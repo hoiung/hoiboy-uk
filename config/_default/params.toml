@@ -15,8 +15,3 @@ textFirstSections = ["tech"]
 
 # Footer
 footerText = "Hoi. CC BY-SA."
-
-# Build provenance: written to public/build-info.json by data template.
-[build]
-  hugoVersion = ""  # filled by CI from .hugo-version
-  commitSha = ""    # filled by CI from git rev-parse HEAD

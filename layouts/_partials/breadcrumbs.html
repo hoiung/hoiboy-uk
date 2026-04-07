@@ -1,9 +1,20 @@
-{{- /* Breadcrumbs walk .Parent. Hidden on home. */ -}}
+{{- /* Breadcrumbs.
+       Posts (under /posts/) walk via the FIRST category tag, not the section.
+       Section pages and term pages walk via .Parent.
+       Hidden on home. */ -}}
 {{- if not .IsHome -}}
 <nav class="breadcrumbs" aria-label="Breadcrumbs">
   <a href="/">Home</a>
-  {{- with .Parent -}}{{- if not .IsHome -}}<span class="sep">&gt;</span><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{- end -}}{{- end -}}
-  {{- if .IsPage -}}<span class="sep">&gt;</span><span>{{ .Title }}</span>{{- end -}}
-  {{- if and .IsNode (not .IsHome) -}}<span class="sep">&gt;</span><span>{{ .Title }}</span>{{- end -}}
+  {{- if .IsPage -}}
+    {{- /* For posts, derive crumb from first category param.
+           Falls back to section parent for non-categorised pages (e.g. /about/). */ -}}
+    {{- with index (.Params.categories | default slice) 0 -}}
+      <span class="sep">&gt;</span><a href="/{{ . | urlize }}/">{{ . | title }}</a>
+    {{- end -}}
+    <span class="sep">&gt;</span><span>{{ .Title }}</span>
+  {{- else if and .IsNode (not .IsHome) -}}
+    {{- /* Section landing or taxonomy term page. */ -}}
+    <span class="sep">&gt;</span><span>{{ .Title }}</span>
+  {{- end -}}
 </nav>
 {{- end -}}

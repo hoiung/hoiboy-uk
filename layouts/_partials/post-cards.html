@@ -3,7 +3,7 @@
   {{- range . -}}
     <a class="card" href="{{ .RelPermalink }}">
       {{- with .Resources.GetMatch "*.{jpg,jpeg,png,webp}" -}}
-        <img src="{{ .RelPermalink }}" alt="{{ $.Title }}" loading="lazy">
+        <img src="{{ .RelPermalink }}" alt="{{ .Title }}" loading="lazy">
       {{- end -}}
       <h3>{{ .Title }}</h3>
       <span class="date">{{ .Date.Format "2 Jan 2006" }}</span>

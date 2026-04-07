@@ -272,7 +272,7 @@ hoiboy-uk/
 ## Development Setup
 
 ```bash
-# Clone (no submodules to recurse, custom theme is in-tree)
+# Clone (no submodules, custom theme is in-tree)
 git clone https://github.com/hoiung/hoiboy-uk
 cd hoiboy-uk
 

@@ -1,0 +1,14 @@
+# Hugo build warning allowlist.
+# Lines here are KNOWN-AND-ACCEPTED warnings from `hugo --printPathWarnings`
+# or similar. CI fails on:
+#   1. Any new warning line NOT in this allowlist (new noise)
+#   2. Any line in this allowlist that NO LONGER appears in current build (dead allowlist line)
+#
+# Bidirectional check prevents silent rot after Hugo or theme upgrades.
+#
+# Empty by default: current build (Hugo 0.160.0, custom in-tree theme)
+# produces zero warnings. If a future build introduces warnings, add the
+# exact line here with a comment explaining why it's accepted.
+#
+# Refresh procedure: run `hugo --gc -e production --logLevel info 2>&1 | grep -i warn`,
+# inspect each new warning, decide accept/fix.

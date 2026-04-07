@@ -7,10 +7,12 @@ Optional: slug, draft
 Phase 0 inline schema. 08_FRONTMATTER_SCHEMA.md is deferred to Phase 1
 once real WordPress posts shape the schema.
 
-Walks content/posts/, validates required fields. Fails loudly.
+Walks content/posts/, parses YAML frontmatter, validates required fields.
+Fails loudly. Uses a tiny YAML parser (no third-party deps in CI).
 """
 from __future__ import annotations
 import sys
+import re
 from pathlib import Path
 
 REQUIRED = {"title", "date", "categories", "tags"}
@@ -18,18 +20,39 @@ ROOT = Path(__file__).resolve().parent.parent
 POSTS = ROOT / "content" / "posts"
 
 
-def parse_frontmatter(text: str) -> dict[str, str] | None:
+def parse_frontmatter(text: str) -> dict[str, object] | None:
+    """Minimal YAML frontmatter parser. Handles strings, bracketed lists,
+    quoted values with colons inside. Sufficient for blog frontmatter.
+    Anything more exotic should switch to PyYAML."""
     if not text.startswith("---"):
         return None
     end = text.find("\n---", 3)
     if end == -1:
         return None
     body = text[3:end].strip()
-    out: dict[str, str] = {}
-    for line in body.splitlines():
-        if ":" in line:
-            key, _, value = line.partition(":")
-            out[key.strip()] = value.strip()
+    out: dict[str, object] = {}
+    current_key: str | None = None
+    for raw in body.splitlines():
+        line = raw.rstrip()
+        if not line or line.startswith("#"):
+            continue
+        # Key: value pattern. Match the FIRST colon that follows an
+        # unquoted key (no quotes/brackets in the key portion).
+        m = re.match(r"^([A-Za-z_][\w-]*)\s*:\s*(.*)$", line)
+        if m:
+            key = m.group(1)
+            value = m.group(2).strip()
+            if value.startswith("[") and value.endswith("]"):
+                inner = value[1:-1].strip()
+                items = [s.strip().strip('"').strip("'") for s in inner.split(",") if s.strip()]
+                out[key] = items
+            elif value.startswith('"') and value.endswith('"'):
+                out[key] = value[1:-1]
+            elif value.startswith("'") and value.endswith("'"):
+                out[key] = value[1:-1]
+            else:
+                out[key] = value
+            current_key = key
     return out
 
 
@@ -37,7 +60,8 @@ def main() -> int:
     if not POSTS.exists():
         return 0
     failures: list[str] = []
-    for md in POSTS.rglob("index.md"):
+    md_files = list(POSTS.rglob("index.md"))
+    for md in md_files:
         text = md.read_text(encoding="utf-8")
         fm = parse_frontmatter(text)
         if fm is None:
@@ -51,7 +75,7 @@ def main() -> int:
         for f in failures:
             print(f"  {f}", file=sys.stderr)
         return 1
-    print(f"Frontmatter OK ({len(list(POSTS.rglob('index.md')))} posts)")
+    print(f"Frontmatter OK ({len(md_files)} posts)")
     return 0
 
 

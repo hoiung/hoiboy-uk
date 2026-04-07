@@ -69,11 +69,11 @@ jobs:
       - name: Em-dash voice guard (zero tolerance)
         run: |
           set -e
-          MATCHES=$(grep -rln $'\u2014' content layouts assets config docs README.md 2>/dev/null || true)
+          MATCHES=$(grep -rln $'\u2014' content layouts assets config docs scripts README.md 2>/dev/null || true)
           if [ -n "$MATCHES" ]; then
             echo "::error::Em dashes found in tracked files (voice rule):"
             echo "$MATCHES"
-            grep -rn $'\u2014' content layouts assets config docs README.md 2>/dev/null || true
+            grep -rn $'\u2014' content layouts assets config docs scripts README.md 2>/dev/null || true
             exit 1
           fi
 
