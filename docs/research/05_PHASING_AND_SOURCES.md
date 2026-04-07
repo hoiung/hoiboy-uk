@@ -10,34 +10,34 @@
 
 No Blogger / Medium / Tumblr to worry about. Phased import.
 
-## Phase 0 — Foundation (next session)
+## Phase 0 .  Foundation (next session)
 
 Goal: live "Hello world" on hoiboy.uk before any content lands.
 
 - [ ] Install Hugo extended on WSL (`sudo apt install hugo` or download binary)
-- [ ] Pick theme — **Congo** (decision recorded in `01_STACK_AND_DESIGN.md` after voice-profile RAG; risotto is fallback if Congo fights)
+- [ ] Pick theme .  **Congo** (decision recorded in `01_STACK_AND_DESIGN.md` after voice-profile RAG; risotto is fallback if Congo fights)
 - [ ] Add theme as git submodule under `themes/`
 - [ ] Write `config.toml`: site title, baseURL `https://hoiboy.uk`, sidebar nav, tag taxonomy
 - [ ] Local preview works (`hugo server`)
 - [ ] Connect Cloudflare Pages → `hoiung/hoiboy-uk` repo
-- [ ] Attach custom domain `hoiboy.uk` (one click — Cloudflare registrar)
+- [ ] Attach custom domain `hoiboy.uk` (one click .  Cloudflare registrar)
 - [ ] Verify live deploy
 - [ ] One placeholder post to confirm the loop works end-to-end
 
-## Phase 1 — WordPress wave
+## Phase 1 .  WordPress wave
 
 Source: WordPress backup XML (WXR format).
 
 - [ ] Drop XML in `legacy/wordpress/` (gitignored)
 - [ ] `scripts/import_wordpress.sh` runs `npx wordpress-export-to-markdown --input=legacy/wordpress/export.xml --output=content/posts --save-images=true`
 - [ ] Restructure into page bundles (each post = folder with `index.md` + images)
-- [ ] `scripts/normalise_frontmatter.py` — collapse categories into tags, add `slug`, ensure `date` ISO 8601
-- [ ] `scripts/fix_encoding.py` — ftfy pass for mojibake
+- [ ] `scripts/normalise_frontmatter.py` .  collapse categories into tags, add `slug`, ensure `date` ISO 8601
+- [ ] `scripts/fix_encoding.py` .  ftfy pass for mojibake
 - [ ] `lychee` link check, log dead links to `docs/research/dead-links-wave1.md`
 - [ ] Commit in batches by year (`git commit -m "Import WordPress posts: 2008"`)
-- [ ] User review pass — Hoi confirms voice intact
+- [ ] User review pass .  Hoi confirms voice intact
 
-## Phase 2 — HTML scraps wave
+## Phase 2 .  HTML scraps wave
 
 Source: scattered local HTML files.
 
@@ -48,7 +48,7 @@ Source: scattered local HTML files.
 - [ ] Same encoding + link-check passes
 - [ ] Commit in batches
 
-## Phase 3 — Google Docs / .docx wave
+## Phase 3 .  Google Docs / .docx wave
 
 Source: Google Docs (exported as .docx) and existing .docx files.
 

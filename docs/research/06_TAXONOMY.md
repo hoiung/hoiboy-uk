@@ -23,7 +23,7 @@ slug: best-ramen-shimokitazawa
 
 ## Rules
 
-- **One primary category per post** by default — keeps nav clean
+- **One primary category per post** by default .  keeps nav clean
 - Cross-over posts can have multiple categories (`[adventure, dance]` for a dance trip to Cuba), used sparingly
 - **Tags are unlimited** and freeform
 - Category names are lowercase, single word
@@ -39,15 +39,15 @@ slug: best-ramen-shimokitazawa
 ```
 
 Hugo auto-generates:
-- `/categories/food/` — list of food posts
+- `/categories/food/` .  list of food posts
 - `/categories/adventure/`, `/categories/dance/`, `/categories/tech/`
-- `/tags/<tag>/` — list per tag
-- `/categories/` — index of all categories
-- `/tags/` — index of all tags
+- `/tags/<tag>/` .  list per tag
+- `/categories/` .  index of all categories
+- `/tags/` .  index of all tags
 
 Sidebar nav links to the four category pages directly: `/food/`, `/adventure/`, `/dance/`, `/tech/` (with permalink rewrites in config so URLs stay short).
 
-## Sidebar nav (FLAT — never grows)
+## Sidebar nav (FLAT .  never grows)
 
 ```
 hoiboy.uk
@@ -102,11 +102,11 @@ Every page has a breadcrumb trail at the top of the main content:
 
 ## Hugo implementation
 
-- **Sidebar**: standard flat partial (`layouts/partials/sidebar.html`) — ~15 lines
-- **Category landing**: custom taxonomy template (`layouts/_default/taxonomy.html`) iterating `.Pages.GroupByDate "2006"` — ~40 lines
-- **Breadcrumbs**: walking `.Parent` chain (`layouts/partials/breadcrumbs.html`) — ~15 lines
+- **Sidebar**: standard flat partial (`layouts/partials/sidebar.html`) .  ~15 lines
+- **Category landing**: custom taxonomy template (`layouts/_default/taxonomy.html`) iterating `.Pages.GroupByDate "2006"` .  ~40 lines
+- **Breadcrumbs**: walking `.Parent` chain (`layouts/partials/breadcrumbs.html`) .  ~15 lines
 - All native Hugo, no plugins
-- Congo theme has breadcrumbs and grouped taxonomy pages built in — even less work for us
+- Congo theme has breadcrumbs and grouped taxonomy pages built in .  even less work for us
 
 ## Import categorisation strategy (Phase 1 onwards)
 
@@ -125,4 +125,4 @@ Flagged posts go into `docs/research/categorisation-review.md` as a checklist fo
 
 ## Future categories
 
-Add by editing `config.toml` and the sidebar partial. No migration needed — existing posts keep their categories. New category just shows up in nav.
+Add by editing `config.toml` and the sidebar partial. No migration needed .  existing posts keep their categories. New category just shows up in nav.
