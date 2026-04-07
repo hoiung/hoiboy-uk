@@ -49,22 +49,59 @@ Sidebar nav links to the four category pages directly: `/food/`, `/adventure/`, 
 
 ## Sidebar nav (planned)
 
+**Tree-style, fully expanded by default, scrollable, collapsible per-category.**
+
 ```
 hoiboy.uk
 ─────────
 Index
-Food
-Adventure
-Dance
-Tech
-─────────
-Tags
 About
 ─────────
-GitHub
-LinkedIn
-RSS
+▼ Food
+   Best ramen in Shimokitazawa
+   Pho in Hanoi at 6am
+   ...
+▼ Adventure
+   Hiking the Annapurna circuit
+   ...
+▼ Dance
+   First salsa congress
+   ...
+▼ Tech
+   (future)
+─────────
+GitHub  LinkedIn  RSS
 ```
+
+### Behaviour
+
+- **Fully expanded by default** — every post title visible at first paint
+- **Per-category collapse** via `<details>/<summary>` (semantic HTML, works without JS)
+- **State persistence** via localStorage — folded categories stay folded next visit (~15 lines vanilla JS)
+- **Scrollable** — sidebar `position: sticky; overflow-y: auto; height: 100vh`. Long lists scroll independently of main content.
+- **No pagination** in sidebar — at hundreds of posts the DOM list is fine. No virtual scrolling until 5000+ posts.
+
+### Implementation
+
+- Hugo data: `.Site.Taxonomies.categories` → iterate posts within each category
+- Custom sidebar partial (`layouts/partials/sidebar.html`) — ~30 lines
+- Overrides theme default sidebar
+- Theme base: **`risotto`** (minimal CSS, clean partials, easiest to override)
+- Fallback if risotto fights us: write a bare theme from scratch (~200 lines, full control)
+
+### Future option
+
+If at scale (~500+ posts) the sidebar feels unwieldy, add year sub-grouping inside each category:
+
+```
+▼ Food
+   ▼ 2024
+      Best ramen in Shimokitazawa
+   ▼ 2019
+      Pho in Hanoi at 6am
+```
+
+Defer this until import is done and we can see how it actually feels.
 
 ## Import categorisation strategy (Phase 1 onwards)
 
