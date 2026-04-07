@@ -80,6 +80,6 @@ Replicate Diehl on Hugo:
 - IBM Plex Sans + one serif accent (Cormorant Garamond or similar)
 - Greyscale palette
 - Posts as `content/posts/<slug>/index.md` page bundles
-- Tags as the only taxonomy
+- **Categories as primary taxonomy** (food, adventure, dance, tech) — sidebar nav. Tags as secondary, freeform. (Diverges from Diehl's tags-only approach because Hoi's content spans distinct topic areas, not one niche.)
 - Prism / MathJax / Mermaid via CDN if needed
 - Cloudflare Pages auto-deploy on push to `main`
