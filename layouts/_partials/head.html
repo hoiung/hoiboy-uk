@@ -11,6 +11,13 @@
 {{- end }}
 {{- $css := resources.Get "css/main.css" | resources.ExecuteAsTemplate "css/main.css" . | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+{{- $logo := resources.Get "images/logo.png" -}}
+{{- $favicon32 := $logo.Resize "32x32 png" -}}
+{{- $favicon192 := $logo.Resize "192x192 png" -}}
+{{- $appleTouch := $logo.Resize "180x180 png" -}}
+<link rel="icon" type="image/png" sizes="32x32" href="{{ $favicon32.RelPermalink }}">
+<link rel="icon" type="image/png" sizes="192x192" href="{{ $favicon192.RelPermalink }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ $appleTouch.RelPermalink }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
