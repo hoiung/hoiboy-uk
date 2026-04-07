@@ -7,7 +7,7 @@
   <a href="/">Home</a>
   {{- if .IsPage -}}
     {{- /* For posts, derive crumb from first category param.
-           Falls back to section parent for non-categorised pages (e.g. /about/). */ -}}
+           Falls back to no parent crumb for non-categorised pages (e.g. /about/). */ -}}
     {{- with index (.Params.categories | default slice) 0 -}}
       <span class="sep">&gt;</span><a href="/{{ . | urlize }}/">{{ . | title }}</a>
     {{- end -}}

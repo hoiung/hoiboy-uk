@@ -25,10 +25,9 @@ disableHugoGeneratorInject = true
   category = "categories"
   tag = "tags"
 
-# Permalinks: short URLs for category landing pages.
-# /food/ instead of /categories/food/.
+# Permalinks for tags taxonomy. Categories use section landings instead
+# of taxonomy permalink rewrite (avoids section vs taxonomy collision).
 [permalinks]
-  categories = "/:slug/"
   tags = "/tags/:slug/"
 
 # Pagination for taxonomy term pages (food/, tech/, etc).
