@@ -57,7 +57,8 @@ body {
   font-size: 0.95rem;
 }
 .sidebar h1 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
-.sidebar h1 a { color: var(--fg); text-decoration: none; }
+.sidebar h1 a.brand { color: var(--fg); text-decoration: none; display: flex; align-items: center; gap: 0.6rem; }
+.sidebar h1 a.brand img { width: 32px; height: 32px; border-radius: 6px; flex-shrink: 0; }
 .sidebar nav { margin-top: 1.25rem; }
 .sidebar nav h2 {
   font-size: 0.75rem;
