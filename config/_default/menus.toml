@@ -2,7 +2,7 @@
 # Order matters: top section, categories, social.
 
 [[main]]
-  name = "Index"
+  name = "Home"
   url = "/"
   weight = 10
 
