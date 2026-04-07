@@ -10,6 +10,11 @@ This folder maps the journey from "I have 22 years of blogs" to a live, Claude-m
 4. [04_CLAUDE_MANAGED_WORKFLOW.md](04_CLAUDE_MANAGED_WORKFLOW.md) — How the GitHub repo + Cloudflare Pages + Claude Code loop works day to day.
 5. [05_PHASING_AND_SOURCES.md](05_PHASING_AND_SOURCES.md) — Confirmed sources (WordPress backup, HTML scraps, Google Docs/docx) and the 4-phase rollout (Foundation → WP → HTML → docx).
 6. [06_TAXONOMY.md](06_TAXONOMY.md) — Categories (food, adventure, dance, tech) as primary nav, tags as secondary, import categorisation strategy.
+7. [07_DESIGN_TOKENS.md](07_DESIGN_TOKENS.md) — Accent colour, fonts, contrast, dark mode decision.
+9. [09_DEPLOYMENT.md](09_DEPLOYMENT.md) — Cloudflare Pages setup, GHA-gated deploy, rollback, break-glass, theme upgrade procedure.
+10. [10_BASELINE_METRICS.md](10_BASELINE_METRICS.md) — Captured baselines for regression detection in Phase 1+.
+
+(`08_FRONTMATTER_SCHEMA.md` deferred to Phase 1: with one stub post there is no schema yet. Phase 0 contract is captured as a header comment in `scripts/validate_frontmatter.py`.)
 
 ## Key decisions so far
 
