@@ -1,0 +1,15 @@
+// Cloudflare Workers Static Assets config.
+// Hosts hoiboy.uk as a static site via Workers Static Assets (the modern
+// Pages replacement). Hugo builds to public/, this serves it.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hoiboy-uk",
+  "compatibility_date": "2026-04-07",
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "404-page"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
