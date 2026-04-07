@@ -90,32 +90,50 @@ jobs:
 
       - name: Hugo build (production)
         run: |
-          hugo --gc --minify -e production --logLevel info 2>&1 | tee /tmp/hugo-build.log
-          if grep -qi "warn\|error" /tmp/hugo-build.log; then
-            echo "::warning::Hugo logged warnings or errors during build:"
-            grep -i "warn\|error" /tmp/hugo-build.log || true
+          hugo --gc --minify -e production 2>&1 | tee /tmp/hugo-build.log
+          # Bidirectional warning allowlist check
+          ACTUAL=$(grep -iE 'warn|error' /tmp/hugo-build.log | sort -u || true)
+          ALLOWED=$(grep -v '^#' .hugo-warning-allowlist | grep -v '^$' | sort -u || true)
+          NEW=$(comm -23 <(echo "$ACTUAL") <(echo "$ALLOWED"))
+          DEAD=$(comm -13 <(echo "$ACTUAL") <(echo "$ALLOWED"))
+          if [ -n "$NEW" ]; then
+            echo "::error::New Hugo warnings outside allowlist:"
+            echo "$NEW"
+            exit 1
+          fi
+          if [ -n "$DEAD" ]; then
+            echo "::error::Dead allowlist entries (no longer in build):"
+            echo "$DEAD"
+            exit 1
           fi
 
-      - name: Write build-info.json
+      - name: URL contract assertion
         run: |
-          cat > public/build-info.json <<EOF
-          {
-            "hugo_version": "${{ steps.hugo_version.outputs.version }}",
-            "commit_sha": "${{ github.sha }}",
-            "built_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-            "site": "hoiboy.uk"
-          }
-          EOF
-          cat public/build-info.json
+          set -e
+          for p in food adventure dance tech about tags posts; do
+            test -f "public/$p/index.html" || { echo "::error::missing /$p/index.html"; exit 1; }
+          done
+          test -f "public/index.html" || { echo "::error::missing root index.html"; exit 1; }
+          test -f "public/index.xml" || { echo "::error::missing root RSS feed"; exit 1; }
+          test -f "public/sitemap.xml" || { echo "::error::missing sitemap.xml"; exit 1; }
+          test -f "public/robots.txt" || { echo "::error::missing robots.txt"; exit 1; }
+          test -f "public/posts/foundation/index.html" || { echo "::error::missing foundation post"; exit 1; }
+          test -f "public/tags/foundation/index.html" || { echo "::error::missing foundation tag page"; exit 1; }
+          echo "URL contract OK"
 
-      - name: RSS validates locally
+      - name: RSS validates locally + jq schema asserts
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq libxml2-utils
+          sudo apt-get update -qq && sudo apt-get install -y -qq libxml2-utils jq
           xmllint --noout public/index.xml
+          xmllint --noout public/sitemap.xml
+
+      - name: Frontmatter parser unit tests
+        run: python3 -m pytest scripts/test_validate_frontmatter.py -q
 
       - name: Markdown lint
         uses: DavidAnson/markdownlint-cli2-action@v16
         with:
+          config: .markdownlint.json
           globs: |
             content/**/*.md
             docs/**/*.md
