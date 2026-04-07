@@ -1,0 +1,14 @@
+{{- define "main" -}}
+<h1>{{ .Title }}</h1>
+{{- with .Content }}<div>{{ . }}</div>{{- end -}}
+{{- $section := lower .Section -}}
+{{- $textFirst := in (site.Params.textFirstSections | default slice) $section -}}
+{{- $pages := .RegularPages -}}
+{{- if eq (len $pages) 0 -}}
+  <p class="empty-state">No posts yet.</p>
+{{- else if $textFirst -}}
+  {{- partial "post-list.html" $pages -}}
+{{- else -}}
+  {{- partial "post-cards.html" $pages -}}
+{{- end -}}
+{{- end -}}

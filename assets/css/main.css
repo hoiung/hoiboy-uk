@@ -1,0 +1,136 @@
+/* hoiboy.uk minimal custom theme.
+   Greyscale base + ONE warm accent. Inter body font, system fallback.
+   2-column grid: sidebar (left, sticky) + main (right, max-w-4xl).
+   Designed for hundreds of years of content without growing the sidebar. */
+
+:root {
+  --accent: {{ site.Params.accentColor | default "#c0533a" }};
+  --fg: #1a1a1a;
+  --fg-muted: #555;
+  --bg: #fafafa;
+  --bg-card: #fff;
+  --rule: #e0e0e0;
+  --max-w: 64rem;
+  --sidebar-w: 14rem;
+  --gutter: 2rem;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #e8e8e8;
+    --fg-muted: #999;
+    --bg: #141414;
+    --bg-card: #1c1c1c;
+    --rule: #2a2a2a;
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--fg);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  gap: var(--gutter);
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: sticky;
+  top: 2rem;
+  align-self: start;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  font-size: 0.95rem;
+}
+.sidebar h1 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
+.sidebar h1 a { color: var(--fg); text-decoration: none; }
+.sidebar nav { margin-top: 1.25rem; }
+.sidebar nav h2 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+  margin: 1.25rem 0 0.4rem;
+  font-weight: 600;
+}
+.sidebar nav ul { list-style: none; }
+.sidebar nav li { margin: 0.2rem 0; }
+.sidebar nav a {
+  color: var(--fg);
+  text-decoration: none;
+  display: block;
+  padding: 0.15rem 0;
+}
+.sidebar nav a:hover, .sidebar nav a.active { color: var(--accent); }
+
+.main { min-width: 0; max-width: 42rem; }
+.breadcrumbs {
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  margin-bottom: 1.5rem;
+}
+.breadcrumbs a { color: var(--fg-muted); text-decoration: none; }
+.breadcrumbs a:hover { color: var(--accent); }
+.breadcrumbs .sep { margin: 0 0.4rem; }
+
+.main h1 { font-size: 1.75rem; line-height: 1.2; margin-bottom: 0.5rem; font-weight: 700; }
+.main h2 { font-size: 1.25rem; margin: 2rem 0 0.5rem; font-weight: 700; }
+.main h3 { font-size: 1.05rem; margin: 1.25rem 0 0.4rem; font-weight: 600; }
+.main p { margin-bottom: 1rem; max-width: 70ch; }
+.main a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.main ul, .main ol { margin: 0 0 1rem 1.4rem; }
+.main li { margin-bottom: 0.25rem; }
+.main code { font-family: var(--font-mono); font-size: 0.9em; background: var(--rule); padding: 0.1em 0.3em; border-radius: 3px; }
+.main pre { background: var(--rule); padding: 1rem; border-radius: 4px; overflow-x: auto; margin-bottom: 1rem; font-size: 0.85rem; }
+.main pre code { background: none; padding: 0; }
+.main blockquote { border-left: 3px solid var(--rule); padding-left: 1rem; color: var(--fg-muted); margin: 1rem 0; }
+.main img { max-width: 100%; height: auto; border-radius: 4px; margin: 1rem 0; }
+.main hr { border: none; border-top: 1px solid var(--rule); margin: 2rem 0; }
+
+.post-meta { font-size: 0.85rem; color: var(--fg-muted); margin-bottom: 1.5rem; }
+.post-meta a { color: var(--fg-muted); }
+
+/* Category landing: posts grouped by year. */
+.year-group { margin-bottom: 1.75rem; }
+.year-group h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-muted); border-bottom: 1px solid var(--rule); padding-bottom: 0.3rem; margin-bottom: 0.6rem; font-weight: 600; }
+.post-list { list-style: none; }
+.post-list li { margin: 0.5rem 0; display: flex; gap: 1rem; align-items: baseline; }
+.post-list .date { font-size: 0.85rem; color: var(--fg-muted); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.post-list a { color: var(--fg); text-decoration: none; }
+.post-list a:hover { color: var(--accent); }
+
+/* Image-first card layout (food/adventure/dance) */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 1.5rem; margin-top: 1rem; }
+.card { display: block; text-decoration: none; color: var(--fg); }
+.card img { width: 100%; aspect-ratio: 3/2; object-fit: cover; border-radius: 4px; margin-bottom: 0.5rem; }
+.card h3 { font-size: 1rem; font-weight: 600; margin: 0; }
+.card .date { font-size: 0.8rem; color: var(--fg-muted); }
+
+.empty-state { color: var(--fg-muted); font-style: italic; padding: 1rem 0; }
+
+footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: 0.8rem; color: var(--fg-muted); }
+
+/* Mobile: collapse sidebar to a top strip */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr; padding: 1rem; }
+  .sidebar { position: static; max-height: none; border-bottom: 1px solid var(--rule); padding-bottom: 1rem; margin-bottom: 1rem; }
+  .main { max-width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
