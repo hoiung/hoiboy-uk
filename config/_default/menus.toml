@@ -1,0 +1,47 @@
+# Sidebar nav. Flat, constant size. Locked in docs/research/06_TAXONOMY.md.
+# Order matters: top section, categories, social.
+
+[[main]]
+  name = "Index"
+  url = "/"
+  weight = 10
+
+[[main]]
+  name = "About"
+  url = "/about/"
+  weight = 20
+
+[[categories]]
+  name = "Food"
+  url = "/food/"
+  weight = 10
+
+[[categories]]
+  name = "Adventure"
+  url = "/adventure/"
+  weight = 20
+
+[[categories]]
+  name = "Dance"
+  url = "/dance/"
+  weight = 30
+
+[[categories]]
+  name = "Tech"
+  url = "/tech/"
+  weight = 40
+
+[[social]]
+  name = "GitHub"
+  url = "https://github.com/hoiung"
+  weight = 10
+
+[[social]]
+  name = "LinkedIn"
+  url = "https://www.linkedin.com/in/senhhoiung/"
+  weight = 20
+
+[[social]]
+  name = "RSS"
+  url = "/index.xml"
+  weight = 30

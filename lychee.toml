@@ -1,0 +1,20 @@
+# Link checker config. ALL link failures are FAIL.
+# Known-flaky external domains go in the exclude list below.
+# Each entry MUST have an "added: YYYY-MM-DD; expires: YYYY-MM-DD (90 days)" comment.
+# CI warns when an entry is past expiry.
+
+include_verbatim = false
+no_progress = true
+max_concurrency = 4
+max_redirects = 5
+timeout = 20
+retry_wait_time = 2
+accept = ["200..=299", "301", "302", "308"]
+
+# File patterns to scan
+include = ["**/*.md"]
+exclude_path = ["public", "themes", "legacy", "node_modules", ".git"]
+
+# Domains explicitly excluded from link check (allowlist).
+# Add entries with the comment format above. Empty by default.
+exclude = []

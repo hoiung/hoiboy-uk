@@ -1,0 +1,14 @@
+{{- /* Posts grouped by year, newest year first. Text-first style. */ -}}
+{{- range (. | first 9999).GroupByDate "2006" -}}
+  <section class="year-group">
+    <h2>{{ .Key }}</h2>
+    <ul class="post-list">
+      {{- range .Pages -}}
+        <li>
+          <span class="date">{{ .Date.Format "2 Jan" }}</span>
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        </li>
+      {{- end -}}
+    </ul>
+  </section>
+{{- end -}}

@@ -2,26 +2,31 @@
 
 **Date**: 2026-04-07
 
-## The loop
+## The loop (updated 2026-04-07: GHA-gated, no auto-build race)
 
 ```
 GitHub repo (hoiung/hoiboy-uk, public)
-        │
-        │  git push
-        ▼
-GitHub Actions CI (Hugo build + lint + link check)
-        │
-        ▼
-Cloudflare Pages (auto-build on push)
-        │
-        ▼
-hoiboy.uk (live, ~10s after push)
+        |
+        |  git push to main
+        v
+GitHub Actions ci.yml (build + lint + voice + traceability + lychee)
+        |
+        |  workflow_run on success
+        v
+GitHub Actions deploy.yml (POSTs Cloudflare deploy hook)
+        |
+        v
+Cloudflare Pages (auto-build DISABLED, hook-only)
+        |
+        v
+hoiboy.uk (live)
 ```
 
 - One source of truth: the GitHub repo
-- Cloudflare Pages watches `main`, rebuilds on every push
-- Custom domain (hoiboy.uk) attaches in one click — Cloudflare registrar + Cloudflare Pages = zero DNS friction
-- Free SSL, free CDN, free hosting
+- Cloudflare auto-build is DISABLED. Deploy is triggered by GHA on green CI only. Prevents the race where Cloudflare and GHA build the same commit in parallel.
+- Custom domain (hoiboy.uk) attaches in one click since Cloudflare is the registrar.
+- Free SSL, free CDN, free hosting.
+- See `09_DEPLOYMENT.md` for the full procedure.
 
 ## Day-to-day collaboration
 

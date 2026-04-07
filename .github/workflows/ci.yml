@@ -4,24 +4,114 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_call:
+    outputs:
+      passed:
+        description: "CI passed"
+        value: ${{ jobs.build.outputs.passed }}
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      passed: ${{ steps.done.outputs.passed }}
+    env:
+      HUGO_ENV: production
+      GOMEMLIMIT: 2GiB
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
           fetch-depth: 0
+          submodules: false
 
-      - name: Setup Hugo
+      - name: Read pinned Hugo version
+        id: hugo_version
+        run: |
+          if [ ! -f .hugo-version ]; then
+            echo "::error::.hugo-version missing"
+            exit 1
+          fi
+          V=$(cat .hugo-version | tr -d '[:space:]')
+          if [ -z "$V" ]; then
+            echo "::error::.hugo-version is empty"
+            exit 1
+          fi
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Hugo (pinned)
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: 'latest'
+          hugo-version: ${{ steps.hugo_version.outputs.version }}
           extended: true
 
-      - name: Build site (strict)
-        run: hugo --minify --gc
+      - name: Assert Hugo version matches .hugo-version
+        run: |
+          INSTALLED=$(hugo version | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' | head -1 | sed 's/^v//')
+          PINNED=${{ steps.hugo_version.outputs.version }}
+          if [ "$INSTALLED" != "$PINNED" ]; then
+            echo "::error::Hugo version drift: installed=$INSTALLED pinned=$PINNED"
+            exit 1
+          fi
+
+      - name: Hugo cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            resources/_gen
+            /tmp/hugo_cache
+          key: hugo-${{ runner.os }}-${{ hashFiles('.hugo-version', 'content/**', 'assets/**', 'layouts/**', 'config/**') }}
+          restore-keys: |
+            hugo-${{ runner.os }}-
+
+      - name: Em-dash voice guard (zero tolerance)
+        run: |
+          set -e
+          MATCHES=$(grep -rln $'\u2014' content layouts assets config README.md 2>/dev/null || true)
+          if [ -n "$MATCHES" ]; then
+            echo "::error::Em dashes found in tracked files (voice rule):"
+            echo "$MATCHES"
+            grep -rn $'\u2014' content layouts assets config README.md 2>/dev/null || true
+            exit 1
+          fi
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Frontmatter validator
+        run: python3 scripts/validate_frontmatter.py
+
+      - name: Config traceability check
+        run: python3 scripts/check_config_traceability.py
+
+      - name: Hugo build (production)
+        run: |
+          hugo --gc --minify -e production --logLevel info 2>&1 | tee /tmp/hugo-build.log
+          if grep -qi "warn\|error" /tmp/hugo-build.log; then
+            echo "::warning::Hugo logged warnings or errors during build:"
+            grep -i "warn\|error" /tmp/hugo-build.log || true
+          fi
+
+      - name: Write build-info.json
+        run: |
+          cat > public/build-info.json <<EOF
+          {
+            "hugo_version": "${{ steps.hugo_version.outputs.version }}",
+            "commit_sha": "${{ github.sha }}",
+            "built_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "site": "hoiboy.uk"
+          }
+          EOF
+          cat public/build-info.json
+
+      - name: RSS validates locally
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq libxml2-utils
+          xmllint --noout public/index.xml
 
       - name: Markdown lint
         uses: DavidAnson/markdownlint-cli2-action@v16
@@ -31,8 +121,25 @@ jobs:
             docs/**/*.md
             README.md
 
-      - name: Link check (offline + live)
+      - name: Lychee link check
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --no-progress --max-concurrency 4 './**/*.md'
-          fail: false
+          args: --config lychee.toml './**/*.md'
+          fail: true
+
+      - name: Cache hygiene
+        if: always()
+        run: |
+          if [ -d resources/_gen ]; then
+            find resources/_gen -atime +30 -delete 2>/dev/null || true
+          fi
+
+      - name: Upload public artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: public
+          path: public
+          retention-days: 7
+
+      - id: done
+        run: echo "passed=true" >> "$GITHUB_OUTPUT"
