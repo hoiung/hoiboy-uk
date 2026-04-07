@@ -21,7 +21,8 @@ This folder maps the journey from "I have 22 years of blogs" to a live, Claude-m
 | Repo visibility | **Public** (portfolio evidence for AI Agent Orchestrator job hunt) | 2026-04-07 |
 | Repo name | `hoiung/hoiboy-uk` | 2026-04-07 |
 | Design reference | stephendiehl.com (greyscale, IBM Plex, sidebar nav, tags-only) | 2026-04-07 |
-| Theme | TBD — candidates: `risotto`, `archie`, `hugo-paper` | open |
+| Theme | **Congo** (per voice-profile fit, see 01_STACK_AND_DESIGN.md). Risotto is fallback. | 2026-04-07 |
+| Design tokens | Greyscale base + ONE warm accent, humanist sans (Inter). Diverges from Diehl greyscale-only. | 2026-04-07 |
 | Voice rule | Hoi's prose is sacred. Never edited. Cleanup only. | 2026-04-07 |
 | Taxonomy | **Categories** (primary): food, adventure, dance, tech. **Tags** (secondary): freeform. | 2026-04-07 |
 
@@ -30,5 +31,5 @@ This folder maps the journey from "I have 22 years of blogs" to a live, Claude-m
 1. ~~Where do the 22 years of blogs live?~~ **Answered 2026-04-07**: WordPress backup (primary), scattered local HTML, Google Docs/.docx. See `05_PHASING_AND_SOURCES.md`.
 2. Roughly how many posts? How many images?
 3. Sidebar nav items from day one (Index, Blog, Tags, About, GitHub, LinkedIn, RSS, anything else)?
-4. Any look/feel non-negotiables beyond "minimal like Diehl"? (dark mode, photo on homepage, your own colour, serif body)
-5. Theme pick: `risotto` (recommended starting point) vs `archie` vs `hugo-paper` vs custom?
+4. Any look/feel non-negotiables beyond "warm-minimal, Congo + warm accent"? (dark mode toggle, photo on homepage, specific colour pick)
+5. ~~Theme pick~~ **Answered 2026-04-07**: Congo (see 01_STACK_AND_DESIGN.md).

@@ -15,7 +15,7 @@ No Blogger / Medium / Tumblr to worry about. Phased import.
 Goal: live "Hello world" on hoiboy.uk before any content lands.
 
 - [ ] Install Hugo extended on WSL (`sudo apt install hugo` or download binary)
-- [ ] Pick theme — recommended start: `risotto` (closest to Diehl aesthetic)
+- [ ] Pick theme — **Congo** (decision recorded in `01_STACK_AND_DESIGN.md` after voice-profile RAG; risotto is fallback if Congo fights)
 - [ ] Add theme as git submodule under `themes/`
 - [ ] Write `config.toml`: site title, baseURL `https://hoiboy.uk`, sidebar nav, tag taxonomy
 - [ ] Local preview works (`hugo server`)
