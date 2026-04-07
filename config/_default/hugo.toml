@@ -1,4 +1,4 @@
-# Hugo site config — single source of truth.
+# Hugo site config. Single source of truth.
 # Hugo version: pinned in /.hugo-version (read by CI and Cloudflare).
 # Theme: NONE. We ship a minimal custom theme inside layouts/ + assets/.
 
