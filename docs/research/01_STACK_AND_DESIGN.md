@@ -72,14 +72,6 @@ stephendiehl.com structurally:
 5. Content-first chrome. The homepage is 4 sentences. Every saved pixel is a pixel he doesn't maintain in 2036.
 6. MathJax + Prism + Mermaid as drop-in CDN scripts. No build-time plugins, no MDX.
 
-## Recipe for hoiboy.uk
+## Recipe for hoiboy.uk (SUPERSEDED 2026-04-07: see updated recipe below)
 
-Replicate Diehl on Hugo:
-- Hugo + theme `risotto` (closest match) or `archie` as starting point
-- `max-w-4xl` content width, sidebar nav
-- IBM Plex Sans + one serif accent (Cormorant Garamond or similar)
-- Greyscale palette
-- Posts as `content/posts/<slug>/index.md` page bundles
-- **Categories as primary taxonomy** (food, adventure, dance, tech) — sidebar nav. Tags as secondary, freeform. (Diverges from Diehl's tags-only approach because Hoi's content spans distinct topic areas, not one niche.)
-- Prism / MathJax / Mermaid via CDN if needed
-- Cloudflare Pages auto-deploy on push to `main`
+Original draft (kept for trail). Replaced after voice-profile audit pivoted theme + design tokens.
