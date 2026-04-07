@@ -47,9 +47,7 @@ Hugo auto-generates:
 
 Sidebar nav links to the four category pages directly: `/food/`, `/adventure/`, `/dance/`, `/tech/` (with permalink rewrites in config so URLs stay short).
 
-## Sidebar nav (planned)
-
-**Tree-style, fully expanded by default, scrollable, collapsible per-category.**
+## Sidebar nav (FLAT — never grows)
 
 ```
 hoiboy.uk
@@ -57,51 +55,58 @@ hoiboy.uk
 Index
 About
 ─────────
-▼ Food
-   Best ramen in Shimokitazawa
-   Pho in Hanoi at 6am
-   ...
-▼ Adventure
-   Hiking the Annapurna circuit
-   ...
-▼ Dance
-   First salsa congress
-   ...
-▼ Tech
-   (future)
+Food
+Adventure
+Dance
+Tech
 ─────────
 GitHub  LinkedIn  RSS
 ```
 
-### Behaviour
+Sidebar shows category names only. Clicking a category goes to its landing page in the main content area. Sidebar size is constant regardless of how many posts exist.
 
-- **Fully expanded by default** — every post title visible at first paint
-- **Per-category collapse** via `<details>/<summary>` (semantic HTML, works without JS)
-- **State persistence** via localStorage — folded categories stay folded next visit (~15 lines vanilla JS)
-- **Scrollable** — sidebar `position: sticky; overflow-y: auto; height: 100vh`. Long lists scroll independently of main content.
-- **No pagination** in sidebar — at hundreds of posts the DOM list is fine. No virtual scrolling until 5000+ posts.
+**Why flat and not a tree**: at hundreds of posts the tree sidebar gets visually unwieldy and ships a huge DOM on every page. Putting the post list in the main content area scales forever, loads faster, is mobile-friendly.
 
-### Implementation
+## Category landing pages (main content area)
 
-- Hugo data: `.Site.Taxonomies.categories` → iterate posts within each category
-- Custom sidebar partial (`layouts/partials/sidebar.html`) — ~30 lines
-- Overrides theme default sidebar
-- Theme base: **`risotto`** (minimal CSS, clean partials, easiest to override)
-- Fallback if risotto fights us: write a bare theme from scratch (~200 lines, full control)
-
-### Future option
-
-If at scale (~500+ posts) the sidebar feels unwieldy, add year sub-grouping inside each category:
+When you click "Food", the main content area shows posts grouped by year (newest first):
 
 ```
-▼ Food
-   ▼ 2024
-      Best ramen in Shimokitazawa
-   ▼ 2019
-      Pho in Hanoi at 6am
+Home › Food
+
+Food
+────
+
+2024
+  Best ramen in Shimokitazawa
+  Pho in Hanoi at 6am
+  Why pad thai is overrated
+
+2023
+  Cooking laksa from scratch
+  ...
+
+2019
+  ...
 ```
 
-Defer this until import is done and we can see how it actually feels.
+Same pattern for `/adventure/`, `/dance/`, `/tech/`.
+
+## Breadcrumbs (everywhere)
+
+Every page has a breadcrumb trail at the top of the main content:
+
+- `/` → `Home`
+- `/food/` → `Home › Food`
+- `/food/best-ramen-shimokitazawa/` → `Home › Food › Best ramen in Shimokitazawa`
+
+## Hugo implementation
+
+- **Sidebar**: standard flat partial (`layouts/partials/sidebar.html`) — ~15 lines
+- **Category landing**: custom taxonomy template (`layouts/_default/taxonomy.html`) iterating `.Pages.GroupByDate "2006"` — ~40 lines
+- **Breadcrumbs**: walking `.Parent` chain (`layouts/partials/breadcrumbs.html`) — ~15 lines
+- All native Hugo, no plugins
+- Congo theme has breadcrumbs and grouped taxonomy pages built in — even less work for us
 
 ## Import categorisation strategy (Phase 1 onwards)
 
