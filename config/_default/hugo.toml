@@ -1,0 +1,40 @@
+# Hugo site config — single source of truth.
+# Hugo version: pinned in /.hugo-version (read by CI and Cloudflare).
+# Theme: NONE. We ship a minimal custom theme inside layouts/ + assets/.
+
+baseURL = "https://hoiboy.uk"
+languageCode = "en-gb"
+title = "hoiboy.uk"
+enableRobotsTXT = true
+enableEmoji = false
+disableHugoGeneratorInject = true
+
+# Build hardening
+[build]
+  noJSConfigInAssets = true
+
+# Output formats: HTML + RSS + sitemap (Hugo defaults), no JSON.
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
+  taxonomy = ["HTML"]
+  term = ["HTML"]
+
+# Categories primary, tags secondary. Per docs/research/06_TAXONOMY.md.
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+
+# Permalinks: short URLs for category landing pages.
+# /food/ instead of /categories/food/.
+[permalinks]
+  categories = "/:slug/"
+  tags = "/tags/:slug/"
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = false
+  [markup.highlight]
+    style = "github"
+    noClasses = false
+    lineNos = false

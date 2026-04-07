@@ -1,0 +1,33 @@
+{{- /* Single template handles both taxonomy index (e.g. /tags/) AND term pages (e.g. /tags/foundation/, /food/).
+       Branched on .Kind. Avoids duplicate markup, satisfies dedupe rule. */ -}}
+{{- define "main" -}}
+<h1>{{ .Title }}</h1>
+{{- with .Content }}<div>{{ . }}</div>{{- end -}}
+
+{{- if eq .Kind "taxonomy" -}}
+  {{- /* Index of all terms in this taxonomy */ -}}
+  {{- if eq (len .Data.Terms) 0 -}}
+    <p class="empty-state">No {{ .Data.Plural }} yet.</p>
+  {{- else -}}
+    <ul class="post-list">
+      {{- range .Data.Terms.Alphabetical -}}
+        <li><a href="{{ .Page.RelPermalink }}">{{ .Page.Title }}</a> <span class="date">({{ .Count }})</span></li>
+      {{- end -}}
+    </ul>
+  {{- end -}}
+
+{{- else -}}
+  {{- /* Term page: posts tagged/categorised with this term, grouped by year */ -}}
+  {{- $term := lower .Title -}}
+  {{- $textFirst := in (site.Params.textFirstSections | default slice) $term -}}
+  {{- $pages := .Pages -}}
+  {{- if eq (len $pages) 0 -}}
+    <p class="empty-state">No posts yet.</p>
+  {{- else if $textFirst -}}
+    {{- partial "post-list-grouped.html" $pages -}}
+  {{- else -}}
+    {{- partial "post-cards-grouped.html" $pages -}}
+  {{- end -}}
+{{- end -}}
+
+{{- end -}}

@@ -1,0 +1,23 @@
+{{- /* Flat sidebar. Constant size. Three sections: top, categories, social. */ -}}
+<aside class="sidebar">
+  <h1><a href="/">{{ site.Title }}</a></h1>
+  <nav>
+    <ul>
+      {{- range site.Menus.main -}}
+        <li><a href="{{ .URL }}"{{ if eq $.RelPermalink .URL }} class="active"{{ end }}>{{ .Name }}</a></li>
+      {{- end -}}
+    </ul>
+    <h2>Categories</h2>
+    <ul>
+      {{- range site.Menus.categories -}}
+        <li><a href="{{ .URL }}"{{ if eq $.RelPermalink .URL }} class="active"{{ end }}>{{ .Name }}</a></li>
+      {{- end -}}
+    </ul>
+    <h2>Elsewhere</h2>
+    <ul>
+      {{- range site.Menus.social -}}
+        <li><a href="{{ .URL }}"{{ if hasPrefix .URL "http" }} rel="noopener" target="_blank"{{ end }}>{{ .Name }}</a></li>
+      {{- end -}}
+    </ul>
+  </nav>
+</aside>

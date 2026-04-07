@@ -1,0 +1,9 @@
+{{- /* Breadcrumbs walk .Parent. Hidden on home. */ -}}
+{{- if not .IsHome -}}
+<nav class="breadcrumbs" aria-label="Breadcrumbs">
+  <a href="/">Home</a>
+  {{- with .Parent -}}{{- if not .IsHome -}}<span class="sep">&gt;</span><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{- end -}}{{- end -}}
+  {{- if .IsPage -}}<span class="sep">&gt;</span><span>{{ .Title }}</span>{{- end -}}
+  {{- if and .IsNode (not .IsHome) -}}<span class="sep">&gt;</span><span>{{ .Title }}</span>{{- end -}}
+</nav>
+{{- end -}}
