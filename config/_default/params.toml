@@ -4,7 +4,7 @@
 description = "Personal blog of Hoi. Food, adventure, dance, tech."
 author = "Hoi"
 
-# Design tokens — see docs/research/07_DESIGN_TOKENS.md
+# Design tokens: see docs/research/07_DESIGN_TOKENS.md
 # (created during Phase 0.9 with hex value, contrast ratios, rationale).
 # Accent: warm terracotta. Single colour applied to links + active nav.
 accentColor = "#c0533a"
