@@ -1,0 +1,334 @@
+**READ IN FULL - DO NOT SKIP SECTIONS**
+**This document contains critical instructions. Selective reading will cause execution failures.**
+
+# SST3 Solo Workflow
+
+## 5-Stage Solo Workflow Model
+
+**Your Role**: Orchestrate research/review via subagent swarms; implement directly. See `../dotfiles/SST3/workflow/WORKFLOW.md` for full 5-stage workflow.
+
+**CRITICAL: Default Mode is PLANNING MODE**
+- Start in planning mode by default
+- ONLY execute when user explicitly requests: "work on #X", "implement this"
+- When unclear, ASK: "Should I proceed with implementation or just plan?"
+- Planning mode = Discussion only (analyze, suggest, explain)
+- Execution mode = File changes, commits, autonomous work
+
+**MANDATORY READING**:
+1. `../dotfiles/SST3/standards/STANDARDS.md` (ALWAYS)
+2. `{repository-name}/CLAUDE.md` (ALWAYS - replace with repo root)
+
+**Reading Confirmation Checklist** (MUST display and complete):
+- [ ] Read STANDARDS.md
+- [ ] Read {repository-name}/CLAUDE.md
+
+## SST3 Solo Workflow
+
+All changes use **Solo workflow** with built-in guardrails.
+
+**STOP if**:
+- No GitHub Issue exists, Create Issue using `../dotfiles/SST3/templates/issue-template.md`
+
+**Creating Issues**: MUST use `../dotfiles/SST3/templates/issue-template.md`
+
+### Solo Workflow Overview
+
+**Context Window**: 1M tokens (Opus 4.6/Sonnet 4.6), 200K (Haiku 4.5)
+**Content Budget**: ~42K tokens (STANDARDS.md + CLAUDE.md + Issue loaded at session start)
+**Handover at**: 80% of model window (800K for 1M, 160K for Haiku)
+**Issue Header**: `## Solo Assignment (SST3 Automated)`
+**Branch**: `solo/issue-{number}-{description}` (commit per file, no PR)
+**Merge**: Direct merge to main after Ralph Review passes (BEFORE user review - protects work)
+
+### Execution Guardrails (Built-in)
+
+1. **Before Starting**: Read CLAUDE.md, STANDARDS.md, Issue line-by-line
+2. **During Work**: Post checkpoint at each phase, check context (80%+ = warn, 90%+ = STOP)
+3. **After Compact**: Re-read CLAUDE.md, STANDARDS.md, Issue last comment
+4. **Verification Loop**: Repeat checks until all pass (overengineering, reuse, fallbacks, wiring, regression tests, quality scan)
+
+### Branch Safety (CRITICAL — DO NOT VIOLATE)
+
+- **NEVER switch branches** (`git checkout main`, `git checkout -b`, `git switch`). Another agent may be working on the current branch concurrently. Switching causes their work to flap, get confused, and get lost.
+- **Always commit and push to the CURRENT active branch** — it will get merged later.
+- If you need something on main, **ask the user** — do NOT switch yourself.
+- The only exception is creating a NEW solo branch at the START of work (before any other agent is active).
+5. **User Review**: POST user-review-checklist.md, work through WITH user
+
+### Command Interface
+
+**Available Commands**:
+
+#### /start Command
+**Purpose**: Repository selection and CLAUDE.md loading
+**Behavior**:
+1. Lists all repos in DevProjects/ with their CLAUDE.md status
+2. Prompts user to select repository
+3. Loads selected repo's CLAUDE.md
+4. **STOPS** - waits for user to specify task
+
+**Usage**: `User: /start` lists repos, User selects, Loads CLAUDE.md, WAITS
+
+#### /SST3-solo Command
+**Purpose**: Load Solo workflow context
+**Behavior**:
+1. Reads STANDARDS.md and current repo CLAUDE.md
+2. Displays Solo mode summary
+3. Sets progress update threshold to 10 minutes
+4. Prompts for task description or Issue number
+5. Ready for Solo execution
+
+**Usage**: `User: /SST3-solo` loads context, prompts for task, executes with guardrails
+
+## Context Management
+
+- **Window**: 1M tokens (Opus 4.6/Sonnet 4.6), 200K tokens (Haiku 4.5)
+- **Handover at**: 80% used
+- **Process**: Post checkpoint to Issue FIRST, then handover
+- **Template**: `../dotfiles/SST3/templates/chat-handover.md`
+
+## Communication Standards
+
+### With Users
+- Clear progress announcements
+- Decision rationale
+- Context memory status
+
+### Issue Updates
+- Phase checkpoints
+- Files modified
+- Blockers/scope changes
+
+## External Research References
+
+**Location**: `docs/research/` in project root
+**Check BEFORE external research**: Existing research references
+**Capture AFTER research**: If 3+ external resources found, create/update research reference
+See: `../dotfiles/SST3/reference/research-reference-guide.md` for complete guide
+
+## Quality Standards
+
+**Quality = Robust, Reliable, Scalable, Repeatable, Discoverable, Low-effort/High-value, Prevention>Cure, Right-balanced, Complete** (See STANDARDS.md)
+
+**Never Assume — Always Check**: Read the actual file/code before drawing conclusions. Assumptions cause silent errors. A five-second Read beats a thirty-minute debugging session. (See STANDARDS.md)
+
+**Fix Everything — No Excuses, No Scope Boundaries, No Language Boundaries**:
+- If you find a problem during ANY work (implementation, review, audit), **investigate it first** to confirm it's real — then **FIX IT NOW**
+- NEVER use "not in scope", "not part of this issue", or "Python-only branch" as excuses to skip fixes
+- Language doesn't matter — Python, Rust, JavaScript, SQL, YAML, shell scripts — **fix them ALL**
+- NEVER categorize problems as "low priority" or "can be deferred" to avoid fixing them
+- The ONLY valid reason to not fix something is if investigation confirms it's a **false positive** (not actually a bug). Document why it's a false positive.
+
+**Critical Thinking**: Challenge ideas when appropriate
+- Disagreement with evidence when approaches are flawed
+- Alternative suggestions when better solutions exist
+- Honest analysis of trade-offs and risks
+- Quality-first approach over blind agreement
+
+## Ralph Review Loop (MANDATORY)
+
+**Purpose**: 3-tier automated review before user approval
+**Subagents are PLANNING ONLY** - they review, they do NOT write code.
+
+**Flow**: Implement → Haiku → Sonnet → Opus → **Merge to main** → User Review
+
+| Tier | Model | Purpose | Invocation |
+|------|-------|---------|------------|
+| 1 | `haiku` (MANDATORY) | Surface checks | `Task(model=haiku, prompt="Review per SST3/ralph/haiku-review.md...")` |
+| 2 | `sonnet` (MANDATORY) | Logic checks | `Task(model=sonnet, prompt="Review per SST3/ralph/sonnet-review.md...")` |
+| 3 | `opus` (MANDATORY) | Deep analysis | `Task(model=opus, prompt="Review per SST3/ralph/opus-review.md...")` |
+
+**On FAIL any tier**: Main agent fixes → Restart from Tier 1 (Haiku)
+**On PASS all 3**: Merge to main immediately (protects work), then user review
+
+**Checklists**: `../dotfiles/SST3/ralph/`
+
+## Quick Reference
+
+### 5-Stage Workflow (ORDER-DEPENDENT — no skipping, no reordering)
+```
+Stage 1: Research — subagent swarm → main agent writes /tmp (findings + gaps + plan)
+Stage 2: Issue Creation — main agent from /tmp, illustrations, compact breaks, quality mantras verbatim
+Stage 3: Triple-Check — subagents verify scope vs audit = 100%, chat history, dead code
+Stage 4: Implementation — main agent implements, Verification Loop, Ralph Review, merge, user-review-checklist
+Stage 5: Post-Implementation Review — subagent swarm: wiring, goal alignment, quality scan, regression tests
+```
+
+### Solo Execution Checklist (Stage 4)
+```
+## Working on Issue #X
+Read CLAUDE.md, STANDARDS.md, Issue
+Create branch: git checkout -b solo/issue-{X}-{description}
+Execute phase 1, commit per file, push, post checkpoint
+Execute phase 2, commit per file, push, post checkpoint
+...
+Run verification loop until clean (overengineering, reuse, duplication, fallbacks, wiring, regression, quality)
+Run Ralph Review (Haiku → Sonnet → Opus)
+Merge to main (BEFORE user review - protects work, check for conflicts first)
+Post user-review-checklist.md (from TEMPLATE, ALL sections mandatory)
+User reviews and approves
+Cleanup branch, close Issue
+```
+
+### Emergency Procedures
+- **Context overflow**: Create handover immediately
+- **Stuck**: Re-read Issue, identify blocker, post to Issue
+- **User compact**: Re-read CLAUDE.md, STANDARDS.md, Issue last comment
+
+### MCP Configuration (Global)
+- **Location**: `~/.claude.json` (user scope)
+- **Verify**: Run `claude mcp list` or `/mcp` inside Claude Code
+- **Servers**: chrome-devtools, github-checkbox, github
+- **Guide**: `../dotfiles/docs/guides/mcp-configuration.md`
+- **Tool Selection**: See `../dotfiles/SST3/reference/tool-selection-guide.md`
+
+### MCP Tool: Checkbox Operations
+Use `mcp__github-checkbox__update_issue_checkbox(issue_number, checkbox_text, evidence)` for progressive checkbox updates.
+
+### MCP Tool: Frontend Verification
+- For frontend changes, Chrome DevTools MCP available
+- Guide: `../dotfiles/docs/guides/chrome-devtools-mcp.md`
+- Screenshots saved to: `../screenshots/`
+
+### MCP Tool: GitHub Issue Operations
+- Tools: issue_write, add_issue_comment, search_issues, get_file_contents, create_pull_request
+
+### Google Drive Sync Conflicts
+
+**Detection**: Edit tool fails with "File has been unexpectedly modified"
+
+**Workaround**:
+```bash
+cp "path/to/file.ext" "C:/temp/file.ext"
+# Edit the copy
+cp "C:/temp/file.ext" "path/to/file.ext"
+```
+
+**Location**: All temp files go to `C:/temp/` (outside Google Drive sync)
+
+---
+<!-- ============================================================== -->
+<!-- ⚠️ DO NOT MODIFY OR DELETE ANYTHING ABOVE THIS LINE ⚠️ -->
+<!-- ============================================================== -->
+<!-- All content ABOVE is SST3 standard managed by dotfiles issues -->
+<!-- Modifications require dotfiles repository SST3 issue approval -->
+<!-- Project-specific configuration begins BELOW this boundary -->
+<!-- ============================================================== -->
+
+
+
+
+# Project-Specific Configuration
+
+## Project Overview
+
+Personal blog at **hoiboy.uk**, owned by Senh Hoi Ung (Hoi). Republishes ~22 years of writing from various legacy platforms plus new posts. Fully managed by Claude Code as a deliberate portfolio piece for AI Agent Orchestrator job applications — the commit history is itself evidence.
+
+**Voice rule**: posts are Hoi's voice. NEVER edit the prose. Cleanup is restricted to formatting, encoding fixes, broken markdown, dead links, image rehosting. The words stay untouched. See `../dotfiles/cv-linkedin/VOICE_PROFILE.md` for the voice profile if writing anything new in his voice.
+
+## Technology Stack
+
+- Generator: Hugo (extended), latest
+- Content: Markdown (page bundles in `content/posts/<slug>/index.md`)
+- Hosting: Cloudflare Pages (auto-build on push to `main`)
+- Domain: hoiboy.uk (registered with Cloudflare)
+- CI: GitHub Actions (Hugo build + markdownlint + lychee link check)
+
+## Repository Structure
+
+```
+hoiboy-uk/
+├── content/
+│   ├── _index.md            # Homepage (deliberately spartan, Diehl-style)
+│   └── posts/<slug>/        # Page bundle per post
+│       ├── index.md
+│       └── *.png|jpg
+├── themes/                  # Hugo theme (TBD: risotto / archie / hugo-paper)
+├── static/                  # Site-wide static assets
+├── docs/research/           # Planning trail and tooling decisions
+├── scripts/                 # Import + maintenance scripts
+├── legacy/                  # Raw exports (gitignored)
+├── .github/workflows/ci.yml # Hugo build + lint + link check
+├── .pre-commit-config.yaml  # File hygiene + markdownlint
+├── config.toml              # Hugo config (TBD)
+└── CLAUDE.md                # This file
+```
+
+## Development Setup
+
+```bash
+git clone https://github.com/hoiung/hoiboy-uk
+cd hoiboy-uk
+
+# Install Hugo (extended)
+sudo apt install hugo
+
+# Local preview
+hugo server --buildDrafts
+# http://localhost:1313
+
+# Pre-commit hooks
+pip install pre-commit
+pre-commit install
+```
+
+## Project Standards
+
+### Quality Checks
+- **pre-commit**: file hygiene (whitespace, EOF, line endings, large files, YAML, merge markers) + markdownlint
+- **GitHub Actions**: `hugo --minify --gc`, markdownlint-cli2, lychee link checker
+- **No AI tells in NEW pages** written in Hoi's voice (see VOICE_PROFILE.md). Republished legacy posts are exempt — they're his pre-AI corpus.
+
+### Adding a Post
+1. `content/posts/<slug>/index.md` with YAML frontmatter (`title`, `date`, `tags`)
+2. Drop images alongside in the same folder
+3. Commit, push. Cloudflare Pages rebuilds in seconds.
+
+### Importing Legacy Posts
+- Raw exports go in `legacy/` (gitignored)
+- Conversion scripts in `scripts/import_*.{sh,py}`
+- Output: `content/posts/<slug>/index.md` page bundles
+- Voice preserved verbatim. Cleanup limited to: encoding (`ftfy`), broken markdown, dead links, image rehosting
+- See `docs/research/02_BLOG_IMPORT_PIPELINE.md`
+
+### Git Workflow
+- Branch: `solo/issue-{N}-description` for non-trivial work, direct to main for content drops
+- Commits: small, descriptive, one logical change
+- Commits authored by Claude Code — visible in history as portfolio evidence
+
+## Common Commands
+
+```bash
+# Local preview
+hugo server --buildDrafts
+
+# Production build
+hugo --minify --gc
+
+# Run pre-commit on all files
+pre-commit run --all-files
+
+# Markdown lint manually
+npx markdownlint-cli2 'content/**/*.md' 'docs/**/*.md'
+
+# Link check
+lychee './**/*.md'
+```
+
+## Project-Specific Notes
+
+- **Drafts**: use `draft: true` in frontmatter — Hugo skips them in production builds. Public repo + draft frontmatter = safe.
+- **Legacy import is voice-sacred**: never rewrite Hoi's prose during import. Only fix structure.
+- **Diehl reference**: stephendiehl.com is the visual reference. Greyscale, IBM Plex Sans, max-w-4xl, sidebar nav, tags-only taxonomy. See `docs/research/01_STACK_AND_DESIGN.md`.
+
+## Documentation Links
+
+- README: `README.md`
+- Research trail: `docs/research/`
+- SST3 standards: `../dotfiles/SST3/standards/STANDARDS.md`
+- Voice profile (for any new prose in Hoi's voice): `../dotfiles/cv-linkedin/VOICE_PROFILE.md`
+
+---
+
+*Template Version: SST3.0.0*
+*Last Updated: 2026-04-07*

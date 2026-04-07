@@ -1,0 +1,22 @@
+# Hugo
+public/
+resources/
+.hugo_build.lock
+
+# Legacy import staging (raw exports, not committed)
+legacy/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Node (only if any tooling needs it)
+node_modules/
+
+# Python (import scripts)
+__pycache__/
+*.pyc
+.venv/
