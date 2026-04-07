@@ -58,7 +58,7 @@ body {
 }
 .sidebar h1 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
 .sidebar h1 a.brand { color: var(--fg); text-decoration: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; }
-.sidebar h1 a.brand img { height: 40px; width: auto; max-width: 100%; }
+.sidebar h1 a.brand img { height: 80px; width: auto; max-width: 100%; }
 .sidebar nav { margin-top: 1.25rem; }
 .sidebar nav h2 {
   font-size: 0.75rem;
