@@ -228,43 +228,65 @@ Personal blog at **hoiboy.uk**, owned by Senh Hoi Ung (Hoi). Republishes ~22 yea
 
 ## Technology Stack
 
-- Generator: Hugo (extended), latest
+- Generator: Hugo extended, version pinned in `.hugo-version` (currently 0.160.0)
+- Theme: minimal custom theme inside `layouts/` and `assets/`. No upstream theme submodule.
 - Content: Markdown (page bundles in `content/posts/<slug>/index.md`)
-- Hosting: Cloudflare Pages (auto-build on push to `main`)
+- Hosting: Cloudflare Pages, auto-build DISABLED, deploy gated by GHA on green CI
 - Domain: hoiboy.uk (registered with Cloudflare)
-- CI: GitHub Actions (Hugo build + markdownlint + lychee link check)
+- CI: GitHub Actions (Hugo build, markdownlint, lychee, em-dash voice guard, frontmatter, config traceability)
 
 ## Repository Structure
 
 ```
 hoiboy-uk/
+├── .hugo-version            # Hugo version pinned, single source of truth
+├── lychee.toml              # Link checker config + allowlist
+├── config/_default/
+│   ├── hugo.toml            # baseURL, taxonomies, permalinks
+│   ├── menus.toml           # Sidebar nav (main, categories, social)
+│   └── params.toml          # Accent colour, build provenance, params
+├── assets/css/main.css      # Templated CSS (~120 lines, greyscale + warm accent)
+├── layouts/
+│   ├── baseof.html          # Shell, sidebar + main + footer
+│   ├── index.html           # Homepage
+│   ├── _partials/           # head, sidebar, breadcrumbs, footer, post-list*, post-cards*
+│   └── _default/            # single, list, taxonomy (handles /tags/ AND /food/)
 ├── content/
-│   ├── _index.md            # Homepage (deliberately spartan, Diehl-style)
-│   └── posts/<slug>/        # Page bundle per post
-│       ├── index.md
-│       └── *.png|jpg
-├── themes/                  # Hugo theme (TBD: risotto / archie / hugo-paper)
-├── static/                  # Site-wide static assets
-├── docs/research/           # Planning trail and tooling decisions
-├── scripts/                 # Import + maintenance scripts
-├── legacy/                  # Raw exports (gitignored)
-├── .github/workflows/ci.yml # Hugo build + lint + link check
-├── .pre-commit-config.yaml  # File hygiene + markdownlint
-├── config.toml              # Hugo config (TBD)
+│   ├── _index.md            # Homepage stub
+│   ├── about.md
+│   ├── posts/<slug>/        # Page bundles
+│   └── {food,adventure,dance,tech}/_index.md  # Section landings
+├── scripts/
+│   ├── validate_frontmatter.py
+│   └── check_config_traceability.py
+├── docs/research/           # Planning trail (00 to 10)
+├── legacy/                  # Raw blog exports for Phase 1+ (gitignored)
+├── .github/workflows/
+│   ├── ci.yml               # Build, lint, voice, traceability, lychee
+│   └── deploy.yml           # POSTs Cloudflare deploy hook on green CI
+├── .pre-commit-config.yaml
+├── .markdownlint.json
 └── CLAUDE.md                # This file
 ```
 
 ## Development Setup
 
 ```bash
+# Clone (no submodules to recurse, custom theme is in-tree)
 git clone https://github.com/hoiung/hoiboy-uk
 cd hoiboy-uk
 
-# Install Hugo (extended)
-sudo apt install hugo
+# Install Hugo extended at the pinned version (NOT apt, which lags)
+HUGO_VERSION=$(cat .hugo-version)
+mkdir -p ~/.local/bin/hugo-versions/$HUGO_VERSION
+cd ~/.local/bin/hugo-versions/$HUGO_VERSION
+curl -sL https://github.com/gohugoio/hugo/releases/download/v$HUGO_VERSION/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz -o hugo.tar.gz
+tar -xzf hugo.tar.gz && rm hugo.tar.gz
+ln -sf ~/.local/bin/hugo-versions/$HUGO_VERSION/hugo ~/.local/bin/hugo
+cd -
 
 # Local preview
-hugo server --buildDrafts
+hugo server
 # http://localhost:1313
 
 # Pre-commit hooks
@@ -275,9 +297,10 @@ pre-commit install
 ## Project Standards
 
 ### Quality Checks
-- **pre-commit**: file hygiene (whitespace, EOF, line endings, large files, YAML, merge markers) + markdownlint
-- **GitHub Actions**: `hugo --minify --gc`, markdownlint-cli2, lychee link checker
-- **No AI tells in NEW pages** written in Hoi's voice (see VOICE_PROFILE.md). Republished legacy posts are exempt — they're his pre-AI corpus.
+- **pre-commit**: file hygiene + markdownlint + frontmatter validator + config traceability
+- **GitHub Actions ci.yml**: Hugo build, markdownlint-cli2, lychee, em-dash grep guard, frontmatter validator, config traceability
+- **GitHub Actions deploy.yml**: POSTs Cloudflare deploy hook ONLY on green CI (auto-build disabled in Cloudflare to prevent racing)
+- **No AI tells in NEW pages** written in Hoi's voice (see VOICE_PROFILE.md). Republished legacy posts are exempt (pre-AI corpus).
 
 ### Adding a Post
 1. `content/posts/<slug>/index.md` with YAML frontmatter (`title`, `date`, `tags`)
@@ -300,26 +323,38 @@ pre-commit install
 
 ```bash
 # Local preview
-hugo server --buildDrafts
+hugo server
 
 # Production build
-hugo --minify --gc
+hugo --gc --minify -e production
 
 # Run pre-commit on all files
 pre-commit run --all-files
+
+# Frontmatter validator
+python3 scripts/validate_frontmatter.py
+
+# Config traceability
+python3 scripts/check_config_traceability.py
 
 # Markdown lint manually
 npx markdownlint-cli2 'content/**/*.md' 'docs/**/*.md'
 
 # Link check
-lychee './**/*.md'
+lychee --config lychee.toml './**/*.md'
+
+# Break-glass deploy from local laptop (when GHA or Cloudflare is down)
+# See docs/research/09_DEPLOYMENT.md for the full procedure.
+wrangler pages deploy public --project-name=hoiboy-uk --branch=main
 ```
 
 ## Project-Specific Notes
 
-- **Drafts**: use `draft: true` in frontmatter — Hugo skips them in production builds. Public repo + draft frontmatter = safe.
-- **Legacy import is voice-sacred**: never rewrite Hoi's prose during import. Only fix structure.
-- **Diehl reference**: stephendiehl.com is the visual reference. Greyscale, IBM Plex Sans, max-w-4xl, sidebar nav, tags-only taxonomy. See `docs/research/01_STACK_AND_DESIGN.md`.
+- **Drafts**: use `draft: true` in frontmatter. Hugo skips them in production builds. Public repo + draft frontmatter = safe.
+- **Legacy import is voice-sacred**: never rewrite Hoi's prose during import. Only fix structure (encoding, dead links, image rehost).
+- **Theme**: minimal custom theme (in-tree, ~15 files in `layouts/` + `assets/css/main.css`). Greyscale + warm terracotta accent + Inter. See `docs/research/01_STACK_AND_DESIGN.md` and `07_DESIGN_TOKENS.md`.
+- **`check-ai-writing-tells.py`**: AVAILABLE in `../dotfiles/SST3/scripts/` but NEVER auto-wired. Run manually before publishing any new Hoi-voice content. Republished legacy posts are exempt (pre-AI corpus, false positive risk).
+- **Em dashes**: ZERO in tracked files (CI hard fail). CLAUDE.md is exempt as SST3 internal doc per memory rule.
 
 ## Documentation Links
 

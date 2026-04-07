@@ -4,7 +4,7 @@
    Designed for hundreds of years of content without growing the sidebar. */
 
 :root {
-  --accent: #c0533a;
+  --accent: {{ site.Params.accentColor | default "#c0533a" }};
   --fg: #1a1a1a;
   --fg-muted: #555;
   --bg: #fafafa;
