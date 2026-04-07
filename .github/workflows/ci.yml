@@ -82,6 +82,9 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install pytest
+        run: pip install --quiet pytest
+
       - name: Frontmatter validator
         run: python3 scripts/validate_frontmatter.py
 
