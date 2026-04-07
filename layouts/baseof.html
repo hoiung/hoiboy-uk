@@ -1,0 +1,18 @@
+{{- /* hoiboy.uk base layout. Single source of truth for HTML shell.
+       2-column grid: sidebar (sticky) + main. */ -}}
+<!doctype html>
+<html lang="{{ site.LanguageCode | default "en" }}">
+<head>
+  {{- partial "head.html" . -}}
+</head>
+<body>
+  <div class="layout">
+    {{- partial "sidebar.html" . -}}
+    <main class="main">
+      {{- partial "breadcrumbs.html" . -}}
+      {{- block "main" . }}{{ end -}}
+      {{- partial "footer.html" . -}}
+    </main>
+  </div>
+</body>
+</html>

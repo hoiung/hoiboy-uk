@@ -1,0 +1,22 @@
+# Site params. Read by layouts/. Every key here MUST be referenced
+# in at least one layout file. Dead keys fail config-traceability check.
+
+description = "Personal blog of Hoi. Food, adventure, dance, tech."
+author = "Hoi"
+
+# Design tokens — see docs/research/07_DESIGN_TOKENS.md
+# (created during Phase 0.9 with hex value, contrast ratios, rationale).
+# Accent: warm terracotta. Single colour applied to links + active nav.
+accentColor = "#c0533a"
+
+# Per-section layout switch. Sections in textFirstSections render
+# as plain title+date list (Tech). All others get image-card layout.
+textFirstSections = ["tech"]
+
+# Footer
+footerText = "Hoi. CC BY-SA."
+
+# Build provenance: written to public/build-info.json by data template.
+[build]
+  hugoVersion = ""  # filled by CI from .hugo-version
+  commitSha = ""    # filled by CI from git rev-parse HEAD
