@@ -9,13 +9,13 @@
 |---|---|---|---|
 | **WordPress** | Tools > Export (WXR XML) | `npx wordpress-export-to-markdown` | Gold standard. Frontmatter, slugs, downloads images, dates/categories/tags. |
 | **Blogger** | Settings > Manage Blog > Back up content (Atom XML) | `blog2md` (npm) | Or convert to WXR via `google-blog-converters` then pipe through wordpress-export-to-markdown |
-| **Medium** | Settings > Account > Download your information (.zip) | `medium-2-md` | Medium HTML is messy — post-process needed |
+| **Medium** | Settings > Account > Download your information (.zip) | `medium-2-md` | Medium HTML is messy .  post-process needed |
 | **Tumblr** | API | `tumblr-utils` (`tumblr_backup.py`) | Downloads posts as JSON/HTML plus all media |
 | **Dead/archived sites** | n/a | `wayback-machine-downloader` (Ruby gem) | Then `wget --mirror --convert-links --page-requisites` for offline copies |
 
 ## HTML → Markdown Conversion
 
-**Pandoc is the winner** for blog content — best table/footnote/blockquote handling:
+**Pandoc is the winner** for blog content .  best table/footnote/blockquote handling:
 
 ```bash
 pandoc -f html -t gfm-raw_html --wrap=none input.html -o output.md
@@ -25,7 +25,7 @@ pandoc -f html -t gfm-raw_html --wrap=none input.html -o output.md
 
 Alternatives:
 - `turndown` (JS): good for browser/Node pipelines, easier to customise per-element rules (e.g. Medium figure captions)
-- `html2text` (Python): weaker — mangles nested lists. Avoid.
+- `html2text` (Python): weaker .  mangles nested lists. Avoid.
 
 ## Frontmatter Normalisation
 
@@ -43,7 +43,7 @@ draft: false
 
 - Keep original slug to preserve URLs (add Cloudflare redirects if old URLs differ)
 - Dates in ISO 8601
-- Categories collapsed into tags (Diehl-style — tags only)
+- Categories collapsed into tags (Diehl-style .  tags only)
 
 `wordpress-export-to-markdown` emits this automatically. For others, parse the source XML/JSON and write frontmatter via a Python post-processor (`python-frontmatter` lib).
 
@@ -56,7 +56,7 @@ draft: false
 
 ## Broken Link / Dead Embed Detection
 
-- **`lychee`** (Rust) — fastest markdown/HTML link checker
+- **`lychee`** (Rust) .  fastest markdown/HTML link checker
   - `lychee --offline ./content` for offline check
   - `lychee ./content` for live check
 - For dead links: query `archive.org` Wayback Availability API, swap in snapshot URLs
@@ -64,7 +64,7 @@ draft: false
 
 ## Encoding Fixes
 
-- `ftfy` (Python) — fixes mojibake (`â€™` → `'`, etc) common in old WordPress exports
+- `ftfy` (Python) .  fixes mojibake (`â€™` → `'`, etc) common in old WordPress exports
 - Run as a single pass over all imported markdown after conversion
 
 ## Claude Code Workflow

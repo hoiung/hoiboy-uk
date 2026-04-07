@@ -62,19 +62,19 @@ hoiboy.uk (live)
 
 ## Why GitHub specifically
 
-1. **Version history** — every edit reversible
-2. **Diffs are reviewable** — Hoi can eyeball before merging if he wants a gate
-3. **Issues = editorial backlog** — "Republish 2008 Java rant" becomes Issue #12
-4. **PRs as optional safety net** — Claude pushes to a `solo/` branch, Hoi merges. Or trust direct-to-main.
-5. **Cloudflare Pages reads it natively** — no CI config needed, Cloudflare detects Hugo automatically
-6. **Free, forever** — at this scale
+1. **Version history** .  every edit reversible
+2. **Diffs are reviewable** .  Hoi can eyeball before merging if he wants a gate
+3. **Issues = editorial backlog** .  "Republish 2008 Java rant" becomes Issue #12
+4. **PRs as optional safety net** .  Claude pushes to a `solo/` branch, Hoi merges. Or trust direct-to-main.
+5. **Cloudflare Pages reads it natively** .  no CI config needed, Cloudflare detects Hugo automatically
+6. **Free, forever** .  at this scale
 
 ## Why public
 
 1. **CV evidence.** Targeting AI Agent Orchestrator roles. Public repo with Claude-authored commit history *is* the portfolio.
 2. **Diehl does it.** Recognised pattern in the technical-blogger world.
-3. **Content is public anyway** — hiding the markdown source adds nothing.
-4. **Forkability** — someone likes the setup, forks it. Free distribution with Hoi's name on it.
+3. **Content is public anyway** .  hiding the markdown source adds nothing.
+4. **Forkability** .  someone likes the setup, forks it. Free distribution with Hoi's name on it.
 5. **Issues become a public editorial backlog** (or stay private by just not using them publicly).
 
 Drafts stay safe with Hugo's `draft: true` frontmatter (skipped in production builds) or in a local `drafts/` folder.
