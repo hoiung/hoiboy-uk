@@ -13,13 +13,8 @@ PARAMS = ROOT / "config" / "_default" / "params.toml"
 LAYOUTS = ROOT / "layouts"
 ASSETS = ROOT / "assets"
 
-# Keys we declare but do not directly grep for in layouts (e.g. provenance,
-# read indirectly via the build pipeline). Document each exemption.
-EXEMPT = {
-    "build",        # nested table, populated by CI for build-info.json
-    "hugoVersion",
-    "commitSha",
-}
+# Keys declared but not greppable in layouts (none currently). Document each.
+EXEMPT: set[str] = set()
 
 
 def extract_keys(toml: str) -> list[str]:

@@ -1,5 +1,9 @@
 name: Deploy
 
+# Triggered ONLY when CI passes on main. Posts the Cloudflare Pages deploy hook.
+# Cloudflare Pages auto-build on push is disabled, so this is the sole prod
+# trigger. The hook is stored as the CF_PAGES_DEPLOY_HOOK secret.
+
 on:
   workflow_run:
     workflows: ["CI"]
@@ -13,55 +17,20 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
-    env:
-      HUGO_ENV: production
-      GOMEMLIMIT: 2GiB
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Assert Cloudflare API token present
+      - name: Assert deploy hook secret present
         env:
-          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          HOOK: ${{ secrets.CF_PAGES_DEPLOY_HOOK }}
         run: |
-          if [ -z "$TOKEN" ]; then
-            echo "::error::CLOUDFLARE_API_TOKEN secret is unset. Configure in repo Settings > Secrets and variables > Actions."
-            exit 1
-          fi
-          if [ -z "$ACCOUNT" ]; then
-            echo "::error::CLOUDFLARE_ACCOUNT_ID secret is unset."
+          if [ -z "$HOOK" ]; then
+            echo "::error::CF_PAGES_DEPLOY_HOOK secret is unset. Configure in repo Settings > Secrets and variables > Actions."
             exit 1
           fi
 
-      - name: Read pinned Hugo version
-        id: hv
-        run: echo "version=$(cat .hugo-version | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
-
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v3
-        with:
-          hugo-version: ${{ steps.hv.outputs.version }}
-          extended: true
-
-      - name: Build site
-        run: hugo --gc --minify -e production
-
-      - name: Write build-info.json
-        run: |
-          cat > public/build-info.json <<EOF
-          {
-            "hugo_version": "${{ steps.hv.outputs.version }}",
-            "commit_sha": "${{ github.sha }}",
-            "built_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-            "site": "hoiboy.uk"
-          }
-          EOF
-
-      - name: Deploy to Cloudflare Workers Static Assets
+      - name: Trigger Cloudflare Pages deploy hook
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          HOOK: ${{ secrets.CF_PAGES_DEPLOY_HOOK }}
         run: |
-          npx --yes wrangler@4 deploy
+          set -e
+          RESP=$(curl -fsS -X POST "$HOOK")
+          echo "Cloudflare response: $RESP"

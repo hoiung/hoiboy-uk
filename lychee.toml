@@ -12,7 +12,7 @@ retry_wait_time = 2
 accept = [200, 201, 202, 203, 204, 301, 302, 307, 308]
 
 # File path globs to skip (lychee scans args from CLI, this filters them)
-exclude_path = ["public", "themes", "legacy", "node_modules", ".git"]
+exclude_path = ["public", "legacy", "node_modules", ".git"]
 
 # Domains explicitly excluded from link check (allowlist).
 # Add entries with the comment format above. Empty by default.

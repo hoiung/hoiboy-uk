@@ -18,30 +18,46 @@ Cloudflare Pages builds from main (auto-build disabled, hook-only)
 hoiboy.uk live (atomic deploy, last good build preserved)
 ```
 
-## Cloudflare Pages settings (manual one-time setup)
+## Cloudflare Pages settings (verified click path, April 2026 unified UI)
+
+**Finding the Pages create form**: Cloudflare merged Workers and Pages into one dashboard. The default `Workers & Pages > Create application` button creates a Worker, NOT a Pages project. To create Pages, look for a small sublink labelled "Pages" inside the Create application flow. It is not prominent. Plan for 2 minutes of clicking around.
 
 | Setting | Value |
 |---|---|
 | Project name | `hoiboy-uk` |
 | Repo | `hoiung/hoiboy-uk` |
 | Branch | `main` |
-| Framework preset | None |
-| Build command | `HUGO_VERSION=$(cat .hugo-version) hugo --gc --minify -e production` |
-| Output directory | `public` |
-| Auto-build on push | **DISABLED** (deploy hook only) |
-| Preview deploys | **DISABLED** (production baseURL is hardcoded; previews would leak it) |
+| Framework preset | **None** (do not pick Hugo from the dropdown, it overrides our settings) |
+| Build command | `bash scripts/cloudflare-build.sh` |
+| Build output directory | `public` (default may be wrong, set explicitly) |
+| Root directory | `/` |
 
-Env vars (Pages > Settings > Environment variables, Production scope):
+Env vars (Settings > Variables and Secrets > Production scope, all Plaintext not Secret):
 
 | Name | Value |
 |---|---|
+| `HUGO_VERSION` | `0.160.0` (must match `.hugo-version` exactly; Cloudflare's runner uses this to install Hugo) |
 | `HUGO_ENV` | `production` |
 | `GOMEMLIMIT` | `2GiB` |
 
-Custom domain:
-- Add `hoiboy.uk` (one click since Cloudflare registrar)
-- Add `www.hoiboy.uk` if you want www to redirect to apex (configure 301 in Cloudflare DNS or Page Rules)
-- "Always Use HTTPS" enabled
+**Critical**: `HUGO_VERSION` MUST be set as a Pages env var. Setting it via shell substitution in the build command (e.g. `HUGO_VERSION=$(cat .hugo-version) hugo ...`) does NOT override the runner's pre-baked Hugo version. The env var is what triggers Cloudflare's runner to install the right version.
+
+### Branch control (Settings > Build > Branch control)
+
+| Setting | Value |
+|---|---|
+| Production branch | `main` |
+| Enable automatic production branch deployments | **UNCHECKED** (deploys come from GHA, not git push) |
+| Preview branch | **None (Disable automatic branch deployments)** |
+
+After saving, Cloudflare will display a banner: "Automatic production branch deployments are disabled for your git integration." That is the design. Ignore the banner.
+
+Custom domain (NOT inside Settings):
+- Custom Domains is a TOP-LEVEL TAB on the project page, alongside Deployments / Functions / Settings. Do not look for it under Settings.
+- Click **Set up a custom domain** > enter `hoiboy.uk` > **Continue** > **Activate domain**
+- One click since Cloudflare registrar (no DNS faff)
+- Optional: add `www.hoiboy.uk` and configure a 301 redirect to apex via Cloudflare DNS or Page Rules
+- "Always Use HTTPS" enabled by default
 
 ## GitHub Actions secret
 
