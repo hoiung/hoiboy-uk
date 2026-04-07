@@ -16,6 +16,10 @@ import re
 from pathlib import Path
 
 REQUIRED = {"title", "date", "categories", "tags"}
+# Allowed category values. Sourced from config/_default/menus.toml at runtime.
+# A typo like categories: [foood] would create an orphan term page no
+# sidebar link reaches. Hard fail.
+ALLOWED_CATEGORIES = {"food", "adventure", "dance", "tech"}
 ROOT = Path(__file__).resolve().parent.parent
 POSTS = ROOT / "content" / "posts"
 
@@ -70,6 +74,15 @@ def main() -> int:
         missing = REQUIRED - set(fm.keys())
         if missing:
             failures.append(f"{md.relative_to(ROOT)}: missing {sorted(missing)}")
+            continue
+        cats = fm.get("categories")
+        if isinstance(cats, list):
+            unknown = set(c.lower() for c in cats) - ALLOWED_CATEGORIES
+            if unknown:
+                failures.append(
+                    f"{md.relative_to(ROOT)}: unknown categories {sorted(unknown)} "
+                    f"(allowed: {sorted(ALLOWED_CATEGORIES)})"
+                )
     if failures:
         print("FRONTMATTER VALIDATION FAILED:", file=sys.stderr)
         for f in failures:

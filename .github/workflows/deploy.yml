@@ -13,6 +13,12 @@ on:
 permissions:
   contents: read
 
+# Serialise overlapping deploys. If two pushes land in quick succession,
+# the second deploy waits for the first to finish (no cancel-in-progress).
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

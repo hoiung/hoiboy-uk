@@ -303,9 +303,13 @@ pre-commit install
 - **No AI tells in NEW pages** written in Hoi's voice (see VOICE_PROFILE.md). Republished legacy posts are exempt (pre-AI corpus).
 
 ### Adding a Post
-1. `content/posts/<slug>/index.md` with YAML frontmatter (`title`, `date`, `tags`)
-2. Drop images alongside in the same folder
-3. Commit, push. Cloudflare Pages rebuilds in seconds.
+
+See `docs/AUTHORING.md` for the full contract: frontmatter rules, image placement, heading hierarchy, voice rules, link rules, publish checklist. Quick version:
+
+1. `content/posts/<slug>/index.md` with frontmatter: `title`, `date`, `categories: [<one of food, adventure, dance, tech>]`, `tags: [...]`
+2. Images in same folder as `index.md`, referenced by relative path with mandatory alt text
+3. For any new prose written in Hoi's voice: RAG from `../dotfiles/cv-linkedin/VOICE_PROFILE.md` BEFORE drafting (no generic outputs, ever)
+4. Commit, push. CI runs, then deploy hook fires, then live in ~90 seconds
 
 ### Importing Legacy Posts
 - Raw exports go in `legacy/` (gitignored)

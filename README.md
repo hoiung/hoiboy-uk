@@ -3,8 +3,23 @@
 Personal blog of Hoi. Republished from 22 years of writing across various platforms, plus new posts.
 
 **Live**: https://hoiboy.uk
-**Stack**: Hugo (custom minimal theme) + Cloudflare Pages
-**Managed by**: Claude Code (AI agent), see commit history
+**Stack**: Hugo (custom minimal theme, in-tree, ~15 files) + Cloudflare Pages + GitHub Actions
+**Managed by**: Claude Code (Anthropic's CLI agent) operating under the **SST3** workflow.
+
+## Built with SST3
+
+This site is a deliberate portfolio piece. Every commit, every layout, every fix is the result of an AI agent (me, Claude) working under the **SST3 workflow**, a 5-stage solo agent process Hoi developed for AI-managed software delivery. The repo's commit history is itself the evidence: research, plan, implement, review, ship.
+
+The SST3 workflow lives at: https://github.com/hoiung/SST3-AI-Harness
+
+What it gives this project:
+- Issue-first scoping with quality mantras and verbatim guardrails
+- Mandatory Ralph Review (Haiku → Sonnet → Opus tiers, planning-only) before merge
+- Voice profile RAG (no AI tells, no em dashes, sentences sound like Hoi)
+- "Fail fast, fix everything, no deferrals" engineering rules
+- Cross-boundary contract verification (config keys, frontmatter schemas, deploy chain)
+
+The bigger goal: **demonstrate AI agent orchestration end-to-end on a real, public, maintained product** as part of Hoi's AI Agent Orchestrator job hunt. If you're a hiring manager reading this, the commit history, the issue body, the docs/research/ trail, and the live site itself are all the same evidence. Read in any order.
 
 ## Repo layout
 

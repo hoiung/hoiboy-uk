@@ -4,6 +4,14 @@
 # Provenance lets Phase 0.8 verify the deployed commit + Hugo version.
 set -euo pipefail
 
+# Drift assert: Cloudflare Pages env var HUGO_VERSION must match .hugo-version.
+PINNED=$(cat .hugo-version | tr -d '[:space:]')
+if [ "${HUGO_VERSION:-}" != "$PINNED" ]; then
+  echo "ERROR: HUGO_VERSION env var ($HUGO_VERSION) does not match .hugo-version ($PINNED)" >&2
+  echo "Update Cloudflare Pages > Settings > Variables and Secrets > HUGO_VERSION" >&2
+  exit 1
+fi
+
 hugo --gc --minify -e production
 
 cat > public/build-info.json <<EOF
