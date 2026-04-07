@@ -1,7 +1,7 @@
 {{- /* Flat sidebar. Constant size. Three sections: top, categories, social. */ -}}
-{{- $logo := (resources.Get "images/logo_wide.png").Resize "x160 png" -}}
+{{- $logo := (resources.Get "images/logo_wide.png").Resize "x120 png" -}}
 <aside class="sidebar">
-  <h1><a href="/" class="brand"><img src="{{ $logo.RelPermalink }}" alt="{{ site.Title }} logo" height="80">{{ site.Title }}</a></h1>
+  <h1><a href="/" class="brand"><img src="{{ $logo.RelPermalink }}" alt="{{ site.Title }} logo" height="60">{{ site.Title }}</a></h1>
   <nav>
     <ul>
       {{- range site.Menus.main -}}
