@@ -69,8 +69,8 @@ No skipped levels (`##` then `####`). Markdownlint enforces.
 | Type | Rule |
 |---|---|
 | Internal | Relative: `[link](/about/)` or `[link](../other-post/)` |
-| External | Absolute, https | `[link](https://example.com)` |
-| Lychee CI | All link failures = CI fail (no warn-only). Known-flaky external domains added to `lychee.toml` exclude with `# added: YYYY-MM-DD; expires: YYYY-MM-DD (90 days)` comment |
+| External | Absolute, https. Example: `[link](https://example.com)` |
+| Lychee CI | All link failures fail CI (no warn-only). Known-flaky external domains added to `lychee.toml` exclude with `added: YYYY-MM-DD; expires: YYYY-MM-DD` comment |
 | Dead links | Replace with archive.org snapshot, OR remove with `[former link]` placeholder |
 
 ## 7. Drafts
