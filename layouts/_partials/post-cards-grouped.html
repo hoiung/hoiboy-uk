@@ -5,8 +5,13 @@
     <div class="cards">
       {{- range .Pages -}}
         <a class="card" href="{{ .RelPermalink }}">
-          {{- with .Resources.GetMatch "*.{jpg,jpeg,png,webp}" -}}
-            <img src="{{ .RelPermalink }}" alt="{{ .Title }}" loading="lazy">
+          {{- $hero := .Resources.GetMatch "hero.*" -}}
+          {{- if not $hero }}{{ $hero = .Resources.GetMatch "2e1ax_vintage_entry_*" }}{{ end -}}
+          {{- if not $hero }}{{ $hero = .Resources.GetMatch "*main*" }}{{ end -}}
+          {{- if not $hero }}{{ $hero = .Resources.GetMatch "*.{jpg,jpeg,png,webp}" }}{{ end -}}
+          {{- $title := .Title -}}
+          {{- with $hero -}}
+            <img src="{{ .RelPermalink }}" alt="{{ $title }}" loading="lazy">
           {{- end -}}
           <h3>{{ .Title }}</h3>
           <span class="date">{{ .Date.Format "2 Jan" }}</span>
