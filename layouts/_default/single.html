@@ -13,6 +13,17 @@
     {{- end -}}
   </div>
   {{- end -}}
+  {{- $images := .Resources.ByType "image" -}}
+  {{- with index $images 0 -}}
+    <img class="post-hero" src="{{ .RelPermalink }}" alt="{{ $.Title }}">
+  {{- end -}}
   {{ .Content }}
+  {{- if gt (len $images) 1 -}}
+    <div class="post-gallery">
+    {{- range after 1 $images -}}
+      <img src="{{ .RelPermalink }}" alt="{{ $.Title }}">
+    {{- end -}}
+    </div>
+  {{- end -}}
 </article>
 {{- end -}}
