@@ -1,0 +1,27 @@
+Hunt log: A Beginners Guide to Zouk Classes in UK
+========================================
+
+Source voice-corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/09_beginners-guide-zouk-classes-uk.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/A Beginners Guide to Zouk Classes in UK/
+
+SQL index match:
+  title='a beginners guide to zouk classes in uk', date_published used => 2014-10-04
+
+Images referenced by HTML <img> tags (post-chrome-filter):
+  - 2014-06-05 14.27.07.jpg
+  - 2e1ax_vintage_entry_zoukclassinukmain.jpg
+
+Dropped by thumbnail dedup (non-thumb variant present):
+
+Images COPIED to bundle (lowercased):
+  - 2014-06-05 14.27.07.jpg
+  - 2e1ax_vintage_entry_zoukclassinukmain.jpg
+
+Category: dance
+
+Concerns:
+  1. Voice-corpus body verbatim, voice-sacred rule honoured.
+  2. Auto-hero template will render first image; no inline refs added.
