@@ -16,6 +16,5 @@
 # Voice-sacred legacy posts contain raw HTML (iD8u drafts). Hugo strips it
 # under unsafe=false; the warning is expected and accepted.
 WARN  Raw HTML omitted while rendering "content/posts/3-decisions-to-change-your-dating-life/index.md"; see https://gohugo.io/getting-started/configuration-markup/#rendererunsafe
-WARN  Raw HTML omitted while rendering "content/posts/x-books-that-will-change-your-dating-life/index.md"; see https://gohugo.io/getting-started/configuration-markup/#rendererunsafe
 You can suppress this warning by adding the following to your project configuration:
 ignoreLogs = ['warning-goldmark-raw-html']
