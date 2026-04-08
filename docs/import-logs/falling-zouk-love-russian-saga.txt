@@ -1,0 +1,23 @@
+Import log: Falling in Zouk Love Again. My Russian Saga
+Slug: falling-zouk-love-russian-saga
+
+Source body (voice-corpus):
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/26_falling-zouk-love-russian-saga.md
+
+Date source (Option B: gdoc mtime):
+  gdoc mtime: Falling in Zouk Love Again - My Russian Saga.gdoc = 2019-07-17
+  Final frontmatter date = 2019-07-17
+
+Image folder: NONE (no matching per-post folder in ZoukBase _COMPLETE)
+
+Images copied into bundle:
+  (none)
+
+MISSING IMAGE: post publishes text-only. Auto-hero template will fall back.
+
+Category: dance
+Tags: zouk, russia, travel, congresses, story
+
+Concerns:
+  - No per-post image folder in ZoukBase _COMPLETE. Text-only publish.
+  - Voice-sacred body copied verbatim from voice-corpus (frontmatter stripped).
