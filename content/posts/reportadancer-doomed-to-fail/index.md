@@ -1,7 +1,7 @@
 ---
 title: "ReportaDancer.com. Why it was DOOMED to Fail"
 date: 2020-06-18
-categories: [tech]
+categories: [tech, dance]
 tags: [webapp, postmortem, community, project, lessons]
 source_file: "voice-corpus/blogs/29_reportadancer-doomed-to-fail.md"
 source_era: "ZoukBase (WordPress)"
