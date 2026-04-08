@@ -153,6 +153,54 @@ delve, leverage (verb), spearhead, synergy, stakeholder, robust, seamless, cutti
 5. **CI sanity**: em-dash CI guard does NOT cover `content/posts/` (legacy is exempt). For new posts, the AI-tells script is your local gate. Don't rely on CI.
 6. **Test**: "Could any other blogger have written this?" If yes, you skipped retrieval. Start over.
 
+## How to use the voice guard hook
+
+A marker-driven pre-commit + CI hook protects new posts from AI tells. Default is SKIP, you opt in per region.
+
+**Marker syntax** (HTML comments, invisible in render):
+
+```markdown
+<!-- iamhoi -->
+This block gets voice-checked. Em dashes, banned words, banned phrases all hard-fail here.
+<!-- iamhoiend -->
+
+This is outside the markers and is silently skipped.
+```
+
+**Region opt-out inside an iamhoi block** (for quoted JD content or banned-word examples):
+
+```markdown
+<!-- iamhoi -->
+Voice prose, scanned.
+<!-- iamhoi-skip -->
+"delve" appearing here will not fail (this is a quote).
+<!-- iamhoi-skipend -->
+Back to voice prose, scanned.
+<!-- iamhoiend -->
+```
+
+**File-level skip**: put `<!-- iamhoi-exempt -->` as the first non-blank line.
+
+**File selection**:
+
+| Has exempt first line | Has iamhoi markers | Date < 2026-04-07 (posts) | Action |
+|---|---|---|---|
+| Yes | any | any | SKIP |
+| No | No | any | SKIP (default) |
+| No | Yes | Yes | SKIP (legacy cutoff) |
+| No | Yes | No | Scan tagged regions only |
+
+**Severity**: em dashes, banned words (~60 from `voice_rules.py`), banned phrases (6), smart quotes, unicode arrows = HARD FAIL. Bold-first bullets and negation framing = WARN.
+
+**Troubleshooting**:
+
+- *Unclosed iamhoi*: every `<!-- iamhoi -->` needs a matching `<!-- iamhoiend -->`. Hard fails with line number.
+- *Drift check failure*: `scripts/voice_rules.py` is byte-identical to `../dotfiles/SST3/scripts/voice_rules.py`. Re-vendor with `cp ../dotfiles/SST3/scripts/voice_rules.py scripts/voice_rules.py`.
+- *False positives*: legitimate proper-noun usage of a banned word (e.g. "AI Harness Engineer" role title) goes outside markers, OR inside an `<!-- iamhoi-skip -->` block.
+- *Adding a new banned word*: edit `../dotfiles/SST3/scripts/voice_rules.py` (canonical) AND `VOICE_PROFILE.md` Section 8 (human companion). Re-vendor into hoiboy-uk. The drift check enforces parity.
+
+**Run locally**: `python3 scripts/check_voice_tells.py --check-only-new`
+
 ## References
 
 - AI writing tells research (in-repo, why the rules exist): `12_AI_WRITING_TELLS.md`
