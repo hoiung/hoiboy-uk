@@ -1,0 +1,25 @@
+Import log: ReportaDancer.com. Why it was DOOMED to Fail
+Slug: reportadancer-doomed-to-fail
+
+Source body (voice-corpus):
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/29_reportadancer-doomed-to-fail.md
+
+Date source (Option B: gdoc mtime):
+  WordPress pubDate 2020-06-18 (special case, not gdoc)
+  Final frontmatter date = 2020-06-18
+
+Image folder: NONE (no matching per-post folder in ZoukBase _COMPLETE)
+
+Images copied into bundle:
+  (none)
+
+MISSING IMAGE: post publishes text-only. Auto-hero template will fall back.
+
+Category: tech
+Tags: webapp, postmortem, community, project, lessons
+
+Concerns:
+  1. Special case: date from WordPress pubDate (2020-06-18), not gdoc mtime.
+  2. Categorised as tech (webapp post-mortem), not dance.
+  - No per-post image folder in ZoukBase _COMPLETE. Text-only publish.
+  - Voice-sacred body copied verbatim from voice-corpus (frontmatter stripped).
