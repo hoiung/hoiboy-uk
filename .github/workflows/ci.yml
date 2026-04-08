@@ -122,7 +122,7 @@ jobs:
       - name: URL contract assertion
         run: |
           set -e
-          for p in food food-booze adventure dance tech relationship tags posts; do
+          for p in food-booze adventure dance tech relationship tags posts; do
             test -f "public/$p/index.html" || { echo "::error::missing /$p/index.html"; exit 1; }
           done
           test -f "public/index.html" || { echo "::error::missing root index.html"; exit 1; }

@@ -19,7 +19,7 @@ REQUIRED = {"title", "date", "categories", "tags"}
 # Allowed category values. Sourced from config/_default/menus.toml at runtime.
 # A typo like categories: [foood] would create an orphan term page no
 # sidebar link reaches. Hard fail.
-ALLOWED_CATEGORIES = {"food", "adventure", "dance", "tech", "relationship"}
+ALLOWED_CATEGORIES = {"food-booze", "adventure", "dance", "tech", "relationship"}
 ROOT = Path(__file__).resolve().parent.parent
 POSTS = ROOT / "content" / "posts"
 
