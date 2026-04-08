@@ -1,0 +1,27 @@
+Hunt log: 5 Common Mistakes Dance Teachers Make At Congresses
+========================================
+
+Source voice-corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/07_5-common-mistakes-dance-teachers.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/5 Common Mistakes Dance Teachers Make At Congresses/
+
+SQL index match:
+  title='5 common mistakes dance teachers make at congresses', date_published used => 2014-11-12
+
+Images referenced by HTML <img> tags (post-chrome-filter):
+  - IMG_2693.JPG
+  - 2e1ax_vintage_entry_5_common_mistakes_dance_teachers_make_at_congresses_main2.jpg
+
+Dropped by thumbnail dedup (non-thumb variant present):
+
+Images COPIED to bundle (lowercased):
+  - img_2693.jpg
+  - 2e1ax_vintage_entry_5_common_mistakes_dance_teachers_make_at_congresses_main2.jpg
+
+Category: dance
+
+Concerns:
+  1. Voice-corpus body verbatim, voice-sacred rule honoured.
+  2. Auto-hero template will render first image; no inline refs added.
