@@ -22,8 +22,8 @@
   weight = 30
 
 [[categories]]
-  name = "Tech"
-  url = "/tech/"
+  name = "Tech & AI"
+  url = "/tech-ai/"
   weight = 40
 
 [[categories]]
