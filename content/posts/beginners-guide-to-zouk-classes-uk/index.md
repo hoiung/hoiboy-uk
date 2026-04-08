@@ -11,7 +11,7 @@ source_era: "AdventureAnd.Me (Joomla)"
 
 Here is a list of Zouk classes and socials across the United Kingdom. I will try my best to keep the list up-to-date, but it is subject to change and always best to contact the teachers/group directly to confirm.
 
-### Find Brazilian Zouk dance schools around the World whether you are visiting or looking for a local school, please visit http://zoukbase.com !!! It has the most up-to-date info.
+### Find Brazilian Zouk dance schools around the World whether you are visiting or looking for a local school, please visit zoukbase.com (no longer available) !!! It has the most up-to-date info.
 
 If you are a teacher/group and would like to be added to this list, please contact me via facebook or the contact form with your class details in the same format as shown below.
 
@@ -174,7 +174,7 @@ Uni Society Curita Facebook: https://www.facebook.com/events/1673646972949146/
 
 ---
 
-Don't know what Zouk is? Then you must read **[What is Zouk?](http://adventureand.me/entry/tips-thoughts/what-is-zouk)**!
-Don't forget to check out my **[7 dance tips from Zero to Hero](http://adventureand.me/entry/tips-thoughts/7-dance-tips-from-zero-to-hero)**!
+Don't know what Zouk is? Then you must read **[What is Zouk?](/posts/what-is-zouk-aam/)**!
+Don't forget to check out my **[7 dance tips from Zero to Hero](/posts/7-dance-tips-zero-to-hero/)**!
 
 *** If you've enjoyed this blog then you should subscribe to our email list! By doing so, you will be first to hear our stories, tips, advice and more. No spam! Just don't forget to confirm your subscription otherwise you won't be subscribed. ***
