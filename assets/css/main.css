@@ -148,6 +148,31 @@ body {
   .reader-warning strong { color: #ff6b5a; }
 }
 
+/* Draft notice banner: used by draft-notice shortcode for unfinished posts */
+.draft-notice {
+  border-left: 4px solid #d97706;
+  background: #fff7ed;
+  padding: 1rem 1.25rem;
+  margin: 0 0 1.5rem;
+  border-radius: 4px;
+  color: var(--fg);
+}
+.draft-notice strong {
+  display: block;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.8rem;
+  color: #d97706;
+  font-weight: 700;
+}
+.draft-notice p { margin: 0; font-size: 0.95rem; line-height: 1.5; }
+
+@media (prefers-color-scheme: dark) {
+  .draft-notice { background: #2a1f10; border-left-color: #fb923c; }
+  .draft-notice strong { color: #fb923c; }
+}
+
 .post-hero { width: 100%; max-height: 24rem; object-fit: cover; border-radius: 4px; margin: 0 0 1.5rem; }
 .post-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: 0.75rem; margin: 1.5rem 0; }
 .post-gallery img { width: 100%; aspect-ratio: 3/2; object-fit: cover; border-radius: 4px; margin: 0; }
