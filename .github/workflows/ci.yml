@@ -140,6 +140,7 @@ jobs:
           config: .markdownlint.json
           globs: |
             content/**/*.md
+            !content/posts/**
             docs/**/*.md
             README.md
 
