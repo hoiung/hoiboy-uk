@@ -70,6 +70,6 @@ If Zouk is a dance you would like to learn, I've written a few tips that may als
 
 **Inshade** - Recommended by a friend, but her blog seems inactive for a year now.
 
-[http://inshadedance.wordpress.com](http://inshadedance.wordpress.com/)
+http://inshadedance.wordpress.com *(no longer available)*
 
 ***** If you've enjoyed this blog then you should subscribe to our email list! By doing so, you will be first to hear our stories, tips, advice and more. No spam! Just don't forget to confirm your subscription otherwise you won't be subscribed. *****
