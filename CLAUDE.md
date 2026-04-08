@@ -1,18 +1,10 @@
-**READ IN FULL - DO NOT SKIP SECTIONS**
-**This document contains critical instructions. Selective reading will cause execution failures.**
-
 # SST3 Solo Workflow
 
 ## 5-Stage Solo Workflow Model
 
 **Your Role**: Orchestrate research/review via subagent swarms; implement directly. See `../dotfiles/SST3/workflow/WORKFLOW.md` for full 5-stage workflow.
 
-**CRITICAL: Default Mode is PLANNING MODE**
-- Start in planning mode by default
-- ONLY execute when user explicitly requests: "work on #X", "implement this"
-- When unclear, ASK: "Should I proceed with implementation or just plan?"
-- Planning mode = Discussion only (analyze, suggest, explain)
-- Execution mode = File changes, commits, autonomous work
+**Default: PLANNING MODE** — execute only when user says "work on #X" / "implement this". No file changes, no commits in planning mode. When unclear, ask.
 
 **MANDATORY READING**:
 1. `../dotfiles/SST3/standards/STANDARDS.md` (ALWAYS)
@@ -33,14 +25,7 @@
 - **AP #13 "Proceed" ≠ "Bypass Process"**: when the user says okay / proceed / yes / go ahead, that means **proceed using the full standard process** — not skip the sweeps, gates, Ralph reviews, or guardrails. User authorisation never bypasses workflow.
 - **AP #16 Monitor, Don't Fire-and-Forget**: every script / command / subprocess / test / deployment / commit / push you launch must be verified end-to-end (tail logs, check exit code, verify output, confirm side effects). "Started" is not "done". For `run_in_background`, poll BashOutput. Be the user's eyes and ears, not just their executioner. If you cannot answer "what happened?" with specifics, you fired and forgot — go check NOW.
 
-## SST3 Solo Workflow
-
-All changes use **Solo workflow** with built-in guardrails.
-
-**STOP if**:
-- No GitHub Issue exists, Create Issue using `../dotfiles/SST3/templates/issue-template.md`
-
-**Creating Issues**: MUST use `../dotfiles/SST3/templates/issue-template.md`
+**STOP if**: No GitHub Issue exists. Create Issue using `../dotfiles/SST3/templates/issue-template.md`.
 
 ### Solo Workflow Overview
 
@@ -53,62 +38,21 @@ All changes use **Solo workflow** with built-in guardrails.
 
 ### Execution Guardrails (Built-in)
 
-1. **Before Starting**: Read CLAUDE.md, STANDARDS.md, Issue line-by-line
-2. **During Work**: Post checkpoint at each phase, check context (80%+ = warn, 90%+ = STOP)
-3. **After Compact**: Re-read CLAUDE.md, STANDARDS.md, Issue last comment
-4. **Verification Loop**: Repeat checks until all pass (overengineering, reuse, fallbacks, wiring, regression tests, quality scan)
+Pre-start read (CLAUDE.md + STANDARDS.md + Issue) → phase checkpoints (80%+ warn, 90%+ STOP) → post-compact re-read → verification loop until clean → user-review-checklist.md.
 
 ### Branch Safety (CRITICAL — DO NOT VIOLATE)
 
-- **NEVER switch branches** (`git checkout main`, `git checkout -b`, `git switch`). Another agent may be working on the current branch concurrently. Switching causes their work to flap, get confused, and get lost.
+- **NEVER switch branches** (`git checkout main`, `git checkout -b`, `git switch`).
 - **Always commit and push to the CURRENT active branch** — it will get merged later.
 - If you need something on main, **ask the user** — do NOT switch yourself.
-- The only exception is creating a NEW solo branch at the START of work (before any other agent is active).
-5. **User Review**: POST user-review-checklist.md, work through WITH user
+- The only exception is creating a NEW solo branch at the START of work.
 
 ### Command Interface
 
-**Available Commands**:
+- `/start` — list repos, prompt selection, load CLAUDE.md, WAIT for task.
+- `/SST3-solo` — load STANDARDS.md + repo CLAUDE.md, display summary, prompt for task, execute with guardrails.
 
-#### /start Command
-**Purpose**: Repository selection and CLAUDE.md loading
-**Behavior**:
-1. Lists all repos in DevProjects/ with their CLAUDE.md status
-2. Prompts user to select repository
-3. Loads selected repo's CLAUDE.md
-4. **STOPS** - waits for user to specify task
-
-**Usage**: `User: /start` lists repos, User selects, Loads CLAUDE.md, WAITS
-
-#### /SST3-solo Command
-**Purpose**: Load Solo workflow context
-**Behavior**:
-1. Reads STANDARDS.md and current repo CLAUDE.md
-2. Displays Solo mode summary
-3. Sets progress update threshold to 10 minutes
-4. Prompts for task description or Issue number
-5. Ready for Solo execution
-
-**Usage**: `User: /SST3-solo` loads context, prompts for task, executes with guardrails
-
-## Context Management
-
-- **Window**: 1M tokens (Opus 4.6/Sonnet 4.6), 200K tokens (Haiku 4.5)
-- **Handover at**: 80% used
-- **Process**: Post checkpoint to Issue FIRST, then handover
-- **Template**: `../dotfiles/SST3/templates/chat-handover.md`
-
-## Communication Standards
-
-### With Users
-- Clear progress announcements
-- Decision rationale
-- Context memory status
-
-### Issue Updates
-- Phase checkpoints
-- Files modified
-- Blockers/scope changes
+Handover template: `../dotfiles/SST3/templates/chat-handover.md` (post checkpoint to Issue FIRST).
 
 ## External Research References
 
@@ -119,22 +63,7 @@ See: `../dotfiles/SST3/reference/research-reference-guide.md` for complete guide
 
 ## Quality Standards
 
-**Quality = Robust, Reliable, Scalable, Repeatable, Discoverable, Low-effort/High-value, Prevention>Cure, Right-balanced, Complete** (See STANDARDS.md)
-
-**Never Assume — Always Check**: Read the actual file/code before drawing conclusions. Assumptions cause silent errors. A five-second Read beats a thirty-minute debugging session. (See STANDARDS.md)
-
-**Fix Everything — No Excuses, No Scope Boundaries, No Language Boundaries**:
-- If you find a problem during ANY work (implementation, review, audit), **investigate it first** to confirm it's real — then **FIX IT NOW**
-- NEVER use "not in scope", "not part of this issue", or "Python-only branch" as excuses to skip fixes
-- Language doesn't matter — Python, Rust, JavaScript, SQL, YAML, shell scripts — **fix them ALL**
-- NEVER categorize problems as "low priority" or "can be deferred" to avoid fixing them
-- The ONLY valid reason to not fix something is if investigation confirms it's a **false positive** (not actually a bug). Document why it's a false positive.
-
-**Critical Thinking**: Challenge ideas when appropriate
-- Disagreement with evidence when approaches are flawed
-- Alternative suggestions when better solutions exist
-- Honest analysis of trade-offs and risks
-- Quality-first approach over blind agreement
+**See STANDARDS.md** — Never Assume (read source before concluding), Fix Everything (no scope/language excuses, no priority deferrals), Critical Thinking (challenge with evidence). Only valid skip reason: confirmed false positive (document why).
 
 **Voice Content Protection (Marker-Driven)** — applies to ANY repo handling Hoi-voice prose (CV, LinkedIn, cover letters, blogs, profiles):
 - Wrap every voice-prose paragraph in `<!-- iamhoi --> ... <!-- iamhoiend -->` BEFORE commit. Default = SKIP. Untagged prose ships unprotected.
@@ -145,7 +74,6 @@ See: `../dotfiles/SST3/reference/research-reference-guide.md` for complete guide
 
 ## Ralph Review Loop (MANDATORY)
 
-**Purpose**: 3-tier automated review before user approval
 **Subagents are PLANNING ONLY** - they review, they do NOT write code.
 
 **Flow**: Implement → Haiku → Sonnet → Opus → **Merge to main** → User Review
@@ -200,29 +128,13 @@ Cleanup branch, close Issue
 - **Guide**: `../dotfiles/docs/guides/mcp-configuration.md`
 - **Tool Selection**: See `../dotfiles/SST3/reference/tool-selection-guide.md`
 
-### MCP Tool: Checkbox Operations
-Use `mcp__github-checkbox__update_issue_checkbox(issue_number, checkbox_text, evidence)` for progressive checkbox updates.
-
-### MCP Tool: Frontend Verification
-- For frontend changes, Chrome DevTools MCP available
-- Guide: `../dotfiles/docs/guides/chrome-devtools-mcp.md`
-- Screenshots saved to: `../screenshots/`
-
-### MCP Tool: GitHub Issue Operations
-- Tools: issue_write, add_issue_comment, search_issues, get_file_contents, create_pull_request
+### MCP Tools
+- **Checkboxes**: `mcp__github-checkbox__update_issue_checkbox(issue_number, checkbox_text, evidence)`
+- **Frontend**: Chrome DevTools MCP — guide `../dotfiles/docs/guides/chrome-devtools-mcp.md`, screenshots → `../screenshots/`
+- **GitHub Issues**: issue_write, add_issue_comment, search_issues, get_file_contents, create_pull_request
 
 ### Google Drive Sync Conflicts
-
-**Detection**: Edit tool fails with "File has been unexpectedly modified"
-
-**Workaround**:
-```bash
-cp "path/to/file.ext" "C:/temp/file.ext"
-# Edit the copy
-cp "C:/temp/file.ext" "path/to/file.ext"
-```
-
-**Location**: All temp files go to `C:/temp/` (outside Google Drive sync)
+Edit fails with "File has been unexpectedly modified" → copy to `C:/temp/`, edit copy, copy back. See `docs/guides/google-drive-sync.md`.
 
 ---
 <!-- ============================================================== -->
@@ -232,6 +144,7 @@ cp "C:/temp/file.ext" "path/to/file.ext"
 <!-- Modifications require dotfiles repository SST3 issue approval -->
 <!-- Project-specific configuration begins BELOW this boundary -->
 <!-- ============================================================== -->
+
 
 
 
