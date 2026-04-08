@@ -1,0 +1,58 @@
+Import log: 7 Dance Tips from Zero to Hero
+Slug: 7-dance-tips-zero-to-hero
+
+Source body (voice-corpus):
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/08_7-dance-tips-zero-to-hero.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/7 Dance Tips from Zero to Hero/
+
+HTML file parsed:
+  7 Dance Tips from Zero to Hero - - AdventureAnd.Me.html
+
+Image files present in _files/ (filtered to images only):
+  2014-06-07 12.21.15.jpg
+  2e1ax_vintage_entry_7dancetipsmain_superman.jpg
+  46126163_10161297875420650_524552400334225408_n.jpg
+  945_hoi_ung.png
+  AAM_Logo.png
+
+Images referenced by HTML body (raw):
+  2014-06-07 12.21.15.jpg          (bgMax background, theme chrome, z-index -1, fixed)
+  AAM_Logo.png                     (site header logo, theme chrome)
+  945_hoi_ung.png                  (author avatar, theme chrome)
+  2e1ax_vintage_entry_7dancetipsmain_superman.jpg  (post hero image)
+
+Theme chrome dropped:
+  2014-06-07 12.21.15.jpg (background)
+  AAM_Logo.png (logo)
+  945_hoi_ung.png (avatar)
+
+Thumbnail dedup pass:
+  2e1ax_vintage_entry_* prefix matches drop rule, BUT no non-thumbnail
+  variant exists in _files/. Per spec, drop only IF non-thumb variant
+  present, so this is KEPT.
+
+Images copied into bundle:
+  2e1ax_vintage_entry_7dancetipsmain_superman.jpg
+
+Date source:
+  AAM SQL row publish_up = 2014-10-03 23:47:26 (non-zero, used)
+  AAM SQL row created    = 2014-10-03 23:47:26 (matches)
+  Last modified          = 2014-12-15 15:55:39 (informational only)
+  Final frontmatter date = 2014-10-03
+
+Body handling:
+  Voice-corpus body has zero inline image references, so no image
+  refs were rewritten. Body copied verbatim from voice-corpus
+  (frontmatter stripped, prose untouched).
+
+Concerns:
+  1. The hero image is the only post image and is not embedded in the
+     prose body. It sits in the bundle folder for theme/template use
+     but is not currently rendered by index.md. Theme template may or
+     may not auto-pick it up.
+  2. Two outbound links point at adventureand.me which is dead. They
+     are preserved as-is per voice-sacred rule. Lychee may flag them.
+  3. Tags chosen from post content: zouk, beginner, tips, social-dance,
+     learning, congresses.
