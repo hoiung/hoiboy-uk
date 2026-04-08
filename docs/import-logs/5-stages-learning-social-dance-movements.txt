@@ -1,0 +1,40 @@
+Import log: 5 Stages of Learning Social Dance Movements
+Slug: 5-stages-learning-social-dance-movements
+
+Source body (voice-corpus):
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/22_5-stages-learning-social-dance-movements.md
+
+Date source (Option B: gdoc mtime):
+  gdoc mtime: 5 Stages of Learning Social Dance Movements/5 Stages of Learning Social Dance Movements.gdoc = 2019-09-09 23:18:35
+  Final frontmatter date = 2019-09-09
+
+Image folder matched:
+  /mnt/c/Users/hoi_u/My Drive/Domi & Hoi/ZoukBase/BLOGS/_COMPLETE/5 Stages of Learning Social Dance Movements
+
+Images copied into bundle:
+  125-1252075_brick-clipart-baby-lego-clipart-transparent-background.png -> 125-1252075_brick-clipart-baby-lego-clipart-transparent-background.png
+  24032-lego-bricks-svg.svg -> 24032-lego-bricks-svg.svg
+  5-stages-learning-social-dance-movements-building-blocks.png -> 5-stages-learning-social-dance-movements-building-blocks.png
+  5-stages-learning-social-dance-movements-building-blocks.svg -> 5-stages-learning-social-dance-movements-building-blocks.svg
+  5-stages-learning-social-dance-movements-cover.png -> 5-stages-learning-social-dance-movements-cover.png
+  5-stages-learning-social-dance-movements-stage1.png -> 5-stages-learning-social-dance-movements-stage1.png
+  5-stages-learning-social-dance-movements-stage1.svg -> 5-stages-learning-social-dance-movements-stage1.svg
+  5-stages-learning-social-dance-movements-stage2.png -> 5-stages-learning-social-dance-movements-stage2.png
+  5-stages-learning-social-dance-movements-stage2.svg -> 5-stages-learning-social-dance-movements-stage2.svg
+  5-stages-learning-social-dance-movements-stage3.png -> 5-stages-learning-social-dance-movements-stage3.png
+  5-stages-learning-social-dance-movements-stage3.svg -> 5-stages-learning-social-dance-movements-stage3.svg
+  5-stages-learning-social-dance-movements-stage4.png -> 5-stages-learning-social-dance-movements-stage4.png
+  5-stages-learning-social-dance-movements-stage4.svg -> 5-stages-learning-social-dance-movements-stage4.svg
+  5-stages-learning-social-dance-movements-stage5.png -> 5-stages-learning-social-dance-movements-stage5.png
+  5-stages-learning-social-dance-movements-stage5.svg -> 5-stages-learning-social-dance-movements-stage5.svg
+  Building-Blocks-with-Legos.jpg -> building-blocks-with-legos.jpg
+  lego social dance.png -> lego-social-dance.png
+  lego social dance.svg -> lego-social-dance.svg
+  lego.jpg -> lego.jpg
+  maxresdefault.jpg -> maxresdefault.jpg
+
+Category: dance
+Tags: zouk, learning, methodology, stages, social-dance
+
+Concerns:
+  - Voice-sacred body copied verbatim from voice-corpus (frontmatter stripped).
