@@ -1,0 +1,81 @@
+Import hunt log: x-books-that-will-change-your-dating-life
+
+Source corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/02_books-that-will-change-your-dating-life.md
+
+Original iD8u gdoc:
+  /mnt/c/Users/hoi_u/My Drive/Business/iD8u (Dating Platform)/DESIGN & MARKETING/_BLOG (Hoi)/X books that will change your dating life.gdoc
+
+Title preserved literally as "X books that will change your dating life" (Hoi's draft title with placeholder X, voice-sacred).
+
+Date: 2021-07-25 (locked by issue #2 Phase 1.B.5 scope).
+
+Category: relationship
+Tags: dating, books, reading-list
+
+Body: voice-sacred prose verbatim. The ONLY modification is rewriting the 7 <a><img></a> Amazon affiliate widgets into clean markdown because Hugo unsafe=false strips raw HTML. Text-only <a href="...">title</a> links later in the post were NOT touched per scope (Phase 1.B.5 explicitly scoped to "7 widgets only").
+
+ASIN verification and cover scrape:
+  Verification method: curl -sLA Mozilla --compressed https://www.amazon.co.uk/dp/<ASIN> (HEAD requests return 405 on Amazon UK, so GET with decompression). Page size 200KB+ and a valid <title> tag containing the book title confirms the product page is live. Cover image extracted from data-old-hires attribute (Amazon UK omits og:image meta tag, data-old-hires is the high-res landing image equivalent).
+
+  1. 0141039418 - A New Earth - by Eckhart Tolle
+     original url: https://www.amazon.co.uk/gp/product/0141039418/ref=as_li_tl?...&tag=id8u-21&...
+     stripped url: https://www.amazon.co.uk/dp/0141039418
+     verification: page size 1992790 bytes, title "A New Earth: The life-changing bestseller..." PASS
+     cover url: https://m.media-amazon.com/images/I/71EFrY9e--L._SL1500_.jpg
+     local file: 0141039418.jpg (77067 bytes)
+
+  2. B07FY2WWZG - How To Win Friends and Influence People - by Dale Carnegie
+     original url: https://www.amazon.co.uk/gp/product/B07FY2WWZG/ref=as_li_tl?...&tag=id8u-21&...
+     stripped url: https://www.amazon.co.uk/dp/B07FY2WWZG
+     verification: page size 1386471 bytes, title "How to Win Friends and Influence People eBook..." PASS
+     cover url: https://m.media-amazon.com/images/I/81OyiPuRR3L._SL1500_.jpg
+     local file: B07FY2WWZG.jpg (95398 bytes)
+
+  3. 147213995X - Mindset - by Dr Carol S. Dweck
+     original url: https://www.amazon.co.uk/gp/product/147213995X/ref=as_li_tl?...&tag=id8u-21&...
+     stripped url: https://www.amazon.co.uk/dp/147213995X
+     verification: page size 1961684 bytes, title "Mindset - Updated Edition: Changing The Way You think..." PASS
+     cover url: https://m.media-amazon.com/images/I/61y1U-lPl5L._SL1500_.jpg
+     local file: 147213995X.jpg (52842 bytes)
+
+  4. 1782118934 - The Game - by Neil Strauss
+     original url: https://www.amazon.co.uk/gp/product/1782118934/ref=as_li_tl?...&tag=id8u-21&...
+     stripped url: https://www.amazon.co.uk/dp/1782118934
+     verification: page size 1385294 bytes, title "The Game: Undercover in the secret society of pickup artists..." PASS
+     cover url: https://m.media-amazon.com/images/I/715Is2YUPlL._SL1500_.jpg
+     local file: 1782118934.jpg (72100 bytes)
+
+  5. B00N10V8Y8 - Get Inside Her - The Female Perspective - by Marni Kinrys, The Ultimate Wing Girl
+     original url: https://www.amazon.co.uk/gp/product/B00N10V8Y8/ref=as_li_tl?...&tag=id8u-21&...
+     stripped url: https://www.amazon.co.uk/dp/B00N10V8Y8
+     verification: page size 1124184 bytes, title "Get inside Her: The Female Perspective..." PASS
+     cover url: https://m.media-amazon.com/images/I/81s+KEy460L._SL1500_.jpg
+     local file: B00N10V8Y8.jpg (172720 bytes)
+
+  6. B086MMKVXY - Mind Control: Persuasion and Dark Psychology, Persuasion Techniques, Manipulation NLP, Dark psychology mind control - by Manfred Percy
+     original url: https://www.amazon.co.uk/gp/product/B086MMKVXY/ref=as_li_tl?...&tag=id8u-21&...
+     stripped url: https://www.amazon.co.uk/dp/B086MMKVXY
+     verification: page size 826318 bytes, title "Mind Control: Persuasion and Dark Psychology..." PASS
+     cover url: https://m.media-amazon.com/images/I/61pp2oTkQBL._SL1360_.jpg
+     local file: B086MMKVXY.jpg (112780 bytes)
+
+  7. B00NOI9HRC - The Power of Body Language: An Ex-FBI Agent's System for Speed-Reading People
+     original url: https://www.amazon.co.uk/gp/product/B00NOI9HRC/ref=as_li_tl?...&tag=id8u-21&...
+     stripped url: https://www.amazon.co.uk/dp/B00NOI9HRC
+     verification: page size 1081500 bytes, title "The Power of Body Language: An Ex-FBI Agent's System..." PASS
+     cover url: https://m.media-amazon.com/images/I/71Via6viOuL._SL1500_.jpg
+     local file: B00NOI9HRC.jpg (102985 bytes)
+
+All 7 ASINs verified live on amazon.co.uk. No replacements needed.
+All 7 cover images scraped successfully (data-old-hires attribute, SL1500/SL1360 high-res).
+Affiliate tag id8u-21 stripped from all URLs.
+
+Hero ordering note: .Resources.ByType "image" sorts alphabetically. 0141039418.jpg sorts first (ASCII digit 0), so "A New Earth" becomes the auto-hero, which matches the corpus intent where it appears first under "Title to be confirmed".
+
+Frontmatter validator: PASS.
+
+Concerns:
+  a. Blog 02 is a DRAFT in the corpus (contains author notes to self, unfinished sentences, "Title to be confirmed", placeholder X in title). Preserved verbatim per voice-sacred rule. Readers will see Hoi's unfiltered drafting voice. This is by design per issue scope.
+  b. Text-only <a href="...">title</a> links in the "Date Related Books" and "Psychology Books" sections later in the post were NOT rewritten because scope strictly limits rewriting to the 7 img widgets. Hugo unsafe=false will strip them at render time, so those book links will appear as plain text in the published HTML. If this is undesirable, follow-up issue required to expand scope.
+  c. Amazon UK does not expose an og:image meta tag on product pages. data-old-hires attribute was used instead (same high-res landing image, functionally equivalent). Noted here because task specified og:image scraping.
