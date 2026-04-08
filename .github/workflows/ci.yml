@@ -95,8 +95,8 @@ jobs:
       - name: Hugo build (production)
         run: |
           hugo --gc --minify -e production 2>&1 | tee /tmp/hugo-build.log
-          # Bidirectional warning allowlist check
-          ACTUAL=$(grep -iE 'warn|error' /tmp/hugo-build.log | sort -u || true)
+          # Bidirectional warning allowlist check (strip absolute paths for portability)
+          ACTUAL=$(grep -iE 'warn|error' /tmp/hugo-build.log | sed 's|"/[^"]*/content/|"content/|g' | sort -u || true)
           ALLOWED=$(grep -v '^#' .hugo-warning-allowlist | grep -v '^$' | sort -u || true)
           NEW=$(comm -23 <(echo "$ACTUAL") <(echo "$ALLOWED"))
           DEAD=$(comm -13 <(echo "$ACTUAL") <(echo "$ALLOWED"))
