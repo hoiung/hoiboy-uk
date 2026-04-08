@@ -1,0 +1,93 @@
+Hunt log: The Biggest Zouk Family Gathering in Europe - DutchZouk! International Congress 2014
+========================================
+
+Source voice-corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/14_dutchzouk-international-congress-2014.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/The Biggest Zouk Family Gathering in Europe - DutchZouk! International Congress 2014/
+
+SQL index:
+  /tmp/aam-sql-index.json
+
+Image files found in _files/ (image-type only):
+  - 2014-06-05 16.24.31.jpg (theme chrome, dropped)
+  - 2e1ax_vintage_entry_10600537_597915870334542_4833635535327280511_main6.jpg
+  - 945_hoi_ung.png (theme chrome, dropped)
+  - AAM_Logo.png (theme chrome, dropped)
+  - b2ap3_thumbnail_10012170_903616176403007_8404207208268531160_o.jpg
+  - b2ap3_thumbnail_10257378_902255683205723_8457760337955150739_o.jpg
+  - b2ap3_thumbnail_10333432_903934389704519_7469637456361432102_o_20141129-030947_1.jpg
+  - b2ap3_thumbnail_10338444_903621323069159_8593329044533708520_o.jpg
+  - b2ap3_thumbnail_10608738_900172046747420_950387817764860164_o.jpg
+  - b2ap3_thumbnail_10608780_900167733414518_815374926236573070_o.jpg
+  - b2ap3_thumbnail_10655418_901836456580979_5507145917244933726_o.jpg
+  - b2ap3_thumbnail_10704264_900774800020478_6411697238238199717_o.jpg
+  - b2ap3_thumbnail_10704399_900175160080442_5562527813955969294_o.jpg
+  - b2ap3_thumbnail_10712436_903925086372116_6634028393372141013_o.jpg
+  - b2ap3_thumbnail_10713015_594446647348131_8861366414577734488_n.jpg
+  - b2ap3_thumbnail_1799966_899605303470761_5932226159988247291_o.jpg
+  - b2ap3_thumbnail_2014-09-12-22.25.25.jpg
+  - b2ap3_thumbnail_2014-10-23-18.13.37.jpg
+  - b2ap3_thumbnail_2014-10-23-19.37.50.jpg
+  - b2ap3_thumbnail_2014-10-24-19.20.08.jpg
+  - b2ap3_thumbnail_2014-10-27-20.55.27.jpg
+  - b2ap3_thumbnail_outfits_dutchzouk_2014a.jpg
+  - b2ap3_thumbnail_trivium_room_2014.jpg
+
+Images REFERENCED by HTML <img> tags:
+  - 2014-06-05 16.24.31.jpg (theme chrome, dropped)
+  - 2e1ax_vintage_entry_10600537_597915870334542_4833635535327280511_main6.jpg
+  - 945_hoi_ung.png (theme chrome, dropped)
+  - AAM_Logo.png (theme chrome, dropped)
+  - b2ap3_thumbnail_10012170_903616176403007_8404207208268531160_o.jpg
+  - b2ap3_thumbnail_10257378_902255683205723_8457760337955150739_o.jpg
+  - b2ap3_thumbnail_10333432_903934389704519_7469637456361432102_o_20141129-030947_1.jpg
+  - b2ap3_thumbnail_10338444_903621323069159_8593329044533708520_o.jpg
+  - b2ap3_thumbnail_10608738_900172046747420_950387817764860164_o.jpg
+  - b2ap3_thumbnail_10608780_900167733414518_815374926236573070_o.jpg
+  - b2ap3_thumbnail_10655418_901836456580979_5507145917244933726_o.jpg
+  - b2ap3_thumbnail_10704264_900774800020478_6411697238238199717_o.jpg
+  - b2ap3_thumbnail_10704399_900175160080442_5562527813955969294_o.jpg
+  - b2ap3_thumbnail_10712436_903925086372116_6634028393372141013_o.jpg
+  - b2ap3_thumbnail_10713015_594446647348131_8861366414577734488_n.jpg
+  - b2ap3_thumbnail_1799966_899605303470761_5932226159988247291_o.jpg
+  - b2ap3_thumbnail_2014-09-12-22.25.25.jpg
+  - b2ap3_thumbnail_2014-10-23-18.13.37.jpg
+  - b2ap3_thumbnail_2014-10-23-19.37.50.jpg
+  - b2ap3_thumbnail_2014-10-24-19.20.08.jpg
+  - b2ap3_thumbnail_2014-10-27-20.55.27.jpg
+  - b2ap3_thumbnail_outfits_dutchzouk_2014a.jpg
+  - b2ap3_thumbnail_trivium_room_2014.jpg
+
+Images COPIED to bundle (lowercased filenames):
+  - 2e1ax_vintage_entry_10600537_597915870334542_4833635535327280511_main6.jpg
+  - b2ap3_thumbnail_10012170_903616176403007_8404207208268531160_o.jpg
+  - b2ap3_thumbnail_10257378_902255683205723_8457760337955150739_o.jpg
+  - b2ap3_thumbnail_10333432_903934389704519_7469637456361432102_o_20141129-030947_1.jpg
+  - b2ap3_thumbnail_10338444_903621323069159_8593329044533708520_o.jpg
+  - b2ap3_thumbnail_10608738_900172046747420_950387817764860164_o.jpg
+  - b2ap3_thumbnail_10608780_900167733414518_815374926236573070_o.jpg
+  - b2ap3_thumbnail_10655418_901836456580979_5507145917244933726_o.jpg
+  - b2ap3_thumbnail_10704264_900774800020478_6411697238238199717_o.jpg
+  - b2ap3_thumbnail_10704399_900175160080442_5562527813955969294_o.jpg
+  - b2ap3_thumbnail_10712436_903925086372116_6634028393372141013_o.jpg
+  - b2ap3_thumbnail_10713015_594446647348131_8861366414577734488_n.jpg
+  - b2ap3_thumbnail_1799966_899605303470761_5932226159988247291_o.jpg
+  - b2ap3_thumbnail_2014-09-12-22.25.25.jpg
+  - b2ap3_thumbnail_2014-10-23-18.13.37.jpg
+  - b2ap3_thumbnail_2014-10-23-19.37.50.jpg
+  - b2ap3_thumbnail_2014-10-24-19.20.08.jpg
+  - b2ap3_thumbnail_2014-10-27-20.55.27.jpg
+  - b2ap3_thumbnail_outfits_dutchzouk_2014a.jpg
+  - b2ap3_thumbnail_trivium_room_2014.jpg
+
+Thumbnail dedup check:
+  Only thumbnail variants present in backup. Kept as-is.
+
+Date source:
+  SQL index date_published used. Final date = 2014-12-04
+
+Concerns:
+  Voice-corpus body is verbatim. No edits, no injected image refs.
+  Original full-size images live only on the dead adventureand.me server.
