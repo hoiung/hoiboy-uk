@@ -1,0 +1,33 @@
+Hunt log: For The Love Of Wine
+========================================
+
+Source voice-corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/11_for-the-love-of-wine.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/For The Love Of Wine/
+
+SQL index match:
+  title='for the love of wine', date_published used => 2014-12-09
+
+Images referenced by HTML <img> tags (post-chrome-filter):
+  - 2014-06-03 13.11.22.jpg
+  - 2e1ax_vintage_entry_forthelogofwinemain.jpg
+  - b2ap3_thumbnail_2014-11-15-21.08.12.jpg
+  - b2ap3_thumbnail_1544984_10153669031490650_1962132467_n.jpg
+  - b2ap3_thumbnail_2014-07-01-20.29.55.jpg
+
+Dropped by thumbnail dedup (non-thumb variant present):
+
+Images COPIED to bundle (lowercased):
+  - 2014-06-03 13.11.22.jpg
+  - 2e1ax_vintage_entry_forthelogofwinemain.jpg
+  - b2ap3_thumbnail_2014-11-15-21.08.12.jpg
+  - b2ap3_thumbnail_1544984_10153669031490650_1962132467_n.jpg
+  - b2ap3_thumbnail_2014-07-01-20.29.55.jpg
+
+Category: food
+
+Concerns:
+  1. Voice-corpus body verbatim, voice-sacred rule honoured.
+  2. Auto-hero template will render first image; no inline refs added.
