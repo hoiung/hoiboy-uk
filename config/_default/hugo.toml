@@ -30,7 +30,7 @@ disableHugoGeneratorInject = true
 [permalinks]
   tags = "/tags/:slug/"
 
-# Pagination for taxonomy term pages (food/, tech/, etc).
+# Pagination for taxonomy term pages (food-booze/, tech/, etc).
 # Future-proofs for thousands of posts per category.
 [pagination]
   pagerSize = 50
