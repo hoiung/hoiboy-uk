@@ -1,0 +1,266 @@
+SLUG: woodsmoke-bushcraft-course
+Corpus: /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/18_woodsmoke-bushcraft-course.md
+SQL match: woodsmoke - woodlanders bushcraft course
+SQL title: Woodsmoke - Woodlanders Bushcraft Course
+date_published: 2014-08-10
+Image filenames from index: 84
+  IDX b2ap3_thumbnail_2014-08-12-23.07.40.jpg
+  IDX a1sx2_Thumbnail1_2014-08-10-14.07.28.jpg
+  IDX a1sx2_Thumbnail1_2014-08-11-01.08.30.jpg
+  IDX a1sx2_Thumbnail1_2014-08-11-10.17.26.jpg
+  IDX a1sx2_Thumbnail1_2014-08-11-09.59.49.jpg
+  IDX b2ap3_thumbnail_2014-09-20-00.39.14-1.jpg
+  IDX a1sx2_Thumbnail1_2014-08-11-11.01.30.jpg
+  IDX a1sx2_Thumbnail1_2014-08-11-11.04.55.jpg
+  IDX a1sx2_Thumbnail1_2014-08-11-15.03.36.jpg
+  IDX b2ap3_thumbnail_2014-09-20-00.40.36.jpg
+  IDX a1sx2_Thumbnail1_2014-08-11-16.09.06.jpg
+  IDX a1sx2_Thumbnail1_2014-08-11-17.00.20.jpg
+  IDX b2ap3_thumbnail_2014-09-20-00.41.37.jpg
+  IDX a1sx2_Thumbnail1_2014-08-11-20.40.51.jpg
+  IDX a1sx2_Thumbnail1_GOPR0700.JPG
+  IDX a1sx2_Thumbnail1_2014-08-12-11.04.09.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-11.24.58.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-11.16.15.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-11.30.04.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-12.25.50.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-12.28.06.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-15.14.58.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-15.58.59.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-16.21.12.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-17.43.02.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-17.43.41.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-17.50.18.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-17.44.56.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-17.45.17.jpg
+  IDX a1sx2_Thumbnail1_2014-08-12-17.52.08.jpg
+  IDX a1sx2_Thumbnail1_2014-08-13-11.30.11.jpg
+  IDX a1sx2_Thumbnail1_2014-08-13-13.21.23.jpg
+  IDX a1sx2_Thumbnail1_2014-08-13-13.36.49.jpg
+  IDX a1sx2_Thumbnail1_2014-08-13-14.08.47.jpg
+  IDX a1sx2_Thumbnail1_2014-08-13-14.19.24.jpg
+  IDX a1sx2_Thumbnail1_2014-08-13-15.12.01.jpg
+  IDX a1sx2_Thumbnail1_2014-08-13-14.34.52.jpg
+  IDX b2ap3_thumbnail_2014-09-20-00.42.57.jpg
+  IDX a1sx2_Thumbnail1_2014-08-13-16.40.11.jpg
+  IDX b2ap3_thumbnail_2014-09-20-00.43.13.jpg
+  IDX a1sx2_Thumbnail1_2014-08-13-18.31.30.jpg
+  IDX a1sx2_Thumbnail1_2014-08-13-18.38.46.jpg
+  IDX a1sx2_Thumbnail1_2014-08-13-19.26.05.jpg
+  IDX a1sx2_Thumbnail1_2014-08-13-19.58.19.jpg
+  IDX b2ap3_thumbnail_2014-09-20-00.43.34.jpg
+  IDX a1sx2_Thumbnail1_GOPR0697.JPG
+  IDX a1sx2_Thumbnail1_2014-08-14-10.47.30.jpg
+  IDX a1sx2_Thumbnail1_2014-08-14-11.59.33.jpg
+  IDX a1sx2_Thumbnail1_2014-08-14-11.30.13.jpg
+  IDX a1sx2_Thumbnail1_2014-08-14-12.30.38.jpg
+  IDX b2ap3_thumbnail_2014-09-20-00.44.17.jpg
+  IDX a1sx2_Thumbnail1_2014-09-07-13.08.30.jpg
+  IDX a1sx2_Thumbnail1_2014-08-14-14.20.46.jpg
+  IDX a1sx2_Thumbnail1_2014-08-14-14.34.24.jpg
+  IDX a1sx2_Thumbnail1_2014-08-14-14.41.11.jpg
+  IDX a1sx2_Thumbnail1_2014-08-14-15.11.09.jpg
+  IDX b2ap3_thumbnail_2014-09-20-00.45.12.jpg
+  IDX b2ap3_thumbnail_2014-09-20-00.45.36.jpg
+  IDX b2ap3_thumbnail_2014-09-20-00.45.49.jpg
+  IDX b2ap3_thumbnail_2014-09-20-00.46.08.jpg
+  IDX a1sx2_Thumbnail1_2014-08-14-17.20.39.jpg
+  IDX a1sx2_Thumbnail1_2014-08-14-18.50.22.jpg
+  IDX a1sx2_Thumbnail1_2014-08-14-19.33.26.jpg
+  IDX a1sx2_Thumbnail1_2014-08-14-19.34.51b.jpg
+  IDX a1sx2_Thumbnail1_2014-08-14-19.59.14.jpg
+  IDX a1sx2_Thumbnail1_flameon.JPG
+  IDX a1sx2_Thumbnail1_GOPR0645.JPG
+  IDX a1sx2_Thumbnail1_GOPR0647.JPG
+  IDX a1sx2_Thumbnail1_GOPR0652.JPG
+  IDX a1sx2_Thumbnail1_GOPR0658.JPG
+  IDX a1sx2_Thumbnail1_GOPR0660.JPG
+  IDX a1sx2_Thumbnail1_GOPR0661.JPG
+  IDX a1sx2_Thumbnail1_GOPR0663.JPG
+  IDX a1sx2_Thumbnail1_GOPR0665.JPG
+  IDX b2ap3_thumbnail_2014-09-20-00.47.39.jpg
+  IDX a1sx2_Thumbnail1_GOPR0672.JPG
+  IDX a1sx2_Thumbnail1_GOPR0713_20140919-141912_1.JPG
+  IDX a1sx2_Thumbnail1_GOPR0715.JPG
+  IDX a1sx2_Thumbnail1_2014-08-14-16.33.55.jpg
+  IDX a1sx2_Thumbnail1_GOPR0705.JPG
+  IDX a1sx2_Thumbnail1_GOPR0720.JPG
+  IDX a1sx2_Thumbnail1_GOPR0725.JPG
+  IDX a1sx2_Thumbnail1_GOPR0723.JPG
+  IDX a1sx2_Thumbnail1_GOPR0694.JPG
+
+POOL SEARCH:
+  COPY(alt non-thumb) 2014-08-12-23.07.40.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-23.07.40.jpg
+  COPY(alt non-thumb) 2014-08-10-14.07.28.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-10-14.07.28.jpg
+  COPY(alt non-thumb) 2014-08-11-01.08.30.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-11-01.08.30.jpg
+  COPY(alt non-thumb) 2014-08-11-10.17.26.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-11-10.17.26.jpg
+  COPY(alt non-thumb) 2014-08-11-09.59.49.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-11-09.59.49.jpg
+  COPY(alt non-thumb) 2014-09-20-00.39.14-1.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-09-20-00.39.14-1.jpg
+  COPY(alt non-thumb) 2014-08-11-11.01.30.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-11-11.01.30.jpg
+  COPY(alt non-thumb) 2014-08-11-11.04.55.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-11-11.04.55.jpg
+  COPY(alt non-thumb) 2014-08-11-15.03.36.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-11-15.03.36.jpg
+  COPY(alt non-thumb) 2014-09-20-00.40.36.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-09-20-00.40.36.jpg
+  COPY(alt non-thumb) 2014-08-11-16.09.06.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-11-16.09.06.jpg
+  COPY(alt non-thumb) 2014-08-11-17.00.20.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-11-17.00.20.jpg
+  COPY(alt non-thumb) 2014-09-20-00.41.37.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-09-20-00.41.37.jpg
+  COPY(alt non-thumb) 2014-08-11-20.40.51.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-11-20.40.51.jpg
+  COPY(alt non-thumb) GOPR0700.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0700.JPG
+  COPY(alt non-thumb) 2014-08-12-11.04.09.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-11.04.09.jpg
+  COPY(alt non-thumb) 2014-08-12-11.24.58.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-11.24.58.jpg
+  COPY(alt non-thumb) 2014-08-12-11.16.15.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-11.16.15.jpg
+  COPY(alt non-thumb) 2014-08-12-11.30.04.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-11.30.04.jpg
+  COPY(alt non-thumb) 2014-08-12-12.25.50.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-12.25.50.jpg
+  COPY(alt non-thumb) 2014-08-12-12.28.06.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-12.28.06.jpg
+  COPY(alt non-thumb) 2014-08-12-15.14.58.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-15.14.58.jpg
+  COPY(alt non-thumb) 2014-08-12-15.58.59.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-15.58.59.jpg
+  COPY(alt non-thumb) 2014-08-12-16.21.12.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-16.21.12.jpg
+  COPY(alt non-thumb) 2014-08-12-17.43.02.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-17.43.02.jpg
+  COPY(alt non-thumb) 2014-08-12-17.43.41.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-17.43.41.jpg
+  COPY(alt non-thumb) 2014-08-12-17.50.18.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-17.50.18.jpg
+  COPY(alt non-thumb) 2014-08-12-17.44.56.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-17.44.56.jpg
+  COPY(alt non-thumb) 2014-08-12-17.45.17.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-17.45.17.jpg
+  COPY(alt non-thumb) 2014-08-12-17.52.08.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-12-17.52.08.jpg
+  COPY(alt non-thumb) 2014-08-13-11.30.11.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-13-11.30.11.jpg
+  COPY(alt non-thumb) 2014-08-13-13.21.23.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-13-13.21.23.jpg
+  COPY(alt non-thumb) 2014-08-13-13.36.49.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-13-13.36.49.jpg
+  COPY(alt non-thumb) 2014-08-13-14.08.47.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-13-14.08.47.jpg
+  COPY(alt non-thumb) 2014-08-13-14.19.24.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-13-14.19.24.jpg
+  COPY(alt non-thumb) 2014-08-13-15.12.01.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-13-15.12.01.jpg
+  COPY(alt non-thumb) 2014-08-13-14.34.52.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-13-14.34.52.jpg
+  COPY(alt non-thumb) 2014-09-20-00.42.57.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-09-20-00.42.57.jpg
+  COPY(alt non-thumb) 2014-08-13-16.40.11.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-13-16.40.11.jpg
+  COPY(alt non-thumb) 2014-09-20-00.43.13.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-09-20-00.43.13.jpg
+  COPY(alt non-thumb) 2014-08-13-18.31.30.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-13-18.31.30.jpg
+  COPY(alt non-thumb) 2014-08-13-18.38.46.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-13-18.38.46.jpg
+  COPY(alt non-thumb) 2014-08-13-19.26.05.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-13-19.26.05.jpg
+  COPY(alt non-thumb) 2014-08-13-19.58.19.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-13-19.58.19.jpg
+  COPY(alt non-thumb) 2014-09-20-00.43.34.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-09-20-00.43.34.jpg
+  COPY(alt non-thumb) GOPR0697.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0697.JPG
+  COPY(alt non-thumb) 2014-08-14-10.47.30.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-10.47.30.jpg
+  COPY(alt non-thumb) 2014-08-14-11.59.33.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-11.59.33.jpg
+  COPY(alt non-thumb) 2014-08-14-11.30.13.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-11.30.13.jpg
+  COPY(alt non-thumb) 2014-08-14-12.30.38.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-12.30.38.jpg
+  COPY(alt non-thumb) 2014-09-20-00.44.17.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-09-20-00.44.17.jpg
+  COPY(alt non-thumb) 2014-09-07-13.08.30.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-09-07-13.08.30.jpg
+  COPY(alt non-thumb) 2014-08-14-14.20.46.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-14.20.46.jpg
+  COPY(alt non-thumb) 2014-08-14-14.34.24.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-14.34.24.jpg
+  COPY(alt non-thumb) 2014-08-14-14.41.11.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-14.41.11.jpg
+  COPY(alt non-thumb) 2014-08-14-15.11.09.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-15.11.09.jpg
+  COPY(alt non-thumb) 2014-09-20-00.45.12.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-09-20-00.45.12.jpg
+  COPY(alt non-thumb) 2014-09-20-00.45.36.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-09-20-00.45.36.jpg
+  COPY(alt non-thumb) 2014-09-20-00.45.49.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-09-20-00.45.49.jpg
+  COPY(alt non-thumb) 2014-09-20-00.46.08.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-09-20-00.46.08.jpg
+  COPY(alt non-thumb) 2014-08-14-17.20.39.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-17.20.39.jpg
+  COPY(alt non-thumb) 2014-08-14-18.50.22.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-18.50.22.jpg
+  COPY(alt non-thumb) 2014-08-14-19.33.26.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-19.33.26.jpg
+  COPY(alt non-thumb) 2014-08-14-19.34.51b.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-19.34.51b.jpg
+  COPY(alt non-thumb) 2014-08-14-19.59.14.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-19.59.14.jpg
+  COPY(alt non-thumb) flameon.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/flameon.JPG
+  COPY(alt non-thumb) GOPR0645.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0645.JPG
+  COPY(alt non-thumb) GOPR0647.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0647.JPG
+  COPY(alt non-thumb) GOPR0652.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0652.JPG
+  COPY(alt non-thumb) GOPR0658.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0658.JPG
+  COPY(alt non-thumb) GOPR0660.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0660.JPG
+  COPY(alt non-thumb) GOPR0661.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0661.JPG
+  COPY(alt non-thumb) GOPR0663.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0663.JPG
+  COPY(alt non-thumb) GOPR0665.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0665.JPG
+  COPY(alt non-thumb) 2014-09-20-00.47.39.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-09-20-00.47.39.jpg
+  COPY(alt non-thumb) GOPR0672.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0672.JPG
+  COPY(alt non-thumb) GOPR0713_20140919-141912_1.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0713_20140919-141912_1.JPG
+  COPY(alt non-thumb) GOPR0715.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0715.JPG
+  COPY(alt non-thumb) 2014-08-14-16.33.55.jpg <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/2014-08-14-16.33.55.jpg
+  COPY(alt non-thumb) GOPR0705.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0705.JPG
+  COPY(alt non-thumb) GOPR0720.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0720.JPG
+  COPY(alt non-thumb) GOPR0725.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0725.JPG
+  COPY(alt non-thumb) GOPR0723.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0723.JPG
+  COPY(alt non-thumb) GOPR0694.JPG <- /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images/945/lake district woodsmoke woodlander bushcraft course 2014/GOPR0694.JPG
+  SKIP b2ap3_thumbnail_2014-08-12-23.07.40.jpg (dedup: non-thumb 2014-08-12-23.07.40.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-10-14.07.28.jpg (dedup: non-thumb 2014-08-10-14.07.28.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-11-01.08.30.jpg (dedup: non-thumb 2014-08-11-01.08.30.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-11-10.17.26.jpg (dedup: non-thumb 2014-08-11-10.17.26.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-11-09.59.49.jpg (dedup: non-thumb 2014-08-11-09.59.49.jpg exists)
+  SKIP b2ap3_thumbnail_2014-09-20-00.39.14-1.jpg (dedup: non-thumb 2014-09-20-00.39.14-1.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-11-11.01.30.jpg (dedup: non-thumb 2014-08-11-11.01.30.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-11-11.04.55.jpg (dedup: non-thumb 2014-08-11-11.04.55.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-11-15.03.36.jpg (dedup: non-thumb 2014-08-11-15.03.36.jpg exists)
+  SKIP b2ap3_thumbnail_2014-09-20-00.40.36.jpg (dedup: non-thumb 2014-09-20-00.40.36.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-11-16.09.06.jpg (dedup: non-thumb 2014-08-11-16.09.06.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-11-17.00.20.jpg (dedup: non-thumb 2014-08-11-17.00.20.jpg exists)
+  SKIP b2ap3_thumbnail_2014-09-20-00.41.37.jpg (dedup: non-thumb 2014-09-20-00.41.37.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-11-20.40.51.jpg (dedup: non-thumb 2014-08-11-20.40.51.jpg exists)
+  SKIP a1sx2_Thumbnail1_GOPR0700.JPG (dedup: non-thumb GOPR0700.JPG exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-11.04.09.jpg (dedup: non-thumb 2014-08-12-11.04.09.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-11.24.58.jpg (dedup: non-thumb 2014-08-12-11.24.58.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-11.16.15.jpg (dedup: non-thumb 2014-08-12-11.16.15.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-11.30.04.jpg (dedup: non-thumb 2014-08-12-11.30.04.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-12.25.50.jpg (dedup: non-thumb 2014-08-12-12.25.50.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-12.28.06.jpg (dedup: non-thumb 2014-08-12-12.28.06.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-15.14.58.jpg (dedup: non-thumb 2014-08-12-15.14.58.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-15.58.59.jpg (dedup: non-thumb 2014-08-12-15.58.59.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-16.21.12.jpg (dedup: non-thumb 2014-08-12-16.21.12.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-17.43.02.jpg (dedup: non-thumb 2014-08-12-17.43.02.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-17.43.41.jpg (dedup: non-thumb 2014-08-12-17.43.41.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-17.50.18.jpg (dedup: non-thumb 2014-08-12-17.50.18.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-17.44.56.jpg (dedup: non-thumb 2014-08-12-17.44.56.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-17.45.17.jpg (dedup: non-thumb 2014-08-12-17.45.17.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-12-17.52.08.jpg (dedup: non-thumb 2014-08-12-17.52.08.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-13-11.30.11.jpg (dedup: non-thumb 2014-08-13-11.30.11.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-13-13.21.23.jpg (dedup: non-thumb 2014-08-13-13.21.23.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-13-13.36.49.jpg (dedup: non-thumb 2014-08-13-13.36.49.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-13-14.08.47.jpg (dedup: non-thumb 2014-08-13-14.08.47.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-13-14.19.24.jpg (dedup: non-thumb 2014-08-13-14.19.24.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-13-15.12.01.jpg (dedup: non-thumb 2014-08-13-15.12.01.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-13-14.34.52.jpg (dedup: non-thumb 2014-08-13-14.34.52.jpg exists)
+  SKIP b2ap3_thumbnail_2014-09-20-00.42.57.jpg (dedup: non-thumb 2014-09-20-00.42.57.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-13-16.40.11.jpg (dedup: non-thumb 2014-08-13-16.40.11.jpg exists)
+  SKIP b2ap3_thumbnail_2014-09-20-00.43.13.jpg (dedup: non-thumb 2014-09-20-00.43.13.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-13-18.31.30.jpg (dedup: non-thumb 2014-08-13-18.31.30.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-13-18.38.46.jpg (dedup: non-thumb 2014-08-13-18.38.46.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-13-19.26.05.jpg (dedup: non-thumb 2014-08-13-19.26.05.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-13-19.58.19.jpg (dedup: non-thumb 2014-08-13-19.58.19.jpg exists)
+  SKIP b2ap3_thumbnail_2014-09-20-00.43.34.jpg (dedup: non-thumb 2014-09-20-00.43.34.jpg exists)
+  SKIP a1sx2_Thumbnail1_GOPR0697.JPG (dedup: non-thumb GOPR0697.JPG exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-10.47.30.jpg (dedup: non-thumb 2014-08-14-10.47.30.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-11.59.33.jpg (dedup: non-thumb 2014-08-14-11.59.33.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-11.30.13.jpg (dedup: non-thumb 2014-08-14-11.30.13.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-12.30.38.jpg (dedup: non-thumb 2014-08-14-12.30.38.jpg exists)
+  SKIP b2ap3_thumbnail_2014-09-20-00.44.17.jpg (dedup: non-thumb 2014-09-20-00.44.17.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-09-07-13.08.30.jpg (dedup: non-thumb 2014-09-07-13.08.30.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-14.20.46.jpg (dedup: non-thumb 2014-08-14-14.20.46.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-14.34.24.jpg (dedup: non-thumb 2014-08-14-14.34.24.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-14.41.11.jpg (dedup: non-thumb 2014-08-14-14.41.11.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-15.11.09.jpg (dedup: non-thumb 2014-08-14-15.11.09.jpg exists)
+  SKIP b2ap3_thumbnail_2014-09-20-00.45.12.jpg (dedup: non-thumb 2014-09-20-00.45.12.jpg exists)
+  SKIP b2ap3_thumbnail_2014-09-20-00.45.36.jpg (dedup: non-thumb 2014-09-20-00.45.36.jpg exists)
+  SKIP b2ap3_thumbnail_2014-09-20-00.45.49.jpg (dedup: non-thumb 2014-09-20-00.45.49.jpg exists)
+  SKIP b2ap3_thumbnail_2014-09-20-00.46.08.jpg (dedup: non-thumb 2014-09-20-00.46.08.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-17.20.39.jpg (dedup: non-thumb 2014-08-14-17.20.39.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-18.50.22.jpg (dedup: non-thumb 2014-08-14-18.50.22.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-19.33.26.jpg (dedup: non-thumb 2014-08-14-19.33.26.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-19.34.51b.jpg (dedup: non-thumb 2014-08-14-19.34.51b.jpg exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-19.59.14.jpg (dedup: non-thumb 2014-08-14-19.59.14.jpg exists)
+  SKIP a1sx2_Thumbnail1_flameon.JPG (dedup: non-thumb flameon.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0645.JPG (dedup: non-thumb GOPR0645.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0647.JPG (dedup: non-thumb GOPR0647.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0652.JPG (dedup: non-thumb GOPR0652.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0658.JPG (dedup: non-thumb GOPR0658.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0660.JPG (dedup: non-thumb GOPR0660.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0661.JPG (dedup: non-thumb GOPR0661.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0663.JPG (dedup: non-thumb GOPR0663.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0665.JPG (dedup: non-thumb GOPR0665.JPG exists)
+  SKIP b2ap3_thumbnail_2014-09-20-00.47.39.jpg (dedup: non-thumb 2014-09-20-00.47.39.jpg exists)
+  SKIP a1sx2_Thumbnail1_GOPR0672.JPG (dedup: non-thumb GOPR0672.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0713_20140919-141912_1.JPG (dedup: non-thumb GOPR0713_20140919-141912_1.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0715.JPG (dedup: non-thumb GOPR0715.JPG exists)
+  SKIP a1sx2_Thumbnail1_2014-08-14-16.33.55.jpg (dedup: non-thumb 2014-08-14-16.33.55.jpg exists)
+  SKIP a1sx2_Thumbnail1_GOPR0705.JPG (dedup: non-thumb GOPR0705.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0720.JPG (dedup: non-thumb GOPR0720.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0725.JPG (dedup: non-thumb GOPR0725.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0723.JPG (dedup: non-thumb GOPR0723.JPG exists)
+  SKIP a1sx2_Thumbnail1_GOPR0694.JPG (dedup: non-thumb GOPR0694.JPG exists)
+
+TOTAL copied: 84
+TOTAL skipped (dedup): 84
+TOTAL missed: 0
+
+Concerns: SQL index only had thumbnail filenames (Joomla easyblog inline thumbs). Non-thumb originals copied when found in pool. Missed files logged above.
