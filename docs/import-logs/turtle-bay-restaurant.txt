@@ -1,0 +1,55 @@
+Hunt log: Turtle Bay Restaurant
+========================================
+
+Source voice-corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/16_turtle-bay-restaurant.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/Turtle Bay Restaurant/
+
+SQL index:
+  /tmp/aam-sql-index.json
+
+Image files found in _files/ (image-type only):
+  - 2014-06-05 12.30.19.jpg (theme chrome, dropped)
+  - 2e1ax_vintage_entry_2014-09-16-17.56.54.jpg
+  - 46126163_10161297875420650_524552400334225408_n.jpg (theme chrome, dropped)
+  - 945_hoi_ung.png (theme chrome, dropped)
+  - AAM_Logo.png (theme chrome, dropped)
+  - a1sx2_Thumbnail1_2014-09-16-17.02.26.jpg
+  - a1sx2_Thumbnail1_2014-09-16-17.21.52.jpg
+  - a1sx2_Thumbnail1_2014-09-16-17.21.56.jpg
+  - a1sx2_Thumbnail1_2014-09-16-17.54.11.jpg
+  - a1sx2_Thumbnail1_2014-09-16-17.56.36.jpg
+  - b2ap3_thumbnail_2014-09-16-17.21.59.jpg
+
+Images REFERENCED by HTML <img> tags:
+  - 2014-06-05 12.30.19.jpg (theme chrome, dropped)
+  - 2e1ax_vintage_entry_2014-09-16-17.56.54.jpg
+  - 945_hoi_ung.png (theme chrome, dropped)
+  - AAM_Logo.png (theme chrome, dropped)
+  - a1sx2_Thumbnail1_2014-09-16-17.02.26.jpg
+  - a1sx2_Thumbnail1_2014-09-16-17.21.52.jpg
+  - a1sx2_Thumbnail1_2014-09-16-17.21.56.jpg
+  - a1sx2_Thumbnail1_2014-09-16-17.54.11.jpg
+  - a1sx2_Thumbnail1_2014-09-16-17.56.36.jpg
+  - b2ap3_thumbnail_2014-09-16-17.21.59.jpg
+
+Images COPIED to bundle (lowercased filenames):
+  - 2e1ax_vintage_entry_2014-09-16-17.56.54.jpg
+  - a1sx2_thumbnail1_2014-09-16-17.02.26.jpg
+  - a1sx2_thumbnail1_2014-09-16-17.21.52.jpg
+  - a1sx2_thumbnail1_2014-09-16-17.21.56.jpg
+  - a1sx2_thumbnail1_2014-09-16-17.54.11.jpg
+  - a1sx2_thumbnail1_2014-09-16-17.56.36.jpg
+  - b2ap3_thumbnail_2014-09-16-17.21.59.jpg
+
+Thumbnail dedup check:
+  Only thumbnail variants present in backup. Kept as-is.
+
+Date source:
+  SQL index date_published used. Final date = 2014-09-18
+
+Concerns:
+  Voice-corpus body is verbatim. No edits, no injected image refs.
+  Original full-size images live only on the dead adventureand.me server.
