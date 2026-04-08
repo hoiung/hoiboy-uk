@@ -7,33 +7,33 @@
   weight = 10
 
 [[categories]]
-  name = "Food & Booze"
-  url = "/food-booze/"
-  weight = 10
-
-[[categories]]
-  name = "Adventure"
-  url = "/adventure/"
-  weight = 20
-
-[[categories]]
-  name = "Dance"
-  url = "/dance/"
-  weight = 30
-
-[[categories]]
   name = "Tech & AI"
   url = "/tech-ai/"
-  weight = 40
-
-[[categories]]
-  name = "Relationship"
-  url = "/relationship/"
-  weight = 50
+  weight = 10
 
 [[categories]]
   name = "Entrepreneurship"
   url = "/entrepreneurship/"
+  weight = 20
+
+[[categories]]
+  name = "Food & Booze"
+  url = "/food-booze/"
+  weight = 30
+
+[[categories]]
+  name = "Adventure"
+  url = "/adventure/"
+  weight = 40
+
+[[categories]]
+  name = "Dance"
+  url = "/dance/"
+  weight = 50
+
+[[categories]]
+  name = "Relationship"
+  url = "/relationship/"
   weight = 60
 
 [[social]]
