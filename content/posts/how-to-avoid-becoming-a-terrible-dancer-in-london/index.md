@@ -7,6 +7,8 @@ source_file: "voice-corpus/blogs/05_avoid-becoming-terrible-zouk-dancer-london-u
 source_era: "AdventureAnd.Me (Joomla)"
 ---
 
+{{< reader-warning >}}
+
 (BEFORE CENSORED) How To Avoid Becoming A Terrible Zouk Dancer In London
 
 Before going into the details of how to avoid becoming a terrible Zouk dancer in London, I would like you to take the time to read the next part and understand who I am, what I'm not, and the reason why I've written this blog.
