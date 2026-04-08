@@ -163,37 +163,3 @@ ZoukDanceCamp - Domi&Hoi's international dance school for Brazilian Zouk in Pola
 ChillZouk - Domi&Hoi's international event for Brazilian Zouk in Poland.
 ZoukBase - Hoi's Brazilian Zouk dance school search website and dance blog.
 
-* Affiliation links -  we may be compensated when you make a purchase from Amazon via these links. Please support us this way by buying through the link because this helps cover some of our time writing these blogs.
-
-
-
-Removed:
-
-Surfing in the UK - you have to try this, that feeling when you're able to hop on the board is unforgettable!
-Bushcraft - will come useful if there is an apocalypse!
-Scuba diving - great set of skills and qualifications to have when traveling!
-Dance dance dance (Tango, Salsa, Kizomba, Hip Hop, Contemporary, and most importantly becoming my greatest passion is Brazilian Zouk) - the best skills to have because last 9 years Brazilian Zouk had taken me around the world, traveling to so many different places to dance and being welcomed by many people of all cultures.
-Bouldering & Rock climbing - my back pain had gone thanks to the strengthening of my core and back muscles!
-Sailing & Windsurfing - It may prove useful one day!
-MMA - I still hate the pain of being punched in the face, but I know I can defend myself and others should I need to.
-Wine tasting courses - I fell in love with wineeeeeeee because of this.
-Trying out many foods - I went on an eating rampage, trying so many cuisines. I do not regret putting any of the food inside me!
-Any much much more adventures…
-
-
-
-
-be a clear communicator,
-be a good listener,
-be present,
-be passionate & fun,
-be decisive,
-be trustworthy,
-be focussed & consistent,
-be reliable (integrity) & dependable,
-be kind & grateful,
-be generous & humble,
-be authentic & genuine,
-be thoughtful & considerate,
-be skillful & confident,
-be hygienic,
