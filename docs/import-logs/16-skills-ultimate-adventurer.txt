@@ -1,0 +1,59 @@
+Hunt log: 16 Skills That Makes The Ultimate Adventurer
+========================================
+
+Source voice-corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/06_16-skills-ultimate-adventurer.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/16 Skills That Makes The Ultimate Adventurer/
+
+SQL index match:
+  title='16 skills that makes the ultimate adventurer', date_published used => 2015-02-06
+
+Images referenced by HTML <img> tags (post-chrome-filter):
+  - IMG_5016.JPG
+  - 2e1ax_vintage_entry_16-Skills-That-Makes-The-Ultimate-Adventurer-main.jpg
+  - b2ap3_thumbnail_scuba-diving-007.jpg
+  - b2ap3_thumbnail_rock-climbing-mission-impossible.jpg
+  - b2ap3_thumbnail_skin-diving.jpg
+  - b2ap3_thumbnail_bushcraft-ace-ventura.jpg
+  - b2ap3_thumbnail_fishing-hunter-x-hunter.png
+  - b2ap3_thumbnail_flying-catch-me-if-you-can.jpg
+  - b2ap3_thumbnail_driving-fast-and-furious.jpg
+  - b2ap3_thumbnail_combat-taken.jpg
+  - b2ap3_thumbnail_martial-arts-bruce-lee.jpg
+  - b2ap3_thumbnail_sailing-pirates-of-the-caribbean.jpg
+  - b2ap3_thumbnail_dancing-shall-we-dance.jpg
+  - b2ap3_thumbnail_horse-riding-lone-ranger.jpg
+  - b2ap3_thumbnail_caving-the-desccent.jpg
+  - b2ap3_thumbnail_surfing-chasing-mavericks.jpg
+  - b2ap3_thumbnail_skiing.jpg
+  - b2ap3_thumbnail_cooking-god-of-cookery.png
+
+Dropped by thumbnail dedup (non-thumb variant present):
+
+Images COPIED to bundle (lowercased):
+  - img_5016.jpg
+  - 2e1ax_vintage_entry_16-skills-that-makes-the-ultimate-adventurer-main.jpg
+  - b2ap3_thumbnail_scuba-diving-007.jpg
+  - b2ap3_thumbnail_rock-climbing-mission-impossible.jpg
+  - b2ap3_thumbnail_skin-diving.jpg
+  - b2ap3_thumbnail_bushcraft-ace-ventura.jpg
+  - b2ap3_thumbnail_fishing-hunter-x-hunter.png
+  - b2ap3_thumbnail_flying-catch-me-if-you-can.jpg
+  - b2ap3_thumbnail_driving-fast-and-furious.jpg
+  - b2ap3_thumbnail_combat-taken.jpg
+  - b2ap3_thumbnail_martial-arts-bruce-lee.jpg
+  - b2ap3_thumbnail_sailing-pirates-of-the-caribbean.jpg
+  - b2ap3_thumbnail_dancing-shall-we-dance.jpg
+  - b2ap3_thumbnail_horse-riding-lone-ranger.jpg
+  - b2ap3_thumbnail_caving-the-desccent.jpg
+  - b2ap3_thumbnail_surfing-chasing-mavericks.jpg
+  - b2ap3_thumbnail_skiing.jpg
+  - b2ap3_thumbnail_cooking-god-of-cookery.png
+
+Category: adventure
+
+Concerns:
+  1. Voice-corpus body verbatim, voice-sacred rule honoured.
+  2. Auto-hero template will render first image; no inline refs added.
