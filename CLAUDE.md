@@ -65,12 +65,7 @@ See: `../dotfiles/SST3/reference/research-reference-guide.md` for complete guide
 
 **See STANDARDS.md** — Never Assume (read source before concluding), Fix Everything (no scope/language excuses, no priority deferrals), Critical Thinking (challenge with evidence). Only valid skip reason: confirmed false positive (document why).
 
-**Voice Content Protection (Marker-Driven)** — applies to ANY repo handling Hoi-voice prose (CV, LinkedIn, cover letters, blogs, profiles):
-- Wrap every voice-prose paragraph in `<!-- iamhoi --> ... <!-- iamhoiend -->` BEFORE commit. Default = SKIP. Untagged prose ships unprotected.
-- Single source of truth: `dotfiles/SST3/scripts/voice_rules.py` (banned words, phrases, KEEP_LIST, cutoff date 2026-04-07). NEVER duplicate the rules.
-- Carve out quoted JD content / banned-word examples / proper-noun usage with `<!-- iamhoi-skip --> ... <!-- iamhoi-skipend -->`.
-- Whole-file exempt: `<!-- iamhoi-exempt -->` as the FIRST non-blank line.
-- See STANDARDS.md "Voice Content Protection" + ANTI-PATTERNS.md AP #15 + dotfiles#404 + hoiboy-uk#3.
+**Voice Content Protection** — when editing Hoi-voice prose (CV, LinkedIn, cover letters, blogs): wrap in `<!-- iamhoi --> ... <!-- iamhoiend -->`. Canonical rules in `../dotfiles/SST3/standards/STANDARDS.md` "Voice Content Protection" + AP #15. Single source of truth for banned words: `../dotfiles/SST3/scripts/voice_rules.py`. (#406 F3.8 dedup.)
 
 ## Ralph Review Loop (MANDATORY)
 
@@ -144,6 +139,7 @@ Edit fails with "File has been unexpectedly modified" → copy to `C:/temp/`, ed
 <!-- Modifications require dotfiles repository SST3 issue approval -->
 <!-- Project-specific configuration begins BELOW this boundary -->
 <!-- ============================================================== -->
+
 
 
 
