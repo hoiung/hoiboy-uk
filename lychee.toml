@@ -16,4 +16,11 @@ exclude_path = ["public", "legacy", "node_modules", ".git", "content/posts"]
 
 # Domains explicitly excluded from link check (allowlist).
 # Add entries with the comment format above. Empty by default.
-exclude = []
+exclude = [
+  # Self-reference: README.md points at the live site, lychee then fetches
+  # hoiboy.uk during CI which races against the same Cloudflare deploy that
+  # the commit is about to trigger. Causes intermittent timeouts under load.
+  # No value in self-checking — Hugo build + URL contract assertion already
+  # validate the live site shape. added: 2026-04-08; expires: 2026-07-07 (90 days)
+  "^https?://(www\\.)?hoiboy\\.uk(/.*)?$",
+]
