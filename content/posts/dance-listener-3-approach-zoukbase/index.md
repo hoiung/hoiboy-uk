@@ -10,7 +10,7 @@ source_era: "ZoukBase (WordPress)"
 
 There are many other articles out there that talks about becoming a ***Light Follow*** or how to be a ***Strong Lead***. Each would touch on the topic about adapting and listening to the partner. This blog builds on top of these.
 
-For the ***Ladies*** who wish to become a Light Follow, there's a well written blog by Stefanie at ThePerfectFollow.com called [How To Be A Light Follow](http://theperfectfollow.com/how-to-be-a-light-follow/). She's also written number of blogs on why you would want to become a ***"Pure Follow"**.* I would suggest spending some time browsing her blogsite. Very useful.
+For the ***Ladies*** who wish to become a Light Follow, there's a well written blog by Stefanie at ThePerfectFollow.com called How To Be A Light Follow *(original URL no longer available)*. She's also written number of blogs on why you would want to become a ***"Pure Follow"**.* I would suggest spending some time browsing her blogsite. Very useful.
 
 For the both ***Gents*** and the ***Ladies***, I would recommend reading this article by Juan Calderon, [Dance Whispering: True Leading & Following and the Science of How Healing It Is](http://zoukology.com/dance-whispering-true-leading-following-and-the-science-of-how-healing-it-is/) \- I truely & deeply believe in Dance Whispering and closely relate with his first half of his blog.
 
@@ -286,7 +286,7 @@ I would be very interested in hearing your thoughts\!
 
 **LASTLY….CHECK THIS OUT\!**
 
-I've been meaning to finish this blog for quite some time now and been very guilty of procrastination because most of my free time were working on [**DiscoverZOUK.com**](http://discoverzouk.com/) (London’s Newest Non-Profit Organisation).
+I've been meaning to finish this blog for quite some time now and been very guilty of procrastination because most of my free time were working on **DiscoverZOUK.com** *(original URL no longer available)* (London’s Newest Non-Profit Organisation).
 
 We’ve recently launched our latest concept called [**ZOUK Workspace every Wednesday @ TheCockPit, Marylebone, London**](https://www.facebook.com/discoverzouk/photos/a.297751667345538.1073741833.183783148742391/297751790678859/?type=3&theater).
 

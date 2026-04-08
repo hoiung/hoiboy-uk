@@ -150,7 +150,7 @@ Classes: Every Friday 7:30pm - 8:00pm (Intro to Brazilian Zouk FREE taster), 8:0
 After Class Socials: 9:00pm til late
 Teacher(s): Giuseppe Palumbo, Sara Conca, Daniel Harding, Jovi Baniela Alvarez, Michael Jones and Jenny Cousins.
 Additional information: There are also bootcamps for beginners. Don't miss out by joining the facebook groups for future dates and details.
-Website: http://www.espirito-latino.com (not sure if site gets updated often)
+Website: http://www.espirito-latino.com *(no longer available)* (not sure if site gets updated often)
 Facebook: https://www.facebook.com/groups/251135155013584/ (suggest checking FB group for latest updates)
 
 ### Other Social Events

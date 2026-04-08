@@ -37,7 +37,7 @@ I have broken this trip into bitesize sections:
 
 Public transport were pretty straight forward in Switzerland. **The Helpdesk speaks English and very helpful for tourists.** I would recommend buying the tickets when you arrive and asking for advice at the counters to see what is best for your itinerary. You won't get any saving pre-booking any tickets, so I wouldn't bother pre-booking it. Do bear in mind the cost of transportation and any changes by visiting the transport website before hand.
 
-http://www.swisstravelsystem.co.uk
+http://www.swisstravelsystem.co.uk *(no longer available)*
 
 From *Geneva to Grindelwald* it took us approximately 3.5 hours to get station to station with only one change at *Bern*. Our apartments were about 1 mile away so we walked it every day even with our grocery shopping. We could have took the free buses but didn't bother having to wait 30 minutes between each intervals.
 

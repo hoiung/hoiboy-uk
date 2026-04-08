@@ -46,7 +46,7 @@ Big shout out for the **London Zouk Crew** for making me feel like part of the g
 
 Being such **good value**, bang for buck, however you choose to call it, I'll make time again for this congress next year! Wouldn't want to miss my double vodka with Acai now do I?!
 
-ZoukTime! official website where you can find infomation and schedule of their next congress. http://www.zouktime.com/
+ZoukTime! official website where you can find infomation and schedule of their next congress. http://www.zouktime.com/ *(no longer available)*
 
 ## Suggestions
 
@@ -57,7 +57,7 @@ I would recommend they fix parts of the dance floor:
 
 **Here are links to two other bloggers who have also written about ZoukTime 5th Brazilian Dance Congress. It is worth reading as both will give you the ladies perspective instead.**
 
-- Kazouk.net: http://www.kazouk.net/#!Flash-Mob-London-2014-Brno-Zouk-Congress-2014/cmbz/52273D14-41EF-41B8-8C0B-C06EB68ED5CB
+- Kazouk.net *(original URL no longer available)*
 - Dance the World: http://dancetheworld.blogspot.co.uk/2014/09/zouk-non-stop-at-zouktime-2014.html
 
 ## Intro to Zouk

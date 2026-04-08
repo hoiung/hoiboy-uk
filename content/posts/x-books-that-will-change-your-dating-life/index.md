@@ -65,19 +65,19 @@ Trying to give you a full list of books, wouldn't work, since you aren't trying 
 I don't believe you need to read all these, but of course the more you learn, understand and apply knowledge will help with your dating and relationship life.
 
 Date Related Books
-<a target="_blank" href="https://www.amazon.co.uk/gp/product/B00F7U8KKA/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=B00F7U8KKA&linkCode=as2&tag=id8u-21&linkId=96202b8f9af35cc0e6ac38c59cfeed53">The Ultimate Texting Guide For Men 2nd Edition</a>
+<a target="_blank" href="https://www.amazon.co.uk/gp/product/B00F7U8KKA/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=B00F7U8KKA&linkCode=as2&linkId=96202b8f9af35cc0e6ac38c59cfeed53">The Ultimate Texting Guide For Men 2nd Edition</a>
 
-<a target="_blank" href="https://www.amazon.co.uk/gp/product/B008ST2U3U/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=B008ST2U3U&linkCode=as2&tag=id8u-21&linkId=95715edb35fb45a9eb26db3e372369c4">Textual Attraction For Guys: The Ultimate Success Guide for Texting Girls!</a>
+<a target="_blank" href="https://www.amazon.co.uk/gp/product/B008ST2U3U/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=B008ST2U3U&linkCode=as2&linkId=95715edb35fb45a9eb26db3e372369c4">Textual Attraction For Guys: The Ultimate Success Guide for Texting Girls!</a>
 
-<a target="_blank" href="https://www.amazon.co.uk/gp/product/B008J51XF4/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=B008J51XF4&linkCode=as2&tag=id8u-21&linkId=c28b0b79c8f4eddf170b0e8540da0f14">10 Mistakes Men Make With Women &amp; How To Avoid Them (The Wing Girl Method Book 1)</a>
+<a target="_blank" href="https://www.amazon.co.uk/gp/product/B008J51XF4/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=B008J51XF4&linkCode=as2&linkId=c28b0b79c8f4eddf170b0e8540da0f14">10 Mistakes Men Make With Women &amp; How To Avoid Them (The Wing Girl Method Book 1)</a>
 
-<a target="_blank" href="https://www.amazon.co.uk/gp/product/1440461546/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=1440461546&linkCode=as2&tag=id8u-21&linkId=a12b9dda723df7f7df174c1af41479c7">Make Her Chase You: The Guide To Attracting Girls Who Are "Out Of Your League" Even If You'Re Not Rich Or Handsome</a>
+<a target="_blank" href="https://www.amazon.co.uk/gp/product/1440461546/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=1440461546&linkCode=as2&linkId=a12b9dda723df7f7df174c1af41479c7">Make Her Chase You: The Guide To Attracting Girls Who Are "Out Of Your League" Even If You'Re Not Rich Or Handsome</a>
 
-<a target="_blank" href="https://www.amazon.co.uk/gp/product/B008U3HCIC/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=B008U3HCIC&linkCode=as2&tag=id8u-21&linkId=95519d25c5dcdac8191e2b1975113836">Make Her Beg to be Your Girlfriend: Be the "Nice Guy" Who Always Gets the Girl</a>
+<a target="_blank" href="https://www.amazon.co.uk/gp/product/B008U3HCIC/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=B008U3HCIC&linkCode=as2&linkId=95519d25c5dcdac8191e2b1975113836">Make Her Beg to be Your Girlfriend: Be the "Nice Guy" Who Always Gets the Girl</a>
 
-<a target="_blank" href="https://www.amazon.co.uk/gp/product/1477631429/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=1477631429&linkCode=as2&tag=id8u-21&linkId=42c2489e9e7bf3ac16151224ea4c965f">101 Good Questions to Ask on a Date: Discover Conversation Topics and Questions that will Eliminate any Incidence of Awkward Silence and Increase Attraction with Your Date</a>
+<a target="_blank" href="https://www.amazon.co.uk/gp/product/1477631429/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=1477631429&linkCode=as2&linkId=42c2489e9e7bf3ac16151224ea4c965f">101 Good Questions to Ask on a Date: Discover Conversation Topics and Questions that will Eliminate any Incidence of Awkward Silence and Increase Attraction with Your Date</a>
 
 Psychology Books
-<a target="_blank" href="https://www.amazon.co.uk/gp/product/1444100904/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=1444100904&linkCode=as2&tag=id8u-21&linkId=749b1d3daa270118901466b566918608">Understand Psychology: How Your Mind Works and Why You Do the Things You Do</a>
+<a target="_blank" href="https://www.amazon.co.uk/gp/product/1444100904/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=1444100904&linkCode=as2&linkId=749b1d3daa270118901466b566918608">Understand Psychology: How Your Mind Works and Why You Do the Things You Do</a>
 
-<a target="_blank" href="https://www.amazon.co.uk/gp/product/006124189X/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=006124189X&linkCode=as2&tag=id8u-21&linkId=1d798fa6da0f2b7c40f65a8ebc19c74c">Influence: The Psychology of Persuasion</a>
+<a target="_blank" href="https://www.amazon.co.uk/gp/product/006124189X/ref=as_li_tl?ie=UTF8&camp=1634&creative=6738&creativeASIN=006124189X&linkCode=as2&linkId=1d798fa6da0f2b7c40f65a8ebc19c74c">Influence: The Psychology of Persuasion</a>

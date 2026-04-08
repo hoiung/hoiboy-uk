@@ -72,7 +72,7 @@ The one thing that I love the most about *Zouk* is the community. *Zouk* really 
 
 - Expensive for water at the parties.
 
-Website: http://dutchzouk.nl
+Website: http://dutchzouk.nl *(no longer available)*
 
 Facebook: https://www.facebook.com/dutchzoukcongress
 
@@ -352,7 +352,7 @@ DutchZouk Fullpass = £105.35 (€132.44)
 
 I even bought some chocolates at the airport and still had €30 left over!
 
-Website: http://dutchzouk.nl
+Website: http://dutchzouk.nl *(no longer available)*
 
 Facebook: https://www.facebook.com/dutchzoukcongress
 
