@@ -135,6 +135,13 @@ See: `../dotfiles/SST3/reference/research-reference-guide.md` for complete guide
 - Honest analysis of trade-offs and risks
 - Quality-first approach over blind agreement
 
+**Voice Content Protection (Marker-Driven)** — applies to ANY repo handling Hoi-voice prose (CV, LinkedIn, cover letters, blogs, profiles):
+- Wrap every voice-prose paragraph in `<!-- iamhoi --> ... <!-- iamhoiend -->` BEFORE commit. Default = SKIP. Untagged prose ships unprotected.
+- Single source of truth: `dotfiles/SST3/scripts/voice_rules.py` (banned words, phrases, KEEP_LIST, cutoff date 2026-04-07). NEVER duplicate the rules.
+- Carve out quoted JD content / banned-word examples / proper-noun usage with `<!-- iamhoi-skip --> ... <!-- iamhoi-skipend -->`.
+- Whole-file exempt: `<!-- iamhoi-exempt -->` as the FIRST non-blank line.
+- See STANDARDS.md "Voice Content Protection" + ANTI-PATTERNS.md AP #15 + dotfiles#404 + hoiboy-uk#3.
+
 ## Ralph Review Loop (MANDATORY)
 
 **Purpose**: 3-tier automated review before user approval
@@ -224,6 +231,8 @@ cp "C:/temp/file.ext" "path/to/file.ext"
 <!-- Modifications require dotfiles repository SST3 issue approval -->
 <!-- Project-specific configuration begins BELOW this boundary -->
 <!-- ============================================================== -->
+
+
 
 
 
