@@ -1,0 +1,71 @@
+Hunt log: The Sun Had Set For 2014. Here Rises The Sun For 2015.
+========================================
+
+Source voice-corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/15_sun-set-2014-rises-2015.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/The Sun Had Set For 2014. Here Rises The Sun For 2015/
+
+SQL index:
+  /tmp/aam-sql-index.json
+
+Image files found in _files/ (image-type only):
+  - 15727174_10211302233973769_486998216842589915_n.jpg
+  - 2014-06-05 11.00.00.jpg (theme chrome, dropped)
+  - 2e1ax_vintage_entry_sunset_birmingham2.jpg
+  - 46126163_10161297875420650_524552400334225408_n.jpg (theme chrome, dropped)
+  - 945_hoi_ung.png (theme chrome, dropped)
+  - AAM_Logo.png (theme chrome, dropped)
+  - b2ap3_thumbnail_10333432_903934389704519_7469637456361432102_o.jpg
+  - b2ap3_thumbnail_1604612_10152238260607608_165306772_n.jpg
+  - b2ap3_thumbnail_1798256_10153880974990075_576238986_n.jpg
+  - b2ap3_thumbnail_1958246_10153902454845650_276506473_n.jpg
+  - b2ap3_thumbnail_2014-08-25-11.34.37.jpg
+  - b2ap3_thumbnail_2014-11-15-17.24.12.jpg
+  - b2ap3_thumbnail_fearless_mma.jpg
+  - b2ap3_thumbnail_flameon.JPG
+  - b2ap3_thumbnail_forthelogofwinemain.jpg
+  - b2ap3_thumbnail_switzerland-the-place-to-be.JPG
+  - b2ap3_thumbnail_zouktime-2014-cover.jpg
+
+Images REFERENCED by HTML <img> tags:
+  - 2014-06-05 11.00.00.jpg (theme chrome, dropped)
+  - 2e1ax_vintage_entry_sunset_birmingham2.jpg
+  - 945_hoi_ung.png (theme chrome, dropped)
+  - AAM_Logo.png (theme chrome, dropped)
+  - b2ap3_thumbnail_10333432_903934389704519_7469637456361432102_o.jpg
+  - b2ap3_thumbnail_1604612_10152238260607608_165306772_n.jpg
+  - b2ap3_thumbnail_1798256_10153880974990075_576238986_n.jpg
+  - b2ap3_thumbnail_1958246_10153902454845650_276506473_n.jpg
+  - b2ap3_thumbnail_2014-08-25-11.34.37.jpg
+  - b2ap3_thumbnail_2014-11-15-17.24.12.jpg
+  - b2ap3_thumbnail_fearless_mma.jpg
+  - b2ap3_thumbnail_flameon.JPG
+  - b2ap3_thumbnail_forthelogofwinemain.jpg
+  - b2ap3_thumbnail_switzerland-the-place-to-be.JPG
+  - b2ap3_thumbnail_zouktime-2014-cover.jpg
+
+Images COPIED to bundle (lowercased filenames):
+  - 2e1ax_vintage_entry_sunset_birmingham2.jpg
+  - b2ap3_thumbnail_10333432_903934389704519_7469637456361432102_o.jpg
+  - b2ap3_thumbnail_1604612_10152238260607608_165306772_n.jpg
+  - b2ap3_thumbnail_1798256_10153880974990075_576238986_n.jpg
+  - b2ap3_thumbnail_1958246_10153902454845650_276506473_n.jpg
+  - b2ap3_thumbnail_2014-08-25-11.34.37.jpg
+  - b2ap3_thumbnail_2014-11-15-17.24.12.jpg
+  - b2ap3_thumbnail_fearless_mma.jpg
+  - b2ap3_thumbnail_flameon.jpg
+  - b2ap3_thumbnail_forthelogofwinemain.jpg
+  - b2ap3_thumbnail_switzerland-the-place-to-be.jpg
+  - b2ap3_thumbnail_zouktime-2014-cover.jpg
+
+Thumbnail dedup check:
+  Only thumbnail variants present in backup. Kept as-is.
+
+Date source:
+  SQL index date_published used. Final date = 2015-01-07
+
+Concerns:
+  Voice-corpus body is verbatim. No edits, no injected image refs.
+  Original full-size images live only on the dead adventureand.me server.
