@@ -37,3 +37,15 @@ repos:
         language: system
         pass_filenames: false
         files: ^(config/_default/params\.toml|layouts/.*\.html|assets/.*\.css)$
+      - id: check-voice-tells
+        name: Voice guard (marker-driven)
+        entry: python3 scripts/check_voice_tells.py --check-only-new
+        language: system
+        pass_filenames: true
+        files: ^(content/.*\.md|docs/research/.*\.md)$
+      - id: voice-rules-drift
+        name: Voice rules vendored copy drift check
+        entry: bash -c 'if [ -d ../dotfiles ]; then cmp -s ../dotfiles/SST3/scripts/voice_rules.py scripts/voice_rules.py || { echo "[drift] scripts/voice_rules.py differs from canonical at ../dotfiles/SST3/scripts/voice_rules.py"; exit 1; }; else echo "[sync] dotfiles canonical not present, skipping" >&2; fi'
+        language: system
+        pass_filenames: false
+        always_run: true

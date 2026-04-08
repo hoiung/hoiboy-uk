@@ -248,7 +248,7 @@ Personal blog at **hoiboy.uk**, owned by Senh Hoi Ung (Hoi). Republishes ~22 yea
 2. `docs/research/12_AI_WRITING_TELLS.md` (in-repo research, why the rules exist)
 3. `../dotfiles/cv-linkedin/VOICE_PROFILE.md` (canonical ~80K corpus analysis with verbatim sentence templates)
 
-Then, before commit: `python3 ../dotfiles/SST3/scripts/check-ai-writing-tells.py content/posts/<slug>/index.md`. The CI em-dash/lychee/markdownlint guards skip `content/posts/`, so the AI-tells script is your local gate, not CI. CI will not catch a bad new post.
+Then, before commit: `python3 scripts/check_voice_tells.py --check-only-new content/posts/<slug>/index.md`. This is the marker-driven voice guard (default = SKIP, opt in per region with `<!-- iamhoi -->` ... `<!-- iamhoiend -->` markers). It runs as a pre-commit hook AND in CI. Legacy posts (date < 2026-04-07) and untagged sections are silently skipped. See `docs/research/11_VOICE_PROFILE.md` "How to use the voice guard hook".
 
 If you are NOT writing a new post (e.g. fixing CI, adding a layout, importing legacy, editing config), do NOT load these voice docs. Skip them and save the tokens.
 
