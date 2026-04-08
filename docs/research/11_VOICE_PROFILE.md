@@ -155,8 +155,9 @@ delve, leverage (verb), spearhead, synergy, stakeholder, robust, seamless, cutti
 
 ## References
 
+- AI writing tells research (in-repo, why the rules exist): `12_AI_WRITING_TELLS.md`
 - Canonical voice profile (full ~80K corpus analysis): `../../../dotfiles/cv-linkedin/VOICE_PROFILE.md`
 - Voice corpus (37 pre-AI blogs, ~80,000 words): `../../../dotfiles/cv-linkedin/voice-corpus/blogs/`
 - AI writing tells script: `../../../dotfiles/SST3/scripts/check-ai-writing-tells.py`
-- AI writing tells research: `../../../dotfiles/cv-linkedin/job-research/18_AI_WRITING_TELLS_AND_DETECTION.md`
+- AI writing tells research (canonical, 25+ sources): `../../../dotfiles/cv-linkedin/job-research/18_AI_WRITING_TELLS_AND_DETECTION.md`
 - Master profile (career evidence for any factual claim): `../../../dotfiles/cv-linkedin/MASTER_PROFILE.md`
