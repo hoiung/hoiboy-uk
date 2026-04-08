@@ -1,0 +1,58 @@
+Hunt log: Birmingham Bouldering Centre
+========================================
+
+Source voice-corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/10_birmingham-bouldering-centre.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/Birmingham Bouldering Centre/
+
+SQL dump (date source):
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/adventureandme.sql
+
+Image files found in _files/ (image-type only):
+  - 2014-06-05 10.45.57.jpg          (theme bgMax background, NOT body)
+  - 2e1ax_vintage_entry_birmingham_boulder_centre.jpg
+  - 46126163_10161297875420650_524552400334225408_n.jpg  (not referenced by HTML)
+  - 945_hoi_ung.png                  (author avatar, theme chrome)
+  - AAM_Logo.png                     (site logo, theme chrome)
+  - a1sx2_Thumbnail1_2014-09-07-14.06.03.jpg
+  - a1sx2_Thumbnail1_2014-09-07-14.06.16.jpg
+  - a1sx2_Thumbnail1_2014-09-25-16.48.21.jpg
+
+Images REFERENCED by the HTML <img> tags:
+  - 2014-06-05 10.45.57.jpg          (bgMax fixed background, theme chrome, dropped)
+  - AAM_Logo.png                     (theme chrome, dropped)
+  - 945_hoi_ung.png                  (avatar chrome, dropped)
+  - 2e1ax_vintage_entry_birmingham_boulder_centre.jpg     (entry header, BODY)
+  - a1sx2_Thumbnail1_2014-09-07-14.06.03.jpg              (Main room, BODY)
+  - a1sx2_Thumbnail1_2014-09-25-16.48.21.jpg              (Spider Xin, BODY)
+  - a1sx2_Thumbnail1_2014-09-07-14.06.16.jpg              (Lobby area, BODY)
+  - staticmap                                              (Joomla geo widget, dropped)
+
+Thumbnail dedup check:
+  No non-thumbnail variants of the a1sx2_Thumbnail1_* images exist in _files/.
+  All three a1sx2 thumbnails kept (only variant available).
+  No b2ap3_thumbnail_* image is referenced by the HTML body, so dedup rule N/A.
+
+Images COPIED to bundle (lowercased filenames):
+  - 2e1ax_vintage_entry_birmingham_boulder_centre.jpg
+  - a1sx2_thumbnail1_2014-09-07-14.06.03.jpg
+  - a1sx2_thumbnail1_2014-09-07-14.06.16.jpg
+  - a1sx2_thumbnail1_2014-09-25-16.48.21.jpg
+
+Date source:
+  SQL row id=29 (post 'Birmingham Bouldering Centre', alias 'birmingham-bouldering-centre')
+  created    = 2014-10-02 19:37:44
+  publish_up = 2014-10-02 19:37:44 (non-zero, used)
+  Final date = 2014-10-02
+
+Concerns:
+  1. Voice-corpus body has zero image references (prose only). Per voice-sacred
+     rule the body is NOT edited to inject images. Images are copied to the
+     bundle as Hugo page resources for future theme/template use.
+  2. The a1sx2_Thumbnail1_* files are the only variant present in the manual
+     backup. Original full-size images live only on the dead adventureand.me
+     server. Acceptable for now.
+  3. Voice-corpus frontmatter approximate_date (2014-10-02) matches the SQL
+     publish_up exactly. Good cross-check.
