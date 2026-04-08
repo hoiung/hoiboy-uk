@@ -1,0 +1,17 @@
+SLUG: how-to-avoid-becoming-a-terrible-dancer-in-london
+Corpus: /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/05_avoid-becoming-terrible-zouk-dancer-london-uncensored.md
+SQL index match (fuzzy): "how to avoid becoming a terrible zouk dancer in london"
+SQL title: How To Avoid Becoming A Terrible Zouk Dancer In London
+date_published: 2016-10-12 18:30:00
+Formatted date: 2016-10-12
+
+Image filenames from SQL index: 0 (empty list)
+Pool searched: /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/images/easyblog_images + easyblog_shared
+Image files copied: 0
+
+Dedup decisions: N/A (no images)
+
+Concerns:
+- SQL index has zero image_filenames for this post. The body HTML apparently contained no inline <img> tags the SQL parser could extract. This post is being imported text-only, per the Phase 1.B.3 rule.
+- This is the UNCENSORED version. A separately recovered censored/public version exists as blog 21 in the corpus. Only the uncensored version is being imported here.
+- Using corpus body verbatim (voice-sacred).
