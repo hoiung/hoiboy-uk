@@ -1,0 +1,22 @@
+Import log: The Clockworks of a Dance Scene
+Slug: clockworks-of-a-dance-scene
+
+Source body (voice-corpus):
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/30_clockworks-of-a-dance-scene.md
+
+Date source (Option B: gdoc mtime):
+  gdoc mtime: The Clockworks of a Dance Scene/The CLOCKWORKS of a DANCE SCENE.gdoc = 2017-11-17 21:42:49
+  Final frontmatter date = 2017-11-17
+
+Image folder matched:
+  /mnt/c/Users/hoi_u/My Drive/Domi & Hoi/ZoukBase/BLOGS/_COMPLETE/The Clockworks of a Dance Scene
+
+Images copied into bundle:
+  The Clockworks of a Dance Scene.jpg -> the-clockworks-of-a-dance-scene.jpg
+  friends_1510784714253.jpg -> friends_1510784714253.jpg
+
+Category: dance
+Tags: zouk, community, scene, systems, ecosystem
+
+Concerns:
+  - Voice-sacred body copied verbatim from voice-corpus (frontmatter stripped).
