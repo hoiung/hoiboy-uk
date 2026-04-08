@@ -1,0 +1,23 @@
+Import log: Become The Dance Listener By Using The 3 Dance Approach
+Slug: dance-listener-3-approach-zoukbase
+
+Source body (voice-corpus):
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/25_dance-listener-3-approach-zoukbase.md
+
+Date source (Option B: gdoc mtime):
+  gdoc mtime: Become The Dance Listener By Using The 3 Dance Approach.gdoc = 2017-06-05
+  Final frontmatter date = 2017-06-05
+
+Image folder: NONE (no matching per-post folder in ZoukBase _COMPLETE)
+
+Images copied into bundle:
+  (none)
+
+MISSING IMAGE: post publishes text-only. Auto-hero template will fall back.
+
+Category: dance
+Tags: zouk, connection, musicality, methodology, social-dance
+
+Concerns:
+  - No per-post image folder in ZoukBase _COMPLETE. Text-only publish.
+  - Voice-sacred body copied verbatim from voice-corpus (frontmatter stripped).
