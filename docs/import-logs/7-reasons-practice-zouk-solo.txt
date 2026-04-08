@@ -1,0 +1,22 @@
+Import log: 7 Great Reasons To Practice Zouk Solo
+Slug: 7-reasons-practice-zouk-solo
+
+Source body (voice-corpus):
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/23_7-reasons-practice-zouk-solo.md
+
+Date source (Option B: gdoc mtime):
+  gdoc mtime: The Key To Effective Dance Practice/7 Great Reasons To Practice Zouk Solo.gdoc = 2017-09-20 00:51:17
+  Final frontmatter date = 2017-09-20
+
+Image folder matched:
+  /mnt/c/Users/hoi_u/My Drive/Domi & Hoi/ZoukBase/BLOGS/_COMPLETE/The Key To Effective Dance Practice/cover image
+  (shared folder, filtered by keyword: '7 great reasons')
+
+Images copied into bundle:
+  7 Great Reasons To Practice Zouk Solo.png -> 7-great-reasons-to-practice-zouk-solo.png
+
+Category: dance
+Tags: zouk, practice, solo, methodology, learning
+
+Concerns:
+  - Voice-sacred body copied verbatim from voice-corpus (frontmatter stripped).
