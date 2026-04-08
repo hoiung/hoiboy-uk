@@ -1,0 +1,28 @@
+Import log: The Key To Effective Zouk Practice
+Slug: key-to-effective-zouk-practice
+
+Source body (voice-corpus):
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/31_key-to-effective-zouk-practice.md
+
+Date source (Option B: gdoc mtime):
+  gdoc mtime: The Key To Effective Dance Practice/The Key To Effective Zouk Practice.gdoc = 2017-09-21 00:35:17
+  Final frontmatter date = 2017-09-21
+
+Image folder matched:
+  /mnt/c/Users/hoi_u/My Drive/Domi & Hoi/ZoukBase/BLOGS/_COMPLETE/The Key To Effective Dance Practice
+
+Images copied into bundle:
+  Make it FUN v2.png -> make-it-fun-v2.png
+  Make it FUN.png -> make-it-fun.png
+  Make it FUN.svg -> make-it-fun.svg
+  Zouk Solo Practice Pyramid.png -> zouk-solo-practice-pyramid.png
+  Zouk Solo Practice Pyramid.svg -> zouk-solo-practice-pyramid.svg
+  curve-down-arrow.svg -> curve-down-arrow.svg
+  skip dance foundation.png -> skip-dance-foundation.png
+  text4189.png -> text4189.png
+
+Category: dance
+Tags: zouk, practice, methodology, technique, learning
+
+Concerns:
+  - Voice-sacred body copied verbatim from voice-corpus (frontmatter stripped).
