@@ -1,0 +1,24 @@
+Import log: Food for Thoughts for Dance Teachers and Organisers
+Slug: food-for-thoughts-dance-teachers-organisers
+
+Source body (voice-corpus):
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/27_food-for-thoughts-dance-teachers-organisers.md
+
+Date source (Option B: gdoc mtime):
+  gdoc mtime: Food for Thoughts for Dance Teachers and Organisers.gdoc = 2019-11-28
+  Final frontmatter date = 2019-11-28
+
+Image folder matched:
+  /mnt/c/Users/hoi_u/My Drive/Domi & Hoi/ZoukBase/BLOGS/_COMPLETE/Food for Thoughts for Dance Teachers and Organisers
+
+Images copied into bundle:
+  IMG_20191128_004125.jpg -> img_20191128_004125.jpg
+  IMG_20191128_004217.jpg -> img_20191128_004217.jpg
+  food for thoughts for dance teachers and organisers.png -> food-for-thoughts-for-dance-teachers-and-organisers.png
+  strategyblackboard_edited.jpg -> strategyblackboard_edited.jpg
+
+Category: dance
+Tags: zouk, teaching, community, organisers, reflection
+
+Concerns:
+  - Voice-sacred body copied verbatim from voice-corpus (frontmatter stripped).
