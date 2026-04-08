@@ -14,13 +14,21 @@
   </div>
   {{- end -}}
   {{- $images := .Resources.ByType "image" -}}
-  {{- with index $images 0 -}}
+  {{- $hero := .Resources.GetMatch "hero.*" -}}
+  {{- if not $hero }}{{ $hero = .Resources.GetMatch "2e1ax_vintage_entry_*" }}{{ end -}}
+  {{- if not $hero }}{{ $hero = .Resources.GetMatch "*main*" }}{{ end -}}
+  {{- if not $hero }}{{ with index $images 0 }}{{ $hero = . }}{{ end }}{{ end -}}
+  {{- with $hero -}}
     <img class="post-hero" src="{{ .RelPermalink }}" alt="{{ $.Title }}">
   {{- end -}}
   {{ .Content }}
-  {{- if gt (len $images) 1 -}}
+  {{- $rest := slice -}}
+  {{- range $images -}}
+    {{- if ne .RelPermalink $hero.RelPermalink -}}{{ $rest = $rest | append . }}{{- end -}}
+  {{- end -}}
+  {{- if gt (len $rest) 0 -}}
     <div class="post-gallery">
-    {{- range after 1 $images -}}
+    {{- range $rest -}}
       <img src="{{ .RelPermalink }}" alt="{{ $.Title }}">
     {{- end -}}
     </div>
