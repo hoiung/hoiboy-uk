@@ -184,6 +184,11 @@ NEGATION_PATTERN: re.Pattern[str] = re.compile(
     re.IGNORECASE,
 )
 
+# Bold-first bullet thresholds. CV documents legitimately use bold-first
+# bullets in Core Competencies sections; non-CV docs should not.
+BOLD_BULLET_THRESHOLD_CV: int = 20
+BOLD_BULLET_THRESHOLD_DEFAULT: int = 3
+
 # Frontmatter date: stdlib regex, NOT PyYAML.
 FRONTMATTER_DATE_PATTERN: re.Pattern[str] = re.compile(
     r"^date:\s*(\d{4}-\d{2}-\d{2})\s*$",
@@ -212,5 +217,6 @@ __all__ = [
     "KEEP_LIST", "BANNED_WORDS", "BANNED_PHRASES",
     "BANNED_WORDS_PATTERN", "BANNED_PHRASES_PATTERN",
     "BOLD_BULLET_PATTERN", "NEGATION_PATTERN", "FRONTMATTER_DATE_PATTERN",
+    "BOLD_BULLET_THRESHOLD_CV", "BOLD_BULLET_THRESHOLD_DEFAULT",
     "Finding",
 ]

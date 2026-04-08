@@ -358,11 +358,11 @@ def main() -> int:
     files_to_scan: list[Path] = []
     if raw_args:
         for arg in raw_args:
-            p = Path(arg)
+            p = Path(arg).resolve()
             if p.is_dir():
                 files_to_scan.extend(sorted(p.rglob("*.md")))
             elif p.exists() and p.suffix == ".md":
-                files_to_scan.append(p.resolve())
+                files_to_scan.append(p)
     else:
         for rel in DEFAULT_PATHS:
             p = repo_root / rel

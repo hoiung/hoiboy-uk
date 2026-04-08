@@ -87,7 +87,7 @@ jobs:
         run: pip install --quiet pytest
 
       - name: Voice guard tells (marker-driven, new posts only)
-        run: python3 scripts/check_voice_tells.py --check-only-new
+        run: python3 scripts/check_voice_tells.py --check-only-new content/ docs/
 
       - name: Voice guard unit tests
         run: python3 -m pytest scripts/test_voice_guard.py -q
