@@ -1,0 +1,54 @@
+Hunt log: ZoukTime! 5th Brazilian Dance Congress
+========================================
+
+Source voice-corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/19_zouktime-brazilian-dance-congress.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/ZoukTime! 5th Brazilian Dance Congress/
+
+SQL index:
+  /tmp/aam-sql-index.json
+
+Image files found in _files/ (image-type only):
+  - 2014-06-07 13.22.26.jpg (theme chrome, dropped)
+  - 2e1ax_vintage_entry_zouktime-2014-cover.jpg
+  - 46126163_10161297875420650_524552400334225408_n.jpg (theme chrome, dropped)
+  - 945_hoi_ung.png (theme chrome, dropped)
+  - AAM_Logo.png (theme chrome, dropped)
+  - a1sx2_Thumbnail1_10537200_10205060700102805_4580730832328846336_o.jpg
+  - a1sx2_Thumbnail1_10556918_10205047815340694_515699943708083900_o.jpg
+  - a1sx2_Thumbnail1_10629324_10205064596120203_513765743807037973_o.jpg
+  - a1sx2_Thumbnail1_20140914_191548.jpg
+  - b2ap3_thumbnail_2014-09-12-00.19.00.jpg
+
+Images REFERENCED by HTML <img> tags:
+  - 2014-06-07 13.22.26.jpg (theme chrome, dropped)
+  - 2e1ax_vintage_entry_zouktime-2014-cover.jpg
+  - 945_hoi_ung.png (theme chrome, dropped)
+  - AAM_Logo.png (theme chrome, dropped)
+  - a1sx2_Thumbnail1_10537200_10205060700102805_4580730832328846336_o.jpg
+  - a1sx2_Thumbnail1_10556918_10205047815340694_515699943708083900_o.jpg
+  - a1sx2_Thumbnail1_10629324_10205064596120203_513765743807037973_o.jpg
+  - a1sx2_Thumbnail1_20140914_191548.jpg
+  - b2ap3_thumbnail_2014-09-12-00.19.00.jpg
+
+Images COPIED to bundle (lowercased filenames):
+  - 2e1ax_vintage_entry_zouktime-2014-cover.jpg
+  - a1sx2_thumbnail1_10537200_10205060700102805_4580730832328846336_o.jpg
+  - a1sx2_thumbnail1_10556918_10205047815340694_515699943708083900_o.jpg
+  - a1sx2_thumbnail1_10629324_10205064596120203_513765743807037973_o.jpg
+  - a1sx2_thumbnail1_20140914_191548.jpg
+  - b2ap3_thumbnail_2014-09-12-00.19.00.jpg
+
+Thumbnail dedup check:
+  Only thumbnail variants present in backup. Kept as-is.
+
+Date source:
+  SQL index date_published used. Final date = 2014-09-30
+
+Concerns:
+  Voice-corpus body is verbatim. No edits, no injected image refs.
+  Original full-size images live only on the dead adventureand.me server.
+
+  NOTE: Pages 2-5 of the original 5-page post were lost; only the first 939 words remain.
