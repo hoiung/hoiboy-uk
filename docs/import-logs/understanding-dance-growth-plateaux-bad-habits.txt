@@ -1,0 +1,41 @@
+Import log: Understanding Dance Growth, Plateaux and Bad Habits
+Slug: understanding-dance-growth-plateaux-bad-habits
+
+Source body (voice-corpus):
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/32_understanding-dance-growth-plateaux-bad-habits.md
+
+Date source (Option B: gdoc mtime):
+  gdoc mtime: Understanding Dance Growth, Plateaux and Bad Habits/Understanding Dance Growth, Plateaux and Bad Habits.gdoc = 2017-09-07 02:49:49
+  Final frontmatter date = 2017-09-07
+
+Image folder matched:
+  /mnt/c/Users/hoi_u/My Drive/Domi & Hoi/ZoukBase/BLOGS/_COMPLETE/Understanding Dance Growth, Plateaux and Bad Habits
+
+Images copied into bundle:
+  20017681_152200642019077_5517151479392292268_o.jpg -> 20017681_152200642019077_5517151479392292268_o.jpg
+  Graph 1 - Dance growth is not linear.png -> graph-1-dance-growth-is-not-linear.png
+  Graph 1 - Dance growth is not linear.svg -> graph-1-dance-growth-is-not-linear.svg
+  Graph 2 - What are dance plateaux.png -> graph-2-what-are-dance-plateaux.png
+  Graph 2 - What are dance plateaux.svg -> graph-2-what-are-dance-plateaux.svg
+  Graph 3 - The forever dance plateau.png -> graph-3-the-forever-dance-plateau.png
+  Graph 3 - The forever dance plateau.svg -> graph-3-the-forever-dance-plateau.svg
+  Graph 4 - Picking up bad habits in dance.png -> graph-4-picking-up-bad-habits-in-dance.png
+  Graph 4 - Picking up bad habits in dance.svg -> graph-4-picking-up-bad-habits-in-dance.svg
+  Graph 5 - Becoming worse than when they started out.png -> graph-5-becoming-worse-than-when-they-started-out.png
+  Graph 5 - Becoming worse than when they started out.svg -> graph-5-becoming-worse-than-when-they-started-out.svg
+  Graph 6 - Building a solid dance foundation.png -> graph-6-building-a-solid-dance-foundation.png
+  Graph 6 - Building a solid dance foundation.svg -> graph-6-building-a-solid-dance-foundation.svg
+  Graph 7 - Congratulations, you’ve earned the terrible badge.png -> graph-7-congratulations-you-ve-earned-the-terrible-badge.png
+  Graph 7 - Congratulations, you’ve earned the terrible badge.svg -> graph-7-congratulations-you-ve-earned-the-terrible-badge.svg
+  Understanding Dance Growth, Plateaux and Bad Habits - Part 1.png -> understanding-dance-growth-plateaux-and-bad-habits-part-1.png
+  Understanding Dance Growth, Plateaux and Bad Habits - Part 2.png -> understanding-dance-growth-plateaux-and-bad-habits-part-2.png
+  Understanding Dance Growth, Plateaux and Bad Habits - Part 3 Final.png -> understanding-dance-growth-plateaux-and-bad-habits-part-3-final.png
+  Understanding Dance Growth, Plateaux and Bad Habits.svg -> understanding-dance-growth-plateaux-and-bad-habits.svg
+  graph_template.svg -> graph_template.svg
+  hahaha.png -> hahaha.png
+
+Category: dance
+Tags: zouk, learning, growth, plateaux, habits
+
+Concerns:
+  - Voice-sacred body copied verbatim from voice-corpus (frontmatter stripped).
