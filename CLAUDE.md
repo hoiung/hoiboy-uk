@@ -224,7 +224,10 @@ cp "C:/temp/file.ext" "path/to/file.ext"
 
 Personal blog at **hoiboy.uk**, owned by Senh Hoi Ung (Hoi). Republishes ~22 years of writing from various legacy platforms plus new posts. Fully managed by Claude Code as a deliberate portfolio piece for AI Agent Orchestrator job applications — the commit history is itself evidence.
 
-**Voice rule**: posts are Hoi's voice. NEVER edit the prose. Cleanup is restricted to formatting, encoding fixes, broken markdown, dead links, image rehosting. The words stay untouched. See `../dotfiles/cv-linkedin/VOICE_PROFILE.md` for the voice profile if writing anything new in his voice.
+**Voice rule (cutoff: 2026-04-07)**: posts split into two universes by date.
+
+- **Date < 2026-04-07** = legacy corpus. **Voice-sacred. NEVER edit the prose.** These ARE the voice persona research. They are evidence of pre-AI Hoi's voice. Cleanup is restricted to formatting, encoding fixes, broken markdown, dead links, image rehosting. The words stay untouched.
+- **Date >= 2026-04-07** = new posts. Voice rules apply. RAG from `docs/research/11_VOICE_PROFILE.md` (in-repo distilled rules) AND the canonical `../dotfiles/cv-linkedin/VOICE_PROFILE.md` (full ~80K corpus analysis) BEFORE drafting. Run `python3 ../dotfiles/SST3/scripts/check-ai-writing-tells.py content/posts/<slug>/index.md` before commit. The CI em-dash/lychee/markdownlint guards skip `content/posts/` so the AI-tells script is your local gate, not CI.
 
 ## Technology Stack
 
@@ -300,7 +303,7 @@ pre-commit install
 - **pre-commit**: file hygiene + markdownlint + frontmatter validator + config traceability
 - **GitHub Actions ci.yml**: Hugo build, markdownlint-cli2, lychee, em-dash grep guard, frontmatter validator, config traceability
 - **GitHub Actions deploy.yml**: POSTs Cloudflare deploy hook ONLY on green CI (auto-build disabled in Cloudflare to prevent racing)
-- **No AI tells in NEW pages** written in Hoi's voice (see VOICE_PROFILE.md). Republished legacy posts are exempt (pre-AI corpus).
+- **No AI tells in NEW pages** (date >= 2026-04-07) written in Hoi's voice. RAG from `docs/research/11_VOICE_PROFILE.md` first, then the canonical `../dotfiles/cv-linkedin/VOICE_PROFILE.md`. Republished legacy posts (date < 2026-04-07) are exempt (pre-AI corpus = voice research itself, never touched).
 
 ### Adding a Post
 
@@ -308,7 +311,7 @@ See `docs/AUTHORING.md` for the full contract: frontmatter rules, image placemen
 
 1. `content/posts/<slug>/index.md` with frontmatter: `title`, `date`, `categories: [<one of food, adventure, dance, tech>]`, `tags: [...]`
 2. Images in same folder as `index.md`, referenced by relative path with mandatory alt text
-3. For any new prose written in Hoi's voice: RAG from `../dotfiles/cv-linkedin/VOICE_PROFILE.md` BEFORE drafting (no generic outputs, ever)
+3. For any new prose (date >= 2026-04-07) written in Hoi's voice: RAG from `docs/research/11_VOICE_PROFILE.md` (in-repo) AND `../dotfiles/cv-linkedin/VOICE_PROFILE.md` (canonical) BEFORE drafting (no generic outputs, ever)
 4. Commit, push. CI runs, then deploy hook fires, then live in ~90 seconds
 
 ### Importing Legacy Posts
@@ -355,7 +358,7 @@ wrangler pages deploy public --project-name=hoiboy-uk --branch=main
 ## Project-Specific Notes
 
 - **Drafts**: use `draft: true` in frontmatter. Hugo skips them in production builds. Public repo + draft frontmatter = safe.
-- **Legacy import is voice-sacred**: never rewrite Hoi's prose during import. Only fix structure (encoding, dead links, image rehost).
+- **Legacy import is voice-sacred (date < 2026-04-07)**: never rewrite Hoi's prose during import. Only fix structure (encoding, dead links, image rehost). Legacy posts ARE the voice research; touching them corrupts the persona evidence.
 - **Theme**: minimal custom theme (in-tree, ~15 files in `layouts/` + `assets/css/main.css`). Greyscale + warm terracotta accent + Inter. See `docs/research/01_STACK_AND_DESIGN.md` and `07_DESIGN_TOKENS.md`.
 - **`check-ai-writing-tells.py`**: AVAILABLE in `../dotfiles/SST3/scripts/` but NEVER auto-wired. Run manually before publishing any new Hoi-voice content. Republished legacy posts are exempt (pre-AI corpus, false positive risk).
 - **Em dashes**: ZERO in tracked files (CI hard fail). CLAUDE.md is exempt as SST3 internal doc per memory rule.
@@ -365,7 +368,8 @@ wrangler pages deploy public --project-name=hoiboy-uk --branch=main
 - README: `README.md`
 - Research trail: `docs/research/`
 - SST3 standards: `../dotfiles/SST3/standards/STANDARDS.md`
-- Voice profile (for any new prose in Hoi's voice): `../dotfiles/cv-linkedin/VOICE_PROFILE.md`
+- Voice profile (in-repo, distilled): `docs/research/11_VOICE_PROFILE.md`
+- Voice profile (canonical, full ~80K corpus analysis): `../dotfiles/cv-linkedin/VOICE_PROFILE.md`
 
 ---
 
