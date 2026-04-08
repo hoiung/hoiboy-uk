@@ -50,13 +50,13 @@ In **Bristol**, there are several classes running on Wednesday; Alessandro teach
 
 For the full venue address and class time tables please click the link below.
 
-**[A Beginners Guide to Zouk Classes in UK](http://adventureand.me/entry/united-kingdom/a-beginners-guide-to-zouk-classes-in-uk)**
+**[A Beginners Guide to Zouk Classes in UK](/posts/beginners-guide-to-zouk-classes-uk/)**
 
 There are still a handful of Birmingham Zoukers who practice and dance Zouk weekly. We have no official classes or teachers. You may have spotted them recently filming a dance for the International Flash Mob 2014! BIG UPS to [Zouk Birmingham](https://www.facebook.com/groups/309008739219237/?fref=ts)!
 
 If Zouk is a dance you would like to learn, I've written a few tips that may also help you.
 
-**[7 dance tips from Zero to Hero](http://adventureand.me/entry/tips-thoughts/7-dance-tips-from-zero-to-hero)**
+**[7 dance tips from Zero to Hero](/posts/7-dance-tips-zero-to-hero/)**
 
 **Here are some other blogs dedicated to Zouk that are worth reading.**
 

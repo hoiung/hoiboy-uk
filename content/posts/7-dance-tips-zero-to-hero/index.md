@@ -31,8 +31,8 @@ Here are 7 methods I've use to build up my Zouk confidence. I'm sure it can be a
 
 Did my 7 dance tips works for you? Let me know how it goes and which one you find works best for you. Happy learning and see you on the dance floor :)
 
-You can find Zouk classes in the UK by clicking on the link below: [A Beginners Guide to Zouk Classes in UK](http://adventureand.me/?view=entry&id=33)
+You can find Zouk classes in the UK by clicking on the link below: [A Beginners Guide to Zouk Classes in UK](/posts/beginners-guide-to-zouk-classes-uk/)
 
-Don't know [What is Zouk?](http://adventureand.me/entry/tips-thoughts/what-is-zouk) You have to read this article then!
+Don't know [What is Zouk?](/posts/what-is-zouk-aam/) You have to read this article then!
 
 *** If you've enjoyed this blog then you should subscribe to our email list! By doing so, you will be first to hear our stories, tips, advice and more. No spam! Just don't forget to confirm your subscription otherwise you won't be subscribed. ***

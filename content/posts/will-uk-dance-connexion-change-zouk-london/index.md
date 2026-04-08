@@ -10,7 +10,7 @@ Many of you may know that I'm not the happiest chap when it comes to dancing Zou
 
 As an experienced international Zouk dancer, I have an extremely one sided feeling about it, but at the same time, I can see the huge potential in London.
 
-If you've not read my blog post that was published last year and wish to know my thoughts then you can read it here '[How To Avoid Becoming A Terrible Zouk Dancer In London](http://adventureand.me/entry/dance/how-to-avoid-becoming-a-terrible-zouk-dancer-in-london)'. -- Be warned, you may not like what you read and this is actually an edited "censored" version compared my original blog post. My feelings haven't changed much since the time of writing, but I'm starting to see some hope… and here are some of the reasons why...
+If you've not read my blog post that was published last year and wish to know my thoughts then you can read it here '[How To Avoid Becoming A Terrible Zouk Dancer In London](/posts/how-to-avoid-becoming-a-terrible-dancer-in-london/)'. -- Be warned, you may not like what you read and this is actually an edited "censored" version compared my original blog post. My feelings haven't changed much since the time of writing, but I'm starting to see some hope… and here are some of the reasons why...
 
 The London Zouk scene has started to evolve and positive changes are happening:
 

@@ -10,10 +10,10 @@ Brazilian Zouk dance camps and boot camps is a **new era** and have become an es
 
 If you've not read my older blog posts comparing the different types of learning environments, check it out!
 
-1. [A Guide to Different Types of Zouk Classes – Part 1](https://zoukbase.com/dance-blogs/a-guide-to-different-types-of-zouk-classes-part-1/)
-2. [A Guide to Different Types of Zouk Classes – Part 2](https://zoukbase.com/dance-blogs/a-guide-to-different-types-of-zouk-classes-part-2/)
-3. [A Guide to Different Types of Zouk Classes – Part 3](https://zoukbase.com/dance-blogs/a-guide-to-different-types-of-zouk-classes-part-3/)
-4. [A Guide to Different Types of Zouk Classes – Part 4](https://zoukbase.com/dance-blogs/a-guide-to-different-types-of-zouk-classes-part-4/)
+1. [A Guide to Different Types of Zouk Classes – Part 1](/posts/guide-types-zouk-classes/#a-guide-to-different-types-of-zouk-classes-part-1)
+2. [A Guide to Different Types of Zouk Classes – Part 2](/posts/guide-types-zouk-classes/#a-guide-to-different-types-of-zouk-classes-part-2)
+3. [A Guide to Different Types of Zouk Classes – Part 3](/posts/guide-types-zouk-classes/#a-guide-to-different-types-of-zouk-classes-part-3)
+4. [A Guide to Different Types of Zouk Classes – Part 4](/posts/guide-types-zouk-classes/#a-guide-to-different-types-of-zouk-classes-part-4)
 
 2019 has been one amazing year when it comes to Brazilian Zouk dance camps and boot camps which are week-long structured programmes to deep dive and help accelerate your learning & development!
 

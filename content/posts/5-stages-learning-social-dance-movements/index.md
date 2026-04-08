@@ -70,7 +70,7 @@ Once we've copied the moves or have an idea of what it looks like, we start to t
 
 You can certainly improve this area by taking courses or programmes that focus on particular techniques or private classes that have deeper explanations. If you are the type who gets bored listening, then you won't progress in this area at all. You need to listen and listen carefully because it's all in the detail.
 
-Reading will help improve your knowledge and understanding. There are a number of blog writers who I really respect their views and vast experience. You can find links to their blog sites on my [**cheat-sheet**](https://zoukbase.com/guides-tips/zouk-cheat-sheet/#zouk-websites-and-blogsites). Don't forget to also browse my other blog posts on this website\!
+Reading will help improve your knowledge and understanding. There are a number of blog writers who I really respect their views and vast experience. You can find links to their blog sites on my **cheat-sheet** *(original URL no longer available)*. Don't forget to also browse my other blog posts on this website\!
 
 Some dancers may talk the talk, but not walk the walk. Having an abundance of knowledge and understanding techniques are useful, but useless at the same time if you don't teach your body how to apply them in real-time. The worst are the ones spouting theory trying to teach others during socials when they are incapable of executing it themselves. Keep reading...
 
