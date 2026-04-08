@@ -1,5 +1,5 @@
 ---
-title: "How To Avoid Becoming A Terrible Zouk Dancer In London"
+title: "How To Avoid Becoming A Terrible Zouk Dancer In London (Uncensored)"
 date: 2016-10-12
 categories: [dance]
 tags: [zouk, london, dance-community, methodology, critique, learning]
