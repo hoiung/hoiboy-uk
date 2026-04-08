@@ -1,0 +1,26 @@
+Import log: Poland's Big Bang Zouk Theory
+Slug: poland-big-bang-zouk-theory
+
+Source body (voice-corpus):
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/28_poland-big-bang-zouk-theory.md
+
+Date source (Option B: gdoc mtime):
+  gdoc mtime: Poland's Big Bang Zouk Theory/Poland's Big Bang Zouk Theory.gdoc = 2017-11-12 12:18:05
+  Final frontmatter date = 2017-11-12
+
+Image folder matched:
+  /mnt/c/Users/hoi_u/My Drive/Domi & Hoi/ZoukBase/BLOGS/_COMPLETE/Poland's Big Bang Zouk Theory
+
+Images copied into bundle:
+  22538673_1908922082467716_3941601886714719622_o - Copy.jpg -> 22538673_1908922082467716_3941601886714719622_o-copy.jpg
+  22538673_1908922082467716_3941601886714719622_o.jpg -> 22538673_1908922082467716_3941601886714719622_o.jpg
+  Polands Big Bang Zouk Theory.jpg -> polands-big-bang-zouk-theory.jpg
+  Polands Big Bang Zouk Theory.png -> polands-big-bang-zouk-theory.png
+  Warsaw_teacher_collaboration_schedule.jpg -> warsaw_teacher_collaboration_schedule.jpg
+  big-bang-1709219_1920.jpg -> big-bang-1709219_1920.jpg
+
+Category: dance
+Tags: zouk, poland, community, growth, scene
+
+Concerns:
+  - Voice-sacred body copied verbatim from voice-corpus (frontmatter stripped).
