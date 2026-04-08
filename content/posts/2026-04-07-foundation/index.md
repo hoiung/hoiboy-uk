@@ -1,7 +1,7 @@
 ---
 title: "Foundation: a blog, finally"
 date: 2026-04-07
-categories: [tech]
+categories: [tech-ai]
 tags: [foundation, hugo, cloudflare-pages, claude-code]
 slug: foundation
 ---
