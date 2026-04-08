@@ -1,0 +1,35 @@
+Import log: Zouk Dance Camps and Boot Camps 2020
+Slug: zouk-dance-camps-boot-camps-2020
+
+Source body (voice-corpus):
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/36_zouk-dance-camps-boot-camps-2020.md
+
+Date source (Option B: gdoc mtime):
+  gdoc mtime: Zouk Dance Camps & Boot Camps 2020.gdoc = 2019-11-28
+  Final frontmatter date = 2019-11-28
+
+Image folder matched:
+  /mnt/c/Users/hoi_u/My Drive/Domi & Hoi/ZoukBase/BLOGS/_COMPLETE/Dance Camp and Boot Camp 2020
+
+Images copied into bundle:
+  Brno Summer Zouk Camp with Ludek, Pavla Monika Ludek.jpg -> brno-summer-zouk-camp-with-ludek-pavla-monika-ludek.jpg
+  Bruno Raiza Intensive Week by Modern Zouk.jpg -> bruno-raiza-intensive-week-by-modern-zouk.jpg
+  Bruno and Raiza Improvement Course Level 1 Calgary Edition.jpg -> bruno-and-raiza-improvement-course-level-1-calgary-edition.jpg
+  MAC Modules Summary 2020.jpg -> mac-modules-summary-2020.jpg
+  Original Bruno and Raiza Level 1 Immersion Course.jpg -> original-bruno-and-raiza-level-1-immersion-course.jpg
+  Original Bruno and Raiza Level 2 Immersion Course.jpg -> original-bruno-and-raiza-level-2-immersion-course.jpg
+  ZOUK Retreat Ukraine 2nd edition Safe Intimacy and Touch.jpg -> zouk-retreat-ukraine-2nd-edition-safe-intimacy-and-touch.jpg
+  Zouk Dance Camps Boot Camps 2020.png -> zouk-dance-camps-boot-camps-2020.png
+  Zouk Immersion Program by Freddy & Andressa.jpg -> zouk-immersion-program-by-freddy-andressa.jpg
+  Zouk Needs You Bootcamp in Slovakia 2020 Val and Vanessa.jpg -> zouk-needs-you-bootcamp-in-slovakia-2020-val-and-vanessa.jpg
+  Zouk Needs You in Rio 2020.jpg -> zouk-needs-you-in-rio-2020.jpg
+  Zouk Retreat Body Communication with Anderson and Brenda In the Dark.jpg -> zouk-retreat-body-communication-with-anderson-and-brenda-in-the-dark.jpg
+  ZoukDanceCamp Series Retrace Your Dance Journey with Anderson & Brenda Chapter 1 Grounding.jpg -> zoukdancecamp-series-retrace-your-dance-journey-with-anderson-brenda-chapter-1-grounding.jpg
+  ZoukDanceCamp Series Retrace Your Dance Journey with Anderson & Brenda Chapter 2 Lead & Follow.jpg -> zoukdancecamp-series-retrace-your-dance-journey-with-anderson-brenda-chapter-2-lead-follow.jpg
+  balizoukretreat.jpg -> balizoukretreat.jpg
+
+Category: dance
+Tags: zouk, camps, congresses, learning, travel
+
+Concerns:
+  - Voice-sacred body copied verbatim from voice-corpus (frontmatter stripped).
