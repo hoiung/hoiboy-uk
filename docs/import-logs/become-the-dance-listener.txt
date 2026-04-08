@@ -1,0 +1,43 @@
+Hunt log: Become The Dance Listener By Using The 3 Dance Approach
+========================================
+
+Source voice-corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/20_dance-listener-3-dance-approach.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/become the dance listener by using the 3 dance approach/
+
+SQL index:
+  /tmp/aam-sql-index.json
+
+Image files found in _files/ (image-type only):
+  - 13055445_1058855074175646_2188491624266427248_n.jpg
+  - 2014-06-01 05.39.57.jpg (theme chrome, dropped)
+  - 230356_10150197720671509_7887969_n.jpg
+  - 2e1ax_vintage_entry_Become_The_Dance_Listener_By_Using_The_3_Dance_Approach.png
+  - 46126163_10161297875420650_524552400334225408_n.jpg (theme chrome, dropped)
+  - 55823766_10161736685500525_8066845414009077760_n.jpg
+  - 945_hoi_ung.png (theme chrome, dropped)
+  - AAM_Logo.png (theme chrome, dropped)
+  - b2ap3_thumbnail_WS_Flyer_Final.jpg
+
+Images REFERENCED by HTML <img> tags:
+  - 2014-06-01 05.39.57.jpg (theme chrome, dropped)
+  - 2e1ax_vintage_entry_Become_The_Dance_Listener_By_Using_The_3_Dance_Approach.png
+  - 945_hoi_ung.png (theme chrome, dropped)
+  - AAM_Logo.png (theme chrome, dropped)
+  - b2ap3_thumbnail_WS_Flyer_Final.jpg
+
+Images COPIED to bundle (lowercased filenames):
+  - 2e1ax_vintage_entry_become_the_dance_listener_by_using_the_3_dance_approach.png
+  - b2ap3_thumbnail_ws_flyer_final.jpg
+
+Thumbnail dedup check:
+  Only thumbnail variants present in backup. Kept as-is.
+
+Date source:
+  SQL index date_published used. Final date = 2017-05-29
+
+Concerns:
+  Voice-corpus body is verbatim. No edits, no injected image refs.
+  Original full-size images live only on the dead adventureand.me server.
