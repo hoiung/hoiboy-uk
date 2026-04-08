@@ -1,0 +1,22 @@
+Import log: What To Practice in Zouk Solo
+Slug: what-to-practice-zouk-solo
+
+Source body (voice-corpus):
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/33_what-to-practice-zouk-solo.md
+
+Date source (Option B: gdoc mtime):
+  gdoc mtime: The Key To Effective Dance Practice/What To Practice in Zouk Solo.gdoc = 2017-09-21 00:25:06
+  Final frontmatter date = 2017-09-21
+
+Image folder matched:
+  /mnt/c/Users/hoi_u/My Drive/Domi & Hoi/ZoukBase/BLOGS/_COMPLETE/The Key To Effective Dance Practice/cover image
+  (shared folder, filtered by keyword: 'what to practice')
+
+Images copied into bundle:
+  What To Practice in Zouk Solo v2.png -> what-to-practice-in-zouk-solo-v2.png
+
+Category: dance
+Tags: zouk, practice, solo, technique, methodology
+
+Concerns:
+  - Voice-sacred body copied verbatim from voice-corpus (frontmatter stripped).
