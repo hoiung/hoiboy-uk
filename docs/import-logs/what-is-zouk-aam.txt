@@ -1,0 +1,37 @@
+Hunt log: What is Zouk?
+========================================
+
+Source voice-corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/17_what-is-zouk.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/What is Zouk/
+
+SQL index:
+  /tmp/aam-sql-index.json
+
+Image files found in _files/ (image-type only):
+  - 2014-06-05 16.24.31.jpg (theme chrome, dropped)
+  - 2e1ax_vintage_entry_whatiszoukmain.jpg
+  - 46126163_10161297875420650_524552400334225408_n.jpg (theme chrome, dropped)
+  - 945_hoi_ung.png (theme chrome, dropped)
+  - AAM_Logo.png (theme chrome, dropped)
+
+Images REFERENCED by HTML <img> tags:
+  - 2014-06-05 16.24.31.jpg (theme chrome, dropped)
+  - 2e1ax_vintage_entry_whatiszoukmain.jpg
+  - 945_hoi_ung.png (theme chrome, dropped)
+  - AAM_Logo.png (theme chrome, dropped)
+
+Images COPIED to bundle (lowercased filenames):
+  - 2e1ax_vintage_entry_whatiszoukmain.jpg
+
+Thumbnail dedup check:
+  Only thumbnail variants present in backup. Kept as-is.
+
+Date source:
+  SQL index date_published used. Final date = 2014-10-03
+
+Concerns:
+  Voice-corpus body is verbatim. No edits, no injected image refs.
+  Original full-size images live only on the dead adventureand.me server.
