@@ -1,0 +1,15 @@
+{{- /* Pick the hero image for a post bundle.
+       Priority order:
+         1. hero.* (explicit author override)
+         2. 2e1ax_vintage_entry_* (AdventureAnd.Me Joomla "main entry" prefix)
+         3. *main* (general convention)
+         4. first image resource by type (ByType "image")
+       Returns nil if the bundle has no images. Callers must guard with `with`. */ -}}
+{{- $hero := .Resources.GetMatch "hero.*" -}}
+{{- if not $hero }}{{ $hero = .Resources.GetMatch "2e1ax_vintage_entry_*" }}{{ end -}}
+{{- if not $hero }}{{ $hero = .Resources.GetMatch "*main*" }}{{ end -}}
+{{- if not $hero -}}
+  {{- $images := .Resources.ByType "image" -}}
+  {{- with index $images 0 }}{{ $hero = . }}{{ end -}}
+{{- end -}}
+{{- return $hero -}}

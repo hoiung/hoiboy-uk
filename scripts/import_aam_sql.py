@@ -2,7 +2,7 @@
 """Parse the AdventureAnd.Me mysqldump SQL and build a JSON index of
 `jos_easyblog_post` rows keyed by lowercase title.
 
-Pure-Python: only `sqlparse` + stdlib. No DB required.
+Pure-Python: stdlib only. No DB required.
 
 Output JSON record shape (per title key):
     {
@@ -24,8 +24,6 @@ import os
 import re
 import sys
 from typing import Iterator, List, Optional
-
-import sqlparse  # noqa: F401  (imported to satisfy requirement; used as sanity check)
 
 DEFAULT_INPUT = (
     "/mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/adventureandme/"
