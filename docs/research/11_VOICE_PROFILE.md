@@ -36,11 +36,11 @@ Going TOO smooth, TOO polite, TOO AI. Hoi's published voice is ~95% identical to
 **Verbatim examples (use these as templates):**
 
 > "I had confidence issues, I was scared of doing things alone, I was afraid of what others would think of me as a weirdo here with no friends. I wasn't good with meeting strangers, I wouldn't even know how to start a conversation or what to do with awkward silences. At the age of 21, I would still get my best friend to help call up ordering takeaways because I was scared to talk to strangers!" (#01)
-
+>
 > "Was I shaking? Yes. Was I scared? Not until I looked at down. Am I crazy? ...Maybe." (#13)
-
+>
 > "Gone. Kaput!" (#01)
-
+>
 > "Enough was enough. The decision to take ownership began with built-up frustration and the final thoughts of 'fuck it, I'm doing it'." (#01)
 
 ## Sentence opening distribution (sampled across 5 blogs)
