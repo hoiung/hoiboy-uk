@@ -240,7 +240,17 @@ Personal blog at **hoiboy.uk**, owned by Senh Hoi Ung (Hoi). Republishes ~22 yea
 **Voice rule (cutoff: 2026-04-07)**: posts split into two universes by date.
 
 - **Date < 2026-04-07** = legacy corpus. **Voice-sacred. NEVER edit the prose.** These ARE the voice persona research. They are evidence of pre-AI Hoi's voice. Cleanup is restricted to formatting, encoding fixes, broken markdown, dead links, image rehosting. The words stay untouched.
-- **Date >= 2026-04-07** = new posts. Voice rules apply. RAG from `docs/research/11_VOICE_PROFILE.md` (in-repo distilled rules) AND the canonical `../dotfiles/cv-linkedin/VOICE_PROFILE.md` (full ~80K corpus analysis) BEFORE drafting. Run `python3 ../dotfiles/SST3/scripts/check-ai-writing-tells.py content/posts/<slug>/index.md` before commit. The CI em-dash/lychee/markdownlint guards skip `content/posts/` so the AI-tells script is your local gate, not CI.
+- **Date >= 2026-04-07** = new posts. Voice rules apply.
+
+**Conditional reading (load ONLY when writing/editing a new post in Hoi's voice; do NOT read at session start):**
+
+1. `docs/research/11_VOICE_PROFILE.md` (in-repo distilled voice rules)
+2. `docs/research/12_AI_WRITING_TELLS.md` (in-repo research, why the rules exist)
+3. `../dotfiles/cv-linkedin/VOICE_PROFILE.md` (canonical ~80K corpus analysis with verbatim sentence templates)
+
+Then, before commit: `python3 ../dotfiles/SST3/scripts/check-ai-writing-tells.py content/posts/<slug>/index.md`. The CI em-dash/lychee/markdownlint guards skip `content/posts/`, so the AI-tells script is your local gate, not CI. CI will not catch a bad new post.
+
+If you are NOT writing a new post (e.g. fixing CI, adding a layout, importing legacy, editing config), do NOT load these voice docs. Skip them and save the tokens.
 
 ## Technology Stack
 
