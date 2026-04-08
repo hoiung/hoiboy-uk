@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="693"
+   height="693"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="Graph 1 - A steady and healthy dance growth.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="-41.620669"
+     inkscape:cy="370.47961"
+     inkscape:document-units="px"
+     inkscape:current-layer="g3833"
+     showgrid="false"
+     inkscape:showpageshadow="false"
+     inkscape:window-width="2048"
+     inkscape:window-height="1089"
+     inkscape:window-x="1912"
+     inkscape:window-y="72"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-359.36217)">
+    <g
+       id="g3833">
+      <path
+         sodipodi:nodetypes="ccccc"
+         inkscape:connector-curvature="0"
+         id="rect3007"
+         d="m 57.054785,420.95297 0.0293,569.8184 578.861155,-0.019 -578.890475,0 z"
+         style="color:#000000;fill:none;stroke:#000000;stroke-width:4.9269352;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <flowRoot
+         transform="matrix(0,-1,1,0,-250.40009,908.82311)"
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial Bold"
+         id="flowRoot3010"
+         xml:space="preserve"><flowRegion
+           id="flowRegion3012"><rect
+             y="261.66486"
+             x="95.964493"
+             height="65.659912"
+             width="329.30972"
+             id="rect3014" /></flowRegion><flowPara
+           id="flowPara3016"
+           style="font-weight:normal;-inkscape-font-specification:Arial;font-style:normal">Progression</flowPara></flowRoot>      <path
+         inkscape:connector-curvature="0"
+         id="path3018"
+         d="m 35.355339,444.27064 21.71828,-23.73858 21.213204,23.23351"
+         style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path3018-1"
+         d="m 611.52356,969.11074 23.73863,21.71826 -23.23353,21.2132"
+         style="fill:none;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <flowRoot
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial Bold"
+         id="flowRoot3010-7"
+         xml:space="preserve"
+         transform="translate(206.41016,736.74708)"><flowRegion
+           id="flowRegion3012-4"><rect
+             y="261.66486"
+             x="95.964493"
+             height="65.659912"
+             width="329.30972"
+             id="rect3014-0" /></flowRegion><flowPara
+           id="flowPara3016-9"
+           style="font-size:40px;font-weight:normal;-inkscape-font-specification:Arial">Time</flowPara></flowRoot>      <flowRoot
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial Bold"
+         id="flowRoot3010-7-4"
+         xml:space="preserve"
+         transform="translate(-34.789063,105.7354)"><flowRegion
+           id="flowRegion3012-4-8"><rect
+             y="261.66486"
+             x="95.964493"
+             height="59.598999"
+             width="680.84283"
+             id="rect3014-0-8" /></flowRegion><flowPara
+           id="flowPara3016-9-2"
+           style="font-size:32px;font-style:oblique;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Arial;-inkscape-font-specification:Arial Bold Oblique;fill:#ff0000">Graph 1 - A steady and healthy dance growth.</flowPara></flowRoot>    </g>
+  </g>
+</svg>
