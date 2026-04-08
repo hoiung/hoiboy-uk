@@ -7,6 +7,8 @@ source_file: "voice-corpus/blogs/02_books-that-will-change-your-dating-life.md"
 source_era: "iD8u (Google Docs)"
 ---
 
+{{< draft-notice >}}
+
 If you have struggled with dating, you may have tried reading "the game"? It's about a guy called Neil Straus in the 2000s when he stumbled into a world of pick up artists. PUA got short.
 
 ![A New Earth - by Eckhart Tolle](0141039418.jpg)
@@ -17,7 +19,7 @@ If you have struggled with dating, you may have tried reading "the game"? It's a
 
 [How To Win Friends and Influence People - by Dale Carnegie](https://www.amazon.co.uk/dp/B07FY2WWZG)
 
-![Mindset - by Dr Carol S. Dweck](147213995X.jpg)
+![Mindset - by Dr Carol S. Dweck](hero.jpg)
 
 [Mindset - by Dr Carol S. Dweck](https://www.amazon.co.uk/dp/147213995X)
 
@@ -28,6 +30,10 @@ If you have struggled with dating, you may have tried reading "the game"? It's a
 ![Get Inside Her - The Female Perspective - by Marni Kinrys, The Ultimate Wing Girl](B00N10V8Y8.jpg)
 
 [Get Inside Her - The Female Perspective - by Marni Kinrys, The Ultimate Wing Girl](https://www.amazon.co.uk/dp/B00N10V8Y8)
+
+<!-- iamhoi -->
+> **The best dating book out of all the ones I've read.** Nothing beats advice from a woman to understand women! We men get it totally wrong, including many male-written dating gurus who are a load of bollocks and egocentric. Not all though, you do find some gems from male writers.
+<!-- iamhoiend -->
 
 ![Mind Control: Persuasion and Dark Psychology, Persuasion Techniques, Manipulation NLP, Dark psychology mind control - by Manfred Percy](B086MMKVXY.jpg)
 
