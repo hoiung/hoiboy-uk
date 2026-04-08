@@ -21,7 +21,7 @@
 | Processed images | 4 | hero/og processing |
 | Build time | ~130 ms | wall clock from build log |
 | Hugo version | 0.160.0 extended | unchanged |
-| Posts in `content/posts/` | 34 (33 imports + foundation) | `ls content/posts/ | wc -l` |
+| Posts in `content/posts/` | 34 (33 imports + foundation) | `ls content/posts/` count |
 | Hunt logs in `docs/import-logs/` | 33 | 1:1 with imported posts |
 | Posts per category | adv 5, dance 22, food 3, tech 2, relationship 2 | grep `categories:` |
 
