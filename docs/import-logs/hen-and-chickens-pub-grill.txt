@@ -1,0 +1,33 @@
+Hunt log: Hen & Chickens Pub Grill
+========================================
+
+Source voice-corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/12_hen-and-chickens-pub-grill.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/Hen & Chickens Pub Grill/
+
+SQL index match:
+  title='hen & chickens pub grill', date_published used => 2014-10-02
+
+Images referenced by HTML <img> tags (post-chrome-filter):
+  - 2014-06-03 13.11.22.jpg
+  - 2e1ax_vintage_entry_2014-09-25-17.56.29.jpg
+  - a1sx2_Thumbnail1_2014-09-25-17.06.46.jpg
+  - a1sx2_Thumbnail1_2014-09-25-17.22.21.jpg
+  - a1sx2_Thumbnail1_2014-09-25-17.22.35.jpg
+
+Dropped by thumbnail dedup (non-thumb variant present):
+
+Images COPIED to bundle (lowercased):
+  - 2014-06-03 13.11.22.jpg
+  - 2e1ax_vintage_entry_2014-09-25-17.56.29.jpg
+  - a1sx2_thumbnail1_2014-09-25-17.06.46.jpg
+  - a1sx2_thumbnail1_2014-09-25-17.22.21.jpg
+  - a1sx2_thumbnail1_2014-09-25-17.22.35.jpg
+
+Category: food
+
+Concerns:
+  1. Voice-corpus body verbatim, voice-sacred rule honoured.
+  2. Auto-hero template will render first image; no inline refs added.
