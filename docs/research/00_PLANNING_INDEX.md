@@ -30,6 +30,11 @@ This folder maps the journey from "I have 22 years of blogs" to a live, Claude-m
 | Design tokens | Greyscale base + ONE warm accent, humanist sans (Inter). Diverges from Diehl greyscale-only. | 2026-04-07 |
 | Voice rule | Hoi's prose is sacred. Never edited. Cleanup only. | 2026-04-07 |
 | Taxonomy | **Categories** (primary): food, adventure, dance, tech. **Tags** (secondary): freeform. | 2026-04-07 |
+| Relationship category | Added in Phase 1.0 for the 2 iD8u dating posts. | 2026-04-08 |
+| Phase 1 import outcome | 33 corpus posts imported via 7 parallel subagents (1 SQL helper, 5 era batches, 1 verification). 34 total posts live (5 adventure, 22 dance, 3 food, 2 tech, 2 relationship). | 2026-04-08 |
+| Voice-sacred CI scope | content/posts/ skipped from em-dash, lychee, and markdownlint guards. Other dirs still hard-fail. | 2026-04-08 |
+| Hero image priority | hero.* > 2e1ax_vintage_entry_* > *main* > first ByType "image". Shared partial layouts/_partials/hero-pick.html. | 2026-04-08 |
+| Date sources (locked) | AAM = SQL publish_up/created. ZoukBase = WP pubDate (1 post) + gdoc mtime (14 posts). iD8u = gdoc mtime. | 2026-04-08 |
 
 ## Open questions (waiting on user)
 

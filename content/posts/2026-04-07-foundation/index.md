@@ -2,7 +2,7 @@
 title: "Foundation: a blog, finally"
 date: 2026-04-07
 categories: [tech]
-tags: [foundation, hugo]
+tags: [foundation, hugo, cloudflare-pages, claude-code]
 slug: foundation
 ---
 
