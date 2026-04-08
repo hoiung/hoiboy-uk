@@ -1,0 +1,51 @@
+Hunt log: Scenic Lovers must Visit Grindelwald, Switzerland
+========================================
+
+Source voice-corpus file:
+  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/13_grindelwald-switzerland.md
+
+AAM manual backup folder:
+  /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/Scenic Lovers must Visit Grindelwald, Switzerland/
+
+SQL index match:
+  title='scenic lovers must visit grindelwald, switzerland', date_published used => 2014-10-29
+
+Images referenced by HTML <img> tags (post-chrome-filter):
+  - 2014-06-05 16.24.31.jpg
+  - 2e1ax_vintage_entry_switzerland-main-june-2014.jpg
+  - b2ap3_thumbnail_switzerland-transport.JPG
+  - b2ap3_thumbnail_switzerland-accommodation-chalet-gletscheral.JPG
+  - b2ap3_thumbnail_switzerland-the-place-to-be.JPG
+  - b2ap3_thumbnail_switzerland-food-restaurant.jpg
+  - b2ap3_thumbnail_switzerland-hikes-grindelwald-pass.jpg
+  - b2ap3_thumbnail_switzerland-hikes2.jpg
+  - b2ap3_thumbnail_switzerland-ice-kingdom.JPG
+  - b2ap3_thumbnail_switzerland-jungfraujoch.jpg
+  - b2ap3_thumbnail_switzerland-canyoning-chli-schliere.jpg
+  - b2ap3_thumbnail_switzerland-paragliding-first-mountain.jpg
+  - b2ap3_thumbnail_switzerland-cycling-lake-brienzersee.jpg
+  - b2ap3_thumbnail_switzerland-final-thoughts.JPG
+
+Dropped by thumbnail dedup (non-thumb variant present):
+
+Images COPIED to bundle (lowercased):
+  - 2014-06-05 16.24.31.jpg
+  - 2e1ax_vintage_entry_switzerland-main-june-2014.jpg
+  - b2ap3_thumbnail_switzerland-transport.jpg
+  - b2ap3_thumbnail_switzerland-accommodation-chalet-gletscheral.jpg
+  - b2ap3_thumbnail_switzerland-the-place-to-be.jpg
+  - b2ap3_thumbnail_switzerland-food-restaurant.jpg
+  - b2ap3_thumbnail_switzerland-hikes-grindelwald-pass.jpg
+  - b2ap3_thumbnail_switzerland-hikes2.jpg
+  - b2ap3_thumbnail_switzerland-ice-kingdom.jpg
+  - b2ap3_thumbnail_switzerland-jungfraujoch.jpg
+  - b2ap3_thumbnail_switzerland-canyoning-chli-schliere.jpg
+  - b2ap3_thumbnail_switzerland-paragliding-first-mountain.jpg
+  - b2ap3_thumbnail_switzerland-cycling-lake-brienzersee.jpg
+  - b2ap3_thumbnail_switzerland-final-thoughts.jpg
+
+Category: adventure
+
+Concerns:
+  1. Voice-corpus body verbatim, voice-sacred rule honoured.
+  2. Auto-hero template will render first image; no inline refs added.
