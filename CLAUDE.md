@@ -16,11 +16,20 @@
 
 **MANDATORY READING**:
 1. `../dotfiles/SST3/standards/STANDARDS.md` (ALWAYS)
-2. `{repository-name}/CLAUDE.md` (ALWAYS - replace with repo root)
+2. `../dotfiles/SST3/standards/ANTI-PATTERNS.md` (ALWAYS — 13 documented failure modes you must not repeat)
+3. `{repository-name}/CLAUDE.md` (ALWAYS - replace with repo root)
 
 **Reading Confirmation Checklist** (MUST display and complete):
 - [ ] Read STANDARDS.md
+- [ ] Read ANTI-PATTERNS.md
 - [ ] Read {repository-name}/CLAUDE.md
+
+**Critical behavioural rules** (full detail in STANDARDS.md + ANTI-PATTERNS.md, must internalise before any edit):
+- **AP #9 Single-Source Edits**: every edit to a multi-research artefact must integrate ALL relevant sources in the same pass. Never apply one in isolation.
+- **AP #10 Duplicate Rules**: grep first. Never create a new rule/helper/hook/component without checking existing coverage.
+- **AP #11 Stopping vs Applying**: when an audit surfaces a documented violation, RUN the full process (false-positive sweep then apply). Don't stop to ask permission for fixes the standards already mandate. Don't apply without the sweep.
+- **AP #12 No Observability**: every component needs structured logs, metrics, and audit trails AT WRITE TIME. Not after the first incident.
+- **AP #13 "Proceed" ≠ "Bypass Process"**: when the user says okay / proceed / yes / go ahead, that means **proceed using the full standard process** — not skip the sweeps, gates, Ralph reviews, or guardrails. User authorisation never bypasses workflow.
 
 ## SST3 Solo Workflow
 
@@ -214,6 +223,7 @@ cp "C:/temp/file.ext" "path/to/file.ext"
 <!-- Modifications require dotfiles repository SST3 issue approval -->
 <!-- Project-specific configuration begins BELOW this boundary -->
 <!-- ============================================================== -->
+
 
 
 
