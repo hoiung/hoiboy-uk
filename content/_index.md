@@ -7,3 +7,25 @@ Hi, I'm Hoi. I'm human, by the way. I just love working with tech, AI, trading, 
 <!-- iamhoiend -->
 
 ![Hoi grinning, holding a giant mug labelled "SIZE matters" with a ruler printed down the side](hoi-size-matters.jpg)
+
+<!-- iamhoi -->
+
+## Irrelevant facts about me
+
+**Age:** {{< age >}}\
+**Starsign:** Libra\
+**Height:** Not very tall\
+**Nicknames & Aliases:** O'Hoi, Seno_[PK], Small Eyes, No Eyes, Midge\
+**Top 3 Favourite Books:** Mindset by Dr Carol S. Dweck, Get Inside Her - The Female Perspective by Marni Kinrys, Richest Man in Babylon by George Samuel Clason\
+**Likes:** People with common sense\
+**Dislikes:** People with uncommon sense\
+**Superpowers:** Getting shit done\
+**Personal Quotation:** "No problems, only solutions..."\
+**Hobbies & Passions:** click on the category menu!\
+**Dance moves known:** 8 (recycled for 10+ years and counting)\
+**Memory:** Goldfish (for shit I don't care about), Elephant (only if it's interesting!)\
+**Longest streak:** Running every day for 2 years. Rain, hail, or snow. Forest Gump moment.\
+**Years spent learning psychology to understand women:** 15 (still learning and still lost at times)\
+**Takeaway ordering confidence at age 21:** 0/10 (got my mate to call for me)
+
+<!-- iamhoiend -->
