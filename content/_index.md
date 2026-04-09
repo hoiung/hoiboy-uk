@@ -29,6 +29,6 @@ Hi, I'm Hoi. I'm human, by the way. I just love working with tech, AI, trading, 
 **Memory:** Goldfish (for shit I don't care about), Elephant (when emotionally charged!)\
 **Longest streak:** Running every day for 2 years. Rain, hail, or snow. Forest Gump moment.\
 **Years spent learning psychology to understand women:** 15 (still learning and still lost at times...)\
-**Takeaway ordering confidence at age 21:** 0/10 (got my mate to call for me)
+**Takeaway ordering confidence at age 21:** 0/10 (got my friends to call for me)
 
 <!-- iamhoiend -->
