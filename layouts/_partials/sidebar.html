@@ -1,7 +1,10 @@
-{{- /* Flat sidebar. Constant size. Three sections: top, categories, social. */ -}}
+{{- /* Flat sidebar. Constant size. Three sections: top, categories, social.
+       Mobile: nav hidden behind CSS-only hamburger toggle (no JS). */ -}}
 {{- $logo := (resources.Get "images/logo_wide.png").Resize "x120 png" -}}
 <aside class="sidebar">
   <h1><a href="/" class="brand"><img src="{{ $logo.RelPermalink }}" alt="{{ site.Title }} logo" height="60">{{ site.Params.brandName | default site.Title }}</a></h1>
+  <input type="checkbox" id="menu-toggle" class="menu-toggle-input">
+  <label for="menu-toggle" class="menu-toggle-btn" aria-label="Toggle menu"><span></span></label>
   <nav>
     <ul>
       {{- range site.Menus.main -}}

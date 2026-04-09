@@ -181,11 +181,46 @@ strong, b { font-weight: 550; }
 
 footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: 0.8rem; color: var(--fg-muted); }
 
-/* Mobile: collapse sidebar to a top strip */
+/* Hamburger toggle: hidden on desktop, CSS-only on mobile (no JS) */
+.menu-toggle-input { display: none; }
+.menu-toggle-btn { display: none; }
+
+/* Mobile: collapse sidebar, hamburger toggle for nav */
 @media (max-width: 768px) {
   .layout { grid-template-columns: 1fr; padding: 1rem; }
-  .sidebar { position: static; max-height: none; border-bottom: 1px solid var(--rule); padding-bottom: 1rem; margin-bottom: 1rem; }
+  .sidebar { position: relative; max-height: none; border-bottom: 1px solid var(--rule); padding-bottom: 1rem; margin-bottom: 1rem; }
+  .sidebar nav { display: none; }
+  .menu-toggle-input:checked ~ nav { display: block; }
   .main { max-width: 100%; }
+
+  .menu-toggle-btn {
+    display: block;
+    cursor: pointer;
+    position: absolute;
+    top: 1.2rem;
+    right: 0;
+    width: 26px;
+    height: 22px;
+  }
+  .menu-toggle-btn span,
+  .menu-toggle-btn span::before,
+  .menu-toggle-btn span::after {
+    display: block;
+    background: var(--fg);
+    height: 2px;
+    width: 26px;
+    border-radius: 1px;
+    position: absolute;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .menu-toggle-btn span { top: 10px; }
+  .menu-toggle-btn span::before { content: ''; top: -8px; }
+  .menu-toggle-btn span::after { content: ''; top: 8px; }
+
+  /* Animate hamburger to X when open */
+  .menu-toggle-input:checked ~ .menu-toggle-btn span { background: transparent; }
+  .menu-toggle-input:checked ~ .menu-toggle-btn span::before { top: 0; transform: rotate(45deg); }
+  .menu-toggle-input:checked ~ .menu-toggle-btn span::after { top: 0; transform: rotate(-45deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
