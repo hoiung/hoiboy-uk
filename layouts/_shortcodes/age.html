@@ -6,5 +6,4 @@
   {{- $age = sub $age 1 -}}
 {{- end -}}
 {{- $age -}}
-{{- /* TEMP PREVIEW: force birthday icon visible. Revert after Hoi confirms. */ -}}
-{{- if or true (and (eq (int now.Month) $birthMonth) (eq now.Day $birthDay)) }} 🎁{{ end -}}
+{{- if and (eq (int now.Month) $birthMonth) (eq now.Day $birthDay) }} 🎁{{ end -}}
