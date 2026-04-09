@@ -1,5 +1,5 @@
 ---
-title: "Building an Autonomous Trading System with Claude Code"
+title: "Building a Production-Grade Trading System with Claude Code"
 date: 2026-04-09
 categories: [tech-ai]
 tags: [claude-code, trading, python, rust, ai, production]
