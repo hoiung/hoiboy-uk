@@ -1,4 +1,4 @@
 {{- if .HasShortcode "gallery" -}}
-<script src="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/js/glightbox.min.js" integrity="sha384-/+Fc1LD6ksHYZ+2MChiSfjEXBcl4q2axUWhs6/CdnfqY5aLmrPwtysVzyeP0s60b" crossorigin="anonymous" onerror="document.querySelectorAll('.glightbox').forEach(function(a){a.removeAttribute('class')})"></script>
-<script>document.addEventListener("DOMContentLoaded",function(){if(typeof GLightbox!=="undefined"){GLightbox({selector:".glightbox",touchNavigation:true,loop:true,zoomable:true,draggable:true})}});</script>
+<script src="/vendor/glightbox/glightbox.min.js"></script>
+<script src="/vendor/glightbox/glightbox-init.js"></script>
 {{- end -}}
