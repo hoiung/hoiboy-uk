@@ -37,8 +37,8 @@
   weight = 50
 
 [[categories]]
-  name = "Relationship"
-  url = "/relationship/"
+  name = "Life"
+  url = "/life/"
   weight = 60
 
 [[social]]

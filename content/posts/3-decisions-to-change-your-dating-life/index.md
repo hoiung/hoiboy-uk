@@ -1,13 +1,13 @@
 ---
 title: "3 Decisions To Change Your Dating Life, Forever"
 date: 2021-06-06
-categories: [relationship]
+categories: [life]
 tags: [dating, mindset, decisions]
 source_file: "voice-corpus/blogs/01_three-decisions-to-change-your-dating-life.md"
 source_era: "iD8u (Google Docs)"
 ---
 
-# 3 Decisions To Change Your Dating Life, Forever
+## 3 Decisions To Change Your Dating Life, Forever
 
 My name is Hoi and thank you for reading my dating blog on iD8u - I Date You!
 
@@ -26,8 +26,6 @@ Stop chasing women.
 If you apply these three decisions, you too should be able to meet an endless amount of women and some will get attracted to you. If she interests you, just make sure you match her efforts.
 
 So, let us begin!
-
-
 
 (1) Try new things.
 Having spent most of my 20s working on average 100 hours a week and becoming worse than broke, no money after years of debt due to multiple failed businesses. I thought I could work hard in my 20s and semi-retire by my 30s. I guess that didn't work out and time doesn't wait for anyone, I wasn't getting any younger, achieved nothing, and was an absolute mess; mentally, emotionally, and physically out of shape.
@@ -60,7 +58,6 @@ Even to this day at age 38 (at the time of writing this blog), I still try many 
 
 I learned that I could sit here moaning about not getting what I want, or I can go and get what I want even if it's not going to be easy. It really is a simple choice! You're probably wondering how trying new things will actually benefit your dating life? Well, it helped strengthen my character, mindset, and prepared me for the next two decisions.
 
-
 (2) Take ownership.
 You will probably struggle with '(1) Try new things' if you do not embrace and prepare to take ownership. It took me a couple of years to fully adjust but now it has become so natural to take ownership and I love it!
 
@@ -87,8 +84,6 @@ One mindset that helped me take ownership was setting my own expectations about 
 So that was my fast-forward story version of how I took ownership of my life and relationships.
 
 I'm going to tell you a big secret. This new approach is a great indicator tool to gauge how much a person is interested in you (this doesn't necessarily mean they like or love you, it just means they are willing to invest money and time in you). I often invite girls I like to things I plan to do. If they tag along, great, if not, equally great! The way they respond gives me enough information to understand their level of interest in spending time with me. If they tag along, it gives me the opportunity to spend time with them and find out what kind of relationship they want, whether it's platonic or romantic.
-
-
 
 (3) Stop chasing women.
 They chase me! Haha, well… aren't I lucky? I've carefully designed and engineered this approach for the reason to prevent myself from continuing doing stupid things and running wild chasing women who have absolutely no interest in me. It was never intended to get women to like me, never mind date me!
@@ -162,4 +157,3 @@ What is Brazilian Zouk? - This video will tell you what this dance is all about!
 ZoukDanceCamp - Domi&Hoi's international dance school for Brazilian Zouk in Poland.
 ChillZouk - Domi&Hoi's international event for Brazilian Zouk in Poland.
 ZoukBase - Hoi's Brazilian Zouk dance school search website and dance blog.
-
