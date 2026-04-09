@@ -14,7 +14,7 @@ accentColor = "#c0533a"
 
 # Per-section layout switch. Sections in textFirstSections render
 # as plain title+date list (Tech & AI). All others get image-card layout.
-textFirstSections = ["tech-ai", "entrepreneurship"]
+textFirstSections = ["tech-ai", "entrepreneurship", "trading"]
 
 # Footer
 footerText = "Senh Hoi Ung. CC BY-SA."

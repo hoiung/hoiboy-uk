@@ -17,6 +17,11 @@
   weight = 20
 
 [[categories]]
+  name = "Trading"
+  url = "/trading/"
+  weight = 25
+
+[[categories]]
   name = "Food & Booze"
   url = "/food-booze/"
   weight = 30
