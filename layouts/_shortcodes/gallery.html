@@ -1,0 +1,19 @@
+{{- $images := .Page.Resources.ByType "image" -}}
+{{- $gallery := .Get "name" | default "gallery" -}}
+{{- if $images -}}
+<div class="photo-gallery">
+  {{- range $images }}
+    {{- $thumb := .Fill "400x300 Lanczos" -}}
+    <a href="{{ .RelPermalink }}"
+       class="glightbox"
+       data-gallery="{{ $gallery }}"
+       data-title="{{ .Title | default .Name }}">
+      <img src="{{ $thumb.RelPermalink }}"
+           alt="{{ .Title | default .Name }}"
+           width="{{ $thumb.Width }}"
+           height="{{ $thumb.Height }}"
+           loading="lazy">
+    </a>
+  {{- end }}
+</div>
+{{- end -}}
