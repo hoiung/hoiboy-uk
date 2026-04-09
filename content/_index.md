@@ -13,7 +13,7 @@ Hi, I'm Hoi. I'm human, by the way. I just love working with tech, AI, trading, 
 ## Irrelevant facts about me
 
 **Age:** {{< age >}}\
-**Starsign:** Libra\
+**Star sign:** Libra\
 **Height:** More girth than length\
 **Alias:** Seno_[PK]\
 **Nicknames:** Panda, O'Hoi, Small Eyes, No Eyes, Midge\
@@ -21,7 +21,7 @@ Hi, I'm Hoi. I'm human, by the way. I just love working with tech, AI, trading, 
 **Likes:** People with common sense\
 **Dislikes:** People with uncommon sense\
 **Superpowers:** Getting shit done\
-**Personal Quotation:** "No problems, only solutions..."\
+**Personal Quote:** "No problems, only solutions..."\
 **Hobbies & Passions:** click on the category menu!\
 **Dance moves known:** 8 (recycled for 10+ years and counting)\
 **Memory:** Goldfish (for shit I don't care about), Elephant (when emotionally charged!)\
