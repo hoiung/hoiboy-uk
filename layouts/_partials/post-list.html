@@ -1,9 +1,0 @@
-{{- /* Flat post list, newest first, no year grouping. Used by section list pages. */ -}}
-<ul class="post-list">
-  {{- range . -}}
-    <li>
-      <span class="date">{{ .Date.Format "2 Jan 2006" }}</span>
-      <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-    </li>
-  {{- end -}}
-</ul>
