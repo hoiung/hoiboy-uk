@@ -21,7 +21,7 @@ Hi, I'm Hoi. I'm human, by the way. I just love working with tech, AI, trading, 
 **Likes:** People with common sense\
 **Dislikes:** People with uncommon sense\
 **Superpowers:** Getting shit done\
-**Personal Quote:** "No problems, only solutions..."\
+**Personal Quote:** "No problems, only solutions."\
 **Hobbies & Passions:** click on the category menu!\
 **Dance moves known:** 8 (recycled for 10+ years and counting)\
 **Memory:** Goldfish (for shit I don't care about), Elephant (when emotionally charged!)\
