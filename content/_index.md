@@ -12,7 +12,7 @@ Hi, I'm Hoi. I'm human, by the way. I just love working with tech, AI, trading, 
 
 ## Irrelevant facts about me
 
-**Age:** {{< age >}}\
+**Age:** The man called Uncle\
 **Star sign:** Libra\
 **Height:** More girth than length\
 **Alias:** Seno_[PK]\
