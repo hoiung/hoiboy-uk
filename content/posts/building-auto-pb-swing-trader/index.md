@@ -3,14 +3,14 @@ title: "Building an Autonomous Trading System with Claude Code"
 date: 2026-04-09
 categories: [tech-ai]
 tags: [claude-code, trading, python, rust, ai, production]
-description: "9,437 commits. 1,419 issues. 5 months. Half of it was fixing things I broke."
+description: "9,437 commits. 1,419 issues. 5 months of tracked code. Half of it was fixing things I broke."
 ---
 
 <!-- iamhoi -->
 
-9,437 commits. 1,419 issues. 5 months. Half of it was fixing things I broke.
+9,437 commits. 1,419 issues. 5 months of tracked code. Half of it was fixing things I broke.
 
-That's the short version. The long version involves a Google spreadsheet, a production-grade autonomous trading system, an AI that never sleeps, and me learning that planning is the hard work (building is the easy bit). I've been at this for about 12-15 hours a day, 6-7 days a week, for roughly 9 months straight. Let me explain.
+That's the short version. The long version involves a Google spreadsheet, a production-grade autonomous trading system, an AI that never sleeps, and me learning that planning is the hard work (building is the easy bit). The 5 months is just the GitHub-tracked phase. The full journey (3 years of trading study, then about 9 months of intensive building at 12-15 hours a day) is longer. Let me explain.
 
 ## The Spreadsheet
 
