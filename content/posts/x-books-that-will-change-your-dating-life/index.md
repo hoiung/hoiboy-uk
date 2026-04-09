@@ -1,7 +1,7 @@
 ---
 title: "X books that will change your dating life"
 date: 2021-07-25
-categories: [relationship]
+categories: [life]
 tags: [dating, books, reading-list]
 source_file: "voice-corpus/blogs/02_books-that-will-change-your-dating-life.md"
 source_era: "iD8u (Google Docs)"
