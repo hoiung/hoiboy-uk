@@ -35,6 +35,12 @@ disableHugoGeneratorInject = true
 [pagination]
   pagerSize = 50
 
+# Minify: keep quotes on integrity/crossorigin attributes (SRI)
+[minify]
+  [minify.tdewolff]
+    [minify.tdewolff.html]
+      keepQuotes = true
+
 [markup]
   [markup.goldmark.renderer]
     unsafe = false
