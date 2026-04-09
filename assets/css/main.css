@@ -123,6 +123,13 @@ strong, b { font-weight: 550; }
 .card h3 { font-size: 1rem; font-weight: 550; margin: 0; }
 .card .date { font-size: 0.8rem; color: var(--fg-muted); }
 
+/* GLightbox photo gallery: masonry columns, click-to-lightbox */
+.photo-gallery { columns: 3 200px; gap: 0.75rem; margin: 1.5rem 0; }
+.photo-gallery a { display: block; break-inside: avoid; margin-bottom: 0.75rem; text-decoration: none; }
+.photo-gallery img { width: 100%; height: auto; display: block; transition: opacity 0.2s ease; }
+.photo-gallery a:hover img { opacity: 0.85; }
+@media (max-width: 600px) { .photo-gallery { columns: 1; } }
+
 .empty-state { color: var(--fg-muted); font-style: italic; padding: 1rem 0; }
 
 /* Reader warning banner: used by reader-warning shortcode on raw-opinion posts */
