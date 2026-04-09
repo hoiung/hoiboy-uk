@@ -6,6 +6,7 @@
 
 description = "Personal blog of Hoi. Food, booze, adventure, dance, tech and AI."
 author = "Hoi"
+brandName = "Life of O'Hoi"
 
 # Design tokens: see docs/research/07_DESIGN_TOKENS.md
 # (created during Phase 0.9 with hex value, contrast ratios, rationale).
