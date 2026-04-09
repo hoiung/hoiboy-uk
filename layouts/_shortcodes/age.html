@@ -1,9 +1,0 @@
-{{- $birthYear := 1982 -}}
-{{- $birthMonth := 10 -}}
-{{- $birthDay := 15 -}}
-{{- $age := sub now.Year $birthYear -}}
-{{- if or (lt (int now.Month) $birthMonth) (and (eq (int now.Month) $birthMonth) (lt now.Day $birthDay)) -}}
-  {{- $age = sub $age 1 -}}
-{{- end -}}
-{{- $age -}}
-{{- if and (eq (int now.Month) $birthMonth) (eq now.Day $birthDay) }} 🎁{{ end -}}
