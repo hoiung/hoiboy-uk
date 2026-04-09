@@ -18,6 +18,7 @@
     <img class="post-hero" src="{{ .RelPermalink }}" alt="{{ $.Title }}">
   {{- end -}}
   {{ .Content }}
+  {{- if not (.HasShortcode "gallery") -}}
   {{- $images := .Resources.ByType "image" -}}
   {{- $rest := slice -}}
   {{- if $hero -}}
@@ -28,9 +29,10 @@
   {{- if gt (len $rest) 0 -}}
     <div class="post-gallery">
     {{- range $rest -}}
-      <img src="{{ .RelPermalink }}" alt="{{ $.Title }}">
+      <img src="{{ .RelPermalink }}" alt="{{ $.Title }}" loading="lazy">
     {{- end -}}
     </div>
+  {{- end -}}
   {{- end -}}
 </article>
 {{- end -}}
