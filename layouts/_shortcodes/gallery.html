@@ -1,4 +1,8 @@
 {{- $images := .Page.Resources.ByType "image" -}}
+{{- $folder := .Get "folder" -}}
+{{- if $folder -}}
+  {{- $images = .Page.Resources.Match (printf "%s/*.{jpg,jpeg,png,webp,gif}" $folder) -}}
+{{- end -}}
 {{- $gallery := .Get "name" | default "gallery" -}}
 {{- if $images -}}
 <div class="photo-gallery">
