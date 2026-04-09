@@ -19,7 +19,7 @@ Hi, I'm Hoi. I'm human, by the way. I just love working with tech, AI, trading, 
 **Nicknames:** Panda, O'Hoi, Small Eyes, No Eyes, Midge\
 **Top 3 Favourite Books:** Mindset by Dr Carol S. Dweck, Get Inside Her - The Female Perspective by Marni Kinrys, Richest Man in Babylon by George Samuel Clason\
 **Fav Drinks:** Good wine, Guinness, Green tea\
-**Fav Food:** Anything yummy\
+**Fav Food:** Anything yummi\
 **Compatibility:** Fun and reliable human beans\
 **Likes:** People with common sense and a sense of silliness because life is too short\
 **Dislikes:** People with uncommon sense and lack of awareness\
