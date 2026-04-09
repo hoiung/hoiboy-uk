@@ -10,7 +10,7 @@ description: "9,437 commits. 1,419 issues. 5 months of tracked code. Half of it 
 
 9,437 commits. 1,419 issues. 5 months of tracked code. Half of it was fixing things I broke.
 
-That's the short version. The long version starts with a hacky Google spreadsheet, goes through 3 years of trading study, and ends with a production-grade autonomous trading system built with Claude Code. The 5 months is just the GitHub-tracked phase. The full journey (including about 9 months of intensive building at 12-15 hours a day) is longer. Let me explain.
+That's the short version. The long version starts with a hacky Google spreadsheet, goes through 3 years of trading study, and ends with a production-grade autonomous trading system built with Claude Code. The 5 months is just the GitHub-tracked phase. The full journey (including about 9 months of intensive building at 12-15 hours a day, 7 days a week) is longer. Let me explain.
 
 ## The Spreadsheet
 
