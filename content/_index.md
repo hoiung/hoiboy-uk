@@ -15,7 +15,8 @@ Hi, I'm Hoi. I'm human, by the way. I just love working with tech, AI, trading, 
 **Age:** {{< age >}}\
 **Starsign:** Libra\
 **Height:** More girth than length\
-**Nicknames & Aliases:** O'Hoi, Seno_[PK], Small Eyes, No Eyes, Midge\
+**Alias:** Seno_[PK]\
+**Nicknames:** Panda, O'Hoi, Small Eyes, No Eyes, Midge\
 **Top 3 Favourite Books:** Mindset by Dr Carol S. Dweck, Get Inside Her - The Female Perspective by Marni Kinrys, Richest Man in Babylon by George Samuel Clason\
 **Likes:** People with common sense\
 **Dislikes:** People with uncommon sense\
