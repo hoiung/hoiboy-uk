@@ -20,7 +20,7 @@ Hi, I'm Hoi. I'm human, by the way. I just love working with tech, AI, trading, 
 **Top 3 Favourite Books:** Mindset by Dr Carol S. Dweck, Get Inside Her - The Female Perspective by Marni Kinrys, Richest Man in Babylon by George Samuel Clason\
 **Likes:** People with common sense and a sense of humour because life is too short\
 **Dislikes:** People with uncommon sense and lack of awareness\
-**Superpowers:** Getting shit done\
+**Superpowers:** ADHD and OCD for getting shit done\
 **Personal Quote:** "No problems, only solutions."\
 **Hobbies & Passions:** Click on the category menu!\
 **Dance moves known:** 8 (recycled for 10+ years and counting)\
