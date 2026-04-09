@@ -66,7 +66,11 @@ All of it built with Claude Code. All of it tracked in GitHub issues. All of it 
 
 ## What I Actually Learned
 
-The SST3 workflow matters more than any individual piece of code. I could rewrite the trading system from scratch (and I probably will, parts of it). But the methodology for working with AI agents, the quality gates, the anti-patterns, the research-first approach... that's the thing that compounds.
+Here's what nobody tells you about building with AI: the building part is kind of easy. Seriously. You describe what you want, the agent writes the code, you review it, you ship it. That bit works.
+
+The tough bit is everything around it. The framework that keeps AI agents in check. The guardrails, the standards, the process, the workflow. Without those? AI probably achieves a 20:80 effectiveness ratio (the polar opposite of what you want). It'll write code that looks right, passes a quick glance, and breaks in production three weeks later. With the right framework? You flip that to 80:20. You get 80% of your goal done properly, then you refine the next 10-15%, and you're good. The remaining 5%? That's usually a waste of time, money, and resources trying to gain very little. Know when to stop polishing.
+
+The SST3 workflow is that framework. It matters more than any individual piece of code. I could rewrite the trading system from scratch (and I probably will, parts of it). But the methodology, the quality gates, the anti-patterns, the research-first approach... that's the thing that compounds.
 
 I'm not a software engineer who uses AI. I'm a product owner and engineering leader who uses AI as the execution layer. I architect the systems, design the methodology, make the technical decisions, manage the quality gates. Claude executes my designs. The engineering mindset and process discipline are my skills. The AI is the force multiplier.
 
