@@ -77,7 +77,7 @@ For a solo researcher reading 100+ papers over months and wanting an LLM to main
 
 ## The verdict
 
-By the old fashioned I'd worn myself out. Here's where I landed.
+By the last drink I'd worn myself out. Here's where I landed.
 
 LLM Wiki is a nice pattern for one specific use case: a solo researcher with a curated collection of sources who wants compiled, cross-referenced notes. For that person, it works.
 
