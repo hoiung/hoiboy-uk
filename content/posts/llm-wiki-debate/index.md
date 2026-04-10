@@ -29,7 +29,7 @@ So we're adding a layer. What does the layer buy us?
 
 ## The overengineering argument
 
-I asked Bear this directly over the Chablis. What's wrong with Obsidian? What's wrong with a folder of .md files with sensible names?
+I started ranting at Bear over the Chablis. What's wrong with Obsidian? What's wrong with a folder of .md files with sensible names?
 
 Obsidian already gives you a graph view showing connections between notes, rich markdown rendering, backlinks panel, full-text search, tags, folders, plugins like Dataview for live queries. You can publish it as a website with Obsidian Publish. Humans get a polished UI. The LLM gets the same .md files it can already read and write. No extra layer needed!
 
@@ -39,11 +39,9 @@ But forget about specific tools for a second. Think about it logically. What pro
 
 Most AI coding tools already use a CLAUDE.md or similar file. One markdown file. The LLM reads it at session start, knows the project context, the standards, the constraints. When things change, you edit the file. Next session picks it up immediately. No re-compilation, no re-indexing, no cascade of wiki page updates. Just... edit the file.
 
-Bear wasn't convinced yet. "But what about when it gets stale?"
-
 ## Who watches the wiki?
 
-This is where it gets properly concerning. And by this point we were on the martinis, so I was getting animated.
+By this point we were on the martinis and I was properly ranting. Bear was just nodding along while I kept going.
 
 The LLM writes wiki page A from source articles 1, 2, and 3. Six months later, article 3 is outdated. The wiki page still references it as current. The LLM doesn't know the source is stale unless someone tells it. So now you need a process to flag stale sources, a process to re-ingest updated sources, a process to cascade updates through every wiki page that touched the stale source, and a process to verify the cascade didn't introduce new errors. That's a maintenance burden on top of a maintenance burden!
 
@@ -53,11 +51,9 @@ The maintenance maths is brutal. A thousand wiki pages, each referencing roughly
 
 There's a scarier problem underneath all that, too. Compounding hallucination. The LLM summarises source article 1 into a wiki page. Gets 95% right, 5% slightly off. Later it synthesises that wiki page with pages B and C into a comparison. The 5% error is now baked in. Next synthesis layer compounds it again. You're playing the telephone game with no correction mechanism. With plain .md files, you're always reading the source. No intermediary. No accumulated drift.
 
-Bear went quiet for a bit on that one. Then he tried a different angle.
-
 ## Forgetting is a feature
 
-This is the bit that really landed for both of us. We were on the old fashioneds by now (don't judge, it was a long dinner).
+I was on the old fashioneds by now (don't judge, it was a long dinner) and this is where the rant got philosophical.
 
 Cognitive science research actually supports the idea that forgetting isn't a flaw. It's a feature! A 2022 study published in Frontiers in Computational Neuroscience found that agents with structured memory can forget a large percentage of older memories without any performance loss. And here's the kicker... some forgetting actually improved performance compared to agents with unbounded memory. Let that sink in. Remembering LESS made them BETTER.
 
@@ -69,7 +65,7 @@ An ever-growing wiki with no forgetting mechanism is the opposite of how effecti
 
 Plain .md files handle this naturally. When things change, you update the file. Old instructions get replaced, not layered on top of. The LLM reads current state. Always. No generated intermediary accumulating quiet drift.
 
-"OK," Bear said. "But what about companies? Teams?"
+And then I moved on to companies, because why stop when you're on a roll.
 
 ## The enterprise angle
 
@@ -83,7 +79,7 @@ For enterprise, it's a non-starter. For personal use... well, Obsidian exists.
 
 ## What it gets right
 
-Don't get me wrong. I'm not going to pretend the whole thing is rubbish. That would be dishonest (and Bear would call me out on it).
+Don't get me wrong. I'm not going to pretend the whole thing is rubbish. That would be dishonest.
 
 The core insight about task allocation is real. LLMs genuinely don't get bored updating cross-references. Humans genuinely do. The "compiled knowledge" framing is useful. And the pattern echoes Vannevar Bush's 1945 Memex concept (a theoretical private knowledge store with associative trails between documents). Bush imagined it 80 years ago. LLMs can now actually maintain it. That's genuinely cool.
 
@@ -91,7 +87,7 @@ For a solo researcher reading 100+ papers over months and wanting an LLM to main
 
 ## The verdict
 
-Bear and I ended up roughly here, somewhere around the second negroni.
+By the second negroni I'd worn myself out. Here's where I landed.
 
 LLM Wiki is a nice pattern for one specific use case: a solo researcher with a curated collection of sources who wants compiled, cross-referenced notes maintained by an AI. For that person, it's elegant.
 
@@ -99,6 +95,6 @@ For everyone else? It's a solution looking for a problem that .md files, Obsidia
 
 Sometimes the boring tool that works is the right tool. I'll take my folder of markdown files over a generated wiki any day.
 
-Bear still disagrees. We'll probably need another dinner to settle this one.
+Bear sat through the whole rant without saying much. He's still on the fence. We'll probably need another dinner to settle this one.
 
 <!-- iamhoiend -->
