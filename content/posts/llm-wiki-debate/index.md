@@ -47,7 +47,7 @@ The LLM writes wiki page A from source articles 1, 2, and 3. Six months later, a
 
 And it gets worse as it grows. One stale wiki page is easy to fix. A thousand stale pages? That's a lot of housekeeping. Every cross-reference is a propagation path for outdated information. The more interconnected the wiki (which is supposed to be the strength, remember), the faster things drift.
 
-So now you've got a system that's supposed to save you time... but it needs constant babysitting to stay accurate. That doesn't sound like a solution. That sounds like a new problem.
+And with how fast things are moving right now (AI is accelerating everything), information goes stale even quicker than before. So now you've got a system that's supposed to save you time... but it needs constant babysitting to stay accurate. That doesn't sound like a solution. That sounds like a new problem.
 
 And there's compounding hallucination on top of that. The LLM summarises a source into a wiki page. Gets 95% right, 5% slightly off. Later it synthesises that page with others into a comparison. The 5% error is now baked in. Next layer compounds it again. You're playing the telephone game with no correction mechanism. With plain .md files, you're always reading the source. No intermediary. No accumulated drift.
 
