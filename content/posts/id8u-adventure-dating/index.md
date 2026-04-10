@@ -59,7 +59,7 @@ The Facebook saga deserves its own paragraph honestly. META has been consistentl
 
 **The idea surviving is the validation.** Bad ideas die. You forget about them after a month. iD8u has survived 4 pauses over 5 years. Every time I put it down, it comes back. Every time I see another "I hate dating apps" post online, I think about it. That persistence isn't stubbornness. It's a signal.
 
-**You don't need a team if you have the right tools.** This is the bit that changed everything. Back in 2021, I needed a tech lead, a designer, a grant writer, a project manager. A full team just to get an MVP off the ground. Now? I've spent 3 years building production systems with AI. My SST3 workflow and Claude Code can do what a small team used to do. The biggest blocker (needing reliable people to build it) might not be a blocker anymore.
+**You don't need a team if you have the right tools. But you do need time.** Back in 2021, I needed a tech lead, a designer, a grant writer, a project manager. A full team just to get an MVP off the ground. Now? I've spent 3 years building production systems with AI. My SST3 workflow and Claude Code can do what a small team used to do. The biggest blocker (needing reliable people to build it) might not be a blocker anymore. But realistically, even with AI, a project like this would take me a year alone to get production ready. The tools changed. The hours didn't.
 
 ## Why it's coming back
 
