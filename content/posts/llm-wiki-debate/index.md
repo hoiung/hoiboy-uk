@@ -1,5 +1,5 @@
 ---
-title: "Is LLM Wiki Pointless?"
+title: "Do We Actually Need LLM Wiki?"
 date: 2026-04-10
 categories: [tech-ai]
 tags: [ai, llm, knowledge-management, obsidian, markdown]
@@ -15,7 +15,7 @@ It was some gist about something called LLM Wiki. Went viral apparently. I didn'
 
 The pitch: instead of throwing documents into a vector database and hoping retrieval finds the right chunk, let the LLM build and maintain a wiki. Three folders of markdown. Sources go in, the LLM reads them, writes summary pages, cross-links everything, keeps an index. Knowledge compiled once, kept current.
 
-Bear was on the fence. I was skeptical.
+Bear was on the fence. I had questions.
 
 ## What it proposes
 
@@ -43,7 +43,7 @@ By this point we were on the martinis and I was properly going.
 
 The LLM writes wiki page A from source articles 1, 2, and 3. Six months later, article 3 is outdated. The wiki page still references it as current. The LLM doesn't know the source is stale unless someone tells it. So now you need a process to flag stale sources, a process to re-ingest, a process to cascade updates through every wiki page that touched the stale source, and a process to verify the cascade didn't introduce new errors. That's a maintenance burden on top of a maintenance burden!
 
-And it gets worse as it grows. One stale wiki page is a bug. A thousand stale pages is a system failure. Every cross-reference is a propagation path for outdated information. The more interconnected the wiki (which is supposed to be the strength, remember), the faster bad data spreads.
+And it gets worse as it grows. One stale wiki page is easy to fix. A thousand stale pages? That's a lot of housekeeping. Every cross-reference is a propagation path for outdated information. The more interconnected the wiki (which is supposed to be the strength, remember), the faster things drift.
 
 You've basically built a cache invalidation problem. And as the old joke goes, the two hardest problems in computer science are cache invalidation, naming things, and off-by-one errors.
 
@@ -81,7 +81,7 @@ By the second negroni I'd worn myself out. Here's where I landed.
 
 LLM Wiki is a nice pattern for one specific use case: a solo researcher with a curated collection of sources who wants compiled, cross-referenced notes. For that person, it works.
 
-For everyone else? I think it creates more problems than it solves. The generated layer adds maintenance burden, introduces hallucination compounding, creates a cache invalidation problem as it grows, and works against the very principle (forgetting, pruning, staying current) that makes knowledge systems actually work.
+For everyone else? I wonder if it creates more problems than it solves. The generated layer adds maintenance, introduces hallucination compounding, creates a cache invalidation problem as it grows, and seems to work against the very principle (forgetting, pruning, staying current) that makes knowledge systems actually work.
 
 Sometimes the boring tool that works is the right tool.
 
