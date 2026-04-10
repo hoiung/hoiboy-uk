@@ -23,4 +23,7 @@ exclude = [
   # No value in self-checking — Hugo build + URL contract assertion already
   # validate the live site shape. added: 2026-04-08; expires: 2026-07-07 (90 days)
   "^https?://(www\\.)?hoiboy\\.uk(/.*)?$",
+  # Medium returns 403 to bots/CI. Link is valid for humans.
+  # added: 2026-04-10; expires: 2026-07-09 (90 days)
+  "^https?://medium\\.com/",
 ]
