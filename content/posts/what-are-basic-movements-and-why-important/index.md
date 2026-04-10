@@ -6,7 +6,7 @@ tags: [zouk, basics, fundamentals, technique, learning]
 source_file: "voice-corpus/blogs/34_what-are-basic-movements-and-why-important.md"
 source_era: "ZoukBase (WordPress)"
 ---
-# What are Zouk basic movements and why are they so important?
+## What are Zouk basic movements and why are they so important?
 
 When learning social dance, I am very sure that all of us always hear repeatedly from our teachers and other experienced dancers that learning and practicing basics are so important and here is the basics blah d blah, blah blah blah. You need to learn the basics to dance Brazilian Zouk blah d blah...
 

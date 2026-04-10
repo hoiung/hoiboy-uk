@@ -20,13 +20,13 @@ Being someone who listens to RnB and Hip hop a lot but also enjoy dancing to som
 
 **Zouk is a very, very, very sensual and fluid dance.** You create that closeness, the feeling and connection with your dance partner. Sometimes sensually slow, respecting the women in front of you and other times just have crazy fun, laughing and after making ton's of mistakes but keep on going. **"Zoukasm"**, that feeling of euphoria keeps me addicted.
 
-### Tell me more
+## Tell me more
 
 Zouk has a many variations and others calling it their own style of Zouk. **Zouk Lambada, LambaZouk, Brazilian Zouk, Neo Zouk, Rio Zouk, Zouk Love, MZouk, SoulZouk, RnB Zouk, VeraZouk** and the list goes on!
 
 For me personally, I like to steal a few moves from different variations to how I feel right when dancing. There really no right or wrong styles to dance to the music played. As long as you dance with the right feel and emotions to the music, you don't necessarily have to dance to every beat!
 
-### Example of Zouk
+## Example of Zouk
 
 Here is a video of one of my favorite teachers who inspired me last year to continue dancing Zouk. I've met them both and they were wonderful people. **Xandy and Evelyn**, their style of Zouk has **contemporary influence** and it just flows so well! Beautiful...
 
@@ -38,7 +38,7 @@ Another of my recent favourite Teachers and their demo in Berlin! Enjoy :)
 
 [Video embed]
 
-### Let's dance
+## Let's dance
 
 If you want to **learn Zouk** and lucky enough to be in one of these cities, there are weekly classes running in London, Manchester and Bristol. Unfortunately our former teachers Jonny and Julia do not teach in Birmingham no more!
 

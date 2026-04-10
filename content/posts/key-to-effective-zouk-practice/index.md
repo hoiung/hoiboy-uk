@@ -16,7 +16,7 @@ When we know something is fun and it gives us a self satisfaction feeling, we al
 
 This blog follows on from my previous short blog 'What To Practice in Zouk Solo' and now I will show you the method I found to be effective for practicing Zouk and making it fun\!
 
-# Start By Changing Your Attitude
+## Start By Changing Your Attitude
 
 1. Practice isn't a chore, don't treat it as that because the moment you do, it will become a chore.
 2. When practicing with others, it isn't their job to entertain you or make it fun for you. It is your responsibility, so YOU make it fun for YOU\!
@@ -24,11 +24,11 @@ This blog follows on from my previous short blog 'What To Practice in Zouk Solo'
 4. It's okay to fail 1000+ times because failing is how your body and mind work, by learning the changes in each failed attempt in getting closer until it feels right.
 5. My perspective of practice is a means of self-discovery and perceive dance, not as a skillset but a philosophy and way of life.
 
-# Make It FUN
+## Make It FUN
 
 The below illustration 'Make it FUN' gives you an overview of how I inject variants into the 'Solo Dance Practice Pyramid' to make it interesting and FUN. I could practice this all day long, if time permits\!
 
-![][image1]
+![Make it FUN - Solo Dance Practice Pyramid](zouk-solo-practice-pyramid.png)
 
 * What I tend to do is break everything down into its simplest components or forms and just dance using these while mixing them up to make it interesting. I do this at every practice session for months without ever getting bored.
 * Remember \- dancing isn't mechanical, and if you've been practicing like this, it's the likely reason why you do get bored. At the same time, you have drilled into your body to dance very mechanically, emotionally dead and actually become one of those boring dancers. No no, we're trying to make you not boring\! :)
@@ -55,7 +55,7 @@ Give this a try and soon you'll find new life in your dances, that practicing is
 
 This method does require great self-discipline, patience and frustration over long extensive periods of time, but you will find it offers much better results in both the mid and long run. If you can do this, then you have another key ingredient that makes a great dancer\!
 
-# Solo Dance Alternatives
+## Solo Dance Alternatives
 
 Alternatively, learning other solo dances are highly beneficial and would follow in the line with what was explained in this blog. Here are some good ones you should try:
 

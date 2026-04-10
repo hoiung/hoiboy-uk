@@ -14,7 +14,7 @@ One thing I've noticed about most leads and some follows are how stiff and borin
 
 Teaching your body to dance is something that can easily be learned by practicing Zouk by yourself and what I am referring as Zouk Solo.
 
-# Here Are 7 Great Reasons Why You Should Practice Zouk Solo
+## Here Are 7 Great Reasons Why You Should Practice Zouk Solo
 
 1. It's the first step to improving how to dance and later add it into your leading or following skills so you would no longer be stiff and dance like a stick is up your ass.
 2. It helps you understand your whole body, which also means you are be able to understand how your partner's body work. This is important for leads as it will allow you to improve your lead while keeping it safe for your partner.

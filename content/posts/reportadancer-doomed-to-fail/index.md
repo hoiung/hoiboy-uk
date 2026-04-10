@@ -58,6 +58,6 @@ Have a read at how they are approaching this problem: [It's Time for a Professio
 
 The idea Domi&Hoi Team is working on is different to Laura's, but it would certainly compliment of having a professional association. We'll reveal more of the plan in a few days, right now we're creating some simple presentation slides to explain how it works and what we can all do to help make it safer.
 
-### **Watch this space: DontStaySilent.Dance**
+## **Watch this space: DontStaySilent.Dance**
 
 Hoi x

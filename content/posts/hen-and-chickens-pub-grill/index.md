@@ -7,7 +7,7 @@ source_file: "voice-corpus/blogs/12_hen-and-chickens-pub-grill.md"
 source_era: "AdventureAnd.Me (Joomla)"
 ---
 
-# Hen & Chickens Pub Grill
+## Hen & Chickens Pub Grill
 
 I have heard of this place from TripAdvisor and the raving reviews it had. After a hard bouldering session, me and Xin decided to go for some curry. Since we were nearby, I suggested we try this place and cross it off my list.
 
