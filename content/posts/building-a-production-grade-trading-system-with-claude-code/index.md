@@ -58,7 +58,7 @@ Before #1338, there were five different sources of position truth and two separa
 
 This is what production looks like. Not the code. Not the architecture diagrams. The actual running system.
 
-{{< gallery >}}
+{{< gallery folder="curated" >}}
 
 The dashboard home screen showing the backtest engine at rest. An active backtest run crunching through hundreds of tickers. The Smart Layer scanning 744 stocks for bounce signals. NVDA stock detail across three timeframes with MVWAP overlays. The backtest results table (really really dense, I know, but every column earns its place). Cross-strategy comparison for decision-making. Active paper trades being managed in real time. The plan trade screen where I pick entry prices. Order confirmation with safety checks before anything touches the broker. Controller health monitoring showing data service status and emergency brake state. And the trade detail panel showing every order, execution, and audit log entry for a single position.
 
@@ -79,5 +79,11 @@ Planning is the hard work. Building is the easy bit. I spent 3 years learning tr
 9,437 commits. 1,419 issues. 136 active days out of 153 (I barely took a day off). 69 days with 12+ hours of work. The longest session was 20 hours straight. Half of it broke. All of it taught me something.
 
 10,000+ commits across 4 repositories. 1,860+ issues with a 99.4% close rate. 11,100+ test cases. The production system will always remain private (it's my edge and my autonomous trading system). But tradebook_GAS (the spreadsheet MVP) will go public eventually. And this blog? This is built and managed by Claude Code too (commit history and all). Watch this space.
+
+## The Full Tour
+
+Every page, every feature. Click through to see what a production-grade trading system actually looks like under the hood.
+
+{{< gallery folder="more" name="full-tour" >}}
 
 <!-- iamhoiend -->
