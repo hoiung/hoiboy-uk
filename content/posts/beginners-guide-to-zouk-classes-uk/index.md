@@ -7,11 +7,11 @@ source_file: "voice-corpus/blogs/09_beginners-guide-zouk-classes-uk.md"
 source_era: "AdventureAnd.Me (Joomla)"
 ---
 
-# A Beginners Guide to Zouk Classes in UK
+## A Beginners Guide to Zouk Classes in UK
 
 Here is a list of Zouk classes and socials across the United Kingdom. I will try my best to keep the list up-to-date, but it is subject to change and always best to contact the teachers/group directly to confirm.
 
-### Find Brazilian Zouk dance schools around the World whether you are visiting or looking for a local school, please visit zoukbase.com (no longer available) !!! It has the most up-to-date info.
+### Find Brazilian Zouk dance schools around the World whether you are visiting or looking for a local school, please visit zoukbase.com (no longer available) !!! It has the most up-to-date info
 
 If you are a teacher/group and would like to be added to this list, please contact me via facebook or the contact form with your class details in the same format as shown below.
 
@@ -28,16 +28,16 @@ We currently have classes & events listed for the following UK Cities:
 
 ### Are you a beginner and don't know where to start?
 
-### The information below should help you get started on your dance journey!
+### The information below should help you get started on your dance journey
 
 Learning Zouk had been made easy for beginners thanks to the ever growing dance community, teachers and organisations. **You do not need to bring a partner**, most people I know go alone and make friends there. **Most classes are pay as you go**, so you only pay on the door/reception when you arrive. Just ensure you turn up about 5-10mins before class, to avoid missing out!
 
 > **I've always wanted to dance**, but being around people who never really interested in it made me forget who I was. Taking the first step is always the hardest, but also the one step I was glad I took.
-
+>
 > **I would highly recommend you go alone**, if you always waiting for someone to go with because you don't have the courage. It's either going to get procrastinated forever or you'll just go once or twice then end up waiting again for the other person because they are unavailable most of the time.
-
+>
 > **Only you can make it happen!** Learning to dance is something that is going to take time, dedication and lots of practice. Plus, isn't it more fun to make friends with people who also enjoys dancing?
-
+>
 > **Tip:** Private classes with teachers are a great way to gain constructive feedback, personal tips, identify bad habits and many other benefits. Please ask the teacher(s) when convenient just before or after class. Alternatively, contact them privately by other means; facebook, email, text message, etc to arrange a time.
 
 The Zouk community is the best! Michael Jones from the Manchester Zouk scene had created this very useful Zouk Timetable. It is a webapp with the aim of helping dancers find and share zouk classes and events all around the world. For more details check out their FB page and webapp link below ***(don't forget to bookmark it!)***
@@ -177,4 +177,4 @@ Uni Society Curita Facebook: https://www.facebook.com/events/1673646972949146/
 Don't know what Zouk is? Then you must read **[What is Zouk?](/posts/what-is-zouk-aam/)**!
 Don't forget to check out my **[7 dance tips from Zero to Hero](/posts/7-dance-tips-zero-to-hero/)**!
 
-*** If you've enjoyed this blog then you should subscribe to our email list! By doing so, you will be first to hear our stories, tips, advice and more. No spam! Just don't forget to confirm your subscription otherwise you won't be subscribed. ***
+***If you've enjoyed this blog then you should subscribe to our email list! By doing so, you will be first to hear our stories, tips, advice and more. No spam! Just don't forget to confirm your subscription otherwise you won't be subscribed.***

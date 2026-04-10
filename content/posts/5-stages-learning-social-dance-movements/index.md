@@ -134,8 +134,6 @@ To become a great social dancer you need to be well-rounded and need to also wor
 
 ## **To summarise, I've created some illustrations to help you digest some of the information**
 
-
-
 Thanks again for reading my blogs and I hope you've enjoyed my views. If you found this useful, please help share so others can benefit too\!
 
 Hoi x

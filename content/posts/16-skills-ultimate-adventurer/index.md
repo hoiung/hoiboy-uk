@@ -11,7 +11,7 @@ My childhood heroes were certainly Indiana Jones and Jackie Chan. How many times
 
 If asked, what would make you into your real life Ultimate Adventurer? I know my answer...
 
-### Here I give you 16 Skills that would make the Ultimate Adventurer:
+## Here I give you 16 Skills that would make the Ultimate Adventurer
 
 **1 Scuba Diving** - Being able to explore underwater takes your experience to a whole new world. The Ocean itself covers 70% of our planet. There is so much to discover because we humans have only explored a mere five percent leaving a huge mystery yet to be learned.
 
@@ -49,7 +49,7 @@ With these skills, it will allow any person to experience, see and do things tha
 
 Now that you have read my list, ever wondered what kind of Adventurer you would be?
 
-#### Interested in some of these skills? As an added bonus, I have listed reputable Schools/Companies which I have attended to learn some of these skills!
+### Interested in some of these skills? As an added bonus, I have listed reputable Schools/Companies which I have attended to learn some of these skills
 
 **Scuba Diving**
 

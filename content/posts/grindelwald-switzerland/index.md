@@ -7,11 +7,11 @@ source_file: "voice-corpus/blogs/13_grindelwald-switzerland.md"
 source_era: "AdventureAnd.Me (Joomla)"
 ---
 
-# Scenic Lovers must Visit Grindelwald, Switzerland
+## Scenic Lovers must Visit Grindelwald, Switzerland
 
 If I had to describe this town in one sentence it probably be, *"Grindelwald, the most picturesque place I have ever set my eyes upon."*
 
-## The Place to Be...
+## The Place to Be
 
 ***Grindelwald* is the sister city of a small village in Japan called *Azumi* which later merged with *Matsumoto City*.** Everywhere you look, the signs were all written in English, Japanese and Chinese.
 
@@ -42,7 +42,7 @@ http://www.swisstravelsystem.co.uk *(no longer available)*
 From *Geneva to Grindelwald* it took us approximately 3.5 hours to get station to station with only one change at *Bern*. Our apartments were about 1 mile away so we walked it every day even with our grocery shopping. We could have took the free buses but didn't bother having to wait 30 minutes between each intervals.
 
 > **Buy the *Swiss Pass* or other saving cards as it will include transfer and return plus 50% off trains, bus, boat.** Huge saving if you have lots of places to visit on your itinerary. We used the cable cars a lot, and the saving added up!
-
+>
 > **If you are staying in a rented apartment, hotel, hostel and some others. They offer a free local transport card during your staying duration.** When we were in *Grindelwald*, we were given a travel card allowing access to free buses and at the hostel in Geneva we were also given a travel card when we checked-in. Please note that the travel card only covers up to certain stops! You'll get charged for going further otherwise, so it is best to check with the bus driver or tourist helpdesk of it's limitation.
 
 ## Accommodation
@@ -270,7 +270,7 @@ But don't let that put you off. There are many things you can do on a budget and
 To end my blog, here are my budget costs for the 9 days spent in *Grindelwald, Switzerland*. I hope this will help you plan your visit.
 
 | Item | Cost |
-|------|------|
+| ------ | ------ |
 | Return Flights (EasyJet - Luton to Geneva) | **£62.75** |
 | Return Coach (Birmingham to Luton) | **£26.00** |
 | Swiss half price card with return train to Geneva | **£81.49** (120CHF) |

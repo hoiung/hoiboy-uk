@@ -7,7 +7,7 @@ source_file: "voice-corpus/blogs/08_7-dance-tips-zero-to-hero.md"
 source_era: "AdventureAnd.Me (Joomla)"
 ---
 
-# 7 Dance Tips from Zero to Hero
+## 7 Dance Tips from Zero to Hero
 
 If you are impatient like me and always like the fasts track but afraid of shortcuts that can cause bad habits. Here are a few suggestions that may help speed up your learning process and get you onto the dance floor with confidence. However, like all skills, you still need to give it time before your muscle memory kicks in, so it is still true that it is down to lots of practice.
 
@@ -35,4 +35,4 @@ You can find Zouk classes in the UK by clicking on the link below: [A Beginners 
 
 Don't know [What is Zouk?](/posts/what-is-zouk-aam/) You have to read this article then!
 
-*** If you've enjoyed this blog then you should subscribe to our email list! By doing so, you will be first to hear our stories, tips, advice and more. No spam! Just don't forget to confirm your subscription otherwise you won't be subscribed. ***
+***If you've enjoyed this blog then you should subscribe to our email list! By doing so, you will be first to hear our stories, tips, advice and more. No spam! Just don't forget to confirm your subscription otherwise you won't be subscribed.***

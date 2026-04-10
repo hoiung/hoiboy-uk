@@ -6,7 +6,7 @@ tags: [restaurant, caribbean, review, birmingham, food]
 source_file: "voice-corpus/blogs/16_turtle-bay-restaurant.md"
 source_era: "AdventureAnd.Me (Joomla)"
 ---
-# Turtle Bay Restaurant
+## Turtle Bay Restaurant
 
 I have been longing to visit this restaurant for some time after hearing it and seeing many friends check-in on their facebooks. I have always loved caribbean food, especially oxtail and ackee & salt fish being my favorite! Lamb pattie too! mMmm...
 
@@ -14,11 +14,11 @@ When entering the restaurant, it was bigger than expected. They were playing chi
 
 Menu was pretty straight forward with a dozen selection for starters and mains. Deciding what to have didn't take us very long.
 
-## Drinks!
+## Drinks
 
 I've ordered myself the **Grace Coconut Water** from the Caribbean Softs section.  When our drinks got served, they gave us unopened cans and glasses of ice. That was a bad decision on management part to be serving drinks in that manner. It does leave an impression, just not a good one! To me, it shows laziness and lack of thought, especially if they want to upmarket the caribbean style cuisine. If they going to use canned drinks, the least they could have done was fill the glass behind the bar and out of sight. Sorry, cans are just hidious in restaurants!
 
-## Food time!
+## Food time
 
 ### The Starter
 

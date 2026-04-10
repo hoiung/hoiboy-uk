@@ -59,7 +59,7 @@ We could suggest that the Congress Organisers produce a guideline/checklist for 
 
 Overall teaching quality would increase. Congress would get more praises, Students would be happier! Everyone benefits! WIN:WIN:WIN scenerio!
 
-### The Teachers' Guideline/Checklist!
+### The Teachers' Guideline/Checklist
 
 This Guideline/Checklist came about by combining ideas from different Teachers' teaching methods.
 
