@@ -49,7 +49,7 @@ And it gets worse as it grows. One stale wiki page is easy to fix. A thousand st
 
 And with how fast things are moving right now (AI is accelerating everything), information goes stale even quicker than before. So now you've got a system that's supposed to save you time... but it needs constant babysitting to stay accurate. That doesn't sound like a solution. That sounds like a new problem.
 
-And there's compounding hallucination on top of that. The LLM summarises a source into a wiki page. Gets 95% right, 5% slightly off. Later it synthesises that page with others into a comparison. The 5% error is now baked in. Next layer compounds it again. You're playing the telephone game with no correction mechanism. With plain .md files, you're always reading the source. No intermediary. No accumulated drift.
+And there's compounding hallucination on top of that. The LLM summarises a source into a wiki page. Gets 95% right, 5% slightly off. Later it synthesises that page with others into a comparison. The 5% error is now baked in. Next layer compounds it again. Each layer drifts a little further from the original and nobody's checking. With plain .md files, you're always reading the source. No intermediary. No drift.
 
 ## Forgetting is a feature
 
