@@ -15,7 +15,7 @@ It was some bloke called Andrej Karpathy's LLM Wiki gist. 17 million views. I ha
 
 The pitch: instead of throwing documents into a vector database and hoping retrieval finds the right chunk, let the LLM build and maintain a wiki. Three folders of markdown. Sources go in, the LLM reads them, writes summary pages, cross-links everything, keeps an index. Knowledge compiled once, kept current. Not re-derived every time you ask a question.
 
-Bear was excited. I was not.
+Bear was on the fence. I was not.
 
 ## What he actually proposes
 
