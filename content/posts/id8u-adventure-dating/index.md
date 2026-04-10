@@ -23,6 +23,10 @@ The business model is like Airbnb for dating experiences. Date creators (individ
 
 I still think the concept is solid. A competitor called Breeze launched with a similar no-chat approach, which honestly just validates the idea. The market wants this.
 
+Here's what the website looked like (I won't be renewing the hosting until I actually build the app, so these screenshots are all that's left for now):
+
+{{< gallery folder="website" name="id8u-website" >}}
+
 ## The team problem
 
 Here's where it gets real.
