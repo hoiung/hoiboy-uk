@@ -15,7 +15,7 @@ It was some gist about something called LLM Wiki. Went viral apparently. I didn'
 
 The pitch: instead of throwing documents into a vector database and hoping retrieval finds the right chunk, let the LLM build and maintain a wiki. Three folders of markdown. Sources go in, the LLM reads them, writes summary pages, cross-links everything, keeps an index. Knowledge compiled once, kept current.
 
-Bear was on the fence. I had questions.
+Bear was on the fence with a dirty grin on his face. I had questions.
 
 ## What it proposes
 
