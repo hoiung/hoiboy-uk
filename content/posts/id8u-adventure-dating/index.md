@@ -17,7 +17,7 @@ We called it iD8u. I Date You. And 5 years later, it's still not built. But it w
 
 ## The concept
 
-The pitch is simple. You sign up, pick an adventure category, and the platform matches you with someone and books the experience. No chatting beforehand. No profile photos in the early vision (we wanted a 30-second voice intro instead, to avoid the superficiality). A feedback system after each date so both people actually grow from it.
+The pitch is simple. You sign up, pick an adventure category, and the platform matches you with someone and books the experience. No chatting beforehand. No profile photos in the early vision (we wanted a 30-second voice intro instead, to avoid the superficiality). A feedback system after each date so both people actually grow from it. And even if the date didn't go well, they still learn new skills or have a new experience out of it.
 
 The business model is like Airbnb for dating experiences. Date creators (individuals, businesses, activity centres) host adventures on the platform. We take a commission. We don't own the experiences, we just connect people through them. The platform creates real jobs for real humans... date hosts, experience creators, adventure planners.
 
