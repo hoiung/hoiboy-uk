@@ -85,6 +85,6 @@ For everyone else? I wonder if it creates more problems than it solves. The gene
 
 Sometimes the boring tool that works is the right tool.
 
-Bear sat through the whole rant without saying much. He's still on the fence. We'll probably need another dinner to settle this one.
+Bear sat through the whole rant without saying much. He's probably still giggling inside knowing exactly who wrote the LLM Wiki gist while I was sat there going "some bloke called Karpathy." We'll probably need another dinner to settle this one.
 
 <!-- iamhoiend -->
