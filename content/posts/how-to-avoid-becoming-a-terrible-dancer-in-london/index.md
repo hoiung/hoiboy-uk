@@ -54,6 +54,12 @@ I'll start off by explaining why I think the majority of London Zouk dancers' su
 
 Please note, the list below is the extreme cases of terrible dancers based mostly from a leader's point of view. Only a very small number have I ever encountered in my years that had met all of these criteria's. However, if you can identify a few of these traits in you, then at least you'll have a fighting chance of fixing them. For the few who had ticked all these boxes, I really can't see the light at the end of the tunnel for you.
 
+<!-- iamhoi -->
+
+To give you some real context: when I moved back to London, I pulled and strained my back twice in the first month of dancing Zouk. Twice. Follows randomly throwing deep cambres out of nowhere and me reactively trying to catch them falling. Random head movements on packed dance floors when I certainly did not initiate it, scrambling to prevent collisions with other couples. Weeks of recovery each time. That's when I knew something was seriously wrong with the standard of dancing here.
+
+<!-- iamhoiend -->
+
 ## Here's what makes terrible dancers terrible
 
 - They offer little or no connection. Do not confuse this with physical contact required for leading and following.
