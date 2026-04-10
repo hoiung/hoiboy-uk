@@ -82,7 +82,7 @@ Planning is the hard work. Building is the easy bit. I spent 3 years learning tr
 
 ## The Full Tour
 
-Every page, every feature. Click through to see what a production-grade trading system actually looks like under the hood.
+Every page, every feature. Click through to see what my production-grade trading system looks like under the hood.
 
 {{< gallery folder="more" name="full-tour" >}}
 
