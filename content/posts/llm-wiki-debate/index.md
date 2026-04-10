@@ -73,9 +73,9 @@ Companies already have wikis. Confluence, Notion, SharePoint. These have role-ba
 
 Don't get me wrong. I'm not trying to rubbish the idea. I'm just asking questions.
 
-The core insight about task allocation is real. LLMs genuinely don't get bored updating cross-references. Humans genuinely do. The "compiled knowledge" framing is useful. And the pattern echoes Vannevar Bush's 1945 Memex concept (a theoretical private knowledge store with associative trails between documents). Bush imagined it 80 years ago. LLMs can now actually maintain it. That's genuinely cool.
+The core idea is sound. LLMs genuinely don't get bored updating cross-references. Humans genuinely do. And the idea of compiling knowledge once instead of re-reading everything from scratch each time... that makes sense.
 
-For a solo researcher reading 100+ papers over months and wanting an LLM to maintain structured companion notes... yeah, that's elegant. I'll give it that.
+For a solo researcher reading loads of papers over months and wanting an LLM to keep structured notes... yeah, I can see that working. I'll give it that.
 
 ## The verdict
 
