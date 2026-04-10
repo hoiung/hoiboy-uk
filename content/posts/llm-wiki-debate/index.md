@@ -35,7 +35,7 @@ Obsidian already gives you a graph view showing connections between notes, rich 
 
 Karpathy tested his pattern on roughly 100 articles. At that scale, a well-named folder IS the wiki. You don't need an intermediary.
 
-I've spent the last year building production systems with AI. Not prototypes, not demos. A swing trading platform with 10,000+ commits and 1,860+ issues. A five-stage solo agent workflow called SST3 that manages everything from research through implementation through review. All of it documented using plain .md files.
+I've spent the last 3 years building production systems with AI. Not prototypes, not demos. A swing trading platform with 10,000+ commits and 1,860+ issues. A five-stage solo agent workflow called SST3 that manages everything from research through implementation through review. All of it documented using plain .md files.
 
 My SST3 workflow manages context for an AI agent across sessions using... a CLAUDE.md file. That's it. One file. The LLM reads it at session start, knows the project structure, the standards, the anti-patterns, the quality gates. Last month I changed how my order flow architecture worked. Updated 3 lines in CLAUDE.md. Every subsequent AI session knew the new contracts immediately. No re-compilation, no re-indexing, no cascade of wiki page updates. Just... edited the file.
 
@@ -61,7 +61,7 @@ This is the bit that really landed for both of us. We were on the old fashioneds
 
 Cognitive science research actually supports the idea that forgetting isn't a flaw. It's a feature! A 2022 study published in Frontiers in Computational Neuroscience found that agents with structured memory can forget a large percentage of older memories without any performance loss. And here's the kicker... some forgetting actually improved performance compared to agents with unbounded memory. Let that sink in. Remembering LESS made them BETTER.
 
-The brain does this deliberately. Research from Princeton shows it actively prunes inaccurate memories to keep the system tidy. During sleep, microglia prune unnecessary synaptic connections. The mechanism removes noise (outdated information, infrequently relevant facts) and produces more consistent decisions.
+The brain does this deliberately. Neuroscience research shows it actively prunes inaccurate memories to keep the system tidy. During sleep, microglia prune unnecessary synaptic connections. The mechanism removes noise (outdated information, infrequently relevant facts) and produces more consistent decisions.
 
 We forget things so that the important stuff stays accessible. Sometimes we forget the important stuff and remember something completely useless (I do this constantly... trust me, I'll remember what I had for lunch in 2019 but forget where I put my keys 5 minutes ago). But the pruning mechanism itself is load-bearing. It's what keeps the whole system from collapsing under its own weight.
 
@@ -73,7 +73,11 @@ My CLAUDE.md approach handles this naturally. When things change, I update the f
 
 ## The enterprise angle
 
-Companies already have wikis. Confluence, Notion, SharePoint. They have access controls, audit trails, compliance logging. RAG taps into those systems and pulls information with proper permissions. Building a parallel LLM-maintained wiki just duplicates what already exists (without the security).
+Companies already have wikis. Confluence, Notion, SharePoint. These aren't just document stores. They have role-based access controls, compliance-grade audit trails, proper retention policies. When someone leaves the company, their access gets revoked. When regulators come knocking, there's an immutable log of who changed what and when.
+
+Karpathy's wiki? It's a folder on a file system. Anyone with access can zip the whole thing and walk out. There's no RBAC, no audit trail beyond git log (which is a developer tool, not a compliance record), and it was tested on roughly 100 articles. Try that with the 50,000 documents a mid-sized company generates in a year.
+
+RAG isn't perfect, but it taps into existing enterprise systems with existing permissions. Building a parallel LLM-maintained wiki duplicates what companies already have, minus everything that makes it safe for a team to use.
 
 For enterprise, it's a non-starter. For personal use... well, Obsidian exists.
 
