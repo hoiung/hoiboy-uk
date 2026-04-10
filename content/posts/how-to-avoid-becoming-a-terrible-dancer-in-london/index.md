@@ -56,7 +56,7 @@ Please note, the list below is the extreme cases of terrible dancers based mostl
 
 <!-- iamhoi -->
 
-To give you some real context: when I moved back to London, I pulled and strained my back twice in the first month of dancing Zouk. Twice. Follows randomly throwing deep cambres out of nowhere and me reactively trying to catch them falling. Random head movements on packed dance floors when I certainly did not initiate it, scrambling to prevent collisions with other couples. Weeks of recovery each time. That's when I knew something was seriously wrong with the standard of dancing here.
+To give you some real context: when I moved back to London, I pulled and strained my back twice in the first month of dancing Zouk. Twice. Follows randomly throwing deep cambres out of nowhere and me reactively trying to catch them falling. Random head movements on packed dance floors when I certainly did not initiate it, scrambling to prevent collisions with other couples. Weeks of recovery each time. I'd been dancing Zouk in many other countries and cities for 3 years before that and never had to deal with it to this extent. That's when I knew something was seriously wrong with the standard of dancing here.
 
 <!-- iamhoiend -->
 
