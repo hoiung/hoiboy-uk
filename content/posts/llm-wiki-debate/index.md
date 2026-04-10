@@ -77,6 +77,8 @@ The core idea is sound. LLMs genuinely don't get bored updating cross-references
 
 For a solo researcher reading loads of papers over months and wanting an LLM to keep structured notes... yeah, I can see that working. I'll give it that.
 
+But then again... what's wrong with good old simple .md files in folders?
+
 ## The verdict
 
 By the last drink I'd worn myself out. Here's where I landed.
