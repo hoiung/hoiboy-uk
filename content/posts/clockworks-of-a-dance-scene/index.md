@@ -94,7 +94,7 @@ On the financial aspect of a dance scene, the Dancers are where the primary fund
 
 ---
 
-# **My Thoughts**
+## **My Thoughts**
 
 There are times when I feel that some people value a particular role more than the others, or give credit, ownership or entitlement to any single role. Personally, I think that's a very narrow-minded way of thinking and anyone who feels this way should just put their ego aside.
 
@@ -150,6 +150,6 @@ When you are hired for an event, are you earning enough to cover all your runnin
 
 Is there anything you feel needs changing?
 
-# **Special Thank You**
+## **Special Thank You**
 
 A special shout-out to all dance contributors around the world. You guys and gals are my CHAMPIONS, my SUPERSTARS\! Thank you for all your hard work and you have my deepest deepest respect. Keep it up\! :D

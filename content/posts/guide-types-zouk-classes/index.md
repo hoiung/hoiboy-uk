@@ -6,9 +6,9 @@ tags: [zouk, classes, learning, guide, beginner]
 source_file: "voice-corpus/blogs/24_guide-types-zouk-classes.md"
 source_era: "ZoukBase (WordPress)"
 ---
-# A Guide to Different Types of Zouk Classes - Part 1
+## A Guide to Different Types of Zouk Classes - Part 1
 
-# Introduction
+## Introduction
 
 Dancing has been one of my greatest investments. With the correct nurturing and guidance, it will reward you for all the time, effort and money you've invested into achieving your desired results.
 
@@ -31,7 +31,7 @@ There will be 4-parts for easy digestion:
 * Part 4:
   * Other Considerations & Final Words
 
-# Progressive Courses
+## Progressive Courses
 
 **My Definition:** Typically pre-paid or require a registration and acceptance before you can join. 1-3 classes per week spanning over multiple weeks and you are expected to commit during the period of time.
 
@@ -57,7 +57,7 @@ You should find progressive courses being offered at your local dance schools.
 
 I generally find progressive courses the best places for starters. The teachers don't need to be top professionals or renowned artists. However, the person teaching the beginners class should actually be the best teacher at the school. Based on my experience, for someone to have the ability to teach the correct basic fundamentals to a beginner, they need to have vast dance experience and knowledge. Once beginners learn to walk properly, it's generally easier for others to teach them and build on that strong foundation. But then again, that's just my opinion.
 
-# Special One-Day Workshops and Congress Workshops
+## Special One-Day Workshops and Congress Workshops
 
 **My Definition:** These could be special one day workshops or workshops at congresses that are taught by professionals who have been invited to share a particular technique or concept and fill in the gaps in experience, knowledge or skills of the local teachers and Zouk enthusiasts. These are great opportunities for everyone of all experience levels unless there are competency prerequisites that need you to have an understanding of the Zouk basics. Although saying that, prerequisites rarely tend to be an issue as the people attending would have had local classes.
 
@@ -75,11 +75,11 @@ I generally find progressive courses the best places for starters. The teachers 
 
 I'll discuss these important changes further in a separate blog and why I believe this is crucial in taking the global Zouk scene towards a healthier direction (not that it isn't healthy currently, but there still are many underlying issues to tackle).
 
-# A Guide to Different Types of Zouk Classes - Part 2
+## A Guide to Different Types of Zouk Classes - Part 2
 
 This is part 2 of 4 of 'A Guide to Different Types of Zouk Classes'.
 
-# Bootcamps & Intensive Courses
+## Bootcamps & Intensive Courses
 
 **My Definition:** Bootcamps are very structured and can range from being taught over a single weekend to a whole month. With smaller weekend boot camps focused on drilling a particular set of topics and longer curriculums progressively linking together all different aspect of dancing.
 
@@ -99,7 +99,7 @@ Class sizes are limited to ensure you receive adequate attention from the teache
 
 I've had the chance to dance and practice with some truly amazing dancers from around the world, both in terms of passion and ability. Everyone is so humble and keen to learn which creates a resonating effect on each other. This is my ideal learning environment, the perfect balance of fun and challenging.
 
-# Privates Classes
+## Privates Classes
 
 **My Definition:**
 
@@ -129,11 +129,11 @@ Most of my privates are always back to basics and correcting my axis, posture an
 
 At the stage I am now (about 3.5 years of actual Zouk learning), I still utilise privates every 6 months to check if I've resolved previous bad habits and identify any new ones because it's easy to pick up bad habits at any time.
 
-# A Guide to Different Types of Zouk Classes - Part 3
+## A Guide to Different Types of Zouk Classes - Part 3
 
 This is part 3 of 4 of 'A Guide to Different Types of Zouk Classes'.
 
-# Drop-in Bar Classes
+## Drop-in Bar Classes
 
 **My Definition:** Come when you want, stop when you want.
 
@@ -175,15 +175,15 @@ Having recently spoken to Willem Engel (the renowned teacher of teachers from th
 
 This conversation has helped re-enforce how I feel about this multi-level system that is often used throughout the world, a system that's failing students.
 
-# A Guide to Different Types of Zouk Classes - Part 4
+## A Guide to Different Types of Zouk Classes - Part 4
 
 This is the 4th and final part of 'A Guide to Different Types of Zouk Classes'.
 
-# Other Considerations
+## Other Considerations
 
 The effectiveness of the different courses and classes will certainly have many other factors including but not limited to;
 
-## The Teachers
+### The Teachers
 
 * The limit of their experience, knowledge and understanding of the dance.
 * A great dancer doesn't necessarily make a great teacher.
@@ -196,7 +196,7 @@ There is no such thing as loyalty when it comes to your self development and if 
 
 The best teachers are the ones who are guiding you in such way that it will bring out the best in you, as a person and as a dancer.
 
-## The students that are attending
+### The students that are attending
 
 * The ratio of male and female is important, where ideally equal ratio is the best.
 * The level of each student also plays a factor. Ideally equal experience across the class, however this factor is one of the most difficult and almost impossible to control. If there are too many students with lesser experience taking a class far too difficult for them this tends to interrupt and stalls other students' development and holds back the overall class progression.
@@ -208,7 +208,7 @@ The easiest way is for students to do themself and everyone a favour by letting 
 
 This is also the main reason why I prefer learning techniques and concepts, because they are generally open level topics.
 
-## Your mood and mental state
+### Your mood and mental state
 
 * Fatigue and negative mood swings may affect your receptiveness and ability to absorb the information e.g. if you are too tired and mentally drained from work.
 * If you are going through a tough time in your life trying to cope with stress and unhappiness.
@@ -219,7 +219,7 @@ I found this to be a terrible idea because to me dance isn't a place to escape w
 
 Dance is a place that I love to go when I am in a happy mental state. This is important because partner dancing is a share of emotions, and the last thing I want to do is spill over my unwanted negative feelings onto my dance partners.
 
-## Practice
+### Practice
 
 * Actually practicing what you've learned.
 * Too busy to find time to practice.
@@ -236,7 +236,7 @@ If you don't know what you should be practicing, then what have you been learnin
 
 No excuses for not practicing now. :)
 
-# Final Words
+## Final Words
 
 There you have it, plenty of options depending on what you are looking for.
 
