@@ -64,6 +64,161 @@ Don't alternate blocks. Weave them: "Here's the line that caused the bug. I foun
 
 ---
 
+## Headline Craft
+
+Research compiled from BuzzSumo (100M+ articles), Backlinko (912M posts), Upworthy (8,977 A/B experiments), Outbrain, CoSchedule (4M+ headlines), Nature Human Behaviour, and PNAS studies. Updated April 2026.
+
+### The Core Rule
+
+Spend disproportionate time on the title. Upworthy's data showed winning headlines produce 20-500% CTR lifts over losers. The title is the only thing most people will ever read.
+
+### Hoi's Natural Title Style (from corpus analysis)
+
+Before applying any formula, know what Hoi already does well:
+
+- **Average: 7 words.** Sweet spot is 6-8 (53% of his titles).
+- **Title Case** (capitalise every word, not strict AP/Chicago). Lowercase only as a deliberate voice signal ("i r back!").
+- **Numbered lists are his default** (22% of titles). Numbers 3, 5, 7, 16.
+- **Questions are his second mode** (17%). Practical utility questions, not philosophical.
+- **Best titles use the double-sentence structure**: "Falling in Zouk Love Again. My Russian Saga." Full stop mid-title creates a two-beat rhythm (headline + subhead collapsed into one).
+- **Parenthetical flags**: "(Uncensored)" signals stakes and honesty.
+- **CAPS on a single key word**: "DOOMED to Fail" earns emphasis without shouting.
+- **Post-mortem framing** works well: "The Idea That Won't Die", "Why it was DOOMED to Fail".
+- **Weakest titles are bare labels** with no angle: "Birmingham Bouldering Centre", "Turtle Bay Restaurant". Always add an opinion or hook.
+
+### Optimal Length
+
+| Surface | Optimal length |
+|---|---|
+| Blog title (H1) | 6-13 words |
+| SEO title tag | 50-60 characters (Google truncates at ~600px width) |
+| Social sharing (og:title) | Under 70 characters (safe across Twitter, LinkedIn, Facebook) |
+| Meta description | 155-160 characters |
+
+Title case gets 2.4% more organic clicks than sentence case (SEMrush, 28-day split test, 96% confidence).
+
+### H1 vs SEO Title
+
+They should be **different but aligned**. The H1 is for the reader on the page (can be longer, more conversational). The SEO title tag is for SERP clicks (50-60 chars, keyword front-loaded). If they match exactly, you lose the chance to optimise for two surfaces. Hugo's `title:` frontmatter becomes the H1. Use `params.seoTitle` or the description field for the SERP version if needed.
+
+### What the Data Says Works
+
+| Finding | Data | Source |
+|---|---|---|
+| Numbers increase CTR | +36% vs no numbers | ConversionXL / Conductor |
+| Questions increase shares | +23.3% | Backlinko, 912M posts |
+| Negative framing beats positive | +63% CTR for negative superlatives ("worst", "never") vs positive ("best", "always") | Outbrain |
+| Odd numbers beat even (usually) | +20% CTR for odd-numbered lists | CMI. But BuzzSumo shows 10 still wins on raw shares. |
+| Digits beat spelled-out numbers | Always use "7" not "Seven" | Nielsen Norman Group eye-tracking |
+| Front-load keywords | Keywords in first 3-4 words get stronger SERP weight and survive truncation | Backlinko, Moz |
+| Sadness increases clicks | +0.7% per SD | Nature Human Behaviour, 105K headlines |
+| Joy decreases clicks | -0.9% per SD | Same study |
+| Each negative word | +2.3% CTR per word | Same study |
+| Each positive word | -1.0% CTR per word | Same study |
+
+### Formulas That Perform (ranked by data)
+
+1. **Number + noun + value**: "7 Dance Tips from Zero to Hero". BuzzSumo's top 7 performers are all number-led.
+2. **How to X (without Y)**: Strongest on LinkedIn (3x nearest rival in B2B). Clear utility promise.
+3. **Why X Is Y (opinion/argument)**: Negative framing variant. "Why Being a UK Landlord Is a Mug's Game".
+4. **Question headline**: "Do We Actually Need LLM Wiki?" Sustains prefrontal cortex engagement 1.9s longer than declarative. But underperforms with loyal audiences who prefer directness.
+5. **[Thing]. [Verdict/Story]**: Hoi's double-sentence format. "ReportaDancer.com. Why it was DOOMED to Fail." Works as a collapsed headline + subhead.
+6. **Personal specific**: "What we learned after auditing 117 landing pages". Signals a real human did a real thing.
+
+### The Curiosity Gap (Use With Care)
+
+Partial information drives clicks. Nature Scientific Reports (2024, 8,977 Upworthy experiments): 50.9% of headlines would see CTR DECREASE if made more concrete. Only 8.7% benefit from more concreteness. The sweet spot is partial information. But Penn State/ACM CHI (2021) found clickbait triggers source derogation (distrust) rather than engagement. The line: **the content must deliver on the headline's implied promise**.
+
+### Emotional Triggers
+
+- **Sadness** increases click odds. Fear and joy both decrease them.
+- Power words cluster into: urgency (alert, critical, pending), exclusivity (accepted, eligible, limited), emotion (dream, epic, warning), value (deal, bargain, sale).
+- Personal pronouns increase CTR by 14-33 percentage points (Tandfonline, 1,828 headline pairs). "You/your" outperforms "I/my" in marketing contexts.
+- EMV (Emotional Marketing Value) benchmark: average English text ~20% EMV words. Professional copywriters hit 30-40%. Elite hit 50-75%.
+
+### BuzzSumo Shifts (2017 vs 2020)
+
+The landscape changed. "Will make you" collapsed from 1.7M shares to 143K. Emotional clickbait died.
+
+| Era | Top Facebook phrases |
+|---|---|
+| 2017 | "will make you", "this is why", "can we guess" |
+| 2020 | "of the year", "in X years", "for the first time", "you need to" |
+
+Optimal headline length shifted from 15 words / 95 chars (2017) to 11 words / 65 chars (2020). Audiences want faster consumption.
+
+### Personal Blog Titles (Not Corporate Content)
+
+Lessons from Seth Godin, Paul Graham, Derek Sivers:
+
+- **Godin**: 2-5 word noun phrases, no verbs, mild provocation. "Plumbed." "Kinder than necessary."
+- **Graham**: Either "How to X" (direct utility) or a single provocative noun ("Heresy", "Founder Mode").
+- **Sivers**: Short imperative or present-tense observation. Never a listicle. "Offline 23 hours a day."
+- **Pattern across all three**: no numbers, no brackets, no "ultimate guide." Confidence by omission.
+- **Hacker News sweet spot**: specific verb + concrete result. "Fingerprinting is worse than I thought."
+- **Anti-clickbait that works**: honest specificity. "We've fabricated steel for 30 years. Here's what most people get wrong."
+
+### 10 Headline Mistakes
+
+1. **Overpromising**: 63% of UK news audiences say clickbait reduces trust (Reuters Institute).
+2. **Vague/generic**: a headline that could be about anything signals low value before the click.
+3. **Too clever**: puns that sacrifice clarity. If the reader has to decode the joke, they scroll.
+4. **Keyword stuffing**: Google penalises it. Readers bounce.
+5. **Curse of knowledge**: assuming the reader already cares. The headline must earn their interest.
+6. **Giving away the conclusion**: no reason to click if the verdict is already in the title.
+7. **Too long**: optimal is 60-100 chars. Google truncates at ~63 chars on desktop.
+8. **Passive voice**: "Profits Were Increased" vs "New Strategy Triples Profits". Active wins.
+9. **Jargon/acronyms**: excludes the majority of potential readers.
+10. **Bare label with no angle**: "Birmingham Bouldering Centre" could be anything. Always add a hook.
+
+### The Writing Process
+
+1. **Write 25 headlines** (Upworthy's technique). The first 5 are obvious. The good ones come from 15-25. The discipline forces you past cliches.
+2. **Title first OR last, but never as an afterthought.** Copyblogger: write it first because it determines your angle. Many writers: write last because the body dictates the summary. The non-negotiable: spend real time on it.
+3. **Title + description as a one-two punch.** The title hooks. The description (Hugo's `description:` frontmatter) qualifies. Write them as a pair. The description should expand the promise, not repeat the title. 155-160 characters max.
+4. **The dinner party test.** Does your headline contain something worth breaking out at a dinner party? If it's too dry to repeat in conversation, it lacks a genuine hook.
+5. **Run it through CoSchedule Headline Analyzer** (free, scores 0-100 on word balance, sentiment, readability). Not authoritative, but catches obvious weakness.
+
+### Year Numbers in Titles
+
+Ahrefs data: users skip stale-titled results. "Best CRM Tools 2023" at position 3 loses clicks to "Best CRM Tools 2026" at position 5. But year in the URL slug ages badly. **Put the year in the title tag only, not the slug.** Update the title annually for evergreen content.
+
+### Platform-Specific Notes
+
+| Platform | Headline preference |
+|---|---|
+| Facebook | Instructional and emotional. "of the year", "you need to know" |
+| Twitter/X | Curiosity-gap and trend-focused. "the future of" |
+| LinkedIn/B2B | "How to" dominates (3x nearest rival). Practical, data-led, aspirational |
+| Hacker News | Specific + concrete. "I built [thing] to solve [specific problem]" |
+
+### Tools
+
+- **CoSchedule Headline Analyzer** (coschedule.com/headline-analyzer): Most comprehensive free option. Scores word balance, sentiment, readability.
+- **Sharethrough Headline Analyzer** (headlines.sharethrough.com): AI-powered. Best for social/ad formats.
+- **AMI EMV Analyzer** (aminstitute.com/headline): 30-second emotional punch sanity check.
+- **None replace real click data.** A/B test via email subject lines first (fastest signal), then apply winners to article titles.
+
+### Sources
+
+- [BuzzSumo 100M Headlines Study](https://buzzsumo.com/blog/most-shared-headlines-study/)
+- [BuzzSumo 10M LinkedIn Headlines](https://buzzsumo.com/blog/write-engaging-b2b-headlines-analysis-10-million-articles-shared-linkedin/)
+- [Backlinko Blogging Stats 2026](https://backlinko.com/blogging-stats)
+- [Backlinko 4M Google Search Results](https://backlinko.com/google-ctr-stats)
+- [Nature Human Behaviour: Negativity Drives Online News](https://www.nature.com/articles/s41562-023-01538-4)
+- [Nature Scientific Reports: Curiosity Gaps (2024)](https://www.nature.com/articles/s41598-024-81575-9)
+- [Banerjee & Urminsky: Upworthy Headline Experiments (UChicago)](https://home.uchicago.edu/ourminsky/Banerjee_Urminsky_Headlines.pdf)
+- [Outbrain: Negative Superlatives Study (via Poynter)](https://www.poynter.org/reporting-editing/2014/the-worst-news-ever-negative-headlines-outperform-positive-ones/)
+- [SEMrush: Title Case vs Sentence Case Split Test](https://www.semrush.com/blog/seo-split-test-result-should-you-sentence-case-or-title-sase-your-title-tags-/)
+- [Nielsen Norman Group: Show Numbers as Numerals](https://www.nngroup.com/articles/web-writing-show-numbers-as-numerals/)
+- [Tandfonline: Effective Headlines in Digital Environment](https://www.tandfonline.com/doi/full/10.1080/21670811.2017.1279978)
+- [Penn State/ACM CHI: Does Clickbait Actually Attract More Clicks (2021)](https://dl.acm.org/doi/fullHtml/10.1145/3411764.3445753)
+- [CoSchedule Headline Analyzer](https://coschedule.com/headline-analyzer)
+- [Noah Kagan: Why Content Goes Viral (1M articles)](https://noahkagan.com/why-content-goes-viral-what-analyzing-100-millions-articles-taught-us/)
+- [Copyblogger: How to Write Headlines That Work](https://copyblogger.com/how-to-write-headlines-that-work/)
+
+---
+
 ## Building in Public
 
 From Indie Hackers analysis of 500 posts:
