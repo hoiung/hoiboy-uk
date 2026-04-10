@@ -112,7 +112,7 @@ strong, b { font-weight: 550; }
 .year-group h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-muted); border-bottom: 1px solid var(--rule); padding-bottom: 0.3rem; margin-bottom: 0.6rem; font-weight: 550; }
 .post-list { list-style: none; }
 .post-list li { margin: 0.5rem 0; display: flex; gap: 1rem; align-items: baseline; }
-.post-list .date { font-size: 0.85rem; color: var(--fg-muted); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.post-list .date { font-size: 0.85rem; color: var(--fg-muted); font-variant-numeric: tabular-nums; flex-shrink: 0; min-width: 3.5rem; }
 .post-list a { color: var(--fg); text-decoration: none; }
 .post-list a:hover { color: var(--accent); }
 
