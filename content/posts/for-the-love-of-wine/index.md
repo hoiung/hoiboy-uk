@@ -7,7 +7,7 @@ source_file: "voice-corpus/blogs/11_for-the-love-of-wine.md"
 source_era: "AdventureAnd.Me (Joomla)"
 ---
 
-# For The Love Of Wine
+## For The Love Of Wine
 
 - Do you love the taste of *Wine* but really have no clue about it?
 - You drink *Wine* because it makes you appear more sophisticated?
@@ -21,7 +21,7 @@ From my experience, I never thought I would love *Wine* as much as I do today. E
 
 At some point, I actually hated *Wine*, especially when it came to the *Reds*. The dryness texture it left in my mouth and hangover headache the following day was enough to put anyone off. *Whites* never occurred to me as much since I thought it was too feminine! I was so wrong... and today, my preference are *Whites* and certainly isn't too feminine!
 
-#### So how did I turn from being this ignorant guy to a Wine loving one?
+### So how did I turn from being this ignorant guy to a Wine loving one?
 
 It all started 2nd Janurary 2014 when I met up *Xin* to celebrate the New Year with some fresh *Oysters* at the **Bullring Market**. She convinced me to go *Wine Tasting* and I remember walking passed this place called **Loki** under the *Great Western Arcade, Birmingham City Centre*. So that's where we headed next...
 
@@ -49,7 +49,7 @@ Joining courses are a great way to start with basic understanding. You get to me
 
 Anyone can learn to appreciate and respect the *World of Wine*, and within no time, you can impress your friends with how smart you are. Maybe...!
 
-#### Let's get you started, here are some links:
+### Let's get you started, here are some links
 
 **Birmingham School of Wine (BSoW), UK** - I would recommend doing the 8 Weeks Around the World Course (If you miss any weeks, you can redo them when the course restarts again)
 http://www.birminghamwineschool.com/eventslist.php

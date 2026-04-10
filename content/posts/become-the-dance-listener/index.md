@@ -22,7 +22,7 @@ I'm calling this dance optimisation method "*The 3 Dance Approach*".
 
 The name is an obvious giveaway why it's called this… Yes, it's because it uses 3 dances. Some people may object or disagree with this and may suggest they can do it quicker. Sure you can, I agree, but I enjoy taking my time to warm up to each other shifting up gears before going full throttle.
 
-*The 3 Dance Approach *works like a charm for me and had helped enhanced dances with Follows of all level. I've shared this methodology with many friends and many agreed it's made a huge difference!
+*The 3 Dance Approach* works like a charm for me and had helped enhanced dances with Follows of all level. I've shared this methodology with many friends and many agreed it's made a huge difference!
 
 *The 3 Dance Approach* is a great tool to help you develop into an exceptional *Dance Listener*.
 
@@ -32,7 +32,7 @@ I would highly encourage everyone and especially beginners to follow *The 3 Danc
 
 A good comment from a friend had me thinking about the feasiliby of the *The 3 Dance Approach* and whether it is usable for Beginner Leads. Her opinion is that Lead(s) needs to be able to do the Zouk basic movements very well for this method to be effective.
 
-I understand where she's coming from and concerns. **This then begs the question, when should a Beginner Lead start learning about Dance Listening? What would be a more simplier/basic version suited for beginners? **
+I understand where she's coming from and concerns. **This then begs the question, when should a Beginner Lead start learning about Dance Listening? What would be a more simplier/basic version suited for beginners?**
 
 My rationale for Beginners to start learning this skill as early as possible in their Zouk journey based on the fact it will reduce or prevent rough/bad leading because Dance Listening will tell them whether they are using too much strength or leading incorrectly.
 
@@ -216,7 +216,7 @@ In speed dating, there aren't enough time to explore each other's interest, what
 
 From my limited understanding in *Tango* is that as part of it's *etiquette*, you are obliged to have multiple dances with the same partner? I'm not saying it should be a strict rule, but only as a rough *guideline* that may enhance both yours and your partners Zouk dance experience.
 
-Really ask yourself this question, **what's the rush? **Steadily, take your time and enjoy getting to know her.
+Really ask yourself this question, **what's the rush?** Steadily, take your time and enjoy getting to know her.
 
 **STOP SHOUTING AND LISTEN**
 

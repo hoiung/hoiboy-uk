@@ -6,9 +6,9 @@ tags: [zouk, learning, growth, plateaux, habits]
 source_file: "voice-corpus/blogs/32_understanding-dance-growth-plateaux-bad-habits.md"
 source_era: "ZoukBase (WordPress)"
 ---
-# Understanding Dance Growth, Plateaux and Bad Habits \- Part 1
+## Understanding Dance Growth, Plateaux and Bad Habits \- Part 1
 
-# Introduction
+## Introduction
 
 One area that I feel has very little attention in Zouk teaching is the setting & managing of progression expectations versus time frame in learning Zouk (especially if you've never danced before).
 
@@ -41,7 +41,7 @@ Part 3:
 * Bonus for reading this far.
 * Final Words
 
-# Dance growth is not linear.
+## Dance growth is not linear
 
 Learning to dance is certainly not a smooth ride. Graph 1 illustrates your progressions going up and down constantly.
 
@@ -49,7 +49,7 @@ To improve in dance, it's about teaching your body, mind and emotional energy to
 
 You will have days where you feel that it's getting better and days you feel like it's getting worse. This is normal as you are learning to apply dance concepts that your mind & body is unfamiliar with. Just keep at it.
 
-# What are dance plateaux.
+## What are dance plateaux
 
 Graph 2 shows that we are constantly facing dance plateaux and it's the obstacle that blocks us from improving.
 
@@ -59,17 +59,17 @@ Unfortunately irregular practices will not get the same results because we all s
 
 As my general rule of thumb, I only count a minimum twice a week of 1+ hour classes or self-routine practices as regular practice. Anything less is irregular.
 
-# The forever dance plateau.
+## The forever dance plateau
 
 As a dancer, graph 3 shows one position that I would never want to be stuck in. This usually happens when dancers start learning for the first couple of years, then they stop going classes or practicing.
 
 The dancers at this forever plateau stage are usually by choice because they have found their comfort zone or have life priorities other than dance. They generally enjoy just social dancing and may attend a class once in a blue moon.
 
-# Understanding Dance Growth, Plateaux and Bad Habits \- Part 2
+## Understanding Dance Growth, Plateaux and Bad Habits \- Part 2
 
 This is part 2 of 3 of 'Understanding Dance Growth, Plateaux and Bad Habits'. Click here to start with part 1 if you've not read it yet.
 
-# Picking up bad dance habits & incorrect techniques.
+## Picking up bad dance habits & incorrect techniques
 
 Graph 4 shows the negative effect on your dance growth when you pick up bad habits or incorrect techniques.
 
@@ -87,7 +87,7 @@ Technique is something you should always go learn through a reputable profession
 
 Please note, some techniques, concepts and movements may be easier to learn than others for different people. There are many techniques and concepts that can't be and shouldn't be learned without having a solid foundation, otherwise you will negatively impact your dance development and progression. Don't run before you've learned how to walk.
 
-# Becoming worse than when you've started out.
+## Becoming worse than when you've started out
 
 I always enjoyed dancing with complete beginners but having danced again with them in 1-6 months later of classes, they often seem to have gotten worse.
 
@@ -102,11 +102,11 @@ To reduce or prevent the chances of becoming worse than you'd started out, avoid
 
 You should subscribe to our newsletter and keep an eye out for a future blog called "The Key To Effective Dance Practice". This would help prevent or reduce the early stage decline in progression and also assist your overall dance growth.
 
-# Understanding Dance Growth, Plateaux and Habits \- Part 3
+## Understanding Dance Growth, Plateaux and Habits \- Part 3
 
 This is the 3rd and final part of 'Understanding Dance Growth, Plateaux and Bad Habits'. Click here to start with part 1 if you've not read it yet.
 
-# Building a dance solid foundation.
+## Building a dance solid foundation
 
 I'm sorry to be the one telling you this, but there is no quicker way in learning to dance. If someone tells you otherwise or is selling you the idea that they know shortcuts, then they probably don't know how to dance and you shouldn't be listening to them.
 
@@ -124,11 +124,11 @@ A very important note is dance foundation isn't something that you develop only 
 
 The stronger your dance foundation, the more amazing and complex techniques can be utilised simultaneously into your dance, without having toppling effects.
 
-# Bonus for reading this far.
+## Bonus for reading this far
 
 Graph 7 is very much self-explanatory. Not many more words needed to be said\!
 
-# Final Words
+## Final Words
 
 I hope this blog had helped set some of your learning expectations and offered some tips for improving.
 

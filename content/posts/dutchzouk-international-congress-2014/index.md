@@ -26,7 +26,7 @@ Friday, the music were absolutely smashing! The playlist had lots of *RnB* and s
 
 Monday was a night that I would never ever forget. By then, my *Zouk* skills had skyrocket. The dancers were mainly the local *Dutch* ladies and I got to admit, their levels were amazing. I have much respect for them because every one of my dances felt connected and they all followed so well. One particular dance that made my night... no... the entire Congress, was with *Natalia*. You really must read further down the blog as to why this dance was so special! Incredible...
 
-One particular point I would like to *highlight* about this congress was how the Teachers really got stuck into dancing and mingling with the students during the parties. There were no *'Teacher's Corner' *and you can spot them scattered everywhere. This is how it should always be on the dance floor... There are no Teachers or Students... We're all just Dancers with the same passion for Zouk!
+One particular point I would like to *highlight* about this congress was how the Teachers really got stuck into dancing and mingling with the students during the parties. There were no *'Teacher's Corner'* and you can spot them scattered everywhere. This is how it should always be on the dance floor... There are no Teachers or Students... We're all just Dancers with the same passion for Zouk!
 
 *[Adam and Claudia]*
 
@@ -36,9 +36,9 @@ It's been such an honour to have met and made so many new friends. Mentioning a 
 
 The one thing that I love the most about *Zouk* is the community. *Zouk* really attracts only the best people in the world. Kind, loving, honest, friendly and fun!
 
-### Pros & Cons of this Congress
+## Pros & Cons of this Congress
 
-#### Pros
+### Pros
 
 - 7 days of dancing!
 
@@ -60,7 +60,7 @@ The one thing that I love the most about *Zouk* is the community. *Zouk* really 
 
 - Organised Lunch and Dinner at Venue!
 
-#### Cons
+### Cons
 
 - No Direct Flight.
 
@@ -76,7 +76,7 @@ Website: http://dutchzouk.nl *(no longer available)*
 
 Facebook: https://www.facebook.com/dutchzoukcongress
 
-### My Experience of this Congress:
+## My Experience of this Congress
 
 - Travel
 
@@ -168,13 +168,13 @@ With 2 main dance floors and 3 other smaller studios. A total of 5 rooms with si
 
 With one particular goal in mind for this Congress, my aim was to focus back to basics and applying techniques. I am at that stage where learning more combinations would not make me a better dancer.
 
-#### Why I Would Always Choose Techniques Over Combination Classes
+### Why I Would Always Choose Techniques Over Combination Classes
 
 Techniques are more conceptual that requires understanding. I tend to remember these type of classes because it engages the creative part of my mind. By visualising the different ways it can be applied, even with little practice, I can somewhat pull it off during a dance.
 
 *[Arkkanjo and Claudia Class "Body Torsions"]*.
 
-#### Spoilt For Choice
+### Spoilt For Choice
 
 Every class I attended were packed! There were so many teachers, technique and combination classes, at times I just couldn't make up my mind. It ended with several last minute change of plans!
 
@@ -184,7 +184,7 @@ I did find myself misled by the naming of some technique classes such as *"Swing
 
 The downside of having lots of teachers and classes simultanously were choices became sacrifices. There were many classes I wanted to attend that ran at the same time. It can be regretful when a class chosen didn't quite met expectations, then you wished you had attended the other one!
 
-#### Teachers And Classes That Helped Me Progress Toward My Goals.
+### Teachers And Classes That Helped Me Progress Toward My Goals
 
 **Freddy and Andressa *"Musicality"*** - The clearest and most well explained class I've attended at this Congress. I can see why *Ying* rated them highly as a Teachers. Thanks to them, I'm starting to experiment with leading moves at different speeds depending on accent changes within a song.
 
@@ -200,7 +200,7 @@ A useful concept learned; In slow songs when it gets slow, you do faster movemen
 
 Every teacher has their own unique flair that makes them different yet great. Try out as many teachers as possible and find the ones that will inspire and lead you to discovering your own unique dance style. Just remember, a good dance Teacher will be ones that makes you feel excited and wanting to dance!
 
-#### Never Again - Blacklisted!
+### Never Again - Blacklisted
 
 Unfortunately there were a few classes that didn't do anything for me, as I have forgotten what was taught already! I have a terrible memory when it comes to combination classes, my brain just never engages these type of classes very well.
 
@@ -210,7 +210,7 @@ There was one class that I will never forget, not because it was great, but beca
 
 I have never been made to *feel* this way ever in all my congresses and classes. This was my first time trying and will be my last time attending to any of his classes. It completely drained me of all enthusiasm and a session that could have been productive elsewhere.
 
-#### Finish With A Bang
+### Finish With A Bang
 
 Suprisingly, Monday's Classes were awesome! It didn't go as planned on paper, but instead we had different Teachers every 20 minutes focusing on different techniques.
 
@@ -226,7 +226,7 @@ These were very useful since it got my mind engaged therefore I will never forge
 
 *[Monday's Class and Party at Kerkplein, Breda]*
 
-#### Master Classes
+### Master Classes
 
 This was the first congress I've ever been to that had *'Master Classes'*! I could understand the reason why they would introduce such classes.
 
@@ -236,7 +236,7 @@ I suspect their way forward were introducing 'Master Classes' where they would s
 
 I wouldn't participate in any of these as it was *'back to basics'* for me. However, having spoken to fellow *Zoukers* who attended these, many had mixed feelings. Some felt that it wasn't quite Master Class level while others found it challenging.
 
-#### How I Choose My Teachers
+### How I Choose My Teachers
 
 One way to learn any sort of skills quickly and effciently are to choose the right Teachers. Teacher's with poor teaching will impact your learning and produce negative effects instead.
 
@@ -270,13 +270,13 @@ When I initially went to the bar to be served and tried to pay in Euros, it turn
 
 *[Dressing up - Left to Right - Thursday, Friday, Sunday. Forgot Saturday and Monday :(]*
 
-#### Thursday
+### Thursday
 
 As I entered the venue, seeing so many dancers, the thumping of the bass line and sound of *Zouk* music. I want to dance! Still feeling nervous about not having danced since *ZoukTime!-BRNO*, I had to find that *'unlucky'* lady who would have the worse dance ever with me! My first dance had always been terrible and hoping once I got that out the way, the rest of the night would get better. Unfortunately that wasn't the case... I danced like %$£% throughout! There were so many accidents and near misses that I wanted to pack up and go home! It turned out I wasn't the only one who had a bad night though...
 
 *[I am there somewhere! :)]*
 
-#### Friday
+### Friday
 
 This turned out to be one of my best nights! The classes during the day really helped kickstart my recovery from the bad start on Thursday evening. I like how they kept performances to minimum, only 4 shows which was great! What I enjoyed most was a good amount of *RnB* music and it was my first time hearing some cool reggae tunes. It really got me into the vibe of dancing a little crazy! I only stayed until 3:30am and really regretted not staying until the very end because I planned to get some sleep for the morning class.
 
@@ -284,7 +284,7 @@ This turned out to be one of my best nights! The classes during the day really h
 
 *Neel* sent me this video of his friend *Zouking* at this congress. Guess who I found *'video bombing'* the entire duration while wearing an Afro?
 
-#### Saturday
+### Saturday
 
 [Video embedded]
 
@@ -294,13 +294,13 @@ My Longest night so far, danced until I dropped literally. My only gripe was the
 
 *[This guy wanted to hold my hands]*
 
-#### Sunday
+### Sunday
 
 By today, I've become more picky with my dances and songs as my feet were getting really sore. The final hour I had to sit down for an entire hour until the final song I got to dance with *Dominica*. I felt so ashamed and embarrassed for dancing so badly like I've had the energy sucked right out of me. *"boo...."*
 
 *[Sunday Survivors at 6am!]*
 
-#### Monday
+### Monday
 
 The after-party... Not expecting much of this night but it turned out to be my best and most memorable evening out of the entire congress! By now, there were less than a hundred dancers remaining. I guessed most of were locals (*Holland*) from what I've gathered. It was smaller yet very cozy.
 
