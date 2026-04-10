@@ -11,7 +11,7 @@ description: "Bear sent me the LLM Wiki gist. But what problem does it solve, an
 
 My mate Bear sent me a link the other day. "Have you seen this?"
 
-It was some gist about something called LLM Wiki. Went viral apparently. I didn't even clock who wrote it at first (turns out it was Andrej Karpathy, a fairly big deal in AI). I just skim-read what it was proposing and immediately started having questions. We were two bottles deep at this point (a Burgundy and a Chablis, pre-dinner) so naturally I had a lot of questions. By the time we'd finished dinner and worked through 4 ports, 4 martinis, 2 negronis, and 2 old fashioneds between us... I had even more.
+It was some gist about something called LLM Wiki. Went viral apparently. I didn't even clock who wrote it at first (turns out it was Andrej Karpathy, a fairly big deal in AI). I just skim-read what it was proposing and immediately started having questions. We were two bottles deep at this point (a Burgundy and a Chablis, pre-dinner) so naturally I had a lot of questions. By the time we'd finished dinner and worked through 2 ports each, 2 martinis each, a negroni each, and an old fashioned each... I had even more.
 
 The pitch: instead of throwing documents into a vector database and hoping retrieval finds the right chunk, let the LLM build and maintain a wiki. Three folders of markdown. Sources go in, the LLM reads them, writes summary pages, cross-links everything, keeps an index. Knowledge compiled once, kept current.
 
@@ -77,7 +77,7 @@ For a solo researcher reading 100+ papers over months and wanting an LLM to main
 
 ## The verdict
 
-By the second negroni I'd worn myself out. Here's where I landed.
+By the old fashioned I'd worn myself out. Here's where I landed.
 
 LLM Wiki is a nice pattern for one specific use case: a solo researcher with a curated collection of sources who wants compiled, cross-referenced notes. For that person, it works.
 
