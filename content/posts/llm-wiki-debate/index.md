@@ -31,7 +31,7 @@ So we're adding a layer. What does the layer actually buy us?
 
 I started ranting at Bear over the Chablis. What's wrong with Obsidian? What's wrong with a folder of .md files with sensible names?
 
-Obsidian already gives you a graph view, rich markdown rendering, backlinks, full-text search, tags, folders, plugins like Dataview for live queries. You can publish it as a website with Obsidian Publish. Humans get a polished UI. The LLM gets the same .md files it can already read and write. No extra layer needed!
+Obsidian already gives you a nice UI for reading and navigating .md files, backlinks between notes, full-text search, tags, folders. You can even publish it as a website. Humans get a polished front end. The LLM gets the same .md files it can already read and write. No extra layer needed!
 
 Think about it logically. What problem does LLM Wiki actually solve? Does the solution create more engineering problems than what it's trying to fix? I just had so many questions.
 
