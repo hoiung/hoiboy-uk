@@ -47,7 +47,7 @@ iD8u has been paused 4 times. Each time for a different reason. Each time the sa
 
 **Pause 2 (Early 2022)**: Momentum just... evaporated. Team members had moved on. The equity conversations had been uncomfortable. Nobody said "I'm out" but nobody was showing up either.
 
-**Pause 3 (Late 2022)**: Our tech lead built a working prototype. It looked great! Then... silence. I got consumed by another project (a trading platform that ended up being 10,000+ commits over 3 years). I couldn't do both. Something had to give.
+**Pause 3 (Late 2022)**: Our tech lead built a working prototype in React. It looked great! But he had to focus elsewhere to pay the bills (fair enough, we all do). He handed over what he'd done, and then I got consumed by another project. I couldn't do both. Something had to give.
 
 **Pause 4 (July 2025)**: Relaunched with my mate Derek. Right person, right energy. Ran Facebook ads again. Summer was the wrong time (everyone's on holiday), and the ads performed terribly compared to 2021. Agreed to hold off until autumn.
 
