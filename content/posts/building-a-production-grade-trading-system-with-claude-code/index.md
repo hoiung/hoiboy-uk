@@ -1,7 +1,7 @@
 ---
 title: "Building a Production-Grade Trading System with Claude Code"
 date: 2026-04-09
-categories: [tech-ai]
+categories: [tech-ai, trading]
 tags: [claude-code, trading, python, rust, ai, production]
 description: "9,437 commits. 1,419 issues. 5 months of tracked code. Half of it was fixing things I broke."
 ---
