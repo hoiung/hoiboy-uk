@@ -7,7 +7,7 @@
 {{- if $images -}}
 <div class="photo-gallery">
   {{- range $images }}
-    {{- $thumb := .Fill "400x300 Lanczos" -}}
+    {{- $thumb := .Resize "400x Lanczos" -}}
     <a href="{{ .RelPermalink }}"
        class="glightbox"
        data-gallery="{{ $gallery }}"

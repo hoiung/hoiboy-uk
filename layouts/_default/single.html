@@ -29,7 +29,7 @@
   {{- if gt (len $rest) 0 -}}
     <div class="photo-gallery">
     {{- range $rest -}}
-      {{- $thumb := .Fill "400x300 Lanczos" -}}
+      {{- $thumb := .Resize "400x Lanczos" -}}
       <a href="{{ .RelPermalink }}" class="glightbox" data-gallery="post-gallery" data-title="{{ .Title | default .Name }}">
         <img src="{{ $thumb.RelPermalink }}" alt="{{ $.Title }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" loading="lazy">
       </a>
