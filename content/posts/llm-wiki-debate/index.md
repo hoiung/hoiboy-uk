@@ -4,7 +4,7 @@ date: 2026-04-10
 categories: [tech-ai]
 tags: [ai, llm, knowledge-management, obsidian, markdown]
 slug: llm-wiki-debate
-description: "Bear sent me Karpathy's LLM Wiki gist. 17 million views. I think it's overengineering. Here's why plain markdown files still win."
+description: "Bear sent me Karpathy's LLM Wiki gist. 17 million views. But what problem does it solve, and does the solution create more engineering problems than what it's trying to fix?"
 ---
 
 <!-- iamhoi -->
@@ -35,9 +35,9 @@ Obsidian already gives you a graph view showing connections between notes, rich 
 
 Karpathy tested his pattern on roughly 100 articles. At that scale, a well-named folder IS the wiki. You don't need an intermediary.
 
-I've spent the last 3 years building production systems with AI. Not prototypes, not demos. A swing trading platform with 10,000+ commits and 1,860+ issues. A five-stage solo agent workflow called SST3 that manages everything from research through implementation through review. All of it documented using plain .md files.
+But forget about specific tools for a second. Think about it logically. What problem does LLM Wiki actually solve? Does the solution create more engineering problems than what it's trying to fix? I just had so many questions.
 
-My SST3 workflow manages context for an AI agent across sessions using... a CLAUDE.md file. That's it. One file. The LLM reads it at session start, knows the project structure, the standards, the anti-patterns, the quality gates. Last month I changed how my order flow architecture worked. Updated 3 lines in CLAUDE.md. Every subsequent AI session knew the new contracts immediately. No re-compilation, no re-indexing, no cascade of wiki page updates. Just... edited the file.
+Most AI coding tools already use a CLAUDE.md or similar file. One markdown file. The LLM reads it at session start, knows the project context, the standards, the constraints. When things change, you edit the file. Next session picks it up immediately. No re-compilation, no re-indexing, no cascade of wiki page updates. Just... edit the file.
 
 Bear wasn't convinced yet. "But what about when it gets stale?"
 
@@ -67,7 +67,7 @@ We forget things so that the important stuff stays accessible. Sometimes we forg
 
 An ever-growing wiki with no forgetting mechanism is the opposite of how effective memory works. Every page it's ever generated sits there forever, confidently presenting information that might be months out of date. No pruning. No decay. No noise reduction.
 
-My CLAUDE.md approach handles this naturally. When things change, I update the file. Old instructions get replaced, not layered on top of. The LLM reads current state. Always. No generated intermediary accumulating quiet drift.
+Plain .md files handle this naturally. When things change, you update the file. Old instructions get replaced, not layered on top of. The LLM reads current state. Always. No generated intermediary accumulating quiet drift.
 
 "OK," Bear said. "But what about companies? Teams?"
 
