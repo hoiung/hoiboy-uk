@@ -20,7 +20,7 @@ By November 2024 I left my corporate job (8 years at Canonical, the Ubuntu peopl
 
 But it worked. Barely. Three take-profit strategies, one-click bracket orders, a background poller that synced positions every 5 minutes. 222 commits. I called it tradebook_GAS and it taught me everything I needed to know about what NOT to build next time.
 
-That was the whole point of doing it on a spreadsheet first: figure out what data sets and calculations we actually need. Every single column in that spreadsheet became a database column in the production system. The pain of building tradebook_GAS wasn't wasted. It was the blueprint for the tradebook side. But the production system went way beyond that: full automation, backtesting engine, signal detection, strategy management, real-time data streaming, order execution. The limitations of the spreadsheet (no backtesting, no automated scanning, ngrok dying at 3am) became the requirements list for everything else.
+That was the whole point of doing it on a spreadsheet first: figure out what data sets and calculations we actually need. Most of those spreadsheet columns carried over into database columns in the production system (we took what we needed, ditched what wasn't useful). The pain of building tradebook_GAS wasn't wasted. It was the blueprint for the tradebook side. But the production system went way beyond that: full automation, backtesting engine, signal detection, strategy management, real-time data streaming, order execution. The limitations of the spreadsheet (no backtesting, no automated scanning, ngrok dying at 3am) became the requirements list for everything else.
 
 ## The Build
 
