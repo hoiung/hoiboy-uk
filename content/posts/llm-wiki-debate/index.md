@@ -35,6 +35,8 @@ Obsidian already gives you a graph view, rich markdown rendering, backlinks, ful
 
 Think about it logically. What problem does LLM Wiki actually solve? Does the solution create more engineering problems than what it's trying to fix? I just had so many questions.
 
+Because here's the thing... my current workflow already does this. I spin up multiple subagents to do research, they dump summaries into .md files, those files get indexed per project repo in a docs subfolder with an index.md. That's it. No wiki engine. No special architecture. Just agents writing markdown into folders with an index. Sound familiar?
+
 Most AI coding tools already use a CLAUDE.md or similar file. One markdown file. The LLM reads it at session start, knows the project context. When things change, you edit the file. Next session picks it up immediately. No re-compilation, no re-indexing, no cascade of wiki page updates. Just... edit the file.
 
 ## The staleness problem
