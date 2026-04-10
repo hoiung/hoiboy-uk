@@ -23,7 +23,7 @@ Hi, I'm Hoi. I'm human, by the way. I just love working with tech, AI, trading, 
 **Compatibility:** Fun and reliable human beans, age is irrelevant\
 **Likes:** People with common sense and a sense of silliness because life is too short\
 **Dislikes:** People with uncommon sense and lack of awareness\
-**Superpowers:** ADHD and OCD for getting shit done\
+**Superpowers:** ADHD and OCD for getting shit done properly\
 **Personal Quote:** "No problems, only solutions."\
 **Hobbies & Passions:** Click and see the categories!\
 **Dance moves known:** 8 (recycled for 10+ years and counting)\
