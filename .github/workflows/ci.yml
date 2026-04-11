@@ -27,6 +27,9 @@ jobs:
           fetch-depth: 0
           submodules: false
 
+      - name: Secret detection (blocking)
+        run: python3 scripts/check-public-repo-secrets.py .
+
       - name: Read pinned Hugo version
         id: hugo_version
         run: |
