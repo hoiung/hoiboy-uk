@@ -48,6 +48,8 @@ What does that mean in practice? If a tenant stops paying rent, you can still ev
 
 And here's the bit that really winds landlords up. Official advice from Shelter, Citizens Advice, and local councils tells tenants to stay in the property and NOT leave voluntarily before a court order. Seriously. Because if they leave early, they're classed as "intentionally homeless" and the council won't rehouse them. The advice isn't technically "don't pay rent" but the practical message is: dig in, wait for the court process, take your time. I understand why they do it (the housing crisis is real, nobody wants people on the streets), but it's another cost that falls entirely on the landlord.
 
+The only real protection against non-payment is rent guarantee insurance. Another premium on top of everything else. The other option is renting through the council directly, but then you lose all control over who lives in your property. No vetting, no choice of tenants. And the amount of nightmare stories I hear from landlords who went the council tenant route... it's a problem I'd rather avoid entirely.
+
 ## House Prices Went Flat
 
 Between 2019 and 2022, UK house prices went up 21.7%. That capital growth was the safety net. Even if the monthly cash flow was tight, you were building equity. The property was worth more every year.
