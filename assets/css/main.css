@@ -192,7 +192,7 @@ footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule);
 
 /* Mobile: collapse sidebar, hamburger toggle for nav */
 @media (max-width: 768px) {
-  .layout { grid-template-columns: 1fr; padding: 1rem; }
+  .layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; padding: 1rem; }
   .sidebar { position: relative; max-height: none; border-bottom: 1px solid var(--rule); padding-bottom: 1rem; margin-bottom: 1rem; }
   .sidebar nav { display: none; }
   .menu-toggle-input:checked ~ nav { display: block; }
