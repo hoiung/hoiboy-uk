@@ -1,3 +1,8 @@
+# Environment files
+.env
+.env.*
+!.env.example
+
 # Hugo
 public/
 resources/

@@ -49,3 +49,20 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+
+      - id: check-public-repo-secrets
+        name: Check for secrets in public repo
+        entry: python3 scripts/check-public-repo-secrets.py . --staged-only
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      - id: secret-rules-drift
+        name: Secret detection script drift check
+        entry: bash
+        args:
+          - -c
+          - 'CANONICAL=../dotfiles/SST3/scripts/check-public-repo-secrets.py; LOCAL=scripts/check-public-repo-secrets.py; [ -f "$CANONICAL" ] || { echo "SKIP dotfiles not found" >&2; exit 0; }; cmp -s "$LOCAL" "$CANONICAL" || { echo "ERROR $LOCAL drifted. Run cp $CANONICAL $LOCAL" >&2; exit 1; }'
+        language: system
+        pass_filenames: false
+        always_run: true
