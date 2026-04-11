@@ -26,4 +26,10 @@ exclude = [
   # Medium returns 403 to bots/CI. Link is valid for humans.
   # added: 2026-04-10; expires: 2026-07-09 (90 days)
   "^https?://medium\\.com/",
+  # ACM Digital Library returns 403 to bots/CI. Academic paywall.
+  # added: 2026-04-11; expires: 2026-07-10 (90 days)
+  "^https?://dl\\.acm\\.org/",
+  # Tandfonline returns 403 to bots/CI. Academic paywall.
+  # added: 2026-04-11; expires: 2026-07-10 (90 days)
+  "^https?://www\\.tandfonline\\.com/",
 ]
