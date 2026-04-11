@@ -23,7 +23,7 @@ Folder name = canonical slug. Date prefix optional but recommended for sort stab
 |---|---|---|---|---|
 | `title` | yes | string | Quote the whole value if it contains a colon | `title: "Why: a manifesto"` |
 | `date` | yes | ISO 8601 | `YYYY-MM-DD` minimum | `date: 2026-04-07` |
-| `categories` | yes | list | Must be one of: `food`, `adventure`, `dance`, `tech` | `categories: [food]` |
+| `categories` | yes | list | Must be one of: `food-booze`, `adventure`, `dance`, `tech-ai`, `life`, `entrepreneurship`, `trading` | `categories: [food-booze]` |
 | `tags` | yes | list | Lowercase, hyphenated, freeform | `tags: [ramen, tokyo, japan]` |
 | `slug` | no | string | Overrides folder name in URL | `slug: best-ramen` |
 | `draft` | no | bool | `true` skips production build | `draft: true` |
@@ -87,7 +87,7 @@ Hugo skips drafts in production builds. Public repo + draft frontmatter = safe (
 ## 8. Publish checklist
 
 - [ ] Frontmatter has all required fields (title, date, categories, tags)
-- [ ] Category is one of {food, adventure, dance, tech}
+- [ ] Category is one of {food-booze, adventure, dance, tech-ai, life, entrepreneurship, trading}
 - [ ] Voice tells clean (manual `check-ai-writing-tells.py` for new prose, skip for legacy)
 - [ ] Zero em dashes (CI catches it but check locally first)
 - [ ] Images in same folder, alt text present, max 1600px wide
