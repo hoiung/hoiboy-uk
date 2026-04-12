@@ -37,6 +37,27 @@ I've tagged each one into four categories and here's how the split looks.
 | Audible | 41 | 32% |
 | Physical | 41 | 32% |
 
+| Year | Count | Notes |
+|---|---|---|
+| 2026 | 1 | |
+| 2024 | 1 | |
+| 2023 | 1 | |
+| 2021-2022 | 0 | Gap |
+| 2020 | 5 | |
+| 2019 | 1 | |
+| 2018 | 2 | |
+| 2015-2017 | 0 | Audible phase fills some of this |
+| 2014 | 12 | |
+| 2013 | 27 | Kindle discovery, went mental |
+| 2012 | 2 | |
+| 2011 | 1 | |
+| 2010 | 16 | Sales/business explosion |
+| 2009 | 0 | Gap |
+| 2008 | 3 | More Linux |
+| 2007 | 5 | Planning law |
+| 2006 | 5 | Linux textbooks |
+| Undated | 45 | Kindle PDFs + Audible (~2016-2020) |
+
 <!-- iamhoi -->
 
 The split tells you a lot about where my head has been. Entrepreneurship and life dominate because those two never stop. Trading is a smaller slice but those books got the most re-reads. Tech books are the lowest count because... I mostly learn tech by building things and reading documentation (plus Stack Overflow at 2am, obviously). The format split is almost perfectly even across Kindle, Audible, and physical. Didn't plan that.
