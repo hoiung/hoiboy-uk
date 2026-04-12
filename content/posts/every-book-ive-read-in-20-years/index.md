@@ -10,7 +10,7 @@ draft: false
 
 <!-- iamhoi -->
 
-I thought it would be interesting to get AI to dig through 20 years of Amazon orders, Kindle downloads, and Audible listens to pull together every book I've ever read. All of them. The good, the bad, the ones I finished at 3am, and the ones I gave up after two chapters because I'd already got what I needed or only read the parts that were relevant.
+I thought it would be interesting to get AI to dig through 20 years of Amazon orders, Kindle downloads, and Audible listens to pull together every book I've ever read. All of them. The good, the bad, the ones I finished at 3am, and the ones I gave up after two chapters because I'd already got what I needed. Honestly, out of the 127... maybe 10-20% I only read the parts that were relevant. The rest I read inside out, cover to cover.
 
 127 books across 20 years works out to about 8 per year on the years I was actually reading. But it wasn't consistent at all. 2013 was 27 books in one year (I'd just discovered Kindle and went absolutely mental). 2010 was 16 (all physical, all sales and business bibles). Then there were dead years where I read nothing... 2009, 2015, 2021, 2022. Life gets in the way. The Audible years (~2016-2020) picked things back up when I realised I could consume books while driving and cooking.
 
