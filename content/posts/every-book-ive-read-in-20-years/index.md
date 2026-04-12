@@ -24,10 +24,10 @@ I've tagged each one into four categories and here's how the split looks.
 
 | Category | Count | % |
 |---|---|---|
-| Entrepreneurship | 55 | 43% |
+| Entrepreneurship | 55 | 44% |
 | Life | 46 | 36% |
 | Trading | 14 | 11% |
-| Tech & AI | 12 | 10% |
+| Tech & AI | 12 | 9% |
 
 | Format | Count | % |
 |---|---|---|
