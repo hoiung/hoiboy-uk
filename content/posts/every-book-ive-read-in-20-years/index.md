@@ -5,7 +5,7 @@ categories: [tech-ai]
 tags: [books, reading, audiobooks, kindle, self-development]
 slug: every-book-ive-read-in-20-years
 description: "A complete catalogue of every book, Kindle download, and Audible listen from 2006 to 2026. AI-scanned from 20 years of purchase history."
-draft: true
+draft: false
 ---
 
 <!-- iamhoi -->
