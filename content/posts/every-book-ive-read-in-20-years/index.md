@@ -52,290 +52,290 @@ Newest first, oldest at the bottom. Numbers count up from oldest so adding new b
 ### 2026
 
 **127. The Art of War** by Sun Tzu · T · Physical
-Ancient strategy on conflict, timing, and knowing when not to fight.
+Outthink, outmanoeuvre, and outpace any opponent by learning when NOT to act. Read this first in 2010, rebought a different translation.
 
 ### 2024
 
 **126. The Complete TurtleTrader** by Michael Covel · T · Physical + Kindle
-How 23 random people were taught to trade and made millions. Systematic rules beat gut feel.
+Proof that a strict rules-based trend-following system beats intuition, every time.
 
 ### 2023
 
 **125. Jesse Livermore's Two Books of Market Wisdom** by Edwin Lefevre / Jesse Livermore · T · Physical + Kindle + Audible
-The original trading autobiography. Every market lesson you need is in here somewhere.
+Learn directly from the man who made and lost fortunes why discipline and patience are the only edge.
 
 ### 2020
 
 **124. Influence: The Psychology of Persuasion** by Robert B. Cialdini · E · Kindle
-Six principles of persuasion that explain why you buy things you don't need.
+Spot the six triggers that bypass rational thinking so you can use them and resist them.
 
 **123. How to Own the World** by Andrew Craig · T · Physical
-Plain English guide to global investing for people who hate finance jargon.
+Any normal person can beat professional fund managers by owning simple, diversified global assets.
 
 **122. Time to Think** by Nancy Kline · L · Physical
-Creating environments where people actually think instead of just reacting.
+The quality of your listening determines the quality of everyone else's thinking around you.
 
 **121. The Zulu Principle** by Jim Slater · T · Kindle
-Finding overlooked growth shares in the UK market. Old school but solid.
+Beat institutional investors by specialising in small-cap growth stocks they're too big to touch.
 
 **120. The Naked Trader** by Robbie Burns · T · Physical
-No-nonsense UK share trading from a bloke who does it for a living.
+A plain-talking system for finding, entering, and cutting UK shares without overcomplicating it.
 
 ### 2019
 
 **119. Facebook Advertising 2020** by Noah Gray · E · Physical + Kindle
-Step-by-step Facebook ads for small business. Dated now but useful at the time.
+Set up targeted Facebook ad campaigns from scratch and stop wasting budget on the wrong audience.
 
 ### 2018
 
 **118. Life Leverage** by Rob Moore · E · Kindle
-Outsource everything, build systems, stop trading time for money.
+Identify the handful of tasks actually worth your time and outsource or eliminate everything else.
 
 **117. Mindset** by Carol Dweck · L · Kindle
-Fixed vs growth mindset. Simple idea, massive implications for everything.
+Your belief about whether ability is fixed or learnable predicts almost every outcome in your life.
 
 ### 2014
 
 **116. My Blog Traffic Sucks!** by Steve Scott · E · Kindle
-Quick tips for getting eyeballs on a new blog. Short but practical.
+Eight repeatable steps to grow blog traffic without being online all day.
 
 **115. Will Write for Food** by Dianne Jacob · E · Physical
-Writing food blogs, cookbooks, and getting paid for it.
+Turn a passion for food into paid work across recipes, cookbooks, blogs, and freelance writing.
 
 **114. How to Write Great Blog Posts** by Steve Scott · E · Kindle
-Engaging readers with better structure and hooks.
+Nineteen post formats with a step-by-step system so you stop staring at a blank screen.
 
 **113. Write Blog Posts Readers Love** by Henri Junttila · E · Kindle
-Step-by-step guide to writing posts people actually share.
+Find your voice, kill writer's block, and follow a repeatable blueprint for posts people finish reading.
 
 **112. 50 Ways To Write Better Blog Posts** by Zak Khan · E · Kindle
-Quick-fire blogging tips. Skimmable.
+Fifty concrete techniques to tighten writing, improve headlines, and keep readers reading.
 
 **111. A New Earth** by Eckhart Tolle · L · Kindle
-Ego, presence, and waking up to unconscious patterns. Follow-up to The Power of Now.
+Stop identifying with your thoughts and ego to end suffering and find lasting peace.
 
 **110. Manual of Egyptian Archaeology** by G. Maspero · L · Kindle
-Victorian-era guide to Egyptian antiquities. Pure curiosity download.
+Decode how ancient Egyptians actually built, painted, and organised their monumental civilisations.
 
 **109. SAS Survival Guide** by John Wiseman · L · Physical
-How to survive anything. Pocket-sized and legitimately useful.
+Stay alive anywhere on earth using proven military fieldcraft and emergency techniques.
 
 **108. The Memory Palace** by Lewis Smile · L · Kindle
-Memory techniques using spatial visualisation. Shakespeare and Dickens as examples.
+Build a memory palace step-by-step to remember anything permanently without rote repetition.
 
 **107. You Can Have an Amazing Memory** by Dominic O'Brien · L · Kindle
-World memory champion's techniques for remembering anything.
+An eight-time World Memory Champion's exact system to recall names, numbers, and speeches.
 
 **106. 50 Pips A Day Forex Strategy** by Laurentiu Damir · T · Kindle
-Simple daily Forex scalping strategy. Very short, very specific.
+One repeatable intraday setup to capture 50 pips consistently from forex markets daily.
 
 **105. The Financial Spread Betting Handbook** by Malcolm Pryor · T · Kindle
-UK spread betting explained. Tax-free trading mechanics.
+Master spread betting mechanics, tax advantages, and risk management before risking real money.
 
 ### 2013
 
 **104. Understand Psychology** by Nicky Hayes · L · Kindle
-Why your mind works the way it does. Teach Yourself series.
+Understand how the mind actually works so you can explain everyday human behaviour.
 
 **103. 20 Psychology Ideas You Really Need to Know** by Various · L · Kindle
-Quick tour of 20 big psychology concepts.
+The 20 ideas from psychology that genuinely shape how people think, feel, and act.
 
 **102. 50 Management Ideas You Really Need to Know** by Various · E · Kindle
-50 management frameworks in bite-sized chapters.
+Command any management conversation with the 50 concepts every leader is expected to know.
 
 **101. 50 Philosophy Ideas You Really Need to Know** by Various · L · Kindle
-Philosophy crash course. Good for pub arguments.
+Hold your own in any philosophical debate by understanding the 50 ideas that shaped Western thought.
 
 **100. The Memory Bible** by Edward V. Lewis · L · Kindle
-More memory techniques. I was clearly obsessed with memory in 2013.
+Neuroscience-backed techniques to sharpen memory recall and protect your brain long-term.
 
 **99. 101 Good Questions to Ask on a Date** by Maurice D. Chuka · L · Kindle
-Exactly what it says on the tin.
+Questions that actually reveal compatibility instead of wasting dates on surface small-talk.
 
 **98. Make Her Beg to be Your Girlfriend** by Michael Fiore · L · Kindle
-Dating advice for "nice guys." Peak 2013 Kindle impulse buy.
+The specific attraction triggers that move a woman from interest to genuine commitment.
 
 **97. How Successful People Think Smart** by Dr Jill Ammon-Wexler · L · Kindle
-Seven mental habits of high performers.
+Rewire thought patterns that successful people use so decisions and focus sharpen automatically.
 
 **96. Increase Your Mind Power** by Dr Jill Ammon-Wexler · L · Kindle
-Brain training and clear thinking techniques.
+Train your brain like a muscle using proven exercises to expand mental capacity and recall.
 
 **95. Engage Your Focus** by Michael Finlayson · L · Kindle
-Concentration and focus techniques for personal development.
+Break the seven mental barriers that stop you acting on your own goals and ambitions.
 
 **94. The Art of Active Listening** by Josh Gibson / Fynn Walker · L · Kindle
-Double your communication skills by actually listening.
+Build the habit of listening for meaning so misunderstandings drop and relationships deepen.
 
 **93. Make Her Chase You** by Tynan · L · Kindle
-Dating dynamics from a reformed pickup artist.
+Stop chasing. Build a life and personality that make women pursue you instead.
 
 **92. 10 Mistakes Men Make With Women** by Marni Kinrys · L · Kindle
-Common dating mistakes. Written by a woman, which was the appeal.
+A woman identifies the ten behaviours that kill attraction and shows you how to stop doing them.
 
 **91. Get Inside Her** by Marni Kinrys · L · Kindle
-More dating advice from a female perspective.
+A woman's unfiltered account of how female psychology actually works in dating.
 
 **90. Textual Attraction for Guys** by Mike Lawrence · L · Kindle
-Texting advice. Yes, I bought a book about texting.
+Which texts build attraction and which ones kill it stone dead before she replies.
 
 **89. The Ultimate Texting Guide For Men** by Tyler Tray · L · Kindle
-More texting advice. I clearly needed help in this department.
+100+ tested texts and the word-choice principles behind them so you stop guessing what to send.
 
 **88. How to Text Girls** by David Ahmad · L · Kindle
-The trilogy is complete. Three texting books in one day.
+Written for women, not men. Useful reverse-read to understand how the other side thinks.
 
 **87. Learn in 10 Min: How to Improve Job Satisfaction** by Joan Henshaw · E · Kindle
-Quick management pamphlet. Read in one sitting.
+The levers that actually move job satisfaction so your team stops quietly quitting.
 
 **86. Learn in 10 Min: How to Run Performance Appraisals** by Joan Henshaw · E · Kindle
-Performance review meetings done properly.
+A nine-step checklist that turns dreaded appraisal meetings into conversations staff find motivating.
 
 **85. Learn in 10 Min: How to Monitor Employee Performance** by Joan Henshaw · E · Kindle
-Tracking team output without being a micromanager.
+A five-step system to track what employees actually deliver so your feedback becomes objective.
 
 **84. Learn in 10 Min: How to Delegate** by Joan Henshaw · E · Kindle
-Stop doing everything yourself. (I still struggle with this.)
+Hand off work cleanly so you stop doing everything yourself and staff grow faster.
 
 **83. 7 Worst Ways to Lead in Business** by Fiona Campbell · E · Kindle
-Leadership anti-patterns. Short read.
+Recognise the seven leadership styles that destroy teams so you can cut them from your own behaviour.
 
 **82. Project Management: How to Plan and Deliver** by Various · E · Kindle
-Project management basics. Studymates series.
+End-to-end project planning and delivery principles distilled so you can run projects without guesswork.
 
 **81. The Three Levels of Leadership** by Various · E · Kindle
-Leadership presence, knowhow, and skill.
+The hidden "personal" inner level of leadership is what separates effective leaders from the rest.
 
 **80. Assertive Behaviour & Delegation** by Various · E · Kindle
-Being assertive without being a tyrant.
+Two paired skills that let you manage people without micromanaging or creating conflict.
 
 **79. If You Want It Done Right, You Don't Have to Do It Yourself** by Various · E · Kindle
-The power of effective delegation. Sensing a theme here.
+A six-step delegation framework so handed-off work actually gets done right.
 
 **78. The 48 Laws of Power in 30 Minutes** by Various · E · Kindle
-Cliff notes version before buying the real thing.
+Core ideas from Greene's 48 Laws condensed, with prompts for applying each one immediately.
 
 ### 2012
 
 **77. The Concise Art of Seduction** by Robert Greene · L · Physical
-Power dynamics and influence through the lens of historical seduction.
+Seduction is a transferable social skill. Master desire, intrigue, and emotional pull in any room.
 
 **76. The 48 Laws of Power** by Robert Greene · E · Physical
-The big one. Power, strategy, and human nature. Everyone should read it.
+Power follows predictable rules. Learn them so nobody can use them against you without you noticing.
 
 ### 2011
 
 **75. Instant MBA** by Nicholas Bate · E · Physical
-52 brilliant ideas to think and perform like a business school grad.
+Get the mindset and vocabulary of a business school graduate in a single sitting.
 
 ### 2010
 
 **74. How To Win Friends And Influence People** by Dale Carnegie · L · Physical
-The original people skills book. Still the best one ever written.
+People do not care about you. Make them feel genuinely valued and they will do almost anything for you.
 
 **73. Persuasive Business Proposals** by Various · E · Physical
-Writing proposals that actually win contracts.
+Win more proposals by leading with the client's problem, not your credentials.
 
 **72. Bare Knuckle Negotiating** by Various · E · Physical
-Negotiation tactics they won't teach you at business school.
+Anticipate dirty tactics, control the pace, and know your walkaway point before you sit down.
 
 **71. Getting to Yes** by Roger Fisher / William Ury · E · Physical
-Principled negotiation. Win-win without being a pushover.
+Stop arguing positions. Focus on shared interests and objective criteria to reach deals both sides keep.
 
 **70. Perfect Pitch** by Jon Steel · E · Physical
-Selling ideas and winning new business. Adweek classic.
+Preparation and emotion beat polish. Win pitches by making your audience feel something.
 
 **69. Bare Knuckle Selling** by Various · E · Physical
-Street-smart sales tactics. Paired with the negotiating book.
+Blend psychology and street-level closing tactics to win deals that polished textbook sellers lose.
 
 **68. How to Write It** by Sandra E. Lamb · E · Physical
-Complete guide to every type of business writing.
+Ready-to-use templates and phrases for every business document you will ever need to write.
 
 **67. Powerful Marketing On A Shoestring Budget** by Various · E · Physical
-Small business marketing without a big budget.
+Jargon-free, case-study-backed guide to marketing every channel without wasting money.
 
 **66. Brilliant Marketing** by Various · E · Physical
-What the best marketers know and do.
+What the best marketers know, do, and say. Step-by-step playbook covering every channel.
 
 **65. Advanced Selling Strategies** by Brian Tracy · E · Physical
-Proven sales techniques from a sales legend.
+Stop being a vendor. Become a consultant who understands client psychology and solves real problems.
 
 **64. How I Raised Myself from Failure to Success in Selling** by Frank Bettger · E · Physical
-Classic sales autobiography. Insurance salesman to top performer.
+Enthusiasm, organisation, and genuine care for the client will take you further than any clever tactic.
 
 **63. The Magic of Thinking Big** by David Schwartz · L · Physical
-Your thinking determines your success. Timeless self-help.
+Your self-image sets your ceiling. Expand how you think about yourself and your results follow.
 
 **62. The Other 8 Hours** by Robert Pagliarini · E · Physical
-What you do outside work determines your future.
+Your spare hours after work are where your real future gets built. Stop wasting them.
 
 **61. Think and Grow Rich** by Napoleon Hill · E · Physical
-The granddaddy of all success books. Written in 1937, still relevant.
+Wealth starts in your head. Burn your desire into your subconscious and then act relentlessly.
 
 **60. The Game** by Neil Strauss · L · Physical
-The infamous pickup artist book. A product of its time.
+Pickup artist culture looks seductive from inside but destroys you. Authenticity beats every routine.
 
 **59. Rich Dad, Poor Dad** by Robert Kiyosaki · E · Physical
-Assets vs liabilities. The book that made everyone want to be an investor.
+Your salary is not wealth. Make money work for you by building assets that generate passive income.
 
 ### 2008
 
 **58. Linux Bible** by Various · AI · Physical
-Comprehensive Linux distro guide. Ubuntu, Fedora, Debian, the lot.
+Complete practical map of Linux from first boot through server administration, covering all major distros.
 
 **57. Live Linux Projects** by Various · AI · Physical
-Building and customising bootable Linux systems.
+Build real infrastructure (backups, web servers, VPNs) so Linux skills stick instead of staying theoretical.
 
 **56. Essential Linux Device Drivers** by Various · AI · Physical
-Kernel-level driver development. Deep end stuff.
+Write production-grade Linux drivers for any hardware, with real kernel code to dissect.
 
 ### 2007
 
 **55. The Modern Law of Contract** by Various · E · Physical
-UK contract law textbook. From my planning career days.
+Working grip on every stage of contract law, from offer through remedies, with case law throughout.
 
 **54. Metric Handbook: Planning and Design Data** by Various · E · Physical
-Architecture and construction reference bible. Still on my shelf.
+Every dimensional standard and space requirement you need to design any building type correctly.
 
 **53. Telling and Duxbury's Planning Law and Procedure** by Various · E · Physical
-UK planning law. Dry but essential for the job.
+The full legal machinery of UK planning, from permission through enforcement and appeals.
 
 **52. A Practical Approach to Planning Law** by Various · E · Physical
-More planning law. I was thorough.
+Follow the planning process step by step, from application to dispute, with real-case guidance.
 
 **51. Planning in the UK** by Various · E · Physical
-Town and country planning textbook.
+Concise, accessible overview of how the UK planning system actually works, from theory to practice.
 
 ### 2006
 
 **50. Linux Cookbook** by Various · AI · Physical
-Recipe-style Linux problem solving.
+Solve real sysadmin problems fast, with cut-and-paste recipes covering the non-obvious tasks.
 
 **49. Linux Administration: A Beginner's Guide** by Various · AI · Physical
-My first sysadmin book. Where it all started.
+Manage users, networks, security, and performance on a live Linux server from scratch.
 
 **48. VI Editor Pocket Reference** by Various · AI · Physical
-Because vi is not intuitive and everyone needs this.
+Finally unlock the full command set of vi/Vim so you stop using 10% of the editor's power.
 
 **47. Learning the Bash Shell** by Various · AI · Physical
-Shell scripting fundamentals. Still use bash daily, 20 years later.
+Go from basic shell use to writing robust scripts with flow control and proper error management.
 
 **46. PHP and MySQL Web Development** by Various · AI · Physical
-The book that taught me web development. LAMP stack era.
+Build secure, database-driven web applications from scratch, including e-commerce and auth.
 
 ### Undated (Kindle PDFs, uploaded manually)
 
 **45. How I Make A Living Trading Stocks** by Tony Oz · T · Kindle PDF
-Day trading strategies from a successful full-time trader.
+Every trade, thought, and P&L from a 56%-return month documented in real time.
 
 **44. Long-Term Secrets To Short-Term Trading** by Larry Williams · T · Kindle PDF
-Swing trading strategies from a legendary futures trader.
+Holding trades slightly longer than you want to is the actual edge most short-term traders miss.
 
 **43. A Beginner's Guide to Short-Term Trading** by Toni Turner · T · Kindle PDF
-Entry-level guide to swing and day trading mechanics.
+Learn to read chart signals and manage the psychology of selling, the part most beginners get wrong.
 
 **42. How Markets Really Work** by Various · T · Kindle PDF
-Market structure and price action fundamentals.
+Data proves buying short-term weakness consistently beats buying breakouts, debunking most retail instincts.
 
 ### Audible Library (dates not recorded)
 
@@ -346,127 +346,127 @@ The Audible phase was roughly 2016 to 2020. I'd listen during commutes, cooking,
 <!-- iamhoiend -->
 
 **41. Thinking, Fast and Slow** by Daniel Kahneman · L · Audible
-Two systems of thinking: fast intuition vs slow logic. Changed how I view decisions.
+Catch yourself making bad decisions in real time by learning the cognitive biases that silently hijack your thinking.
 
 **40. 12 Rules for Life** by Jordan B. Peterson · L · Audible
-Clean your room, stand up straight, and take responsibility. Polarising but thought-provoking.
+Stop drifting and start taking responsibility with a clear set of principles for living with purpose and order.
 
 **39. The Power of Now** by Eckhart Tolle · L · Audible
-Living in the present moment. Pairs with A New Earth.
+Reduce anxiety and suffering by learning to detach from your thoughts and live in the present moment.
 
 **38. Start with Why** by Simon Sinek · E · Audible
-Why purpose matters more than what you do. The golden circle.
+Lead and sell more effectively by articulating the belief behind what you do, not just what you do.
 
 **37. Drive** by Daniel H. Pink · L · Audible
-Autonomy, mastery, and purpose. What actually motivates people (not money).
+Stop using rewards to motivate people. Build lasting drive through autonomy, mastery, and purpose.
 
 **36. The Four Agreements** by Don Miguel Ruiz · L · Audible
-Toltec wisdom: be impeccable with your word, don't take things personally.
+Break self-limiting beliefs by adopting four simple agreements that replace self-judgment with freedom.
 
 **35. The Millionaire Fastlane** by MJ DeMarco · E · Audible
-Why the "save and invest" path is slow. Build a business instead.
+Reject the 40-year wealth plan. Build a business that creates financial freedom in a decade.
 
 **34. Talk Like TED** by Carmine Gallo · L · Audible
-Public speaking secrets from the best TED talks.
+Deliver presentations that move people by learning nine science-backed techniques from the best TED talks.
 
 **33. The Power of Body Language** by Joe Navarro · L · Audible
-Reading people through nonverbal cues. Written by an ex-FBI agent.
+Read people far more accurately by learning which body signals are hardwired and almost impossible to fake.
 
 **32. Key Person of Influence** by Daniel Priestley · E · Audible
-Five steps to becoming the go-to person in your industry.
+Become the go-to expert in your field by building five strategic assets that attract opportunities.
 
 **31. The Brain** by David Eagleman · AI · Audible
-How your brain works. Neuroscience made accessible.
+Understand why you think, feel, and decide the way you do by seeing how your brain constructs reality.
 
 **30. Fanatical Prospecting** by Jeb Blount · E · Audible
-Relentless outbound sales activity. Not subtle but effective.
+Never have an empty sales pipeline again by building a relentless, systematic prospecting habit.
 
 **29. Ca$hvertising** by Drew Eric Whitman · E · Audible
-Psychological triggers that make people buy. Direct response copywriting.
+Write ads that actually sell by using 100+ proven psychological triggers that drive buying decisions.
 
 **28. The Richest Man in Babylon** by George S. Clason · T · Audible
-Ancient parables about saving, investing, and building wealth. Timeless.
+Master the timeless rules of personal finance: pay yourself first, invest wisely, never let money sit idle.
 
 **27. Build a Brand in 30 Days** by Simon Middleton · E · Audible
-Quick brand-building framework for entrepreneurs.
+Build a genuinely distinctive brand in a month with 30 daily exercises covering values, voice, and position.
 
 **26. How We Learn** by Benedict Carey · L · Audible
-The science of learning. Why spacing and testing beat cramming.
+Retain far more of what you study by replacing outdated habits with techniques that exploit how memory works.
 
 **25. Facebook Marketing and Advertising** by David Clarke · E · Audible
-Facebook ads strategy. Paired with the 2020 book.
+Run targeted Facebook ad campaigns from scratch, covering audience building, budgets, and tracking results.
 
 **24. The Way of the Superior Man** by David Deida · L · Audible
-Masculine purpose, relationships, and spiritual growth. Marmite book.
+Stop suppressing your ambitions and instincts. Masculine purpose and presence transform work and relationships.
 
 **23. Start Now. Get Perfect Later.** by Rob Moore · E · Audible
-Stop overthinking and just launch. Rob Moore's signature message.
+Finally start the thing you've been putting off. Imperfect action beats perfect inaction every single time.
 
 **22. The Power of Broke** by Daymond John · E · Audible
-Having no money forces creativity. Shark Tank investor's story.
+Financial constraints are a competitive edge. Scarcity forces creativity, hustle, and authenticity that money can't buy.
 
 **21. Property Magic** by Simon Zutshi · E · Audible
-UK property investing strategies. Below market value deals.
+Build a UK property portfolio with little capital by using other people's money, time, and experience.
 
 **20. The Ideal Team Player** by Patrick M. Lencioni · E · Audible
-Three virtues: humble, hungry, and smart. Team dynamics.
+Hire and build better teams by spotting the three traits that make someone truly coachable and collaborative.
 
 **19. I'm Feeling Lucky** by Douglas Edwards · AI · Audible
-Inside Google's early days from employee #59.
+See how Google's chaotic, engineer-first culture shaped the web, from the eyes of employee #59.
 
 **18. What You Need to Know About: Economics** by George Buckley · E · Audible
-Economics fundamentals without the textbook pain.
+Understand inflation, jobs, and interest rates well enough to make sense of the news and your finances.
 
 **17. The Facebook Effect** by David Kirkpatrick · AI · Audible
-How Facebook was built and why it matters. Pre-Meta era.
+How Zuckerberg's obsession with growth over profit built a platform that rewired social life globally.
 
 **16. Behind the Cloud** by Marc Benioff · AI · Audible
-Salesforce founder's story. SaaS before anyone called it SaaS.
+111 actionable startup plays covering marketing, sales, and leadership from zero to billion.
 
 **15. The Millionaire Real Estate Investor** by Gary Keller · E · Audible
-Wealth building through property. Keller Williams founder.
+Five proven models for building a property portfolio distilled from 120 real millionaire investors.
 
 **14. The Edge** by Michael Heppell · L · Audible
-Small improvements that make a big difference. Quick motivational read.
+Identify the small daily habits that separate the truly elite from people who are merely good.
 
 **13. Mind Control** by Edward Martinez · L · Audible
-Psychological influence and persuasion techniques.
+Spot and resist manipulation by learning the dark psychology and NLP tactics used against you daily.
 
 **12. The Ultimate Jim Rohn Library** by Jim Rohn · L · Audible
-Personal development philosophy from the OG motivational speaker.
+Rewire your mindset around money, discipline, and goals using Rohn's plain-spoken philosophy of personal responsibility.
 
 **11. Quantum Memory** by Dominic O'Brien · L · Audible
-Advanced memory techniques from the world champion. Pairs with his Kindle book.
+Master the association and location techniques used by a world champion to recall anything on demand.
 
 **10. The Secret to Attracting Money** by Joe Vitale · L · Audible
-Law of attraction applied to wealth. Take it or leave it.
+Identify the unconscious money beliefs blocking your wealth and replace them using law of attraction methods.
 
 **9. Advanced Energy Anatomy** by Caroline Myss · L · Audible
-Spiritual anatomy and energy systems. Deep end territory.
+Use four core archetypes and seven co-creation principles to make conscious choices that shape your health and life.
 
 **8. Hypnotherapy** by Freddy Jacquin · L · Audible
-Methods and philosophies of clinical hypnotherapy.
+Practical hypnotherapy scripts and induction techniques directly from one of the world's leading practitioners.
 
 **7. Learn Portuguese in Your Car** by Central Park Language Learning · L · Audible
-Portuguese audio course. For travel, not fluency.
+Pick up conversational Portuguese phrases and 1,000 common words during dead commute time.
 
 **6. Critical Thinking** by Ian Tuhovsky · L · Audible
-Logic, reasoning, and thinking clearly. Short but useful.
+Detect bad science, media spin, and cognitive biases so you stop making decisions based on noise.
 
 **5. Alpha Money Strategies** by Alpha Male Strategies · T · Audible
-Financial and mental freedom strategies. Blunt delivery.
+Find your passion, monetise it, and build a credit and investment foundation that multiplies your income.
 
 **4. UnCommon Sense** by Mark Homer · E · Audible
-Property and business wisdom. Progressive Property co-founder.
+Profit by identifying and ignoring the popular misconceptions in property, business, and finance.
 
 **3. All About Buy-to-Let Mortgages** by Peter J. How · E · Audible
-UK BTL mortgage mechanics. Reference material.
+Navigate every stage of UK buy-to-let mortgages in plain English and use cheap finance to build a portfolio.
 
 **2. The Complete No-Nonsense Guide to UK Property** by David Tarn · E · Audible
-UK property investing for beginners. Practical and no-fluff.
+Go from zero to first UK investment property with a step-by-step guide covering strategy, viewings, and legals.
 
 **1. Success: Success Strategies** by Ace McCloud · L · Audible
-Generic success habits. One of those Audible impulse buys.
+100 concrete success habits across mindset, health, and goals to build a personalised action plan.
 
 <!-- iamhoi -->
 
