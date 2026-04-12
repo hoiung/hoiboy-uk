@@ -312,6 +312,84 @@ The `single.html` template has a `HasShortcode` guard: posts using `{{</* galler
 
 ---
 
+## Post Format Selection (MANDATORY before writing)
+
+Decide the post FORMAT before writing a single word. Different post types need different content structures. Getting this wrong means a full rewrite (see Issue #8: 127-book list rendered as 6-column tables, had to be rewritten as a list).
+
+### Post Type Taxonomy
+
+| Type | Primary format | When to use |
+|---|---|---|
+| Narrative / Opinion | Flowing prose paragraphs | Argument, story, editorial. Lists fragment the reasoning. |
+| How-to / Tutorial | Numbered steps + H2 per step + images | Sequential instructions. Reader must follow order. |
+| Listicle | Numbered H2 per item + bullet pros/cons | 5-20 ranked or curated items. Each item is self-contained. |
+| Catalogue / Collection | Bold-title list entries + inline metadata | 20-200+ items. Reference browsing, not deep reading. |
+| Comparison | Side-by-side tables + pros/cons + verdict | Reader needs to evaluate attributes across options simultaneously. |
+| Review | H2 per criterion + star/score + CTA | Single product evaluation. Conversion-oriented. |
+| Roundup | Card-style or mini-list with link + summary | Curating other people's content with brief commentary. |
+| Pillar / Guide | TOC + H2/H3 hierarchy + mixed prose, lists, tables | Breadth requires navigation scaffolding. 3,000+ words. |
+
+### When to Use Tables
+
+Tables are for **genuinely relational, two-dimensional data** where the row/column intersection carries meaning. The W3C test: "if removing the table structure would lose meaning, it's tabular."
+
+**Tables ARE correct for:**
+- Comparison grids (features across products)
+- Stats/metrics tables (category counts, percentages)
+- Pricing tiers, spec sheets
+- Schedules and timetables
+
+**Tables are WRONG for:**
+- Book/resource lists (not comparing attributes across items)
+- Step-by-step instructions (use numbered lists)
+- Narrative content with metadata (use bold-title list entries)
+- Any list where each item has a variable-length description
+
+**Mobile rule:** More than 3 columns requires a responsive strategy. More than 5 columns will break on phones (375px viewport fits 2-3 narrow columns max). 6-column tables with long text cells are unreadable on mobile.
+
+### Catalogue / Collection Posts (20+ items)
+
+This is the format for reading lists, tool stacks, resource directories. Research from Derek Sivers (473 books), Patrick Collison (1,000+ books), Ryan Holiday, Austin Kleon, Jason Kottke.
+
+**Entry format (bold-title list):**
+```markdown
+**127. The Art of War** by Sun Tzu · T · Physical
+Why this book matters in one sentence from personal experience.
+```
+
+**Key principles:**
+- Bold title is the primary visual anchor. The eye scans for bold on the left edge.
+- Metadata (author, category, format) inline after title, lighter weight.
+- Description is one line about WHY the book is useful, not a textbook summary.
+- Consistent entry structure throughout. Reader learns the pattern after 3-4 entries.
+- White space between entries. The margin tells the eye "this is one unit."
+
+**For 50+ items:**
+- Group by section (year, category, theme). Cognitive limit is ~7 items per group.
+- Jump links / anchor TOC at the top. Each section heading gets an `id`.
+- "Back to top" links at each section end for mobile.
+- Never paginate a list that should be scannable (breaks Ctrl+F).
+
+**One-liner quality rule:**
+The description must answer "why should I read this?" not "what is this about?" Wrong: "Ancient strategy on conflict and warfare." Right: "Every chapter applies to business, negotiation, and knowing when NOT to act." The reader already knows what the book is from the title. They want to know what they'll GET from it.
+
+**What the best reading lists do:**
+- Derek Sivers: cover + title + author + numeric rating + personal notes
+- Patrick Collison: title only + colour-coding for quality tier (radical minimalism)
+- Ryan Holiday: deep categorical sections, 50-200 word editorial per book
+- Austin Kleon: thematic sections, conversational subheadings, 1-3 sentences personal reaction
+- None of them use HTML tables for the book list
+
+### Format Decision Checklist (ask before writing)
+
+1. **What type of post is this?** (narrative, listicle, catalogue, tutorial, comparison, review)
+2. **How many items?** (<10 = listicle with H2 per item. 10-50 = grouped list. 50+ = catalogue with TOC and sections)
+3. **Is the data genuinely tabular?** (comparing attributes across items = table. Sequential list with metadata = not a table)
+4. **Will this render on mobile?** (>3 columns = needs responsive strategy. Long descriptions in table cells = will break)
+5. **What does the reader need to DO with this?** (scan and pick = bold-title list. Compare options = table. Follow steps = numbered list. Read an argument = prose)
+
+---
+
 ## Sources
 
 - [Writing a tech blog people want to read: Sean Goedecke](https://www.seangoedecke.com/on-writing/)
@@ -324,7 +402,19 @@ The `single.html` template has a `HasShortcode` guard: posts using `{{</* galler
 - [Details/summary lightboxes: Dan Q](https://danq.me/2025/08/15/details-summary-lightboxes-in-pure-html-css/)
 - [GLightbox GitHub](https://github.com/biati-digital/glightbox)
 - [PhotoSwipe 5 with Hugo: 42point](https://42point.com/en/posts/2024-04-28-photoswipe-with-hugo/)
+- [Derek Sivers book notes](https://sive.rs/book) (473 books, single-page catalogue)
+- [Patrick Collison bookshelf](https://patrickcollison.com/bookshelf) (1,000+ books, colour-coded)
+- [Ryan Holiday reading list](https://ryanholiday.net/the-reading-list/) (deep categorical sections)
+- [Austin Kleon reading year](https://austinkleon.com/2022/12/28/my-reading-year-2022/) (thematic prose)
+- [Jason Kottke media diet](https://kottke.org/23/12/my-recent-media-diet-the-end-of-2023-edition) (bold title + letter grade)
+- [W3C WAI Tables Tutorial](https://www.w3.org/WAI/tutorials/tables/) (when tables are appropriate)
+- [CSS-Tricks: Responsive Data Tables](https://css-tricks.com/responsive-data-tables/)
+- [CSS-Tricks: Definition Lists](https://css-tricks.com/utilizing-the-underused-but-semantically-awesome-definition-list/)
+- [WebAIM: Creating Accessible Tables](https://webaim.org/techniques/tables/)
+- [Semrush: How to Format a Blog Post](https://www.semrush.com/blog/how-to-format-a-blog-post/)
+- [HubSpot: How to Choose Blog Post Format](https://blog.hubspot.com/marketing/how-to-choose-blogging-post-format-ht)
+- [NN/G: In-Page Links and Content Navigation](https://www.nngroup.com/articles/in-page-links-content-navigation/)
 
 ---
 
-*Research compiled: 2026-04-09*
+*Research compiled: 2026-04-09, updated: 2026-04-12 (Post Format Selection added after Issue #8 lesson)*
