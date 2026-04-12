@@ -31,9 +31,9 @@ I've tagged each one into four categories and here's how the split looks.
 
 | Format | Count | % |
 |---|---|---|
-| Kindle | 46 | 36% |
+| Kindle | 45 | 35% |
 | Audible | 41 | 32% |
-| Physical | 40 | 32% |
+| Physical | 41 | 32% |
 
 <!-- iamhoi -->
 
