@@ -32,4 +32,7 @@ exclude = [
   # Tandfonline returns 403 to bots/CI. Academic paywall.
   # added: 2026-04-11; expires: 2026-07-10 (90 days)
   "^https?://www\\.tandfonline\\.com/",
+  # UChicago faculty page intermittent timeout in CI. PDF link valid for humans.
+  # added: 2026-04-12; expires: 2026-07-11 (90 days)
+  "^https?://home\\.uchicago\\.edu/",
 ]
