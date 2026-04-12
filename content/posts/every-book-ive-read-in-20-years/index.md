@@ -39,24 +39,24 @@ I've tagged each one into four categories and here's how the split looks.
 
 | Year | Count | Notes |
 |---|---|---|
-| 2026 | 1 | |
-| 2024 | 1 | |
-| 2023 | 1 | |
-| 2021-2022 | 0 | Gap |
-| 2020 | 5 | |
-| 2019 | 1 | |
-| 2018 | 2 | |
+| 2026 | 1 | Rebought a classic in a new translation |
+| 2024 | 1 | Trading systems |
+| 2023 | 1 | Trading psychology |
+| 2021-2022 | 0 | Gap. Building, not reading. |
+| 2020 | 5 | Trading + investing deep dive |
+| 2019 | 1 | Facebook ads for business |
+| 2018 | 2 | Mindset + productivity |
 | 2015-2017 | 0 | Audible phase fills some of this |
-| 2014 | 12 | |
-| 2013 | 27 | Kindle discovery, went mental |
-| 2012 | 2 | |
-| 2011 | 1 | |
-| 2010 | 16 | Sales/business explosion |
+| 2014 | 12 | Blogging, memory, trading, spirituality |
+| 2013 | 27 | Kindle discovery. Management, psychology, dating, self-help. Went mental. |
+| 2012 | 2 | Robert Greene era. Power + seduction. |
+| 2011 | 1 | Business fundamentals |
+| 2010 | 16 | Sales, negotiation, marketing, wealth. The entrepreneur awakening. |
 | 2009 | 0 | Gap |
-| 2008 | 3 | More Linux |
-| 2007 | 5 | Planning law |
-| 2006 | 5 | Linux textbooks |
-| Undated | 45 | Kindle PDFs + Audible (~2016-2020) |
+| 2008 | 3 | Linux device drivers and systems |
+| 2007 | 5 | UK planning law and contract law. Career textbooks. |
+| 2006 | 5 | Linux, bash, PHP. Where the tech career started. |
+| Undated | 45 | Kindle PDFs + Audible (~2016-2020). Property, startups, personal development. |
 
 <!-- iamhoi -->
 
