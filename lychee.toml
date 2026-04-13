@@ -35,4 +35,10 @@ exclude = [
   # UChicago faculty page intermittent timeout in CI. PDF link valid for humans.
   # added: 2026-04-12; expires: 2026-07-11 (90 days)
   "^https?://home\\.uchicago\\.edu/",
+  # CSS-Tricks returns 415 Unsupported Media Type to bots/CI. Links valid for humans.
+  # added: 2026-04-13; expires: 2026-07-12 (90 days)
+  "^https?://css-tricks\\.com/",
+  # Ryan Holiday returns 415 to bots/CI. Link valid for humans.
+  # added: 2026-04-13; expires: 2026-07-12 (90 days)
+  "^https?://ryanholiday\\.net/",
 ]
