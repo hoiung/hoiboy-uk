@@ -493,8 +493,10 @@ The Audible phase was roughly 2016 to 2020. I'd listen during commutes, cooking,
 
 <!-- iamhoi -->
 
-That's 127 books across 20 years. Some were life-changing (How To Win Friends, Thinking Fast and Slow, The Complete TurtleTrader). Some were 2am impulse downloads that I'd forgotten about until the AI pulled them up. And yes, I went through a very specific texting advice phase in December 2013. We've all been there. Don't judge.
+That's 127 books across 20 years. Some were 2am impulse downloads that I'd forgotten about until the AI pulled them up. And yes, I went through a very specific texting advice phase in December 2013. We've all been there. Don't judge.
 
-If you take anything from this list... read more than you think you need to, across more topics than feel comfortable. The Linux books from 2006 led to a tech career. The sales books from 2010 taught me to run a business. The trading books built the system I use today. And the self-development books somewhere in between kept me from going mental while figuring it all out.
+But a lot of these genuinely changed how I operate. The mindset and memory books helped me work out how my brain actually works... I don't learn like most people. I need physical action and emotional triggers to lock things in, not the academic way of regurgitating facts without purpose (which is why school never worked for me). The books about women and dating? I grew up around mainly boys with very little interaction with the opposite sex in my early years, so yeah, those were necessary. And all the business and strategy books helped me formulate how I survive in this day and age, how to create things, and how to plan for the future.
+
+If you take anything from this list... read more than you think you need to, across more topics than feel comfortable. The Linux books from 2006 led to a tech career. The sales books from 2010 taught me to survive in business. The trading books expanded how I think about markets. And the self-development books somewhere in between kept me from going mental while figuring it all out.
 
 <!-- iamhoiend -->
