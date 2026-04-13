@@ -75,7 +75,7 @@ Newest first, oldest at the bottom. Numbers count up from oldest so adding new b
 ### 2026
 
 **127. The Art of War** by Sun Tzu · T · Physical
-Outthink, outmanoeuvre, and outpace any opponent by learning when NOT to act. Read this first in 2010, rebought a different translation.
+Strategic thinking for everything, not just war. Force and numbers don't always win... it's about finding advantages and edges, and most of them start with patience and positioning. Read this first in 2010, rebought a different translation.
 
 ### 2024
 
