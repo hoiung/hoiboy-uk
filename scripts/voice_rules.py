@@ -88,7 +88,6 @@ BANNED_WORDS: tuple[str, ...] = (
     "innovative",
     "impactful",
     "facilitate", "facilitating", "facilitated",
-    "harness", "harnessing",
     "furthermore",
     "moreover",
     "pivotal",
