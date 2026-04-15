@@ -107,6 +107,7 @@ Here's what Claude (or any LLM) does left unsupervised. I say this with love. I 
 - It **ticks the boxes without evidence**. Marks a checkbox as complete. No proof. No artifact. No way to audit what actually happened.
 - It **loses context between sessions**. Starts fresh. Forgets the decisions you made yesterday. Contradicts itself. Re-implements things that already exist.
 - It **duplicates work**. Instead of grep-ing for an existing helper, it writes a new one. Three versions of the same function drift over time. Nobody notices until something breaks.
+- It **skims with grep, never traces**. It searches, finds a match, and stops. It does not track the function through every caller, every dependency, every config key, every workflow it touches. So when it makes a change, it has no idea if the change is good or bad. It just made it. Then stuff breaks somewhere else in the system that it never bothered to look at.
 - It **applies fixes in isolation**. You ask it to fix one thing, it fixes that thing, and silently breaks three others because it only looked through one lens.
 - It **spews confident hallucinations**. The tone never changes whether it's telling you the truth or inventing API calls that don't exist.
 - It **stops mid-work to ask permission** for things that are obviously fine. Or (worse) doesn't stop when it SHOULD and blows through a destructive action.
