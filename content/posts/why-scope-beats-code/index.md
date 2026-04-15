@@ -75,6 +75,10 @@ This is what technical debt actually is. Not a backlog of todo items. A slow acc
 
 And SST3 is built specifically to stop that snowball from forming. Every gap gets flagged at scope time. Every checkbox needs evidence before it ticks. Every phase gets reviewed by three different models at increasing depth (that's Ralph Review, named after Ralph Wiggum; if Ralph can spot it, it is really wrong). Every silent fallback is treated as a bug, not a feature.
 
+There is a specific reason I layer three reviewers instead of one. A single reviewer gets blind spots. Two reviewers might share the same blind spots because they were trained on similar data. Three reviewers with three different prompts and three different depths catch different things. Haiku is cheap and quick, so I use it for surface problems (missing files, unchecked boxes, debug prints, obvious naming issues). Sonnet goes deeper into logic (null paths, fallback traps, contradictions between the scope and the implementation). Opus does the architectural audit (overengineering, silent coupling, design drift). If any tier fails, the orchestrator fixes and restarts from Haiku. No shortcuts. No "looks good to me" without evidence.
+
+The point is not to be perfect. The point is to stop the rot before it has somewhere to sit.
+
 It is more expensive per piece in tokens. Obviously. You are spending tokens on research, on verification, on triple-checks, on review. But it is a magnitude cheaper overall, because you are not constantly rebuilding on top of foundations that were already rotten.
 
 Pay a bit more in the planning phase. Pay a fortune less in the cleanup phase. There is no third option. There is only "pay now" and "pay ten times more later".
