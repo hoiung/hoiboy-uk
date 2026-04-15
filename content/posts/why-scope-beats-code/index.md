@@ -99,7 +99,7 @@ These are the failure modes the harness exists to catch. Scope-first is how you 
 
 If you only take one thing away from this post: the AI doesn't know your standards. You do. A harness is how you teach the AI your standards and make sure it follows them. Scope is the bit where you teach the harness what "good" looks like. Skimp on that step and the rest of the system cannot save you.
 
-The name SST3-AI-Harness is deliberate. The AI is the horse. The harness is the wrapper around it: orchestration, governance, quality gates, enforcement. The whole lot. Without the harness, the horse bolts across the field in whichever direction catches its attention. With the harness, it pulls in the direction you pointed it in, at the pace you set. Same raw power. Very different outcome.
+The name SST3-AI-Harness is deliberate. **SST3 is the harness for AI.** Think horse harness, parachute harness, climbing harness. The bit that lets powerful things do useful work without killing anyone. The LLM is the horse. SST3 is what keeps it pulling in the direction you pointed it in, at the pace you set, without bolting across the field. Orchestration, governance, quality gates, enforcement. The whole lot. Same raw power, very different outcome.
 
 And there is a second meaning baked into the word. "Harness your full potential." Once the AI is properly reined in, it helps you harness yours. It pulls the work out of you at a pace and polish you would not hit alone. Super hero suit (think Iron Man). Same tool, two jobs: it reins in the AI, and the AI then reins in the best work you have got.
 
