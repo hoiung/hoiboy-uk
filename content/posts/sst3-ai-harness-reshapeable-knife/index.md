@@ -60,7 +60,7 @@ But that's miles better than before. Before, the ratio was flipped: maybe 20% us
 
 It's the difference between "AI wrote the thing and I spent two hours fixing it" and "AI did the thing properly the first time because the harness literally wouldn't let it get away with NOT doing it properly".
 
-Think horse harness, parachute harness, climbing harness. The bit that lets powerful things do useful work without killing anyone. The LLM is the horse. SST3 is the harness. (Yes, "harness" is technically a banned word on my own voice guard. Product-name exemption. Moving on.)
+Think horse harness, parachute harness, climbing harness. The bit that lets powerful things do useful work without killing anyone. The LLM is the horse. SST3 is the harness.
 
 ## The reshapeable knife
 
@@ -79,9 +79,9 @@ SST3 is a reshapeable knife. Out of the box, it's a generalist. Good at a lot of
 I've finetuned mine for:
 
 1. Production trading system development (10,000+ commits across three repos)
-2. Blog writing with a voice guard that catches AI tells before they ship
+2. Blog writing with a distilled voice persona (built from my own writing over the years) plus a voice guard that catches AI tells before they ship
 3. eBay listings where the output template has to survive eBay's weird HTML rules
-4. CV and cover-letter work with voice protection so it sounds like me and not ChatGPT's cousin
+4. CV, cover-letters, LinkedIn posts, and any professional writing that needs to sound like me, not ChatGPT's cousin. Same voice persona, same voice guard, applied wherever the writing needs to feel human-first
 5. Deep research with a subagent swarm pattern
 6. MCP server development for evidence-enforced GitHub operations
 7. Admin auto-pilot (expense tagging, sync workflows, email triage)
