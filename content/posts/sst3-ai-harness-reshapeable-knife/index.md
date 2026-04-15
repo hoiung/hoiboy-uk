@@ -213,7 +213,7 @@ The complex workflows took longer. The trading platform. This blog. The custom M
 
 What do I do with it?
 
-I write this blog. I read more. I run experiments I've had in my notebook for literal years. I work on passive-income ideas that were always one week away from starting. I do the research that the old me never had time for. The trading platform runs mostly without me. The eBay listings now take minutes instead of hours. The admin of having a life is down to maybe 30 minutes a day.
+I write this blog. I read more. I run experiments I've had in my notebook for literal years, on a home mini-lab stitched together from whatever I can find: laptop, Intel NUC, Chromebox, anything with a CPU and enough RAM to be useful. I work on passive-income ideas that were always one week away from starting. I do the research that the old me never had time for. The trading platform runs mostly without me. The eBay listings now take minutes instead of hours. The admin of having a life is down to maybe 30 minutes a day.
 
 The rest is mine.
 
