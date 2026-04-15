@@ -207,7 +207,7 @@ Better to be the person who learnt to work with AI than the person who got repla
 
 ## Automation is compound interest
 
-I automated a lot of my tedious work. Listing creation. Blog editing. CV iterations. Research digests. Literature sweeps. Chart scanning that used to eat my mornings. It took time to set up. Weeks in some cases. Worth every minute.
+I automated a lot of my tedious work. Listing creation. Blog editing. CV iterations. Research digests. Literature sweeps. Chart scanning and automated trade strategies that used to eat my mornings, afternoons, and evenings. It took time to set up. Weeks in some cases. Worth every minute.
 
 The complex workflows took longer. The trading platform. This blog. The custom MCP servers. Months of finetuning. Also worth it. I now have time I didn't have before. Actual time. The expensive, non-renewable kind.
 
