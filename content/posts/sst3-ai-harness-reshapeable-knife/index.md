@@ -94,7 +94,7 @@ Honestly? I did not set out to build a methodology. I set out to solve my own pa
 
 The pain was this. Raw Claude Code out of the box is noticeably better than ChatGPT for coding, and it is the reason my friend Bear told me to give it a shot. Good for short tasks. Terrible for anything longer than 30 minutes. It forgets what you told it. It introduces scope drift. It adds "helpful" fallbacks that hide bugs instead of failing loudly. It silently mocks tests so everything passes and nothing actually works. (I've been there. Many times. It's painful.)
 
-When I eventually ran the research on the other frameworks out there (LangChain, CrewAI, whatever the flavour of the month is) I did not need to install any of them to see the gap. Reading their own documentation made it clear: they focus on chaining prompts and assigning tasks. Which is fine. But based on what I read, none of them answer the real question: **how do I stop the AI from shipping garbage?**
+When I eventually ran the research on the other frameworks out there (LangChain, CrewAI, whatever the flavour of the month is) I did not need to install any of them to see the gap. Reading their own documentation made it clear: they focus on chaining prompts and assigning tasks. Which is fine. But based on what I read, none of them answer the real question: **how do I stop the AI from shipping garbage?** (Fair caveat: it has been a while since I last compared. They may have added governance features since. If they have, good. The point still stands that governance was not the core of those tools at the time.)
 
 Governance. That's the missing piece. Not "what does the AI do", but "how do we know the AI did it right".
 
