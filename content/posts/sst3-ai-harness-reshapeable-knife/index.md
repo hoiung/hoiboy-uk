@@ -247,7 +247,7 @@ My honest recommendation: install [Claude Code](https://docs.claude.com/claude-c
 
 Not sponsored. Not affiliated. Just what I use and what I know works.
 
-Like the knife.
+Like the knife. (Side note: I love cooking and I am very proficient with both the cleaver and the chef's knife. Pick the right blade for the job and the job gets a lot easier.)
 
 ## The one-liner
 
