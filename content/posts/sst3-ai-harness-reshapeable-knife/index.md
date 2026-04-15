@@ -84,8 +84,7 @@ I've finetuned mine for:
 4. CV, cover-letters, LinkedIn posts, and any professional writing that needs to sound like me, not ChatGPT's cousin. Same voice persona, same voice guard, applied wherever the writing needs to feel human-first
 5. Deep research with a subagent swarm pattern
 6. MCP server development for evidence-enforced GitHub operations
-7. Admin auto-pilot (expense tagging, sync workflows, email triage)
-8. This blog. The whole site. Every post, every commit, every layout fix.
+7. This blog. The whole site. Every post, every commit, every layout fix.
 
 Same harness. Different edge. Same blade metal, just resharpened for the cut.
 
