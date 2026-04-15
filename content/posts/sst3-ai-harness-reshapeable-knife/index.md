@@ -58,7 +58,7 @@ With [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) around the AI,
 
 But that's miles better than before. Before, the ratio was flipped: maybe 20% usable, 80% slop and bullshit. The harness turned that around. Doesn't mean I've handed over the keys. Means the keys are safer in my hand while the AI does the driving under supervision.
 
-It's the difference between "AI wrote the thing and I spent two hours fixing it" and "AI did the thing properly the first time because the harness literally wouldn't let it get away with NOT doing it properly".
+It's the difference between "AI wrote the thing and I spent two hours fixing it" and "AI got much closer on the first pass because the harness made cutting corners significantly harder". Not magic. Not a guarantee. Just a much better base rate. AI is probabilistic, so you shift the odds. You don't eliminate risk.
 
 Think horse harness, parachute harness, climbing harness. The bit that lets powerful things do useful work without killing anyone. The LLM is the horse. SST3 is the harness.
 
@@ -94,7 +94,7 @@ Honestly? I did not set out to build a methodology framework. I set out to solve
 
 The pain was this. Raw Claude Code out of the box is noticeably better than ChatGPT for coding, and it is the reason my friend Bear told me to give it a shot. Good for short tasks. Terrible for anything longer than 30 minutes. It forgets what you told it. It introduces scope drift. It adds "helpful" fallbacks that hide bugs instead of failing loudly. It silently mocks tests so everything passes and nothing actually works. (I've been there. Many times. It's painful.)
 
-The real question I kept hitting wasn't "can the AI code?", it was **"how do I stop the AI from shipping garbage when I'm not watching?"**. That is a governance question, not a prompt-engineering question. Not "what does the AI do", but "how do we know the AI did it right".
+The real question I kept hitting wasn't "can the AI code?", it was **"how do I make it much less likely that the AI ships garbage when I'm not watching, and much more likely that it hits the goal I set?"**. That is a governance question, not a prompt-engineering question. Not "what does the AI do", but "how do we know the AI did it right, and how do we make 'right' the more likely path?". AI is probabilistic. The harness shifts the odds. It does not erase them.
 
 ## The cowboy problem
 
@@ -125,7 +125,7 @@ Plain English, how it actually stops each of those:
 - **Monitor, don't fire-and-forget.** Every background job must be tailed. Every script's exit code checked. Every side effect verified. "Started" is never "done".
 - **Evidence-enforced checkboxes.** There's a custom MCP (Model Context Protocol) server that literally will not let the AI mark a checkbox as complete without pasting the proof (commit hash, test output, file diff, whatever). Accountability by construction.
 - **Structured handover between sessions.** When context runs out, the AI writes a handover document to the GitHub issue FIRST. The next session reads the issue and picks up exactly where the last one left off. Nothing's in the AI's head alone.
-- **Grep before writing anything.** Literal rule: before creating any new file, helper, rule, or function, search the codebase first with multiple synonyms. Update existing in place if found. Prevents duplicate drift.
+- **Grep before writing anything.** Literal rule: before creating any new file, helper, rule, or function, search the codebase first with multiple synonyms. Update existing in place if found. Cuts duplicate drift way down.
 - **Single-source edits.** Every change has to pass every lens at once (voice, craft, wiring, standards). No "fix voice then break craft then patch wiring" zig-zag.
 - **3-tier automated review before every merge.** Ralph (named after Ralph Wiggum, if Ralph can spot it, it's really wrong). Haiku catches surface issues (debug prints, missing files). Sonnet catches logic issues (null propagation, scope drift). Opus catches architectural issues (wiring across modules, contract mismatches). Any tier fails, you go back to Haiku and restart. No shortcuts.
 - **14 pre-commit hooks.** Token budget, hardcoded parameters, silent fallbacks, secrets, voice tells, path drift, large files, merge conflicts. The commit literally gets rejected if you violate one. Good standards are the ones that are automatically enforced. Paper standards are just stories people tell each other.
