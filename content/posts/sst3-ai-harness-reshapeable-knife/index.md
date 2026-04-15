@@ -257,7 +257,7 @@ Everything else is implementation detail.
 
 If you want the full reasoning on why I spend more tokens on scope than on code, I wrote that up separately: [Why I Spend More Tokens Refining Scope Than Writing Code](https://hoiboy.uk/posts/why-scope-beats-code/).
 
-Watch this space. More posts coming on the specific bits. The Ralph Review system. The voice guard for writing. The MCP server for evidence-enforced GitHub operations. How I use subagent swarms for research. Plenty more where this came from.
+Watch this space. More posts coming on the specific bits. The Ralph Review system. The voice guard for writing. The MCP server for evidence-enforced GitHub operations. How I use subagent swarms for research. The ebay-seller-tool that turns hours of listing admin into minutes. Plenty more where this came from.
 
 And if you're sitting on a pile of tedious work thinking "there must be a better way", there is.
 
