@@ -39,7 +39,7 @@ Then every angle gets double-checked and triple-checked by a second layer of sub
 
 I think of it like Lego. One polished piece at a time. Each piece has to be gold-quality before it slots in next to the others. You do NOT stack two half-finished bricks and hope they'll settle. That is how you get a tower that leans on day one and falls over on day ninety.
 
-This is the opposite of how most AI frameworks think about throughput. SST3 doesn't care how many agents you can run in parallel. It cares how few clean pieces you can ship per hour, with zero rework.
+This is the opposite of how most AI frameworks think about throughput. SST3 doesn't care how many agents you can run in parallel. It cares how few clean pieces you can ship per hour, with rework as close to zero as you can realistically get.
 
 Slower per piece. Dramatically faster overall. (And much, much less archaeology later.)
 
