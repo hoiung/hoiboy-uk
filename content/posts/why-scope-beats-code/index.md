@@ -83,6 +83,18 @@ It is more expensive per piece in tokens. Obviously. You are spending tokens on 
 
 Pay a bit more in the planning phase. Pay a fortune less in the cleanup phase. There is no third option. There is only "pay now" and "pay ten times more later".
 
+## The three ways AI quietly goes off-piste
+
+If I had to summarise two years of AI scar tissue into three bullets, it would be these:
+
+**1. It makes things up.** Confidently. With citations. You ask for an acronym expansion and it hands you a plausible-sounding phrase that simply is not true. I have watched an AI invent a project name from nothing, repeat it three times across a conversation as if it were fact, and only back down when I dropped actual source files in front of it. If you do not triple-check claims against a primary source, you will ship fiction. (This has happened in this very workflow. Yes, in the post you are reading right now. The harness is what caught it.)
+
+**2. It overengineers.** You ask for a two-bullet summary. It returns a three-phase implementation plan with a decision gate, a Ralph review, and a compact break. You ask it to trim a README section. It tries to restructure the whole file and front-load the install instructions you did not ask to touch. Agents love adding things. They love making scope bigger and more "complete". What you wanted was smaller, faster, simpler. What they deliver without guardrails is bigger, slower, busier.
+
+**3. It does the opposite of what was agreed.** This one is the quietest and the most dangerous. You agree on direction A in the chat. Five minutes and two subagents later, the implementation is subtly doing direction B. Not defiant. Not malicious. Just drift. The agent followed the last piece of context it prioritised, and the last piece was not the user decision from earlier. Without an explicit "opposite-scoping check" built into the process, drift wins more often than it should.
+
+These are the failure modes the harness exists to catch. Scope-first is how you give yourself the hooks to notice any of the three before they hit production. Each one compounds if unchecked. Each one is cheaper to catch at scope time than at cleanup time. None of them are theoretical. All three have happened to me, in real work, inside real shipped code, before I learned to scope properly.
+
 ## The one-liner
 
 If you only take one thing away from this post: the AI doesn't know your standards. You do. A harness is how you teach the AI your standards and make sure it follows them. Scope is the bit where you teach the harness what "good" looks like. Skimp on that step and the rest of the system cannot save you.
