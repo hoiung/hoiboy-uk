@@ -243,6 +243,8 @@ That's it. The AI will do the reading for you and hand you back a plain-English 
 
 My honest recommendation: install [Claude Code](https://docs.claude.com/claude-code). It is the CLI (command-line interface) version of Claude that SST3 was actually built on, and the `/Leader` commands work natively inside it. You will also want the Max 20x plan, not the base tier. The base tier doesn't give you enough tokens to do anything meaningful. The Max 20x gives the orchestrator enough room to actually hold a full Issue, standards, research, and diff at the same time. That is the whole point of SST3. Skimp on tokens and the harness cannot load its own rules, so it cannot enforce them.
 
+**Platform note.** On Windows, I run Claude Code inside WSL2 (Windows Subsystem for Linux 2) with Ubuntu. It is a much cleaner developer experience than raw Windows, and if you don't know how to set up WSL2, Claude Code can walk you through it once you have it installed. On Mac, I am told it runs fine natively (I haven't tested personally). On Linux, obviously native.
+
 Not sponsored. Not affiliated. Just what I use and what I know works.
 
 Like the knife.
