@@ -261,7 +261,7 @@ Watch this space. More posts coming on the specific bits. The Ralph Review syste
 
 And if you're sitting on a pile of tedious work thinking "there must be a better way", there is.
 
-Go build your harness. Or steal mine.
+Go build your harness. Or steal (borrow) mine.
 
 Hoi x
 <!-- iamhoiend -->
