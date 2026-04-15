@@ -9,7 +9,7 @@ description: "SST2 taught me the hard way. The scoping step costs tokens up fron
 
 <!-- iamhoi -->
 
-There was a version of me, about two years back, who thought the smart move was to point an AI agent at a problem and let it rip. Five agents. Ten agents. Fire away. Maximum throughput. What could go wrong.
+There was a version of me, about six months back, who thought the smart move was to point an AI agent at a problem and let it rip. Five agents. Ten agents. Fire away. Maximum throughput. What could go wrong.
 
 A lot, as it turns out.
 
