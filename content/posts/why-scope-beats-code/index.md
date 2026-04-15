@@ -99,6 +99,10 @@ These are the failure modes the harness exists to catch. Scope-first is how you 
 
 If you only take one thing away from this post: the AI doesn't know your standards. You do. A harness is how you teach the AI your standards and make sure it follows them. Scope is the bit where you teach the harness what "good" looks like. Skimp on that step and the rest of the system cannot save you.
 
+The name SST3-AI-Harness is deliberate. The AI is the horse. The harness is the wrapper around it: orchestration, governance, quality gates, enforcement. The whole lot. Without the harness, the horse bolts across the field in whichever direction catches its attention. With the harness, it pulls in the direction you pointed it in, at the pace you set. Same raw power. Very different outcome.
+
+And there is a second meaning baked into the word. "Harness your full potential." That is what the harness does to you, too. It draws the work out of you at a pace and polish you would not hit on your own. Super hero suit. Same tool, two jobs: it reins in the AI and it amplifies the human wearing it.
+
 I spend more tokens on scope than on code. It is not a quirk. It is the whole method.
 
 If you want the longer story about why the harness exists and how the cross-department stuff works, I wrote that up separately: [SST3-AI-Harness. Why I Built a Hero Suit for AI.](https://hoiboy.uk/posts/sst3-ai-harness-reshapeable-knife/). If you want the code and the repo, [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) is public. Clone, install, and give it a weekend. The scoping step feels heavy the first time. By the third Issue you will wonder how you ever shipped anything without it.
