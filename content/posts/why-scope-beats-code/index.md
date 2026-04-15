@@ -101,7 +101,7 @@ If you only take one thing away from this post: the AI doesn't know your standar
 
 The name SST3-AI-Harness is deliberate. The AI is the horse. The harness is the wrapper around it: orchestration, governance, quality gates, enforcement. The whole lot. Without the harness, the horse bolts across the field in whichever direction catches its attention. With the harness, it pulls in the direction you pointed it in, at the pace you set. Same raw power. Very different outcome.
 
-And there is a second meaning baked into the word. "Harness your full potential." Once the AI is properly reined in, it helps you harness yours. It pulls the work out of you at a pace and polish you would not hit alone. Super hero suit. Same tool, two jobs: it reins in the AI, and the AI then reins in the best work you have got.
+And there is a second meaning baked into the word. "Harness your full potential." Once the AI is properly reined in, it helps you harness yours. It pulls the work out of you at a pace and polish you would not hit alone. Super hero suit (think Iron Man). Same tool, two jobs: it reins in the AI, and the AI then reins in the best work you have got.
 
 I spend more tokens on scope than on code. It is not a quirk. It is the whole method.
 
