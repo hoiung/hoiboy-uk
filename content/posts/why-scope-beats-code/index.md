@@ -103,6 +103,8 @@ The name SST3-AI-Harness is deliberate. The AI is the horse. The harness is the 
 
 And there is a second meaning baked into the word. "Harness your full potential." Once the AI is properly reined in, it helps you harness yours. It pulls the work out of you at a pace and polish you would not hit alone. Super hero suit (think Iron Man). Same tool, two jobs: it reins in the AI, and the AI then reins in the best work you have got.
 
+You always keep a human eye on it. Or at least one eye on it. The harness does a lot of the heavy lifting, but it is not a replacement for you watching where it goes.
+
 I spend more tokens on scope than on code. It is not a quirk. It is the whole method.
 
 If you want the longer story about why the harness exists and how the cross-department stuff works, I wrote that up separately: [SST3-AI-Harness. Why I Built a Hero Suit for AI.](https://hoiboy.uk/posts/sst3-ai-harness-reshapeable-knife/). If you want the code and the repo, [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) is public. Clone, install, and give it a weekend. The scoping step feels heavy the first time. By the third Issue you will wonder how you ever shipped anything without it.
