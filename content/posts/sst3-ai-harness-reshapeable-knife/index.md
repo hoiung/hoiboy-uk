@@ -203,7 +203,7 @@ The people rejecting AI today are the same people who rejected spreadsheets in 1
 
 And frankly? I'm a believer in Darwin's law. Survival of the fittest. Adapt or get adapted out. If you can't live and work in this AI tech age, you may need to change your day job. And soon enough, the company that hired you might just help you do that (not in the nice way). Harsh? A bit. True? Also a bit.
 
-Better to be the person who learnt the harness than the person who got replaced by someone who did.
+Better to be the person who learnt to work with AI than the person who got replaced by someone who did.
 
 ## Automation is compound interest
 
