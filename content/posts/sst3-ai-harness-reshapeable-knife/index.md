@@ -90,11 +90,11 @@ Same harness. Different edge. Same blade metal, just resharpened for the cut.
 
 ## Why I built it
 
-Because I tried the alternatives and they all failed me the same way.
+Honestly? I did not set out to build a methodology. I set out to solve my own pain, and I built SST3 unknowingly. I only discovered the other frameworks LATER, at which point I ran proper deep-research comparisons and found that mine had features theirs did not, was simpler by design, and was customised to the work I was actually doing.
 
-Raw Claude Code out of the box? Brilliant for autocomplete. Terrible for anything longer than 30 minutes. It forgets what you told it. It introduces scope drift. It adds "helpful" fallbacks that hide bugs instead of failing loudly. It silently mocks tests so everything passes and nothing actually works. (I've been there. Many times. It's painful.)
+The pain was this. Raw Claude Code out of the box? Brilliant for autocomplete. Terrible for anything longer than 30 minutes. It forgets what you told it. It introduces scope drift. It adds "helpful" fallbacks that hide bugs instead of failing loudly. It silently mocks tests so everything passes and nothing actually works. (I've been there. Many times. It's painful.)
 
-The other frameworks? LangChain, CrewAI, whatever the flavour of the month is. Mostly focused on chaining prompts and assigning tasks. Which is fine. But none of them answer the real question: **how do I stop the AI from shipping garbage?**
+When I eventually compared against the other frameworks (LangChain, CrewAI, whatever the flavour of the month is) the gap was clear. They mostly focus on chaining prompts and assigning tasks. Which is fine. But none of them answer the real question: **how do I stop the AI from shipping garbage?**
 
 Governance. That's the missing piece. Not "what does the AI do", but "how do we know the AI did it right".
 
