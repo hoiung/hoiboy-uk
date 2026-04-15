@@ -15,7 +15,7 @@ A lot, as it turns out.
 
 ## What SST2 taught me
 
-Before [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) there was SST2. SST2 looked like most mainstream agent frameworks still do. One orchestrator, a pool of specialist agents, coordination messages flying between them, and every agent holding a loaded write-access permission. Think LangChain or CrewAI shape, with my own guardrails welded on the side.
+Before [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) there was SST2. SST2 was a multi-agent setup: one orchestrator, a pool of specialist agents, coordination messages flying between them, and every agent holding a loaded write-access permission. Lots of parallel writers. My own guardrails welded on the side. I thought throughput was the answer.
 
 It was a disaster.
 
