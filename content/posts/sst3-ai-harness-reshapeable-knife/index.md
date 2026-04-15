@@ -233,11 +233,15 @@ The [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) repo is public 
 
 ### For non-techies
 
-If you don't write code, this is still for you. You do not need to clone anything by hand. Open ChatGPT, Claude, or whichever AI you already use, and give it a prompt like this one:
+If you don't write code, this is still for you. You don't need to clone anything. Open ChatGPT, Claude chat, or whichever AI you already use, and paste this prompt:
 
 > *"Read the README at https://github.com/hoiung/SST3-AI-Harness and walk me through setting it up for my work. I'm not a developer. Explain each step in plain English, tell me what to install, and flag anything that needs a paid plan before I start."*
 
-My honest recommendation: install [Claude Code](https://docs.claude.com/claude-code). It is the CLI (command-line interface) version of Claude that SST3 was actually built on, and the `/Leader` commands work natively inside it. You will also want the Max 20x plan, not the base tier. The base tier does not give you enough tokens to do anything meaningful. The Max 20x gives the orchestrator enough room to actually hold a full Issue, standards, research, and diff at the same time. That is the whole point of SST3. Skimp on tokens and the harness cannot load its own rules, so it cannot enforce them.
+That's it. The AI will do the reading for you and hand you back a plain-English setup plan.
+
+### If you want the full SST3 experience
+
+My honest recommendation: install [Claude Code](https://docs.claude.com/claude-code). It is the CLI (command-line interface) version of Claude that SST3 was actually built on, and the `/Leader` commands work natively inside it. You will also want the Max 20x plan, not the base tier. The base tier doesn't give you enough tokens to do anything meaningful. The Max 20x gives the orchestrator enough room to actually hold a full Issue, standards, research, and diff at the same time. That is the whole point of SST3. Skimp on tokens and the harness cannot load its own rules, so it cannot enforce them.
 
 Not sponsored. Not affiliated. Just what I use and what I know works.
 
