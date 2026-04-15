@@ -103,7 +103,7 @@ Here's what Claude (or any LLM) does left unsupervised. I say this with love. I 
 - It **takes shortcuts**. Skips the research stage. Dives into code before understanding the problem. Ships stuff that passes tests but doesn't actually work.
 - It **silently falls back**. Can't find a config value? Defaults to zero. Missing data? Returns an empty string. You only find out 3 weeks later when a trade didn't execute or a report showed £0 revenue.
 - It **mocks tests to pass**. Genuinely. It'll add `**kwargs` to a mock that silently swallows every argument you pass, and the test passes with a smile, and the real code doesn't propagate a single parameter.
-- It **fires and forgets**. Launches a background job. Moves on. Never checks whether it finished. "Started" gets treated as "done".
+- It **fires and forgets**. Launches a background job. Moves on. Never checks whether it finished, whether it got stuck, whether it errored out, or whether the output was actually produced. "Started" gets treated as "done". Broken gets treated as "done". A stack trace on stderr gets treated as "done". If nobody looks, nobody knows.
 - It **ticks the boxes without evidence**. Marks a checkbox as complete. No proof. No artifact. No way to audit what actually happened.
 - It **loses context between sessions**. Starts fresh. Forgets the decisions you made yesterday. Contradicts itself. Re-implements things that already exist.
 - It **duplicates work**. Instead of grep-ing for an existing helper, it writes a new one. Three versions of the same function drift over time. Nobody notices until something breaks.
