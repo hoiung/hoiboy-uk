@@ -227,7 +227,7 @@ You don't need to copy my whole setup. Start small.
 4. Get an AI to do the task. Let the checklist catch anything wrong.
 5. Review. Refine the checklist. Run it again.
 
-You've just built a micro-harness. That IS SST3 in miniature. Now scale it to your second task. Your third. Your tenth.
+You've just built a micro-harness. That is SST3 in miniature. Now scale it to your second task. Your third. Your tenth.
 
 The [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) repo is public on GitHub. MIT-licensed. Steal what's useful. Ignore what's not. Fork it, finetune it, ship it inside your own tooling. I wrote it to be a generalist with enough finetune points that it becomes a specialist in your hands.
 
