@@ -70,7 +70,7 @@ A knife is a knife is a knife. Right?
 
 Wrong.
 
-A chef's blade. A surgeon's scalpel. A butcher's cleaver. A samurai's katana. All knives. Completely different tools. You wouldn't chop onions with a scalpel (possible, just not very practical, lol). You wouldn't perform open-heart surgery with a cleaver. You wouldn't take a chef's blade to a sword fight (please don't). And you wouldn't julienne your carrots with a katana, though you'd look very very cool trying.
+A chef's blade. A surgeon's scalpel. A butcher's cleaver. A ninja's throwing knife. All knives. Completely different tools. You wouldn't chop onions with a scalpel (possible, just not very practical, lol). You wouldn't perform open-heart surgery with a cleaver. You wouldn't take a chef's blade to a rooftop chase (please don't). And you wouldn't julienne your carrots with a throwing knife, though you'd look very very cool trying.
 
 The blade shape depends on the job. The user depends on knowing the job.
 
