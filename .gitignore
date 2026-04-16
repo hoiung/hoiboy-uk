@@ -25,3 +25,6 @@ node_modules/
 __pycache__/
 *.pyc
 .venv/
+
+# Code review graph (local AST index, regenerable)
+.code-review-graph/
