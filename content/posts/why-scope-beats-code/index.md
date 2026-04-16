@@ -113,11 +113,11 @@ These are the failure modes the harness exists to catch. Scope-first is how you 
 
 If you only take one thing away from this post: the AI doesn't know your standards. You do. A harness is how you teach the AI your standards and make sure it follows them. Scope is the bit where you teach the harness what "good" looks like. Skimp on that step and the rest of the system cannot save you.
 
-The name SST3-AI-Harness is deliberate. **SST3 is the harness for AI.** Think horse harness, parachute harness, climbing harness. The bit that lets powerful things do useful work without killing anyone. The LLM is the horse. SST3 is what keeps it pulling in the direction you pointed it in, at the pace you set, without bolting across the field. Orchestration, governance, quality gates, enforcement. The whole lot. Same raw power, very different outcome.
+The name SST3-AI-Harness is deliberate. **SST3 is the harness for AI.** Think horse harness, parachute harness, climbing harness. The bit that reduces the chance of anyone hurting themselves and lets you do the work with some peace of mind that the safety net will do its job when the time comes. The LLM is the horse. SST3 is what keeps it pulling in the direction you pointed it in, at the pace you set, without bolting across the field. Orchestration, governance, quality gates, enforcement. The whole lot. Same raw power, very different outcome.
 
 There is a second meaning too. Harness your full potential. Rein the AI in, and it helps you do better work than you would alone. Think Iron Man. The suit protects him and makes him stronger, but it is still Tony Stark inside. Same idea. The harness keeps the AI on track, and the AI pulls the best out of you.
 
-You always keep a human eye on it. Or at least one eye on it. The harness does a lot of the heavy lifting, but it is not a replacement for you watching where it goes. Remember, a harness is a reduction system, not a prevention system. I do not think a true prevention system exists right now, because every LLM is built on probability. The output is a best guess based on the input. A very good guess, most of the time. But still a guess.
+You should always keep a human eye on it. Or at least one eye on it. The harness does a lot of the heavy lifting, but it is not a replacement for you watching where it goes. Remember, a harness is a reduction system, not a prevention system. I do not think a true prevention system exists right now, because every LLM is built on probability. The output is a best guess based on the input. A very good guess, most of the time. But still a guess.
 
 I spend more tokens on scope than on code. It is not a quirk. It is the whole method.
 
