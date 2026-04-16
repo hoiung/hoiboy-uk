@@ -115,7 +115,7 @@ If you only take one thing away from this post: the AI doesn't know your standar
 
 The name SST3-AI-Harness is deliberate. **SST3 is the harness for AI.** Think horse harness, parachute harness, climbing harness. The bit that lets powerful things do useful work without killing anyone. The LLM is the horse. SST3 is what keeps it pulling in the direction you pointed it in, at the pace you set, without bolting across the field. Orchestration, governance, quality gates, enforcement. The whole lot. Same raw power, very different outcome.
 
-And there is a second meaning baked into the word. "Harness your full potential." Once the AI is properly reined in, it helps you harness yours. It pulls the work out of you at a pace and polish you would not hit alone. Super hero suit (think Iron Man). Same tool, two jobs: it reins in the AI, and the AI then reins in the best work you have got.
+There is a second meaning too. Harness your full potential. Rein the AI in, and it helps you do better work than you would alone. Think Iron Man. The suit protects him and makes him stronger, but it is still Tony Stark inside. Same idea. The harness keeps the AI on track, and the AI pulls the best out of you.
 
 You always keep a human eye on it. Or at least one eye on it. The harness does a lot of the heavy lifting, but it is not a replacement for you watching where it goes. Remember, a harness is a reduction system, not a prevention system. I do not think a true prevention system exists right now, because every LLM is built on probability. The output is a best guess based on the input. A very good guess, most of the time. But still a guess.
 
