@@ -23,9 +23,11 @@ Some of that was my inexperience. Some of it was the tooling at the time. A big 
 
 It was like letting five cowboys fire pistols in the same saloon. Nobody hit what they were aiming at. Everybody left a mess.
 
+We still had a main orchestrator directing and "checking" their work. Did not save us. The agents still went rogue, and the orchestrator either gave up or flagged the work as done just because. Ticked the box. Moved on. Left the mess behind for someone (me) to find weeks later.
+
 The worst part was that you only felt the pain months later. Long after the agents had finished and I'd moved on. By the time I noticed the damage, there was no memory of which agent changed what, or why. Debugging became archaeology. Digging up old bones to figure out why the wall was leaning.
 
-I suspect my tradebook system still has stale, contradictory code from that era. I tried to clean it up. I genuinely did. Every time I thought I was done I'd find another buried fossil. At some point you just accept it. The production code has legacy technical debt I haven't fully exorcised, I've moved on, and the rule now is that new code doesn't touch the old mess or accidentally integrate with it.
+I suspect my tradebook system still has stale, contradictory code from that era. I tried to clean it up. I genuinely did. Every time I thought I was done I'd find another buried fossil. At some point you just accept it. The production code has legacy technical debt I haven't fully exorcised, I've moved on, and the rule now is simple: if the harness finds a piece of the old mess while working on something else, remove it. Otherwise, leave it alone. No accidental integration with it either.
 
 That was the lesson. Multiple writer-agents create chaos that compounds silently. The chaos is invisible the day you ship. It shows up six months later when the whole thing starts behaving oddly and nobody can tell you why.
 
@@ -45,21 +47,27 @@ Slower per piece. Dramatically faster overall. (And much, much less archaeology 
 
 The 1M context window that arrived in 2025 made this practical across bigger projects. The orchestrator can hold the Issue, the standards, the research, and the full diff without spilling context anywhere. The subagents absorb the high-volume reads on its behalf. The orchestrator stays coherent. The code stays coherent. No more cowboys.
 
+That said, more context is not a free lunch. It comes with its own unpredictability. Sometimes the model hallucinates with 80% context left. Sometimes with 50%. Sometimes with 30%. It is quite random, and I suspect a chunk of it lines up with Claude server outages, because the worst days are the outage days. More than once I have watched the harness wreck a build on a bad-infra day and then spent the next day undoing its work and refixing by hand. So even with 1M context and a harness around it, you still need a human eye on the output.
+
+My own rule of thumb: I keep an eye on the context memory gauge and compact waaaay before 20% left. Around 40% is usually when I start to feel performance and accuracy dip, so that is my trigger. Compact early, reload the important stuff fresh, carry on. Much cheaper than letting it drift into the weeds at 10% and shipping garbage.
+
 ## Why I spend more tokens on scope than on code
 
 Here is the bit that surprises people.
 
 Most of my tokens do not get spent writing code. They get spent refining the scope before a single line of code gets written. Research subagents. Issue drafting subagents. Sanity-check subagents verifying the draft against the research. Opposite-scoping checks. False-positive sweeps. Before/after illustrations for every change so the before can be compared against the after when we're done.
 
+Subagents also read the architecture docs and map the current code line by line, function by function, module by module, against what the scope is proposing. That way the new piece lands inside the existing workflow, not in isolation next to it. They also check the YAML config files, where I keep the single source of truth parameters for the whole system in one place. If the scope changes a parameter, I want to know which YAML key owns it before the code gets touched, not after.
+
 Sounds excessive, right? It is not.
 
 The biggest killer of any project is unclear instructions and scope that is not well-defined. You can have the smartest team in the world and the best tools money can buy. If the scope is fuzzy, the output is fuzzy. Worse, you only discover the fuzziness AFTER you have already spent money and time building the wrong thing.
 
-This is the single biggest lesson from two decades of Project Management, IT engineering, running my own businesses, and leading teams through plenty of failures and a fair number of successes. Taking the first step in the right direction is the most important decision you make. It is like having a map of where you want to get to. There are many routes. You want to pick the one that dodges the obstacles, challenges, and gotchas that would otherwise stop you from getting there.
+This is the single biggest lesson from two decades of Project Management, IT engineering, running my own businesses, and leading teams through plenty of failures and a fair number of successes. Taking the first step in the right direction is the most important decision you make. It is like having a map of where you want to get to. There are many routes. You want to review the map and see the landscape first, then pick the route that dodges the obstacles, challenges, and gotchas that would otherwise stop you from getting there.
 
 I find it far cheaper to have a clear plan that is still flexible to changes than a loose plan that gets lost or misinterpreted. The loose plan costs you later. You look up months down the line, realise you have drifted further from the goal, and then you pay twice to find your way back. Cleaning up bad code is hard. Sometimes genuinely painful. Sometimes the scars never fully heal once the bad code has shipped to production.
 
-This is not a PM cliche. This is somebody who has lived through the cleanup three or four times and does not want to live through it again.
+This is not a PM cliche. This is somebody who has lived through the cleanup three or four times and does not want to live through it again. Some of those cleanups were 24 to 30 hour sessions with no sleep. Not heroic. Just what bad scope costs you when it finally comes due.
 
 ## The snowball nobody warns you about
 
@@ -67,7 +75,7 @@ Here is the sneaky part about gaps in scope. They do not announce themselves on 
 
 Small gaps sit there quietly. Every new feature you build on top of them inherits the same weak foundation. Miss a gap this week. The next piece layers on top of it. Then the one after that. Before you know it, you have a snowball rolling down the hill, and by the time you notice, it is the size of a house.
 
-You end up with a fragile production system that breaks the moment the wind changes direction. A trading strategy that works on Tuesdays but somehow loses money on Thursdays. A checkbox that ticks itself without evidence. A config key that nobody reads. A test that passes because the mock silently swallowed the argument it was supposed to check.
+You end up with a fragile production system that breaks the moment the wind changes direction. A trading strategy that loses far more than it should on a red day because a Stop order got cancelled somewhere and never auto-repaired, so the trade ran well past the exit that was supposed to save it. A checkbox that ticks itself without evidence. A config key that nobody reads. A test that passes because the mock silently swallowed the argument it was supposed to verify.
 
 None of those sound like "the project is failing". All of them quietly erode the ground under it. One by one. Month after month.
 
@@ -83,15 +91,21 @@ It is more expensive per piece in tokens. Obviously. You are spending tokens on 
 
 Pay a bit more in the planning phase. Pay a fortune less in the cleanup phase. There is no third option. There is only "pay now" and "pay ten times more later".
 
+Skip the scoping and you end up with a monkey turning the wheel from the inside just to keep the thing moving, while you know full well it is not actually working properly. That is not a system. That is a costume.
+
+PS. Pay peanuts, get monkeys. Only this time the pun is literal.
+
 ## The three ways AI quietly goes off-piste
 
 If I had to summarise two years of AI scar tissue into three bullets, it would be these:
 
-**1. It makes things up.** Confidently. With citations. You ask for an acronym expansion and it hands you a plausible-sounding phrase that simply is not true. I have watched an AI invent a project name from nothing, repeat it three times across a conversation as if it were fact, and only back down when I dropped actual source files in front of it. If you do not triple-check claims against a primary source, you will ship fiction. (This has happened in this very workflow. Yes, in the post you are reading right now. The harness is what caught it.)
+**1. It makes things up.** Confidently. With citations. You ask for an acronym expansion and it hands you a plausible-sounding phrase that simply is not true. I have watched an AI invent a feature comparison against another framework from nothing, repeat it three times across a conversation as if it were fact, and only back down when I asked which version they had actually tested (spoiler: none). If you do not triple-check claims against a primary source, you will ship fiction. (This has happened in this very workflow. Yes, in the post you are reading right now. The harness is what caught it.)
 
 **2. It overengineers.** You ask for a two-bullet summary. It returns a three-phase implementation plan with a decision gate, a Ralph review, and a compact break. You ask it to trim a README section. It tries to restructure the whole file and front-load the install instructions you did not ask to touch. Agents love adding things. They love making scope bigger and more "complete". What you wanted was smaller, faster, simpler. What they deliver without guardrails is bigger, slower, busier.
 
 **3. It does the opposite of what was agreed.** This one is the quietest and the most dangerous. You agree on direction A in the chat. Five minutes and two subagents later, the implementation is subtly doing direction B. Not defiant. Not malicious. Just drift. The agent followed the last piece of context it prioritised, and the last piece was not the user decision from earlier. Without an explicit "opposite-scoping check" built into the process, drift wins more often than it should.
+
+In PM terms, numbers 2 and 3 are both scope creep. The plan drifts from the original agreement without approval. The only difference is that with a human team you usually get a conversation before somebody goes rogue. With an AI agent you just get the commit.
 
 These are the failure modes the harness exists to catch. Scope-first is how you give yourself the hooks to notice any of the three before they hit production. Each one compounds if unchecked. Each one is cheaper to catch at scope time than at cleanup time. None of them are theoretical. All three have happened to me, in real work, inside real shipped code, before I learned to scope properly.
 
@@ -103,7 +117,7 @@ The name SST3-AI-Harness is deliberate. **SST3 is the harness for AI.** Think ho
 
 And there is a second meaning baked into the word. "Harness your full potential." Once the AI is properly reined in, it helps you harness yours. It pulls the work out of you at a pace and polish you would not hit alone. Super hero suit (think Iron Man). Same tool, two jobs: it reins in the AI, and the AI then reins in the best work you have got.
 
-You always keep a human eye on it. Or at least one eye on it. The harness does a lot of the heavy lifting, but it is not a replacement for you watching where it goes.
+You always keep a human eye on it. Or at least one eye on it. The harness does a lot of the heavy lifting, but it is not a replacement for you watching where it goes. Remember, a harness is a reduction system, not a prevention system. I do not think a true prevention system exists right now, because every LLM is built on probability. The output is a best guess based on the input. A very good guess, most of the time. But still a guess.
 
 I spend more tokens on scope than on code. It is not a quirk. It is the whole method.
 

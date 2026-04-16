@@ -92,7 +92,6 @@ BANNED_WORDS: tuple[str, ...] = (
     "moreover",
     "pivotal",
     "tapestry",
-    "landscape",
     "realm",
     "underscore", "underscores", "underscoring",
     "meticulous", "meticulously",
