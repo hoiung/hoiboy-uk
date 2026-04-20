@@ -1,5 +1,5 @@
 ---
-title: "Scaling Without Quality. Just Multiplying Problems."
+title: "Scaling Without Quality. Just Multiplying Bugs."
 date: 2026-04-20
 draft: true
 categories: [tech-ai]
@@ -39,7 +39,7 @@ Plenty of teams are sprinting. Not enough are stopping to ask whether the thing 
 
 ## Once Upon a Time, I Watched the Same Pattern Play Out in Different Buildings
 
-Same film, different buildings.
+Same movie, different buildings.
 
 A team gets the pressure to ship. Quality slips a bit, as it does under pressure. Bugs pile up. Someone in leadership decides the fix is "more engineers" or "more automation" or "let's parallelise the pipeline". The org scales the work... and scaling doesn't fix the underlying quality. It just copies the same mess across more places.
 
@@ -47,15 +47,15 @@ Six months later you've got ten of everything. Ten versions of the same bug fail
 
 Now with traditional software, at least the bugs are predictable. Same input, same broken output, the thing fails in a repeatable way, and someone clever enough eventually works it out.
 
-With AI agents? The bugs are **unpredictable**. Same prompt (same instructions), three different outputs. One of them confidently wrong in a way that looks right enough to ship. Same input on Tuesday works, Wednesday it silently hallucinates a function that doesn't exist, Thursday it's inventing libraries (software toolkits) that were never real. Now multiply that by 50 concurrent agents.
+With AI agents? The bugs are **unpredictable**. Same prompt (same instructions), three different outputs. One of them confidently wrong in a way that looks right enough to ship. Same input on Tuesday works. Wednesday it silently hallucinates a function that doesn't exist. Thursday it's scope-creeping: features you never asked for, hardcoded parameters everywhere, unwired functions left dangling, new code wired straight into dead code that goes nowhere. And it'll cheerfully claim it all works. Now multiply that by 50 concurrent agents.
 
 Go on. Picture it. Picture the on-call shift at 3am, the pager going off, the logs lighting up on 50 different orchestrators at once.
 
-That's the disaster I've been building the opposite of, on purpose, for the last two-ish years.
+That's the disaster I've been building the opposite of, on purpose, for the last year.
 
 ## So I Built [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) the Opposite Way
 
-SST3-AI-Harness is the system I built to run AI agents under strict rules. Scaffolding that keeps the AI honest. No hiring sprint. No parallel squads. One person directing a single main orchestrator, with one shared ruleset for everything.
+SST3-AI-Harness is the frame I built (by mistake) to run AI agents under strict rules. Scaffolding that keeps the AI honest. No hiring sprint. No parallel squads. One person directing a single main orchestrator, with one shared ruleset for everything.
 
 The shape ended up being five stages of delivery (research, then a written issue, then a triple-check on the scope, then implementation, then a post-implementation review) with a three-model review loop at the end. Haiku, Sonnet, and Opus are three sizes of Claude, small to large. Haiku, the fast one, reads first for surface problems. Sonnet, the mid-size, reads for logic. Opus, the big brain, reads for architecture. If any of them flags something, the whole thing restarts from Haiku.
 
@@ -77,7 +77,7 @@ Fix. Unfix. Improve. Figure out how to make it work. Repeat.
 
 It's hard work.
 
-Which is why I close the tab on every "vibe coded an entire app in 3 hours" video the moment it loads. Load of rubbish. Trust me... the people making those clips are missing the actual work that happens before and after the clip, where the thing goes from demo-toy to something that doesn't fall over the moment a user does something unexpected.
+Which is why I close the tab on every "vibe coded an entire app in 3 hours" video or article the moment it loads on my Google newsfeed. Load of rubbish. Trust me... the people making those clips are missing the actual work that happens before and after the clip, where the thing goes from demo-toy to something that doesn't fall over the moment a user does something unexpected.
 
 SST3 being fragile is fine, though. Because the whole point isn't that SST3 eliminates bugs. It doesn't. The point is that when the surprises hit (and they always do), the machinery around me absorbs them without everything melting down at once. Small problem stays small...
 
@@ -91,9 +91,11 @@ When the harness is built right, scaling it comes down to copying, not rebuildin
 
 The reason is simple. The harness isn't coupled to me. It's coupled to the rules. Copy the rules, copy the quality floor. That's it. Whoever runs the harness next (human or AI) inherits the enforcement layer, not me.
 
-Compare that with any scaling org that didn't build the enforcement layer early. They've got the people, the budget, the parallel agents. What they don't have is the enforcement layer, because there was never time for it, because the moment someone mentioned it a director said "we'll revisit that after we ship". So when they scale, every new team inherits the same silent defaults, confident hallucinations everywhere, broken test patterns that pass the automated tests but mean absolutely nothing in production.
+People have noticed, to be fair. "Harness Engineering" and "AI Harness" are floating around as terms now because enough of the industry has clocked that scaling without governance, without guidelines, without a harness, is dangerous. The penny has dropped.
 
-And now the mess is 10x.
+But for the orgs that didn't build the enforcement layer early, the penny dropped too late. They've got the people, the budget, the parallel agents. And no enforcement layer, because there was never time for it, because the moment someone mentioned it a director said "we'll revisit that after we ship". So when they scale, every new team inherits the same silent defaults, confident hallucinations everywhere, broken test patterns that pass the automated tests but mean absolutely nothing in production.
+
+And now the mess is 10x. For the ones who rushed ahead without a harness.
 
 Scaling multiplied what they had. The base was fragile. When they scaled up, the fragility multiplied with it.
 
@@ -105,7 +107,7 @@ The reason clicked hard recently when I was looking at the SST3-AI-Harness repo 
 
 The answer wasn't "rewrite anything". The answer was: **package, duplicate, onboard.** Each new orchestrator inherits the frozen harness. Same 5-stage lifecycle. The 14 hooks (those automatic checks I mentioned). Ralph Review (the three-model Haiku-Sonnet-Opus cross-check from earlier, named after the "Ralph" loop technique where you run the same work through the loop until it's clean). Planning-default. And the 80% context-handover threshold. AIs have a memory limit; at 80% full SST3 forces a handover to a fresh session before the AI starts forgetting earlier parts of the job and breaking things. They don't re-invent any of it. They inherit the quality floor.
 
-That's only possible because of the last two years of insisting on quality when it felt slow.
+That's only possible because of the last year of insisting on quality when it felt slow.
 
 Every pre-commit hook came from getting burned. Silent fallbacks got banned because they hide bugs. The evidence-enforcement rule exists because AI agents will tick any checkbox you give them, cheerfully, if you don't make them show receipts.
 
@@ -113,7 +115,7 @@ None of it looked strategic at the time. It looked like over-engineering, a one-
 
 Fake either/or. Real question: **when you scale, what gets multiplied?**
 
-If the answer is "signal", you have to build the signal first. Before you have anyone to scale to. Before the pressure hits.
+Everything does. The good stuff, the bad stuff, the AI slop, all of it. You just hope the good wins louder than the slop. That's the whole gamble. Build a base where the good has a chance.
 
 If the answer is "mess"... good luck. You'll need it.
 
@@ -130,6 +132,10 @@ Not "eliminate problems". Fantasy. You'll always have bugs, edge cases, somethin
 But if your base system is tight, small problems stay small.
 
 A failing test gets caught in Haiku review. Silent fallbacks? The pre-commit hook kills them. A checkbox ticked without evidence? The plugin rejects it. And a confidently-wrong output gets flagged by the Ralph triple-pass before it goes anywhere dangerous. None of these are individually dramatic. They're just friction. Pedantic friction that stops small problems from ever snowballing into the sort of problem that ends a startup.
+
+Does AI still lie through any of these? Sometimes. Minimal is acceptable.
+
+Don't chase bug-free perfection either. By then you've missed the gravy train and the competition's moved past you. Know when it's good enough.
 
 Now multiply that by 50 orchestrators, each running the same harness. The friction multiplies. So does the quality floor, and the recovery speed. Things will still break, of course. But when they do, each instance has the same repair machinery ready to catch it before it goes anywhere dangerous.
 
