@@ -63,7 +63,7 @@
     "headline" .Title
     "description" $desc
     "datePublished" (.Date.Format "2006-01-02T15:04:05Z07:00")
-    "author" (dict "@type" "Person" "name" site.Params.author "url" site.BaseURL)
+    "author" (dict "@type" "Person" "name" site.Params.author "url" site.BaseURL "sameAs" site.Params.authorSameAs)
     "publisher" (dict "@type" "Organization" "name" site.Title "logo" (dict "@type" "ImageObject" "url" $favicon192.Permalink))
     "mainEntityOfPage" (dict "@type" "WebPage" "@id" .Permalink)
   -}}
