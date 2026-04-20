@@ -84,11 +84,9 @@ SST3 being fragile is fine, though. Because the whole point isn't that SST3 elim
 
 Here's what I find interesting.
 
-A lot of engineers I've worked with know quality-first is the smarter bet. They'd build that way if they could. But we live in a hierarchical world, and when the pressure to ship comes from above (hit these numbers, make the demo work by Friday, we've promised the board), shit rolls downhill. Engineering teams end up shipping before they're ready, not because they don't know better, but because they can't push back hard enough on the deadline someone above them committed to.
+A lot of engineers I've worked with know quality-first is the smarter bet. They'd build that way if they could. But we live in a hierarchical world where somebody is paying you to deliver on time and expecting a return on their investment. Shit rolls downhill. Deadlines get committed to above your head. Engineering teams end up shipping before they're ready, not because they don't know better, but because on-time delivery is the thing they're being paid for.
 
-That's what creates the myth that quality-first is the slow, not-ambitious alternative to just shipping. It's not. It's the alternative to snowballing rework. The engineers know this. They just don't always get a vote.
-
-When you're the one running the harness top to bottom, the way I do with SST3, that trade-off disappears. Which is where this gets interesting.
+When you're the one running the harness top to bottom, the way I do with SST3, that specific pressure disappears. Which is where this gets interesting.
 
 When the harness is built right, scaling it comes down to copying, not rebuilding. The whole thing is packaged. Workflow, process, governance, standards, review loop, pre-commit hooks, planning mode, evidence rules, context-handover protocol, the lot. Put it in a box. Duplicate the box. Stand up another main orchestrator. Same workflow. Same governance. Same standards. Same quality floor, in every instance, without me having to retrain anyone or rewrite anything.
 
