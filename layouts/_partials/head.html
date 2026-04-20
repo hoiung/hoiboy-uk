@@ -25,6 +25,20 @@
 <meta property="og:description" content="{{ $desc }}">
 <meta property="og:url" content="{{ .Permalink }}">
 <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+{{- if .IsPage -}}
+  {{- $hero := partial "hero-pick.html" . -}}
+  {{- with $hero -}}
+    {{- if ne .MediaType.SubType "svg+xml" -}}
+      {{- $og := .Fill "1200x630 webp q85" }}
+<meta property="og:image" content="{{ $og.Permalink }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{{ $.Title }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{ $og.Permalink }}">
+    {{- end -}}
+  {{- end -}}
+{{- end }}
 {{- if or (.HasShortcode "gallery") (.Resources.ByType "image") }}
 <link rel="stylesheet" href="/vendor/glightbox/glightbox.min.css">
 {{- end }}
