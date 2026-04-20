@@ -25,6 +25,21 @@ Going TOO smooth, TOO polite, TOO AI. Hoi's published voice is ~95% identical to
 4. **No parenthetical asides.** Hoi drops them constantly (this is where his personality lives).
 5. **Rule-of-three abstract nouns** ("presence, curiosity, and shared experience"). Replace with concrete rule-of-8 lists.
 
+## The three categories of fabrication that will poison the voice (zero tolerance)
+
+Voice mechanics (above) are only half the job. The other half is authenticity. When drafting new Hoi-voice content, never commit any of these:
+
+1. **Specific personal experiences you invent.** Scenes, specific numbers, specific frustrations, specific anecdotes. Only write what Hoi has actually said in the current conversation or the corpus as his experience.
+2. **Aphorisms attributed to Hoi.** Coining a catchy line and passing it off as his view is still fabrication. Plausibility is not enough.
+3. **Invented narratives / strawmen / fake myths.** "The myth that X", "everyone assumes Y", "the industry claims Z" when nobody actually claims that. Use real economic / hierarchical mechanisms (deadlines, ROI, delivery pressure) instead of imagined industry beliefs.
+
+Called out twice on the `scaling-without-quality` blog draft, 2026-04-20:
+
+- *"I never said things move or gets renamed every time I logged in, stop making shit up"* (category 1)
+- *"no one claimed quality-first is the slow. stop making shit up. it's just how the world works when someone is paying you to delivery on time and they want a return on their investments"* (category 3)
+
+When in doubt, cut. Hoi can add a real detail back in seconds. Debugging a fabricated one takes much longer.
+
 ## Sentence rhythm fingerprint
 
 - **Average:** ~16 words. **Median:** ~13 words.
