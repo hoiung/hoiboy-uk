@@ -123,7 +123,7 @@ There's always a price. Pay now, or pay later.
 
 That's the decision every org dodges, because deferring the bill feels like winning. Sometimes "pay cheap, pay twice" does work out. Most times... it doesn't. And at AI-agent scale, "pay later" means paying the hallucination tax on every one of 50 orchestrators at once, not just the one. The bill compounds with the scaling factor.
 
-That's the line I keep going back to.
+That's the line I keep going back to. Quality first.
 
 Not "eliminate problems". Fantasy. You'll always have bugs, edge cases, something surprising turning up in production that no test covered. AI agents make this ten times worse than traditional software because the bugs aren't reproducible and the agents are confidently wrong in convincing ways.
 
