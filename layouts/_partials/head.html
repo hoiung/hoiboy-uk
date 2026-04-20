@@ -25,6 +25,18 @@
 <meta property="og:description" content="{{ $desc }}">
 <meta property="og:url" content="{{ .Permalink }}">
 <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:locale" content="en_GB">
+{{- if and .IsPage (eq .Section "posts") }}
+<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+{{- if and .Lastmod (ne .Lastmod .Date) }}
+<meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+{{- end }}
+<meta property="article:author" content="{{ site.Params.author }}">
+{{- range .Params.tags }}
+<meta property="article:tag" content="{{ . }}">
+{{- end }}
+{{- end }}
 {{- if .IsPage -}}
   {{- $hero := partial "hero-pick.html" . -}}
   {{- with $hero -}}
