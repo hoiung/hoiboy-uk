@@ -83,7 +83,7 @@ Since then, I have reshaped the same harness for other verticals. My CV and Link
 
 Two friends now want my help to implement the harness for their own trades. One is a coach, one is an architect. I am onboarding them both, and will write more about the journey of helping their businesses grow by tailoring their hero suits in future posts. Watch this space.
 
-The approach is reproducible. Any domain expert with a trade worth automating can build their own harness the same way. The lab ships the general-purpose model. The expert ships the trade-specific harness on top. Whoever knows the trade best writes that harness best. That is you, not them. Once you have it, use the harness to build every new skill your discipline needs. Same governance each time. The expertise compounds.
+The approach is reproducible. Any domain expert with a trade worth automating can build their own harness the same way. The lab ships the general-purpose model. The expert ships the trade-specific harness on top. Whoever knows the trade best writes that harness best. That is you. Not the lab. Once the harness is built, use it to build every new skill your discipline needs. Same governance each time. The expertise compounds.
 
 ## How to start (without writing any code yourself)
 
