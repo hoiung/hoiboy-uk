@@ -3,7 +3,7 @@ title: "Prompts, Agents, Harnesses. The Fourth Is Where It Gets Good."
 date: 2026-04-21
 draft: true
 categories: [tech-ai]
-tags: [ai, claude, agents, harness, zeitgeist]
+tags: [ai, claude, agents, harness, overview]
 description: "Three AI eras since ChatGPT. Prompts, then agents, now harnesses. Here's what Era 4 looks like, and why the builders who ship it first get the head start."
 ---
 
@@ -49,7 +49,7 @@ Honest footnote. The word is not new. EleutherAI shipped `lm-evaluation-harness`
 
 Not everyone buys the framing. Noam Brown at OpenAI said on Latent Space (5 March 2026) that *"those scaffolds will also just be replaced by the reasoning models and models in general becoming more capable."* METR and Scale AI's SWE-Atlas research, same thread, found harness choice produces "noise within margin of error" across models. That is a real counter-claim. If they are right, harnesses are a temporary patch. If they are wrong, every SaaS vendor building AI features is sleepwalking.
 
-I wrote the deep dive on what a harness actually is and how I built one already. [It is here](/posts/sst3-ai-harness-reshapeable-knife/). This post is the zeitgeist around it.
+I wrote the deep dive on what a harness actually is and how I built one already. [It is here](/posts/sst3-ai-harness-reshapeable-knife/). This post is the wider picture around it.
 
 ## Sidebar. I was barking up the right tree
 
@@ -65,7 +65,7 @@ Start with the bad. [Stanford's AI Index 2026](https://hai.stanford.edu/ai-index
 
 Translation. The models are smart. They are also dishonest by default, and they get more dishonest the more confidently you lie at them.
 
-At the same time, the internet is filling up. Simon Willison's "slop" is not a metaphor anymore. Generated images, generated news, generated reviews, generated lawsuits. Anyone who has searched for a recipe in 2026 has watched five AI-written pages argue about the same chicken. OpenAI scrapped their ChatGPT watermarking work in August 2024. The technology existed. They did not deploy it. Their internal survey found about 30% of users said they would use the service less if their output was watermarked. So they did not watermark. Classic market incentive.
+At the same time, the internet is filling up. Slop is like mould on a basket of apples. One goes off, you don't spot it, a week later half the basket is ruined. The tricky bit is you cannot see most of it from the top. You have to pick each apple up and turn it over before you know. Generated images, generated news, generated reviews, generated lawsuits. The mould is already in the basket. Someone has to inspect, and someone has to pull the off ones out before they touch the rest. And the people selling the apples have no commercial reason to label their own mould. OpenAI scrapped their ChatGPT watermarking work in August 2024. The technology existed. They did not deploy it. Their internal survey found about 30% of users said they would use the service less if their output was watermarked. So they did not watermark. Classic market incentive.
 
 Google's SynthID is doing the opposite (10 billion pieces watermarked, detector launched May 2025, full rollout with Gemini 3 Pro in November 2025). The C2PA coalition (Coalition for Content Provenance and Authenticity, a cross-industry provenance standard) has 5,000-plus members now, including Adobe, Microsoft, Intel, BBC, OpenAI, Google, Meta, Amazon, and Sony. Cloudflare implemented it in 2025. Sony shipped the PXW-Z300, the first C2PA video camcorder, in July 2025. The infrastructure exists. Almost no content is using it.
 
