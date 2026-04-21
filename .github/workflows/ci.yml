@@ -94,6 +94,10 @@ jobs:
       - name: Voice guard tells (marker-driven, new posts only)
         run: python3 scripts/check_voice_tells.py --check-only-new content/ docs/
 
+      - name: Word-count ceiling
+        run: |
+          python3 scripts/check_wordcount.py $(git ls-files 'content/posts/*/index.md')
+
       - name: Voice guard unit tests
         run: python3 -m pytest scripts/test_voice_guard.py -q
 
