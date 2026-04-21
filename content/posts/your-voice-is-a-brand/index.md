@@ -13,7 +13,9 @@ images:
 
 <!-- iamhoi -->
 
-Six days ago I published the [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reshapeable-knife post and closed it with "watch this space. More posts coming on the specific bits. The voice guard for writing." This is that post. It is about a marketing trick applied to a person.
+A week ago I published the [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reshapeable-knife post and closed it with "watch this space. More posts coming on the specific bits. The voice guard for writing." This is that post. It is about a marketing trick applied to a person.
+
+Here is what drove it. For months, every AI first-draft of my blog, my CV, my cover letters came back reading like it had been through a consultant. Polished. Abstract. Buzzword-dense. Em dashes in every paragraph. I would fix one and the next draft would hand it all back. That was the pattern. This post is about how I broke the pattern.
 
 ## Brands have a voice framework. So can a person
 
@@ -25,15 +27,17 @@ Every brand you know has a voice. Colours. A typography style. A set of words it
 
 That is not an accident. Somebody wrote the rules down, and now every designer, copywriter, and AI tool a brand touches produces on-brand assets because the framework is portable.
 
-I spent years in marketing before I spent years in tech. The penny dropped one afternoon when AI kept handing me consultant-deck drafts of my own blog. Buzzwords. Big abstract nouns. Em dashes in every paragraph. The kind of prose you skim and bounce. I wanted my drafts back to sounding like me, not like everyone. And I thought: if a brand can encode its voice so AI produces on-brand assets, a person should be able to do the same. Personality is a brand, one scale down. That thought became a project.
+I spent years in marketing before I spent years in tech. The penny dropped one afternoon when AI kept handing me consultant-deck drafts of my own blog. I wanted my drafts back to sounding like me, not like everyone. And I thought: if a brand can encode its voice so AI produces on-brand assets, a person should be able to do the same. Personality is a brand, one scale down. That thought became a project.
+
+This is the marketer's trick if you think about it. Brand guidelines exist because a brand has to produce consistent output across many people and many contexts. A designer does not wake up and decide what Nike sounds like that morning. The voice is encoded once; every piece of work downstream inherits it. The framework IS the voice. Point AI at that framework and you get on-brand output without having to re-explain the brand every time. Now run the same play on a person. A person can have a framework too. Voice rules, preferred words, banned words, cadence habits, sign-off patterns, sentence-shape preferences. Encode it once; every future AI draft inherits it. That was the bet this project was built on. The bet paid off.
 
 ## I treated my voice like a brand
 
 Brand teams do 3 things. They collect the raw artefacts (ads, posts, taglines). They analyse the pattern. They write the rules down.
 
-I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 platforms across Joomla, WordPress, Google Docs, Google Drive, and the Hugo static-site this blog runs on. The goal was not to admire the corpus. The goal was to pull the pattern out.
+I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 separate platforms: a Joomla dance-community site, 3 WordPress event sites, 2 sets of Google Docs drafts, a Google Drive internal archive, and this Hugo blog. The goal was not to admire the corpus. The goal was to pull the pattern out.
 
-350 sentences profiled. 9 voice registers (the sober technical me, the gym-rat me, the drunk-kebab me, the father-of-two me, and 5 shades in between). 30 AI tells catalogued as smoking-gun absences (words AI loves that my corpus has exactly zero of across 161,000 words). 45 rescue rules for when a draft had started to drift.
+350 sentences profiled. 9 voice registers (the sober technical me, the gym-rat me, the drunk-kebab me, the father-of-two me, and 5 shades in between). 30 AI tells catalogued as smoking-gun absences (words AI loves that my corpus has exactly zero of across 161,000 words). 37 rescue rules for when a draft had started to drift.
 
 The big one was em dashes. External research puts GPT-4.1 at 10.62 em dashes per 1,000 words. Humans average 3.23. My corpus has 0 across 161,000 words. Sam Altman has publicly said ChatGPT's em-dash frequency was tuned during fine-tuning. Which is fine for ChatGPT. Just not fine for me.
 
@@ -65,7 +69,7 @@ The guard itself is a 432-line Python script, `check_voice_tells.py`. 7 detectio
 
 There is a marker system on top. By default the guard scans nothing. A draft opts in by wrapping the prose in `<!-- iamhoi -->` and `<!-- iamhoiend -->` HTML comments (invisible when rendered). A skip-hole inside a region lets me quote banned words in an example block without tripping the guard. That default was deliberate. I have years of pre-AI legacy posts on this site written well before any AI model existed, and those posts ARE the voice research. Scanning them would flag words I had used sincerely and corrupt the persona evidence. Default-skip keeps the research corpus untouched while every new post gets the full treatment.
 
-It runs as a pre-commit hook, in 3 CI jobs (the voice guard itself, an em-dash grep belt-and-braces, and a unit-test suite for the marker state machine), and as a drift guard that refuses to let the vendored Python copy in this blog's repo diverge from the canonical copy in my dotfiles repo. Binary pass or fail. There is no warning tier. I tried one. The sentence-rhythm heuristics I wrote for it were too brittle on short content, and I shipped without it rather than ship a guard that cried wolf. That is the honest-engineering line: if I cannot make the rule work in practice, the rule does not ship.
+It runs as a pre-commit hook, in 3 continuous integration (CI) steps (the voice guard itself, an em-dash grep belt-and-braces, and a unit-test suite for the marker state machine), and as a drift guard that refuses to let the vendored Python copy in this blog's repo diverge from the canonical copy in my dotfiles repo. Binary pass or fail. There is no warning tier. I tried one. The sentence-rhythm heuristics I wrote for it were too brittle on short content, and I shipped without it rather than ship a guard that cried wolf. That is the honest-engineering line: if I cannot make the rule work in practice, the rule does not ship.
 
 The code behind this blog lives at [github.com/hoiung/hoiboy-uk](https://github.com/hoiung/hoiboy-uk). Click through if you want to read the script. It is not long.
 
@@ -77,17 +81,31 @@ And then there was the scaling-without-quality draft a few weekends ago. AI padd
 
 ## Applying the same persona everywhere
 
-Once the voice was encoded it stopped being a blog thing and became a framework.
+Once the voice was encoded it stopped being a blog thing and became a framework. Same framework, plugged into every surface that produces writing with my name on it. A quick tour.
 
-The `/blog` skill I use in [Claude Code](https://claude.com/claude-code) pulls the voice profile into context on every new post. So does the `/job-hunter` skill. Job-hunter has 2 codified lenses (VOICE, the same one this blog uses; and HIRER, a separate profile about how hiring managers read CVs). It also has an unconventional-research workflow. Every application pulls company-insider signal from Reddit, Blind, Glassdoor verbatim, engineering blogs, and regulatory filings (and no, not just the company's marketing site). When I prepped for a Bolt screen last week, that workflow surfaced the EU Platform Work Directive 2024/2831 and the UK tribunal case from November 2024. Neither sits on the jobs page. Both are the actual risk exposure for the role.
+Blog first. The `/blog` skill I use in [Claude Code](https://claude.com/claude-code) pulls the voice profile into context on every new post, including this one. The pre-commit hook catches banned words before I see them in the editor.
 
-Same persona feeds my CV, my LinkedIn profile, cover letters, interview prep notes, the emails I write to recruiters, and the copy for the small businesses I run on the side (an online store I run and a side project called id8u). The [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) framework underneath wires the voice profile into every skill that produces public writing with my name on it. If an AI draft sneaks a banned word through, the pre-commit hook catches it. If the hook misses, CI catches it. If both miss, the drift guard catches stale rule copies. 3 layers, 1 source of truth.
+The CV is where the framework really earns its keep. Draft tailored to the job posting, banned-word scan, voice-guard run, plain-English check on every acronym. Outcomes language only, no recruiter-bait stock phrases.
 
-One receipt on whether this dilutes my voice. I keep a private draft of every big post uncensored, alongside the version I publish publicly. On a recent side-by-side across about 8,000 words, the two versions were 95% identical. I softened exactly 1 line (too personal about a family member). Professional me is not a different person from private me. The rails did their job.
+<!-- iamhoi-skip -->
+(Specifically the "dedicated team player" / "proven track record" / "results-driven" family that any human with a CV knows by heart and every ATS rewards anyway.)
+<!-- iamhoi-skipend -->
+
+LinkedIn inherits the same filter. Posts, profile headline, about section. Even the headline gets the voice treatment before it ships.
+
+Cover letters are where the framework pays its rent most visibly. Every application now has a bespoke first paragraph that sounds like me, not a template. The `/job-hunter` skill handles that. It has 2 codified lenses. One is VOICE, the same one this blog uses. The other is HIRER, a separate profile about how hiring managers actually read a CV. On top of those lenses sits an unconventional-research workflow. Every application pulls company-insider signal from Reddit, Blind, Glassdoor verbatim, engineering blogs, and regulatory filings. Not just the company's marketing site. When I prepped for a Bolt screen last week, that workflow surfaced the European Union (EU) Platform Work Directive 2024/2831 and the UK tribunal case from November 2024. Neither sits on the jobs page. Both are the actual risk exposure for the role.
+
+Emails come next. Cold follow-ups, recruiter replies, client comms. Same voice filter. Drafts that move through my harness get the pre-commit discipline. Drafts I write inside someone else's client tool get a mental banned-word list instead.
+
+Businesses last. Product descriptions on my online store I run, website copy for a side project called id8u, reply macros for customer-support tickets. Small-commerce English is usually the first place brand voice collapses. It does not have to.
+
+The [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) framework underneath wires the voice profile into every one of those skills. If an AI draft sneaks a banned word through, the pre-commit hook catches it. If the hook misses, CI catches it. If both miss, the drift guard catches stale rule copies. 3 layers, 1 source of truth.
+
+One receipt on whether any of this dilutes my voice. I keep a private draft of every big post uncensored, alongside the version I publish publicly. On a recent side-by-side across about 8,000 words, the two versions were 95% identical. I softened exactly 1 line (too personal about a family member). Professional me is not a different person from private me. The rails did their job.
 
 ## What AI is still better at than me
 
-This post is not anti-AI. I use AI every day and will not stop. AI is much better than me at tedious work. Frontmatter. Hugo builds. Link checks. Grep-for-anomalies across 60 posts. Rehosting images from dead hosts. Writing test scaffolding. Catching a typo I read past 4 times.
+This post is not anti-AI. I use AI every day and will not stop. AI is much better than me at tedious work. Frontmatter. Hugo builds. Link checks. Grep-for-anomalies across 40 posts. Rehosting images from dead hosts. Writing test scaffolding. Catching a typo I read past 4 times.
 
 The voice persona is a rail, not a replacement. It draws a line. AI handles the tedious work it is great at. A human brief and a voice rail handle anything with my name on it that the public will read. That trade-off is the whole point. AI got better; my public writing did not get worse. If anything, it got more consistently me.
 
@@ -99,7 +117,7 @@ One more counterargument worth pre-empting. Does encoding your voice dilute it? 
 
 ## The "watch this space" post
 
-6 days ago I closed the [reshapeable-knife post](/posts/sst3-ai-harness-reshapeable-knife/) with "watch this space. More posts coming on... the voice guard for writing." This is the one. Next up is the Ralph Review system. For the sister argument about reaching for the simple tool when it works rather than the clever one that does not, see the [LLM Wiki debate post](/posts/llm-wiki-debate/).
+A week ago I closed the [reshapeable-knife post](/posts/sst3-ai-harness-reshapeable-knife/) with "watch this space. More posts coming on... the voice guard for writing." This is the one. Next up is the Ralph Review system. For the sister argument about reaching for the simple tool when it works rather than the clever one that does not, see the [LLM Wiki debate post](/posts/llm-wiki-debate/).
 
 If any of this sounds like a framework you could build for yourself, you probably have more raw material than you think. I found mine on Tumblr.
 
