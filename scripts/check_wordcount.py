@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import re
 import sys
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 import yaml
@@ -33,7 +33,7 @@ from voice_rules import HOIBOY_CUTOFF_DATE
 WORDCOUNT_CEILING: int = 3000
 
 # Grandfathered posts: already published before this hook existed.
-# Intentionally NOT a frontmatter opt-out — any future addition requires
+# Intentionally NOT a frontmatter opt-out. Any future addition requires
 # a code review. The live negative example referenced in
 # docs/research/14_BLOG_CRAFT.md line 17 is sst3-ai-harness-reshapeable-knife.
 # Grandfather list captures the full set of pre-hook sprawl cases so CI
@@ -93,6 +93,10 @@ def parse_post_date(text: str, path: Path) -> date:
     if not isinstance(data, dict) or "date" not in data:
         raise ValueError(f"Missing 'date' field in frontmatter: {path}")
     raw = data["date"]
+    # datetime is a subclass of date; coerce first so timestamp strings
+    # like `date: 2026-04-21T09:00:00Z` do not crash the later cmp.
+    if isinstance(raw, datetime):
+        return raw.date()
     if isinstance(raw, date):
         return raw
     if isinstance(raw, str):
