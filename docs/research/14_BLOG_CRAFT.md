@@ -14,7 +14,7 @@ Research on writing engaging personal tech blogs. Informs the /blog skill and al
 
 The engagement peak is ~1,928 words. Tech niche trends slightly shorter because screenshots and code blocks carry informational weight.
 
-75% of readers prefer posts under 1,000 words, but posts over 2,000 words rank 4x better in search. Resolution: make the first 800 words so good they keep reading. Write long, publish tight (cut 20-30% in editing).
+75% of readers prefer posts under 1,000 words, but posts over 2,000 words rank 4x better in search. Resolution: make the first 800 words so good they keep reading. Write long, publish tight (cut 20-30% in editing). Hard stop: drafts crossing 3,000 words get split or cut back, no exceptions. Enforced by `scripts/check_wordcount.py` (pre-commit + CI). Negative example on file: `sst3-ai-harness-reshapeable-knife` (15 Apr 2026, 5,143 words, 2x target).
 
 ---
 
