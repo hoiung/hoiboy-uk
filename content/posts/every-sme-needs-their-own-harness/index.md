@@ -17,6 +17,10 @@ But that slice will be optimised for *their* funnel, not your trade. It will be 
 
 The real play is different. Every domain expert should be building their own harness.
 
+AI is not going to replace you. The lazy framing is that it will. AI assists. It does the generic bit well. What it does not do is *your* unique angle: the skillset, the creativity, the small judgment calls that only make sense if you know the craft. Ingenuity is where humans still excel.
+
+And generic is itself a product. ChatGPT out of the box is a generic product and it is worth hundreds of billions. But generic is not what most trades sell. Brands sell personality. Experts sell judgment. The moment your output is indistinguishable from the AI-generated baseline, you are one of a million voices using the same tool and the same prompt. Nothing to pay extra for. Prices collapse. Margins disappear. The harness does not save you from that. You do. The harness is the custom fit, the hero suit we tailor to you. The suit amplifies. The person inside is still the one making the call. Creativity, ingenuity, judgment. That is the human bit.
+
 ## Why the off-the-shelf slice will not fit
 
 First, the honest bit. The lab products are genuinely useful for their target users.
