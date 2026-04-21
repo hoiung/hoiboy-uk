@@ -1,0 +1,6 @@
+# Dev-only dependencies for hook scripts + tests.
+# CI installs via `pip install -r requirements-dev.txt`.
+# Local contributors: `pip install -r requirements-dev.txt` before committing,
+# or let pre-commit's own venv provide pyyaml transitively.
+pytest
+pyyaml
