@@ -65,6 +65,8 @@ For a solicitor: rules for how to cite precedent, anti-patterns for what never g
 
 The general model underneath does the thinking. The harness does the governing. You still do the trade.
 
+Here is the part that compounds. Once the harness is in place, it also governs how new skills and tools get built for your trade. The same standards, anti-patterns, workflows, verifications, and checks that stop the AI doing something stupid today also apply when you ask the AI to help extend the harness tomorrow. Write a new approval workflow. Add a new compliance check. Build a new skill for a specific case type. The governance that protects the output also protects the build. The harness teaches the AI how to write more harness, correctly, for your vertical. That is the moat. Every skill you add respects the rules you already set. Every future AI build session starts from higher ground.
+
 This is not theoretical. Vertical-SaaS vendors have been shipping this shape for a couple of years already. Salesforce calls theirs Agentforce, Atlassian ships Rovo, SAP has Joule, Bloomberg has BloombergGPT. The difference is their harness is *their* product, locked to *their* customers. Yours is yours. You control the prompts, the data, the tools, the updates, the exits. If the underlying model changes, you change one configuration. If your trade rules change, you change the harness.
 
 ## Evidence it works
