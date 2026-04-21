@@ -87,6 +87,6 @@ AI labs sell the tool. You bring the trade. That is where the expertise goes dur
 
 Build the harness. It is yours.
 
-(If you want the wider zeitgeist around this, three AI eras in three years and where I think the fourth one is heading, the companion post is [Prompts, Agents, Harnesses. The Fourth Is Where It Gets Good.](/posts/prompts-agents-harnesses-whats-next/).)
+(If you want the wider picture around this, three AI eras in three years and where I think the fourth one is heading, the companion post is [Prompts, Agents, Harnesses. The Fourth Is Where It Gets Good.](/posts/prompts-agents-harnesses-whats-next/).)
 
 <!-- iamhoiend -->
