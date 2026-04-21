@@ -1,7 +1,7 @@
 ---
 title: "Scaling Without Quality. Just Multiplying Bugs."
-date: 2026-04-20
-draft: true
+date: 2026-04-21
+draft: false
 categories: [tech-ai]
 tags: [ai, claude-code, ai-orchestration, sst3, scaling, quality]
 slug: scaling-without-quality
@@ -19,9 +19,9 @@ And it's not because the team were lazy. The opposite. They scale when they genu
 
 That's been the pattern for 20+ years, across every team I've watched from the inside.
 
-Think about the software most of us actually live in every day. Facebook Ads, Amazon's reseller tools, YouTube's creator and admin console. GoDaddy's admin stack. WordPress, Joomla, and every CMS anyone's ever tried to run a site on. SugarCRM, vTigerCRM, Salesforce, and every CRM anyone's ever tried to run a sales team on. Apache, BIND, DHCP, Samba, CUPS, Postfix, and the rest of the open-source server stack that quietly keeps businesses running. Asterisk PBX, Trixbox, Skype SIP trunking, and every other VoIP telephony system I've had to keep alive. Remedy and the other ticketing systems I've used over the years. Printer drivers and tools. Windows (95, 98, 2000, XP, Server, take your pick). Every flavour of Linux. FreeBSD. OpenBSD. Practically every piece of software I've ever touched, at every tier of the stack, is fragile in its own way. And the list goes on...
+Think about the software entrepreneurs and businesses of every size actually live in every day. Facebook Ads, Amazon's reseller tools, YouTube's creator and admin console. GoDaddy's admin stack. WordPress, Joomla, and every CMS anyone's ever tried to run a site on. SugarCRM, vTigerCRM, Salesforce, and every CRM anyone's ever tried to run a sales team on. Apache, BIND, DHCP, Samba, CUPS, Postfix, and the rest of the open-source server stack that quietly keeps businesses running. Asterisk PBX, Trixbox, Skype SIP trunking, and every other VoIP telephony system I've had to keep alive. Remedy and the other ticketing systems I've used over the years. Printer drivers and tools. Windows (95, 98, 2000, XP, Server, take your pick). Every flavour of Linux. FreeBSD. OpenBSD. Practically every piece of software I've ever touched, at every tier of the stack, is fragile in its own way. And the list goes on...
 
-None of these are simple apps that just store and show data. Some are massive platforms run by thousands of engineers. Others are open-source giants with decades of contributor history behind them. A bunch are "enterprise-grade" tools sold with very serious price tags and very serious training programmes to match. And they're ALL STILL fragile. Every one. Features ship faster than bugs get patched. Whole teams exist just to keep the thing afloat.
+None of these are simple apps that just store and show data. Some are massive platforms run by thousands of engineers. Others are open-source giants with decades of contributor history behind them. A bunch are "enterprise-grade" tools sold with very serious price tags and very serious training programmes to match. And most of them these days are SaaS (Software as a Service: pay a monthly subscription, use it hosted, never install anything). Even SaaS has to be customised, with intricate workflows and settings to get right. And the vendor is always fixing, upgrading, pushing the next piece of tech. What worked yesterday may not work today. They're ALL STILL fragile. Every one. Features ship faster than bugs get patched. Whole teams exist just to keep the thing afloat.
 
 That's the universal tax of shipping software to real users. The product never actually stabilises. It just keeps getting bolted on to.
 
@@ -37,9 +37,9 @@ If that sounds obvious, congratulations, you're one of the few. Because a lot of
 
 Plenty of teams are sprinting. Not enough are stopping to ask whether the thing they're sprinting with is actually sound.
 
-## Once Upon a Time, I Watched the Same Pattern Play Out in Different Buildings
+## Once Upon a Time, I Watched the Same Pattern Play Out in Different Scenarios
 
-Same movie, different buildings.
+Same movie, different scenarios.
 
 A team gets the pressure to ship. Quality slips a bit, as it does under pressure. Bugs pile up. Someone in leadership decides the fix is "more engineers" or "more automation" or "let's parallelise the pipeline". The org scales the work... and scaling doesn't fix the underlying quality. It just copies the same mess across more places.
 
@@ -49,9 +49,19 @@ Now with traditional software, at least the bugs are predictable. Same input, sa
 
 With AI agents? The bugs are **unpredictable**. Same prompt (same instructions), three different outputs. One of them confidently wrong in a way that looks right enough to ship. Same input on Tuesday works. Wednesday it silently hallucinates a function that doesn't exist. Thursday it's scope-creeping: features you never asked for, hardcoded parameters everywhere, unwired functions left dangling, new code wired straight into dead code that goes nowhere. And it'll cheerfully claim it all works. Now multiply that by 50 concurrent agents.
 
+And it gets worse. AI compounds wrong into right. If it's seen a broken pattern enough times, whether in its training data or pulled in via RAG (retrieval-augmented generation: fetching real examples into the prompt before the AI writes), it starts treating the bug AS the correct answer. Which is also why "AI slop" is a real problem. The internet is flooded with AI-generated code and AI-written articles now. The next round of AI reads all of it and thinks it's genuinely good engineering. It isn't. It's slop, confidently reproduced.
+
+PS: I reckon the next real breakthrough in AI isn't more parameters or bigger context windows. It's figuring out fact from fiction. When the internet's 80% AI slop and 20% actual truth, whoever cracks that is the next game changer.
+
+Or the labs figure out their own way to quarantine the clean facts from the slop. Which will cost tokens, obviously. The same labs creating the slop will happily charge you to sort it out. Selling shovels always wins. Create the problem, then sell the solution.
+
+Which is basically misinformation. Same game the world's been playing for years, just accelerated now. Repeat a lie enough times and it turns into fact, because the masses keep repeating it. Some people call them sheeple. Either way, it's a very dangerous game.
+
 Go on. Picture it. Picture the on-call shift at 3am, the pager going off, the logs lighting up on 50 different orchestrators at once.
 
-That's the disaster I've been building the opposite of, on purpose, for the last year.
+That's the disaster I've been building the opposite of. Not on purpose. I was just trying to stop my own automated trading system from breaking every time an AI touched it. The harness came as a side-effect. Nine months ago. Refined weekly since.
+
+Turned out I was ahead of the game. AI labs and indie builders are only talking about harnesses now, in the last couple of months or so. Feels like I was barking up the right tree and clocked what was missing with AI before most people did.
 
 ## So I Built [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) the Opposite Way
 
@@ -107,7 +117,7 @@ The reason clicked hard recently when I was looking at the SST3-AI-Harness repo 
 
 The answer wasn't "rewrite anything". The answer was: **package, duplicate, onboard.** Each new orchestrator inherits the frozen harness. Same 5-stage lifecycle. The 14 hooks (those automatic checks I mentioned). Ralph Review (the three-model Haiku-Sonnet-Opus cross-check from earlier, named after the "Ralph" loop technique where you run the same work through the loop until it's clean). Planning-default. And the 80% context-handover threshold. AIs have a memory limit; at 80% full SST3 forces a handover to a fresh session before the AI starts forgetting earlier parts of the job and breaking things. They don't re-invent any of it. They inherit the quality floor.
 
-That's only possible because of the last year of insisting on quality when it felt slow.
+That's only possible because of the last nine months of insisting on quality when it felt slow.
 
 Every pre-commit hook came from getting burned. Silent fallbacks got banned because they hide bugs. The evidence-enforcement rule exists because AI agents will tick any checkbox you give them, cheerfully, if you don't make them show receipts.
 
@@ -144,4 +154,18 @@ That's the whole thing, in one line.
 **Build the box right. Duplicate it. Scale the quality.**
 
 It's the opposite of the industry default. Which is exactly why I'm betting on it.
+
+## Footnote: I Built SST3 Under 200K. AI's at 1M Now
+
+Worth noting the context I built this in.
+
+Nine months ago, the best context window I could get was 200K tokens. That's what Claude Code shipped with. And SST3 itself, loaded at session start (CLAUDE.md, STANDARDS.md, ANTI-PATTERNS.md, current issue), chewed up as much as 100K. That's 50% of my working memory gone before I'd written a single line of new code.
+
+It didn't hit 100K on day one either. It crept up as I kept finding gaps and holes in the workflow, new anti-patterns to document, new rules that had to be canonical. Every gap meant a hard decision: keep it, bin it, or keep it short and hope the AI doesn't skip over the short version because it wasn't clear enough. That last trade-off was the hardest one on most days. Short saves tokens. Short also gets skimmed.
+
+The struggle was real. Every new rule I added to SST3 had to earn its place. Every anti-pattern entry had to justify the tokens it cost. I was always trimming, dedup'ing, compacting to stay inside the budget. Lego pieces snapped together precisely or not at all. There wasn't spare budget for sloppy design.
+
+In hindsight, I'm glad I built it under that pressure. If I'd had 1M tokens from day one, SST3 would probably be twice the size, do half the work, and cost three times the tokens per run. The 200K constraint forced the harness to stay lean. Now that AI's comfortably in the 1M era, I get to keep the lean harness AND have around 700K free for actual problem-solving. The last 200K is a danger zone. Hallucinations spike, agents start going rogue. So 800K is the real working cap, not 1M.
+
+Scarcity as a design tool. Unintentional, but it worked.
 <!-- iamhoiend -->
