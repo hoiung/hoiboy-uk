@@ -79,6 +79,8 @@ I built mine nine months ago. Not for a business plan. For a problem. My automat
 
 It is public, it is reshapeable, and the full write-up of what it does and how it was built is [here](/posts/sst3-ai-harness-reshapeable-knife/). What matters for this post is the shape, not the code. The harness sits on top of whichever model I am using that month. It does not care. If Anthropic ships a better Claude tomorrow, great. If OpenAI shifts the goalposts again, fine. The harness governs my trading workflow. It does not care what Anthropic is planning next quarter.
 
+Since then, the same shape has reshaped across other verticals. My CV and LinkedIn work (governance around voice, fact-checking). This blog (the same harness governs every post, which is why it sounds like me, not like a generic AI tech take). Our eBay side business (listing rules, photography standards, description anti-patterns). Two friends took the shape and reshaped it for their own trades: one for a coaching practice, one for an architecture studio. More are on the way. None of them needed me to rewrite the underlying wrapper. New rules, new documents, new workflows. The shape held.
+
 That shape is reproducible. Any domain expert with a trade worth automating can build an equivalent. The lab ships the horizontal; the expert ships the vertical; the harness is the interface between them. The person who knows the trade best writes the harness best. That is you, not them.
 
 ## How to start (without writing any code yourself)
