@@ -89,7 +89,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install Python deps
-        run: pip install --quiet pytest pyyaml
+        run: pip install --quiet -r requirements-dev.txt
 
       - name: Voice guard tells (marker-driven, new posts only)
         run: python3 scripts/check_voice_tells.py --check-only-new content/ docs/
@@ -100,6 +100,9 @@ jobs:
 
       - name: Voice guard unit tests
         run: python3 -m pytest scripts/test_voice_guard.py -q
+
+      - name: Word-count hook unit tests
+        run: python3 -m pytest scripts/test_check_wordcount.py -q
 
       - name: Frontmatter validator
         run: python3 scripts/validate_frontmatter.py
