@@ -1,7 +1,7 @@
 ---
 title: "Every Domain Expert Needs Their Own AI Harness"
 date: 2026-04-21
-draft: true
+draft: false
 categories: [tech-ai, entrepreneurship]
 tags: [ai, sme, harness, claude, domain-experts]
 description: "Frontier labs are productising general-to-specialised AI. Their SKUs are not your workflow. Every domain expert should be building their own harness."
@@ -69,9 +69,9 @@ For a solicitor: rules for how to cite precedent, anti-patterns for what never g
 
 The general model underneath does the thinking. The harness does the governing. You still do the trade.
 
-Here is the part that compounds. Once the harness is in place, it also governs how new skills and tools get built for your trade. The same standards, anti-patterns, workflows, verifications, and checks that stop the AI doing something stupid today also apply when you ask the AI to help extend the harness tomorrow. Write a new approval workflow. Add a new compliance check. Build a new skill for a specific case type. The governance that protects the output also protects the build. The harness teaches the AI how to write more harness, correctly, for your vertical. That is the moat. Every skill you add respects the rules you already set. Every future AI build session starts from higher ground.
+Here is the part that compounds. Once the harness is in place, it also governs how new skills and tools get built for your trade. The same standards, anti-patterns, workflows, verifications, and checks that stop the AI doing something stupid today also apply when you ask the AI to help extend the harness tomorrow. Write a new approval workflow. Add a new compliance check. Build a new skill for a specific case type. The governance that protects the output also protects the build. The harness guides the AI when writing new rules, skills, and workflows for your vertical. That is the moat. Every skill you add respects the rules you already set. Every future AI build session starts from higher ground.
 
-This is not theoretical. Vertical-SaaS vendors have been shipping this shape for a couple of years already. Salesforce calls theirs Agentforce, Atlassian ships Rovo, SAP has Joule, Bloomberg has BloombergGPT. The difference is their harness is *their* product, locked to *their* customers. Yours is yours. You control the prompts, the data, the tools, the updates, the exits. If the underlying model changes, you change one configuration. If your trade rules change, you change the harness.
+This is not theoretical. Vertical-SaaS vendors have been building domain-specific AI platforms for a couple of years. Salesforce's Agentforce is the closest in shape to a harness (agents, tools, workflows, and governance all bundled). Atlassian's Rovo, SAP's Joule, and Bloomberg's BloombergGPT are further up the stack (some are assistant-products, one is a specialised model), but the common thread is the same: the vertical sells better than the horizontal. The difference is their version is *their* product, locked to *their* customers. Yours is yours. You control the prompts, the data, the tools, the updates, the exits. If the underlying model changes, you change one configuration. If your trade rules change, you change the harness.
 
 ## Evidence it works
 
@@ -83,13 +83,13 @@ Since then, I have reshaped the same harness for other verticals. My CV and Link
 
 Two friends now want my help to implement the harness for their own trades. One is a coach, one is an architect. I am onboarding them both, and will write more about the journey of helping their businesses grow by tailoring their hero suits in future posts. Watch this space.
 
-The approach is reproducible. Any domain expert with a trade worth automating can build their own harness the same way. The lab ships the general-purpose model. The expert ships the trade-specific harness on top. Whoever knows the trade best writes that harness best. That is you. Not the lab. Once the harness is built, use it to build every new skill your discipline needs. Same governance each time. The expertise compounds.
+The approach is reproducible. Any domain expert with a trade worth automating can build their own harness the same way. The lab ships the general-purpose model. The expert ships the trade-specific harness on top. Whoever knows the trade best writes that harness best. That is you. Not the lab. Once the harness is built, every new skill your discipline needs gets built under the same governance. No starting from scratch. The expertise compounds.
 
 ## How to start (without writing any code yourself)
 
-If you have never written a line of code, good news. Harness engineering in 2026 does not need you to. The frontier labs now ship tooling that lets a non-developer define a harness in plain English. Anthropic's [Agent Skills](https://www.anthropic.com/news/skills) (the SKILL.md open-standard spec, published 16 October 2025) lets anyone write a capability as a markdown file. Claude Projects (the Pro and Team feature with 200K-context curated knowledge bases) lets anyone seed a domain.
+If you have never written a line of code, good news. The starting pieces can be written in plain English. Anthropic's [Agent Skills](https://www.anthropic.com/news/skills) (the SKILL.md open-standard spec, published 16 October 2025) lets anyone package a capability as a markdown file. Claude Projects (the Pro and Team feature with 200K-context curated knowledge bases) lets anyone seed a domain with its own knowledge. But neither of those is a harness on its own. Skills are attachments that plug into a harness. Projects is the knowledge layer the harness wraps around. The harness itself, the enforcement layer, is what you build on top.
 
-Your starting harness is three governance layers: a set of rules the AI never breaks, a set of steps it must follow, and a human checkpoint at the risky bits. The harness wraps around the documents that describe your trade (your brand guide, your case law, your strategy notes), so the model consults them correctly instead of guessing.
+Your starting harness is three governance layers: a set of rules the AI never breaks, a set of steps it must follow, and a human checkpoint at the risky bits. The harness wraps around the documents that describe your trade (your brand guide, your case law, your strategy notes) and any skills you write for specific tasks, so the model consults them correctly instead of guessing.
 
 For a marketer, the three governance layers might look like `approval-list.md` (who signs off what), `channel-rules.md` (what goes where, and what never does), and a hard stop that makes a human press the button before anything goes public. The documents it wraps: your brand guide, product catalogue, past approved copy. For a solicitor, swap the content but keep the shape: drafting rules, filing workflow, partner sign-off at the risky moments, all wrapping a precedent library and your jurisdiction's case law. Start there. Most trades get a lot of the way with that shape alone. The deeper engineering layers (evaluation loops, retry logic, permission models, automated tests) come later, when the harness has proved its worth.
 
