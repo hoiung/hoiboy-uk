@@ -31,7 +31,7 @@ I spent years in marketing before I spent years in tech. The penny dropped one a
 
 Brand teams do 3 things. They collect the raw artefacts (ads, posts, taglines). They analyse the pattern. They write the rules down.
 
-I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 platforms (Blogger, Medium, Substack, draft folders, a WordPress site that predates most of those, Tumblr, LinkedIn, and a folder of WhatsApp voice-note transcripts from long drives). The goal was not to admire the corpus. The goal was to pull the pattern out.
+I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 platforms across Joomla, WordPress, Google Docs, Google Drive, and the Hugo static-site this blog runs on. The goal was not to admire the corpus. The goal was to pull the pattern out.
 
 350 sentences profiled. 9 voice registers (the sober technical me, the gym-rat me, the drunk-kebab me, the father-of-two me, and 5 shades in between). 30 AI tells catalogued as smoking-gun absences (words AI loves that my corpus has exactly zero of across 161,000 words). 45 rescue rules for when a draft had started to drift.
 
