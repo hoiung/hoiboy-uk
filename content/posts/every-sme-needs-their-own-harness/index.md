@@ -27,7 +27,9 @@ Claude Design (launched 17 April 2026, powered by Opus 4.7) does the same trick 
 
 Claude Code Desktop (redesigned 15 April 2026, often confused with Cowork) is still developer-focused. Parallel coding sessions, Git worktrees, pull-request review. Not for the non-coder. Anthropic split the personas cleanly because they could.
 
-Now the framing. Each of these SKUs (stock keeping units, the label retailers and software vendors use for every saleable product variant) is optimised for *the lab's* business model. Cowork is an upsell into Pro and Team subscriptions. Design is a research-preview signal to investors that Anthropic Labs is encroaching on every vertical. Code Desktop is developer retention. None of them is a tool you can shape into *your* workflow. They are all Anthropic's interpretation of what a lawyer or a marketer or a designer needs. If you want the wrapping to match your actual trade, you have to build the wrapping.
+A chronology footnote worth heading off. "Claude could always control your computer" is a common miscount. The actual screen-control tool was [Computer Use](https://www.anthropic.com/news/3-5-models-and-computer-use), launched 22 October 2024. [Claude Code](https://code.claude.com/docs/en/overview) came four months later, into research preview on 24 February 2025. Computer Use drove the visual GUI. Claude Code drove the terminal. Two different capabilities, shipped in that order.
+
+Now my read on it. Each of these SKUs (stock keeping units, the label retailers and software vendors use for every saleable product variant) is optimised for *the lab's* business model. Cowork is an upsell into Pro and Team subscriptions. Design is a research-preview signal to investors that Anthropic Labs is encroaching on every vertical. Code Desktop is developer retention. None of them is a tool you can shape into *your* workflow. They are all Anthropic's interpretation of what a lawyer or a marketer or a designer needs. If you want the wrapping to match your actual trade, you have to build the wrapping.
 
 And this is not an Anthropic problem. Google shipped Workspace Studio on 19 March 2026 ("puts custom agent creation in the hands of every employee"). OpenAI did the whole arc years ago: Custom GPTs (November 2023), Operator (January 2025), ChatGPT Agent later in 2025, then GPT-5.2-Codex for coding specifically. Every frontier lab is running the same play. They all sell the horizontal product. None of them ships your vertical.
 
@@ -35,19 +37,19 @@ And this is not an Anthropic problem. Google shipped Workspace Studio on 19 Marc
 
 Here is where it gets interesting. The labs know the model is generalising, and they know the value is in specialising it. They keep saying so out loud.
 
-Anthropic's Claude Mythos Preview announcement (7 April 2026, the cybersecurity research release in Project Glasswing) says the bit nobody is meant to notice. Their exact words:
+[Anthropic's Claude Mythos Preview announcement](https://red.anthropic.com/2026/mythos-preview/) (7 April 2026, the cybersecurity research release in Project Glasswing) says the bit nobody is meant to notice. Their exact words:
 
 > "We did not explicitly train Mythos Preview to have these capabilities. Rather, they emerged as a downstream consequence of general improvements in code, reasoning, and autonomy."
 
 Translation. We built a general-purpose model. It became a security expert on its own. We did not plan that.
 
-And then, more usefully, the Claude Agent SDK rename on 29 September 2025 (SDK stands for software development kit, the thing developers plug into):
+And then, more usefully, the [Claude Agent SDK rename on 29 September 2025](https://claude.com/blog/building-agents-with-the-claude-agent-sdk) (SDK stands for software development kit, the thing developers plug into):
 
 > "To reflect this broader vision, we're renaming the Claude Code SDK to the Claude Agent SDK... the agent harness that powers Claude Code can power many other types of agents, too."
 
 Translation. We built this thing for coders. It works for everyone. We are renaming it so people stop thinking it is only for code.
 
-That is Anthropic, in their own words, confirming what Hoi has been saying for nine months. General AI does not stay general. It specialises. The only question is who gets to shape the specialisation. If it is the lab, the lab owns the trade's workflow. If it is the trade, the trade owns the lab's output.
+That is Anthropic, in their own words, confirming what I have been saying for nine months. General AI does not stay general. It specialises. The only question is who gets to shape the specialisation. If it is the lab, the lab owns the trade's workflow. If it is the trade, the trade owns the lab's output.
 
 ## The prescription
 
@@ -59,7 +61,7 @@ If you are a solicitor, your harness knows your jurisdiction, your precedents, y
 
 The general model underneath does the thinking. The harness does the trade.
 
-This is not theoretical. Salesforce, SAP, Atlassian, Bloomberg, and every serious vertical-SaaS vendor is already shipping this shape. The difference is their harness is *their* product, locked to *their* customers. Yours is yours. You control the prompts, the data, the tools, the updates, the exits. If the underlying model changes, you change one configuration. If your trade rules change, you change the harness.
+This is not theoretical. Vertical-SaaS vendors have been shipping this shape for a couple of years already. Salesforce calls theirs Agentforce, Atlassian ships Rovo, SAP has Joule, Bloomberg has BloombergGPT. The difference is their harness is *their* product, locked to *their* customers. Yours is yours. You control the prompts, the data, the tools, the updates, the exits. If the underlying model changes, you change one configuration. If your trade rules change, you change the harness.
 
 ## Evidence it works
 
@@ -71,9 +73,9 @@ That shape is reproducible. Any domain expert with a trade worth automating can 
 
 ## How to start (without writing any code yourself)
 
-If you have never written a line of code, good news. Harness engineering in 2026 does not need you to. The frontier labs now ship tooling that lets a non-developer define a harness in plain English. Anthropic's Agent Skills (the SKILL.md open-standard spec, published 16 October 2025) lets anyone write a capability as a markdown file. Claude Projects (the Pro and Team feature with 200K-context curated knowledge bases) lets anyone seed a domain. Your harness can start as four things: a set of documents that describe your trade, a set of rules the AI never breaks, a set of steps it must follow, and a human checkpoint at the risky bits.
+If you have never written a line of code, good news. Harness engineering in 2026 does not need you to. The frontier labs now ship tooling that lets a non-developer define a harness in plain English. Anthropic's [Agent Skills](https://www.anthropic.com/news/skills) (the SKILL.md open-standard spec, published 16 October 2025) lets anyone write a capability as a markdown file. Claude Projects (the Pro and Team feature with 200K-context curated knowledge bases) lets anyone seed a domain. Your harness can start as four things: a set of documents that describe your trade, a set of rules the AI never breaks, a set of steps it must follow, and a human checkpoint at the risky bits.
 
-Start there. Most trades get a lot of the way with that shape alone. The engineering layers (evaluation loops, retry logic, permission models, automated tests) come later, when the harness has proved its worth.
+For a marketer, those four might look like `brand-voice.md` (how you sound), `approval-list.md` (who signs off what), `channel-rules.md` (what goes where, and what never does), and a hard stop that makes a human press the button before anything goes public. For a solicitor, swap the content but keep the shape: precedent library, drafting rules, filing workflow, partner sign-off at the risky moments. Start there. Most trades get a lot of the way with that shape alone. The engineering layers (evaluation loops, retry logic, permission models, automated tests) come later, when the harness has proved its worth.
 
 ## Close
 
@@ -84,5 +86,7 @@ The ones who start now get two things. A working harness that matches their actu
 AI labs sell the tool. You bring the trade. That is where the expertise goes durable.
 
 Build the harness. It is yours.
+
+(If you want the wider zeitgeist around this, three AI eras in three years and where I think the fourth one is heading, the companion post is [Prompts, Agents, Harnesses. The Fourth Is Where It Gets Good.](/posts/prompts-agents-harnesses-whats-next/).)
 
 <!-- iamhoiend -->
