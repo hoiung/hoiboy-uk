@@ -85,7 +85,7 @@ The hard tier is news, politics, history, motive, anything resting on human judg
 
 This is the bit I do not have a neat answer for. What I think the verification layer has to do, at minimum, is show the chain. Where did this claim start? Who has repeated it? Has anyone contradicted it? Has the originator corrected it since? That is closer to forensic inspection than a watermark. The apple inspector has to be inspectable too.
 
-Dario Amodei wrote *Machines of Loving Grace* in October 2024. Fourteen thousand words on utopian AI. He barely mentioned reliability. That is the gap. The CEO of a frontier lab wrote a utopian essay and skipped the bit where the models lie.
+Dario Amodei wrote *Machines of Loving Grace* in October 2024. Around fifteen thousand words on utopian AI. It does not address AI output reliability at all. That is the gap. The CEO of a frontier lab wrote a fifteen-thousand-word utopian essay and skipped the bit where the models lie.
 
 Whoever ships the fact-from-fiction layer first wins the next cycle. Not by making a better model. By making a model you can stake a career on. That is where Era 4 goes.
 
