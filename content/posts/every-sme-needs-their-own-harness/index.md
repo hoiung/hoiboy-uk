@@ -27,7 +27,7 @@ Claude Design (launched 17 April 2026, powered by Opus 4.7) does the same trick 
 
 Claude Code Desktop (redesigned 15 April 2026, often confused with Cowork) is still developer-focused. Parallel coding sessions, Git worktrees, pull-request review. Not for the non-coder. Anthropic split the personas cleanly because they could.
 
-Now the framing. Each of these SKUs is optimised for *the lab's* business model. Cowork is an upsell into Pro and Team subscriptions. Design is a research-preview signal to investors that Anthropic Labs is encroaching on every vertical. Code Desktop is developer retention. None of them is a tool you can shape into *your* workflow. They are all Anthropic's interpretation of what a lawyer or a marketer or a designer needs. If you want the wrapping to match your actual trade, you have to build the wrapping.
+Now the framing. Each of these SKUs (stock keeping units, the label retailers and software vendors use for every saleable product variant) is optimised for *the lab's* business model. Cowork is an upsell into Pro and Team subscriptions. Design is a research-preview signal to investors that Anthropic Labs is encroaching on every vertical. Code Desktop is developer retention. None of them is a tool you can shape into *your* workflow. They are all Anthropic's interpretation of what a lawyer or a marketer or a designer needs. If you want the wrapping to match your actual trade, you have to build the wrapping.
 
 And this is not an Anthropic problem. Google shipped Workspace Studio on 19 March 2026 ("puts custom agent creation in the hands of every employee"). OpenAI did the whole arc years ago: Custom GPTs (November 2023), Operator (January 2025), ChatGPT Agent later in 2025, then GPT-5.2-Codex for coding specifically. Every frontier lab is running the same play. They all sell the horizontal product. None of them ships your vertical.
 
@@ -55,7 +55,7 @@ A harness is the wrapper around the general model. The prompts that tell it your
 
 That wrapper is where your trade lives.
 
-If you are a solicitor, your harness knows your jurisdiction, your precedents, your clause templates, the names of the judges in your local court, and what you never ever promise a client over email. If you are a marketer, your harness knows your brand voice, your product catalogue, your channel rules, your compliance list, and what you would never let a junior copywriter send. If you are a trader, your harness knows your strategies, your instruments, your risk limits, your broker's API quirks, and the twelve ways a model has previously tried to put your money in the wrong account.
+If you are a solicitor, your harness knows your jurisdiction, your precedents, your clause templates, the names of the judges in your local court, and what you never ever promise a client over email. If you are a marketer, your harness knows your brand voice, your product catalogue, your channel rules, your compliance list, and what you would never let a junior copywriter send. If you are a trader, your harness knows your strategies, your instruments, your risk limits, your broker's API (application programming interface, the channel a program uses to talk to another program) quirks, and the twelve ways a model has previously tried to put your money in the wrong account.
 
 The general model underneath does the thinking. The harness does the trade.
 
