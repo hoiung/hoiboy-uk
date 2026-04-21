@@ -88,8 +88,8 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install pytest
-        run: pip install --quiet pytest
+      - name: Install Python deps
+        run: pip install --quiet pytest pyyaml
 
       - name: Voice guard tells (marker-driven, new posts only)
         run: python3 scripts/check_voice_tells.py --check-only-new content/ docs/
