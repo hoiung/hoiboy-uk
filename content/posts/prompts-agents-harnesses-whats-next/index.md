@@ -1,7 +1,7 @@
 ---
 title: "Prompts, Agents, Harnesses. The Fourth Is Where It Gets Good."
 date: 2026-04-21
-draft: true
+draft: false
 categories: [tech-ai]
 tags: [ai, claude, agents, harness, overview]
 description: "Three AI eras since ChatGPT. Prompts, then agents, now harnesses. Here's what Era 4 looks like, and why the builders who ship it first get the head start."
@@ -78,6 +78,12 @@ Four other people are already betting on different "next frontiers", and I respe
 My bet is different. I am not betting on a better model. I am betting on *verification*. The plumbing is half-built. The market is screaming for it (anyone who sells legal, medical, financial, or educational AI has to solve this before they can scale). The frontier labs will not ship it fast because watermarking cuts their usage (see OpenAI 2024). That gap is the opportunity.
 
 Here is the part I keep coming back to. Even if LeCun's world models land, or Sutton's continual-RL works out, or Noam Brown gets test-time compute to keep scaling, or Fei-Fei Li's spatial intelligence unlocks embodied agents, every single one of those outputs still has to be trusted by someone who pays a consequence if it is wrong. Verification is the constraint that survives every other bet landing. The model might get smarter. The liability stays the same. That is why I think the verification layer gets priced like infrastructure within three years, not like a feature.
+
+Not all verification is the same difficulty, and I should be honest about that. Maths, code, chemistry, anything you can calculate or re-run, has a clean verification path. Two systems do the same check and agree or disagree. Easy tier.
+
+The hard tier is news, politics, history, motive, anything resting on human judgment. "Reliable sources" is the standard answer and it is only a partial one. The BBC, Reuters, the FT, the Economist, all good, none of them immune. A reliable source that gets the story wrong once becomes the seed for a thousand derivative articles. The mould spreads through the source. You can cite the source and still be citing mould.
+
+This is the bit I do not have a neat answer for. What I think the verification layer has to do, at minimum, is show the chain. Where did this claim start? Who has repeated it? Has anyone contradicted it? Has the originator corrected it since? That is closer to forensic inspection than a watermark. The apple inspector has to be inspectable too.
 
 Dario Amodei wrote *Machines of Loving Grace* in October 2024. Fourteen thousand words on utopian AI. He barely mentioned reliability. That is the gap. The CEO of a frontier lab wrote a utopian essay and skipped the bit where the models lie.
 
