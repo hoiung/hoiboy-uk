@@ -1,6 +1,6 @@
 ---
 title: "Scaling Without Quality. Just Multiplying Bugs."
-date: 2026-04-21
+date: 2026-04-19
 draft: false
 categories: [tech-ai]
 tags: [ai, claude-code, ai-orchestration, sst3, scaling, quality]
