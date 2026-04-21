@@ -43,6 +43,13 @@ repos:
         language: system
         pass_filenames: true
         files: ^(content/.*\.md|docs/research/.*\.md)$
+      - id: check-wordcount
+        name: Word-count ceiling (>3000 fails, skip legacy)
+        entry: python3 scripts/check_wordcount.py
+        language: system
+        pass_filenames: true
+        files: ^content/posts/.*/index\.md$
+        always_run: false
       - id: voice-rules-drift
         name: Voice rules vendored copy drift check
         entry: bash -c 'if [ -d ../dotfiles ]; then cmp -s ../dotfiles/SST3/scripts/voice_rules.py scripts/voice_rules.py || { echo "[drift] scripts/voice_rules.py differs from canonical at ../dotfiles/SST3/scripts/voice_rules.py"; exit 1; }; else echo "[sync] dotfiles canonical not present, skipping" >&2; fi'
