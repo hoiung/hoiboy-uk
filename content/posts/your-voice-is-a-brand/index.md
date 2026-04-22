@@ -123,6 +123,22 @@ The rules are living code, not a one-shot framework. AI models will change. New 
 
 One more counterargument worth pre-empting. Does encoding your voice dilute it? On the 8,000-word side-by-side I already mentioned, 1 line changed in the whole document. 95% identical. The rails keep AI drafts honest. They do not overwrite me.
 
+## Bloopers. Catches from the harness along the way
+
+This post did not arrive clean. It went through the same voice persona and harness discipline it describes, and that discipline surfaced real work along the way. A short list, because transparency is the whole point.
+
+The pre-commit voice guard caught banned words on my first try at the Nike example. The two buzzwords I had quoted were both on the banned list, even though I was quoting them as things Nike does NOT say. The regex does not care about rhetorical framing. Wrapped the quote in an iamhoi-skip block. Kept the argument. Passed the guard.
+
+A 3-tier AI review pass inside the harness (I will write about that one next) caught a fabricated platform list. An earlier draft named Blogger, Medium, Substack, Tumblr, and WhatsApp voice-note transcripts as the 8 platforms. None of those appear in my written-life inventory. Category-1 fabrication. Replaced with the real tech stack.
+
+A post-implementation review swarm caught the date maths in my opener ("Six days ago" was actually 7), plus 3 count errors: "45 rescue rules" was actually 37 per my VOICE_PROFILE, "60 posts" was actually 40 per my live site, "3 CI jobs" was actually 3 steps inside 1 CI job. Memory blur on my part. The source files were always ground truth.
+
+The same swarm caught 2 acronyms used without inline expansion (CI and EU) and flagged the Story Spine missing its "every day, here is what I was doing before" beat. Added "continuous integration" and "European Union" inline. Added one sentence on 3 years of noticing the pattern.
+
+2 other fabrications got past the swarm and landed on my own read-through. Earlier drafts had me "drafting for months" (not true) and "years in marketing before years in tech" (also not true; 20+ years running businesses where marketing was one trade among many). Caught on re-read. Fixed both. That is why the human-in-the-loop pass stays mandatory.
+
+Add all of that up and it is the 5-10% thumbprint pass the earlier section mentioned. The other 90-95% came out of the harness clean.
+
 ## The "watch this space" post
 
 A week ago I closed the [reshapeable-knife post](/posts/sst3-ai-harness-reshapeable-knife/) with "watch this space. More posts coming on... the voice guard for writing." This is the one. Next up is the Ralph Review system. For the sister argument about reaching for the simple tool when it works rather than the clever one that does not, see the [LLM Wiki debate post](/posts/llm-wiki-debate/).
