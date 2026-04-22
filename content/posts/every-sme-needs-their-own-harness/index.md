@@ -99,7 +99,7 @@ The frontier labs will keep shipping slices. More Coworks, more Designs, more ve
 
 But the customisation layer is a shell, not a trade. And using it well is not free. You still have to learn how to customise it. The reliable version (prompts, rules, data, edge cases, fallbacks) takes time, knowledge, and a lot of experiments. Nobody hands you that.
 
-The connectors give you access to your data. What they don't give you is the codified judgement. The small calls that separate your output from the AI-generated baseline. The taste that only makes sense if you have been doing the work for a decade. That is the bit no vendor ships, because there aren't enough buyers for it.
+The connectors give you access to your data. What they don't give you is the codified judgement. The small calls that separate your output from the AI-generated baseline. The instincts that only make sense if you have been doing the work for a decade. That is the bit no vendor ships, because there aren't enough buyers for it.
 
 So you are spending the hours either way. The only question is where. You can learn the engineering yourself and build the harness. You can rent a vendor's customisation layer and accept that it changes under you. Or you can bring in a harness engineer, someone whose trade IS harness-building, and keep your own hours on the part only you can do. Three different trade-offs. All of them beat "do nothing and wait for the perfect SKU to arrive".
 
