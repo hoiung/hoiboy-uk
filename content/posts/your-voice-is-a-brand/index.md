@@ -1,7 +1,7 @@
 ---
 title: "Brands Have Voices. People Do Too."
 date: 2026-04-22
-lastmod: 2026-04-22T10:15:00Z
+lastmod: 2026-04-22T11:00:00Z
 draft: false
 categories: [tech-ai]
 tags: [voice-persona, writing, ai-tells, sst3, personal-brand, portfolio]
@@ -15,7 +15,7 @@ images:
 
 A week ago I published the [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reshapeable-knife post and closed it with "watch this space. More posts coming on the specific bits. The voice guard for writing." This is that post. It is about a marketing trick applied to a person.
 
-Here is what drove it. 3 years of watching AI write, from ChatGPT through to Claude. The pattern does not shift. Mechanical. Generic. Buzzword-heavy. A love for uncommon acronyms everyday readers will not understand. Same tell across every new model. I kept noticing. This post is about what I did with the observation.
+Here is what drove it. 3 years of watching AI write, from ChatGPT through to Claude. The pattern does not shift. Mechanical. Generic. Buzzword-heavy. A love for uncommon acronyms everyday readers will not understand. Same tell across every new model. This post is what I did with the observation.
 
 ## Brands have a voice framework. So can a person
 
@@ -35,7 +35,7 @@ This is the marketer's trick if you think about it. Brand guidelines exist becau
 
 Marketing people do 3 things. They collect the raw artefacts (ads, posts, taglines). They analyse the pattern. They write the rules down.
 
-I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 separate platforms: a Joomla adventure blog (where my early dance writing also lived), 3 WordPress dance-community sites, 2 sets of Google Docs drafts, a Google Drive internal archive, and this Hugo blog. The goal was not to admire the corpus. The goal was to pull the pattern out. That took a swarm of subagents in my [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reading the corpus in parallel. No single AI context can hold 161,000 words and keep its attention honest.
+I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 separate platforms: a Joomla adventure blog (where my early dance writing also lived), 3 WordPress dance-community sites, 2 sets of Google Docs drafts, a Google Drive internal archive, and this Hugo blog. The goal was not to admire the corpus. The goal was to pull the pattern out. That took a swarm of subagents in my [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reading the corpus. No single AI context can hold 161,000 words and keep its attention honest.
 
 350 sentences profiled. 9 voice registers (the sober technical me, the gym-rat me, the drunk-kebab me, the dance-fanatic me, the entrepreneur me, and 4 shades in between). 30 AI tells catalogued as smoking-gun absences (words AI loves that my corpus has exactly zero of across 161,000 words). 37 rescue rules for when a draft had started to drift.
 
@@ -63,7 +63,7 @@ To be clear, KISS is not this blog's argument. It is the reason the rules look t
 
 Rules are no good if nobody enforces them. So I encoded them.
 
-The single source of truth is a Python file called `voice_rules.py`. 76 banned words. 7 banned phrases (the cover-letter openers, the hedging preambles, the career humble-brags).
+The single source of truth is `voice_rules.py`. 76 banned words. 7 banned phrases (cover-letter openers, hedging preambles, career humble-brags).
 
 <!-- iamhoi-skip -->
 (Named for the archive: "I am writing to express my interest", "It is worth noting that", "Throughout my career, I have". There are 7.)
@@ -73,19 +73,19 @@ The single source of truth is a Python file called `voice_rules.py`. 76 banned w
 
 The guard itself is a 432-line Python script, `check_voice_tells.py`. 7 detection types. Em dashes. Banned words. Banned phrases. Smart quotes. Unicode arrows (AI's favourite way to draw a diagram nobody asked for). A negation-framing pattern (the "it's not X, it's Y" shape AI reaches for about 3 times a page). A bold-first-bullet pattern (AI's favourite layout, the one that turns every document into a slide deck).
 
-There is a marker system on top. By default the guard scans nothing. A draft opts in by wrapping the prose in `<!-- iamhoi -->` and `<!-- iamhoiend -->` HTML comments (invisible when rendered). A skip-hole inside a region lets me quote banned words in an example block without tripping the guard. That default was deliberate. I have years of pre-AI legacy posts on this site written well before any AI model existed, and those posts ARE the voice research. Scanning them would flag words I had used sincerely and corrupt the persona evidence. Default-skip keeps the research corpus untouched while every new post gets the full treatment.
+There is a marker system on top. By default the guard scans nothing. A draft opts in by wrapping the prose in `<!-- iamhoi -->` and `<!-- iamhoiend -->` HTML comments. A skip-hole inside a region lets me quote banned words in an example block without tripping the guard. That default was deliberate. I have years of pre-AI legacy posts on this site, and those posts ARE the voice research. Scanning them would flag words I had used sincerely and corrupt the persona evidence. Default-skip keeps the research corpus untouched while every new post gets the full treatment.
 
-It runs as a pre-commit hook, in 3 continuous integration (CI) steps (the voice guard itself, an em-dash grep belt-and-braces, and a unit-test suite for the marker state machine), and as a drift guard that refuses to let the vendored Python copy in this blog's repo diverge from the canonical copy in my dotfiles repo. Binary pass or fail. There is no warning tier. I tried one. The sentence-rhythm heuristics I wrote for it were too brittle on short content, and I shipped without it rather than ship a guard that cried wolf. That is the honest-engineering line: if I cannot make the rule work in practice, the rule does not ship.
+It runs as a pre-commit hook, in 3 continuous integration (CI) steps (the voice guard itself, an em-dash grep belt-and-braces, and a unit-test suite for the marker state machine), and as a drift guard that refuses to let the vendored Python copy diverge from the canonical. Binary pass or fail. There is no warning tier. I tried one. The sentence-rhythm heuristics I wrote for it were too brittle on short content, and I shipped without it rather than ship a guard that cried wolf. That is the honest-engineering line: if I cannot make the rule work in practice, the rule does not ship.
 
 The code behind this blog lives at [github.com/hoiung/hoiboy-uk](https://github.com/hoiung/hoiboy-uk). Click through if you want to read the script. It is not long.
 
 ## What I got wrong along the way
 
-The rules bit me the day I wrote them. The first internal doc I drafted said the banned-word list had "around 60 entries." The actual Python file had 76. A gap between what I thought I had built and what I had built. I caught it on a later audit and fixed the doc to match the code. The code was ground truth; my memory of the code was fiction.
+The rules bit me the day I wrote them. The first internal doc said the banned-word list had ~60 entries. The actual Python file had 76. A gap between what I thought I had built and what I had built. Caught on a later audit; fixed the doc to match the code. The code was ground truth; my memory of it was fiction.
 
-And then there was the scaling-without-quality draft a few weekends ago. AI padded a paragraph with a specific coworker anecdote that never happened. It sounded good. It was not true. I called it out at the time with "stop making shit up" twice in one session. The 3-fabrication-categories rule (no invented scenes, no aphorisms attributed to me I never said, no strawmen like "everyone assumes X") went into the voice profile that evening. Rule 1 caught rule 1's own drafting session. The rules work because I apply them to me first.
+And then the scaling-without-quality draft a few weekends ago. AI padded a paragraph with a specific coworker anecdote that never happened. It sounded good. It was not true. I called it out at the time with "stop making shit up" twice in one session. The 3-fabrication-categories rule (no invented scenes, no aphorisms, no strawmen) went into the voice profile that evening. Rule 1 caught rule 1's own drafting session. The rules work because I apply them to me first.
 
-Even this post. Drafting it inside the harness, the post-implementation review swarm caught 2 fabrications the main agent had slipped in. One invented platform list. One invented timeline claim (me "drafting for months" when really I had just been watching AI write for 3 years). The swarm flagged both with file and line receipts. I fixed them. The point is not that AI invents things. It does, constantly. The point is that the harness catches more than I catch alone.
+Even this post. Drafting inside the harness, the post-implementation review swarm caught 2 fabrications the main agent slipped in. One invented platform list. One invented timeline. Flagged with file and line receipts; fixed. The point is not that AI invents things. It does, constantly. The point is the harness catches more than I catch alone.
 
 ## Applying the same persona everywhere
 
@@ -101,7 +101,7 @@ The CV is where the framework really earns its keep. Draft tailored to the job p
 
 LinkedIn inherits the same filter. Posts, profile headline, about section. Even the headline gets the voice treatment before it ships.
 
-Cover letters are where the framework pays its rent most visibly. Every application now has a bespoke first paragraph that sounds like me, not a template. The `/job-hunter` skill handles that. It has 2 codified lenses. One is VOICE, the same one this blog uses. The other is HIRER, a separate profile about how hiring managers actually read a CV. On top of those lenses sits an unconventional-research workflow. Every application pulls company-insider signal from Reddit, Blind, Glassdoor verbatim, engineering blogs, and regulatory filings. Not just the company's marketing site. When I prepped for a Bolt screen last week, that workflow surfaced the European Union (EU) Platform Work Directive 2024/2831 and the UK tribunal case from November 2024. Neither sits on the jobs page. Both are the actual risk exposure for the role.
+Cover letters are where the framework pays its rent most visibly. Every application has a bespoke first paragraph that sounds like me, not a template. The `/job-hunter` skill handles it via 2 codified lenses (VOICE, the same as this blog; HIRER, how hiring managers actually read a CV), plus an unconventional-research workflow pulling company-insider signal from Reddit, Blind, Glassdoor verbatim, engineering blogs, and regulatory filings. Not just the company's marketing site. Prepping for a Bolt screen last week, that workflow surfaced the European Union (EU) Platform Work Directive 2024/2831 and the UK tribunal case from November 2024. Neither on the jobs page. Both the actual risk exposure for the role.
 
 Emails come next. Cold follow-ups, recruiter replies, client comms. Same voice filter. Drafts that move through my harness get the pre-commit discipline. Drafts I write inside someone else's client tool get a mental banned-word list instead.
 
@@ -115,23 +115,23 @@ One receipt on whether any of this dilutes my voice. I keep a private draft of e
 
 This was always going to be a refining process. The rules started wrong. The doc said ~60 banned words when the code had 76. The keep-list grew as the guard kept flagging warm vocabulary I actually use. The warning tier shipped as OFF because the heuristic was too brittle. I spent the first couple of months fixing drift the guard surfaced.
 
-I am past that phase now. I do not refine the rules often any more, only when the same pattern or the same problem shows up twice. Which is rare. What I still do, and will always do, is the human-in-the-loop manual sanity check on every draft. Read it through once. Brush up the sentences that do not quite feel right. Double-check any fact or number that looks off. Overall: 90-95% good to go after that pass. The other 5-10% is my thumbprint.
+I am past that phase now. I do not refine the rules often any more, only when the same pattern or the same problem shows up frequently. What I still do, and will always do, is the human-in-the-loop manual sanity check on every draft. Read it through once. Brush up the sentences that do not quite feel right. Double-check any fact or number that looks off. Overall: 90-95% good to go after that pass. The other 5-10% is my thumbprint.
 
 ## What AI is still better at than me
 
-This post is not anti-AI. I use AI every day and will not stop. AI is much better than me at tedious work. Frontmatter. Hugo builds. Link checks. Grep-for-anomalies across 40 posts. Rehosting images from dead hosts. Writing test scaffolding. Catching a typo I read past 4 times.
+This post is not anti-AI. I use AI every day and will not stop. AI is much better than me at tedious work. Frontmatter. Hugo builds. Link checks. Grep-for-anomalies across 40 posts. Writing test scaffolding. Catching a typo I read past 4 times.
 
 The voice persona is a rail, not a replacement. It draws a line. AI handles the tedious work it is great at. A human brief and a voice rail handle anything with my name on it that the public will read. That trade-off is the whole point. AI got better; my public writing did not get worse. If anything, it got more consistently me.
 
 ## What this does not do
 
-The rules are living code, not a one-shot framework. AI models will change. New tells will emerge. I expect to add to the banned-word list (45% of job seekers were using AI on CVs in 2024, 64% of recruiters noticed an uptick, and the floor on "what counts as AI tell" keeps shifting upward). I expect one of today's rules to look silly in 2 years when model behaviour shifts again. That is fine. The guard is easy to change. What is hard is the corpus analysis, and that is the thing you do once.
+The rules are living code, not a one-shot framework. AI models will change. New tells will emerge. I expect to add to the banned-word list (45% of job seekers were using AI on CVs in 2024, 64% of recruiters noticed an uptick, and the floor on "what counts as AI tell" keeps shifting upward). I expect one of today's rules to look silly in 2 years when model behaviour shifts again. That is fine. The guard is easy to change. The corpus analysis is the thing you do once.
 
 One more counterargument worth pre-empting. Does encoding your voice dilute it? On the 8,000-word side-by-side I already mentioned, 1 line changed in the whole document. 95% identical. The rails keep AI drafts honest. They do not overwrite me.
 
 ## Bloopers. Catches from this very build
 
-Two categories. The harness caught stuff on its own. I caught stuff on re-read. Separating them so you see where the lines fall.
+Two categories. Harness catches. My catches on re-read. Separated so you see the lines.
 
 ### What the harness caught autonomously
 
@@ -143,9 +143,13 @@ A post-implementation review swarm caught 7 other things: the date maths ("Six d
 
 ### What I caught on human-in-the-loop re-read
 
-2 category-1 fabrications slipped past every layer of the harness and landed on my own read. Earlier drafts had me "drafting for months" (not true) and "years in marketing before years in tech" (also not true; 20+ years running businesses, with marketing as one trade among many). Flagged on re-read. Fixed both.
+5 category-1 fabrications slipped past every layer of the harness and landed on my own read. "Drafting for months" (not true). "Years in marketing before tech" (not true; 20+ years running businesses). "The father-of-two me" in the voice registers (no kids). "The dance-teacher me" next to it (fanatic, not teacher). "Found mine on Tumblr" in the closer (never used Tumblr). Each one plausible. Each one invented. Fixed on re-read.
 
-I also made 3 smaller in-voice edits: added "a shape" to the brand-voice attribute list, changed "a set of tones" to "a tone of emotional triggers", and asked for a "(mostly)" in the SEO description to land the honesty of what the rails achieve.
+Plus smaller voice edits. "A shape" and "a tone of emotional triggers" added to the brand-voice list. A "(mostly)" added to the SEO description for honesty. Joomla reframed as my adventure blog rather than a dance site. "Brand teams" swapped for plain "Marketing people". Em dash spelled out for readers new to the character.
+
+### What the harness blocks going forward
+
+One re-read catch was private business detail that never should have shipped. An early draft named my eBay store by product category. I scrubbed it to generic framing, force-pushed history so the specific is gone from every commit, then extended the harness. New memory rule: personal business specifics are private. New pre-commit blocklist in every public repo I own. Future drafts trying to re-introduce a blocked term get refused. The rails caught something new, so now they catch it everywhere.
 
 Add it all up and it maps onto the 5-10% thumbprint pass mentioned earlier. Harness does the factual, structural, lexical. I do the context and the first-person reality it has no way to know. Neither works alone.
 
@@ -153,6 +157,6 @@ Add it all up and it maps onto the 5-10% thumbprint pass mentioned earlier. Harn
 
 A week ago I closed the [reshapeable-knife post](/posts/sst3-ai-harness-reshapeable-knife/) with "watch this space. More posts coming on... the voice guard for writing." This is the one. Next up is the Ralph Review system. For the sister argument about reaching for the simple tool when it works rather than the clever one that does not, see the [LLM Wiki debate post](/posts/llm-wiki-debate/).
 
-If any of this sounds like a framework you could build for yourself, you probably have more raw material than you think. I found mine on Tumblr.
+If this sounds like a framework you could build for yourself, you probably have more raw material than you think. Mine came from archives I had stopped opening years ago.
 
 <!-- iamhoiend -->
