@@ -69,7 +69,7 @@ At the same time, the internet is filling up. Slop is like mould on a basket of 
 
 Google's SynthID is doing the opposite (10 billion pieces watermarked, detector launched May 2025, full rollout with Gemini 3 Pro in November 2025). The C2PA coalition (Coalition for Content Provenance and Authenticity, a cross-industry provenance standard) has 5,000-plus members now, including Adobe, Microsoft, Intel, BBC, OpenAI, Google, Meta, Amazon, and Sony. Cloudflare implemented it in 2025. Sony shipped the PXW-Z300, the first C2PA video camcorder, in July 2025. The infrastructure exists. Almost no content is using it.
 
-So the gap is obvious. Models lie. As the internet becomes 80% AI output, that output feeds back into the next generation of models. AI training on AI. Lies compounding on lies. How do we deal with all bullshit? The tooling to sign clean facts exists but barely shows up at the surface. Whoever ships the trust layer gets the next cycle.
+So the gap is obvious. Models lie. As the internet becomes 80% AI output, that output feeds back into the next generation of models. AI training on AI. Lies compounding on lies. How do we deal with all that bullshit? The tooling to sign clean facts exists but barely shows up at the surface. Whoever ships the trust layer gets the next cycle.
 
 Here is why I am actually bullish.
 
