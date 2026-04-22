@@ -95,13 +95,17 @@ For a marketer, the three governance layers might look like `approval-list.md` (
 
 ## Close
 
-The frontier labs will keep shipping slices. More Coworks, more Designs, more vertical SKUs. Some will be useful to you. None of them will be *yours*.
+The frontier labs will keep shipping slices. More Coworks, more Designs, more vertical SKUs. They are also shipping the customisation layer. Projects, connectors, MCP pulling data from your Drive, your Slack, your GitHub. That part is good news. Use it.
 
-The ones who start now get two things. A working harness that matches their actual trade, today. And a moat that keeps working as the models underneath improve. A better model in 2027 makes your harness better. A better lab SKU in 2027 makes their shareholders better. Not quite the same thing.
+But the customisation layer is a shell, not a trade. And using it well is not free. You still have to learn how to customise it. The reliable version (prompts, rules, data, edge cases, fallbacks) takes time, knowledge, and a lot of experiments. Nobody hands you that.
 
-AI labs sell the tool. You bring the trade. That is where the expertise goes durable.
+The connectors give you access to your data. What they don't give you is the codified judgement. The small calls that separate your output from the AI-generated baseline. The taste that only makes sense if you have been doing the work for a decade. That is the bit no vendor ships, because there aren't enough buyers for it.
 
-Build the harness. It is yours.
+So you are spending the hours either way. The only question is where. You can learn the engineering yourself and build the harness. You can rent a vendor's customisation layer and accept that it changes under you. Or you can bring in a harness engineer, someone whose trade IS harness-building, and keep your own hours on the part only you can do. Three different trade-offs. All of them beat "do nothing and wait for the perfect SKU to arrive".
+
+A better model in 2027 makes your harness better. A better lab SKU in 2027 also makes your harness better, because you will plug it in. The labs give you the platform. You bring the trade. The trade is the durable asset.
+
+Build the harness. Or have one built for you. It is yours either way.
 
 (If you want the wider picture around this, three AI eras in three years and where I think the fourth one is heading, the companion post is [Prompts, Agents, Harnesses. The Fourth Is Where It Gets Good.](/posts/prompts-agents-harnesses-whats-next/).)
 
