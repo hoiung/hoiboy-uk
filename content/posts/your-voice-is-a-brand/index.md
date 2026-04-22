@@ -19,7 +19,7 @@ Here is what drove it. 3 years of watching AI write, from ChatGPT through to Cla
 
 ## Brands have a voice framework. So can a person
 
-Every brand you know has a voice. Colours. A typography style. A shape. A set of words it says and a set it refuses. Nike says "just do it." Nike does not say the consultant-deck filler a brand audit would flag on sight.
+Every brand you know has a voice. Colours. A typography style. A shape. A set of tones. A set of words it says and a set it refuses. Nike says "just do it." Nike does not say the consultant-deck filler a brand audit would flag on sight.
 
 <!-- iamhoi-skip -->
 (If you are wondering which filler: things like "at scale" and "stakeholders" would never survive a Nike brand review.)
