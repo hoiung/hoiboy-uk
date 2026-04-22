@@ -37,7 +37,7 @@ Brand teams do 3 things. They collect the raw artefacts (ads, posts, taglines). 
 
 I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 separate platforms: a Joomla adventure blog (where my early dance writing also lived), 3 WordPress dance-community sites, 2 sets of Google Docs drafts, a Google Drive internal archive, and this Hugo blog. The goal was not to admire the corpus. The goal was to pull the pattern out. That took a swarm of subagents in my [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reading the corpus in parallel. No single AI context can hold 161,000 words and keep its attention honest.
 
-350 sentences profiled. 9 voice registers (the sober technical me, the gym-rat me, the drunk-kebab me, the dance-fanatic me, and 5 shades in between). 30 AI tells catalogued as smoking-gun absences (words AI loves that my corpus has exactly zero of across 161,000 words). 37 rescue rules for when a draft had started to drift.
+350 sentences profiled. 9 voice registers (the sober technical me, the gym-rat me, the drunk-kebab me, the dance-fanatic me, the entrepreneur me, and 4 shades in between). 30 AI tells catalogued as smoking-gun absences (words AI loves that my corpus has exactly zero of across 161,000 words). 37 rescue rules for when a draft had started to drift.
 
 The big one was em dashes. External research puts GPT-4.1 at 10.62 em dashes per 1,000 words. Humans average 3.23. My corpus has 0 across 161,000 words. Sam Altman has publicly said ChatGPT's em-dash frequency was tuned during fine-tuning. Which is fine for ChatGPT. Just not fine for me.
 
@@ -125,7 +125,7 @@ One more counterargument worth pre-empting. Does encoding your voice dilute it? 
 
 ## Bloopers. Catches from this very build
 
-Two categories. The harness caught stuff on its own. I caught stuff on re-read. Separating them so you can see where the lines actually fall.
+Two categories. The harness caught stuff on its own. I caught stuff on re-read. Separating them so you see where the lines fall.
 
 ### What the harness caught autonomously
 
