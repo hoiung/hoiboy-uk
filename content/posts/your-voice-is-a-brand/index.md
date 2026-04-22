@@ -2,7 +2,7 @@
 title: "Brands Have Voices. People Do Too."
 date: 2026-04-22
 lastmod: 2026-04-22
-draft: true
+draft: false
 categories: [tech-ai]
 tags: [voice-persona, writing, ai-tells, sst3, personal-brand, portfolio]
 slug: your-voice-is-a-brand
