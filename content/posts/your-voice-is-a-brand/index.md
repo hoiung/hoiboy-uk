@@ -6,7 +6,7 @@ draft: true
 categories: [tech-ai]
 tags: [voice-persona, writing, ai-tells, sst3, personal-brand, portfolio]
 slug: your-voice-is-a-brand
-description: "A brand has a voice. So do I. We analysed 12 years of my writing, encoded 76 rules the AI cannot break, and now AI writes like me, not like a consultant deck."
+description: "A brand has a voice. So do I. We analysed 12 years of my writing, encoded 76 rules the AI cannot break, and now AI writes like me (mostly), not like a consultant deck."
 images:
   - hero.webp
 ---
@@ -102,6 +102,12 @@ Businesses last. Product descriptions on my online store I run, website copy for
 The [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) framework underneath wires the voice profile into every one of those skills. If an AI draft sneaks a banned word through, the pre-commit hook catches it. If the hook misses, CI catches it. If both miss, the drift guard catches stale rule copies. 3 layers, 1 source of truth.
 
 One receipt on whether any of this dilutes my voice. I keep a private draft of every big post uncensored, alongside the version I publish publicly. On a recent side-by-side across about 8,000 words, the two versions were 95% identical. I softened exactly 1 line (too personal about a family member). Professional me is not a different person from private me. The rails did their job.
+
+## Where I am with it now
+
+This was always going to be a refining process. The rules started wrong. The doc said ~60 banned words when the code had 76. The keep-list grew as the guard kept flagging warm vocabulary I actually use. The warning tier shipped as OFF because the heuristic was too brittle. I spent the first couple of months fixing drift the guard surfaced.
+
+I am past that phase now. I do not refine the rules often any more, only when the same pattern or the same problem shows up twice. Which is rare. What I still do, and will always do, is the human-in-the-loop manual sanity check on every draft. Read it through once. Brush up the sentences that do not quite feel right. Double-check any fact or number that looks off. Overall: 90-95% good to go after that pass. The other 5-10% is me putting the thumbprint on it.
 
 ## What AI is still better at than me
 
