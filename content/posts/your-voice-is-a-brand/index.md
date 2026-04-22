@@ -35,7 +35,7 @@ This is the marketer's trick if you think about it. Brand guidelines exist becau
 
 Brand teams do 3 things. They collect the raw artefacts (ads, posts, taglines). They analyse the pattern. They write the rules down.
 
-I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 separate platforms: a Joomla dance-community site, 3 WordPress event sites, 2 sets of Google Docs drafts, a Google Drive internal archive, and this Hugo blog. The goal was not to admire the corpus. The goal was to pull the pattern out. That took a swarm of subagents in my [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reading the corpus in parallel. No single AI context can hold 161,000 words and keep its attention honest.
+I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 separate platforms: a Joomla adventure blog (where my early dance writing also lived), 3 WordPress dance-community sites, 2 sets of Google Docs drafts, a Google Drive internal archive, and this Hugo blog. The goal was not to admire the corpus. The goal was to pull the pattern out. That took a swarm of subagents in my [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reading the corpus in parallel. No single AI context can hold 161,000 words and keep its attention honest.
 
 350 sentences profiled. 9 voice registers (the sober technical me, the gym-rat me, the drunk-kebab me, the father-of-two me, and 5 shades in between). 30 AI tells catalogued as smoking-gun absences (words AI loves that my corpus has exactly zero of across 161,000 words). 37 rescue rules for when a draft had started to drift.
 
@@ -109,7 +109,7 @@ One receipt on whether any of this dilutes my voice. I keep a private draft of e
 
 This was always going to be a refining process. The rules started wrong. The doc said ~60 banned words when the code had 76. The keep-list grew as the guard kept flagging warm vocabulary I actually use. The warning tier shipped as OFF because the heuristic was too brittle. I spent the first couple of months fixing drift the guard surfaced.
 
-I am past that phase now. I do not refine the rules often any more, only when the same pattern or the same problem shows up twice. Which is rare. What I still do, and will always do, is the human-in-the-loop manual sanity check on every draft. Read it through once. Brush up the sentences that do not quite feel right. Double-check any fact or number that looks off. Overall: 90-95% good to go after that pass. The other 5-10% is me putting the thumbprint on it.
+I am past that phase now. I do not refine the rules often any more, only when the same pattern or the same problem shows up twice. Which is rare. What I still do, and will always do, is the human-in-the-loop manual sanity check on every draft. Read it through once. Brush up the sentences that do not quite feel right. Double-check any fact or number that looks off. Overall: 90-95% good to go after that pass. The other 5-10% is my thumbprint.
 
 ## What AI is still better at than me
 
@@ -133,7 +133,7 @@ The pre-commit voice guard caught banned words on my first try at the Nike examp
 
 A 3-tier AI review pass inside the harness (next post is on that) caught a fabricated platform list. An earlier draft named Blogger, Medium, Substack, Tumblr, and WhatsApp voice-note transcripts as the 8 platforms. None appear in my written-life inventory. Category-1 fabrication. Replaced with the real tech stack.
 
-A post-implementation review swarm caught 7 other things: the date maths in my opener ("Six days ago" was actually 7), 3 count errors ("45 rescue rules" was 37, "60 posts" was 40, "3 CI jobs" was 3 steps in 1 job), 2 acronyms used without inline expansion (CI and EU), the Story Spine missing its "every day, here is what I was doing before" beat, the brand-voice thesis being underdeveloped (originally 1 sentence, now 2 paragraphs), and the applications section running 4 times thinner than the corpus-build section.
+A post-implementation review swarm caught 7 other things: the date maths ("Six days ago" was actually 7), 3 count errors ("45 rescue rules" was 37, "60 posts" was 40, "3 CI jobs" was 3 steps in 1 job), 2 acronyms used without inline expansion (CI and EU), the Story Spine missing its "every day, here is what I was doing before" beat, the brand-voice thesis being underdeveloped (originally 1 sentence, now 2 paragraphs), and the applications section running 4 times thinner than the corpus-build section.
 
 ### What I caught on human-in-the-loop re-read
 
