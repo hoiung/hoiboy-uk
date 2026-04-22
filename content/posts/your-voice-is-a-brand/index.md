@@ -6,7 +6,7 @@ draft: false
 categories: [tech-ai]
 tags: [voice-persona, writing, ai-tells, sst3, personal-brand, portfolio]
 slug: your-voice-is-a-brand
-description: "A brand has a voice. So do I. We analysed 12 years of my writing, encoded 76 rules the AI cannot break, and now AI writes like me (mostly), not like a consultant deck."
+description: "A brand has a voice. So do I. We analysed 12 years of my writing, encoded 61 rules the AI cannot break, and now AI writes like me (mostly), not like a consultant deck."
 images:
   - hero.webp
 ---
@@ -22,7 +22,7 @@ Here is what drove it. 3 years of watching AI write, from ChatGPT through to Cla
 Every brand you know has a voice. Colours. A typography style. A shape. A tone of emotional triggers. A set of words it says and a set it refuses. Nike says "just do it." Nike does not say the consultant-deck filler a brand audit would flag on sight.
 
 <!-- iamhoi-skip -->
-(If you are wondering which filler: things like "at scale" and "stakeholders" would never survive a Nike brand review.)
+(If you are wondering which filler: things like "at scale" and "circle back" would never survive a Nike brand review.)
 <!-- iamhoi-skipend -->
 
 That is not an accident. Somebody wrote the rules down, and now every designer, copywriter, and AI tool a brand touches produces on-brand assets because the framework is portable.
@@ -35,9 +35,9 @@ This is the marketer's trick if you think about it. Brand guidelines exist becau
 
 Marketing people do 3 things. They collect the raw artefacts (ads, posts, taglines). They analyse the pattern. They write the rules down.
 
-I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 separate platforms: a Joomla adventure blog (where my early dance writing also lived), 3 WordPress dance-community sites, 2 sets of Google Docs drafts, a Google Drive internal archive, and this Hugo blog. The goal was not to admire the corpus. The goal was to pull the pattern out. That took a swarm of subagents in my [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reading the corpus. No single AI context can hold 161,000 words and keep its attention honest.
+I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 separate platforms: a Joomla adventure blog (where my early dance writing also lived), 3 WordPress dance-community sites, 2 sets of Google Docs drafts, a Google Drive internal archive, and this Hugo blog. The goal was not to admire the archive. The goal was to pull the pattern out. That took a swarm of subagents in my [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reading it all. No single AI context can hold 161,000 words and keep its attention honest.
 
-350 sentences profiled. 9 voice registers (the sober technical me, the gym-rat me, the drunk-kebab me, the dance-fanatic me, the entrepreneur me, and 4 shades in between). 30 AI tells catalogued as smoking-gun absences (words AI loves that my corpus has exactly zero of across 161,000 words). 37 rescue rules for when a draft had started to drift.
+350 sentences profiled. 9 voice registers (the sober technical me, the gym-rat me, the drunk-kebab me, the dance-fanatic me, the entrepreneur me, and 4 shades in between). 30 AI tells catalogued as smoking-gun absences (words AI loves that my writing has exactly zero of across 161,000 words). 37 rescue rules for when a draft had started to drift.
 
 The big one was em dashes.
 
@@ -45,16 +45,16 @@ The big one was em dashes.
 (Em dash = the long horizontal bar: —. Not a hyphen. AI loves them.)
 <!-- iamhoi-skipend -->
 
-External research puts GPT-4.1 at 10.62 em dashes per 1,000 words. Humans average 3.23. My corpus has 0 across 161,000 words. Sam Altman has publicly said ChatGPT's em-dash frequency was tuned during fine-tuning. Which is fine for ChatGPT. Just not fine for me.
+External research puts GPT-4.1 at 10.62 em dashes per 1,000 words. Humans average 3.23. My writing has 0 across 161,000 words. Sam Altman has publicly said ChatGPT's em-dash frequency was tuned during fine-tuning. Which is fine for ChatGPT. Just not fine for me.
 
-And I was not precious about the data either. 1 of the 59 entries (an early post I had let ChatGPT polish before I knew better) has 7 em dashes in 270 words. That sample sits in the corpus as a control. It is what I sound like when I hand the pen over. The other 58 entries are what I sound like when I hold it. The contrast is the proof.
+And I was not precious about the data either. 1 of the 59 entries (an early post I had let ChatGPT polish before I knew better) has 7 em dashes in 270 words. That sample sits in the archive as a control. It is what I sound like when I hand the pen over. The other 58 entries are what I sound like when I hold it. The contrast is the proof.
 
 ## KISS is why the rules look the way they do
 
-There is a personal principle underneath all of this. Keep It Simple, Stupid. I treat every reader as a person who might not have English as a first language. My corpus uses short sentences, concrete nouns, contractions. The smartest people I know explain things in plain English. The ones trying to sound smart reach for elevated filler vocabulary AI was trained on.
+There is a personal principle underneath all of this. Keep It Simple, Stupid. I treat every reader as a person who might not have English as a first language. My writing uses short sentences, concrete nouns, contractions. The smartest people I know explain things in plain English. The ones trying to sound smart reach for elevated filler vocabulary AI was trained on.
 
 <!-- iamhoi-skip -->
-(The banned-word file names them: delve, leverage, synergy, stakeholder, robust, seamless, innovative, cutting-edge, impactful. There are 76 of those. I will not pretend I did not include examples.)
+(The banned-word file names them: delve, tapestry, meticulous, pivotal, furthermore, seamless, innovative, cutting-edge, impactful. There are 61 of those. I will not pretend I did not include examples.)
 <!-- iamhoi-skipend -->
 
 To be clear, KISS is not this blog's argument. It is the reason the rules look the way they do. A different writer would end up with a different list.
@@ -63,7 +63,7 @@ To be clear, KISS is not this blog's argument. It is the reason the rules look t
 
 Rules are no good if nobody enforces them. So I encoded them.
 
-The single source of truth is `voice_rules.py`. 76 banned words. 7 banned phrases (cover-letter openers, hedging preambles, career humble-brags).
+The single source of truth is `voice_rules.py`. 61 banned words. 7 banned phrases (cover-letter openers, hedging preambles, career humble-brags).
 
 <!-- iamhoi-skip -->
 (Named for the archive: "I am writing to express my interest", "It is worth noting that", "Throughout my career, I have". There are 7.)
@@ -73,7 +73,7 @@ The single source of truth is `voice_rules.py`. 76 banned words. 7 banned phrase
 
 The guard itself is a 432-line Python script, `check_voice_tells.py`. 7 detection types. Em dashes. Banned words. Banned phrases. Smart quotes. Unicode arrows (AI's favourite way to draw a diagram nobody asked for). A negation-framing pattern (the "it's not X, it's Y" shape AI reaches for about 3 times a page). A bold-first-bullet pattern (AI's favourite layout, the one that turns every document into a slide deck).
 
-There is a marker system on top. By default the guard scans nothing. A draft opts in by wrapping the prose in `<!-- iamhoi -->` and `<!-- iamhoiend -->` HTML comments. A skip-hole inside a region lets me quote banned words in an example block without tripping the guard. That default was deliberate. I have years of pre-AI legacy posts on this site, and those posts ARE the voice research. Scanning them would flag words I had used sincerely and corrupt the persona evidence. Default-skip keeps the research corpus untouched while every new post gets the full treatment.
+There is a marker system on top. By default the guard scans nothing. A draft opts in by wrapping the prose in `<!-- iamhoi -->` and `<!-- iamhoiend -->` HTML comments. A skip-hole inside a region lets me quote banned words in an example block without tripping the guard. That default was deliberate. I have years of pre-AI legacy posts on this site, and those posts ARE the voice research. Scanning them would flag words I had used sincerely and corrupt the persona evidence. Default-skip keeps the back catalogue untouched while every new post gets the full treatment.
 
 It runs as a pre-commit hook, in 3 continuous integration (CI) steps (the voice guard itself, an em-dash grep belt-and-braces, and a unit-test suite for the marker state machine), and as a drift guard that refuses to let the vendored Python copy diverge from the canonical. Binary pass or fail. There is no warning tier. I tried one. The sentence-rhythm heuristics I wrote for it were too brittle on short content, and I shipped without it rather than ship a guard that cried wolf. That is the honest-engineering line: if I cannot make the rule work in practice, the rule does not ship.
 
@@ -125,7 +125,7 @@ The voice persona is a rail, not a replacement. It draws a line. AI handles the 
 
 ## What this does not do
 
-The rules are living code, not a one-shot framework. AI models will change. New tells will emerge. I expect to add to the banned-word list (45% of job seekers were using AI on CVs in 2024, 64% of recruiters noticed an uptick, and the floor on "what counts as AI tell" keeps shifting upward). I expect one of today's rules to look silly in 2 years when model behaviour shifts again. That is fine. The guard is easy to change. The corpus analysis is the thing you do once.
+The rules are living code, not a one-shot framework. AI models will change. New tells will emerge. I expect to add to the banned-word list (45% of job seekers were using AI on CVs in 2024, 64% of recruiters noticed an uptick, and the floor on "what counts as AI tell" keeps shifting upward). I expect one of today's rules to look silly in 2 years when model behaviour shifts again. That is fine. The guard is easy to change. The voice analysis is the thing you do once.
 
 One more counterargument worth pre-empting. Does encoding your voice dilute it? On the 8,000-word side-by-side I already mentioned, 1 line changed in the whole document. 95% identical. The rails keep AI drafts honest. They do not overwrite me.
 
