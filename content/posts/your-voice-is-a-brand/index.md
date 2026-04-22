@@ -15,7 +15,7 @@ images:
 
 A week ago I published the [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reshapeable-knife post and closed it with "watch this space. More posts coming on the specific bits. The voice guard for writing." This is that post. It is about a marketing trick applied to a person.
 
-Here is what drove it. For months, every AI first-draft of my blog, my CV, my cover letters came back reading like it had been through a consultant. Polished. Abstract. Buzzword-dense. Em dashes in every paragraph. I would fix one and the next draft would hand it all back. That was the pattern. This post is about how I broke the pattern.
+Here is what drove it. 3 years of watching AI write, from ChatGPT through to Claude. The pattern does not shift. Mechanical. Generic. Buzzword-heavy. A love for uncommon acronyms everyday readers will not understand. Same tell across every new model. I kept noticing. This post is about what I did with the observation.
 
 ## Brands have a voice framework. So can a person
 
