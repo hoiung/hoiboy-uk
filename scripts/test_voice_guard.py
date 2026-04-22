@@ -88,9 +88,12 @@ class TestCutoffFilter:
 
 # 4. Banned word boundary parity with canonical
 class TestParityWithCanonical:
-    def test_deliverable_vs_deliver(self):
-        assert vr.BANNED_WORDS_PATTERN.search("deliverable")
-        assert not vr.BANNED_WORDS_PATTERN.search("we deliver value")
+    def test_facilitate_vs_face(self):
+        # Uses `facilitate` (still banned) now that `deliverable` was
+        # whitelisted 2026-04-22 per memory/feedback_if_i_type_it_i_use_it.md.
+        # Same principle: word-boundary match on banned form, not partial.
+        assert vr.BANNED_WORDS_PATTERN.search("facilitate")
+        assert not vr.BANNED_WORDS_PATTERN.search("we face the problem")
 
     def test_cutoff_constant(self):
         assert vr.HOIBOY_CUTOFF_DATE == date(2026, 4, 7)
@@ -100,15 +103,20 @@ class TestParityWithCanonical:
 class TestDecisionMatrix:
     def test_default_skip(self, tmp_path):
         f = tmp_path / "anything.md"
-        f.write_text("delve and leverage everywhere\n", encoding="utf-8")
+        # Uses `delve` + `facilitate` — both still banned. `leverage` was
+        # whitelisted 2026-04-22 so it no longer proves a default-skip case.
+        f.write_text("delve and facilitate everywhere\n", encoding="utf-8")
         assert cvt.scan_file(f, tmp_path) == []
 
     def test_marker_scans_only_tagged(self, tmp_path):
         f = tmp_path / "x.md"
+        # Body inside iamhoi markers contains `facilitate` (still banned);
+        # outside markers contains `delve` + `seamless` (ignored by default
+        # SKIP). Swapped from `leverage`/`synergy` which are now whitelisted.
         f.write_text(
-            "delve outside\n<!-- iamhoi -->\nleverage inside\n<!-- iamhoiend -->\nsynergy after\n",
+            "delve outside\n<!-- iamhoi -->\nfacilitate inside\n<!-- iamhoiend -->\nseamless after\n",
             encoding="utf-8",
         )
         findings = cvt.scan_file(f, tmp_path)
         assert len(findings) == 1
-        assert "leverage" in findings[0].detail
+        assert "facilitate" in findings[0].detail
