@@ -1,7 +1,7 @@
 ---
 title: "Brands Have Voices. People Do Too."
 date: 2026-04-22
-lastmod: 2026-04-22
+lastmod: 2026-04-22T10:15:00Z
 draft: false
 categories: [tech-ai]
 tags: [voice-persona, writing, ai-tells, sst3, personal-brand, portfolio]
@@ -33,13 +33,19 @@ This is the marketer's trick if you think about it. Brand guidelines exist becau
 
 ## I treated my voice like a brand
 
-Brand teams do 3 things. They collect the raw artefacts (ads, posts, taglines). They analyse the pattern. They write the rules down.
+Marketing people do 3 things. They collect the raw artefacts (ads, posts, taglines). They analyse the pattern. They write the rules down.
 
 I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 separate platforms: a Joomla adventure blog (where my early dance writing also lived), 3 WordPress dance-community sites, 2 sets of Google Docs drafts, a Google Drive internal archive, and this Hugo blog. The goal was not to admire the corpus. The goal was to pull the pattern out. That took a swarm of subagents in my [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reading the corpus in parallel. No single AI context can hold 161,000 words and keep its attention honest.
 
 350 sentences profiled. 9 voice registers (the sober technical me, the gym-rat me, the drunk-kebab me, the dance-fanatic me, the entrepreneur me, and 4 shades in between). 30 AI tells catalogued as smoking-gun absences (words AI loves that my corpus has exactly zero of across 161,000 words). 37 rescue rules for when a draft had started to drift.
 
-The big one was em dashes. External research puts GPT-4.1 at 10.62 em dashes per 1,000 words. Humans average 3.23. My corpus has 0 across 161,000 words. Sam Altman has publicly said ChatGPT's em-dash frequency was tuned during fine-tuning. Which is fine for ChatGPT. Just not fine for me.
+The big one was em dashes.
+
+<!-- iamhoi-skip -->
+(Em dash = the long horizontal bar: —. Not a hyphen. AI loves them.)
+<!-- iamhoi-skipend -->
+
+External research puts GPT-4.1 at 10.62 em dashes per 1,000 words. Humans average 3.23. My corpus has 0 across 161,000 words. Sam Altman has publicly said ChatGPT's em-dash frequency was tuned during fine-tuning. Which is fine for ChatGPT. Just not fine for me.
 
 And I was not precious about the data either. 1 of the 59 entries (an early post I had let ChatGPT polish before I knew better) has 7 em dashes in 270 words. That sample sits in the corpus as a control. It is what I sound like when I hand the pen over. The other 58 entries are what I sound like when I hold it. The contrast is the proof.
 
@@ -133,13 +139,13 @@ The pre-commit voice guard caught banned words on my first try at the Nike examp
 
 A 3-tier AI review pass inside the harness (next post is on that) caught a fabricated platform list. An earlier draft named Blogger, Medium, Substack, Tumblr, and WhatsApp voice-note transcripts as the 8 platforms. None appear in my written-life inventory. Category-1 fabrication. Replaced with the real tech stack.
 
-A post-implementation review swarm caught 7 other things: the date maths ("Six days ago" was actually 7), 3 count errors ("45 rescue rules" was 37, "60 posts" was 40, "3 CI jobs" was 3 steps in 1 job), 2 acronyms used without inline expansion (CI and EU), the Story Spine missing its "every day, here is what I was doing before" beat, the brand-voice thesis being underdeveloped (originally 1 sentence, now 2 paragraphs), and the applications section running 4 times thinner than the corpus-build section.
+A post-implementation review swarm caught 7 other things: the date maths ("Six days ago" was actually 7), 3 count errors ("45 rescue rules" was 37, "60 posts" was 40, "3 CI jobs" was 3 steps in 1 job), 2 acronyms used without inline expansion (CI and EU), the Story Spine missing its "every day, here is what I was doing before" beat, the brand-voice thesis being underdeveloped (1 sentence originally), and the applications section running too thin.
 
 ### What I caught on human-in-the-loop re-read
 
 2 category-1 fabrications slipped past every layer of the harness and landed on my own read. Earlier drafts had me "drafting for months" (not true) and "years in marketing before years in tech" (also not true; 20+ years running businesses, with marketing as one trade among many). Flagged on re-read. Fixed both.
 
-I also made 3 smaller in-voice edits: added "a shape" to the brand-voice attribute list, changed "a set of tones" to "a tone of emotional triggers" for precision, and asked for a "(mostly)" in the SEO description to land the honesty of what the rails actually achieve.
+I also made 3 smaller in-voice edits: added "a shape" to the brand-voice attribute list, changed "a set of tones" to "a tone of emotional triggers", and asked for a "(mostly)" in the SEO description to land the honesty of what the rails achieve.
 
 Add it all up and it maps onto the 5-10% thumbprint pass mentioned earlier. Harness does the factual, structural, lexical. I do the context and the first-person reality it has no way to know. Neither works alone.
 
