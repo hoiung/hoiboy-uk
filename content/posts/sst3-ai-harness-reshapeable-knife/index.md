@@ -1,6 +1,6 @@
 ---
 title: "SST3-AI-Harness. Why I Built a Hero Suit for AI."
-date: 2026-04-15
+date: 2026-04-14
 categories: [tech-ai]
 tags: [ai, claude-code, automation, ai-orchestration, sst3, governance]
 slug: sst3-ai-harness-reshapeable-knife
