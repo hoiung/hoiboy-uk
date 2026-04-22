@@ -57,7 +57,7 @@ Nine months ago I was just trying to stop AI breaking my automated trading syste
 
 Onto the forecast.
 
-## Era 4. Telling Facts From Fiction
+## Era 4. Telling Facts From Fiction. The Fourth Coming
 
 This is where the good news lives. Bear with me.
 
