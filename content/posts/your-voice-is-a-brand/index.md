@@ -35,7 +35,7 @@ This is the marketer's trick if you think about it. Brand guidelines exist becau
 
 Brand teams do 3 things. They collect the raw artefacts (ads, posts, taglines). They analyse the pattern. They write the rules down.
 
-I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 separate platforms: a Joomla dance-community site, 3 WordPress event sites, 2 sets of Google Docs drafts, a Google Drive internal archive, and this Hugo blog. The goal was not to admire the corpus. The goal was to pull the pattern out.
+I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 separate platforms: a Joomla dance-community site, 3 WordPress event sites, 2 sets of Google Docs drafts, a Google Drive internal archive, and this Hugo blog. The goal was not to admire the corpus. The goal was to pull the pattern out. That took a swarm of subagents in my [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reading the corpus in parallel. No single AI context can hold 161,000 words and keep its attention honest.
 
 350 sentences profiled. 9 voice registers (the sober technical me, the gym-rat me, the drunk-kebab me, the father-of-two me, and 5 shades in between). 30 AI tells catalogued as smoking-gun absences (words AI loves that my corpus has exactly zero of across 161,000 words). 37 rescue rules for when a draft had started to drift.
 
@@ -78,6 +78,8 @@ The code behind this blog lives at [github.com/hoiung/hoiboy-uk](https://github.
 The rules bit me the day I wrote them. The first internal doc I drafted said the banned-word list had "around 60 entries." The actual Python file had 76. A gap between what I thought I had built and what I had built. I caught it on a later audit and fixed the doc to match the code. The code was ground truth; my memory of the code was fiction.
 
 And then there was the scaling-without-quality draft a few weekends ago. AI padded a paragraph with a specific coworker anecdote that never happened. It sounded good. It was not true. I called it out at the time with "stop making shit up" twice in one session. The 3-fabrication-categories rule (no invented scenes, no aphorisms attributed to me I never said, no strawmen like "everyone assumes X") went into the voice profile that evening. Rule 1 caught rule 1's own drafting session. The rules work because I apply them to me first.
+
+Even this post. Drafting it inside the harness, the post-implementation review swarm caught 2 fabrications the main agent had slipped in. One invented platform list. One invented timeline claim (me "drafting for months" when really I had just been watching AI write for 3 years). The swarm flagged both with file and line receipts. I fixed them. The point is not that AI invents things. It does, constantly. The point is that the harness catches more than I catch alone.
 
 ## Applying the same persona everywhere
 
