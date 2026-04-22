@@ -105,7 +105,7 @@ Cover letters are where the framework pays its rent most visibly. Every applicat
 
 Emails come next. Cold follow-ups, recruiter replies, client comms. Same voice filter. Drafts that move through my harness get the pre-commit discipline. Drafts I write inside someone else's client tool get a mental banned-word list instead.
 
-Businesses last. Product descriptions on my online store I run, website copy for a side project called id8u, reply macros for customer-support tickets. Small-commerce English is usually the first place brand voice collapses. It does not have to.
+Businesses last. Product descriptions for an online store I run, website copy for a side project called id8u, reply macros for customer-support tickets. Small-commerce English is usually the first place brand voice collapses. It does not have to.
 
 The [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) framework underneath wires the voice profile into every one of those skills. If an AI draft sneaks a banned word through, the pre-commit hook catches it. If the hook misses, CI catches it. If both miss, the drift guard catches stale rule copies. 3 layers, 1 source of truth.
 
