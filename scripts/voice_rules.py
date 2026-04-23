@@ -90,6 +90,25 @@ KEEP_LIST: tuple[str, ...] = (
     # Third pass same day — Hoi: "why is stakeholder there? I use that word".
     # Same meta-rule. stakeholder/stakeholders moved here.
     "stakeholder", "stakeholders",
+    # Direction-reset vocabulary (2026-04-23) — enablement lane target-role
+    # keywords + Knowledge Academy Coaching & Mentoring cert (2025) domain.
+    # Added per direction-reset Thread 7 + meta-rule "if I type it, I use it".
+    # NOTE: facilitate/facilitating/facilitated STAYS BANNED despite semantic
+    # proximity to enablement vocabulary — corporate-speak Hoi does not use
+    # naturally. Prefer coach / enable / run / lead instead.
+    "teach", "teaching", "teaches", "taught",
+    "mentor", "mentoring", "mentored", "mentors",
+    "coach", "coaching", "coached", "coaches",
+    "enable", "enabling", "enabled", "enables", "enablement",
+    "capability", "capabilities",
+    "upskill", "upskilling", "upskilled",
+    "knowledge transfer",
+    "AI literacy",
+    "AI fluency",
+    "AI adoption",
+    "domain expert", "domain experts",
+    "subject matter expert", "subject matter experts",
+    "SME", "SMEs",
 )
 
 # ---------------------------------------------------------------------------
