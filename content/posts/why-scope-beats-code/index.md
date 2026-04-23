@@ -19,7 +19,7 @@ Before [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) there was SS
 
 It was a disaster.
 
-Some of that was my inexperience. Some of it was the tooling at the time. A big chunk of it was the 200K context window Claude was working with in late 2024, which was never going to hold a shared mental model of a production codebase across five concurrent agents. The agents would each pick their own direction. Each one confident. Each one writing code. Each one completely unaware that another agent had already written something contradictory three minutes earlier in a different file.
+Some of that was my inexperience. Some of it was the tooling at the time. A big chunk of it was the 200K context window Claude was working with in late 2025, which was never going to hold a shared mental model of a production codebase across five concurrent agents. The agents would each pick their own direction. Each one confident. Each one writing code. Each one completely unaware that another agent had already written something contradictory three minutes earlier in a different file.
 
 It was like letting five cowboys fire pistols in the same saloon. Nobody hit what they were aiming at. Everybody left a mess.
 
@@ -45,7 +45,7 @@ This is the opposite of how most AI frameworks think about throughput. SST3 does
 
 Slower per piece. Dramatically faster overall. (And much, much less archaeology later.)
 
-The 1M context window that arrived in 2025 made this practical across bigger projects. The orchestrator can hold the Issue, the standards, the research, and the full diff without spilling context anywhere. The subagents absorb the high-volume reads on its behalf. The orchestrator stays coherent. The code stays coherent. No more cowboys.
+The 1M context window that arrived in 2026 made this practical across bigger projects. The orchestrator can hold the Issue, the standards, the research, and the full diff without spilling context anywhere. The subagents absorb the high-volume reads on its behalf. The orchestrator stays coherent. The code stays coherent. No more cowboys.
 
 That said, more context is not a free lunch. It comes with its own unpredictability. Sometimes the model hallucinates with 80% context left. Sometimes with 50%. Sometimes with 30%. It is quite random, and I suspect a chunk of it lines up with Claude server outages, because the worst days are the outage days. More than once I have watched the harness wreck a build on a bad-infra day and then spent the next day undoing its work and refixing by hand. So even with 1M context and a harness around it, you still need a human eye on the output.
 
