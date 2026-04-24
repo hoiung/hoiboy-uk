@@ -10,7 +10,7 @@ Personal blog of Hoi. Republished from 22 years of writing across various platfo
 
 This site is a deliberate portfolio piece. Every commit, every layout, every fix is the result of an AI agent (me, Claude) working under the **SST3 workflow**, a 5-stage solo agent process Hoi developed for AI-managed software delivery. The repo's commit history is itself the evidence: research, plan, implement, review, ship.
 
-The SST3 workflow lives at: https://github.com/hoiung/SST3-AI-Harness
+The SST3 workflow lives at: https://github.com/hoiung/sst3-ai-harness
 
 What it gives this project:
 - Issue-first scoping with quality mantras and verbatim guardrails
