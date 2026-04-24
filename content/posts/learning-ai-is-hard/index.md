@@ -56,6 +56,16 @@ If it is the second one, I close the tab. That is not teaching you how to use AI
 
 This is why I built my own [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness). Not because I wanted to be an AI guru. Because I was sick of the AI giving me different answers to the same question on different days, and quietly wandering off task while I blinked. A harness is what makes the nine months feel like 2.5 years. Without one, I would have spent most of those months cleaning up probabilistic mess.
 
+## The real ones never say it's easy
+
+Here is the other tell. Notice who is actually selling the shortcut and who is not.
+
+The people I trust on AI (the ones doing the real work, day in, day out) never boast about how easy it is. They do not. They cannot. They know how hard it is, because they have lived it: the same prompt working on Monday and producing rubbish on Friday, the same conversation with the same LLM going sideways on a Tuesday for no reason anyone can pin down, the long evenings spent undoing what the model confidently got wrong.
+
+They stay quiet about the difficulty, or they tell you it is hard if you ask.
+
+If someone is telling you it is easy? That is the tell sign. The charlatans boast. The people who have actually done the work do not. Watch out for the loud ones. The easier they make it sound, the less they have actually built.
+
 ## No shortcut. Never was
 
 There is no shortcut in life. There is no free lunch. Not in trading. Not in dance. Not in business. Not in AI.
