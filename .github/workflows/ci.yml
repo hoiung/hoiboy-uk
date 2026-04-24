@@ -153,7 +153,7 @@ jobs:
         run: python3 -m pytest scripts/test_validate_frontmatter.py -q
 
       - name: Markdown lint
-        uses: DavidAnson/markdownlint-cli2-action@v16
+        uses: DavidAnson/markdownlint-cli2-action@v23
         with:
           config: .markdownlint.json
           globs: |
