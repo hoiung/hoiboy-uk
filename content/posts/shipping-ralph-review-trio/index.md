@@ -5,7 +5,7 @@ draft: true
 categories: [tech-ai]
 tags: [ai, claude-code, sst3, code-review, plugin-marketplace]
 slug: shipping-ralph-review-trio
-description: "Three sequential Claude reviewers, any fail restarts from tier one. Lived in my private harness for months. Today I shipped it as a Claude Code plugin and watched it review its own ship."
+description: "Three-tier Ralph Review with restart-on-fail. Borrowed the loop pattern from Geoffrey Huntley, layered three SST3 checklists on top, shipped as a Claude Code plugin today."
 ---
 
 <!-- iamhoi -->
@@ -16,8 +16,6 @@ This afternoon, a few hours after pushing Ralph Review Trio to a public GitHub r
 
 The tool reviewed its own shipping.
 
-I have been building software for a long time and I do not remember the last time I felt that kind of specific quiet satisfaction.
-
 ## What it actually is
 
 Three Claude models reading the same diff at increasing depth. Haiku runs first and does the cheap surface checks (file structure, commit hygiene, debug code, visible magic numbers). If it passes, Sonnet runs next and does logic tracing (cross-boundary contracts, null propagation, config wiring, real call-site inspection). If that passes, Opus runs last and does architectural review plus a factual-claims audit on anything the diff writes into documentation.
@@ -26,11 +24,11 @@ If any of the three tiers fails, the whole loop restarts from Tier 1.
 
 Not continue-with-a-flag. Not "note the finding and keep going". Restart.
 
-That one rule is the thing that makes the review actually work, and it is the rule I kept getting wrong for about four months before it clicked.
+That one rule is what makes the review actually work.
 
 ## Why restart-on-fail sounds harsh (and isn't)
 
-Here is the scenario I kept running into. Haiku would pass a file. Sonnet would find a silent exception handler in that same file and I would fix it. The file changed. Haiku's pass was now against a stale version of the file.
+Here is why the rule matters. Haiku passes a file. Sonnet, tracing deeper, finds a silent exception handler in that same file. The fix touches the file. Haiku's earlier pass is now against a stale version.
 
 The pragmatic move is to pretend the stale approval still holds. After all, it was only a small change. You fix. You mark Sonnet PASS. You move on.
 
@@ -42,15 +40,15 @@ Yes, it costs more tokens. A hundred Haiku seconds instead of zero. In exchange,
 
 It feels harsh on day one. After a month, you stop noticing the extra Haiku cycles and you start trusting the reviews in a way you did not before.
 
-## Why I built it in a harness, not a prompt
+## Where the pattern comes from
 
-<!-- iamhoi-skip -->
-I run my solo engineering workflow inside a [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) (single source of truth version 3), a governance harness I evolved out of the wreckage of my earlier multi-agent experiments. Subagent orchestration, structured RESULT blocks, checkpoint MCP servers, voice guards, the whole stack. The harness is its own thing; the review loop is one component.
-<!-- iamhoi-skipend -->
+Ralph is not mine. It comes from [Geoffrey Huntley](https://ghuntley.com/ralph): a while-true loop that re-feeds the same prompt to an agent until it emits a completion promise, with failures treated as deterministic and prompt-tunable. Anthropic published an official `ralph-loop` plugin implementing the mechanic as a slash command, and that plugin is what powers each tier inside mine.
 
-The review loop used to live inside my private dotfiles. Good for me. Useless to anyone else. Short of cloning my whole harness, no one could get the benefit of the checklist structure, the restart rule, the subagent discipline, or the months of tightening that sit behind those checklist bullets.
+What I layered on top is the three-tier cost-stratified orchestration. One Ralph loop per tier, not one long loop for the whole review. Haiku runs its own ralph-loop against the surface checklist until it emits `<promise>HAIKU_PASS</promise>`. Sonnet runs its own loop against the logic checklist. Opus runs its own loop against the architectural checklist. The controller dispatches them in order, and any deep-tier failure restarts the whole stack from Tier 1.
 
-The Anthropic Agent Skills open standard changed the calculation. There is now a file format for describing a Skill, a package for describing a Plugin, and a marketplace format for listing them. If I follow the spec, my private review loop becomes installable by anyone with Claude Code. Two lines:
+The 3-tier stack entered [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) (my single-source-of-truth governance harness) on 8 January 2026. The initial scaffolding (three tier checklist files, the dispatch controller, the restart rule) was all in place within a single evening, committed against `dotfiles#391`. Three and a half months of real bug catches since then have tightened the checklists organically. Ralph once flagged its own hardcoded repository-path assumption hiding in the Haiku tier (that fix shipped as `dotfiles#399`). Another time it caught a cross-boundary contract gap in a production service, which drove an upgrade that added explicit cross-boundary contract verification (code to DB, code to config, caller to callee) into every tier file. The pattern earns its keep by catching things I was sure were fine.
+
+The reviewers lived inside my private dotfiles. Good for me. Useless to anyone else. The Anthropic Agent Skills open standard (December 2025) gave a clean format to publish in: a Skill file, a Plugin package, a marketplace manifest. Two lines to install:
 
 ```
 /plugin marketplace add hoiung/sst3-skills
@@ -105,9 +103,9 @@ Ten and a half minutes of wall clock. 235,000 tokens. 116 tool uses total. If yo
 
 There are already several 3-tier review packs on the marketplaces. Using three models at three depths is not a differentiator on its own.
 
-Four hooks kept from the harness that I think earn their keep. Sequential restart-on-fail is the big one (covered above). The other three:
+The three-tier Ralph orchestration itself is the first differentiator (covered above). The other three hooks are the SST3-specific layers that earn their keep:
 
-Sample Invocation Gate: for any change that touches a pipeline, CLI wiring, cross-module function-argument propagation, or a persistent-state write, Sonnet will not pass without evidence of a real command invocation against a real database. Exit code zero is not enough. AP #18 in the harness exists because exit-zero runs that wrote zero rows are a silent-failure class I have fixed too many times.
+Sample Invocation Gate: for any change that touches a pipeline, CLI wiring, cross-module function-argument propagation, or a persistent-state write, Sonnet will not pass without evidence of a real command invocation against a real database. Exit code zero is not enough. AP #18 in the harness exists because exit-zero runs that wrote zero rows are a silent-failure class the harness was built to catch.
 
 Proof of Work governance signal: if you use a governance MCP server for checkbox tracking (I have one), Opus checks that every checked box has a matching evidence entry in a canonical `## Proof of Work` section of the issue body. It refuses narrative-only progress. The rule is strict because soft governance produces shipped products where nobody can reconstruct what was verified against what.
 
