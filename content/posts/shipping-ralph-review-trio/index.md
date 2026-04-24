@@ -1,89 +1,133 @@
 ---
-title: "Shipping Ralph Review Trio as a Claude Code Plugin"
+title: "Three Reviewers, Restart on Fail. Why I Shipped It."
 date: 2026-04-24
 draft: true
 categories: [tech-ai]
 tags: [ai, claude-code, sst3, code-review, plugin-marketplace]
 slug: shipping-ralph-review-trio
-description: "Three sequential reviewers, restart-on-fail. Battle-tested in my private SST3 harness, now installable by anyone in two lines."
+description: "Three sequential Claude reviewers, any fail restarts from tier one. Lived in my private harness for months. Today I shipped it as a Claude Code plugin and watched it review its own ship."
 ---
 
 <!-- iamhoi -->
 
 There is a moment when you ship a tool and then point the tool at itself.
 
-This afternoon, a few hours after pushing Ralph Review Trio to a public GitHub repo, I installed it into my own Claude Code session and ran it on the branch that contained the ship. Three tiers, Haiku surface, Sonnet logic, Opus deep. Ten and a half minutes, 235,000 tokens, 116 tool uses. All three came back clean. Five non-blocking observations flagged, none about the ship itself.
+This afternoon, a few hours after pushing Ralph Review Trio to a public GitHub repo, I installed it into my own Claude Code session and ran it on the branch that contained the ship. Three tiers. Haiku surface. Sonnet logic. Opus deep. Ten and a half minutes, 235,000 tokens, 116 tool uses. All three came back clean. Five non-blocking observations flagged, none of them about the ship itself.
 
-The tool reviewed its own shipping and said the work was fine. I have been building software a long time and I do not remember the last time I felt that kind of specific quiet satisfaction.
+The tool reviewed its own shipping.
 
-## What Ralph Review Trio actually is
+I have been building software for a long time and I do not remember the last time I felt that kind of specific quiet satisfaction.
 
-Three sequential code reviewers at increasing depth. Haiku for surface. Sonnet for logic. Opus for architecture. Each reviewer runs its own checklist. If any tier fails, the whole loop restarts from Tier 1 after the fixes are applied. There is no next-tier-with-a-flag shortcut. Pass means all three passed.
+## What it actually is
 
-The restart rule sounds harsh. It is not harsh. It is the thing that makes the review actually work.
+Three Claude models reading the same diff at increasing depth. Haiku runs first and does the cheap surface checks (file structure, commit hygiene, debug code, visible magic numbers). If it passes, Sonnet runs next and does logic tracing (cross-boundary contracts, null propagation, config wiring, real call-site inspection). If that passes, Opus runs last and does architectural review plus a factual-claims audit on anything the diff writes into documentation.
 
-Bugs caught by a deeper tier often invalidate earlier-tier findings. If Sonnet spots a silent fallback that Haiku missed, the fix may touch the same file Haiku already approved. You can pretend the earlier approval is still valid. In practice it is not. The safer move is to re-run the cheap tier and re-verify. A hundred Haiku seconds against five minutes of Sonnet later is a trade you take every single time.
+If any of the three tiers fails, the whole loop restarts from Tier 1.
 
-## Why I built this in a harness, not a prompt
+Not continue-with-a-flag. Not "note the finding and keep going". Restart.
+
+That one rule is the thing that makes the review actually work, and it is the rule I kept getting wrong for about four months before it clicked.
+
+## Why restart-on-fail sounds harsh (and isn't)
+
+Here is the scenario I kept running into. Haiku would pass a file. Sonnet would find a silent exception handler in that same file and I would fix it. The file changed. Haiku's pass was now against a stale version of the file.
+
+The pragmatic move is to pretend the stale approval still holds. After all, it was only a small change. You fix. You mark Sonnet PASS. You move on.
+
+The problem is that "only a small change" is exactly the class of thing Haiku was supposed to catch. Maybe the fix introduced a debug print. Maybe it changed a magic number. Maybe it added a commented-out `# TODO`. Surface-level mistakes that Haiku would have caught the first time... but Haiku already ran. You cannot go back.
+
+Unless you can. And the fix is trivial. Any tier failure restarts the whole loop from Tier 1. Pass means all three tiers passed in a row, against the same final state of the code.
+
+Yes, it costs more tokens. A hundred Haiku seconds instead of zero. In exchange, every file in the final diff has actually been surface-reviewed in its final form, not in some intermediate state nobody remembers.
+
+It feels harsh on day one. After a month, you stop noticing the extra Haiku cycles and you start trusting the reviews in a way you did not before.
+
+## Why I built it in a harness, not a prompt
 
 <!-- iamhoi-skip -->
-I run my solo engineering workflow inside a single-source-of-truth harness I call SST3. Subagent orchestration, structured RESULT blocks, checkpoint MCP, explicit governance signals, voice guards, the whole stack. The harness is its own thing; the review loop is one component of it.
+I run my solo engineering workflow inside a [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) (single source of truth version 3), a governance harness I evolved out of the wreckage of my earlier multi-agent experiments. Subagent orchestration, structured RESULT blocks, checkpoint MCP servers, voice guards, the whole stack. The harness is its own thing; the review loop is one component.
 <!-- iamhoi-skipend -->
 
-The review loop used to live inside my private dotfiles repo. Good for me, useless to anyone else. Short of cloning my whole harness, no one could get the benefit of the checklist structure, the restart rule, the subagent discipline, or the two years of tightening that sit behind those checklist bullets.
+The review loop used to live inside my private dotfiles. Good for me. Useless to anyone else. Short of cloning my whole harness, no one could get the benefit of the checklist structure, the restart rule, the subagent discipline, or the months of tightening that sit behind those checklist bullets.
 
-The Anthropic Agent Skills open standard changed that. Since December 2025, there is a file format for describing a Skill, a package for describing a Plugin, and a marketplace format for listing them. The standard is clean. If I follow it, my private review loop becomes installable by anyone with Claude Code. Two lines:
+The Anthropic Agent Skills open standard changed the calculation. There is now a file format for describing a Skill, a package for describing a Plugin, and a marketplace format for listing them. If I follow the spec, my private review loop becomes installable by anyone with Claude Code. Two lines:
 
 ```
 /plugin marketplace add hoiung/sst3-skills
 /plugin install ralph-review-trio@sst3-skills
 ```
 
-That is the ship.
+That was the plan.
 
-## What makes this pack different from any other 3-tier review
+## The two things that broke on ship day
 
-There are already a dozen code-review packs on the marketplaces. Half of them use some variant of Haiku + Sonnet + Opus. The fact that you use three models at different depths is not a differentiator on its own.
+The plan did not survive first contact. It rarely does.
 
-Here is what is different in this one.
+**First break**: I packaged the plugin, pushed it to GitHub, ran the marketplace add from Claude Code. Succeeded. Ran the install. Failed.
 
-**Sequential with restart-on-fail, not parallel with aggregation.** Most tools run the three reviewers in parallel and aggregate their outputs. That feels efficient. It is actually the wrong shape for the problem. Failures at deeper tiers often change the correctness of earlier tiers; you need the loop to restart, not just note both findings and keep going.
+```
+Failed to install: invalid manifest file
+Validation errors: repository: Invalid input: expected string, received object
+```
 
-**Sample Invocation Gate.** For any change that touches a pipeline, a CLI wiring, a cross-module function-argument propagation, or a persistent-state write, Sonnet requires evidence of a real command invocation against a real database. Exit code zero is not enough. I have too many scars from exit-zero runs that wrote zero rows to trust a unit test on its own.
+My `plugin.json` had `repository` as an npm-style `{type, url}` object. Claude Code expected a plain URL string. JSON syntax was valid. Schema validation passed. The real install loader rejected it on a structural mismatch that no offline check would have caught.
 
-**Proof of Work governance signal.** If you are using a governance MCP server for checkbox tracking (I have one, it is trivial to adapt to any project), Opus checks that every checked box has a matching evidence entry in a canonical `## Proof of Work` section of the issue body. It will not accept narrative progress as evidence. The rule is strict because the consequence of soft governance is a shipped product where nobody can reconstruct what was verified against what.
+Fix was one character pair of braces. The lesson was not. A structural JSON-is-valid check is not a schema-conformance check. The only way to know your plugin spec is right is to run the install loader against it. (This is the pattern AP #18 exists for in my harness. The scar tissue is real.)
 
-**MCP availability discriminator.** Every reviewer subagent that touches code-graph queries must state `mcp_graph_available: yes | no` on the first line of its result. If it says yes and then falls back to grep, that is a fail. If it says no and falls back with documented evidence, that is a pass. This one rule kills the entire class of lazy-fallback bugs that would otherwise hide silently in review output.
+**Second break**: install succeeded after the fix. `/reload-plugins` showed the skill registered. I ran the trio on a test branch. The controller dispatched a subagent named `haiku-reviewer` and got:
 
-None of these are new inventions in software engineering. What is new is packaging them as a single, installable Claude Code plugin with an opinionated controller loop that enforces them.
+```
+Agent type 'haiku-reviewer' not found.
+Available agents: ralph-review-trio:haiku-reviewer, ralph-review-trio:sonnet-reviewer, ralph-review-trio:opus-reviewer
+```
 
-## The dogfood test, in detail
+Claude Code namespaces plugin-bundled agents as `<plugin-name>:<agent-name>`. My command file said "dispatch `haiku-reviewer`". Wrong. Needed to say "dispatch `ralph-review-trio:haiku-reviewer`".
 
-The run I started this post with. My branch on dotfiles had eight commits of mixed content, four Markdown files, 462 insertions, 42 deletions. Not a small review target. Not a large one either. A reasonable branch to test against.
+Another one-line fix. Pushed as v0.2 an hour later. But that is what the dogfood test is for... it is not the review that finds these. It is the real user session, the real controller, the real dispatch. No amount of unit testing against a mock plugin loader would have shown me either of those two bugs.
 
-Haiku finished in 101 seconds. Went through the file structure, the commit hygiene, the checkbox evidence, the governance evidence audit, the surface-level common-culprit scan. Passed.
+I shipped v0.2 before the dogfood run even started.
 
-Sonnet took five minutes and fifty-two seconds. Ran 60 tool uses. That is Sonnet actually tracing call sites, reading migrations, opening function bodies, verifying that null-propagation annotations match reality. It did not just skim. Passed.
+## What the dogfood run actually found
 
-Opus took two minutes fifty-six seconds. Reviewed the Sonnet result, did the governance drift audit (Tier A vs Tier B classification worked correctly), ran the overengineering check, looked at factual claims in documentation. Passed.
+After both fixes, the trio ran cleanly. On a non-trivial target: 4 Markdown files, 462 insertions, 42 deletions, 8 commits ahead of master. Not a toy review target.
 
-Five non-blocking observations flagged, none of them about the ship. They were about other work on the same branch. The review was honest.
+Haiku finished in 101 seconds. Walked the file structure, commit hygiene, checkbox evidence, governance evidence audit, surface-level common-culprit scan. Passed.
 
-Total ten and a half minutes of wall clock, 235,000 tokens. If you bill that against your Claude Code subscription, it is genuinely cheap for the depth of review. If you compare it to one round of actual human code review, it is an embarrassing saving.
+Sonnet took five minutes and fifty-two seconds. Ran 60 tool uses. That is Sonnet actually tracing call sites, reading migrations, opening function bodies, verifying null-propagation annotations match reality. Not skimming. 60 tool uses is real work. Passed.
+
+Opus took two minutes fifty-six seconds. Reviewed the Sonnet result, ran the governance drift audit (Tier A vs Tier B cadence classification worked correctly), did the overengineering check, ran the factual claims audit. Passed.
+
+Five non-blocking observations flagged, all about other work on the same branch, none about the ship. The review was honest.
+
+Ten and a half minutes of wall clock. 235,000 tokens. 116 tool uses total. If you bill that against your Claude Code subscription, it is genuinely cheap for the depth of review. If you compare it to one round of human code review... it is an embarrassing saving.
+
+## What makes this pack different from a generic 3-tier
+
+There are already several 3-tier review packs on the marketplaces. Using three models at three depths is not a differentiator on its own.
+
+Four hooks kept from the harness that I think earn their keep. Sequential restart-on-fail is the big one (covered above). The other three:
+
+Sample Invocation Gate: for any change that touches a pipeline, CLI wiring, cross-module function-argument propagation, or a persistent-state write, Sonnet will not pass without evidence of a real command invocation against a real database. Exit code zero is not enough. AP #18 in the harness exists because exit-zero runs that wrote zero rows are a silent-failure class I have fixed too many times.
+
+Proof of Work governance signal: if you use a governance MCP server for checkbox tracking (I have one), Opus checks that every checked box has a matching evidence entry in a canonical `## Proof of Work` section of the issue body. It refuses narrative-only progress. The rule is strict because soft governance produces shipped products where nobody can reconstruct what was verified against what.
+
+MCP availability discriminator: every reviewer subagent that touches code-graph queries must state `mcp_graph_available: yes | no` on the first line of its result block. `yes` plus grep-only evidence is a fail; `no` plus documented grep fallback is a pass. This one line kills the class of lazy-fallback bugs that would otherwise hide silently in review output.
+
+None of these are new inventions. What is new is packaging them as one installable plugin with an opinionated controller loop.
 
 ## Where the provenance ends up
 
-The source of these reviewers is scrubbed from my private dotfiles at commit `9249dbf`. That scrub pin goes into the public README so any future drift between the private canonical and the public pack is auditable. Business identifiers, private trading internals, file paths that reference my own machine, all stripped before the first commit to the public repo landed.
+The reviewers are scrubbed from my private dotfiles at commit `9249dbf`. That scrub pin goes into the public README so any future drift between the private canonical and the public pack is auditable. Business identifiers, private trading internals, machine-specific paths... all stripped before the first commit landed in the public repo.
 
 What stays is the pattern teeth. The sequential restart rule. The Sample Invocation Gate. The Proof of Work signal. The MCP availability discriminator. Those are the things worth shipping; the rest was scaffolding.
 
-## What this pack does not do
+## What this pack does NOT do
 
-It does not replace human review. It is a pre-human-review verification that every tier's checklist got walked. The human still reads the diff, asks the architectural question, spots the thing nobody thought to put in a checklist. This tool is a floor, not a ceiling.
+It does not replace human review. It is the pre-human-review floor. Every tier's checklist got walked, evidence was captured, structured findings were produced. The human still reads the diff, asks the architectural question, spots the thing nobody put in a checklist.
 
-It does not guarantee your code is bug-free. Three reviewers at three depths will miss bugs. Anyone claiming otherwise is selling snake oil. What it does is remove the class of bugs that a structured checklist would have caught, before the human gets involved.
+Bug-free code is not a thing it guarantees. Three reviewers at three depths will miss bugs. Anyone claiming otherwise is selling snake oil.
 
-It does not work well on work-in-progress branches. The checklist assumes the change is code-complete. Running it mid-implementation gives you a hundred false positives because half the features are not wired yet.
+Work-in-progress branches are not its problem space either. The checklist assumes the change is code-complete. Run it mid-implementation and you will get a hundred false positives because half the features are not wired yet.
 
 ## Install
 
@@ -95,12 +139,16 @@ It does not work well on work-in-progress branches. The checklist assumes the ch
 
 Then, when a branch is code-complete, `/ralph-review-trio`.
 
-MIT licensed. Fork it, adapt it, ship your own flavour. The repository is [github.com/hoiung/sst3-skills](https://github.com/hoiung/sst3-skills). Issues and PRs welcome. If you find a class of bug the checklist misses, tell me and I will fold it in.
+MIT licensed. Fork it, adapt it, ship your own flavour. Repository: [github.com/hoiung/sst3-skills](https://github.com/hoiung/sst3-skills). Issues and PRs welcome. If you find a class of bug the checklist misses, tell me and I will fold it in.
 
 ## What comes next
 
-Two more packs are drafted in private but not yet public. Solo workflow governance (phase-checkpoint discipline, branch-safety rules, merge gate) and subagent swarm patterns (layered cross-checking, RESULT block schema, frozen scope snippets). Both need their own validation before I put them into the marketplace. If the Ralph Review Trio pack gets any traction, the other two follow.
+Two more packs drafted privately but not public yet. Solo workflow governance (phase-checkpoint discipline, branch safety, merge gates) and subagent swarm patterns (layered cross-checking, RESULT schema, frozen scope snippets). Both need their own validation before they land in the marketplace.
 
-If none of them ship, none of them ship. I have a kill date on the whole experiment. Ninety days from today. No stars, no installs, no signups, no inbound leads, the project comes home and I redirect the effort to something else. Building the distribution surface is the bet; the packs are the test.
+If the Ralph Review Trio pack gets any traction, the other two follow. If it does not... neither do they.
+
+Ninety-day kill date on the whole experiment. No stars, no installs, no signups, no inbound leads at the end of that window? Project comes home. Effort redirects to something winning. No ego in the kill decision.
+
+The bet is the distribution surface. The packs are the test.
 
 <!-- iamhoiend -->
