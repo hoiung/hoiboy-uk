@@ -13,7 +13,7 @@ images:
 
 <!-- iamhoi -->
 
-A week ago I published the [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reshapeable-knife post and closed it with "watch this space. More posts coming on the specific bits. The voice guard for writing." This is that post. It is about a marketing trick applied to a person.
+A week ago I published the [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) reshapeable-knife post and closed it with "watch this space. More posts coming on the specific bits. The voice guard for writing." This is that post. It is about a marketing trick applied to a person.
 
 Here is what drove it. 3 years of watching AI write, from ChatGPT through to Claude. The pattern does not shift. Mechanical. Generic. Buzzword-heavy. A love for uncommon acronyms everyday readers will not understand. Same tell across every new model. This post is what I did with the observation.
 
@@ -35,7 +35,7 @@ This is the marketer's trick if you think about it. Brand guidelines exist becau
 
 Marketing people do 3 things. They collect the raw artefacts (ads, posts, taglines). They analyse the pattern. They write the rules down.
 
-I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 separate platforms: a Joomla adventure blog (where my early dance writing also lived), 3 WordPress dance-community sites, 2 sets of Google Docs drafts, a Google Drive internal archive, and this Hugo blog. The goal was not to admire the archive. The goal was to pull the pattern out. That took a swarm of subagents in my [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) reading it all. No single AI context can hold 161,000 words and keep its attention honest.
+I did the same with my writing. 12 years of it. 59 entries. About 161,000 words. 8 separate platforms: a Joomla adventure blog (where my early dance writing also lived), 3 WordPress dance-community sites, 2 sets of Google Docs drafts, a Google Drive internal archive, and this Hugo blog. The goal was not to admire the archive. The goal was to pull the pattern out. That took a swarm of subagents in my [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) reading it all. No single AI context can hold 161,000 words and keep its attention honest.
 
 350 sentences profiled. 9 voice registers (the sober technical me, the gym-rat me, the drunk-kebab me, the dance-fanatic me, the entrepreneur me, and 4 shades in between). 30 AI tells catalogued as smoking-gun absences (words AI loves that my writing has exactly zero of across 161,000 words). 37 rescue rules for when a draft had started to drift.
 
@@ -107,7 +107,7 @@ Emails come next. Cold follow-ups, recruiter replies, client comms. Same voice f
 
 Businesses last. Product descriptions for an online store I run, website copy for a side project called id8u, reply macros for customer-support tickets. Small-commerce English is usually the first place brand voice collapses. It does not have to.
 
-The [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) framework underneath wires the voice profile into every one of those skills. If an AI draft sneaks a banned word through, the pre-commit hook catches it. If the hook misses, CI catches it. If both miss, the drift guard catches stale rule copies. 3 layers, 1 source of truth.
+The [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) framework underneath wires the voice profile into every one of those skills. If an AI draft sneaks a banned word through, the pre-commit hook catches it. If the hook misses, CI catches it. If both miss, the drift guard catches stale rule copies. 3 layers, 1 source of truth.
 
 One receipt on whether any of this dilutes my voice. I keep a private draft of every big post uncensored, alongside the version I publish publicly. On a recent side-by-side across about 8,000 words, the two versions were 95% identical. I softened exactly 1 line (too personal about a family member). Professional me is not a different person from private me. The rails did their job.
 
