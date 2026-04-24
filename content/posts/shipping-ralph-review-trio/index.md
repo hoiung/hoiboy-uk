@@ -52,7 +52,7 @@ Three and a half months later, the same three files add up to 416 lines and the 
 
 A few catches worth naming, so you do not have to take the shape on faith. Ralph flagged its own hardcoded repository-path assumption hiding in the Haiku tier (`dotfiles#399`). It caught a database helper returning dict-row cursors while callers still indexed by `[0]` tuple style: eight latent bugs across hot paths, one of which was silently writing NULL foreign keys for roughly three out of four audit rows (`auto_pb#1415`). It caught a cache helper quietly substituting a default argument whenever callers forgot to pass one, pretending the code was fine; the fix made the argument required and raised loudly on omission (`auto_pb#1442`). The pattern earns its keep by catching things I was sure were fine.
 
-This is the kind of thing I think of as elegant engineering. Small idea on top of someone else's small idea, neither complicated on its own, both tightening each other. Since it went live in January Ralph has been a reliable bug-catching machine. It just works.
+Ralph is a reliable bug-catching machine. It just works. Simple.
 
 The reviewers lived inside my private dotfiles. Good for me. Useless to anyone else. The Anthropic Agent Skills open standard (December 2025) gave a clean format to publish in: a Skill file, a Plugin package, a marketplace manifest. Two lines to install:
 
