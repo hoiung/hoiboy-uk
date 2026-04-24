@@ -42,11 +42,11 @@ It feels harsh on day one. After a month, you stop noticing the extra Haiku cycl
 
 ## Where the pattern comes from
 
-Ralph is not mine. It comes from [Geoffrey Huntley](https://ghuntley.com/ralph): a while-true loop that re-feeds the same prompt to an agent until it emits a completion promise, with failures treated as deterministic and prompt-tunable. Anthropic published an official `ralph-loop` plugin implementing the mechanic as a slash command, and that plugin is what powers each tier inside mine.
+Ralph is not mine. It comes from [Geoffrey Huntley](https://ghuntley.com/ralph): a while-true loop that re-feeds the same prompt to an agent until it emits a completion promise. Anthropic published an official `ralph-loop` plugin implementing the mechanic as a slash command, and that plugin is what powers each tier inside mine.
 
 What I layered on top is the three-tier cost-stratified orchestration. One Ralph loop per tier, not one long loop for the whole review. Haiku runs its own ralph-loop against the surface checklist until it emits `<promise>HAIKU_PASS</promise>`. Sonnet runs its own loop against the logic checklist. Opus runs its own loop against the architectural checklist. The controller dispatches them in order, and any deep-tier failure restarts the whole stack from Tier 1.
 
-The 3-tier stack entered [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) on 8 January 2026. The initial scaffolding (three tier checklists, a dispatch controller, a restart rule, ~142 combined lines) was all in place within a single evening, committed against `dotfiles#391`.
+The 3-tier stack entered [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) on 8 January 2026. The initial scaffolding (three tier checklists, a dispatch controller, a restart rule, ~142 combined lines) was all in place within a single evening, committed against `dotfiles#391`.
 
 Three and a half months later, the same three files add up to 416 lines and the checklists have been pulled into more than 430 issues across my two main repos, with ~155 of those closing with all three tier-pass tokens emitted. Over 250 commits across the two repos reference Ralph activity directly. Every new line in a checklist traces back to a class of bug that slipped through an earlier review. The evolution has been bursty-reactive, not gradual: a long quiet middle, then 21 tier-checklist upgrades in 19 days after a cross-boundary contract post-mortem (`auto_pb#1407`) triggered a cascade of governance integrations (Sample Invocation Gate, MCP availability discriminator, Checkbox-MCP audit, Proof of Work canonical signal).
 
@@ -97,13 +97,13 @@ After both fixes, the trio ran cleanly. On a non-trivial target: 4 Markdown file
 
 Haiku finished in 101 seconds. Walked the file structure, commit hygiene, checkbox evidence, governance evidence audit, surface-level common-culprit scan. Passed.
 
-Sonnet took five minutes and fifty-two seconds. Ran 60 tool uses, actually tracing call sites, reading migrations, opening function bodies, verifying null-propagation. Not skimming. Passed.
+Sonnet took five minutes and fifty-two seconds. Ran 60 tool uses, tracing call sites, reading migrations, opening function bodies, verifying null-propagation. Not skimming. Passed.
 
-Opus took two minutes fifty-six seconds. Reviewed the Sonnet result, ran the governance drift audit (Tier A vs Tier B cadence worked correctly), overengineering check, factual claims audit. Passed.
+Opus took two minutes fifty-six seconds. Reviewed the Sonnet result, ran the governance drift audit, overengineering check, factual claims audit. Passed.
 
 Five non-blocking observations flagged, all about other work on the same branch, none about the ship. The review was honest.
 
-Ten and a half minutes of wall clock. 235,000 tokens. 116 tool uses. Against your Claude Code subscription, cheap for the depth. Against one round of human code review... an embarrassing saving.
+Ten and a half minutes of wall clock. 235,000 tokens. 116 tool uses. Against your Claude Code subscription, cheap for the depth. Against one human review... an embarrassing saving.
 
 ## What makes this pack different from a generic 3-tier
 
@@ -127,7 +127,9 @@ What stays is the pattern teeth. The sequential restart rule. The Sample Invocat
 
 ## What this pack does NOT do
 
-A few things it does not do. It does not replace human review; it is the pre-human-review floor where every tier's checklist got walked and structured findings are ready for the human. It does not guarantee bug-free code. Three reviewers at three depths will miss things. Anyone claiming otherwise is selling snake oil. It does not work on work-in-progress branches; the checklist assumes the change is code-complete, and running it mid-implementation floods you with false positives.
+It does not replace human review. It is the pre-human-review floor where every tier's checklist got walked and structured findings are ready for the human. It does not guarantee bug-free code. Three reviewers at three depths will miss things. It does not work on work-in-progress branches; the checklist assumes the change is code-complete, and running it mid-implementation floods you with false positives.
+
+It also works alone, but it works better inside a harness. The same three tier checklists ship as part of [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness). The standalone plugin exists for people who want to dissect the pattern, or wire the same loop into a review for an LLM other than Claude.
 
 ## Install
 
@@ -147,7 +149,7 @@ Two more packs drafted privately. Solo workflow governance (phase-checkpoint dis
 
 If the Ralph Review Trio pack gets traction, the other two follow. If it does not, neither do they.
 
-Ninety-day kill date on the whole experiment. No stars, no installs, no signups, no inbound leads at the end of that window and the project comes home. No ego in the kill.
+Ninety-day kill date. No stars, no installs, no signups, no inbound leads at the end of that window and the project comes home. No ego in the kill.
 
 The bet is the distribution surface. The packs are the test.
 
