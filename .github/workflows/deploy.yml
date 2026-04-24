@@ -38,5 +38,13 @@ jobs:
           HOOK: ${{ secrets.CF_PAGES_DEPLOY_HOOK }}
         run: |
           set -e
-          RESP=$(curl -fsS -X POST "$HOOK")
+          RESP=$(curl -fSs -X POST "$HOOK")
           echo "Cloudflare response: $RESP"
+          # Validate response robustly for BOTH JSON and non-JSON shapes.
+          # Cloudflare usually replies {"result":"ok", ...}; errors may be
+          # plaintext or HTML. jq -e returns non-zero if the selector does
+          # not match, which trips the shell into the fallback branch that
+          # exits loudly with the raw response in the log.
+          # Canonical: dotfiles#438 Phase 8 (silent-fail-on-malformed fix).
+          echo "$RESP" | jq -e '.result == "ok"' >/dev/null 2>&1 \
+            || { echo "::error::Cloudflare deploy hook returned non-OK or non-JSON response: $RESP"; exit 1; }
