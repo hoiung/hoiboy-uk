@@ -3,7 +3,7 @@ title: "Skills"
 description: "SST3-AI-Harness skills, packaged up as installable Claude Code plugins. Free, MIT-licensed, dogfooded."
 ---
 
-A small, growing collection of the workflows that run inside [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness), packaged as installable Claude Code plugins. Free. MIT-licensed. Dogfooded on the same code that produced them.
+A small, growing collection of the workflows that run inside [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness), packaged as installable Claude Code plugins. Free. MIT-licensed. Dogfooded on the same code that produced them.
 
 One pack ships live today. The rest follow if this one finds an audience.
 
