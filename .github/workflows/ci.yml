@@ -22,7 +22,7 @@ jobs:
       HUGO_ENV: production
       GOMEMLIMIT: 2GiB
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: false
