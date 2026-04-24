@@ -25,7 +25,7 @@ Then, when a branch is code-complete, run `/ralph-review-trio`.
 
 ### Links
 
-- **Deep dive**: [Three Reviewers, Restart on Fail. Why I Shipped It.](/posts/shipping-ralph-review-trio/)
+- **Deep dive**: [Three Reviewers, Restart on Fail. Why I Shipped It.]({{< ref "/posts/shipping-ralph-review-trio" >}})
 - **Source**: [github.com/hoiung/sst3-skills](https://github.com/hoiung/sst3-skills)
 - **Scrubbed from private dotfiles @ commit `9249dbf`**. Public pack drift against that pin is auditable.
 
