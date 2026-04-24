@@ -214,7 +214,7 @@ Back to voice prose, scanned.
 - *False positives*: legitimate proper-noun usage of a banned word (e.g. "AI Harness Engineer" role title) goes outside markers, OR inside an `<!-- iamhoi-skip -->` block.
 - *Adding a new banned word*: edit `../dotfiles/SST3/scripts/voice_rules.py` (canonical) AND `VOICE_PROFILE.md` Section 8 (human companion). Re-vendor into hoiboy-uk. The drift check enforces parity.
 
-**Run locally**: `python3 scripts/check_voice_tells.py --check-only-new`
+**Run locally**: `python3 scripts/check-ai-writing-tells.py --check-only-new`
 
 ## References
 
