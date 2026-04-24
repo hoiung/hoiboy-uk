@@ -15,7 +15,7 @@ A lot, as it turns out.
 
 ## What SST2 taught me
 
-Before [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) there was SST2. SST2 was a multi-agent setup: one orchestrator, a pool of specialist agents, coordination messages flying between them, and every agent holding a loaded write-access permission. Lots of parallel writers. My own guardrails welded on the side. I thought throughput was the answer.
+Before [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) there was SST2. SST2 was a multi-agent setup: one orchestrator, a pool of specialist agents, coordination messages flying between them, and every agent holding a loaded write-access permission. Lots of parallel writers. My own guardrails welded on the side. I thought throughput was the answer.
 
 It was a disaster.
 
@@ -121,6 +121,6 @@ You should always keep a human eye on it. Or at least one eye on it. The harness
 
 I spend more tokens on scope than on code. It is not a quirk. It is the whole method.
 
-If you want the longer story about why the harness exists and how the cross-department stuff works, I wrote that up separately: [SST3-AI-Harness. Why I Built a Hero Suit for AI.](https://hoiboy.uk/posts/sst3-ai-harness-reshapeable-knife/). If you want the code and the repo, [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) is public. Clone, install, and give it a weekend. The scoping step feels heavy the first time. By the third Issue you will wonder how you ever shipped anything without it.
+If you want the longer story about why the harness exists and how the cross-department stuff works, I wrote that up separately: [SST3-AI-Harness. Why I Built a Hero Suit for AI.](https://hoiboy.uk/posts/sst3-ai-harness-reshapeable-knife/). If you want the code and the repo, [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) is public. Clone, install, and give it a weekend. The scoping step feels heavy the first time. By the third Issue you will wonder how you ever shipped anything without it.
 
 <!-- iamhoiend -->
