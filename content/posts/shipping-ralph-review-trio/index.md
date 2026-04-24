@@ -1,7 +1,6 @@
 ---
 title: "Three Reviewers, Restart on Fail. Why I Shipped It."
 date: 2026-04-24
-draft: true
 categories: [tech-ai]
 tags: [ai, claude-code, sst3, code-review, plugin-marketplace]
 slug: shipping-ralph-review-trio
