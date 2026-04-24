@@ -15,8 +15,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      passed: ${{ steps.done.outputs.passed }}
     env:
       HUGO_ENV: production
       GOMEMLIMIT: 2GiB
@@ -198,6 +196,3 @@ jobs:
           name: public
           path: public
           retention-days: 7
-
-      - id: done
-        run: echo "passed=true" >> "$GITHUB_OUTPUT"
