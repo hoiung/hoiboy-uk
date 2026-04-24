@@ -94,7 +94,7 @@ When I dance with someone who hasn't improved in god-knows how many years, it's 
 
 Do younger, hotter, prettier, better-looking dancers get more dances? Yeah, they do. Is that fair? Well, fair or not, it's the reality of a social dance floor. My counter is simple. If you're one of those dancers, use this window to improve really really quickly. Looks fade. Dances don't have to.
 
-And just to be clear, I don't have time for pretty dancers who are bad for my back. If they don't improve, I'll seldom dance with them again. Not out of spite, just out of injury risk. I enjoy dancing through someone's journey, I don't enjoy reliving the same day over and over like a dance version of Groundhog Day (if you've ever seen the movie, great classic, must watch, one of the few I actually recommend rewatching every few years).
+And just to be clear, I don't have time for pretty dancers who are bad for my back. If they don't improve, I'll seldom dance with them again. Not out of spite, just out of injury risk. I enjoy dancing through someone's journey, I don't enjoy reliving the same day over and over like a dance version of Groundhog Day (if you've ever seen the movie, great classic, must watch, one of the few I actually recommend rewatching every few years, because you only want to relive it if it's actually good haha).
 
 ## Closing thoughts
 
