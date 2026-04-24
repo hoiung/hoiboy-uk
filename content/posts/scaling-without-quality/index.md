@@ -63,7 +63,7 @@ That's the disaster I've been building the opposite of. Not on purpose. I was ju
 
 Turned out I was ahead of the game. AI labs and indie builders are only talking about harnesses now, in the last couple of months or so. Feels like I was barking up the right tree and clocked what was missing with AI before most people did.
 
-## So I Built [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) the Opposite Way
+## So I Built [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) the Opposite Way
 
 SST3-AI-Harness is the frame I built (by mistake) to run AI agents under strict rules. Scaffolding that keeps the AI honest. No hiring sprint. No parallel squads. One person directing a single main orchestrator, with one shared ruleset for everything.
 
