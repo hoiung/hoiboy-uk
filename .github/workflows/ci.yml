@@ -92,7 +92,7 @@ jobs:
         run: pip install --quiet -r requirements-dev.txt
 
       - name: Voice guard tells (marker-driven, new posts only)
-        run: python3 scripts/check_voice_tells.py --check-only-new content/ docs/
+        run: python3 scripts/check-ai-writing-tells.py --check-only-new content/ docs/
 
       - name: Word-count ceiling
         run: |
