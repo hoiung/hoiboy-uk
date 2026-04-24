@@ -1,6 +1,6 @@
 ---
 title: "Why I Spend More Tokens Refining Scope Than Writing Code"
-date: 2026-04-15
+date: 2026-04-17
 categories: [tech-ai]
 tags: [ai, claude-code, sst3, governance, project-management]
 slug: why-scope-beats-code
