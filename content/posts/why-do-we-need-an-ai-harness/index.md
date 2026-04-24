@@ -1,7 +1,7 @@
 ---
 title: "Why Do We Need an AI Harness?"
-date: 2026-04-24
-draft: true
+date: 2026-04-15
+draft: false
 slug: why-do-we-need-an-ai-harness
 categories: [tech-ai]
 tags: [ai, harness, llm, guardrails, sst3]
