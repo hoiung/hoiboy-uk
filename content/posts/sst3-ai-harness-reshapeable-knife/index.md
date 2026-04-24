@@ -12,7 +12,7 @@ description: "Why I built SST3-AI-Harness, how the reshapeable-knife idea works 
 
 Anywhere between 6 and 12 hours depending on how busy the week was. Same patterns. Same indicators. Same exhausting slog of "is this a real bounce or am I about to get slapped in the face by the market?" Constantly trying to figure out what works and what doesn't, how it works, and why it works. Then figuring out how to test the thing that seemed to work. Then trying to work out whether it was ACTUALLY working or just overfitted nonsense that looked brilliant on paper and would fall apart the moment the stock's personality shifted. (I didn't have a backtest system back then, so "on paper" really meant manually reviewing charts by eye. Basically theory. Dangerous theory with no data to back it up.) The eBay side hustle was the thing I'd poke at whenever I had a little extra time. Honestly, mostly procrastination.
 
-The trading platform though. That was the real project. And that's actually the reason [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) exists. I didn't set out to build a methodology framework. I set out to build a trading system, and I kept running head-first into the same wall: AI without guardrails, standards, governance, and (most importantly) PROCESS is a glorious mess. Actually, "process" is being generous. What process?
+The trading platform though. That was the real project. And that's actually the reason [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) exists. I didn't set out to build a methodology framework. I set out to build a trading system, and I kept running head-first into the same wall: AI without guardrails, standards, governance, and (most importantly) PROCESS is a glorious mess. Actually, "process" is being generous. What process?
 
 To actually get past theory and into something real, I had to pour in my entire life's worth of knowledge, experience, and engineering thought process. Every pattern I'd picked up across 20+ years of IT, every lesson from running small businesses, every hard-earned instinct from staring at charts long enough to know what NOT to trust. All of it went into turning "this might work" into "here's the data that proves it works, here's the test that proves it keeps working, and here's the guardrail that stops the AI from silently breaking it next week".
 
@@ -43,7 +43,7 @@ Something had to give.
 
 ## What I built
 
-[SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) is what I built to fix it.
+[SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) is what I built to fix it.
 
 Quick name decode, because people keep asking.
 
@@ -54,7 +54,7 @@ Short version: it's a Single-Source-of-Truth methodology framework plus a stack 
 
 Do I fully trust it? Absolutely not. And honestly, you should NEVER fully trust AI. That's rule number one. It doesn't matter how good the harness is, how shiny the guardrails are, how many reviews you stack. You always keep a human eye on it.
 
-With [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) around the AI, my working trust level sits at about 80%. Not 100%. Not even 90%. Eighty. I'm a big believer in the 80:20 rule and this is no different. 80% of the output is clean enough to use with light review. The other 20% I still watch carefully, red pen in hand. That 20% is the grey area where the AI tends to fudge things, and over time you learn exactly where it usually tries to.
+With [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) around the AI, my working trust level sits at about 80%. Not 100%. Not even 90%. Eighty. I'm a big believer in the 80:20 rule and this is no different. 80% of the output is clean enough to use with light review. The other 20% I still watch carefully, red pen in hand. That 20% is the grey area where the AI tends to fudge things, and over time you learn exactly where it usually tries to.
 
 But that's miles better than before. Before, the ratio was flipped: maybe 20% usable, 80% slop and bullshit. The harness turned that around. Doesn't mean I've handed over the keys. Means the keys are safer in my hand while the AI does the driving under supervision.
 
@@ -64,7 +64,7 @@ Think horse harness, parachute harness, climbing harness. The bit that lets powe
 
 ## The reshapeable knife
 
-There's a metaphor I use in the [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) README and I want to expand on it, because a lot of people miss the point.
+There's a metaphor I use in the [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) README and I want to expand on it, because a lot of people miss the point.
 
 A knife is a knife is a knife. Right?
 
@@ -115,7 +115,7 @@ Here's what Claude (or any LLM) does left unsupervised. I say this with love. I 
 
 It's a cowboy. It's a loose cannon. It's the Wild West with extra confidence. Brilliant when directed. Chaos when not.
 
-[SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) is the sheriff.
+[SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) is the sheriff.
 
 ## How the harness clamps the cowboy
 
@@ -145,7 +145,7 @@ Is it perfect? No. Is it very very much better than Claude Code out of the box? 
 
 Here's where most people stop reading because they think this is developer stuff. Don't.
 
-Every department has its own SMEs (Subject Matter Experts, the people who actually know the job). Every department drowns in repetitive work. Every department has quality standards that get skipped under deadline pressure. [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) is NOT an IT tool. It's a methodology framework for wrapping AI with guardrails. And guardrails apply everywhere.
+Every department has its own SMEs (Subject Matter Experts, the people who actually know the job). Every department drowns in repetitive work. Every department has quality standards that get skipped under deadline pressure. [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) is NOT an IT tool. It's a methodology framework for wrapping AI with guardrails. And guardrails apply everywhere.
 
 **Marketing.** Your brand voice is a voice profile. Your anti-vocab list (words your brand NEVER uses) is a guardrail. Your SEO checklist is a pre-commit hook. Your approval gates before a campaign goes live is a 3-tier review. The structure maps one-to-one. I literally built one for this blog so every new post gets scanned for AI tells before it goes live. Same playbook works for brand copy, ad scripts, press releases.
 
@@ -229,13 +229,13 @@ You don't need to copy my whole setup. Start small.
 
 You've just built a micro-harness. That is SST3 in miniature. Now scale it to your second task. Your third. Your tenth.
 
-The [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) repo is public on GitHub. MIT-licensed. Steal what's useful. Ignore what's not. Fork it, finetune it, ship it inside your own tooling. I wrote it to be a generalist with enough finetune points that it becomes a specialist in your hands.
+The [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) repo is public on GitHub. MIT-licensed. Steal what's useful. Ignore what's not. Fork it, finetune it, ship it inside your own tooling. I wrote it to be a generalist with enough finetune points that it becomes a specialist in your hands.
 
 ### For non-techies
 
 If you don't write code, this is still for you. You don't need to clone anything. Open ChatGPT, Claude chat, or whichever AI you already use, and paste this prompt:
 
-> *"Read the README at https://github.com/hoiung/SST3-AI-Harness and walk me through setting it up for my work. I'm not a developer. Explain each step in plain English, tell me what to install, and flag anything that needs a paid plan before I start."*
+> *"Read the README at https://github.com/hoiung/sst3-ai-harness and walk me through setting it up for my work. I'm not a developer. Explain each step in plain English, tell me what to install, and flag anything that needs a paid plan before I start."*
 
 That's it. The AI will do the reading for you and hand you back a plain-English setup plan.
 
