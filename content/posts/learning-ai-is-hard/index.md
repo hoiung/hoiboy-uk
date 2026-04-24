@@ -56,6 +56,8 @@ If it is the second one, I close the tab. That is not teaching you how to use AI
 
 That is why having a harness matters. (Mine is [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness). Use it, fork it, or roll your own. The point is you have one.) I built it because I was sick of the AI quietly wandering off task while I blinked. A harness doesn't kill the randomness (nothing does, that is how LLMs work). What it does is pull every output closer to what you actually asked for and catch the drift early, run after run. Closer every time. That is all you need.
 
+More on that here: [Why Do We Need an AI Harness?](/posts/why-do-we-need-an-ai-harness/)
+
 ## The real ones never say it's easy
 
 Here is the other tell. Notice who is actually selling the shortcut and who is not.
