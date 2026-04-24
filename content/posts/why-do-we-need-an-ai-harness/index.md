@@ -56,6 +56,8 @@ This is what the industry has quietly converged on. Simon Willison [calls the wh
 
 I am an engineer. Just not an ML engineer. Twenty years in IT, data centres and infrastructure. Serial entrepreneur. Reseller. Swing trader. PMP project management certification, once upon a time. All of that taught me how to plan, design, build, and ship anything of high quality execution. Which is pretty much what you need to build a harness. Got burned enough times by the random-answer problem to build the guardrails I needed. Nine months of twelve-to-fifteen-hour days, one harness later. It is public, MIT licensed, and free to use: [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness). You need Claude Code to run it end-to-end, and it is opinionated, but it is real, and it ships. I publish my work for the public so other small operators and domain experts can see what they might build for themselves.
 
+More on the journey that got me here: [Learning AI Is Hard. Really.](/posts/learning-ai-is-hard/)
+
 ## So
 
 Go use it. Fork it. Build your own. Do any of it. Or keep being surprised that the same prompt gives you different answers twice.
