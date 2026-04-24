@@ -34,9 +34,9 @@ The pragmatic move is to pretend the stale approval still holds. After all, it w
 
 The problem is that "only a small change" is exactly the class of thing Haiku was supposed to catch. Maybe the fix introduced a debug print. Maybe it changed a magic number. Maybe it added a commented-out `# TODO`. Surface-level mistakes that Haiku would have caught the first time... but Haiku already ran. You cannot go back.
 
-Unless you can. And the fix is trivial. Any tier failure restarts the whole loop from Tier 1. Pass means all three tiers passed in a row, against the same final state of the code.
+Unless you can. The fix is trivial: any tier failure restarts the whole loop from Tier 1. Pass means all three tiers passed in a row against the same final state.
 
-Yes, it costs more tokens. A hundred Haiku seconds instead of zero. In exchange, every file in the final diff has actually been surface-reviewed in its final form, not in some intermediate state nobody remembers.
+Yes, it costs more tokens. A hundred Haiku seconds instead of zero. In exchange, every file in the final diff has actually been surface-reviewed in its final form.
 
 It feels harsh on day one. After a month, you stop noticing the extra Haiku cycles and you start trusting the reviews in a way you did not before.
 
@@ -46,7 +46,13 @@ Ralph is not mine. It comes from [Geoffrey Huntley](https://ghuntley.com/ralph):
 
 What I layered on top is the three-tier cost-stratified orchestration. One Ralph loop per tier, not one long loop for the whole review. Haiku runs its own ralph-loop against the surface checklist until it emits `<promise>HAIKU_PASS</promise>`. Sonnet runs its own loop against the logic checklist. Opus runs its own loop against the architectural checklist. The controller dispatches them in order, and any deep-tier failure restarts the whole stack from Tier 1.
 
-The 3-tier stack entered [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) (my single-source-of-truth governance harness) on 8 January 2026. The initial scaffolding (three tier checklist files, the dispatch controller, the restart rule) was all in place within a single evening, committed against `dotfiles#391`. Three and a half months of real bug catches since then have tightened the checklists organically. Ralph once flagged its own hardcoded repository-path assumption hiding in the Haiku tier (that fix shipped as `dotfiles#399`). Another time it caught a cross-boundary contract gap in a production service, which drove an upgrade that added explicit cross-boundary contract verification (code to DB, code to config, caller to callee) into every tier file. The pattern earns its keep by catching things I was sure were fine.
+The 3-tier stack entered [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) on 8 January 2026. The initial scaffolding (three tier checklists, a dispatch controller, a restart rule, ~142 combined lines) was all in place within a single evening, committed against `dotfiles#391`.
+
+Three and a half months later, the same three files add up to 416 lines and the checklists have been pulled into more than 430 issues across my two main repos, with ~155 of those closing with all three tier-pass tokens emitted. Over 250 commits across the two repos reference Ralph activity directly. Every new line in a checklist traces back to a class of bug that slipped through an earlier review. The evolution has been bursty-reactive, not gradual: a long quiet middle, then 21 tier-checklist upgrades in 19 days after a cross-boundary contract post-mortem (`auto_pb#1407`) triggered a cascade of governance integrations (Sample Invocation Gate, MCP availability discriminator, Checkbox-MCP audit, Proof of Work canonical signal).
+
+A few catches worth naming, so you do not have to take the shape on faith. Ralph flagged its own hardcoded repository-path assumption hiding in the Haiku tier (`dotfiles#399`). It caught a database helper returning dict-row cursors while callers still indexed by `[0]` tuple style: eight latent bugs across hot paths, one of which was silently writing NULL foreign keys for roughly three out of four audit rows (`auto_pb#1415`). It caught a cache helper quietly substituting a default argument whenever callers forgot to pass one, pretending the code was fine; the fix made the argument required and raised loudly on omission (`auto_pb#1442`). The pattern earns its keep by catching things I was sure were fine.
+
+This is the kind of thing I think of as elegant engineering. Small idea on top of someone else's small idea, neither complicated on its own, both tightening each other. Since it went live in January the process itself has almost never broken. The bugs it surfaces break. The loop that surfaces them holds.
 
 The reviewers lived inside my private dotfiles. Good for me. Useless to anyone else. The Anthropic Agent Skills open standard (December 2025) gave a clean format to publish in: a Skill file, a Plugin package, a marketplace manifest. Two lines to install:
 
@@ -70,7 +76,7 @@ Validation errors: repository: Invalid input: expected string, received object
 
 My `plugin.json` had `repository` as an npm-style `{type, url}` object. Claude Code expected a plain URL string. JSON syntax was valid. Schema validation passed. The real install loader rejected it on a structural mismatch that no offline check would have caught.
 
-Fix was one character pair of braces. The lesson was not. A structural JSON-is-valid check is not a schema-conformance check. The only way to know your plugin spec is right is to run the install loader against it. (This is the pattern AP #18 exists for in my harness. The scar tissue is real.)
+Fix was one character pair of braces. The lesson was not. A structural JSON-is-valid check is not a schema-conformance check. The only way to know your plugin spec is right is to run the install loader against it. (AP #18 in my harness exists for exactly this reason.)
 
 **Second break**: install succeeded after the fix. `/reload-plugins` showed the skill registered. I ran the trio on a test branch. The controller dispatched a subagent named `haiku-reviewer` and got:
 
@@ -81,7 +87,7 @@ Available agents: ralph-review-trio:haiku-reviewer, ralph-review-trio:sonnet-rev
 
 Claude Code namespaces plugin-bundled agents as `<plugin-name>:<agent-name>`. My command file said "dispatch `haiku-reviewer`". Wrong. Needed to say "dispatch `ralph-review-trio:haiku-reviewer`".
 
-Another one-line fix. Pushed as v0.2 an hour later. But that is what the dogfood test is for... it is not the review that finds these. It is the real user session, the real controller, the real dispatch. No amount of unit testing against a mock plugin loader would have shown me either of those two bugs.
+Another one-line fix. Pushed as v0.2 an hour later. But that is what the dogfood test is for: the real user session, the real controller, the real dispatch. No unit test against a mock loader would have shown me either bug.
 
 I shipped v0.2 before the dogfood run even started.
 
@@ -91,13 +97,13 @@ After both fixes, the trio ran cleanly. On a non-trivial target: 4 Markdown file
 
 Haiku finished in 101 seconds. Walked the file structure, commit hygiene, checkbox evidence, governance evidence audit, surface-level common-culprit scan. Passed.
 
-Sonnet took five minutes and fifty-two seconds. Ran 60 tool uses. That is Sonnet actually tracing call sites, reading migrations, opening function bodies, verifying null-propagation annotations match reality. Not skimming. 60 tool uses is real work. Passed.
+Sonnet took five minutes and fifty-two seconds. Ran 60 tool uses, actually tracing call sites, reading migrations, opening function bodies, verifying null-propagation. Not skimming. Passed.
 
-Opus took two minutes fifty-six seconds. Reviewed the Sonnet result, ran the governance drift audit (Tier A vs Tier B cadence classification worked correctly), did the overengineering check, ran the factual claims audit. Passed.
+Opus took two minutes fifty-six seconds. Reviewed the Sonnet result, ran the governance drift audit (Tier A vs Tier B cadence worked correctly), overengineering check, factual claims audit. Passed.
 
 Five non-blocking observations flagged, all about other work on the same branch, none about the ship. The review was honest.
 
-Ten and a half minutes of wall clock. 235,000 tokens. 116 tool uses total. If you bill that against your Claude Code subscription, it is genuinely cheap for the depth of review. If you compare it to one round of human code review... it is an embarrassing saving.
+Ten and a half minutes of wall clock. 235,000 tokens. 116 tool uses. Against your Claude Code subscription, cheap for the depth. Against one round of human code review... an embarrassing saving.
 
 ## What makes this pack different from a generic 3-tier
 
@@ -121,11 +127,7 @@ What stays is the pattern teeth. The sequential restart rule. The Sample Invocat
 
 ## What this pack does NOT do
 
-It does not replace human review. It is the pre-human-review floor. Every tier's checklist got walked, evidence was captured, structured findings were produced. The human still reads the diff, asks the architectural question, spots the thing nobody put in a checklist.
-
-Bug-free code is not a thing it guarantees. Three reviewers at three depths will miss bugs. Anyone claiming otherwise is selling snake oil.
-
-Work-in-progress branches are not its problem space either. The checklist assumes the change is code-complete. Run it mid-implementation and you will get a hundred false positives because half the features are not wired yet.
+A few things it does not do. It does not replace human review; it is the pre-human-review floor where every tier's checklist got walked and structured findings are ready for the human. It does not guarantee bug-free code. Three reviewers at three depths will miss things. Anyone claiming otherwise is selling snake oil. It does not work on work-in-progress branches; the checklist assumes the change is code-complete, and running it mid-implementation floods you with false positives.
 
 ## Install
 
@@ -141,11 +143,11 @@ MIT licensed. Fork it, adapt it, ship your own flavour. Repository: [github.com/
 
 ## What comes next
 
-Two more packs drafted privately but not public yet. Solo workflow governance (phase-checkpoint discipline, branch safety, merge gates) and subagent swarm patterns (layered cross-checking, RESULT schema, frozen scope snippets). Both need their own validation before they land in the marketplace.
+Two more packs drafted privately. Solo workflow governance (phase-checkpoint discipline, branch safety, merge gates) and subagent swarm patterns (layered cross-checking, RESULT schema, frozen scope snippets). Both need their own validation.
 
-If the Ralph Review Trio pack gets any traction, the other two follow. If it does not... neither do they.
+If the Ralph Review Trio pack gets traction, the other two follow. If it does not, neither do they.
 
-Ninety-day kill date on the whole experiment. No stars, no installs, no signups, no inbound leads at the end of that window? Project comes home. Effort redirects to something winning. No ego in the kill decision.
+Ninety-day kill date on the whole experiment. No stars, no installs, no signups, no inbound leads at the end of that window and the project comes home. No ego in the kill.
 
 The bet is the distribution surface. The packs are the test.
 
