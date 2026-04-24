@@ -4,11 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-  workflow_call:
-    outputs:
-      passed:
-        description: "CI passed"
-        value: ${{ jobs.build.outputs.passed }}
 
 permissions:
   contents: read
