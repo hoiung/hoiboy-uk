@@ -1,7 +1,7 @@
 ---
 title: "Learning AI Is Hard. Really."
-date: 2026-04-24
-draft: true
+date: 2026-04-23
+draft: false
 slug: learning-ai-is-hard
 categories: [tech-ai]
 tags: [ai, learning, discipline, claude-code, clickbait]
@@ -42,9 +42,9 @@ Here is the bit the clickbait conveniently skips. An LLM in its raw state is a p
 
 Which means the prompt that gave them their shiny demo? Run it yourself tomorrow and you will get something different. Slightly different. Or wildly different. Often both on the same day. The output is seriously, genuinely random.
 
-You follow the video step by step. You get a thing that looks nothing like the thing they built. You conclude you are stupid. You might even go and buy their course to try and find what you are missing.
+You follow the video step by step. You get a thing that looks nothing like the thing they built. You rewind. You retry.
 
-You are not stupid. What made the final cut is the take that worked, after however many retakes and a tidy edit on top (perfectly normal video production, they just don't tell you that part).
+What made the final cut is the take that worked, after however many retakes and a tidy edit on top (perfectly normal video production, they just don't tell you that part). What you saw is the highlight reel, not the process.
 
 ## My 60-second filter
 
@@ -54,7 +54,7 @@ Does the creator talk about checking the output? Running tests? Catching the mod
 
 If it is the second one, I close the tab. That is not teaching you how to use AI. That is teaching you how NOT to use AI (just another person happy to show you the wrong way for views).
 
-That is why having a harness matters. (Mine is [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness), open source. Use it, fork it, or roll your own. The point is you have one.) I built it not to be an AI guru, but because I was sick of the AI giving me different answers to the same question on different days, and quietly wandering off task while I blinked. A harness is what makes the nine months feel like 2.5 years. Without one, I would have spent most of those months cleaning up probabilistic mess.
+That is why having a harness matters. (Mine is [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness). Use it, fork it, or roll your own. The point is you have one.) I built it because I was sick of the AI quietly wandering off task while I blinked. A harness doesn't kill the randomness (nothing does, that is how LLMs work). What it does is pull every output closer to what you actually asked for and catch the drift early, run after run. Closer every time. That is all you need.
 
 ## The real ones never say it's easy
 
@@ -76,13 +76,13 @@ AI is a force multiplier, not a crutch. If you know what you are doing, it multi
 
 ## I'm a realist
 
-I don't bullshit. I don't sugarcoat. I speak bluntly because I respect people enough to be honest with them. If that pisses people off, fine. Better that than wasting someone's year telling them a comfortable lie. I try to be gentle and political because it works sometimes, but not always. A reality check is sometimes needed. So I also use bluntness (again, it's just a tool, just one of my favourites lol).
+I don't like to bullshit. I don't like to sugarcoat. I prefer to speak bluntly.
 
-But. And this matters.
+That doesn't mean I speak rudely or disrespectfully. I try to be gentle and political because it works sometimes, but not always. A reality check is sometimes needed (tough love you know). So I also use bluntness (again, it's just a tool, just one of my favourites lol).
 
 I also believe, deeply, that everyone is capable of learning whatever they want, given the time and the opportunity. Or the willingness to create that opportunity when one does not show up at the door (spoiler: it won't).
 
-The only way out is through. There is no hack. There is no guru. There is just the work. You put in the hours, and the hours compound. Three years. Nine months. Fifteen-hour days. Still tip of the iceberg. Still loving every minute of it. Mostly... don't ask me on a Tuesday.
+The only way out is tough it out and try to have fun and find enjoyment along the way. There is no hack. There is just the work. You put in the hours, and the hours compound. Three years. Nine months. Fifteen-hour days. Still tip of the iceberg. Still loving every minute of it. Mostly... just don't ask me in early mornings.
 
 If you are at the start of learning AI, or any other really hard thing: welcome to the grind. Settle in. Trust the process. Do the reps. Ignore the two-hour merchants.
 
