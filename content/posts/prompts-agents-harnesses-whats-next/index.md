@@ -53,7 +53,7 @@ I wrote the deep dive on what a harness actually is and how I built one already.
 
 ## Sidebar. I was barking up the right tree
 
-Nine months ago I was just trying to stop AI breaking my automated trading system. Every time it touched something, something else broke. So I built a wrapper. Then another wrapper around that wrapper. Then checks on the wrappers. Called the thing [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) and kept shipping. The shape I ended up with is what three frontier labs and Thoughtworks are now calling harness engineering. I was not ahead because I was clever. I was ahead because my trading money was on the line and the no-wrapper option kept losing. Worth flagging. Not worth dwelling on.
+Nine months ago I was just trying to stop AI breaking my automated trading system. Every time it touched something, something else broke. So I built a wrapper. Then another wrapper around that wrapper. Then checks on the wrappers. Called the thing [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) and kept shipping. The shape I ended up with is what three frontier labs and Thoughtworks are now calling harness engineering. I was not ahead because I was clever. I was ahead because my trading money was on the line and the no-wrapper option kept losing. Worth flagging. Not worth dwelling on.
 
 Onto the forecast.
 
