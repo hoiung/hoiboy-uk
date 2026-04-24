@@ -1,5 +1,5 @@
 ---
-title: "Three Reviewers, Restart on Fail. Why I Shipped It."
+title: "Shipped Ralph Review Trio, But What Is It?"
 date: 2026-04-24
 categories: [tech-ai]
 tags: [ai, claude-code, sst3, code-review, plugin-marketplace]
