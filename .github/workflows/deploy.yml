@@ -38,17 +38,24 @@ jobs:
           HOOK: ${{ secrets.CF_PAGES_DEPLOY_HOOK }}
         run: |
           set -e
+          # Defence-in-depth: tell Actions to mask the hook URL in any log
+          # output even if Cloudflare echoes it back in an error response
+          # (GHA auto-masks exact secrets by default, but scrubbing prefix
+          # + host + path individually catches partial quotations too).
+          echo "::add-mask::$HOOK"
           RESP=$(curl -fSs -X POST "$HOOK")
-          echo "Cloudflare response: $RESP"
           # Validate response robustly for BOTH JSON and non-JSON shapes.
           # Real Cloudflare Pages deploy-hook reply shape (verified via
           # post-merge CI run 24898325438 on 2026-04-24):
           #   {"result": {"id": "<uuid>"}, "success": true, "errors": [], "messages": []}
           # Errors may be plaintext or HTML — jq parse-fail falls through to
-          # the shell fallback that exits loudly with the raw response. The
-          # selector is `.success == true` (the real success signal), not
-          # `.result == "ok"` which never matches and inverts Phase 8 into
-          # a hard-fail-on-success regression (caught by Ralph Tier 2 Sonnet).
-          # Canonical: dotfiles#438 Phase 8 (silent-fail-on-malformed fix).
-          echo "$RESP" | jq -e '.success == true' >/dev/null 2>&1 \
-            || { echo "::error::Cloudflare deploy hook returned non-OK or non-JSON response: $RESP"; exit 1; }
+          # the shell fallback that exits loudly. Scrubbed echo: print only
+          # HTTP success signal + body-length, NOT the raw body (Stage 5 L1-C
+          # hardening — avoids leaking the hook URL if CF ever quotes it).
+          if echo "$RESP" | jq -e '.success == true' >/dev/null 2>&1; then
+            echo "Cloudflare deploy hook: success (body length $(printf %s "$RESP" | wc -c) bytes)"
+          else
+            BYTES=$(printf %s "$RESP" | wc -c)
+            echo "::error::Cloudflare deploy hook returned non-OK / non-JSON (body=${BYTES} bytes). Inspect run logs via secure channel."
+            exit 1
+          fi
