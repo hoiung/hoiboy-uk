@@ -1,7 +1,7 @@
 ---
 title: "I Built an eBay Harness in 15 Days. Here's What 17 Tools Look Like."
 date: 2026-04-25
-draft: true
+draft: false
 slug: my-ebay-harness
 categories: [tech-ai, entrepreneurship]
 tags: [ai, harness, mcp, ebay, sst3, claude-code, tools]
