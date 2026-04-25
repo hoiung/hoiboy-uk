@@ -3,7 +3,7 @@ title: "I Built an eBay Harness in 15 Days. Here's What 17 Tools Look Like."
 date: 2026-04-25
 draft: true
 slug: my-ebay-harness
-categories: [tech-ai]
+categories: [tech-ai, entrepreneurship]
 tags: [ai, harness, mcp, ebay, sst3, claude-code, tools]
 description: "Production proof for the harness thesis. 15 days, 160 commits, 17 MCP tools, four phases. What it looks like when an operator builds for their own trade."
 ---
