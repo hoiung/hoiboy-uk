@@ -1,4 +1,4 @@
-# 15 — LinkedIn Promotion Posts (Click-Driving Format)
+# 15 - LinkedIn Promotion Posts (Click-Driving Format)
 
 **Last updated**: 2026-04-25
 **Applies to**: every LinkedIn post written to drive readers from the LinkedIn feed to a hoiboy.uk blog post.
@@ -160,9 +160,9 @@ When `/blog write <slug>` is followed by a LinkedIn post draft:
 2. Verify total word count is 50-90 (target ~70).
 3. Verify total character count is 350-600 (hard ceiling 700).
 4. Verify line 1 (the hook) is under 140 characters.
-5. Run the voice guard against the LinkedIn post even though it lives on Drive — same banned-word rules apply.
+5. Run the voice guard against the LinkedIn post even though it lives on Drive - same banned-word rules apply.
 6. ONE link only. NEVER add a repo link.
 7. 3-5 hashtags at the end.
-8. Append to `linkedin_Posts.md` newest-at-top with `## YYYY-MM-DD — <Title> (DRAFT, not published)`.
+8. Append to `linkedin_Posts.md` newest-at-top with `## YYYY-MM-DD - <Title> (DRAFT, not published)`.
 
 When in doubt: if removing 30% of the words would still leave a coherent tease, the draft is too long.
