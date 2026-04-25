@@ -4,7 +4,7 @@ date: 2026-04-25
 categories: [tech-ai]
 tags: [mcp, claude-code, ast, code-review, sst3]
 slug: rule-was-right-tool-wrong-shape
-description: "We dropped code-review-graph from our SST3 stack after two unfixable bugs landed on the same day. The decision rule that pointed at it stayed. Here is the line between the two."
+description: "We dropped code-review-graph after two same-day upstream bugs. The rule that pointed at it stayed. Here's the line between the two."
 draft: true
 ---
 
