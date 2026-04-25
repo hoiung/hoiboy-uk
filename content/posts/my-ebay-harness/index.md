@@ -22,7 +22,7 @@ I gave myself a window. Two weeks. Make it go away.
 
 I will not tell you what I sell. None of your business. That's my edge. (You can call it an online store. You can call it a side project. You can call it the small businesses I run on the side. Pick whichever makes you comfortable.) The platform is eBay. That's the only specific you get.
 
-eBay's seller side has a particular shape. The Seller Hub web UI scatters things across six or seven surfaces. The mobile app shows you a different subset. Half the data you actually want, the qty sold per listing, the watcher counts, the offer counts, the buyer questions, lives in the Trading API (the legacy XML one, the one that has been "deprecated" for years and yet still runs the lights). The newer REST APIs, Inventory and Analytics, hold the modern signals (impressions, click-through rate, conversion). They live behind a separate OAuth (open-authorisation) flow. Two-headed authentication for the same account.
+eBay's seller side has a particular shape. The Seller Hub web UI scatters things across six or seven surfaces. The mobile app shows you a different subset. Half the data you actually want, the qty sold per listing, the watcher counts, the offer counts, the buyer questions, lives in the Trading API (Application Programming Interface, the legacy XML one, the one that has been "deprecated" for years and yet still runs the lights). The newer REST APIs, Inventory and Analytics, hold the modern signals (impressions, click-through rate, conversion). They live behind a separate OAuth (open-authorisation) flow. Two-headed authentication for the same account.
 
 Nothing ties them together. No single eBay surface gives you the picture. Either you spend half an hour every week clicking through Seller Hub spotting which listings have stalled, or you build the harness that knows which API verb to call in what order.
 
@@ -30,7 +30,7 @@ I built the harness.
 
 ## Why a harness, not a script
 
-I have done this dance before. Built a [trading harness](/posts/why-do-we-need-an-ai-harness/) for swing trades. Built a [blogging harness](/posts/your-voice-is-a-brand/) for this site. Same shape, different trade. Get burned by the same problem in three different domains, and you stop writing scripts. You write a harness.
+I have done this dance before. Built a [trading harness](/posts/building-a-production-grade-trading-system-with-claude-code/) for swing trades. Built a [blogging harness](/posts/your-voice-is-a-brand/) for this site. Same shape, different trade. Get burned by the same problem in three different domains, and you stop writing scripts. You write a harness.
 
 A script does one thing. A harness does many things, and refuses to do them when you ask wrong. A script reads from one API. A harness knows about three APIs and which one to ask first. A script crashes on a malformed input. A harness gives a refusal you can read in plain English and act on. A script is a tool. A harness is a workshop.
 
