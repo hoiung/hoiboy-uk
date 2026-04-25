@@ -1,0 +1,17 @@
+{{- /*
+  Consulting success banner. Shows when URL has ?success=1 (Stripe redirect).
+
+  No args. Inline script detects the query param and toggles display.
+
+  Example:
+    {{< consulting-success-banner >}}
+*/ -}}
+<div id="consulting-success-banner" style="display:none;background:#f4f4f4;border-left:4px solid #c2683c;padding:1rem 1.25rem;margin:1.5rem 0;">
+  Payment received. I will email within 1 UK business day to confirm your kickoff slot.
+</div>
+<script>
+  if (window.location.search.includes('success=1')) {
+    var b = document.getElementById('consulting-success-banner');
+    if (b) { b.style.display = 'block'; }
+  }
+</script>
