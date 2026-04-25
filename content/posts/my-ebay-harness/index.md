@@ -74,6 +74,8 @@ Most listing-diagnostic tools you can buy give you a dashboard. Six panels. Fort
 
 MCP makes the synthesis possible because every signal is already a tool the agent can ask for. The harness is the thing that decides which tools to ask for, in what order, with what fallback when a call fails. The agent sees seventeen tools. It does not see seventeen REST endpoints. The mapping from "what the operator wants" to "what the API actually serves" lives in the harness, not in the prompt.
 
+Still ironing it out. I use it every day, find a gap or a friction point, file it for the next phase. The seventeen tools are not the final shape. They are the shape it has taken from running my trade with it for fifteen days. Real use surfaces what design alone does not.
+
 ## The Cassini context (why automation matters here)
 
 eBay's search ranking algorithm is called Cassini. It is real-time. Not nightly batch. A listing rises or falls within hours of the signal moving. Public reporting on Cassini, mostly seller-community write-ups since eBay never published exact weights, talks about three signal clusters: relevance (roughly 40 to 50 percent), seller performance (30 to 40 percent), listing quality and engagement (the remaining 20 to 30 percent). A long stretch with no sales and visibility quietly suppresses. Nobody emails you. The traffic just goes.
