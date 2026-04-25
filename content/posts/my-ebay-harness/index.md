@@ -34,6 +34,8 @@ I have done this dance before. Built a [trading harness](/posts/building-a-produ
 
 A script does one thing. A harness does many things (the power of AI integration!), and refuses to do them when you ask wrong. A script reads from one API. A harness knows about three APIs and which one to ask first. A script crashes on a malformed input. A harness gives a refusal you can read in plain English and act on. A script is a tool. A harness is a workshop.
 
+The real point is the conversation. I say "Analyse this week's performance. Which items are not moving and what should I change?" Plain English in. The harness picks which MCP tool to call, which skill to load with my operator-specific rules, which API to fall back to when the first call fails, what order to do it all in. I do not invoke six scripts in a sequence and stitch the outputs together. I describe what I want, in a sentence, and the harness runs the workshop. As I add capabilities, more skills, more MCP tools, more API hooks bolted on, the same sentence keeps working. It just gets a fuller answer.
+
 Same chassis as the trading harness and the blog harness. [Reshaped](/posts/sst3-ai-harness-reshapeable-knife/) for reselling. Built on top of [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) (the underlying methodology I run for everything: my trading bot, my blog, my CV, this post you are reading right now). Same workflow. Same Ralph Review tiers. Just pointed at the eBay platform instead of IBKR or Hugo.
 
 The thesis I have been writing for a month, [every domain expert needs their own harness](/posts/every-sme-needs-their-own-harness/), needed proof. Not metaphor. Not philosophy. A real one. Public. Operating. Mine.
