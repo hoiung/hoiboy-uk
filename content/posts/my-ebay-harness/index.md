@@ -34,7 +34,7 @@ I have done this dance before. Built a [trading harness](/posts/building-a-produ
 
 A script does one thing. A harness does many things, and refuses to do them when you ask wrong. A script reads from one API. A harness knows about three APIs and which one to ask first. A script crashes on a malformed input. A harness gives a refusal you can read in plain English and act on. A script is a tool. A harness is a workshop.
 
-Same blade metal as the trading harness and the blog harness. [Reshaped](/posts/sst3-ai-harness-reshapeable-knife/) for reselling. Built on top of [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) (the underlying methodology I run for everything: my trading bot, my blog, my CV, this post you are reading right now). Same workflow. Same Ralph Review tiers. Just pointed at the eBay platform instead of IBKR or Hugo.
+Same chassis as the trading harness and the blog harness. [Reshaped](/posts/sst3-ai-harness-reshapeable-knife/) for reselling. Built on top of [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) (the underlying methodology I run for everything: my trading bot, my blog, my CV, this post you are reading right now). Same workflow. Same Ralph Review tiers. Just pointed at the eBay platform instead of IBKR or Hugo.
 
 The thesis I have been writing for a month, [every domain expert needs their own harness](/posts/every-sme-needs-their-own-harness/), needed proof. Not metaphor. Not philosophy. A real one. Public. Operating. Mine.
 
@@ -66,7 +66,7 @@ Anyone can wire CRUD to an API in a weekend. The reason this took fifteen days, 
 
 **Move three, audit trail.** Every mutation appends a structured line to `~/.local/share/ebay-seller-tool/audit.log`. Timestamp. Operator (me). Tool name. Inputs (redacted of long fields). Result. If something looks weird in Seller Hub later, I do not have to remember what I did. I just `tail` the log.
 
-**Move four, snapshot-based elasticity.** Listing state appends to `~/.local/share/ebay-seller-tool/price_snapshots.jsonl`. JSON Lines. User-owned. Outside the repo. `jq` it. `pandas` it. Stream it into anything. Months from now I will have time-series data on every listing's price, watcher count, and conversion, ready for elasticity work that does not exist yet.
+**Move four, snapshot-based elasticity.** Listing state appends to `~/.local/share/ebay-seller-tool/price_snapshots.jsonl`. JSON Lines. User-owned. Outside the repo. `jq` it. `pandas` it. Stream it into anything. Every snapshot adds to a time-series of price, watcher count, and conversion. Plenty of receipts to draw on when I want to look at elasticity properly.
 
 The synthesis tool, `analyse_listing`, ties them together. One operator turn ("analyse my worst-performing listing this month") fans out to six API calls (sold, unsold, transactions, feedback, traffic, returns), runs the funnel synthesis (impressions, click-through rate, views, watchers, conversion, days-to-sell), checks the floor, and returns one diagnosis with one recommended action. Not a dashboard. A verdict.
 
@@ -78,7 +78,7 @@ Model Context Protocol (MCP, the standard Claude Code uses to call external tool
 
 eBay's search ranking algorithm is called Cassini. It is real-time. Not nightly batch. A listing rises or falls within hours of the signal moving. Public reporting on Cassini, mostly seller-community write-ups since eBay never published exact weights, talks about three signal clusters: relevance (roughly 40 to 50 percent), seller performance (30 to 40 percent), listing quality and engagement (the remaining 20 to 30 percent). A long stretch with no sales and visibility quietly suppresses. Nobody emails you. The traffic just goes.
 
-The mechanism that matters for any seller running multiple listings: the signal loop is faster than your manual review loop. Three-day-old data is stale. Even one-day-old data on the wrong listing means three days of muted impressions before you notice. Manual review at "once a week" cadence loses every week against any seller who closes the loop in 24 hours.
+The mechanism that matters for any seller running multiple listings: the signal loop is faster than your manual review loop. Manual review at "once a week" cadence loses every week against any seller who closes the loop in 24 hours.
 
 Promoted Listings has its own twist. eBay rewrote the attribution rule across major markets through 2025, then in the US in early 2026. Old rule, the same person who clicked the promoted listing had to buy. New rule, any person clicks, any other person buys within thirty days, and the platform attributes the sale to the campaign and bills the ad fee. European sellers reported attribution rates jumping from about 12 percent to 80 percent or higher with no measurable lift in actual orders. A disguised fee increase, not a sales-velocity increase.
 
