@@ -12,7 +12,7 @@
 */ -}}
 {{- $type := .Get "type" -}}
 {{- $offer := .Get "offer" | default "harness_architect" -}}
-{{- $data := index .Site.Data.consulting $offer -}}
+{{- $data := index hugo.Data.consulting $offer -}}
 {{- if not $data -}}
   {{- errorf "consulting-cta: no data for offer %q at data/consulting.yaml" $offer -}}
 {{- end -}}
