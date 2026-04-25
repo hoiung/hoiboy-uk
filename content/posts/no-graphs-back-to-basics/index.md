@@ -1,10 +1,10 @@
 ---
-title: "The rule was right. The tool was the wrong shape."
+title: "Reverted code review graphs. Going back to basics"
 date: 2026-04-25
 categories: [tech-ai]
 tags: [mcp, claude-code, ast, code-review, sst3]
-slug: rule-was-right-tool-wrong-shape
-description: "We dropped code-review-graph after two same-day upstream bugs. The rule that pointed at it stayed. Here's the line between the two."
+slug: no-graphs-back-to-basics
+description: "We reverted code-review-graph after two same-day bugs and went back to basics. The rule stayed. The replacement is not even a graph."
 draft: true
 ---
 
@@ -50,7 +50,7 @@ Our position going in: the alternatives all looked reasonable. The off-the-shelf
 
 ## The pivot
 
-What replaces it is a Bash-script lane at `dotfiles/SST3/scripts/sst3-graph-*`, scoped as Phase A of a four-phase plan in `dotfiles#445` (the four phases compose: code wrappers, doc-tooling wrappers, cross-class drift detection, harness integration). Each script is a request-scoped subprocess composing native Claude Code LSP calls plus `ast-grep` plus `git diff` plus `ripgrep` plus the per-language coverage tools. You invoke it from the Bash tool inside an agent (main or subagent), it runs, it prints, it exits. There is no `~/.claude.json` entry. There is no long-running daemon. Each query starts from nothing and finishes returning nothing in memory. When the next session resumes, there is zero stdio state to replay. Zero!
+What replaces it is the wrapper-lane at `dotfiles/SST3/scripts/sst3-graph-*`, scoped as Phase A of a four-phase plan in `dotfiles#445` (the four phases compose: code wrappers, doc-tooling wrappers, cross-class drift detection, harness integration). Eight scripts, one per query type. None of them are a graph any more... no SQLite persistent layer, no Tree-sitter index, no embeddings. They are stateless Bash wrappers that reproduce the old query interface using `ast-grep` for structural patterns, `ripgrep` for literal search, `git` for diff and log, `find` for file enumeration, and `coverage.py` for untested-function detection per language. You invoke a script from the Bash tool inside an agent (main or subagent), it runs, it prints NDJSON, it exits. There is no `~/.claude.json` entry. There is no long-running daemon. Each query starts from nothing and finishes returning nothing in memory. When the next session resumes, there is zero stdio state to replay. Zero!
 
 The contract surface is preserved by JSON-shape match. Scripts emit the same shape of output the MCP would have, so callers in our canonical docs stay textually correct against the new lane. Five tool names map to five script names. Same names, same arguments, same shape. The wiring underneath is different. The wiring above does not need to know.
 
@@ -64,7 +64,7 @@ The implementation route swapped. The rule did not. That is what good rules look
 
 ## "For now"
 
-For now is doing some work in the title... I have not declared graphs dead as a category. The AST data model is the right shape for structural questions in supported languages. Subprocess scripts are not a deeper insight than a real graph. They are a less ambitious one. We just stopped trusting daemons in our editor session lifecycle for a while.
+I have not declared graphs dead as a category. The AST data model is still the right shape for structural questions in supported languages. The wrapper-lane scripts are not a deeper insight than a real graph. They are a less ambitious one. We just stopped trusting daemons in our editor session lifecycle for a while.
 
 If `n24q02m/better-code-review-graph#365` ships a fix and the resume-replay class in `claude-code#48275` gets closed, we may pull a graph MCP back in the future. The decision rule it would slot under is the same one that sits there now. The tool will be different. The line between the two is what matters.
 
