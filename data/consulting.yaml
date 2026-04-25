@@ -15,5 +15,8 @@ harness_architect:
   calcom_booking: "https://cal.com/OPERATOR_TODO_REPLACE_BEFORE_LAUNCH/20min-discovery"
 
   # Price display (matches SOW + Stripe Payment Link).
+  # price_gbp is the numeric value (used for programmatic checks + future partials).
+  # price_display is the UK-formatted string for human display (thousands separator).
   price_gbp: 4995
+  price_display: "4,995"
   delivery_days: 14

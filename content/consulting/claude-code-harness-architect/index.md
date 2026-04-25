@@ -5,19 +5,19 @@ description: "Fixed-scope 14-day engagement. I build and install a working Claud
 ---
 
 <!-- iamhoi-claims
-Every personal "I built / I shipped / I run" claim on this page is listed here with a verifiable URL. Stage 5 audit greps this block, tallies it against page claims, and flags anything unmatched.
+Every personal "I built / I shipped / I run / I designed" claim on this page is listed here with a verifiable URL. Stage 5 audit greps this block, tallies it against page claims, and flags anything unmatched.
 
 I built SST3-AI-Harness and dogfood it on every project I own → https://github.com/hoiung/sst3-ai-harness
 I shipped Ralph Review Trio as a public Claude Code plugin → https://hoiboy.uk/posts/shipping-ralph-review-trio/
 I built and published ebay-seller-tool, an MCP server I use daily → https://github.com/hoiung/ebay-seller-tool
-I run a live options-based swing trading platform on real capital → https://hoiboy.uk/trading/
+I designed, run, and babysit daily a live options-based swing trading platform on real capital → https://hoiboy.uk/trading/
 -->
 
 <!-- iamhoi -->
 
 Fourteen days. A working Claude Code harness installed inside your repository. Built on the same pattern I use on my own code.
 
-**£4,995 GBP. Fixed fee. 100% upfront. No hourly billing.**
+{{< consulting-cta type="price" >}} No hourly billing.
 
 {{< consulting-cta type="stripe" >}} {{< consulting-cta type="calcom" >}}
 
@@ -67,9 +67,9 @@ A named human-review gate sits at Day 4, Day 7, Day 12, and Day 14. Nothing leav
 
 ## Price
 
-**£4,995 GBP, fixed fee, 100% upfront via Stripe.**
+{{< consulting-cta type="price" >}}
 
-No hourly billing. No NET-30. No invoicing. The payment clears, I block the 14 days, we start.
+Via Stripe. No hourly billing. No NET-30. No invoicing. The payment clears, I block the 14 days, we start.
 
 {{< consulting-cta type="stripe" >}}
 
@@ -118,6 +118,6 @@ Full legal terms in the SOW, sent within one hour of booking.
 
 ## Ready?
 
-{{< consulting-cta type="stripe" label="Buy now for £4,995" >}}
+{{< consulting-cta type="stripe" >}}
 
 {{< consulting-cta type="calcom" label="Or book a 20-min discovery call" >}}
