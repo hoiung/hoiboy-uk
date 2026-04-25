@@ -62,7 +62,7 @@ Anyone can wire CRUD to an API in a weekend. The reason this took fifteen days, 
 
 **Move one, floor-price refusal.** Phase 4. If you ask the harness to revise a listing below the computed floor, it refuses. Loud refusal, not silent clamp. The floor comes from a public `config/fees.yaml` (final-value fee schedule, payment fee, ad fee if Promoted) plus the measured per-SKU return rate. The verdict is a number you can explain to someone. The refusal is a sentence you can copy into a note. The harness saying no on my behalf when the AI gets enthusiastic.
 
-**Move two, dry-run by default.** Every create and revise call defaults to the eBay Verify API. You see exactly what the platform would do, with the warnings and errors the platform would raise, before anything mutates. I pick when to apply. Apply is one explicit flag. Forgetting the flag does nothing. I cannot accidentally update 30 listings because Claude got chatty.
+**Move two, dry-run on every mutation.** Create defaults to the eBay Verify API. Revise has the same dry-run mode available, opt-in. You see exactly what the platform would do, with the warnings and errors the platform would raise, before anything mutates. Apply is one explicit flag. Forgetting the flag on a create does nothing. I cannot accidentally publish a batch of new listings because Claude got chatty.
 
 **Move three, audit trail.** Every mutation appends a structured line to `~/.local/share/ebay-seller-tool/audit.log`. Timestamp. Operator (me). Tool name. Inputs (redacted of long fields). Result. If something looks weird in Seller Hub later, I do not have to remember what I did. I just `tail` the log.
 
@@ -76,11 +76,11 @@ Model Context Protocol (MCP, the standard Claude Code uses to call external tool
 
 ## The Cassini context (why automation matters here)
 
-eBay's search ranking algorithm is called Cassini. It is real-time. Not nightly batch. A listing rises or falls within hours of the signal moving. The official documentation talks about three signal clusters: relevance (about 40 to 50 percent), seller performance (30 to 40 percent), listing quality and engagement (the remaining 20 to 30 percent). Sixty days with no sales and visibility quietly suppresses. Nobody emails you. The traffic just goes.
+eBay's search ranking algorithm is called Cassini. It is real-time. Not nightly batch. A listing rises or falls within hours of the signal moving. Public reporting on Cassini, mostly seller-community write-ups since eBay never published exact weights, talks about three signal clusters: relevance (roughly 40 to 50 percent), seller performance (30 to 40 percent), listing quality and engagement (the remaining 20 to 30 percent). A long stretch with no sales and visibility quietly suppresses. Nobody emails you. The traffic just goes.
 
 The mechanism that matters for any seller running multiple listings: the signal loop is faster than your manual review loop. Three-day-old data is stale. Even one-day-old data on the wrong listing means three days of muted impressions before you notice. Manual review at "once a week" cadence loses every week against any seller who closes the loop in 24 hours.
 
-Promoted Listings has its own twist. eBay rewrote the attribution rule across major markets through 2025, then in the US in early 2026. Old rule, the same person who clicked the promoted listing had to buy. New rule, any person clicks, any other person buys within thirty days, and the platform attributes the sale to the campaign and bills the ad fee. Sellers reported attribution rates jumping from about 12 percent to 80 percent or higher with no measurable lift in actual orders. A disguised fee increase, not a sales-velocity increase.
+Promoted Listings has its own twist. eBay rewrote the attribution rule across major markets through 2025, then in the US in early 2026. Old rule, the same person who clicked the promoted listing had to buy. New rule, any person clicks, any other person buys within thirty days, and the platform attributes the sale to the campaign and bills the ad fee. European sellers reported attribution rates jumping from about 12 percent to 80 percent or higher with no measurable lift in actual orders. A disguised fee increase, not a sales-velocity increase.
 
 You cannot fix algorithms by talking to algorithms. You fix them by working the funnel, fast, every day, and refusing to pay for attribution that you would have got for free. That is what the harness does on my behalf.
 
