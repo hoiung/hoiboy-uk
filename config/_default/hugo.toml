@@ -21,9 +21,15 @@ disableHugoGeneratorInject = true
   term = ["HTML"]
 
 # Categories primary, tags secondary. Per docs/research/06_TAXONOMY.md.
+# `series` taxonomy added 2026-04-26 (Issue #3) for grouping multi-post sequences
+# (bake-off teaser + future results posts). Term page renders via
+# layouts/series/term.html (Hugo lookup chain: series/term.html >
+# _default/term.html > _default/taxonomy.html). Posts opt-in via
+# `series: <name>` + `order: <int>` frontmatter.
 [taxonomies]
   category = "categories"
   tag = "tags"
+  series = "series"
 
 # Permalinks for tags taxonomy. Categories use section landings instead
 # of taxonomy permalink rewrite (avoids section vs taxonomy collision).

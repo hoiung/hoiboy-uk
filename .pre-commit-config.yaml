@@ -45,6 +45,12 @@ repos:
         language: system
         pass_filenames: true
         files: ^(content/.*\.md|docs/research/.*\.md)$
+      - id: check-iamhoi-wrapping
+        name: Enforce iamhoi marker wrapping on new posts
+        entry: python3 scripts/check-iamhoi-wrapping.py --check-only-new
+        language: system
+        pass_filenames: true
+        files: ^content/posts/.*\.md$
       - id: check-wordcount
         name: Word-count ceiling (>3000 fails, skip legacy)
         entry: python3 scripts/check_wordcount.py

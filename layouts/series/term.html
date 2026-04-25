@@ -1,0 +1,38 @@
+{{- /* Series term page (e.g. /series/bakeoff/).
+       Posts opt in via `series: <name>` + `order: <int 0-100>` frontmatter.
+       Sorted by `order` ascending so a multi-post sequence reads in intended
+       order regardless of publish dates. Issue #3.
+
+       Hugo template lookup for /series/<term>/ is:
+         layouts/series/term.html  ← THIS FILE (most-specific match)
+         layouts/_default/term.html
+         layouts/_default/taxonomy.html
+       _default/series.html is NOT in the lookup chain.
+
+       Falls back to taxonomy.html if `order` is missing on every post (sort
+       degrades to .Date desc), so existing taxonomies (tags, categories)
+       are unaffected. */ -}}
+{{- define "main" -}}
+<h1>{{ .Title }} series</h1>
+{{- with .Content }}<div class="series-intro">{{ . }}</div>{{- end -}}
+
+{{- $pages := sort .Pages ".Params.order" "asc" -}}
+{{- if eq (len $pages) 0 -}}
+  <p class="empty-state">No posts in this series yet.</p>
+{{- else -}}
+  <ol class="series-posts">
+    {{- range $pages -}}
+      <li>
+        <a href="{{ .RelPermalink }}">
+          <span class="series-title">{{ .Title }}</span>
+          {{- if .Params.draft }} <span class="badge draft">DRAFT</span>{{- end -}}
+        </a>
+        <div class="series-meta">
+          <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
+          {{- with .Description }} &mdash; {{ . }}{{- end -}}
+        </div>
+      </li>
+    {{- end -}}
+  </ol>
+{{- end -}}
+{{- end -}}
