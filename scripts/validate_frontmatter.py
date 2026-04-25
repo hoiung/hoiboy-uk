@@ -16,6 +16,10 @@ import re
 from pathlib import Path
 
 REQUIRED = {"title", "date", "categories", "tags"}
+# Optional fields (informational schema, not enforced for backward compat).
+# `series` + `order` added 2026-04-26 (Issue #3) for the bake-off teaser series
+# taxonomy. Posts lacking these fields continue to validate as PASS.
+OPTIONAL = {"slug", "draft", "description", "series", "order"}
 # Allowed category values. Sourced from config/_default/menus.toml at runtime.
 # A typo like categories: [foood] would create an orphan term page no
 # sidebar link reaches. Hard fail.
