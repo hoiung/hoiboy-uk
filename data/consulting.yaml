@@ -1,0 +1,19 @@
+# Single source of truth for consulting-page external URLs.
+# Referenced from content/consulting/*/index.md via {{ .Site.Data.consulting.<key> }}.
+# Updated at launch day by the operator (Hoi) with real Stripe + Cal.com URLs.
+
+harness_architect:
+  # OPERATOR_TODO: replace with real Stripe Payment Link URL (£4,995 GBP one-time).
+  # Dashboard: https://dashboard.stripe.com/payment-links
+  # Success URL must point back to /consulting/claude-code-harness-architect/?success=1
+  # Cancel URL must point back to /consulting/claude-code-harness-architect/
+  stripe_payment_link: "https://buy.stripe.com/OPERATOR_TODO_REPLACE_BEFORE_LAUNCH"
+
+  # OPERATOR_TODO: replace with real Cal.com cloud booking URL (20-min discovery, UK business hours).
+  # Dashboard: https://cal.com/bookings
+  # Required fields on booking: email, LinkedIn URL. No other friction questions.
+  calcom_booking: "https://cal.com/OPERATOR_TODO_REPLACE_BEFORE_LAUNCH/20min-discovery"
+
+  # Price display (matches SOW + Stripe Payment Link).
+  price_gbp: 4995
+  delivery_days: 14
