@@ -76,7 +76,13 @@ Most listing-diagnostic tools you can buy give you a dashboard. Six panels. Fort
 
 MCP makes the synthesis possible because every signal is already a tool the agent can ask for. The harness is the thing that decides which tools to ask for, in what order, with what fallback when a call fails. The agent sees seventeen tools. It does not see seventeen REST endpoints. The mapping from "what the operator wants" to "what the API actually serves" lives in the harness, not in the prompt.
 
-Still ironing it out. I use it every day, find a gap or a friction point, file it for the next phase. The seventeen tools are not the final shape. They are the shape it has taken from running my trade with it for fifteen days. Real use surfaces what design alone does not.
+## What it is not
+
+Two things to be straight about.
+
+First, scripts still win where scripts win. Predictable. Deterministic. Same input, same output, every time. No tokens burned, no model variance, no hallucination risk. For a one-shot job that does one thing the same way every time, a script is the right answer and I still write them. The harness is the wrong tool when the work is small, repetitive, and known.
+
+Second, this thing is not finished and probably never will be. I get tool picks wrong. I get refusals wrong. I file gaps and friction points every week. Some queries the harness still gets confused on, where I have to spell out the steps it should have inferred. Some "shortcuts" I added turned out to be longer paths in disguise. Every week I add a tool, change a default, retire a path that turned out to be a dead end. The seventeen tools and the four guardrail moves are a snapshot, not a finished product. They are the shape it has taken from running my trade with it for fifteen days. They are not the shape it will be in a month. Day-to-day use is what surfaces the gaps. Day-to-day use is what closes them. The harness is not a project I shipped. It is a project I am living with.
 
 ## The Cassini context (why automation matters here)
 
