@@ -66,6 +66,8 @@ The implementation route swapped. The rule did not. That is what good rules look
 
 I have not declared graphs dead as a category. The AST data model is still the right shape for structural questions in supported languages. The wrapper-lane scripts are not a deeper insight than a real graph. They are a less ambitious one. We just stopped trusting daemons in our editor session lifecycle for a while.
 
+Vectors are also on the list to explore. Embeddings-based search over the codebase is a different shape of structural-data tooling than an AST graph, and we have not run that experiment yet. It is an obvious next angle to test once the wrapper-lane has bedded in. Whether it enhances the SST3 harness or just adds another rough edge is a question the experiment answers, not the architectural call to make now.
+
 If `n24q02m/better-code-review-graph#365` ships a fix and the resume-replay class in `claude-code#48275` gets closed, we may pull a graph MCP back in the future. The decision rule it would slot under is the same one that sits there now. The tool will be different. The line between the two is what matters.
 
 <!-- iamhoiend -->
