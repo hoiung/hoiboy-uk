@@ -1,0 +1,25 @@
+{{- /*
+  Consulting CTA button. Reads URL from data/consulting.yaml.
+
+  Args:
+    type   = "stripe" | "calcom"   (required)
+    label  = override label        (optional)
+    offer  = data-file key         (optional, default "harness_architect")
+
+  Example:
+    {{< consulting-cta type="stripe" >}}
+    {{< consulting-cta type="calcom" label="Book a call" >}}
+*/ -}}
+{{- $type := .Get "type" -}}
+{{- $offer := .Get "offer" | default "harness_architect" -}}
+{{- $data := index .Site.Data.consulting $offer -}}
+{{- if not $data -}}
+  {{- errorf "consulting-cta: no data for offer %q at data/consulting.yaml" $offer -}}
+{{- end -}}
+{{- if eq $type "stripe" -}}
+  <a href="{{ $data.stripe_payment_link }}" class="btn btn-primary" rel="noopener" target="_blank">{{ .Get "label" | default "Buy now" }}</a>
+{{- else if eq $type "calcom" -}}
+  <a href="{{ $data.calcom_booking }}" class="btn btn-secondary" rel="noopener" target="_blank">{{ .Get "label" | default "Book a 20-min discovery call" }}</a>
+{{- else -}}
+  {{- errorf "consulting-cta: unknown type %q (expected stripe|calcom)" $type -}}
+{{- end -}}
