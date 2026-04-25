@@ -87,7 +87,7 @@ I built [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness), a multi-ag
 
 I also shipped [ebay-seller-tool](https://github.com/hoiung/ebay-seller-tool), an MCP server I use on my own eBay reseller business. Commercial use, not a toy.
 
-Separately I run a [live options-based swing trading platform](https://hoiboy.uk/trading/) on real capital that I designed, Claude implemented, and I babysit daily. Seven years of iteration, 9,000+ commits, 11,000+ strategy evaluations.
+Separately I run a [live options-based swing trading platform](https://hoiboy.uk/trading/) on real capital that I designed, Claude implemented, and I babysit daily. 9,000+ commits, 11,000+ strategy evaluations, every trade reconciled to ledger.
 
 The harness I install in your repository is not a theoretical pattern. It is the one that survives contact with my own code.
 
