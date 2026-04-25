@@ -1,7 +1,7 @@
 ---
 title: "Ultrathink Mode. Why I Keep Turning It Off."
-date: 2026-04-24
-draft: true
+date: 2026-04-18
+draft: false
 categories: [tech-ai]
 tags: [claude, claude-code, llms, ai-workflow, productivity]
 slug: overthink-mode
@@ -10,7 +10,7 @@ description: "Claude's highest effort setting burns more tokens than it saves. I
 
 <!-- iamhoi -->
 
-Every time Claude ships a new model or variant, one of my first jobs is to check the effort setting. Arrow keys until I land on high. The middle of the five. Every time.
+Every time Claude ships a new model or variant, one of my first jobs is to check the effort setting. Arrow keys until I land in the middle. Used to be middle of three. Now middle of five. Every time.
 
 Claude Code currently gives me five steps on the dial: low, medium, high, xhigh, max. There's also an auto mode, which I never use (I'd rather not leave the setting to the UI). Across tools the top tiers go by different names. Ultrathink. Max mode. Extended thinking. Whatever the marketing team picked that week. I call them overthink mode. Because that's what they do.
 
@@ -24,17 +24,21 @@ Now you're spending more tokens telling it to undo the things you didn't ask for
 
 I've not found a single use case where max effort doesn't fail drastically. Not one. It either overengineers, or it derails, or it starts doing weird shit in a direction nobody asked for.
 
+What makes it worse is the way it overrides the harness. The harness I run has an explicit no-overengineering rule and a "read the chat for what we already agreed" rule. Max effort blows past both. Goes independent. Disconnects from the harness, disconnects from me, isolates itself in its own overthinking head, and then it's off. Doing. Doing. Doing. Stuck in its own little world implementing away, while I'm sat there waiting for the one-line change I actually asked for.
+
 ## The other end is just as bad
 
-Low effort isn't the answer either. Turn the dial all the way down and the model stops checking itself. It misreads the file, skips the part of the ask it didn't feel like doing, writes code that compiles but doesn't do the thing. Different failure mode, same net result. Token waste, back-and-forth, frustration.
+Low effort isn't where I keep the dial either. Drop it all the way down and the model stops checking itself. Misreads the file, skips the part of the ask it didn't feel like doing, writes code that compiles but doesn't do the thing. Different failure mode, same net result. Token waste, back-and-forth, frustration.
 
-Low and medium don't check themselves enough. Xhigh and max overthink. High sits in the middle of the five. High wins.
+(Honest disclosure: I've not lived with low and medium for as long as the top tiers. The pain at the top is what made me dial back. The middle is what stuck. Speaking from my own experience, not a survey.)
+
+Xhigh and max overthink. High sits in the middle of the five. High wins.
 
 ## My release-day ritual
 
 Every time a new Claude model drops (Opus something, Sonnet something else, Haiku whatever), the effort setting resets on me. New model, same arrow-key shuffle. Open settings, arrow down to the effort row, skip past auto (never use it), step past low and medium, step back from xhigh and max, land on high. Done. Carry on with the actual work.
 
-I've done this so many times it's pure muscle memory now. I've been experimenting with effort levels for the last nine or ten months, across every Claude release, across ChatGPT's reasoning knob when OpenAI added one, across Gemini's when Google added one. Different names, different tier counts (Claude Code alone keeps changing how many steps and modes live on the dial), same dial underneath, same answer every single time.
+I've done this so many times it's pure muscle memory now. I've been experimenting with effort levels for the last nine or ten months, across every Claude release, and on ChatGPT's reasoning knob when OpenAI added one. Different names, different tier counts (Claude Code alone keeps changing how many steps and modes live on the dial), same dial underneath, same answer every single time.
 
 Middle tier. Every model. Every release. Best of both worlds.
 
@@ -56,13 +60,15 @@ Most of my day is Claude Code driven through the [SST3-AI-Harness](https://githu
 
 The model didn't get dumber. Thinking harder just isn't the same as doing better work. The harder the model is told to think about a clearly-specified task, the more ways it invents to reinterpret the task. Clarity is a finite resource. Burning tokens on rethinking the ask erodes it.
 
+Same thing humans do. We overthink. We overcomplicate. We overengineer. Sometimes KISS (keep it simple, stupid) is all that's needed to make progress.
+
 ## The setting I reset after every new release
 
 If you're running these models day in, day out, here's the one setting I'd ask you to audit.
 
-Open Claude Code (or ChatGPT, or whatever you're using). Find the effort dial. On Claude Code right now it's a five-step ladder (low, medium, high, xhigh, max) plus an auto mode I'd leave alone. Check where yours sits. If it's at xhigh or max, nudge it back. If it's at low or medium, nudge it up. Park it on high. The middle of the five.
+Open Claude Code (or ChatGPT, or whatever you're using). Find the effort dial. On Claude Code right now it's a five-step ladder (low, medium, high, xhigh, max) plus an auto mode I'd leave alone. Check where yours sits using command "/effort". If it's at xhigh or max, nudge it back. If it's at low or medium, nudge it up. Park it on high. The middle of the five.
 
-Has anyone else run into this? I can't be the only one hitting the same pattern every release. Overthink mode sounds like a feature. In my experience it's a tax.
+Has anyone else run into this? I can't be the only one hitting the same pattern every release. Overthink mode sounds like a feature. In my experience it's a tax. (My friend Bear loves it. I don't. He probably has a use case I haven't run into.)
 
 Middle every time. Nine or ten months in, same answer.
 
