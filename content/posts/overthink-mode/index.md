@@ -60,7 +60,7 @@ Most of my day is Claude Code driven through the [SST3-AI-Harness](https://githu
 
 The model didn't get dumber. Thinking harder just isn't the same as doing better work. The harder the model is told to think about a clearly-specified task, the more ways it invents to reinterpret the task. Clarity is a finite resource. Burning tokens on rethinking the ask erodes it.
 
-Same thing humans do. We overthink. We overcomplicate. We overengineer. Sometimes KISS (keep it simple, stupid) is all that's needed to make progress.
+Same thing humans do. We overthink. We overcomplicate. We overengineer. Sometimes KISS (Keep It Simple Stupid) is all that's needed to make progress.
 
 ## The setting I reset after every new release
 
