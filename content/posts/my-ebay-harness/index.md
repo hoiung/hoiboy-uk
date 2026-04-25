@@ -100,7 +100,7 @@ You cannot fix algorithms by talking to algorithms. You fix them by working the 
 
 Two layers. The harness, the public layer, [hoiung/ebay-seller-tool](https://github.com/hoiung/ebay-seller-tool), is open. MIT licensed. Take it. Fork it. Run it against your own eBay account. The seventeen tools work for any reseller on the platform. The guardrails work for anyone.
 
-The skill on top, the private layer, is mine. The category-specific title rules. The condition-description templates. The price-warning thresholds. The vocabulary I use in returns conversations. The watch-list of patterns that mean a listing is about to lose its rank. None of that is in the public repo. It lives in my SST3 skill folder and stays there. That is the trade craft. That is twenty years of pattern matching. It is not for sale.
+The skill on top, the private layer, is mine. The category-specific title rules. The condition-description templates. The price-warning thresholds. The vocabulary I use in returns conversations. The watch-list of patterns that mean a listing is about to lose its rank. None of that is in the public repo. It lives in my private SST3 skill folder and stays there. That is the trade craft.
 
 A harness is the place where the public tool meets the private rules. The tool is what anyone can run. The rules are what I have learned from running the trade. Both go in the workshop. Only one goes on GitHub.
 
