@@ -12,15 +12,15 @@ description: "Production proof for the harness thesis. 15 days, 160 commits, 17 
 
 ## The problem I gave myself a window to fix
 
-I run an eBay reseller business on the side. Listing creation. Photos. Item specifics. Condition descriptions. Pricing checks. Inventory monitoring. Repricing when the market shifts. Watching feedback. Watching returns. Watching the active listings panel for the ones that have gone quiet.
+I run a small eBay reseller business on the side, nothing big as I never intend to scale it. Listing creation. Photos. Item specifics. Condition descriptions. Pricing checks. Inventory monitoring. Repricing when the market shifts. Watching feedback. Watching returns. Watching the active listings panel for the ones that have gone quiet.
 
 It is manual. It is serial. It is error-prone. Multiple live listings. More in the queue. Do the maths.
 
-I gave myself a window. Two weeks. Make it go away.
+I gave myself a window. Two weeks. Make it fun (automate the processes).
 
-## The setup (and what I will not tell you)
+## The setup
 
-I will not tell you what I sell. None of your business. That's my edge. (You can call it an online store. You can call it a side project. You can call it the small businesses I run on the side. Pick whichever makes you comfortable.) The platform is eBay. That's the only specific you get.
+There are other eBay tools on GitHub. There is even an official eBay MCP (Model Context Protocol, the standard Claude Code uses to call external tools) server. Most are buyer-side (search, deal hunting, price tracking) or read-only browsing layers. The few that touch the Sell API expose every endpoint as a separate tool. Three hundred and twenty-five tools in one of them. No opinion. No guardrails. Generic by design. A generic tool that serves every seller serves no specific seller well. The whole point of building my own is the opinion. The seventeen tools I picked are the seventeen my trade actually uses, in the order my trade actually uses them, with the refusals my trade actually needs.
 
 eBay's seller side has a particular shape. The Seller Hub web UI scatters things across six or seven surfaces. The mobile app shows you a different subset. Half the data you actually want, the qty sold per listing, the watcher counts, the offer counts, the buyer questions, lives in the Trading API (Application Programming Interface, the legacy XML one, the one that has been "deprecated" for years and yet still runs the lights). The newer REST APIs, Inventory and Analytics, hold the modern signals (impressions, click-through rate, conversion). They live behind a separate OAuth (open-authorisation) flow. Two-headed authentication for the same account.
 
@@ -32,7 +32,7 @@ I built the harness.
 
 I have done this dance before. Built a [trading harness](/posts/building-a-production-grade-trading-system-with-claude-code/) for swing trades. Built a [blogging harness](/posts/your-voice-is-a-brand/) for this site. Same shape, different trade. Get burned by the same problem in three different domains, and you stop writing scripts. You write a harness.
 
-A script does one thing. A harness does many things, and refuses to do them when you ask wrong. A script reads from one API. A harness knows about three APIs and which one to ask first. A script crashes on a malformed input. A harness gives a refusal you can read in plain English and act on. A script is a tool. A harness is a workshop.
+A script does one thing. A harness does many things (the power of AI integration!), and refuses to do them when you ask wrong. A script reads from one API. A harness knows about three APIs and which one to ask first. A script crashes on a malformed input. A harness gives a refusal you can read in plain English and act on. A script is a tool. A harness is a workshop.
 
 Same chassis as the trading harness and the blog harness. [Reshaped](/posts/sst3-ai-harness-reshapeable-knife/) for reselling. Built on top of [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) (the underlying methodology I run for everything: my trading bot, my blog, my CV, this post you are reading right now). Same workflow. Same Ralph Review tiers. Just pointed at the eBay platform instead of IBKR or Hugo.
 
@@ -72,7 +72,7 @@ The synthesis tool, `analyse_listing`, ties them together. One operator turn ("a
 
 Most listing-diagnostic tools you can buy give you a dashboard. Six panels. Forty numbers. Pick a hypothesis. Run with it. Wrong half the time. The verdict version is harder to build (you have to encode the funnel logic, the priority of which break to fix first, the floor-price check, the return-rate weighting) but cheaper to use. Read sentence. Take action. Done.
 
-Model Context Protocol (MCP, the standard Claude Code uses to call external tools) makes the synthesis possible because every signal is already a tool the agent can ask for. The harness is the thing that decides which tools to ask for, in what order, with what fallback when a call fails. The agent sees seventeen tools. It does not see seventeen REST endpoints. The mapping from "what the operator wants" to "what the API actually serves" lives in the harness, not in the prompt.
+MCP makes the synthesis possible because every signal is already a tool the agent can ask for. The harness is the thing that decides which tools to ask for, in what order, with what fallback when a call fails. The agent sees seventeen tools. It does not see seventeen REST endpoints. The mapping from "what the operator wants" to "what the API actually serves" lives in the harness, not in the prompt.
 
 ## The Cassini context (why automation matters here)
 
