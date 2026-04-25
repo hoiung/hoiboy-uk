@@ -5,7 +5,7 @@ draft: true
 slug: my-ebay-harness
 categories: [tech-ai]
 tags: [ai, harness, mcp, ebay, sst3, claude-code, tools]
-description: "Production proof for the harness thesis. 15 days, 159 commits, 17 MCP tools, four phases. What it looks like when an operator builds for their own trade."
+description: "Production proof for the harness thesis. 15 days, 160 commits, 17 MCP tools, four phases. What it looks like when an operator builds for their own trade."
 ---
 
 <!-- iamhoi -->
@@ -40,7 +40,7 @@ The thesis I have been writing for a month, [every domain expert needs their own
 
 ## The 15-day arc
 
-Started 10 April 2026. Latest commit 25 April 2026. Fifteen days. 159 commits. 134 of them Claude-attributed (about 84%). Ten Ralph-reviewed merges. One GitHub issue (multi-phase, four checkpoints). Public on GitHub, MIT licensed, [hoiung/ebay-seller-tool](https://github.com/hoiung/ebay-seller-tool).
+Started 10 April 2026. Latest commit 25 April 2026. Fifteen days. 160 commits. 135 of them Claude-attributed (about 84%). Ten Ralph-reviewed merges. A handful of GitHub issues, one per feature or phase fix. Public on GitHub, MIT licensed, [hoiung/ebay-seller-tool](https://github.com/hoiung/ebay-seller-tool).
 
 Four phases. Each one bolted on to the previous. None of them rewrote the previous one.
 
@@ -54,11 +54,11 @@ Four phases. Each one bolted on to the previous. None of them rewrote the previo
 
 Plus six supporting read-only tools strung across the phases: `get_sold_listings`, `get_unsold_listings`, `get_seller_transactions`, `get_listing_feedback`, `get_listing_cases`, `get_store_info`. Boring on their own. Critical to feed the diagnostic side of the harness.
 
-Five plus three plus one plus two plus six. Seventeen tools. Four phases. Reshapeable knife playing out in code. [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) ran the cadence (Implement, then Haiku review, then Sonnet review, then Opus review, then merge). Ralph caught the bugs that pytest never would have. Three Sonnet-tier flags on logic. Seven Opus-tier flags on architecture and edge cases. Restart from Tier 1 each time. Boring discipline. Boring discipline is the only kind that ships.
+Five plus three plus one plus two plus six. Seventeen tools. Four phases. Reshapeable knife playing out in code. [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) ran the cadence (Implement, then Haiku review, then Sonnet review, then Opus review, then merge). Ralph caught the bugs that pytest never would have. Restart from Tier 1 on every fail. Boring discipline. Boring discipline is the only kind that ships.
 
 ## The guardrail moves (the bit that makes it more than CRUD)
 
-Anyone can wire CRUD to an API in a weekend. The reason this took fifteen days, and 159 commits, and ten Ralph reviews, is the four moves that turn it from a script into a harness.
+Anyone can wire CRUD to an API in a weekend. The reason this took fifteen days, and 160 commits, and ten Ralph reviews, is the four moves that turn it from a script into a harness.
 
 **Move one, floor-price refusal.** Phase 4. If you ask the harness to revise a listing below the computed floor, it refuses. Loud refusal, not silent clamp. The floor comes from a public `config/fees.yaml` (final-value fee schedule, payment fee, ad fee if Promoted) plus the measured per-SKU return rate. The verdict is a number you can explain to someone. The refusal is a sentence you can copy into a note. The harness saying no on my behalf when the AI gets enthusiastic.
 
@@ -80,7 +80,7 @@ eBay's search ranking algorithm is called Cassini. It is real-time. Not nightly 
 
 The mechanism that matters for any seller running multiple listings: the signal loop is faster than your manual review loop. Three-day-old data is stale. Even one-day-old data on the wrong listing means three days of muted impressions before you notice. Manual review at "once a week" cadence loses every week against any seller who closes the loop in 24 hours.
 
-Promoted Listings has its own twist. The attribution rule changed in January 2026. Old rule, the same person who clicked the promoted listing had to buy. New rule, any person clicks, any other person buys within thirty days, and the platform attributes the sale to the campaign and bills the ad fee. European sellers reported attribution rates climbing from about 35 percent to 80 percent or higher with no measurable lift in actual orders. A disguised fee increase, not a sales-velocity increase.
+Promoted Listings has its own twist. eBay rewrote the attribution rule across major markets through 2025, then in the US in early 2026. Old rule, the same person who clicked the promoted listing had to buy. New rule, any person clicks, any other person buys within thirty days, and the platform attributes the sale to the campaign and bills the ad fee. Sellers reported attribution rates jumping from about 12 percent to 80 percent or higher with no measurable lift in actual orders. A disguised fee increase, not a sales-velocity increase.
 
 You cannot fix algorithms by talking to algorithms. You fix them by working the funnel, fast, every day, and refusing to pay for attribution that you would have got for free. That is what the harness does on my behalf.
 
