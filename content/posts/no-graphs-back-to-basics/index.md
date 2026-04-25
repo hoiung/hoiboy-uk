@@ -5,7 +5,7 @@ categories: [tech-ai]
 tags: [mcp, claude-code, ast, code-review, sst3]
 slug: no-graphs-back-to-basics
 description: "We reverted code-review-graph after two same-day bugs and went back to basics. The rule stayed. The replacement is not even a graph."
-draft: true
+draft: false
 ---
 
 <!-- iamhoi -->
