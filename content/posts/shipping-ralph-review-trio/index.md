@@ -114,7 +114,7 @@ Sample Invocation Gate: for any change that touches a pipeline, CLI wiring, cros
 
 Proof of Work governance signal: if you use a governance MCP server for checkbox tracking (I have one), Opus checks that every checked box has a matching evidence entry in a canonical `## Proof of Work` section of the issue body. It refuses narrative-only progress. The rule is strict because soft governance produces shipped products where nobody can reconstruct what was verified against what.
 
-MCP availability discriminator: every reviewer subagent that touches code-graph queries must state `mcp_graph_available: yes | no` on the first line of its result block. `yes` plus grep-only evidence is a fail; `no` plus documented grep fallback is a pass. This one line kills the class of lazy-fallback bugs that would otherwise hide silently in review output.
+MCP availability discriminator: every reviewer subagent that touches code-graph queries must state `mcp_graph_available: yes | no` on the first line of its result block. `yes` plus grep-only evidence is a fail; `no` plus documented grep fallback is a pass. This one line kills the class of lazy-fallback bugs that would otherwise hide silently in review output. (Update, 2026-04-25: we [reverted the graph MCP entirely](/posts/no-graphs-back-to-basics/) and rebuilt the same query interface as stateless Bash wrappers. The discriminator rule survived the tool change unchanged. The new post walks through why.)
 
 None of these are new inventions. What is new is packaging them as one installable plugin with an opinionated controller loop.
 
