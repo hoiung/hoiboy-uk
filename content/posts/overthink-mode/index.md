@@ -1,5 +1,5 @@
 ---
-title: "Ultrathink Mode. Why I Keep Turning It Off."
+title: "Ultrathink Mode aka Overthink Mode. Why I Keep Turning It Off."
 date: 2026-04-18
 draft: false
 categories: [tech-ai]
