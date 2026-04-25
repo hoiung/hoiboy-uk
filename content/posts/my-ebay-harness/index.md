@@ -40,7 +40,7 @@ Why bother with all this. Claude Code reads my plain English and decides what to
 
 Same chassis as the trading harness and the blog harness. [Reshaped](/posts/sst3-ai-harness-reshapeable-knife/) for reselling. Built on top of [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) (the underlying methodology I run for everything: my trading bot, my blog, my CV, this post you are reading right now). Just pointed at the eBay platform instead of IBKR or Hugo.
 
-The thesis I have been writing for a month, [every domain expert needs their own harness](/posts/every-sme-needs-their-own-harness/), needed proof. Not metaphor. Not philosophy. A real one. Public. Operating. Mine.
+The thesis from the recent posts, [every domain expert needs their own harness](/posts/every-sme-needs-their-own-harness/), needed proof. Not metaphor. Not philosophy. A real one. Public. Operating. Mine.
 
 ## The 15-day arc
 
