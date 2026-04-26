@@ -1,5 +1,5 @@
 ---
-title: "10 Knives. One Job. Watch This."
+title: "10 AI Harnesses. One Job. Watch This."
 date: 2026-04-26
 draft: true
 categories: [tech-ai]
@@ -26,7 +26,7 @@ So I figured... fine. Let's actually find out. Properly.
 <!-- iamhoi -->
 Most people pick a framework based on the README and a YouTube demo. I am running a bake-off.
 
-Same brief. Same clock. Same scorecard. Ten harnesses, lined up like ten knives in a knife block, all aimed at the same job: build one autonomous controller feature for the production trading platform. The winner's code goes into the live system. The losers go back in the drawer.
+Same brief. Same clock. Same scorecard. Ten harnesses, all aimed at the same job: build one autonomous controller feature for the production trading platform. The winner's code goes into the live system. The losers go on the shelf.
 
 (Yes, this is going to take weeks. Yes, I know I could have just picked Claude Agent SDK and called it done. No, that's not the point.)
 
@@ -44,7 +44,7 @@ The heavyweights are **CrewAI** (multi-agent crews with explicit personas, the f
 
 The reference baselines are **Claude Agent SDK** (Anthropic-native, as close to the model as you can get without writing your own loop) and **Agno** (the late entrant, Python-first, performance-focused).
 
-And the home-grown one is **[SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness)** (Single Source of Truth v3). My own. Built from first principles before I knew LangChain or CrewAI existed, on top of twenty years of project management and engineering scar tissue. Currently runs both my production trading platform AND this very blog you are reading. Two production systems on the same harness/framework, two completely different domains... so the "domain-agnostic" claim is real, not theoretical. (I have written more about why SST3 looks more like a [reshapeable knife](/posts/sst3-ai-harness-reshapeable-knife/) than a fixed framework, if you want the deep dive.)
+And the home-grown one is **[SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness)** (Single Source of Truth v3). My own. Built from first principles before I knew LangChain or CrewAI existed, on top of twenty years of project management and engineering scar tissue. Currently runs both my production trading platform AND this very blog you are reading. Two production systems on the same harness/framework, two completely different domains... so the "domain-agnostic" claim is real, not theoretical. (I have written more about how SST3 reshapes itself per task in an [earlier SST3 deep dive](/posts/sst3-ai-harness-reshapeable-knife/), if you want it.)
 
 SST3 is the bar. The other nine are graded against what it produces. If one of them beats it, I will say so out loud and adopt it. If not, the home-grown one keeps the seat. Both outcomes are interesting. Both are in scope.
 <!-- iamhoiend -->
@@ -90,7 +90,7 @@ The first run starts shortly. Per-harness postmortems publish here as one arc on
 
 The full methodology, the scorecard, the running order, and the rationale behind every design choice. All locked in the public [bake-off repo](https://github.com/hoiung/bakeoff). If you want to reproduce the experiment yourself, the templates will be there once the dust clears.
 
-Until then... ten knives, one job, may the sharpest edge win.
+Until then... ten harnesses, one job, may the best one win.
 
 Watch this space as the battle begins.
 <!-- iamhoiend -->
