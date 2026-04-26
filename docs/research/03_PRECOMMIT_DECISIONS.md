@@ -1,7 +1,7 @@
 # Pre-commit and CI Decisions
 
 **Date**: 2026-04-07
-**Sources audited**: the trading repo's `.pre-commit-config.yaml`, `dotfiles/SST3/scripts/`, `dotfiles/.github/workflows/`.
+**Sources audited**: existing pre-commit and CI configurations from related private repos.
 
 ## Principle
 
