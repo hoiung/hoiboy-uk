@@ -67,7 +67,7 @@ print_summary() {
     for line in "${results[@]}"; do
         printf '  %s\n' "$line"
     done
-    printf '-------------------------------\n'
+    printf '%s\n' '-------------------------------'
 }
 
 # 1. Em-dash grep (recurses into directory; fails if any U+2014 found).
