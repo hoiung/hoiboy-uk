@@ -1,5 +1,5 @@
 ---
-title: "10 AI Harnesses. One Job. Watch This."
+title: "10 AI Harnesses. One Job. Who Will Win?"
 date: 2026-04-26
 draft: false
 categories: [tech-ai]
@@ -14,9 +14,9 @@ description: "Ten AI coding harnesses. One frozen brief. One shot each. The winn
 <!-- iamhoi -->
 A simple question. Which AI coding harness would actually ship code I'd put in front of a live trading system? Not the one that demos best on YouTube. Not the one with the prettiest agent graph. The one that gets the job done... when getting it wrong costs me real money.
 
-I have been building a production trading platform for the past six months. Same [SST3-AI-Harness/framework](https://github.com/hoiung/sst3-ai-harness) (Single Source of Truth v3) underneath. Same five-stage workflow. Same Ralph review trio (Haiku, Sonnet, Opus, in that order, restart from the top on any fail). It works. It ships. It runs.
+I have been building a production trading platform for the past six months. [SST3-AI-Harness/framework](https://github.com/hoiung/sst3-ai-harness) (Single Source of Truth v3) underneath, though not the same SST3 throughout. Mine kept evolving, same as every other harness out there, as the models kept moving underneath us. What held was the shape: five-stage workflow, Ralph review trio (Haiku, Sonnet, Opus, in that order, restart from the top on any fail). It works. It ships. It runs.
 
-But every other week, some new agent framework shows up in my feeds. CrewAI! LangGraph! Smolagents! AutoGen-renamed-to-MAF! Each one promises to be the One True Way to wrangle an LLM into shipping real code. I'd been ignoring them (my harness/framework already works, why fix what isn't broken?) but the noise kept getting louder.
+But every other week, some new agent framework shows up in my feeds. CrewAI! LangGraph! Smolagents! AutoGen-renamed-to-MAF! Real frameworks, all of them. Built by people who know what they're doing, working fine in their own studies and edge cases. I'd been ignoring them (my harness/framework already works, why fix what isn't broken?) but the question kept nagging: would any of them actually fit my use case? My way of working? My quality bar?
 
 So I figured... fine. Let's actually find out. Properly.
 <!-- iamhoiend -->
