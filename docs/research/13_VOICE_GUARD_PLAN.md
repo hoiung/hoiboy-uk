@@ -61,7 +61,7 @@ A voice-tells pre-commit hook **already exists** in dotfiles (`SST3/scripts/chec
 - Voice cutoff date: **2026-04-07** (foundation post). Anything dated `>= 2026-04-07` = new = voice rules apply.
 
 ### Cross-repo plumbing
-- Both repos are siblings under `/home/hoiung/DevProjects/`. No submodules, no symlinks.
+- Both repos are siblings on disk in the local dev workspace. No submodules, no symlinks.
 - hoiboy-uk references dotfiles via relative path `../dotfiles/...` in CLAUDE.md, research docs
 - hoiboy-uk CI does NOT clone dotfiles (`actions/checkout` with `submodules: false`), so any runtime dependency on dotfiles content fails on the CI runner
 - dotfiles is private; cross-repo CI checkout requires a deploy key or PAT - adds friction

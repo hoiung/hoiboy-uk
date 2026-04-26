@@ -9,7 +9,7 @@
 # Usage:
 #   bash scripts/strip-exif.sh content/posts/<slug>/hero.webp [more.jpg ...]
 #
-# Issue: hoiung/bakeoff-priv#3 (Phase 1 infra).
+# Tracker: private bake-off teaser issue (Phase 1 infra).
 # Exit codes: 0 = success, 1 = exiftool failure on at least one file,
 #             2 = wrong usage, 127 = exiftool not installed.
 

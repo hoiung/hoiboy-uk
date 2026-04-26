@@ -14,7 +14,7 @@
 #   bash scripts/pre-publish.sh content/posts/<slug>/             # page bundle dir
 #   bash scripts/pre-publish.sh content/posts/<slug>/index.md     # single file
 #
-# Issue: hoiung/bakeoff-priv#3 (Phase 1 infra).
+# Tracker: private bake-off teaser issue (Phase 1 infra).
 # Exit codes: 0 = all checks pass; non-zero = first failing check's exit code.
 
 set -euo pipefail

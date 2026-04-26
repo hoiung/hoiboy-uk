@@ -1,13 +1,13 @@
 # Pre-commit and CI Decisions
 
 **Date**: 2026-04-07
-**Sources audited**: `auto_pb_swing_trader/.pre-commit-config.yaml`, `dotfiles/SST3/scripts/`, `dotfiles/.github/workflows/`.
+**Sources audited**: the trading repo's `.pre-commit-config.yaml`, `dotfiles/SST3/scripts/`, `dotfiles/.github/workflows/`.
 
 ## Principle
 
 Minimum useful set. This is a markdown-first blog, not a trading system. Quality engineering matters even for simple repos, but only the checks that actually catch bugs in this context.
 
-## From auto_pb_swing_trader pre-commit
+## From the trading repo's pre-commit
 
 | Hook | hoiboy-uk relevance | Decision |
 |---|---|---|

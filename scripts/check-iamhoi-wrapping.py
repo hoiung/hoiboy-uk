@@ -22,7 +22,7 @@ First-person detection:
     not being Hoi-voice. Hoi's prose is reliably first-person; KEEP_LIST
     without first-person is generic professional vocabulary.
 
-Issue: hoiung/bakeoff-priv#3 (Phase 1 infra)
+Tracker: private bake-off teaser issue (Phase 1 infra)
 Exit codes: 0 = pass, 1 = wrapping missing, 2 = config / read error
 """
 

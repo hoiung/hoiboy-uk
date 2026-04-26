@@ -6,7 +6,7 @@ This folder maps the journey from "I have 22 years of blogs" to a live, Claude-m
 
 1. [01_STACK_AND_DESIGN.md](01_STACK_AND_DESIGN.md) .  Static site generator comparison + Diehl design reference. Decision: **Hugo**.
 2. [02_BLOG_IMPORT_PIPELINE.md](02_BLOG_IMPORT_PIPELINE.md) .  How to import 22 years of legacy posts from WordPress / Blogger / Medium / Tumblr / archived sites into clean markdown.
-3. [03_PRECOMMIT_DECISIONS.md](03_PRECOMMIT_DECISIONS.md) .  Which pre-commit hooks and CI checks to copy from auto_pb_swing_trader and SST3, and which to skip.
+3. [03_PRECOMMIT_DECISIONS.md](03_PRECOMMIT_DECISIONS.md) .  Which pre-commit hooks and CI checks to copy from the trading repo and SST3, and which to skip.
 4. [04_CLAUDE_MANAGED_WORKFLOW.md](04_CLAUDE_MANAGED_WORKFLOW.md) .  How the GitHub repo + Cloudflare Pages + Claude Code loop works day to day.
 5. [05_PHASING_AND_SOURCES.md](05_PHASING_AND_SOURCES.md) .  Confirmed sources (WordPress backup, HTML scraps, Google Docs/docx) and the 4-phase rollout (Foundation → WP → HTML → docx).
 6. [06_TAXONOMY.md](06_TAXONOMY.md) .  Categories (food, adventure, dance, tech) as primary nav, tags as secondary, import categorisation strategy.
