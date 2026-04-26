@@ -1,7 +1,7 @@
 ---
 title: "10 AI Harnesses. One Job. Watch This."
 date: 2026-04-26
-draft: true
+draft: false
 categories: [tech-ai]
 tags: [bakeoff, harness, methodology, sst3-ai-harness, ai-agents]
 series: bakeoff
