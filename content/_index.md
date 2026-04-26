@@ -16,7 +16,7 @@ Hi, I'm Hoi. I'm human, by the way. I just love working with tech, AI, trading, 
 **Star sign:** Libra\
 **Height:** More panda than giraffe\
 **Alias:** Seno_[PK]\
-**Nicknames:** Panda, O'Hoi, Small Eyes, No Eyes, Midge\
+**Nicknames:** Panda, HoiBoy, O'Hoi, Small Eyes, No Eyes, Midge\
 **Top 3 Favourite Books:** Mindset by Dr Carol S. Dweck, Get Inside Her - The Female Perspective by Marni Kinrys, Richest Man in Babylon by George Samuel Clason\
 **Fav Drinks:** Good wine, Guinness, Green tea\
 **Fav Food:** Scoff scoff anything yummi\
