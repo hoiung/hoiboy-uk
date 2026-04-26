@@ -6,7 +6,7 @@ categories: [tech-ai]
 tags: [bakeoff, harness, methodology, sst3-ai-harness, ai-agents]
 series: bakeoff
 order: 0
-description: "Ten AI coding harnesses. One frozen brief. Eight hours each. The winner ships into a live trading system. Watch this space."
+description: "Ten AI coding harnesses. One frozen brief. One shot each. The winner ships into a live trading system. Watch this space."
 ---
 
 ## The Setup
