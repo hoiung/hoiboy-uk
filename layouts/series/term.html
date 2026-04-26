@@ -9,9 +9,12 @@
          layouts/_default/taxonomy.html
        _default/series.html is NOT in the lookup chain.
 
-       Falls back to taxonomy.html if `order` is missing on every post (sort
-       degrades to .Date desc), so existing taxonomies (tags, categories)
-       are unaffected. */ -}}
+       Hugo treats a missing `.Params.order` as the int zero-value, so posts
+       lacking `order` sort to position 0 (intermixed with any explicit
+       `order: 0` post). Always set `order` on every post in a series to
+       avoid silent mis-ordering. Single-post series (just the teaser) are
+       trivially correct. Other taxonomies (tags, categories) are unaffected
+       — they fall through to `_default/taxonomy.html` per Hugo lookup chain. */ -}}
 {{- define "main" -}}
 <h1>{{ .Title }} series</h1>
 {{- with .Content }}<div class="series-intro">{{ . }}</div>{{- end -}}
