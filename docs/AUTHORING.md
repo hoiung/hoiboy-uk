@@ -132,6 +132,6 @@ Hugo skips drafts in production builds. Public repo + draft frontmatter = safe (
 - [ ] Local preview: `hugo server`, click around the post
 - [ ] Headings start at `##`, no skipped levels
 - [ ] Internal links resolve, external links live
-- [ ] **Pre-publish gate**: `bash scripts/pre-publish.sh content/posts/<slug>/` — runs em-dash + voice-tells + frontmatter + word-count + secrets in one go (exit 0 = clean to publish)
+- [ ] **Pre-publish gate**: `bash scripts/pre-publish.sh content/posts/<slug>/`. Runs em-dash + voice-tells + frontmatter + word-count + secrets in one go (exit 0 = clean to publish)
 - [ ] Commit with descriptive message
 - [ ] Push, watch CI green, then live in ~90s

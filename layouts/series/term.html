@@ -13,8 +13,8 @@
        lacking `order` sort to position 0 (intermixed with any explicit
        `order: 0` post). Always set `order` on every post in a series to
        avoid silent mis-ordering. Single-post series (just the teaser) are
-       trivially correct. Other taxonomies (tags, categories) are unaffected
-       — they fall through to `_default/taxonomy.html` per Hugo lookup chain. */ -}}
+       trivially correct. Other taxonomies (tags, categories) are unaffected.
+       They fall through to `_default/taxonomy.html` per Hugo lookup chain. */ -}}
 {{- define "main" -}}
 <h1>{{ .Title }} series</h1>
 {{- with .Content }}<div class="series-intro">{{ . }}</div>{{- end -}}
