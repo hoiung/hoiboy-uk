@@ -14,7 +14,7 @@ description: "Ten AI coding harnesses. One frozen brief. One shot each. The winn
 <!-- iamhoi -->
 A simple question. Which AI coding harness would actually ship code I'd put in front of a live trading system? Not the one that demos best on YouTube. Not the one with the prettiest agent graph. The one that gets the job done... when getting it wrong costs me real money.
 
-I have been building a production trading platform for the last few years. Same [SST3-AI-Harness/framework](https://github.com/hoiung/sst3-ai-harness) (Single Source of Truth v3) underneath. Same five-stage workflow. Same Ralph review trio (Haiku, Sonnet, Opus, in that order, restart from the top on any fail). It works. It ships. It runs.
+I have been building a production trading platform for the past six months. Same [SST3-AI-Harness/framework](https://github.com/hoiung/sst3-ai-harness) (Single Source of Truth v3) underneath. Same five-stage workflow. Same Ralph review trio (Haiku, Sonnet, Opus, in that order, restart from the top on any fail). It works. It ships. It runs.
 
 But every other week, some new agent framework shows up in my feeds. CrewAI! LangGraph! Smolagents! AutoGen-renamed-to-MAF! Each one promises to be the One True Way to wrangle an LLM into shipping real code. I'd been ignoring them (my harness/framework already works, why fix what isn't broken?) but the noise kept getting louder.
 
@@ -24,7 +24,7 @@ So I figured... fine. Let's actually find out. Properly.
 ## The Itch
 
 <!-- iamhoi -->
-Most people pick a framework based on the README and a YouTube demo. I am running a bake-off.
+Most people pick a framework based on brand recognition or whatever's hot on their feed this month. I am running a bake-off.
 
 Same brief. Same clock. Same scorecard. Ten harnesses, all aimed at the same job: build one autonomous controller feature for the production trading platform. The winner's code goes into the live system. The losers go on the shelf.
 
@@ -36,17 +36,19 @@ The point is I want to KNOW. Not "the docs look nice", not "the discord seems ac
 ## The 10 Contestants
 
 <!-- iamhoi -->
-Three lean floors. Four heavyweight frameworks. Two reference baselines. One home-grown experimental harness/framework. All in.
+Three lean floors. Four heavyweights. One Anthropic-native floor. One late entrant. One home-grown harness/framework that sets the bar. All in.
 
 The lean floors are **Smolagents** (Hugging Face's minimalist runtime, the "if you can't beat THIS, why are you adding any abstraction at all" floor), **pydantic-ai** (Pydantic's bet on type-safe agent purity), and **OpenAI Agents SDK** (handoff-flavoured, the SDK successor to OpenAI's earlier agent experiments).
 
 The heavyweights are **CrewAI** (multi-agent crews with explicit personas, the framework most people meme about), **LangGraph** (stateful directed-graph orchestration, currently the LinkedIn buzzword leader), **Google ADK** (OpenTelemetry-native, the only one that natively pretends to care about observability), and **MAF** (Microsoft Agent Framework, the AutoGen rename, Microsoft's enterprise pitch).
 
-The reference baselines are **Claude Agent SDK** (Anthropic-native, as close to the model as you can get without writing your own loop) and **Agno** (the late entrant, Python-first, performance-focused).
+The Anthropic-native floor is **Claude Agent SDK**. As close to the model as you can get without writing your own loop. It is the baseline of what raw Claude does without a wrapper framework wrapped around it.
+
+The late entrant is **Agno**. Python-first, performance-focused, showed up after the lineup was already drafted, made the cut anyway.
 
 And the home-grown one is **[SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness)** (Single Source of Truth v3). My own. Built from first principles before I knew LangChain or CrewAI existed, on top of twenty years of project management and engineering scar tissue. Currently runs both my production trading platform AND this very blog you are reading. Two production systems on the same harness/framework, two completely different domains... so the "domain-agnostic" claim is real, not theoretical. (I have written more about how SST3 reshapes itself per task in an [earlier SST3 deep dive](/posts/sst3-ai-harness-reshapeable-knife/), if you want it.)
 
-SST3 is the bar. The other nine are graded against what it produces. If one of them beats it, I will say so out loud and adopt it. If not, the home-grown one keeps the seat. Both outcomes are interesting. Both are in scope.
+Two of these have a special role in the scoring. **SST3 is the bar.** The target every other contestant has to meet or beat. **Claude Agent SDK is the baseline.** The floor showing what raw Anthropic-native does with no wrapper framework at all. The other eight have to land somewhere between those two: above the baseline at minimum (otherwise the framework is making things worse than no framework), ideally above the bar (otherwise SST3 keeps the seat).
 <!-- iamhoiend -->
 
 ## The Rules
@@ -56,9 +58,9 @@ A bake-off is only worth reading if it is fair. The setup is deliberately, delib
 
 *Same input.* Every harness gets the same frozen brief, packaged as the same tarball. No live editing. No follow-up clarifications. What is in the tarball is what each harness sees... and that's it.
 
-*Same time.* Eight hours of wall-clock. The clock starts when the harness begins. Stops when it stops. Or when the cap hits. Whichever comes first.
+*Tokens logged, quality scored.* I track every token each harness consumes (some are token-pigs by design and that is fine). I do not score on token count. I score on whether the harness actually delivered, and how well. The question is whether the harness holds water under a real production brief, not whether it uses fewer tokens than its rivals.
 
-*One shot.* No second attempts on the same brief. No "let me re-prompt and try again". Whatever the harness produces in eight hours is what gets scored. The first run is the last run.
+*One shot.* No second attempts on the same brief. No "let me re-prompt and try again". Whatever the harness produces on its first and only run is what gets scored. No second pass. No retries. The first run is the last run.
 
 *Anti-fab gate.* Code that compiles but does not do what the spec says fails on a separate axis. A harness cannot win by producing plausible nonsense (the AI agent equivalent of lying with a straight face). Fail-loud beats fail-quiet, every time.
 
