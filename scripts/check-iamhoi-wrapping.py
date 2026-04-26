@@ -14,12 +14,13 @@ Decision matrix (default = PASS):
   body has first-person prose AND no marker        -> FAIL exit 1
 
 First-person detection:
-  - regex `\\b(I|I'm|I've|my|me|Hoi)\\b` (case-sensitive on `I`/`I'm`/`I've`/`Hoi`;
-    case-insensitive on `my`/`me` via separate pattern, but kept simple for
-    false-positive economy)
-  - KEEP_LIST vocabulary from voice_rules.py (passion, journey, back to basics,
-    align, leverage, robust, coach, enable, etc) — only triggers if 3+ KEEP_LIST
-    terms appear, to suppress one-off generic-word noise.
+  - regex `\\b(I|I'm|I've|Hoi)\\b` (case-sensitive) plus `\\b(my|me)\\b`
+    (case-insensitive). Any single hit triggers detection.
+  - KEEP_LIST vocabulary signal removed after Issue #3 Sonnet review surfaced
+    false-positive risk: a non-Hoi technical post quoting methodology terms
+    (`leverage`, `robust`, `coach`, `back to basics`, etc) would FAIL despite
+    not being Hoi-voice. Hoi's prose is reliably first-person; KEEP_LIST
+    without first-person is generic professional vocabulary.
 
 Issue: hoiung/bakeoff-priv#3 (Phase 1 infra)
 Exit codes: 0 = pass, 1 = wrapping missing, 2 = config / read error
@@ -33,19 +34,14 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from voice_rules import HOIBOY_CUTOFF_DATE, KEEP_LIST
+from voice_rules import HOIBOY_CUTOFF_DATE
 
 # Pre-compiled patterns (compile once, reuse per file)
 _FIRST_PERSON_RE = re.compile(r"\b(I|I'm|I've|Hoi)\b")
 _FIRST_PERSON_LOWER_RE = re.compile(r"\b(my|me)\b", re.IGNORECASE)
-_KEEP_LIST_RE = re.compile(
-    r"\b(" + "|".join(re.escape(w) for w in KEEP_LIST) + r")\b",
-    re.IGNORECASE,
-)
 _FRONTMATTER_DATE_RE = re.compile(r"^date:\s*(\d{4}-\d{2}-\d{2})", re.MULTILINE)
 _MARKER_OPEN = "<!-- iamhoi -->"
 _MARKER_EXEMPT = "<!-- iamhoi-exempt -->"
-_KEEP_LIST_THRESHOLD = 3  # require >= N KEEP_LIST hits to count as Hoi-voice
 
 
 def parse_post_date(text: str) -> date | None:
@@ -81,13 +77,18 @@ def is_exempt(body: str) -> bool:
 
 
 def has_voice_prose(body: str) -> bool:
-    """Return True if body contains first-person prose or a strong KEEP_LIST signal."""
-    if _FIRST_PERSON_RE.search(body):
-        return True
-    if _FIRST_PERSON_LOWER_RE.search(body):
-        return True
-    keep_hits = len(_KEEP_LIST_RE.findall(body))
-    return keep_hits >= _KEEP_LIST_THRESHOLD
+    """Return True if body contains first-person prose (I, I'm, I've, Hoi, my, me).
+
+    First-person pronouns are the only detection signal. The KEEP_LIST
+    vocabulary path was removed after Issue #3 Sonnet review surfaced false-
+    positive risk: a non-Hoi technical post quoting methodology terms
+    (`leverage`, `robust`, `coach`, `back to basics`, etc) would FAIL despite
+    not being Hoi-voice. Hoi's prose is reliably first-person; KEEP_LIST
+    without first-person is generic professional vocabulary.
+    """
+    return bool(
+        _FIRST_PERSON_RE.search(body) or _FIRST_PERSON_LOWER_RE.search(body)
+    )
 
 
 def check_file(path: Path, check_only_new: bool) -> tuple[bool, str]:
