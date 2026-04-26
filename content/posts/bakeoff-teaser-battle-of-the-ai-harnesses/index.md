@@ -48,7 +48,15 @@ The late entrant is **Agno**. Python-first, performance-focused, showed up after
 
 And the home-grown one is **[SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness)** (Single Source of Truth v3). My own. Built from first principles before I knew LangChain or CrewAI existed, on top of twenty years of project management and engineering scar tissue. Currently runs both my production trading platform AND this very blog you are reading. Two production systems on the same harness/framework, two completely different domains... so the "domain-agnostic" claim is real, not theoretical. (I have written more about how SST3 reshapes itself per task in an [earlier SST3 deep dive](/posts/sst3-ai-harness-reshapeable-knife/), if you want it.)
 
-Two of these have a special role in the scoring. **SST3 is the bar.** The target every other contestant has to meet or beat. **Claude Agent SDK is the baseline.** The floor showing what raw Anthropic-native does with no wrapper framework at all. The other eight have to land somewhere between those two: above the baseline at minimum (otherwise the framework is making things worse than no framework), ideally above the bar (otherwise SST3 keeps the seat).
+Two of these have a special role in the scoring.
+
+**SST3 is the bar.** Meaning it is what already runs my live trading platform today, and what every other contestant has to beat to take its place. If a contestant ships better code than SST3 under the same brief, SST3 gets dethroned. Simple.
+
+**Claude Agent SDK is the baseline.** Meaning it is the bare minimum: raw Claude with no framework wrapped around it at all, just the SDK. Every contestant should at least be able to beat THAT (otherwise the framework is making things actively worse, which would be a damning result for any framework that calls itself a framework).
+
+So there are three possible outcomes per contestant. They could land **above the bar** (beat SST3, in which case SST3 gets retired and they take its seat). They could land **between baseline and bar** (beat raw Claude but lose to SST3, in which case they are a working framework but not better than what I already have). Or they could land **below the baseline** (lose even to raw Claude with no wrapper, which means the framework is actively making things worse, which would be embarrassing for whoever shipped it).
+
+Most should land in the middle. The interesting questions are whether any of them hit the top, and whether any of them sit at the bottom.
 <!-- iamhoiend -->
 
 ## The Rules
