@@ -1,86 +1,96 @@
 ---
-title: "Battle of the AI Harnesses: 10 Coding Agents, One Production-Grade Trading System"
+title: "10 Knives. One Job. Watch This."
 date: 2026-04-26
 draft: true
 categories: [tech-ai]
 tags: [bakeoff, harness, methodology, sst3-ai-harness, ai-agents]
 series: bakeoff
 order: 0
-description: "Ten AI coding harnesses. One frozen issue. One eight-hour timer. The winner's code goes into a live trading system. Watch this space."
+description: "Ten AI coding harnesses. One frozen brief. Eight hours each. The winner ships into a live trading system. Watch this space."
 ---
 
-## Hook
+## The Setup
 
 <!-- iamhoi -->
-A simple question. Which AI coding harness actually ships production-grade code under real constraints?
+A simple question. Which AI coding harness would actually ship code I'd put in front of a live trading system? Not the one that demos best on YouTube. Not the one with the prettiest agent graph. The one that gets the job done... when getting it wrong costs me real money.
 
-Not "which one demoes well in the marketing video". Not "which one has the prettiest agent graph". Which one, given the same shared issue and the same eight hours, produces code I would put in front of a live trading system without losing sleep.
+I have been building a production trading platform for the last few years. Same [SST3-AI-Harness/framework](https://github.com/hoiung/sst3-ai-harness) (Single Source of Truth v3) underneath. Same five-stage workflow. Same Ralph review trio (Haiku, Sonnet, Opus, in that order, restart from the top on any fail). It works. It ships. It runs.
 
-I am running ten of them through the same gauntlet. One issue. One spec. One quality bar. Each harness gets the frozen brief in a tarball, eight hours of wall-clock time, no second attempts. The winner's code feeds into the next round of production controller work, on a system that already runs against a real brokerage with real money.
+But every other week, some new agent framework shows up in my feeds. CrewAI! LangGraph! Smolagents! AutoGen-renamed-to-MAF! Each one promises to be the One True Way to wrangle an LLM into shipping real code. I'd been ignoring them (my harness/framework already works, why fix what isn't broken?) but the noise kept getting louder.
 
-This post is the warm-up. The bake-off itself starts shortly. The full results, the per-harness deep dives, and the methodology autopsy land here once the dust has cleared.
+So I figured... fine. Let's actually find out. Properly.
 <!-- iamhoiend -->
 
-## The 10 contestants
+## The Itch
 
 <!-- iamhoi -->
-The roster, in no particular order.
+Most people pick a framework based on the README and a YouTube demo. I am running a bake-off.
 
-- **[SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) (Single Source of Truth v3)**: my home-grown, methodology-led harness. Acts as the baseline bar everything else gets measured against.
-- **Smolagents**: the lean floor. Hugging Face's minimal agent runtime. If a heavyweight harness cannot beat this, that is interesting in itself.
-- **pydantic-ai**: lean and type-safe. Pydantic's bet on agent framework purity.
-- **OpenAI Agents SDK**: lean and handoff-flavoured. The current SDK successor to OpenAI's earlier agent experiments.
-- **CrewAI**: heavy on roles. Multi-agent crews with explicit personas.
-- **LangGraph**: heavy on graph. Stateful directed-graph orchestration.
-- **Google ADK**: heavy on observability. OpenTelemetry-native by default.
-- **MAF (Microsoft Agent Framework)**: the AutoGen successor. Microsoft's enterprise pitch.
-- **Agno**: the late entrant. Python-first, performance-focused.
-- **Claude Agent SDK**: Anthropic-native reference baseline. As close to the model as you can get without writing your own loop.
+Same brief. Same clock. Same scorecard. Ten harnesses, lined up like ten knives in a knife block, all aimed at the same job: build one autonomous controller feature for the production trading platform. The winner's code goes into the live system. The losers go back in the drawer.
 
-Three "lean" floors. Four "heavy" frameworks. Two reference baselines. One home-grown experimental harness. Same issue, same clock, same scorecard.
+(Yes, this is going to take weeks. Yes, I know I could have just picked Claude Agent SDK and called it done. No, that's not the point.)
+
+The point is I want to KNOW. Not "the docs look nice", not "the discord seems active", not "this guy on Twitter swears by it". I want to know which one ships. And the only way to know is to put them in the same room, give them the same job, and see what falls out the other side.
 <!-- iamhoiend -->
 
-## The SST3 baseline
+## The 10 Contestants
 
 <!-- iamhoi -->
-I built [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) before I knew LangChain or CrewAI existed. The patterns came out of twenty years of project management and engineering work, not from cargo-culting a popular framework.
+Three lean floors. Four heavyweight frameworks. Two reference baselines. One home-grown experimental harness/framework. All in.
 
-It earns its place as the baseline because it is what I actually use, every day, on the production system being enhanced. If the bake-off proves that one of the off-the-shelf harnesses ships better code under the same constraints, I will say so out loud and adopt it. If not, the home-grown one keeps the seat. Both outcomes are interesting.
+The lean floors are **Smolagents** (Hugging Face's minimalist runtime, the "if you can't beat THIS, why are you adding any abstraction at all" floor), **pydantic-ai** (Pydantic's bet on type-safe agent purity), and **OpenAI Agents SDK** (handoff-flavoured, the SDK successor to OpenAI's earlier agent experiments).
 
-The bar is whatever SST3 produces. The other nine are graded against that.
+The heavyweights are **CrewAI** (multi-agent crews with explicit personas, the framework most people meme about), **LangGraph** (stateful directed-graph orchestration, currently the LinkedIn buzzword leader), **Google ADK** (OpenTelemetry-native, the only one that natively pretends to care about observability), and **MAF** (Microsoft Agent Framework, the AutoGen rename, Microsoft's enterprise pitch).
+
+The reference baselines are **Claude Agent SDK** (Anthropic-native, as close to the model as you can get without writing your own loop) and **Agno** (the late entrant, Python-first, performance-focused).
+
+And the home-grown one is **[SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness)** (Single Source of Truth v3). My own. Built from first principles before I knew LangChain or CrewAI existed, on top of twenty years of project management and engineering scar tissue. Currently runs both my production trading platform AND this very blog you are reading. Two production systems on the same harness/framework, two completely different domains... so the "domain-agnostic" claim is real, not theoretical. (I have written more about why SST3 looks more like a [reshapeable knife](/posts/sst3-ai-harness-reshapeable-knife/) than a fixed framework, if you want the deep dive.)
+
+SST3 is the bar. The other nine are graded against what it produces. If one of them beats it, I will say so out loud and adopt it. If not, the home-grown one keeps the seat. Both outcomes are interesting. Both are in scope.
 <!-- iamhoiend -->
 
-## How the bake-off stays fair
+## The Rules
 
 <!-- iamhoi -->
-A bake-off is only worth reading if it is fair. The setup is deliberately boring on that front.
+A bake-off is only worth reading if it is fair. The setup is deliberately, deliberately, deliberately boring on that front.
 
-- **Equal input.** Every harness gets the same frozen issue, packaged as the same tarball. No live editing. No follow-up clarifications. What is in the tarball is what each harness sees.
-- **Equal time.** Eight hours of wall-clock. The clock starts when the harness begins. Stops when it stops, or when the cap hits.
-- **One shot.** No second attempts on the same issue. No "let me re-prompt and try again". Whatever the harness produces in eight hours is what gets scored.
-- **Anti-fabrication gate.** Code that compiles but does not do what the spec says fails on a separate axis. A harness cannot win by producing plausible nonsense.
-- **Eleven-column scorecard.** Code quality, observability, verification, monitoring, trading safety, deployability, documentation, anti-fabrication, plus three weighted aggregates. Pareto-frontier sanity check. Documented tiebreakers.
-- **Cooling-off and rest days.** Fixed running order, set in advance, with rest days between heavy runs to keep my own measurement quality steady.
+*Same input.* Every harness gets the same frozen brief, packaged as the same tarball. No live editing. No follow-up clarifications. What is in the tarball is what each harness sees... and that's it.
 
-Full methodology lives in the public [bake-off repo](https://github.com/hoiung/bakeoff). It is locked before the first run starts so I cannot move the goalposts mid-experiment.
+*Same time.* Eight hours of wall-clock. The clock starts when the harness begins. Stops when it stops. Or when the cap hits. Whichever comes first.
+
+*One shot.* No second attempts on the same brief. No "let me re-prompt and try again". Whatever the harness produces in eight hours is what gets scored. The first run is the last run.
+
+*Anti-fab gate.* Code that compiles but does not do what the spec says fails on a separate axis. A harness cannot win by producing plausible nonsense (the AI agent equivalent of lying with a straight face). Fail-loud beats fail-quiet, every time.
+
+*Eleven-column scorecard.* Code quality, observability, verification, monitoring, trading safety, deployability, documentation, anti-fabrication, plus three weighted aggregates. Pareto sanity check. Documented tiebreakers, written down before the first run.
+
+*Cooling-off and rest days.* Fixed running order, set in advance, with rest days between heavy runs to keep MY OWN measurement quality steady. (I am the dumbest part of this experiment. The bake-off is also a measurement of how well I judge the bake-off, and that needs sleep too.)
+
+Full methodology lives in the public [bake-off repo](https://github.com/hoiung/bakeoff). Locked before the first run starts. So I cannot move the goalposts mid-experiment, no matter how much I might want to.
 <!-- iamhoiend -->
 
-## What is at stake
+## What's at Stake
 
 <!-- iamhoi -->
-The winner is not getting a trophy. The winner's code goes into the next round of production controller enhancement on a system that already trades against a real brokerage.
+The winner does not get a trophy. The winner's code goes into the next round of production controller enhancement. On a system that already trades against a real brokerage. With real money.
 
-That is why the rubric is the way it is. If a harness ships impressive-looking code that fails on observability or trading safety, it is not useful to me. The measurement is "would I put this in production tomorrow", not "did the demo run".
+That is why the rubric is the way it is. If a harness ships impressive-looking code that fails on observability or trading safety, it is not useful to me. The measurement is "would I put this in production tomorrow", not "did the demo run and look pretty in the YouTube video".
 
-It also means the cost of getting this wrong is real. I am not running this for fun. The result of the bake-off changes which harness I bet on for the next year of work.
+It also means the cost of getting this wrong is real. I am not running this for fun (well, mostly). The result of the bake-off changes which harness/framework I bet on for the next year of work. Possibly longer.
+
+Most people would just pick a framework from someone else's comparison blog post. I am writing the comparison blog post... by actually building production code in all ten of them.
+
+Different angle. Same result. Much more reliable.
 <!-- iamhoiend -->
 
-## Watch this space
+## Watch This Space
 
 <!-- iamhoi -->
-The first run starts shortly. Per-harness postmortems publish here as one arc once all ten runs are done, not in dribs and drabs. Bookmark the site, grab the RSS feed if you live in 2007, or just check back when the dust has settled.
+The first run starts shortly. Per-harness postmortems publish here as one arc once all ten runs are done... not in dribs and drabs. Bookmark the site. Grab the RSS feed (yes, RSS, like it's 2007). Or just check back when the dust has settled.
 
-The full methodology, the scorecard, the running order, and the rationale behind every design choice are all locked in the public [bake-off repo](https://github.com/hoiung/bakeoff). If you want to reproduce the experiment yourself, the templates will be there once the dust clears.
+The full methodology, the scorecard, the running order, and the rationale behind every design choice. All locked in the public [bake-off repo](https://github.com/hoiung/bakeoff). If you want to reproduce the experiment yourself, the templates will be there once the dust clears.
+
+Until then... ten knives, one job, may the sharpest edge win.
 
 Watch this space as the battle begins.
 <!-- iamhoiend -->
