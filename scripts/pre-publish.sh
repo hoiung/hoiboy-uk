@@ -1,12 +1,21 @@
 #!/bin/bash
 # Pre-publish gate aggregator for hoiboy.uk new blog posts.
 #
-# Runs five sequential checks fail-fast on first non-zero exit:
-#   1. Em-dash grep   (any U+2014 = fail)
-#   2. Voice tells    (check-ai-writing-tells.py --check-only-new)
-#   3. Frontmatter    (validate_frontmatter.py — whole-tree)
-#   4. Word count     (check_wordcount.py >3000 = fail)
-#   5. Private leaks  (check-public-repo-secrets.py)
+# Runs seven sequential checks fail-fast on first non-zero exit:
+#   1. Em-dash grep      (any U+2014 = fail)
+#   2. Voice tells       (check-ai-writing-tells.py --check-only-new)
+#   3. Frontmatter       (validate_frontmatter.py — whole-tree)
+#   4. Word count        (check_wordcount.py >3000 = fail)
+#   5. Private leaks     (check-public-repo-secrets.py)
+#   6. Hugo build        (hugo --buildDrafts so cross-link resolution + permalinks
+#                         match production exactly; rendered HTML lands in public/)
+#   7. Rendered links    (lychee on `public/posts/<slug>/index.html` NOT raw .md
+#                         — catches broken cross-section links + missing assets
+#                         that markdown-only lychee cannot see)
+#
+# Checks 6+7 added per dotfiles Issue #447 Phase 7 (AP #18 per-shape recipe
+# for the Static-blog shape). Lighthouse-CI deliberately OUT OF SCOPE — no
+# perf-budget need yet, would add puppeteer/headless-Chrome overhead.
 #
 # Bash (not strict POSIX sh) for `set -o pipefail`.
 #
@@ -94,5 +103,39 @@ run_check "wordcount" python3 scripts/check_wordcount.py "$POST_FILE"
 # 5. Private blocklist + secrets (PLATFORM_TOKEN + PRIVATE_PATH + BLOCKLIST).
 run_check "secrets" python3 scripts/check-public-repo-secrets.py "$TARGET"
 
+# 6. Hugo build with --buildDrafts so the rendered HTML in public/ matches
+#    what production will serve (excluding the auto-deploy gate). Builds ALL
+#    drafts so cross-links to in-progress posts resolve.
+hugo_build() {
+    rm -rf public
+    hugo --buildDrafts --minify --quiet
+    [[ -d public ]] || { printf >&2 'ERR: hugo build did not produce public/\n'; return 1; }
+}
+run_check "hugo-build" hugo_build
+
+# 7. Lychee on rendered HTML — catches broken cross-section links + missing
+#    assets that markdown-only lychee misses (e.g. a `[link](../other-section/)`
+#    that resolves under Hugo's permalink scheme but not under raw-md walk).
+rendered_link_check() {
+    local slug rendered
+    if [ -d "$TARGET" ]; then
+        slug=$(basename "$TARGET")
+    else
+        slug=$(basename "$(dirname "$TARGET")")
+    fi
+    rendered="public/posts/$slug/index.html"
+    if [[ ! -f "$rendered" ]]; then
+        printf >&2 'WARN: rendered HTML not at %s — looking for any matching slug\n' "$rendered"
+        rendered=$(find public -path "*/$slug/index.html" -type f 2>/dev/null | head -n1)
+        [[ -z "$rendered" ]] && { printf >&2 'ERR: cannot locate rendered HTML for slug %s\n' "$slug"; return 1; }
+    fi
+    if ! command -v lychee >/dev/null 2>&1; then
+        printf >&2 'ERR: lychee not installed; install via cargo or apt\n'
+        return 127
+    fi
+    lychee --config lychee.toml --no-progress "$rendered"
+}
+run_check "rendered-link-liveness" rendered_link_check
+
 print_summary
-printf '[OK] all 5 pre-publish checks passed for %s\n' "$TARGET"
+printf '[OK] all 7 pre-publish checks passed for %s\n' "$TARGET"
