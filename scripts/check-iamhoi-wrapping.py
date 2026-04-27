@@ -182,7 +182,7 @@ def main() -> int:
             print(msg, file=sys.stderr)
         print(
             f"\n{len(failures)} file(s) missing iamhoi wrapping. "
-            f"See dotfiles/cv-linkedin/VOICE_PROFILE.md Section 8 + AP #15.",
+            f"See ~/DevProjects/job-hunter/cv-linkedin/VOICE_PROFILE.md Section 8 + AP #15.",
             file=sys.stderr,
         )
         return 1

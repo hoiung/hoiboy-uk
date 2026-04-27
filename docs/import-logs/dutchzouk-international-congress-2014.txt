@@ -2,7 +2,7 @@ Hunt log: The Biggest Zouk Family Gathering in Europe - DutchZouk! International
 ========================================
 
 Source voice-corpus file:
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/14_dutchzouk-international-congress-2014.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/14_dutchzouk-international-congress-2014.md
 
 AAM manual backup folder:
   /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/The Biggest Zouk Family Gathering in Europe - DutchZouk! International Congress 2014/

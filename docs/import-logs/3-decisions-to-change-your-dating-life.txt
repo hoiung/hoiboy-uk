@@ -1,7 +1,7 @@
 Import hunt log: 3-decisions-to-change-your-dating-life
 
 Source corpus file:
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/01_three-decisions-to-change-your-dating-life.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/01_three-decisions-to-change-your-dating-life.md
 
 Original iD8u gdoc:
   /mnt/c/Users/hoi_u/My Drive/Business/iD8u (Dating Platform)/DESIGN & MARKETING/_BLOG (Hoi)/3 Decisions To Change Your Dating Life, Forever.gdoc

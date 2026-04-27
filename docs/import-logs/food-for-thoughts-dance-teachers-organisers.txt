@@ -2,7 +2,7 @@ Import log: Food for Thoughts for Dance Teachers and Organisers
 Slug: food-for-thoughts-dance-teachers-organisers
 
 Source body (voice-corpus):
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/27_food-for-thoughts-dance-teachers-organisers.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/27_food-for-thoughts-dance-teachers-organisers.md
 
 Date source (Option B: gdoc mtime):
   gdoc mtime: Food for Thoughts for Dance Teachers and Organisers.gdoc = 2019-11-28

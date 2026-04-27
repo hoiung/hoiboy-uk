@@ -1,5 +1,5 @@
 SLUG: woodsmoke-bushcraft-course
-Corpus: /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/18_woodsmoke-bushcraft-course.md
+Corpus: /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/18_woodsmoke-bushcraft-course.md
 SQL match: woodsmoke - woodlanders bushcraft course
 SQL title: Woodsmoke - Woodlanders Bushcraft Course
 date_published: 2014-08-10

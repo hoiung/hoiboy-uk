@@ -2,7 +2,7 @@ Import log: ReportaDancer.com. Why it was DOOMED to Fail
 Slug: reportadancer-doomed-to-fail
 
 Source body (voice-corpus):
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/29_reportadancer-doomed-to-fail.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/29_reportadancer-doomed-to-fail.md
 
 Date source (Option B: gdoc mtime):
   WordPress pubDate 2020-06-18 (special case, not gdoc)

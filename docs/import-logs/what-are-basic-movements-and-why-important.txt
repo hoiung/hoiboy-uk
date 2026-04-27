@@ -2,7 +2,7 @@ Import log: What are basic movements and why are they so important?
 Slug: what-are-basic-movements-and-why-important
 
 Source body (voice-corpus):
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/34_what-are-basic-movements-and-why-important.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/34_what-are-basic-movements-and-why-important.md
 
 Date source (Option B: gdoc mtime):
   gdoc mtime: What are basic movements and why are they so important/What are basic movements and why are they important .gdoc = 2019-09-03 01:51:16

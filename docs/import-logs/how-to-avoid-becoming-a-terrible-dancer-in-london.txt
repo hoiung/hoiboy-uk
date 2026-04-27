@@ -1,5 +1,5 @@
 SLUG: how-to-avoid-becoming-a-terrible-dancer-in-london
-Corpus: /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/05_avoid-becoming-terrible-zouk-dancer-london-uncensored.md
+Corpus: /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/05_avoid-becoming-terrible-zouk-dancer-london-uncensored.md
 SQL index match (fuzzy): "how to avoid becoming a terrible zouk dancer in london"
 SQL title: How To Avoid Becoming A Terrible Zouk Dancer In London
 date_published: 2016-10-12 18:30:00

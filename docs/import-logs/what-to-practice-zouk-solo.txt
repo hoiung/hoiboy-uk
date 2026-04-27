@@ -2,7 +2,7 @@ Import log: What To Practice in Zouk Solo
 Slug: what-to-practice-zouk-solo
 
 Source body (voice-corpus):
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/33_what-to-practice-zouk-solo.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/33_what-to-practice-zouk-solo.md
 
 Date source (Option B: gdoc mtime):
   gdoc mtime: The Key To Effective Dance Practice/What To Practice in Zouk Solo.gdoc = 2017-09-21 00:25:06

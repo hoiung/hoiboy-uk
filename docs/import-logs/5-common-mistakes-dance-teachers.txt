@@ -2,7 +2,7 @@ Hunt log: 5 Common Mistakes Dance Teachers Make At Congresses
 ========================================
 
 Source voice-corpus file:
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/07_5-common-mistakes-dance-teachers.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/07_5-common-mistakes-dance-teachers.md
 
 AAM manual backup folder:
   /mnt/c/Users/hoi_u/My Drive/AdventureAnd.Me/BACKUP/manual blog backup/5 Common Mistakes Dance Teachers Make At Congresses/

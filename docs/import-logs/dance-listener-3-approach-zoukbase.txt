@@ -2,7 +2,7 @@ Import log: Become The Dance Listener By Using The 3 Dance Approach
 Slug: dance-listener-3-approach-zoukbase
 
 Source body (voice-corpus):
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/25_dance-listener-3-approach-zoukbase.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/25_dance-listener-3-approach-zoukbase.md
 
 Date source (Option B: gdoc mtime):
   gdoc mtime: Become The Dance Listener By Using The 3 Dance Approach.gdoc = 2017-06-05

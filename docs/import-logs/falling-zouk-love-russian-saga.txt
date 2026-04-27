@@ -2,7 +2,7 @@ Import log: Falling in Zouk Love Again. My Russian Saga
 Slug: falling-zouk-love-russian-saga
 
 Source body (voice-corpus):
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/26_falling-zouk-love-russian-saga.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/26_falling-zouk-love-russian-saga.md
 
 Date source (Option B: gdoc mtime):
   gdoc mtime: Falling in Zouk Love Again - My Russian Saga.gdoc = 2019-07-17

@@ -2,7 +2,7 @@ Import log: 5 Stages of Learning Social Dance Movements
 Slug: 5-stages-learning-social-dance-movements
 
 Source body (voice-corpus):
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/22_5-stages-learning-social-dance-movements.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/22_5-stages-learning-social-dance-movements.md
 
 Date source (Option B: gdoc mtime):
   gdoc mtime: 5 Stages of Learning Social Dance Movements/5 Stages of Learning Social Dance Movements.gdoc = 2019-09-09 23:18:35

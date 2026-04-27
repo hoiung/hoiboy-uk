@@ -2,7 +2,7 @@ Import log: The Clockworks of a Dance Scene
 Slug: clockworks-of-a-dance-scene
 
 Source body (voice-corpus):
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/30_clockworks-of-a-dance-scene.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/30_clockworks-of-a-dance-scene.md
 
 Date source (Option B: gdoc mtime):
   gdoc mtime: The Clockworks of a Dance Scene/The CLOCKWORKS of a DANCE SCENE.gdoc = 2017-11-17 21:42:49

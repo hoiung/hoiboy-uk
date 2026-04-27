@@ -2,7 +2,7 @@ Import log: Understanding Dance Growth, Plateaux and Bad Habits
 Slug: understanding-dance-growth-plateaux-bad-habits
 
 Source body (voice-corpus):
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/32_understanding-dance-growth-plateaux-bad-habits.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/32_understanding-dance-growth-plateaux-bad-habits.md
 
 Date source (Option B: gdoc mtime):
   gdoc mtime: Understanding Dance Growth, Plateaux and Bad Habits/Understanding Dance Growth, Plateaux and Bad Habits.gdoc = 2017-09-07 02:49:49

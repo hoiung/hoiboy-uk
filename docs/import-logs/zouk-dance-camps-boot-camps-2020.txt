@@ -2,7 +2,7 @@ Import log: Zouk Dance Camps and Boot Camps 2020
 Slug: zouk-dance-camps-boot-camps-2020
 
 Source body (voice-corpus):
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/36_zouk-dance-camps-boot-camps-2020.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/36_zouk-dance-camps-boot-camps-2020.md
 
 Date source (Option B: gdoc mtime):
   gdoc mtime: Zouk Dance Camps & Boot Camps 2020.gdoc = 2019-11-28

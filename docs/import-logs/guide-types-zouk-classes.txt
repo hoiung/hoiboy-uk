@@ -2,7 +2,7 @@ Import log: A Guide to Different Types of Zouk Classes
 Slug: guide-types-zouk-classes
 
 Source body (voice-corpus):
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/24_guide-types-zouk-classes.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/24_guide-types-zouk-classes.md
 
 Date source (Option B: gdoc mtime):
   gdoc mtime: A Guide to Different Types of Zouk Classes.gdoc = 2017-08-26

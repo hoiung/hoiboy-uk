@@ -2,7 +2,7 @@ Import log: Will UK Dance Connexion change Zouk in London
 Slug: will-uk-dance-connexion-change-zouk-london
 
 Source body (voice-corpus):
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/35_will-uk-dance-connexion-change-zouk-london.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/35_will-uk-dance-connexion-change-zouk-london.md
 
 Date source (Option B: gdoc mtime):
   gdoc mtime: Will UK Dance Connexion change Zouk in London .gdoc = 2017-08-03

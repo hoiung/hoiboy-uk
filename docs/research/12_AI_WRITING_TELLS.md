@@ -1,7 +1,7 @@
 # AI Writing Tells and Detection Research
 
 **Captured**: 2026-04-08
-**Source**: copied from `../../../dotfiles/cv-linkedin/job-research/18_AI_WRITING_TELLS_AND_DETECTION.md` (canonical, 25+ sources). Reproduced here so the in-repo voice rules are self-justifying.
+**Source**: copied from `../../../job-hunter/cv-linkedin/job-research/18_AI_WRITING_TELLS_AND_DETECTION.md` (canonical, 25+ sources). Reproduced here so the in-repo voice rules are self-justifying.
 
 ## Why this matters
 

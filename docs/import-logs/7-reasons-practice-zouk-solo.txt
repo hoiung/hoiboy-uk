@@ -2,7 +2,7 @@ Import log: 7 Great Reasons To Practice Zouk Solo
 Slug: 7-reasons-practice-zouk-solo
 
 Source body (voice-corpus):
-  /home/hoiung/DevProjects/dotfiles/cv-linkedin/voice-corpus/blogs/23_7-reasons-practice-zouk-solo.md
+  /home/hoiung/DevProjects/job-hunter/cv-linkedin/voice-corpus/blogs/23_7-reasons-practice-zouk-solo.md
 
 Date source (Option B: gdoc mtime):
   gdoc mtime: The Key To Effective Dance Practice/7 Great Reasons To Practice Zouk Solo.gdoc = 2017-09-20 00:51:17

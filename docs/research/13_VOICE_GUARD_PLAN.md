@@ -327,7 +327,7 @@ Note: the voice rules sync-check in hoiboy-uk CI is skipped because dotfiles is 
 - [ ] Re-run hook, confirm no false positives
 
 ### Phase 4 - documentation
-- [ ] Update `dotfiles/cv-linkedin/VOICE_PROFILE.md` Section 8 with the marker block + sync notes
+- [ ] Update `~/DevProjects/job-hunter/cv-linkedin/VOICE_PROFILE.md` Section 8 with the marker block + sync notes
 - [ ] Update `hoiboy-uk/docs/research/11_VOICE_PROFILE.md` with marker syntax docs
 - [ ] Update `hoiboy-uk/CLAUDE.md` voice rule section to mention the hook
 - [ ] Update `dotfiles/CLAUDE.md` if needed
