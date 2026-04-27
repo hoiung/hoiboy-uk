@@ -24,7 +24,7 @@ So I figured... fine. Let's actually find out. Properly.
 ## The Itch
 
 <!-- iamhoi -->
-Most people pick a framework based on brand recognition or whatever's hot on their feed this month. I am running a bake-off.
+I want to know which framework actually ships. So I am running a bake-off.
 
 Same brief. Same clock. Same scorecard. Ten harnesses, all aimed at the same job: build one autonomous controller feature for the production trading platform. The winner's code goes into the live system. The losers go on the shelf.
 
@@ -40,7 +40,7 @@ Three lean floors. Four heavyweights. One Anthropic-native floor. One late entra
 
 The lean floors are **Smolagents** (Hugging Face's minimalist runtime, the "if you can't beat THIS, why are you adding any abstraction at all" floor), **pydantic-ai** (Pydantic's bet on type-safe agent purity), and **OpenAI Agents SDK** (handoff-flavoured, the SDK successor to OpenAI's earlier agent experiments).
 
-The heavyweights are **CrewAI** (multi-agent crews with explicit personas, the framework most people meme about), **LangGraph** (stateful directed-graph orchestration, currently the LinkedIn buzzword leader), **Google ADK** (OpenTelemetry-native, the only one that natively pretends to care about observability), and **MAF** (Microsoft Agent Framework, the AutoGen rename, Microsoft's enterprise pitch).
+The heavyweights are **CrewAI** (multi-agent crews with explicit personas), **LangGraph** (stateful directed-graph orchestration, currently the LinkedIn buzzword leader), **Google ADK** (OpenTelemetry-native, the only one that natively pretends to care about observability), and **MAF** (Microsoft Agent Framework, the AutoGen rename, Microsoft's enterprise pitch).
 
 The Anthropic-native floor is **Claude Agent SDK**. As close to the model as you can get without writing your own loop. It is the baseline of what raw Claude does without a wrapper framework wrapped around it.
 
@@ -88,9 +88,9 @@ That is why the rubric is the way it is. If a harness ships impressive-looking c
 
 It also means the cost of getting this wrong is real. I am not running this for fun (well, mostly). The result of the bake-off changes which harness/framework I bet on for the next year of work. Possibly longer.
 
-Most people would just pick a framework from someone else's comparison blog post. I am writing the comparison blog post... by actually building production code in all ten of them.
+I am writing this comparison blog post the long way: by actually building production code in all ten of them.
 
-Different angle. Same result. Much more reliable.
+Different angle. Same question. Better answer.
 <!-- iamhoiend -->
 
 ## Watch This Space

@@ -32,6 +32,7 @@ Voice mechanics (above) are only half the job. The other half is authenticity. W
 1. **Specific personal experiences you invent.** Scenes, specific numbers, specific frustrations, specific anecdotes. Only write what Hoi has actually said in the current conversation or the corpus as his experience.
 2. **Aphorisms attributed to Hoi.** Coining a catchy line and passing it off as his view is still fabrication. Plausibility is not enough.
 3. **Invented narratives / strawmen / fake myths.** "The myth that X", "everyone assumes Y", "the industry claims Z" when nobody actually claims that. Use real economic / hierarchical mechanisms (deadlines, ROI, delivery pressure) instead of imagined industry beliefs.
+   - **AI-author exception (CRITICAL).** Hoi himself uses the "Most people X, I Y" contrast pattern frequently (his #1 rhetorical move, ~40-60 corpus appearances). It's authentic from him because he has lived experience to back claims about others. AI drafting in Hoi's voice does NOT have that basis and MUST NOT introduce new "Most people X" / "everyone Y" / "the industry Z" claims — replicate only when Hoi provided the comparative in source material. Otherwise lead with what Hoi is doing and drop the comparative. Hoi (2026-04-27): *"we're just here to share our way"*; *"the most people, is only when I know it myself and say it, but if it's AI compiled, then no, dont make things up"*.
 
 Called out twice on the `scaling-without-quality` blog draft, 2026-04-20:
 
@@ -144,6 +145,8 @@ delve, leverage (verb), spearhead, synergy, stakeholder, robust, seamless, cutti
 2. **Contrast framing ("Most people X, I Y").** His most reliable rhetorical move. Examples:
    - "Most people use AI as autocomplete. I treat it like a junior-to-mid engineer that I'm tech-leading."
    - "My old approach was X. My new approach is Y. Can you see the difference?"
+
+   > **AUTHOR-DEPENDENT (CRITICAL).** Authentic when Hoi writes it (lived experience). When AI drafts in Hoi's voice, AI MUST NOT introduce new "Most people X" claims — replicate only when Hoi provided the comparative in source material. Otherwise lead with what Hoi is doing and drop the comparative. Hoi (2026-04-27): *"the most people, is only when I know it myself and say it, but if it's AI compiled, then no, dont make things up"*. Cross-reference: section above on the three categories of fabrication, category 3 sub-bullet.
 3. **Self-deprecation as a flex**: "being the very untalented dancer that I am", "I have a memory of a goldfish and know only 8 moves", "short-arse at only 5ft 7 inches".
 
 ## Sign-offs (era-dependent)
