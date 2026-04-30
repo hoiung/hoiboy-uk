@@ -41,7 +41,7 @@ repos:
         files: ^(config/_default/params\.toml|layouts/.*\.html|assets/.*\.css)$
       - id: check-voice-tells
         name: Voice guard (marker-driven)
-        entry: python3 scripts/check-ai-writing-tells.py --check-only-new
+        entry: python3 scripts/check-ai-writing-tells.py --mode blog --check-only-new
         language: system
         pass_filenames: true
         files: ^(content/.*\.md|docs/research/.*\.md)$
