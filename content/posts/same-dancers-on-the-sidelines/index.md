@@ -48,7 +48,7 @@ Because practice is the common denominator under almost every one of those items
 
 And here's the funny thing. Practice, exploration, mistakes, they all arrive together. Is it really a mistake when you're exploring a movement or a sound? Like any trade, any profession, you need to know your tools and when to use them. In 360 degrees. In multiple layers, vertically and horizontally. At angles you didn't even know existed until you tried.
 
-I won't go deeper into that rabbit hole here. My old blogs dive into it properly, and I'd rather point you there than retype a decade of notes. The 2016 London rant ([how to avoid becoming a terrible dancer in London](/dance/how-to-avoid-becoming-a-terrible-dancer-in-london/)) still holds up. So does [understanding dance growth, plateaux and bad habits](/dance/understanding-dance-growth-plateaux-bad-habits/), [the key to effective Zouk practice](/dance/key-to-effective-zouk-practice/), and [what to practice solo](/dance/what-to-practice-zouk-solo/). Go read those if you want the engineering of it. This post is the observation.
+I won't go deeper into that rabbit hole here. My old blogs dive into it properly, and I'd rather point you there than retype a decade of notes. The 2016 London rant ([how to avoid becoming a terrible dancer in London](/posts/how-to-avoid-becoming-a-terrible-dancer-in-london/)) still holds up. So does [understanding dance growth, plateaux and bad habits](/posts/understanding-dance-growth-plateaux-bad-habits/), [the key to effective Zouk practice](/posts/key-to-effective-zouk-practice/), and [what to practice solo](/posts/what-to-practice-zouk-solo/). Go read those if you want the engineering of it. This post is the observation.
 
 ## The same dancers on the sidelines
 
