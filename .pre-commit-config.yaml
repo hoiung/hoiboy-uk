@@ -72,6 +72,13 @@ repos:
         pass_filenames: false
         always_run: true
 
+      - id: validate-internal-links
+        name: Validate internal markdown links
+        entry: python3 scripts/validate_internal_links.py
+        language: system
+        pass_filenames: false
+        files: ^content/.*\.md$
+
       - id: secret-rules-drift
         name: Secret detection script drift check
         entry: bash
