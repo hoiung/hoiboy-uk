@@ -118,7 +118,7 @@ A link like `/dance/some-post/` is broken even though it looks plausible. The po
 |---|---|
 | `/posts/some-post/` | `content/posts/some-post/index.md` (the post) |
 | `/dance/` | `content/dance/_index.md` (auto-generated category landing) |
-| `/dance/some-post/` | 404, then Cloudflare fallback to homepage (the bug class) |
+| `/dance/some-post/` | Cloudflare fallback returns the homepage HTML (HTTP 200, but no real page — the bug class) |
 
 Worked example. Cross-linking another post:
 

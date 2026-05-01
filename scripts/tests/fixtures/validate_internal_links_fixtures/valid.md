@@ -1,5 +1,5 @@
 ---
-title: "Fixture — valid links only"
+title: "Fixture - valid links only"
 date: 2026-05-01
 draft: true
 ---
@@ -33,8 +33,15 @@ Reference-style link:
 
 [same]: /posts/same-dancers-on-the-sidelines/
 
-Image is NOT a link — image existence is a different bug class:
+Image is NOT a link, image existence is a different bug class:
 ![alt text](/dance/should-be-skipped-because-image.png).
+
+Reference-style IMAGE definition is also not a link, even when the URL would
+look like a section-prefix link in isolation:
+
+![alt][refimg]
+
+[refimg]: /dance/should-be-skipped-because-ref-image.jpg
 
 Hugo shortcode — interior is not link-extractable:
 {{< figure src="/dance/example.jpg" alt="example" >}}

@@ -1,5 +1,5 @@
 ---
-title: "Fixture — broken post slug"
+title: "Fixture - broken post slug"
 date: 2026-05-01
 draft: true
 ---

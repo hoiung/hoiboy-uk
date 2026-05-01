@@ -1,5 +1,5 @@
 ---
-title: "Fixture — section-prefix bug"
+title: "Fixture - section-prefix bug"
 date: 2026-05-01
 draft: true
 ---

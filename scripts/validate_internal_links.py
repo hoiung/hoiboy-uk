@@ -87,6 +87,12 @@ _REF_DEF_RE = re.compile(r"^\s*\[([^\]]+)\]:\s*(\S+)", re.MULTILINE)
 # Reference-style link usage — `[text][ref]` (collapsed `[text][]` also matches
 # with ref==text).
 _REF_USE_RE = re.compile(r"(?<!!)\[([^\]]+)\]\[([^\]]*)\]")
+# Reference-style IMAGE usage — `![alt][ref]` (collapsed `![ref][]` also
+# matches with ref==alt). Image existence is a different bug class
+# (sibling-file in page bundle, out of scope), so refs used ONLY as images
+# must be excluded from URL classification — the same out-of-scope decision
+# the inline `(?<!!)` lookbehind makes for `![alt](path)`.
+_REF_IMG_USE_RE = re.compile(r"!\[([^\]]*)\]\[([^\]]*)\]")
 
 
 def _strip_non_link_regions(text: str) -> str:
@@ -198,6 +204,20 @@ def scan_file(md_path: Path, repo_root: Path) -> list[tuple[int, str, str]]:
         url = m.group(2).strip()
         line = _line_of(body, m.start())
         refs[ref_id] = (line, url)
+    # Track which refs are consumed by image syntax `![alt][ref]` vs link
+    # syntax `[text][ref]`. Image-only refs are skipped from URL classification
+    # because image existence is out of scope (parity with the inline `(?<!!)`
+    # lookbehind that already excludes `![alt](path)`).
+    image_refs: set[str] = set()
+    for m in _REF_IMG_USE_RE.finditer(body):
+        alt = m.group(1).strip().lower()
+        ref_id = m.group(2).strip().lower() or alt  # collapsed `![ref][]`
+        image_refs.add(ref_id)
+    link_refs: set[str] = set()
+    for m in _REF_USE_RE.finditer(body):
+        text = m.group(1).strip().lower()
+        ref_id = m.group(2).strip().lower() or text  # collapsed `[text][]`
+        link_refs.add(ref_id)
     findings: list[tuple[int, str, str]] = []
     seen: set[tuple[int, str]] = set()
     # Inline `[text](/path)` links.
@@ -211,11 +231,10 @@ def scan_file(md_path: Path, repo_root: Path) -> list[tuple[int, str, str]]:
         if not ok and (line, target) not in seen:
             seen.add((line, target))
             findings.append((line, target, msg))
-    # Reference-style usages `[text][ref]` — resolve ref → URL via the
-    # definitions table, then classify.
-    for m in _REF_USE_RE.finditer(body):
-        text = m.group(1).strip().lower()
-        ref_id = m.group(2).strip().lower() or text  # collapsed `[text][]`
+    # Reference-style link usages — resolve ref → URL via the definitions
+    # table, then classify. Skip refs consumed only as images (see image_refs
+    # above).
+    for ref_id in link_refs:
         if ref_id not in refs:
             continue  # unknown ref — markdown renders it as literal text, not a link
         ref_line, ref_url = refs[ref_id]
@@ -226,10 +245,13 @@ def scan_file(md_path: Path, repo_root: Path) -> list[tuple[int, str, str]]:
         if not ok and (ref_line, target) not in seen:
             seen.add((ref_line, target))
             findings.append((ref_line, target, msg))
-    # Reference-style definitions whose URL is itself broken (e.g. a `[ref]:
-    # /dance/foo/` line that no `[text][ref]` ever uses — still a buggy
-    # reference that would fail when activated).
+    # Reference-style definitions whose URL is itself broken AND the ref is
+    # used as a link (or unused — defensive: an unused link-shaped def is a
+    # latent bug). Skip image-only refs (out of scope, parity with inline
+    # image lookbehind).
     for ref_id, (line, url) in refs.items():
+        if ref_id in image_refs and ref_id not in link_refs:
+            continue
         target = _normalise_target(url)
         if target is None:
             continue

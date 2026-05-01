@@ -64,3 +64,45 @@ def test_bad_post_slug_exits_one() -> None:
         result.stderr,
         re.IGNORECASE | re.DOTALL,
     ), f"expected 'nonexistent...broken internal link'; got:\n{result.stderr}"
+
+
+def test_ref_style_image_only_def_does_not_false_positive(tmp_path) -> None:
+    """Reference-style image definitions must not be classified as links —
+    image existence is out of scope, same as inline ``![alt](path)``."""
+    md = tmp_path / "img_ref_only.md"
+    md.write_text(
+        "![alt][img]\n\n[img]: /dance/foo.jpg\n",
+        encoding="utf-8",
+    )
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--repo-root", str(REPO_ROOT), str(md)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, (
+        f"image-only ref-def must not flag as broken link; got exit "
+        f"{result.returncode}\nstderr:\n{result.stderr}"
+    )
+
+
+def test_ref_style_used_as_both_image_and_link_still_validates(tmp_path) -> None:
+    """If the same ref id is used as both ``![alt][ref]`` (image) and
+    ``[text][ref]`` (link), the link use forces URL classification — image
+    suppression only applies when the ref is image-only."""
+    md = tmp_path / "img_and_link_ref.md"
+    md.write_text(
+        "![alt][shared] and [text][shared]\n\n[shared]: /dance/foo/\n",
+        encoding="utf-8",
+    )
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--repo-root", str(REPO_ROOT), str(md)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 1, (
+        f"ref used as both image AND link must validate URL; got exit "
+        f"{result.returncode}\nstderr:\n{result.stderr}"
+    )
+    assert "section-prefix" in result.stderr, result.stderr
