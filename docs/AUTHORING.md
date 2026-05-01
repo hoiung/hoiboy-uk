@@ -120,7 +120,7 @@ A link like `/dance/some-post/` is broken even though it looks plausible. The po
 | `/dance/` | `content/dance/_index.md` (auto-generated category landing) |
 | `/dance/some-post/` | 404, then Cloudflare fallback to homepage (the bug class) |
 
-Worked example — cross-linking another post:
+Worked example. Cross-linking another post:
 
 ```markdown
 [the 2016 London rant](/posts/how-to-avoid-becoming-a-terrible-dancer-in-london/) still holds up.
