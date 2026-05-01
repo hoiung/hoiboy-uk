@@ -108,6 +108,32 @@ The wrapping enforcer (`scripts/check-iamhoi-wrapping.py`) blocks commits where 
 | Lychee CI | All link failures fail CI (no warn-only). Known-flaky external domains added to `lychee.toml` exclude with `added: YYYY-MM-DD; expires: YYYY-MM-DD` comment |
 | Dead links | Replace with archive.org snapshot, OR remove with `[former link]` placeholder |
 
+## 6a. Internal links: section landings list, posts host
+
+Posts live at `/posts/<slug>/` regardless of category. Section landings (`/dance/`, `/food-booze/`, `/tech-ai/`, `/life/`, `/entrepreneurship/`, `/trading/`, `/adventure/`) are auto-generated index pages from Hugo's category taxonomy. They LIST the posts in that category. They DO NOT HOST individual posts.
+
+A link like `/dance/some-post/` is broken even though it looks plausible. The post is at `/posts/some-post/`; `/dance/` is the category landing where Hugo lists all dance posts. Cloudflare's fallback silently routes 404s to the homepage, so the bug surfaces as "click goes to homepage".
+
+| Form | Routes to |
+|---|---|
+| `/posts/some-post/` | `content/posts/some-post/index.md` (the post) |
+| `/dance/` | `content/dance/_index.md` (auto-generated category landing) |
+| `/dance/some-post/` | 404, then Cloudflare fallback to homepage (the bug class) |
+
+Worked example — cross-linking another post:
+
+```markdown
+[the 2016 London rant](/posts/how-to-avoid-becoming-a-terrible-dancer-in-london/) still holds up.
+```
+
+NOT:
+
+```markdown
+[the 2016 London rant](/dance/how-to-avoid-becoming-a-terrible-dancer-in-london/) ← broken, do not use
+```
+
+The `scripts/validate_internal_links.py` pre-commit hook + CI step rejects the broken form with an actionable hint (`did you mean /posts/<slug>/?`). Run it manually any time: `python3 scripts/validate_internal_links.py`.
+
 ## 7. Drafts
 
 ```yaml
