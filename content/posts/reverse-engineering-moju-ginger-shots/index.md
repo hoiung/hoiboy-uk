@@ -51,9 +51,11 @@ This is the part I'm most pleased about.
 
 Bottle 1 went in at full Moju ratio. 25.4g of ginger per 60ml shot, scaled up to a Ninja-jug batch. With cold-press that's drinkable. With skin-on blend it's... a dare. You could chew it. The pulp was so thick the blender was basically making ginger paste with a splash of apple juice. Drinkable, technically. Repeatable, no.
 
-I didn't chuck it though. (I'm not binning 150g of perfectly good ginger.) I drank through it by topping the wine bottle up with extra apple juice and a squeeze more lemon every couple of days as I drained it. Diluted as I went. That's why the photo below shows the bottle full to the brim. It's v1 after a few rounds of "still too thick, add more juice".
+I didn't chuck it though. (I'm not binning 150g of perfectly good ginger.) The photo below shows v1 straight out of the blender. You can see how thick the pulp is, clinging to the inside walls of the bottle.
 
-![Recycled Malbec Rose wine bottle topped to the brim with v1 ginger shot, sitting on the hob. The fullness is from days of topping it up with apple and lemon juice to thin it out, not from blender aeration.](v1-too-thick.jpg)
+![Recycled Malbec Rose wine bottle of v1 ginger shot, sitting on the hob. Thick pulp clinging to the inside walls. Consistency was too thick to drink straight.](v1-too-thick.jpg)
+
+I drank through it by topping the bottle up with extra apple juice and a squeeze more lemon every couple of days as I drained it. Diluted as I went.
 
 Bottle 2 was the one. Pulled the ginger back to about 60% of Moju strength (15g of ginger per 60ml shot instead of 25.4g), kept the apple-to-lemon ratio identical, sterilised the wine bottle properly, blended the same way. Tasted it. Tasted it again. Yum. No top-ups needed. Consistency was right out of the blender.
 
