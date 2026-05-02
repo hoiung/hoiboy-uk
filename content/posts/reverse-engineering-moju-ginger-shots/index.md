@@ -69,13 +69,21 @@ A Moju Wake Shake Boom multi-shot bottle is 420ml (7 shots of 60ml each, one a d
 - About **1.5p per ml**
 - Annualised: **~£325 a year** on shots alone
 
-My homemade v2 batch yields about 600ml (no aeration trick, what goes into the Ninja comes out roughly the same volume) and costs me under £1.50 in ingredients. That works out to:
+My homemade v2 batch yields about 600ml. Here's the actual shopping list, all from Tesco home delivery:
 
-- About **0.25p per ml** (depending on the price of ginger that week)
-- Roughly **6x cheaper** by volume
-- Annualised: **~£55 a year**
+- **Tesco Root Ginger Loose, 1kg** for £5.26, 150g per batch = **79p**
+- **Grower's Harvest Pure Apple Juice, 1L** for 86p, 405ml per batch = **35p**
+- **Pride Lemon Juice, 250ml** for 78p, 45ml per batch = **14p**
 
-Saving: about £270 a year. Or, framed differently, I paid roughly £650 across two years for something I can now make for £110.
+Total per 600ml batch: **£1.28**.
+
+That works out to:
+
+- About **0.21p per ml**
+- Roughly **7x cheaper** by volume
+- Annualised: **~£47 a year**
+
+Saving: about £278 a year. Or, framed differently, I paid roughly £650 across two years for something I can now make for £94.
 
 (I'll let that sit for a second.)
 
