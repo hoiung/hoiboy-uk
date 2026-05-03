@@ -1,7 +1,7 @@
 ---
-title: "I Reverse-Engineered My Moju Ginger Shot Habit. £1.50 a Bottle."
+title: "I Reverse-Engineered My Moju Ginger Shot Habit. £1.28 a Bottle."
 date: 2026-05-02
-description: "Two years on Moju ginger shots. Then I photographed the Wake Shake Boom label, fed it to Claude Code, blended my own with skin and fibre still in, and went from £6.25 a bottle to under £1.50."
+description: "Two years on Moju ginger shots. Then I photographed the Wake Shake Boom label, fed it to Claude Code, blended my own with skin and fibre still in, and went from £6.25 a bottle to £1.28."
 categories: [food-booze]
 tags: [ginger, homemade, diy, savings, kitchen]
 draft: false
