@@ -1,7 +1,7 @@
 ---
 title: "I Reverse-Engineered My Moju Ginger Shot Habit. £1.28 a Bottle."
 date: 2026-05-02
-description: "Two years on Moju ginger shots. Then I photographed the Wake Shake Boom label, fed it to Claude Code, blended my own with skin and fibre still in, and went from £6.25 a bottle to £1.28."
+description: "Two years on Moju ginger shots. Then I photographed the Moju Ginger Shots label, fed it to Claude Code, blended my own with skin and fibre still in, and went from £6.25 a bottle to £1.28."
 categories: [food-booze]
 tags: [ginger, homemade, diy, savings, kitchen]
 draft: false
@@ -21,11 +21,11 @@ I'd been paying a fiver-plus a bottle for a kitchen recipe with four ingredients
 
 ## The label, the photo, and Claude Code
 
-Here's where it got fun. I took two clear photos of the Moju "Wake Shake Boom" bottle (front and back, with the QUID percentage visible), opened up Claude Code, dropped the photos in, and asked it to read the label and tell me the ginger percentage and the apple-to-lemon ratio.
+Here's where it got fun. I took two clear photos of the Moju "Ginger Shots" bottle (front and back, with the QUID percentage visible), opened up Claude Code, dropped the photos in, and asked it to read the label and tell me the ginger percentage and the apple-to-lemon ratio.
 
-![Moju Wake Shake Boom 420ml back label, ingredients and 37% ginger root QUID visible](moju-label.jpg)
+![Moju Ginger Shots 420ml back label, ingredients and 37% ginger root QUID visible](moju-label.jpg)
 
-QUID stands for "Quantitative Ingredient Declaration", which is the bit of the food label the law makes them print. For Wake Shake Boom it says ginger root 37%. That's measured before pressing, by mass. From there it's basic ratio work. Ginger sits at 25.4g per 60ml shot. Apple juice does the bulk of the liquid. Lemon for the bite. Ascorbic acid for vitamin C (and a bit of shelf life).
+QUID stands for "Quantitative Ingredient Declaration", which is the bit of the food label the law makes them print. For Moju Ginger Shots it says ginger root 37%. That's measured before pressing, by mass. From there it's basic ratio work. Ginger sits at 25.4g per 60ml shot. Apple juice does the bulk of the liquid. Lemon for the bite. Ascorbic acid for vitamin C (and a bit of shelf life).
 
 Got the working out, sense-checked it, wrote it down.
 
@@ -65,7 +65,7 @@ That's the version I've been making since. Same ratios, same blender, same wine 
 
 Let me show the working, because this is the bit that actually made me sit down and write this.
 
-A Moju Wake Shake Boom multi-shot bottle is 420ml (7 shots of 60ml each, one a day). I was paying about £50 for 8 bottles every 8 weeks via subscription. That works out to:
+A Moju Ginger Shots multi-shot bottle is 420ml (7 shots of 60ml each, one a day). I was paying about £50 for 8 bottles every 8 weeks via subscription. That works out to:
 
 - £6.25 per 420ml bottle
 - About **1.5p per ml**
