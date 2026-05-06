@@ -28,7 +28,7 @@
   {{- errorf "consulting-cta: no data for offer %q at data/consulting.yaml" $offer -}}
 {{- end -}}
 {{- $todoMarker := "OPERATOR_TODO_REPLACE_BEFORE_LAUNCH" -}}
-{{- $mailtoHref := "mailto:hello+harness-architect@duckandbear.co.uk?subject=Cash-engine%20discovery%20call" -}}
+{{- $mailtoHref := "mailto:hello+harness-architect@hoiboy.uk?subject=Cash-engine%20discovery%20call" -}}
 {{- if eq $type "calcom" -}}
   {{- $url := $data.calcom_booking | default "" -}}
   {{- if or (eq $url "") (strings.Contains $url $todoMarker) -}}

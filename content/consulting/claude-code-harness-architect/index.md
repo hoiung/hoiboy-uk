@@ -90,4 +90,4 @@ I run an IR35 contract review (Qdos or Bauer & Cottrell) on the SOW before signa
 
 ---
 
-DUCK & BEAR LTD. UK Personal Service Company. VAT registration: pending HMRC issuance. Companies House registration on the legal footer post-issuance.
+TANTUNG LTD. UK Personal Service Company. VAT registration: pending HMRC issuance. Companies House registration on the legal footer post-issuance.

@@ -24,7 +24,7 @@
 #  - harness_architect.tier_3_monthly_maintenance.price_display_annual -> content/consulting/<slug>/index.md (Tier 3 annual bullet)
 
 business:
-  legal_name: "DUCK & BEAR LTD"
+  legal_name: "TANTUNG LTD"
   companies_house: ""   # Operator replaces with the public Companies House registration number.
   vat_number: null      # null until HMRC voluntary-VAT issuance lands per consulting-ops#2 Phase 8 AC 8.2.
 

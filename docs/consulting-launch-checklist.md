@@ -10,7 +10,7 @@ The consulting landing pages render external CTAs (Cal.com, optionally Stripe) w
 
 ### Gate 1: Hugo shortcode mailto fallback
 
-`layouts/_shortcodes/consulting-cta.html` detects the `OPERATOR_TODO_REPLACE_BEFORE_LAUNCH` substring at template-render time and falls back to a `mailto:hello+harness-architect@duckandbear.co.uk` link. Fail-LOUD-with-degraded-CTA: the page still ships a working contact path. Verify with `hugo --buildDrafts` against an `OPERATOR_TODO`-stuffed yaml; the rendered HTML should contain a `mailto:` href at the CTA seam.
+`layouts/_shortcodes/consulting-cta.html` detects the `OPERATOR_TODO_REPLACE_BEFORE_LAUNCH` substring at template-render time and falls back to a `mailto:hello+harness-architect@hoiboy.uk` link. Fail-LOUD-with-degraded-CTA: the page still ships a working contact path. Verify with `hugo --buildDrafts` against an `OPERATOR_TODO`-stuffed yaml; the rendered HTML should contain a `mailto:` href at the CTA seam.
 
 ### Gate 2: pre-publish.sh production-errorf
 
