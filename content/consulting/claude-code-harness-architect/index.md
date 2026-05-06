@@ -1,7 +1,7 @@
 ---
 title: "AI Managed Harness services"
 date: 2026-04-25
-description: "Discovery-first AI harness consultancy for owner-operator-led teams. Audit, foundation, build, then a Monthly Maintenance Package. UK PSC, outside-IR35."
+description: "Discovery-first AI harness consultancy for owner-operator-led teams. Audit, foundation, build, then a Monthly Maintenance Package. UK-based, international clients welcome."
 ---
 
 <!-- iamhoi-claims
@@ -78,11 +78,11 @@ The harness I install in your business is not a theoretical pattern. It is the o
 
 <!-- iamhoiend -->
 
-## How it sits with UK off-payroll rules
+## Working with me from outside the UK
 
-UK Personal Service Company (PSC) posture, outside-IR35 (the UK off-payroll working rules) by working practice. Right of substitution. No mutuality of obligation (MOO; meaning neither side is obliged to keep the engagement going past each closed phase). Multiple-clients diversification. Phase-gated invoicing per SOW phase, never a single open-ended retainer.
+I am UK-based. Most clients land within the UK and pay in GBP, no fuss. International clients are welcome too: if scope needs me on-site somewhere outside the UK, you cover travel and accommodation at cost (no markup). Remote-only engagements work the same regardless of geography.
 
-I run an IR35 contract review (Qdos or Bauer & Cottrell) on the SOW before signature where the engagement crosses certain thresholds. The legal scaffolding is documented, not improvised.
+For UK clients specifically: I run an outside-IR35 working-practice posture by design (right of substitution, no mutuality of obligation between SOW phases, phase-gated invoicing, multiple-clients diversification, IR35 contract review on the SOW). If you are inside-UK and AI-spend approval has procurement implications, ask on the discovery call.
 
 ## Ready?
 
@@ -90,4 +90,4 @@ I run an IR35 contract review (Qdos or Bauer & Cottrell) on the SOW before signa
 
 ---
 
-TANTUNG LTD (Companies House 10566169). UK Personal Service Company. VAT registration: pending HMRC issuance. Contact: hello@hoiboy.uk.
+TANTUNG LTD, registered in England and Wales (Companies House 10566169). VAT registration: pending HMRC issuance. Contact: hello@hoiboy.uk.
