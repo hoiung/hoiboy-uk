@@ -161,7 +161,7 @@ For UK clients specifically: I run an outside-IR35 working-practice posture by d
 
 ## Ready?
 
-{{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}}
+{{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}} {{< smallprint >}}<-- (Recruiters: please do not click. I do not have time for bullshit. Only for fun-yet-serious decision makers or their trusted seconds who also have no time for bullshit and need to get things done.){{< /smallprint >}}
 
 ---
 
