@@ -90,4 +90,4 @@ I run an IR35 contract review (Qdos or Bauer & Cottrell) on the SOW before signa
 
 ---
 
-TANTUNG LTD. UK Personal Service Company. VAT registration: pending HMRC issuance. Companies House registration on the legal footer post-issuance.
+TANTUNG LTD (Companies House 10566169). UK Personal Service Company. VAT registration: pending HMRC issuance. Contact: hello@hoiboy.uk.

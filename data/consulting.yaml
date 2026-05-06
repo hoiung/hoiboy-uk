@@ -25,7 +25,7 @@
 
 business:
   legal_name: "TANTUNG LTD"
-  companies_house: ""   # Operator replaces with the public Companies House registration number.
+  companies_house: "10566169"
   vat_number: null      # null until HMRC voluntary-VAT issuance lands per consulting-ops#2 Phase 8 AC 8.2.
 
 harness_architect:
