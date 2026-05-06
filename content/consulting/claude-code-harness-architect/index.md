@@ -37,7 +37,7 @@ Owner-operator CEOs running 5 to 50 employee businesses. Founder-led. Sometimes 
 
 With or without a CTO is fine. If you already have one, I work alongside them as an extension (an extra pair of senior hands and a harness pattern that lifts what they are already doing). If you do not, I cover the AI-tooling architecture lane until you decide whether you need a permanent technical hire. Either way, you make AI-spend decisions yourself and you do not need to convince a board.
 
-You feel the AI-tooling drift. You know Claude (or ChatGPT, Cursor, Copilot, Notion AI, or whichever tool the smart people on YouTube were excited about last month) works in pockets but not consistently. You bought the courses. You read the threads. You sense there is a real productivity tool buried in this technology that nobody on your team has the time to architect properly.
+You feel the AI-tooling drift. You know Claude (or ChatGPT, Cursor, Copilot, Notion AI, or whichever tool the smart people on YouTube were excited about last month) works in demos only but not consistently. You bought the courses. You read the threads. You sense there is a real productivity tool buried in this technology that nobody on your team has the time to architect properly.
 
 You probably feel understaffed. You are always under pressure. Things slip through the cracks because the team is running too lean, and the slippage compounds (you can feel it). That is when bringing me in starts to make sense. Not to hire more humans (expensive, slow to onboard, adds management overhead), but to automate the work that does not need a human in the first place. Same team, more output, less drained.
 
