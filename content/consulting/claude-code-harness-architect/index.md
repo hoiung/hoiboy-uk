@@ -79,7 +79,7 @@ I deliver this sequentially, one step at a time, never parallel. Each step close
 
 Need open-scope hours portfolio-wide instead of the monthly maintenance package? Tier 2 hourly pack: £1,500 / 10 hours + VAT. Existing clients only (you already have at least one harness shipped) and maintenance-only scope (drift events, support, troubleshooting). Feature work or new harness builds run as their own per-harness audit + build SOW, not under this pack.
 
-Per-harness build prices are not published (they are scoped after the per-harness audit, against your harness specifics). The Monthly Maintenance Package and hourly pack ARE published; those are commodity-shaped.
+Per-harness builds typically land between £12K and £30K + VAT depending on harness complexity. The audit gives you the actual scope and quote (the build fee is a fixed-fee output of the audit, not an open hourly tab). Volume discounts may apply for multi-harness commitments at engagement open, discussed on the audit walkthrough call. The Monthly Maintenance Package and hourly pack ARE fully published; those are commodity-shaped.
 
 <!-- iamhoiend -->
 
@@ -89,6 +89,12 @@ Per-harness build prices are not published (they are scoped after the per-harnes
 - C-level convincing. If your CEO is not already bought in, the company audit will surface that and I will stop.
 - Frontier-lab work where the ultimate customer is another engineering team.
 - Anything past the Monthly Maintenance Package scope (training, dataset construction, prompt-optimisation playbooks, uptime SLAs). Those are different engagement shapes; I can refer.
+
+## What I cover vs what you cover
+
+**My side (absorbed in the build fee + MMP fee):** all AI tooling costs for my own work. Claude Max subscriptions, Anthropic API top-ups, MCP server hosting, agent-orchestration overhead during build phases and under the Monthly Maintenance Package. You will never see "Anthropic API: £487.32" as a line item on an invoice from me.
+
+**Your side (your own subscription with Anthropic):** the everyday use of the shipped harness by your team. The harness runs against your own Anthropic accounts in production. I recommend **Claude Max 20x per user** on your team for daily harness operation, or whichever Anthropic tier fits your usage agreement. This is a direct subscription between you and Anthropic, separate from anything I bill you for.
 
 ## Why me
 
