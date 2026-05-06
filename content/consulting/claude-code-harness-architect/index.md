@@ -130,9 +130,8 @@ I deliver this sequentially, one step at a time, never parallel. Each step close
 1. Free 20-minute discovery call (Cal.com booking, Mon to Fri, UK business hours). Tell me your business shape, your AI usage today, what you wish worked better, and how you imagine AI working for you in your head (the result you picture, the workflow you imagine, the daily-life-with-AI you would like to have). That last part lets me set honest expectations and surface any alignment or misalignment between what you imagine and what is realistic right now, well before any money or SOW lands. I tell you whether this is a fit, fast.
 2. Company structure audit (1 to 3 days, written report plus walkthrough call). Three tiers: £1,500 + VAT for 5 to 10 employees. £2,500 + VAT for 10 to 50 employees. £4,500-£5,000 + VAT for 50+ employees (range, scoped on the discovery call). The audit is independent (it is not credited back against build work later, because that would compromise auditor independence).
 3. Foundation setup (£3,000 + VAT for 2 days fixed; overflow at £1,500/extra day, hard-capped at 4 days total). The scaffolding infrastructure that every harness sits on top of. This is what lets me cleanly manage all your harnesses, support and adapt each one when your needs change, capture automated feedback on how they are performing in your day-to-day, and put security controls in place so your company information stays safe and contained. Future-improvement recommendations come naturally out of the usage feedback the foundation gives me (those recommendations are out-of-scope as billable work, but I will surface them so you can decide what to act on).
-4. Per-harness audit and build, sequential, one harness at a time. Each harness gets its own audit (£750 + VAT, one SME-day, where SME means Subject Matter Expert; the consultancy-industry billing unit for one full day of an expert's time) before any build work starts. Build is custom-scoped per audit (the audit is what tells us what to build, so I will not pre-quote it). The first month of post-build support is included free per harness shipped, capped at 8 hours of my time across that first calendar month per harness (so we both know what is on the table; not full-time on-call availability).
-5. SME harness manual + tutoring workshop, per harness (£750 + VAT, one SME-day). Once the harness is built, your subject matter experts need to actually USE it confidently. This is a hands-on session where I walk them through the harness, the workflows, the guardrails, the failure modes to watch for, and the bits where they should and should not push back. The manual is also baked INTO the harness itself, so anyone on your team can ask the harness "how do I use you for X?" and get an answer back rooted in your trade's actual rules. No 20-page PDF that nobody reads.
-6. Ongoing Monthly Maintenance Package, per harness, deliverable-anchored (NOT a retainer; you pay for closed drift events plus the monthly maintenance report, not for me being on standby). Pricing starts from £400/mo per harness on month-to-month, or £340/mo per harness on a 12-month annual commit. Covers AI model drift (e.g. Claude Opus 4.6->4.7), dependency drift, configuration drift. Not feature work.
+4. Per-harness audit, build, training, and first-month support, sequential, one harness at a time. Each harness gets its own audit (£750 + VAT, one SME-day, where SME means Subject Matter Expert; the consultancy-industry billing unit for one full day of an expert's time) before any build work starts. Build is custom-scoped per audit (the audit is what tells us what to build, so I will not pre-quote it). Once the harness ships, your subject matter experts get a hands-on tutoring workshop (£750 + VAT, one SME-day) so they can actually USE it confidently. The manual is also baked INTO the harness itself, so anyone on your team can ask the harness "how do I use you for X?" and get an answer back rooted in your trade's actual rules. No 20-page PDF that nobody reads. Then the first month of post-build support is included free per harness shipped, capped at 8 hours of my time across that first calendar month per harness (so we both know what is on the table; not full-time on-call availability).
+5. Ongoing Monthly Maintenance Package, per harness, deliverable-anchored (NOT a retainer; you pay for closed drift events plus the monthly maintenance report, not for me being on standby). Pricing starts from £400/mo per harness on month-to-month, or £340/mo per harness on a 12-month annual commit. Covers AI model drift (e.g. Claude Opus 4.6->4.7), dependency drift, configuration drift. Not feature work.
 
 Need open-scope hours portfolio-wide instead of the monthly maintenance package? Tier 2 hourly pack: £1,500 / 10 hours + VAT. Existing clients only (you already have at least one harness shipped) and maintenance-only scope (drift events, support, troubleshooting). Feature work or new harness builds run as their own per-harness audit + build SOW, not under this pack.
 
@@ -151,9 +150,9 @@ At a glance. All prices exclude VAT (charged at the prevailing rate; VAT-registe
 | 3. Foundation setup | £3,000 base 2 days; £1,500/extra day, hard-capped at 4 days total | The scaffolding infrastructure that every harness sits on |
 | 4a. Per-harness audit | £750 per harness | 1 SME-day; sequential, one per harness, before each build |
 | 4b. Per-harness build | £12K-£30K typical (fixed-fee output of audit) | Custom-scoped per audit; volume discount for multi-harness commitments at engagement open |
-| 4c. Tier 1 first-month support | Free | 8 hours of my time per harness across the first calendar month post-build (not full-time availability) |
-| 5. SME harness manual + tutoring workshop | £750 per harness | One SME-day post-build; hands-on training for your team; manual baked INTO the harness so it answers "how do I use you?" on demand |
-| 6. Tier 3 Monthly Maintenance Package | £400/mo per harness on month-to-month, or £340/mo per harness on a 12-month annual commit | Drift events + monthly report; 5 hours per harness per month included; £150/h overage; no rollover |
+| 4c. SME harness manual + tutoring workshop | £750 per harness | One SME-day post-build; hands-on training for your team; manual baked INTO the harness so it answers "how do I use you?" on demand |
+| 4d. Tier 1 first-month support | Free | 8 hours of my time per harness across the first calendar month post-workshop (not full-time availability) |
+| 5. Tier 3 Monthly Maintenance Package | £400/mo per harness on month-to-month, or £340/mo per harness on a 12-month annual commit | Drift events + monthly report; 5 hours per harness per month included; £150/h overage; no rollover |
 | Optional. Tier 2 hourly pack | £1,500 / 10 hours | Existing clients only (must have at least one harness shipped); maintenance scope only |
 
 **What I cover** (absorbed in the phase fees, not separately billed): all AI tooling costs for my own work. Claude Max subscriptions, Anthropic API top-ups, MCP server hosting, agent-orchestration overhead during build phases and under the Monthly Maintenance Package or Tier 2 hourly pack.
@@ -203,15 +202,15 @@ I am UK-based. Most clients land within the UK and pay in GBP, no fuss. Internat
 
 For UK clients specifically: I run an outside-IR35 working-practice posture by design (right of substitution, no mutuality of obligation between SOW phases, phase-gated invoicing, multiple-clients diversification, IR35 contract review on the SOW). If you are inside-UK and AI-spend approval has procurement implications, ask on the discovery call.
 
+## Ready?
+
+{{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}} {{< smallprint >}}<-- (Recruiters: please do not click. I do not have time for bullshit. Please <strong>click</strong> if you are a fun-yet-serious decision maker or their trusted second, who has no time for bullshit and needs to get things done.){{< /smallprint >}}
+
 ## What you are buying, in one diagram
 
 {{< zoom-image src="harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your business. A human checkpoint sits outside the rings." title="What is an AI harness" >}}
 
 <small><em>(Click the diagram to enlarge for details.)</em></small>
-
-## Ready?
-
-{{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}} {{< smallprint >}}<-- (Recruiters: please do not click. I do not have time for bullshit. Please <strong>click</strong> if you are a fun-yet-serious decision maker or their trusted second, who has no time for bullshit and needs to get things done.){{< /smallprint >}}
 
 ---
 
