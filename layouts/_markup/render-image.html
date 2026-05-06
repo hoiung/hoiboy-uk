@@ -1,6 +1,0 @@
-{{- $src := .Destination -}}
-{{- $alt := .Text -}}
-{{- $title := .Title | default $alt -}}
-<a href="{{ $src | safeURL }}" class="glightbox" data-title="{{ $title }}">
-  <img src="{{ $src | safeURL }}" alt="{{ $alt }}" loading="lazy">
-</a>
