@@ -39,12 +39,17 @@
 {{- end }}
 {{- if .IsPage -}}
   {{- $hero := partial "hero-pick.html" . -}}
-  {{- with $hero -}}
+  {{- $shareCard := .Resources.GetMatch "share-card.*" -}}
+  {{- $socialImage := $shareCard | default $hero -}}
+  {{- with $socialImage -}}
     {{- if not (strings.HasSuffix .Name ".svg") -}}
-      {{- $og := .Fill "1200x630 webp q85" }}
+      {{- /* share-card.* uses .Resize (preserves aspect) so the diagram is not cropped.
+             Hero falls back to .Fill 1200x630 (the social-card landscape aspect) for
+             photo-style heroes that are already landscape. */ -}}
+      {{- $og := cond (and $shareCard (eq $shareCard.RelPermalink .RelPermalink)) (.Resize "1200x webp q85") (.Fill "1200x630 webp q85") }}
 <meta property="og:image" content="{{ $og.Permalink }}">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image:width" content="{{ $og.Width }}">
+<meta property="og:image:height" content="{{ $og.Height }}">
 <meta property="og:image:alt" content="{{ $.Title }}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="{{ $og.Permalink }}">
@@ -53,9 +58,11 @@
 {{- end }}
 {{- if and .IsPage (eq .Section "posts") }}
   {{- $ldHero := partial "hero-pick.html" . -}}
+  {{- $ldShareCard := .Resources.GetMatch "share-card.*" -}}
+  {{- $ldSocialImage := $ldShareCard | default $ldHero -}}
   {{- $ldHeroUrl := "" -}}
-  {{- with $ldHero }}{{- if not (strings.HasSuffix .Name ".svg") -}}
-    {{- $ldHeroUrl = (.Fill "1200x630 webp q85").Permalink -}}
+  {{- with $ldSocialImage }}{{- if not (strings.HasSuffix .Name ".svg") -}}
+    {{- $ldHeroUrl = (cond (and $ldShareCard (eq $ldShareCard.RelPermalink .RelPermalink)) (.Resize "1200x webp q85") (.Fill "1200x630 webp q85")).Permalink -}}
   {{- end }}{{- end }}
   {{- $ld := dict
     "@context" "https://schema.org"

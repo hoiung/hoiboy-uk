@@ -6,6 +6,9 @@
          4. first raster image resource (jpg/jpeg/png/webp/gif), alphabetical
        SVGs are EXCLUDED from candidate 4 because legacy bundles often
        contain inline diagram SVGs that are never standalone hero photos.
+       share-card.* is EXCLUDED from candidate 4 because it is a
+       social-share-only image (used by head.html for og:image) and
+       should never render as the visible hero at the top of the page.
        Authors who want an SVG hero must rename it to hero.svg explicitly.
        Returns nil if the bundle has no eligible images. Callers must guard with `with`. */ -}}
 {{- $hero := .Resources.GetMatch "hero.*" -}}
@@ -15,7 +18,8 @@
   {{- range .Resources.ByType "image" -}}
     {{- if not $hero -}}
       {{- $ext := path.Ext .Name | lower -}}
-      {{- if ne $ext ".svg" -}}{{ $hero = . }}{{- end -}}
+      {{- $isShareCard := strings.HasPrefix .Name "share-card." -}}
+      {{- if and (ne $ext ".svg") (not $isShareCard) -}}{{ $hero = . }}{{- end -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}

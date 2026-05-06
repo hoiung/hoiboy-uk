@@ -8,77 +8,69 @@
       <polygon points="0 0, 10 4, 0 8" fill="#1a1a1a"/>
     </marker>
     <style><![CDATA[
-      .accent-stroke { stroke: #c0533a; }
-      .accent-fill { fill: #c0533a; }
-      .accent-stroke-light { stroke: #c0533a; stroke-opacity: 0.35; }
-      .fg-stroke { stroke: #1a1a1a; }
-      .fg-fill { fill: #1a1a1a; }
-      .muted-stroke { stroke: #555; }
-      .muted-fill { fill: #555; }
-      .light-fill { fill: #fafafa; }
       @media (prefers-color-scheme: dark) {
-        .fg-stroke { stroke: #e8e8e8; }
-        .fg-fill { fill: #e8e8e8; }
-        .muted-stroke { stroke: #999; }
-        .muted-fill { fill: #999; }
-        .light-fill { fill: #141414; }
+        .fg-stroke { stroke: #e8e8e8 !important; }
+        .fg-fill { fill: #e8e8e8 !important; }
+        .muted-stroke { stroke: #999 !important; }
+        .muted-fill { fill: #999 !important; }
+        .light-fill { fill: #141414 !important; }
       }
     ]]></style>
   </defs>
 
-  <text x="800" y="60" text-anchor="middle" font-size="32" font-weight="600" class="fg-fill">What is an AI harness?</text>
-  <text x="800" y="100" text-anchor="middle" font-size="18" font-style="italic" class="muted-fill">Inside the specialised layer is your trade's craft, codified.</text>
+  <text x="800" y="60" text-anchor="middle" font-size="32" font-weight="600" fill="#1a1a1a" class="fg-fill">What is an AI harness?</text>
+  <text x="800" y="100" text-anchor="middle" font-size="18" font-style="italic" fill="#555" class="muted-fill">Inside the specialised layer is your trade's craft, codified.</text>
 
-  <text x="800" y="180" text-anchor="middle" font-size="22" font-weight="700" class="accent-fill">SPECIALISED HARNESS — built for your business</text>
+  <text x="800" y="180" text-anchor="middle" font-size="22" font-weight="700" fill="#c0533a" class="accent-fill">SPECIALISED HARNESS: built for your business</text>
 
-  <circle cx="800" cy="600" r="380" fill="none" class="accent-stroke" stroke-width="6"/>
+  <circle cx="800" cy="600" r="380" fill="none" stroke="#c0533a" stroke-width="6" class="accent-stroke"/>
 
-  <line x1="900" y1="427" x2="990" y2="271" class="accent-stroke-light" stroke-width="2"/>
-  <line x1="1000" y1="600" x2="1180" y2="600" class="accent-stroke-light" stroke-width="2"/>
-  <line x1="900" y1="773" x2="990" y2="929" class="accent-stroke-light" stroke-width="2"/>
-  <line x1="700" y1="773" x2="610" y2="929" class="accent-stroke-light" stroke-width="2"/>
-  <line x1="600" y1="600" x2="420" y2="600" class="accent-stroke-light" stroke-width="2"/>
-  <line x1="700" y1="427" x2="610" y2="271" class="accent-stroke-light" stroke-width="2"/>
+  <line x1="900" y1="427" x2="990" y2="271" stroke="#c0533a" stroke-opacity="0.35" stroke-width="2" class="accent-stroke-light"/>
+  <line x1="1000" y1="600" x2="1180" y2="600" stroke="#c0533a" stroke-opacity="0.35" stroke-width="2" class="accent-stroke-light"/>
+  <line x1="900" y1="773" x2="990" y2="929" stroke="#c0533a" stroke-opacity="0.35" stroke-width="2" class="accent-stroke-light"/>
+  <line x1="700" y1="773" x2="610" y2="929" stroke="#c0533a" stroke-opacity="0.35" stroke-width="2" class="accent-stroke-light"/>
+  <line x1="600" y1="600" x2="420" y2="600" stroke="#c0533a" stroke-opacity="0.35" stroke-width="2" class="accent-stroke-light"/>
+  <line x1="700" y1="427" x2="610" y2="271" stroke="#c0533a" stroke-opacity="0.35" stroke-width="2" class="accent-stroke-light"/>
 
-  <text x="800" y="285" text-anchor="middle" font-size="17" font-weight="700" class="fg-fill">DECISION RULES</text>
-  <text x="800" y="308" text-anchor="middle" font-size="13" class="muted-fill">when to act, when to escalate</text>
-  <text x="800" y="326" text-anchor="middle" font-size="13" class="muted-fill">what needs human sign-off</text>
+  <text x="800" y="285" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a" class="fg-fill">DECISION RULES</text>
+  <text x="800" y="308" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">when to act, when to escalate</text>
+  <text x="800" y="326" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">what needs human sign-off</text>
 
-  <text x="1051" y="430" text-anchor="middle" font-size="17" font-weight="700" class="fg-fill">RESEARCH METHOD</text>
-  <text x="1051" y="453" text-anchor="middle" font-size="13" class="muted-fill">what to look for, in order</text>
-  <text x="1051" y="471" text-anchor="middle" font-size="13" class="muted-fill">when to stop, when to dig</text>
+  <text x="1051" y="430" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a" class="fg-fill">RESEARCH METHOD</text>
+  <text x="1051" y="453" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">what to look for, in order</text>
+  <text x="1051" y="471" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">when to stop, when to dig</text>
 
-  <text x="1051" y="745" text-anchor="middle" font-size="17" font-weight="700" class="fg-fill">DATA SOURCES</text>
-  <text x="1051" y="768" text-anchor="middle" font-size="13" class="muted-fill">which APIs, docs, databases</text>
-  <text x="1051" y="786" text-anchor="middle" font-size="13" class="muted-fill">how to fetch, where to cache</text>
+  <text x="1051" y="745" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a" class="fg-fill">DATA SOURCES</text>
+  <text x="1051" y="768" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">which APIs, docs, databases</text>
+  <text x="1051" y="786" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">how to fetch, where to cache</text>
 
-  <text x="800" y="900" text-anchor="middle" font-size="17" font-weight="700" class="fg-fill">SOURCE RELIABILITY</text>
-  <text x="800" y="923" text-anchor="middle" font-size="13" class="muted-fill">what to trust, what to flag</text>
-  <text x="800" y="941" text-anchor="middle" font-size="13" class="muted-fill">verification before citing</text>
+  <text x="800" y="900" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a" class="fg-fill">SOURCE RELIABILITY</text>
+  <text x="800" y="923" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">what to trust, what to flag</text>
+  <text x="800" y="941" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">verification before citing</text>
 
-  <text x="549" y="745" text-anchor="middle" font-size="17" font-weight="700" class="fg-fill">PROBLEM DETECTORS</text>
-  <text x="549" y="768" text-anchor="middle" font-size="13" class="muted-fill">known failure modes</text>
-  <text x="549" y="786" text-anchor="middle" font-size="13" class="muted-fill">drift indicators, regressions</text>
+  <text x="549" y="745" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a" class="fg-fill">PROBLEM DETECTORS</text>
+  <text x="549" y="768" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">known failure modes</text>
+  <text x="549" y="786" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">drift indicators, regressions</text>
 
-  <text x="549" y="430" text-anchor="middle" font-size="17" font-weight="700" class="fg-fill">ANTI-PATTERNS</text>
-  <text x="549" y="453" text-anchor="middle" font-size="13" class="muted-fill">what NEVER to do</text>
-  <text x="549" y="471" text-anchor="middle" font-size="13" class="muted-fill">your trade's banned shortcuts</text>
+  <text x="549" y="430" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a1a" class="fg-fill">ANTI-PATTERNS</text>
+  <text x="549" y="453" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">what NEVER to do</text>
+  <text x="549" y="471" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">your trade's banned shortcuts</text>
 
-  <circle cx="800" cy="600" r="200" fill="none" class="muted-stroke" stroke-width="3" stroke-dasharray="8,6"/>
-  <text x="800" y="540" text-anchor="middle" font-size="16" font-weight="600" class="fg-fill">GENERAL-PURPOSE HARNESS</text>
-  <text x="800" y="563" text-anchor="middle" font-size="13" class="muted-fill">(ships with Claude Code, Cursor,</text>
-  <text x="800" y="580" text-anchor="middle" font-size="13" class="muted-fill">Skills, Agent SDK)</text>
+  <circle cx="800" cy="600" r="200" fill="none" stroke="#555" stroke-width="3" stroke-dasharray="8,6" class="muted-stroke"/>
+  <text x="800" y="540" text-anchor="middle" font-size="16" font-weight="600" fill="#1a1a1a" class="fg-fill">GENERAL-PURPOSE HARNESS</text>
+  <text x="800" y="563" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">(ships with Claude Code, Cursor,</text>
+  <text x="800" y="580" text-anchor="middle" font-size="13" fill="#555" class="muted-fill">Skills, Agent SDK)</text>
 
-  <rect x="725" y="615" width="150" height="50" class="fg-fill" rx="6"/>
-  <text x="800" y="647" text-anchor="middle" font-size="16" font-weight="600" class="light-fill">AI agent</text>
+  <rect x="725" y="615" width="150" height="50" fill="#1a1a1a" rx="6" class="fg-fill"/>
+  <text x="800" y="647" text-anchor="middle" font-size="16" font-weight="600" fill="#fafafa" class="light-fill">AI agent</text>
 
-  <line x1="60" y1="600" x2="585" y2="600" class="fg-stroke" stroke-width="3" marker-end="url(#arrowhead)"/>
-  <text x="60" y="578" font-size="16" font-weight="600" class="fg-fill">brief / task</text>
+  <line x1="60" y1="600" x2="585" y2="600" stroke="#1a1a1a" stroke-width="3" class="fg-stroke" marker-end="url(#arrowhead)"/>
+  <text x="60" y="578" font-size="16" font-weight="600" fill="#1a1a1a" class="fg-fill">brief / task</text>
 
-  <line x1="1015" y1="600" x2="1540" y2="600" class="fg-stroke" stroke-width="3" marker-end="url(#arrowhead)"/>
-  <text x="1540" y="578" text-anchor="end" font-size="16" font-weight="600" class="fg-fill">audit-trailed output</text>
+  <line x1="1015" y1="600" x2="1540" y2="600" stroke="#1a1a1a" stroke-width="3" class="fg-stroke" marker-end="url(#arrowhead)"/>
+  <text x="1540" y="578" text-anchor="end" font-size="16" font-weight="600" fill="#1a1a1a" class="fg-fill">audit-trailed output</text>
 
-  <rect x="660" y="1060" width="280" height="56" fill="none" class="fg-stroke" stroke-width="3" rx="8"/>
-  <text x="800" y="1096" text-anchor="middle" font-size="18" font-weight="700" class="fg-fill">HUMAN CHECKPOINT</text>
-  <text x="800" y="1145" text-anchor="middle" font-size="14" class="muted-fill">(your SME reviews before anything ships)</text>
+  <rect x="660" y="1060" width="280" height="56" fill="none" stroke="#1a1a1a" stroke-width="3" rx="8" class="fg-stroke"/>
+  <text x="800" y="1096" text-anchor="middle" font-size="18" font-weight="700" fill="#1a1a1a" class="fg-fill">HUMAN CHECKPOINT</text>
+  <text x="800" y="1145" text-anchor="middle" font-size="14" fill="#555" class="muted-fill">(your SME reviews before anything ships)</text>
 </svg>
