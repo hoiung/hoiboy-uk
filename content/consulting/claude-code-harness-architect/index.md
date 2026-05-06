@@ -107,7 +107,7 @@ As a bonus you get my bubbly, fun, no-bullshit (maybe a sprinkle of sarcasm) per
 
 And while we are on this. The bigger problem with AI right now is people spending too much time making things LOOK nice that do not actually WORK. The pretty UI on top of the broken bit. The demo that landed on camera after take 17 (and the previous 16 takes you never saw). The slider that loads before the bug surfaces. That is the actual problem to solve.
 
-I am not running that play. I would rather spend my hours building the thing that works (audit, foundation, per-harness build, ongoing maintenance) than wrapping shit in gold. AI is moving fast enough that there is no time for the other thing anyway. Yes, I will automate the bits of my own marketing where automation makes genuine sense, and yes this page will keep getting a little nicer over time. But the value is not in the wrapper. The value is in something that works reliably, now AND in 12 months, with the minimum maintenance burden possible.
+I am not running that play. I would rather spend my hours building the thing that works (audit, foundation, per-harness build, ongoing maintenance) than wrapping shit in gold. AI is moving fast enough that there is no time for the other thing anyway. Yes, I will automate the bits of my own marketing where automation makes genuine sense, and yes this page will keep getting a little nicer over time. But the value is not in the wrapping. The value is in something that works reliably, now AND in 12 months, with the minimum maintenance burden possible.
 
 That is what I am building for you. Not a pretty thing. A working thing.
 
