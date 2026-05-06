@@ -63,7 +63,7 @@ That is the problem I am solving for you. Your subject matter experts are there 
 
 <!-- iamhoi -->
 
-Fair question. Because I could spin up a fancy "AI consultancy" website in a day (templated trust signals, stock photography, an "Our Process" section in a sans-serif font, you've seen it). Gold foil wrapping. You do not want gold foil. You want someone genuinely good at the actual work, who delivers on time, at high quality, and goes above and beyond when the audit surfaces something you did not expect.
+Fair question. Because I could spin up a fancy "AI consultancy" website in a day (templated trust signals, stock photography, an "Our Process" section in a sans-serif font, you've seen it). Gold foil wrapping and the full sales pitch from a true salesman who talks big but isn't the one delivering it. You do not want any of that. You want someone genuinely good at the actual work, who delivers on time, at high quality, and goes above and beyond when the audit surfaces something you did not expect.
 
 So that is what I am offering, on my actual blog where you can read who I am, what I am, what I am not, what I think about, what I build, what I cock up, what I learn. Reading me here is easier than reading a pitch deck someone else wrote for me.
 
