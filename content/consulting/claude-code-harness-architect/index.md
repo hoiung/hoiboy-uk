@@ -111,11 +111,15 @@ At a glance. All prices exclude VAT (charged at the prevailing rate; VAT-registe
 - Anything past the Monthly Maintenance Package scope (training, dataset construction, prompt-optimisation playbooks, uptime SLAs). Those are different engagement shapes; I can refer.
 - Politics, emotion management, or "how is everyone feeling today" steering (not too much anyways!). I am here to deliver what I said I would deliver. What I will absolutely talk about: how we do this work together, how we problem-solve through whatever surfaces, and how we keep the engagement on track.
 
-## What I cover vs what you cover
+## What I cover, what you cover, what you own, what I keep
 
-**My side (absorbed in the build fee + MMP fee):** all AI tooling costs for my own work. Claude Max subscriptions, Anthropic API top-ups, MCP server hosting, agent-orchestration overhead during build phases and under the Monthly Maintenance Package. You will never see "Anthropic API: £487.32" as a line item on an invoice from me.
+**My side, costs absorbed (build fee + MMP fee):** all AI tooling costs for my own work. Claude Max subscriptions, Anthropic API top-ups, MCP server hosting, agent-orchestration overhead during build phases and under the Monthly Maintenance Package. You will never see "Anthropic API: £487.32" as a line item on an invoice from me.
 
-**Your side (your own subscription with Anthropic):** the everyday use of the shipped harness by your team. The harness runs against your own Anthropic accounts in production. I recommend **Claude Max 20x per user** on your team for daily harness operation, or whichever Anthropic tier fits your usage agreement. This is a direct subscription between you and Anthropic, separate from anything I bill you for.
+**Your side, your subscription with Anthropic:** the everyday use of the shipped harness by your team. The harness runs against your own Anthropic accounts in production. I recommend **Claude Max 20x per user** on your team for daily harness operation, or whichever Anthropic tier fits your usage agreement. This is a direct subscription between you and Anthropic, separate from anything I bill you for.
+
+**What you own (yours on payment clearance):** the custom harnesses I build for your business (skills, hooks, configurations, integrations specific to YOUR context) plus the audit report, architecture proposal, monthly maintenance reports, and any client-specific tailoring of governance documents. I will NOT reuse your custom harness deliverables for other clients (it would not be fair on you, and it is in the SOW).
+
+**What I keep (my pre-existing IP):** the SST3 framework I bring into every engagement, my generalised methodology and patterns, my operational infrastructure for running the consultancy. You get a perpetual right to USE the framework as installed in your business; you do not get the right to resell it as your own product. I retain the right to use generalised patterns (redacted of any of your specifics) in my own future work, blog posts, and teaching.
 
 ## Why me
 
