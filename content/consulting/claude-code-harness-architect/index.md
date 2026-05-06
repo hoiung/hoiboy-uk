@@ -47,7 +47,7 @@ Your decisions land in days, not quarters, which is exactly why this engagement 
 
 Fair question. Because I could spin up a fancy "AI consultancy" website in a day (templated trust signals, stock photography, an "Our Process" section in a sans-serif font, you've seen it). Gold foil wrapping. You do not want gold foil. You want someone genuinely good at the actual work, who delivers on time, at high quality, and goes above and beyond when the audit surfaces something you did not expect.
 
-So that is what I am offering, on my actual blog where you can read what I think about, what I build, what I cock up, what I learn. Reading me here is easier than reading a pitch deck someone else wrote for me.
+So that is what I am offering, on my actual blog where you can read who I am, what I am, what I am not, what I think about, what I build, what I cock up, what I learn. Reading me here is easier than reading a pitch deck someone else wrote for me.
 
 As a bonus you get my bubbly, fun, no-bullshit personality. We will figure out on a 20-minute discovery call whether working together is going to be a wonderful and pleasurable experience for both of us, well before any money or SOW lands on the table.
 
