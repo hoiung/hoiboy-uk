@@ -17,7 +17,7 @@ I designed, run, and babysit daily a live options-based swing trading platform o
 
 I help non-technical domain experts adopt AI properly. Not by handing you a tool and saying "off you go". Not by writing a hand-wavy AI strategy deck either!
 
-I am not here to scale your AWS or your other cloud infrastructure. I am here to help the people who actually do the work in your business (marketing, sales, ops, design, finance, customer support, wherever you sit) integrate a custom AI harness that automates the routine, so you can focus on your human ingenuity and your domain expertise (the things AI cannot replicate, now or any time soon).
+I am not here to scale your AWS or your other cloud infrastructure (that's your tech team's job!). I am here to help the people who actually do the work in your business (marketing, sales, ops, design, finance, customer support, wherever you sit) integrate a custom AI harness that automates the routine, so you can focus on your human ingenuity and your domain expertise (the things AI cannot replicate, now or any time soon).
 
 There is a right way and a wrong way to use AI. Most non-technical people are doing it the wrong way. (Honestly most technical people are doing it the wrong way too, which is part of why this market is the way it is right now.) Using AI properly takes a long time to learn. The good news: I have spent that time already, so you do not have to.
 
