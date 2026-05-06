@@ -1,17 +1,21 @@
 #!/bin/bash
 # Pre-publish gate aggregator for hoiboy.uk new blog posts.
 #
-# Runs seven sequential checks fail-fast on first non-zero exit:
-#   1. Em-dash grep      (any U+2014 = fail)
-#   2. Voice tells       (check-ai-writing-tells.py --check-only-new)
-#   3. Frontmatter       (validate_frontmatter.py — whole-tree)
-#   4. Word count        (check_wordcount.py >3000 = fail)
-#   5. Private leaks     (check-public-repo-secrets.py)
-#   6. Hugo build        (hugo --buildDrafts so cross-link resolution + permalinks
+# Runs eight sequential checks fail-fast on first non-zero exit:
+#   1. Consulting YAML   (data/consulting.yaml MUST NOT contain OPERATOR_TODO
+#                         substring — global gate, blocks publish whenever a
+#                         placeholder URL is unreplaced. consulting-ops#2 AC 0.2.)
+#   2. Em-dash grep      (any U+2014 = fail)
+#   3. Voice tells       (check-ai-writing-tells.py --check-only-new)
+#   4. Frontmatter       (validate_frontmatter.py — whole-tree)
+#   5. Word count        (check_wordcount.py >3000 = fail)
+#   6. Private leaks     (check-public-repo-secrets.py)
+#   7. Hugo build        (hugo --buildDrafts so cross-link resolution + permalinks
 #                         match production exactly; rendered HTML lands in public/)
-#   7. Rendered links    (lychee on `public/posts/<slug>/index.html` NOT raw .md
-#                         — catches broken cross-section links + missing assets
-#                         that markdown-only lychee cannot see)
+#   8. Rendered links    (lychee on rendered HTML NOT raw .md — catches broken
+#                         cross-section links + missing assets that markdown-only
+#                         lychee cannot see; covers public/posts/<slug>/ AND
+#                         public/consulting/<slug>/ per AC 0.4.)
 #
 # Checks 6+7 added per dotfiles Issue #447 Phase 7 (AP #18 per-shape recipe
 # for the Static-blog shape). Lighthouse-CI deliberately OUT OF SCOPE — no
@@ -79,7 +83,24 @@ print_summary() {
     printf '%s\n' '-------------------------------'
 }
 
-# 1. Em-dash grep (recurses into directory; fails if any U+2014 found).
+# 1. Consulting YAML guard — blocks publish if any OPERATOR_TODO_REPLACE_BEFORE_LAUNCH
+#    placeholder is still in data/consulting.yaml. Defence-in-depth alongside the
+#    pre-commit hook + Hugo shortcode mailto fallback. consulting-ops#2 AC 0.2.
+consulting_yaml_check() {
+    local yaml="data/consulting.yaml"
+    if [ ! -f "$yaml" ]; then
+        return 0
+    fi
+    if grep -F 'OPERATOR_TODO' "$yaml" >/dev/null 2>&1; then
+        printf >&2 '  consulting.yaml contains OPERATOR_TODO placeholder; refusing to publish\n'
+        grep -nF 'OPERATOR_TODO' "$yaml" >&2 || true
+        return 1
+    fi
+    return 0
+}
+run_check "consulting-yaml-no-operator-todo" consulting_yaml_check
+
+# 2. Em-dash grep (recurses into directory; fails if any U+2014 found).
 EM_DASH=$'\xe2\x80\x94'
 em_dash_check() {
     if grep -rn "$EM_DASH" "$TARGET" >/dev/null 2>&1; then
@@ -137,5 +158,31 @@ rendered_link_check() {
 }
 run_check "rendered-link-liveness" rendered_link_check
 
+# 8b. Lychee on rendered consulting pages — when public/consulting/*/index.html
+#     exists post-Hugo-build, every external URL in those rendered pages is
+#     verified live. This is what catches a stale cal.com/OPERATOR_TODO/...
+#     URL slipping through (the OPERATOR_TODO yaml gate at check #1 is the
+#     primary defence; this is defence-in-depth at the rendered-HTML layer).
+#     consulting-ops#2 AC 0.4.
+consulting_link_check() {
+    if [ ! -d "public/consulting" ]; then
+        printf '  no public/consulting/ directory in build output; skipping consulting-link-liveness\n'
+        return 0
+    fi
+    local rendered
+    rendered=$(find public/consulting -path '*/index.html' -type f 2>/dev/null)
+    if [ -z "$rendered" ]; then
+        printf '  no rendered consulting pages found; skipping\n'
+        return 0
+    fi
+    if ! command -v lychee >/dev/null 2>&1; then
+        printf >&2 'ERR: lychee not installed; install via cargo or apt\n'
+        return 127
+    fi
+    # shellcheck disable=SC2086
+    lychee --config lychee.toml --no-progress $rendered
+}
+run_check "consulting-link-liveness" consulting_link_check
+
 print_summary
-printf '[OK] all 7 pre-publish checks passed for %s\n' "$TARGET"
+printf '[OK] all 9 pre-publish checks passed for %s\n' "$TARGET"
