@@ -60,7 +60,8 @@ harness_architect:
 
   # Tier 1 — first month of post-build support included free per harness.
   tier_1_first_month_support:
-    scope_text: "First month of support included free per harness shipped"
+    scope_text: "First month of support included free per harness shipped, capped at 8 hours of operator time across that first calendar month per harness (not full-time availability)"
+    hours_cap: 8
 
   # Tier 2 — open-scope hourly pack, portfolio-wide.
   tier_2_hourly_pack:
