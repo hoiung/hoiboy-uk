@@ -23,7 +23,7 @@ There is a right way and a wrong way to use AI. Most non-technical people are do
 
 This is a sequential, audit-first engagement. It starts at £1,500 and builds on what already exists in your business (sometimes more than you think it does). I make sure your AI tooling becomes a working harness, then I keep it working.
 
-<small><em>(Recruiters: please do not click below. I do not have time for bullshit. Only for fun-yet-serious people who also have no time for bullshit and want to get things done.)</em></small>
+{{< smallprint >}}(Recruiters: please do not click below. I do not have time for bullshit. Only for fun-yet-serious people who also have no time for bullshit and want to get things done.){{< /smallprint >}}
 
 {{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}}
 
