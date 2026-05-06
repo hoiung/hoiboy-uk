@@ -2,9 +2,6 @@
 title: "AI Managed Harness Services"
 date: 2026-04-25
 description: "I help non-technical domain experts adopt AI properly. Audit-first ladder, custom AI harness that automates the routine work, freeing you to focus on the human-ingenuity work AI cannot replicate. UK-based, international clients welcome."
-resources:
-  - src: "harness-layers.svg"
-    title: "What is an AI harness"
 ---
 
 <!-- iamhoi-claims
@@ -54,7 +51,7 @@ Your decisions land in days, not quarters, which is exactly why this engagement 
 
 Short version: a harness is a custom-built wrapper around your chosen AI tools (Claude, ChatGPT, Cursor, Copilot, whatever you use), shaped to your business's actual work, with the workflows, guardrails, governance, and feedback loops baked in. Without one, AI is a clever assistant that occasionally forgets things and occasionally (mostly) hallucinates. With one, AI becomes a consistent, audit-trailed colleague that does the routine work the way YOU need it done. The difference between "fun in demos" and "actually useful every day".
 
-![Diagram of an AI harness with two concentric layers. The inner layer (dashed grey ring) is the general-purpose harness that ships with Claude Code, Cursor, Skills, and the Agent SDK. The outer layer (solid terracotta ring) is the specialised harness built for your business, holding workflows, governance, domain expertise, and your competitive edge. The AI agent sits at the centre. A brief enters from the left, flows through both layers, and exits as audit-trailed output to the right. A human-checkpoint box below the rings represents your SME reviewing before anything ships.](harness-layers.svg)
+(See the hero diagram at the top of the page: two concentric layers, six labelled segments in the specialised outer ring, AI agent at the centre, your human checkpoint outside.)
 
 Worth being precise about which harness we are talking about, because there are layers. Modern AI tools (Claude Code, Cursor, Copilot, ChatGPT, the lot) already ship with their own general-purpose harnesses underneath, which is what makes them roughly useful for everyone in roughly the same way. The harness I build for you sits ON TOP of that. It is the specialised layer for YOUR business: your workflows, your governance, your domain expertise, your competitive edge.
 
