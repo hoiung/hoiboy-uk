@@ -137,7 +137,7 @@ And keep reading me on this blog as I build and deliver more AI-related work (no
 
 ## Working with me from outside the UK
 
-I am UK-based. Most clients land within the UK and pay in GBP, no fuss. International clients are welcome too: if scope needs me on-site somewhere outside the UK, you cover travel and accommodation at cost (no markup). Remote-only engagements work the same regardless of geography.
+I am UK-based. Most clients land within the UK and pay in GBP, no fuss. International clients are welcome too: if scope needs me on-site somewhere outside the UK, you cover travel, accommodation, food, and any other reasonable on-site expenses at cost (no markup). Remote-only engagements work the same regardless of geography.
 
 For UK clients specifically: I run an outside-IR35 working-practice posture by design (right of substitution, no mutuality of obligation between SOW phases, phase-gated invoicing, multiple-clients diversification, IR35 contract review on the SOW). If you are inside-UK and AI-spend approval has procurement implications, ask on the discovery call.
 
