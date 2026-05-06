@@ -24,7 +24,11 @@ exclude = [
   # Self-reference: README.md points at the live site, lychee then fetches
   # hoiboy.uk during CI which races against the same Cloudflare deploy that
   # the commit is about to trigger. Causes intermittent timeouts under load.
-  # No value in self-checking — Hugo build + URL contract assertion already
+  # No value in self-checking; Hugo build + URL contract assertion already
   # validate the live site shape. added: 2026-04-08; expires: 2026-07-07 (90 days)
   "^https?://(www\\.)?hoiboy\\.uk(/.*)?$",
+  # LinkedIn returns HTTP 999 (anti-bot rate-limit) to lychee's user-agent,
+  # which is not a real HTTP status. Sidebar profile link cannot be liveness-
+  # checked from CI without a logged-in cookie. added: 2026-05-06; expires: 2026-08-04 (90 days)
+  "^https?://(www\\.)?linkedin\\.com(/.*)?$",
 ]

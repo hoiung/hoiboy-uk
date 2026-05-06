@@ -154,7 +154,7 @@ rendered_link_check() {
         printf >&2 'ERR: lychee not installed; install via cargo or apt\n'
         return 127
     fi
-    lychee --config lychee.toml --no-progress "$rendered"
+    lychee --config lychee.toml --root-dir "$REPO_ROOT/public" --no-progress "$rendered"
 }
 run_check "rendered-link-liveness" rendered_link_check
 
@@ -180,7 +180,7 @@ consulting_link_check() {
         return 127
     fi
     # shellcheck disable=SC2086
-    lychee --config lychee.toml --no-progress $rendered
+    lychee --config lychee.toml --root-dir "$REPO_ROOT/public" --no-progress $rendered
 }
 run_check "consulting-link-liveness" consulting_link_check
 
