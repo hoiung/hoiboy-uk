@@ -1,7 +1,7 @@
 ---
 title: "AI Managed Harness services"
 date: 2026-04-25
-description: "Discovery-first AI harness consultancy for owner-operator-led teams. Audit, foundation, build, then a Monthly Maintenance Package. UK-based, international clients welcome."
+description: "I help non-technical domain experts adopt AI properly. Audit-first ladder, custom AI harness that automates the routine work, freeing you to focus on the human-ingenuity work AI cannot replicate. UK-based, international clients welcome."
 ---
 
 <!-- iamhoi-claims
@@ -15,7 +15,11 @@ I designed, run, and babysit daily a live options-based swing trading platform o
 
 <!-- iamhoi -->
 
-I help small teams run their AI tooling without setting fire to a month of internal eng time. Not a hand-wavy AI strategy deck either!
+I help non-technical domain experts adopt AI properly. Not by handing you a tool and saying "off you go" (which is most AI consulting in the wild). Not by writing a hand-wavy AI strategy deck either!
+
+I am not here to scale your AWS or your other cloud infrastructure. I am here to help the people who actually do the work in your business (marketing, sales, ops, design, finance, customer support, wherever you sit) integrate a custom AI harness that automates the routine, so you can focus on your human ingenuity and your domain expertise (the things AI cannot replicate, now or any time soon).
+
+There is a right way and a wrong way to use AI. Most non-technical people are doing it the wrong way. (Honestly most technical people are doing it the wrong way too, which is part of why this market is the way it is right now.) Using AI properly takes a long time to learn. The good news: I have spent that time already, so you do not have to.
 
 This is a sequential, audit-first engagement. It starts at £1,500 and builds on what already exists in your business (sometimes more than you think it does). I make sure your AI tooling becomes a working harness, then I keep it working.
 
