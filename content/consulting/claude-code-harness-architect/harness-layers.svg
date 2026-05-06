@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1073" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif" role="img" aria-labelledby="diagramTitle diagramDesc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif" role="img" aria-labelledby="diagramTitle diagramDesc">
   <title id="diagramTitle">What is an AI harness</title>
-  <desc id="diagramDesc">Diagram of an AI harness with two concentric layers. The inner layer (dashed grey ring) is the general-purpose harness that ships with Claude Code, Cursor, Anthropic Skills, and the Agent SDK. The outer layer (solid terracotta ring) is the specialised harness built for the client's business, containing workflows, governance, domain expertise, and the client's competitive edge. The AI agent sits at the centre. A brief enters from the left, flows through both harness layers, and exits as audit-trailed output to the right. A human checkpoint box below the rings represents the client's SME reviewing before anything ships.</desc>
+  <desc id="diagramDesc">Diagram of an AI harness with two concentric layers. The inner layer (dashed grey ring) is the general-purpose harness that ships with Claude Code, Cursor, Anthropic Skills, and the Agent SDK. The outer layer (solid terracotta ring) is the specialised harness, divided into six segments arranged clockwise: Decision Rules at 12 o'clock, Research Method at 2 o'clock, Data Sources at 4 o'clock, Source Reliability at 6 o'clock, Problem Detectors at 8 o'clock, and Anti-Patterns at 10 o'clock. Each segment carries a two-line description of what that component does. The AI agent sits at the centre. A brief enters from the left, flows through the layers, and exits as audit-trailed output to the right. A human-checkpoint box below the rings represents the SME reviewing before anything ships.</desc>
 
   <defs>
     <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
@@ -10,6 +10,7 @@
     <style><![CDATA[
       .accent-stroke { stroke: #c0533a; }
       .accent-fill { fill: #c0533a; }
+      .accent-stroke-light { stroke: #c0533a; stroke-opacity: 0.35; }
       .fg-stroke { stroke: #1a1a1a; }
       .fg-fill { fill: #1a1a1a; }
       .muted-stroke { stroke: #555; }
@@ -26,27 +27,58 @@
   </defs>
 
   <text x="800" y="60" text-anchor="middle" font-size="32" font-weight="600" class="fg-fill">What is an AI harness?</text>
-  <text x="800" y="100" text-anchor="middle" font-size="20" font-style="italic" class="muted-fill">Two layers, one agent inside.</text>
+  <text x="800" y="100" text-anchor="middle" font-size="18" font-style="italic" class="muted-fill">Inside the specialised layer is your trade's craft, codified.</text>
 
-  <circle cx="800" cy="560" r="350" fill="none" class="accent-stroke" stroke-width="6"/>
-  <text x="800" y="200" text-anchor="middle" font-size="22" font-weight="700" class="accent-fill">SPECIALISED HARNESS</text>
-  <text x="800" y="225" text-anchor="middle" font-size="15" class="muted-fill">(built for your business)</text>
-  <text x="800" y="247" text-anchor="middle" font-size="14" class="muted-fill">workflows  ·  governance  ·  domain expertise  ·  competitive edge</text>
+  <text x="800" y="180" text-anchor="middle" font-size="22" font-weight="700" class="accent-fill">SPECIALISED HARNESS — built for your business</text>
 
-  <circle cx="800" cy="560" r="200" fill="none" class="muted-stroke" stroke-width="3" stroke-dasharray="8,6"/>
-  <text x="800" y="385" text-anchor="middle" font-size="18" font-weight="600" class="fg-fill">GENERAL-PURPOSE HARNESS</text>
-  <text x="800" y="408" text-anchor="middle" font-size="14" class="muted-fill">(ships with Claude Code, Cursor, Skills, Agent SDK)</text>
+  <circle cx="800" cy="600" r="380" fill="none" class="accent-stroke" stroke-width="6"/>
 
-  <rect x="725" y="540" width="150" height="50" class="fg-fill" rx="6"/>
-  <text x="800" y="572" text-anchor="middle" font-size="16" font-weight="600" class="light-fill">AI agent</text>
+  <line x1="900" y1="427" x2="990" y2="271" class="accent-stroke-light" stroke-width="2"/>
+  <line x1="1000" y1="600" x2="1180" y2="600" class="accent-stroke-light" stroke-width="2"/>
+  <line x1="900" y1="773" x2="990" y2="929" class="accent-stroke-light" stroke-width="2"/>
+  <line x1="700" y1="773" x2="610" y2="929" class="accent-stroke-light" stroke-width="2"/>
+  <line x1="600" y1="600" x2="420" y2="600" class="accent-stroke-light" stroke-width="2"/>
+  <line x1="700" y1="427" x2="610" y2="271" class="accent-stroke-light" stroke-width="2"/>
 
-  <line x1="100" y1="560" x2="430" y2="560" class="fg-stroke" stroke-width="3" marker-end="url(#arrowhead)"/>
-  <text x="100" y="538" font-size="18" font-weight="600" class="fg-fill">brief / task</text>
+  <text x="800" y="285" text-anchor="middle" font-size="17" font-weight="700" class="fg-fill">DECISION RULES</text>
+  <text x="800" y="308" text-anchor="middle" font-size="13" class="muted-fill">when to act, when to escalate</text>
+  <text x="800" y="326" text-anchor="middle" font-size="13" class="muted-fill">what needs human sign-off</text>
 
-  <line x1="1170" y1="560" x2="1500" y2="560" class="fg-stroke" stroke-width="3" marker-end="url(#arrowhead)"/>
-  <text x="1500" y="538" text-anchor="end" font-size="18" font-weight="600" class="fg-fill">audit-trailed output</text>
+  <text x="1051" y="430" text-anchor="middle" font-size="17" font-weight="700" class="fg-fill">RESEARCH METHOD</text>
+  <text x="1051" y="453" text-anchor="middle" font-size="13" class="muted-fill">what to look for, in order</text>
+  <text x="1051" y="471" text-anchor="middle" font-size="13" class="muted-fill">when to stop, when to dig</text>
 
-  <rect x="660" y="920" width="280" height="56" fill="none" class="fg-stroke" stroke-width="3" rx="8"/>
-  <text x="800" y="956" text-anchor="middle" font-size="18" font-weight="700" class="fg-fill">HUMAN CHECKPOINT</text>
-  <text x="800" y="1010" text-anchor="middle" font-size="14" class="muted-fill">(your SME reviews before anything ships)</text>
+  <text x="1051" y="745" text-anchor="middle" font-size="17" font-weight="700" class="fg-fill">DATA SOURCES</text>
+  <text x="1051" y="768" text-anchor="middle" font-size="13" class="muted-fill">which APIs, docs, databases</text>
+  <text x="1051" y="786" text-anchor="middle" font-size="13" class="muted-fill">how to fetch, where to cache</text>
+
+  <text x="800" y="900" text-anchor="middle" font-size="17" font-weight="700" class="fg-fill">SOURCE RELIABILITY</text>
+  <text x="800" y="923" text-anchor="middle" font-size="13" class="muted-fill">what to trust, what to flag</text>
+  <text x="800" y="941" text-anchor="middle" font-size="13" class="muted-fill">verification before citing</text>
+
+  <text x="549" y="745" text-anchor="middle" font-size="17" font-weight="700" class="fg-fill">PROBLEM DETECTORS</text>
+  <text x="549" y="768" text-anchor="middle" font-size="13" class="muted-fill">known failure modes</text>
+  <text x="549" y="786" text-anchor="middle" font-size="13" class="muted-fill">drift indicators, regressions</text>
+
+  <text x="549" y="430" text-anchor="middle" font-size="17" font-weight="700" class="fg-fill">ANTI-PATTERNS</text>
+  <text x="549" y="453" text-anchor="middle" font-size="13" class="muted-fill">what NEVER to do</text>
+  <text x="549" y="471" text-anchor="middle" font-size="13" class="muted-fill">your trade's banned shortcuts</text>
+
+  <circle cx="800" cy="600" r="200" fill="none" class="muted-stroke" stroke-width="3" stroke-dasharray="8,6"/>
+  <text x="800" y="540" text-anchor="middle" font-size="16" font-weight="600" class="fg-fill">GENERAL-PURPOSE HARNESS</text>
+  <text x="800" y="563" text-anchor="middle" font-size="13" class="muted-fill">(ships with Claude Code, Cursor,</text>
+  <text x="800" y="580" text-anchor="middle" font-size="13" class="muted-fill">Skills, Agent SDK)</text>
+
+  <rect x="725" y="615" width="150" height="50" class="fg-fill" rx="6"/>
+  <text x="800" y="647" text-anchor="middle" font-size="16" font-weight="600" class="light-fill">AI agent</text>
+
+  <line x1="60" y1="600" x2="585" y2="600" class="fg-stroke" stroke-width="3" marker-end="url(#arrowhead)"/>
+  <text x="60" y="578" font-size="16" font-weight="600" class="fg-fill">brief / task</text>
+
+  <line x1="1015" y1="600" x2="1540" y2="600" class="fg-stroke" stroke-width="3" marker-end="url(#arrowhead)"/>
+  <text x="1540" y="578" text-anchor="end" font-size="16" font-weight="600" class="fg-fill">audit-trailed output</text>
+
+  <rect x="660" y="1060" width="280" height="56" fill="none" class="fg-stroke" stroke-width="3" rx="8"/>
+  <text x="800" y="1096" text-anchor="middle" font-size="18" font-weight="700" class="fg-fill">HUMAN CHECKPOINT</text>
+  <text x="800" y="1145" text-anchor="middle" font-size="14" class="muted-fill">(your SME reviews before anything ships)</text>
 </svg>
