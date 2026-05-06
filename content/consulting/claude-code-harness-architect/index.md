@@ -57,6 +57,10 @@ So: expecting a non-technical subject matter expert (whose actual expertise is m
 
 That is the problem I am solving for you. Your subject matter experts are there to do what they are good at, and they should stay focused on that. Leave the harness and the workflow design to people like me who have spent way too much of our spare time playing around with AI (because yeah it is fun, but also frustrating at times). I bring the harness pattern, the workflow design, the governance, and the ongoing maintenance into your business as a service, so your people can do their actual jobs.
 
+One more thing worth knowing: the harness is more independent than you might think. Picture it as a wrapper, a piece of kit the AI agent wears, with the workflows, guardrails, governance, and feedback loops baked into the wrapper itself. Once it is shipped and working, it does not change much. New models come along (Claude Opus 4.6 to 4.7, and whatever comes after), and based on what I have seen so far those upgrades tend to make the harness work better, not break it. Some tweaks may be needed when a new model lands (the Monthly Maintenance Package handles that), but no wholesale rebuilds.
+
+So your domain expert's day-to-day with the harness in place: the routine work gets handled consistently (with the right enforcement and audit trail), and they spend their hours on the human-judgment work AI cannot replicate (the creative calls, the customer relationships, the strategic decisions). Faster output, higher quality, same headcount, same people doing what they are best at.
+
 <!-- iamhoiend -->
 
 ## "Why is a managed service offer on a blog site?"
