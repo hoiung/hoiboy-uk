@@ -2,12 +2,23 @@
   Consulting CTA button. Reads URL from data/consulting.yaml.
 
   Args:
-    type   = "stripe" | "calcom"   (required)
+    type   = "calcom"              (required; V2 = single-CTA, no Stripe)
     label  = override label        (optional)
     offer  = data-file key         (optional, default "harness_architect")
 
+  V2 OPERATOR_TODO detection: when the configured URL still contains the
+  literal substring "OPERATOR_TODO_REPLACE_BEFORE_LAUNCH" (operator has not
+  yet replaced the placeholder with a real Cal.com URL), the rendered CTA
+  falls back to a mailto: link. Fail-LOUD-with-degraded-CTA: the page still
+  ships a working contact path, the broken URL never reaches a buyer's click.
+  Production pre-publish.sh + pre-commit hook + lychee gate block the
+  OPERATOR_TODO from reaching production HTML; the mailto branch is
+  defence-in-depth and local-preview render-safety.
+
+  consulting-ops#2 Phase 0 AC 0.1.
+
   Example:
-    {{< consulting-cta type="stripe" >}}
+    {{< consulting-cta type="calcom" >}}
     {{< consulting-cta type="calcom" label="Book a call" >}}
 */ -}}
 {{- $type := .Get "type" -}}
@@ -16,13 +27,15 @@
 {{- if not $data -}}
   {{- errorf "consulting-cta: no data for offer %q at data/consulting.yaml" $offer -}}
 {{- end -}}
-{{- if eq $type "stripe" -}}
-  {{- $default_label := printf "Buy now for £%s" $data.price_display -}}
-  <a href="{{ $data.stripe_payment_link }}" class="btn btn-primary" rel="noopener" target="_blank">{{ .Get "label" | default $default_label }}</a>
-{{- else if eq $type "calcom" -}}
-  <a href="{{ $data.calcom_booking }}" class="btn btn-secondary" rel="noopener" target="_blank">{{ .Get "label" | default "Book a 20-min discovery call" }}</a>
-{{- else if eq $type "price" -}}
-  <strong>£{{ $data.price_display }} GBP. Fixed fee. {{ $data.delivery_days }}-day delivery. 100% upfront.</strong>
+{{- $todoMarker := "OPERATOR_TODO_REPLACE_BEFORE_LAUNCH" -}}
+{{- $mailtoHref := "mailto:hello+harness-architect@duckandbear.co.uk?subject=Cash-engine%20discovery%20call" -}}
+{{- if eq $type "calcom" -}}
+  {{- $url := $data.calcom_booking -}}
+  {{- if strings.Contains $url $todoMarker -}}
+    <a href="{{ $mailtoHref }}" class="btn btn-secondary">{{ .Get "label" | default "Email Hoi to start" }}</a>
+  {{- else -}}
+    <a href="{{ $url }}" class="btn btn-secondary" rel="noopener" target="_blank">{{ .Get "label" | default "Book a 20-min discovery call" }}</a>
+  {{- end -}}
 {{- else -}}
-  {{- errorf "consulting-cta: unknown type %q (expected stripe|calcom|price)" $type -}}
+  {{- errorf "consulting-cta: unknown type %q (V2 supports: calcom)" $type -}}
 {{- end -}}

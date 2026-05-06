@@ -79,6 +79,20 @@ repos:
         pass_filenames: false
         files: ^content/.*\.md$
 
+      - id: consulting-yaml-no-operator-todo
+        name: Block OPERATOR_TODO placeholders in data/consulting.yaml
+        # consulting-ops#2 AC 0.3 — defence-in-depth alongside the Hugo
+        # shortcode mailto fallback + pre-publish.sh global gate. Catches
+        # accidental commit of an unreplaced placeholder before push, so the
+        # broken URL never reaches Cloudflare Pages.
+        entry: bash
+        args:
+          - -c
+          - 'if [ -f data/consulting.yaml ] && grep -F OPERATOR_TODO data/consulting.yaml; then echo "ERROR: data/consulting.yaml contains OPERATOR_TODO placeholder; replace before commit" >&2; exit 1; fi'
+        language: system
+        pass_filenames: false
+        files: ^data/consulting\.yaml$
+
       - id: secret-rules-drift
         name: Secret detection script drift check
         entry: bash
