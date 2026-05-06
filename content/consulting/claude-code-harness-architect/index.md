@@ -59,6 +59,18 @@ Want to dig into the concept before booking a call? Three posts of mine that go 
 
 <!-- iamhoiend -->
 
+## "Why Claude Code (and not the other Claude products)?"
+
+<!-- iamhoi -->
+
+I focus on Claude Code specifically. Anthropic has a growing menu of Claude products tailored to specific roles or use cases (Claude Desktop, Claude for Work, whatever launches next), and they all have their place. But once your team learns Claude Code, it covers ALL of those use cases (and a hundred more your business has not thought of yet) from one tool, set up once, harnessed properly.
+
+Claude Code does not have a pretty point-and-click UI, and that is for a good reason: it does not need one. Set up correctly and harnessed properly, it is simply powerful. You get an enormously flexible agent that runs anything from "draft me a customer reply" to "audit the last quarter's contracts" to "wire up a workflow that reconciles three internal systems automatically". It does everything the specialised Claude products do, and a whole lot more.
+
+That is what I am betting my consultancy on. One tool, learned well, harnessed well, applied across every side of your business.
+
+<!-- iamhoiend -->
+
 ## "What problem am I solving for you?"
 
 <!-- iamhoi -->
