@@ -30,8 +30,8 @@
 {{- $todoMarker := "OPERATOR_TODO_REPLACE_BEFORE_LAUNCH" -}}
 {{- $mailtoHref := "mailto:hello+harness-architect@duckandbear.co.uk?subject=Cash-engine%20discovery%20call" -}}
 {{- if eq $type "calcom" -}}
-  {{- $url := $data.calcom_booking -}}
-  {{- if strings.Contains $url $todoMarker -}}
+  {{- $url := $data.calcom_booking | default "" -}}
+  {{- if or (eq $url "") (strings.Contains $url $todoMarker) -}}
     <a href="{{ $mailtoHref }}" class="btn btn-secondary">{{ .Get "label" | default "Email Hoi to start" }}</a>
   {{- else -}}
     <a href="{{ $url }}" class="btn btn-secondary" rel="noopener" target="_blank">{{ .Get "label" | default "Book a 20-min discovery call" }}</a>

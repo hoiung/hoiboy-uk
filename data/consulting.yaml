@@ -1,22 +1,73 @@
-# Single source of truth for consulting-page external URLs.
+# V2 cash-engine offer architecture (consulting-ops#2 Phase 2).
+# Single source of truth for consulting-page external URLs + V2 pricing ladder.
 # Referenced from content/consulting/*/index.md via {{ .Site.Data.consulting.<key> }}.
-# Updated at launch day by the operator (Hoi) with real Stripe + Cal.com URLs.
+#
+# Config Traceability — every key below has a documented reader. AC 2.5.
+#  - business.legal_name                                          -> content/consulting/<slug>/index.md (legal footer)
+#  - business.companies_house                                     -> content/consulting/<slug>/index.md (legal footer)
+#  - business.vat_number                                          -> content/consulting/<slug>/index.md (legal footer; null until HMRC issuance)
+#  - harness_architect.calcom_booking                             -> layouts/_shortcodes/consulting-cta.html (CTA href)
+#  - harness_architect.company_audit.tier_5_to_10.employees_label -> content/consulting/<slug>/index.md (price-ladder bullet)
+#  - harness_architect.company_audit.tier_5_to_10.price_display   -> content/consulting/<slug>/index.md (price-ladder bullet)
+#  - harness_architect.company_audit.tier_10_to_50.employees_label -> content/consulting/<slug>/index.md (price-ladder bullet)
+#  - harness_architect.company_audit.tier_10_to_50.price_display  -> content/consulting/<slug>/index.md (price-ladder bullet)
+#  - harness_architect.company_audit.tier_50_plus.employees_label -> content/consulting/<slug>/index.md (price-ladder bullet)
+#  - harness_architect.company_audit.tier_50_plus.price_display   -> content/consulting/<slug>/index.md (price-ladder bullet)
+#  - harness_architect.per_harness_audit.price_display            -> content/consulting/<slug>/index.md (per-harness audit bullet)
+#  - harness_architect.foundation_setup.price_display             -> content/consulting/<slug>/index.md (foundation bullet)
+#  - harness_architect.foundation_setup.overflow_rate_display     -> content/consulting/<slug>/index.md (foundation bullet)
+#  - harness_architect.foundation_setup.cap_days                  -> content/consulting/<slug>/index.md (foundation bullet)
+#  - harness_architect.tier_1_first_month_support.scope_text      -> content/consulting/<slug>/index.md (Tier 1 bullet)
+#  - harness_architect.tier_2_hourly_pack.price_display           -> content/consulting/<slug>/index.md (Tier 2 bullet)
+#  - harness_architect.tier_2_hourly_pack.hours_included          -> content/consulting/<slug>/index.md (Tier 2 bullet)
+#  - harness_architect.tier_3_monthly_maintenance.price_display_mtm    -> content/consulting/<slug>/index.md (Tier 3 MTM bullet)
+#  - harness_architect.tier_3_monthly_maintenance.price_display_annual -> content/consulting/<slug>/index.md (Tier 3 annual bullet)
+
+business:
+  legal_name: "DUCK & BEAR LTD"
+  companies_house: ""   # Operator replaces with the public Companies House registration number.
+  vat_number: null      # null until HMRC voluntary-VAT issuance lands per consulting-ops#2 Phase 8 AC 8.2.
 
 harness_architect:
-  # OPERATOR_TODO: replace with real Stripe Payment Link URL (£4,995 GBP one-time).
-  # Dashboard: https://dashboard.stripe.com/payment-links
-  # Success URL must point back to /consulting/claude-code-harness-architect/?success=1
-  # Cancel URL must point back to /consulting/claude-code-harness-architect/
-  stripe_payment_link: "https://buy.stripe.com/OPERATOR_TODO_REPLACE_BEFORE_LAUNCH"
+  # Operator replaces with the live Cal.com URL post-Phase-1 AC 1.2. Empty
+  # string + shortcode mailto fallback covers the pre-launch state; the
+  # pre-publish.sh + pre-commit hook + lychee gates block any unreplaced
+  # placeholder URL from reaching production. See docs/consulting-launch-checklist.md.
+  calcom_booking: ""
 
-  # OPERATOR_TODO: replace with real Cal.com cloud booking URL (20-min discovery, UK business hours).
-  # Dashboard: https://cal.com/bookings
-  # Required fields on booking: email, LinkedIn URL. No other friction questions.
-  calcom_booking: "https://cal.com/OPERATOR_TODO_REPLACE_BEFORE_LAUNCH/20min-discovery"
+  # Company structure audit ladder.
+  # OD-PRICE-LADDER LOCKED = LIFT (consulting-ops#2 Phase 7 AC 7.2, 2026-05-06).
+  company_audit:
+    tier_5_to_10:
+      employees_label: "5-10 employees"
+      price_display: "1,500"          # £1,500 + VAT
+    tier_10_to_50:
+      employees_label: "10-50 employees"
+      price_display: "2,500"          # £2,500 + VAT
+    tier_50_plus:
+      employees_label: "50+ employees"
+      price_display: "4,500-5,000"    # £4,500-£5,000 + VAT (range, scoped per call)
 
-  # Price display (matches SOW + Stripe Payment Link).
-  # price_gbp is the numeric value (used for programmatic checks + future partials).
-  # price_display is the UK-formatted string for human display (thousands separator).
-  price_gbp: 4995
-  price_display: "4,995"
-  delivery_days: 14
+  # Per-harness audit (sequential, scoped per harness post company audit).
+  per_harness_audit:
+    price_display: "750"              # £750 + VAT per harness audit (1 SME-day)
+
+  # Foundation setup — flat 2-day base + overflow up to a hard cap.
+  foundation_setup:
+    price_display: "3,000"            # £3,000 + VAT for 2 days
+    overflow_rate_display: "1,500"    # £1,500 / extra day
+    cap_days: 4                       # Max 4 days total; harder scope-trim past that
+
+  # Tier 1 — first month of post-build support included free per harness.
+  tier_1_first_month_support:
+    scope_text: "First month of support included free per harness shipped"
+
+  # Tier 2 — open-scope hourly pack, portfolio-wide.
+  tier_2_hourly_pack:
+    price_display: "1,500"            # £1,500 + VAT
+    hours_included: 10                # 10 hours included
+
+  # Tier 3 — Monthly Maintenance Package, per harness, deliverable-anchored.
+  tier_3_monthly_maintenance:
+    price_display_mtm: "400"          # £400/mo per harness, month-to-month
+    price_display_annual: "340"       # £340/mo per harness, 12-month annual commit
