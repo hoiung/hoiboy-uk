@@ -1,0 +1,17 @@
+{{- /*
+  Single clickable image that opens in a glightbox lightbox.
+  Renders at content column width (NOT a thumbnail) so it stays
+  legible in place; click enlarges to full-size lightbox.
+
+  Args:
+    src   = relative path inside page bundle (e.g. "hero.svg") OR absolute URL
+    alt   = accessibility alt text (also used as fallback for title)
+    title = short lightbox caption (data-title); keep concise so the
+            lightbox image area is not squeezed by the caption text
+*/ -}}
+{{- $src := .Get "src" -}}
+{{- $alt := .Get "alt" | default "" -}}
+{{- $title := .Get "title" | default $alt -}}
+<a href="{{ $src | safeURL }}" class="glightbox zoom-image" data-title="{{ $title }}">
+  <img src="{{ $src | safeURL }}" alt="{{ $alt }}" loading="lazy">
+</a>

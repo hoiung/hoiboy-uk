@@ -1,4 +1,4 @@
-{{- if or (.HasShortcode "gallery") (.Resources.ByType "image") -}}
+{{- if or (.HasShortcode "gallery") (.HasShortcode "zoom-image") (.Resources.ByType "image") -}}
 <script src="/vendor/glightbox/glightbox.min.js"></script>
 <script src="/vendor/glightbox/glightbox-init.js"></script>
 {{- end -}}

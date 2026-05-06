@@ -195,6 +195,12 @@ I am UK-based. Most clients land within the UK and pay in GBP, no fuss. Internat
 
 For UK clients specifically: I run an outside-IR35 working-practice posture by design (right of substitution, no mutuality of obligation between SOW phases, phase-gated invoicing, multiple-clients diversification, IR35 contract review on the SOW). If you are inside-UK and AI-spend approval has procurement implications, ask on the discovery call.
 
+## What you are buying, in one diagram
+
+{{< zoom-image src="hero.svg" alt="The same two-layer harness diagram from the top of the page: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your business. A human checkpoint sits outside the rings." title="What is an AI harness" >}}
+
+<small><em>(Click the diagram to enlarge for details.)</em></small>
+
 ## Ready?
 
 {{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}} {{< smallprint >}}<-- (Recruiters: please do not click. I do not have time for bullshit. Please <strong>click</strong> if you are a fun-yet-serious decision maker or their trusted second, who has no time for bullshit and needs to get things done.){{< /smallprint >}}
