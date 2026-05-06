@@ -11,8 +11,12 @@ timeout = 20
 retry_wait_time = 2
 accept = [200, 201, 202, 203, 204, 301, 302, 307, 308]
 
-# File path globs to skip (lychee scans args from CLI, this filters them)
-exclude_path = ["public", "legacy", "node_modules", ".git", "content/posts", "docs/research", "scripts/tests/fixtures"]
+# File path globs to skip (lychee scans args from CLI, this filters them).
+# `public/posts` is excluded because per-post pre-publish.sh already validates
+# the rendered HTML for blog posts; `public/consulting` is INTENTIONALLY NOT
+# excluded so consulting-ops#2 AC 0.4 (Cal.com URL liveness) can fire against
+# the rendered consulting page HTML.
+exclude_path = ["public/posts", "legacy", "node_modules", ".git", "content/posts", "docs/research", "scripts/tests/fixtures"]
 
 # Domains explicitly excluded from link check (allowlist).
 # Add entries with the comment format above. Empty by default.
