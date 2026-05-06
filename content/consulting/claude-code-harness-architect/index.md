@@ -45,6 +45,20 @@ Your decisions land in days, not quarters, which is exactly why this engagement 
 
 <!-- iamhoiend -->
 
+## What is an AI harness, and why do you need one?
+
+<!-- iamhoi -->
+
+Short version: a harness is a custom-built wrapper around your chosen AI tools (Claude, ChatGPT, Cursor, Copilot, whatever you use), shaped to your business's actual work, with the workflows, guardrails, governance, and feedback loops baked in. Without one, AI is a clever assistant that occasionally forgets things and occasionally hallucinates. With one, AI becomes a consistent, audit-trailed colleague that does the routine work the way YOU need it done. The difference between "fun in demos" and "actually useful every day".
+
+Want to dig into the concept before booking a call? Three posts of mine that go deeper:
+
+- [Why Do We Need an AI Harness?]({{< ref "/posts/why-do-we-need-an-ai-harness" >}}) (15 Apr 2026)
+- [Every Domain Expert Needs Their Own AI Harness]({{< ref "/posts/every-sme-needs-their-own-harness" >}}) (21 Apr 2026)
+- [SST3-AI-Harness. Why I Built a Hero Suit for AI.]({{< ref "/posts/sst3-ai-harness-reshapeable-knife" >}}) (14 Apr 2026)
+
+<!-- iamhoiend -->
+
 ## "What problem am I solving for you?"
 
 <!-- iamhoi -->
