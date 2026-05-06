@@ -91,7 +91,7 @@ At a glance. All prices exclude VAT (charged at the prevailing rate; VAT-registe
 |---|---|---|
 | 1. Discovery call | Free | 20-minute Cal.com booking, Mon to Fri UK business hours |
 | 2. Company audit | £1,500 (5-10 emp) / £2,500 (10-50 emp) / £4,500-5,000 (50+ emp) | 1-3 SME-days; written report + walkthrough call; independent (not credited back against build) |
-| 3. Foundation setup | £3,000 base; £1,500/extra day, hard-capped at 4 days total | The scaffolding infrastructure that every harness sits on |
+| 3. Foundation setup | £3,000 base 2 days; £1,500/extra day, hard-capped at 4 days total | The scaffolding infrastructure that every harness sits on |
 | 4a. Per-harness audit | £750 per harness | 1 SME-day; sequential, one per harness, before each build |
 | 4b. Per-harness build | £12K-£30K typical (fixed-fee output of audit) | Custom-scoped per audit; volume discount for multi-harness commitments at engagement open |
 | 4c. Tier 1 first-month support | Free | 8 hours of my time per harness across the first calendar month post-build (not full-time availability) |
