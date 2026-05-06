@@ -95,7 +95,7 @@ At a glance. All prices exclude VAT (charged at the prevailing rate; VAT-registe
 | 4a. Per-harness audit | £750 per harness | 1 SME-day; sequential, one per harness, before each build |
 | 4b. Per-harness build | £12K-£30K typical (fixed-fee output of audit) | Custom-scoped per audit; volume discount for multi-harness commitments at engagement open |
 | 4c. Tier 1 first-month support | Free | 8 hours of my time per harness across the first calendar month post-build (not full-time availability) |
-| 5. Tier 3 Monthly Maintenance Package | £400/mo per harness MTM, or £340/mo per harness on a 12-month annual commit | Drift events + monthly report; 5 hours per harness per month included; £150/h overage; no rollover |
+| 5. Tier 3 Monthly Maintenance Package | £400/mo per harness on month-to-month, or £340/mo per harness on a 12-month annual commit | Drift events + monthly report; 5 hours per harness per month included; £150/h overage; no rollover |
 | Optional. Tier 2 hourly pack | £1,500 / 10 hours | Existing clients only (must have at least one harness shipped); maintenance scope only |
 
 **What I cover** (absorbed in the phase fees, not separately billed): all AI tooling costs for my own work. Claude Max subscriptions, Anthropic API top-ups, MCP server hosting, agent-orchestration overhead during build phases and under the Monthly Maintenance Package or Tier 2 hourly pack.
