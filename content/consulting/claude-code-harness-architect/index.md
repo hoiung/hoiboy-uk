@@ -37,6 +37,30 @@ Your team is not enterprise. Your decisions land in days, not quarters. That is 
 
 <!-- iamhoiend -->
 
+## "Why is a managed service offer on a blog site?"
+
+<!-- iamhoi -->
+
+Fair question. Because I could spin up a fancy "AI consultancy" website in a day (templated trust signals, stock photography, an "Our Process" section in a sans-serif font, you've seen it). Gold foil wrapping. You do not want gold foil. You want someone genuinely good at the actual work, who delivers on time, at high quality, and goes above and beyond when the audit surfaces something you did not expect.
+
+So that is what I am offering, on my actual blog where you can read what I think about, what I build, what I cock up, what I learn. Reading me here is easier than reading a pitch deck someone else wrote for me.
+
+As a bonus you get my bubbly, fun, no-bullshit personality. We will figure out on a 20-minute discovery call whether working together is going to be a wonderful and pleasurable experience for both of us, well before any money or SOW lands on the table.
+
+<!-- iamhoiend -->
+
+## "Are you a one-man band?"
+
+<!-- iamhoi -->
+
+Yes! I had businesses where I managed large teams (which is its own full-time job, and a different one to actually doing the work). With AI assistants doing the heavy lifting now, I genuinely do not need that overhead any more. The AI is the team working for me.
+
+That frees me up to spend my time on the higher-value work, which is helping you set up the same arrangement so your team gets the productivity lift you suspect is buried in this technology. The whole reason this offer exists is to help you do what I just did.
+
+For UK clients there is a Right of Substitution clause in the SOW (a named SME peer who can step in for genuine emergency unavailability), but the design intent is: you are working with me, not a faceless agency.
+
+<!-- iamhoiend -->
+
 ## How it works
 
 <!-- iamhoi -->
