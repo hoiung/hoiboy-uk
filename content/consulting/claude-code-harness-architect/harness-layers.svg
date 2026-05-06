@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1073" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif" role="img" aria-labelledby="diagramTitle diagramDesc">
+  <title id="diagramTitle">What is an AI harness</title>
+  <desc id="diagramDesc">Diagram of an AI harness with two concentric layers. The inner layer (dashed grey ring) is the general-purpose harness that ships with Claude Code, Cursor, Anthropic Skills, and the Agent SDK. The outer layer (solid terracotta ring) is the specialised harness built for the client's business, containing workflows, governance, domain expertise, and the client's competitive edge. The AI agent sits at the centre. A brief enters from the left, flows through both harness layers, and exits as audit-trailed output to the right. A human checkpoint box below the rings represents the client's SME reviewing before anything ships.</desc>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#1a1a1a"/>
+    </marker>
+    <style><![CDATA[
+      .accent-stroke { stroke: #c0533a; }
+      .accent-fill { fill: #c0533a; }
+      .fg-stroke { stroke: #1a1a1a; }
+      .fg-fill { fill: #1a1a1a; }
+      .muted-stroke { stroke: #555; }
+      .muted-fill { fill: #555; }
+      .light-fill { fill: #fafafa; }
+      @media (prefers-color-scheme: dark) {
+        .fg-stroke { stroke: #e8e8e8; }
+        .fg-fill { fill: #e8e8e8; }
+        .muted-stroke { stroke: #999; }
+        .muted-fill { fill: #999; }
+        .light-fill { fill: #141414; }
+      }
+    ]]></style>
+  </defs>
+
+  <text x="800" y="60" text-anchor="middle" font-size="32" font-weight="600" class="fg-fill">What is an AI harness?</text>
+  <text x="800" y="100" text-anchor="middle" font-size="20" font-style="italic" class="muted-fill">Two layers, one agent inside.</text>
+
+  <circle cx="800" cy="560" r="350" fill="none" class="accent-stroke" stroke-width="6"/>
+  <text x="800" y="200" text-anchor="middle" font-size="22" font-weight="700" class="accent-fill">SPECIALISED HARNESS</text>
+  <text x="800" y="225" text-anchor="middle" font-size="15" class="muted-fill">(built for your business)</text>
+  <text x="800" y="247" text-anchor="middle" font-size="14" class="muted-fill">workflows  ·  governance  ·  domain expertise  ·  competitive edge</text>
+
+  <circle cx="800" cy="560" r="200" fill="none" class="muted-stroke" stroke-width="3" stroke-dasharray="8,6"/>
+  <text x="800" y="385" text-anchor="middle" font-size="18" font-weight="600" class="fg-fill">GENERAL-PURPOSE HARNESS</text>
+  <text x="800" y="408" text-anchor="middle" font-size="14" class="muted-fill">(ships with Claude Code, Cursor, Skills, Agent SDK)</text>
+
+  <rect x="725" y="540" width="150" height="50" class="fg-fill" rx="6"/>
+  <text x="800" y="572" text-anchor="middle" font-size="16" font-weight="600" class="light-fill">AI agent</text>
+
+  <line x1="100" y1="560" x2="430" y2="560" class="fg-stroke" stroke-width="3" marker-end="url(#arrowhead)"/>
+  <text x="100" y="538" font-size="18" font-weight="600" class="fg-fill">brief / task</text>
+
+  <line x1="1170" y1="560" x2="1500" y2="560" class="fg-stroke" stroke-width="3" marker-end="url(#arrowhead)"/>
+  <text x="1500" y="538" text-anchor="end" font-size="18" font-weight="600" class="fg-fill">audit-trailed output</text>
+
+  <rect x="660" y="920" width="280" height="56" fill="none" class="fg-stroke" stroke-width="3" rx="8"/>
+  <text x="800" y="956" text-anchor="middle" font-size="18" font-weight="700" class="fg-fill">HUMAN CHECKPOINT</text>
+  <text x="800" y="1010" text-anchor="middle" font-size="14" class="muted-fill">(your SME reviews before anything ships)</text>
+</svg>
