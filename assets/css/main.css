@@ -192,6 +192,18 @@ strong, b { font-weight: 550; }
 .zoom-image:hover { cursor: zoom-in; }
 .zoom-image:hover img { opacity: 0.9; }
 
+/* glightbox: force SVG slides to fill the lightbox container.
+   Without this, SVG can render at its natural size (small) inside the slide. */
+.gslide-image img[src$=".svg"] {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 95vw;
+  max-height: 90vh;
+  background: var(--bg-card);
+  padding: 1rem;
+  border-radius: 4px;
+}
+
 footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: 0.8rem; color: var(--fg-muted); }
 
 /* Hamburger toggle: hidden on desktop, CSS-only on mobile (no JS) */
