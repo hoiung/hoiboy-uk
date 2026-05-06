@@ -197,7 +197,7 @@ For UK clients specifically: I run an outside-IR35 working-practice posture by d
 
 ## What you are buying, in one diagram
 
-{{< zoom-image src="hero.svg" alt="The same two-layer harness diagram from the top of the page: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your business. A human checkpoint sits outside the rings." title="What is an AI harness" >}}
+{{< zoom-image src="harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your business. A human checkpoint sits outside the rings." title="What is an AI harness" >}}
 
 <small><em>(Click the diagram to enlarge for details.)</em></small>
 
