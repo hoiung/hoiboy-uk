@@ -131,6 +131,8 @@ I run a [live options-based swing trading platform](https://hoiboy.uk/trading/) 
 
 The harness I install in your business is not a theoretical pattern. It is the one that survives contact with my own code (which is the one harness anyone honestly should be selling).
 
+And keep reading me on this blog as I build and deliver more AI-related work (non-confidential, obviously). [Latest posts]({{< ref "/posts" >}}).
+
 <!-- iamhoiend -->
 
 ## Working with me from outside the UK
