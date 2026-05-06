@@ -45,6 +45,20 @@ Your decisions land in days, not quarters, which is exactly why this engagement 
 
 <!-- iamhoiend -->
 
+## "What problem am I solving for you?"
+
+<!-- iamhoi -->
+
+Building a proper AI harness (with all the necessary workflows, guardrails, governance, enforcements, feedback loops, and the dozen other moving parts that make AI actually useful inside a business) requires more than a full-time job. It is a real specialism.
+
+I have been at it 12 to 15 hours a day every day for the last year, on top of two years of "normal" daily use before that. AI is fast-changing, the goalposts keep moving (new models, new tools, new best practices, every quarter), and keeping a working harness in shape requires staying on top of all of it.
+
+So: expecting a non-technical subject matter expert (whose actual expertise is marketing, sales, ops, design, finance, customer support, or whatever side of the business they sit on) to learn all of that on top of their day job? No wonder so many people are struggling with AI adoption. Your team are not engineers. They were not hired to spend their evenings on YouTube learning how to wrangle Claude.
+
+That is the problem I am solving for you. Your subject matter experts are there to do what they are good at, and they should stay focused on that. Leave the harness and the workflow design to people like me who have spent way too much of our spare time playing around with AI (because yeah it is fun, but also frustrating at times). I bring the harness pattern, the workflow design, the governance, and the ongoing maintenance into your business as a service, so your people can do their actual jobs.
+
+<!-- iamhoiend -->
+
 ## "Why is a managed service offer on a blog site?"
 
 <!-- iamhoi -->
