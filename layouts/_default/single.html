@@ -21,17 +21,26 @@
   {{- if not (.HasShortcode "gallery") -}}
   {{- $images := .Resources.ByType "image" -}}
   {{- $rest := slice -}}
-  {{- if $hero -}}
-    {{- range $images -}}
-      {{- if ne .RelPermalink $hero.RelPermalink -}}{{ $rest = $rest | append . }}{{- end -}}
+  {{- range $images -}}
+    {{- if or (not $hero) (ne .RelPermalink $hero.RelPermalink) -}}
+      {{- $rest = $rest | append . -}}
     {{- end -}}
   {{- end -}}
   {{- if gt (len $rest) 0 -}}
     <div class="photo-gallery">
     {{- range $rest -}}
-      {{- $thumb := .Resize "400x Lanczos" -}}
+      {{- $isSVG := strings.HasSuffix .Name ".svg" -}}
+      {{- $src := .RelPermalink -}}
+      {{- $w := "" -}}
+      {{- $h := "" -}}
+      {{- if not $isSVG -}}
+        {{- $thumb := .Resize "400x Lanczos" -}}
+        {{- $src = $thumb.RelPermalink -}}
+        {{- $w = $thumb.Width -}}
+        {{- $h = $thumb.Height -}}
+      {{- end -}}
       <a href="{{ .RelPermalink }}" class="glightbox" data-gallery="post-gallery" data-title="{{ .Title | default .Name }}">
-        <img src="{{ $thumb.RelPermalink }}" alt="{{ $.Title }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" loading="lazy">
+        <img src="{{ $src }}" alt="{{ .Title | default $.Title }}"{{ with $w }} width="{{ . }}"{{ end }}{{ with $h }} height="{{ . }}"{{ end }} loading="lazy">
       </a>
     {{- end -}}
     </div>

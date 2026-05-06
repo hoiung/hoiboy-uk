@@ -2,6 +2,9 @@
 title: "AI Managed Harness Services"
 date: 2026-04-25
 description: "I help non-technical domain experts adopt AI properly. Audit-first ladder, custom AI harness that automates the routine work, freeing you to focus on the human-ingenuity work AI cannot replicate. UK-based, international clients welcome."
+resources:
+  - src: "harness-layers.svg"
+    title: "What is an AI harness"
 ---
 
 <!-- iamhoi-claims
