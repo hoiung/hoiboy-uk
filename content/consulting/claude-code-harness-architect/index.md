@@ -1,7 +1,7 @@
 ---
-title: "AI Managed Harness services"
+title: "AI Managed Harness Services + System (HMS+S)"
 date: 2026-04-25
-description: "I help non-technical domain experts adopt AI properly. Audit-first ladder, custom AI harness that automates the routine work, freeing you to focus on the human-ingenuity work AI cannot replicate. UK-based, international clients welcome."
+description: "AI Managed Harness Services + System (HMS+S). I help non-technical domain experts adopt AI properly. Sequential audit-first engagement plus perpetual USE-licence to my battle-tested SST3 framework. Custom harness that automates the routine work, freeing you for the human-ingenuity work AI cannot replicate. UK-based, international clients welcome."
 ---
 
 <!-- iamhoi-claims
@@ -21,7 +21,7 @@ I am not here to scale your AWS or your other cloud infrastructure (that's your 
 
 There is a right way and a wrong way to use AI. Most non-technical people are doing it the wrong way. (Honestly most technical people are doing it the wrong way too, which is part of why this market is the way it is right now.) Using AI properly takes a long time to learn. The good news: I have spent that time already, so you do not have to.
 
-This is a sequential, audit-first engagement. It starts at £1,500 and builds on what already exists in your business (sometimes more than you think it does). I make sure your AI tooling becomes a working harness, then I keep it working.
+This is a sequential, audit-first engagement plus perpetual USE-licence to my battle-tested framework (the +System part of HMS+S, more on that below). It starts at £1,500 and builds on what already exists in your business (sometimes more than you think it does). I make sure your AI tooling becomes a working harness, then I keep it working.
 
 {{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}} {{< smallprint >}}<-- (Recruiters: please do not click. I do not have time for bullshit. Please <strong>click</strong> if you are a fun-yet-serious decision maker or their trusted second, who has no time for bullshit and needs to get things done.){{< /smallprint >}}
 
@@ -72,6 +72,20 @@ I focus on Claude Code specifically. Anthropic has a growing menu of Claude prod
 Claude Code does not have a pretty point-and-click UI, and that is for a good reason: it does not need one. Set up correctly and harnessed properly, it is simply powerful. You get an enormously flexible agent that runs anything from "draft me a customer reply" to "audit the last quarter's contracts" to "wire up a workflow that reconciles three internal systems automatically". It does everything the specialised Claude products do, and a whole lot more.
 
 That is what I am betting my consultancy on. One tool, learned well, harnessed well, applied across every side of your business.
+
+<!-- iamhoiend -->
+
+## "And what is the +System part of HMS+S?"
+
+<!-- iamhoi -->
+
+The Services part is the consulting hours: I plan, I build, I maintain. The +System part is what you get in addition: my SST3 framework, productised, battle-tested on every project I run (the live trading platform, multiple businesses I operate on the side, this blog itself, my CV and LinkedIn pipeline). The methodology, the templates, the anti-patterns, the governance gates, and the automated review loops that turn raw Claude Code into something you can trust on real work, not just demos.
+
+Here is the bit that becomes obvious once you have more than one harness running. How do you MANAGE them all? Marketing one. Sales one. Ops one. Finance one. Different teams. Different rules. Same governance. How do you patch them when a new model lands? How do you audit who did what across all of them? Where is the unified view? That layer (the central management system that sits above your individual harnesses and keeps them coherent) is also part of the +System. The frontier-lab products ship harness primitives. The +System part of HMS+S ships the orchestration layer above them.
+
+You get a perpetual USE-licence as part of any engagement. The framework lives on YOUR infrastructure. It updates as I improve it (without breaking your harness). And it is public on GitHub, MIT-licensed, so even if I am hit by a bus tomorrow, you keep the source.
+
+Why this is in the offer name: consulting hours alone make the deliverable consultant-dependent. The +System part means you also get the productised foundation the deliverables sit on, AND the management layer that keeps them coherent as you scale to multiple harnesses. Less consultant-dependence, more compounding value, harness keeps improving as the framework improves.
 
 <!-- iamhoiend -->
 
