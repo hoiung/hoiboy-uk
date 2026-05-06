@@ -57,7 +57,7 @@ As a bonus you get my bubbly, fun, no-bullshit personality. We will figure out o
 
 <!-- iamhoi -->
 
-Yes! I had businesses where I managed large teams (which is its own full-time job, and a different one to actually doing the work). With AI assistants doing the heavy lifting now, I genuinely do not need that overhead any more. The AI is the team working for me. So now I can focus on what I'm passionate about: being out there helping you on the ground!
+Yes! I had businesses where I managed large teams (which is its own full-time job, and a different one to actually doing the work). With AI assistants doing the heavy lifting now, I genuinely do not need that overhead any more. The AI is the team working for me. So now I can focus on what I'm passionate about: being out there helping you on the ground, sharing my expertise!
 
 For UK clients there is a Right of Substitution clause in the SOW (a named SME peer who can step in for genuine emergency unavailability), but the design intent is: you are working with me, not a faceless agency.
 
