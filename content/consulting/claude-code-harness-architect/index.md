@@ -29,9 +29,11 @@ This is a sequential, audit-first engagement. It starts at £1,500 and builds on
 
 <!-- iamhoi -->
 
-Owner-operator CEOs running 5 to 50 employee businesses. Founder-led. Sometimes with a small ops or engineering team, sometimes solo on the operator side. With or without a CTO is fine: if you already have one, I work alongside them as an extension (an extra pair of senior hands and a harness pattern that lifts what they are already doing); if you do not, I cover the AI-tooling architecture lane until you decide whether you need a permanent technical hire. Either way, you make AI-spend decisions yourself and you do not need to convince a board.
+Owner-operator CEOs running 5 to 50 employee businesses. Founder-led. Sometimes with a small team, sometimes solo on the operator side. The team can sit on any side of the business: ops, sales, marketing, customer support, design, finance, engineering, or some mix of those. The common thread is wanting to actually adopt AI effectively, rather than the way most people are using it right now (which is... not quite the right way, and you can probably feel that already).
 
-You feel the AI-tooling drift. You know Claude (or Cursor, or whichever tool the smart people on YouTube were excited about last month) works in pockets but not consistently. You bought the courses. You read the threads. You sense there is a real productivity tool buried in this technology that nobody on your team has the time to architect properly.
+With or without a CTO is fine. If you already have one, I work alongside them as an extension (an extra pair of senior hands and a harness pattern that lifts what they are already doing). If you do not, I cover the AI-tooling architecture lane until you decide whether you need a permanent technical hire. Either way, you make AI-spend decisions yourself and you do not need to convince a board.
+
+You feel the AI-tooling drift. You know Claude (or ChatGPT, Cursor, Copilot, Notion AI, or whichever tool the smart people on YouTube were excited about last month) works in pockets but not consistently. You bought the courses. You read the threads. You sense there is a real productivity tool buried in this technology that nobody on your team has the time to architect properly.
 
 Your team is not enterprise. Your decisions land in days, not quarters. That is the whole reason this engagement shape works for you.
 
