@@ -107,7 +107,9 @@ At a glance. All prices exclude VAT (charged at the prevailing rate; VAT-registe
 - Programme management. I do not run your AI roadmap quarterly review.
 - C-level convincing. If your CEO is not already bought in, the company audit will surface that and I will stop.
 - Frontier-lab work where the ultimate customer is another engineering team.
+- Build your cloud infrastructure or your customer-facing agentic AI itself. I am not here to spin up your AWS, Azure, or Google Cloud, or to run your production agents for you. I CAN build harnesses for the tech team that does that work (so they ship faster and stay consistent), but I will not do their work for them.
 - Anything past the Monthly Maintenance Package scope (training, dataset construction, prompt-optimisation playbooks, uptime SLAs). Those are different engagement shapes; I can refer.
+- Politics, emotion management, or "how is everyone feeling today" steering (not too much anyways!). I am here to deliver what I said I would deliver. What I will absolutely talk about: how we do this work together, how we problem-solve through whatever surfaces, and how we keep the engagement on track.
 
 ## What I cover vs what you cover
 
