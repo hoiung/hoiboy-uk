@@ -49,7 +49,7 @@ Your decisions land in days, not quarters, which is exactly why this engagement 
 
 <!-- iamhoi -->
 
-Short version: a harness is a custom-built wrapper around your chosen AI tools (Claude, ChatGPT, Cursor, Copilot, whatever you use), shaped to your business's actual work, with the workflows, guardrails, governance, and feedback loops baked in. Without one, AI is a clever assistant that occasionally forgets things and occasionally hallucinates. With one, AI becomes a consistent, audit-trailed colleague that does the routine work the way YOU need it done. The difference between "fun in demos" and "actually useful every day".
+Short version: a harness is a custom-built wrapper around your chosen AI tools (Claude, ChatGPT, Cursor, Copilot, whatever you use), shaped to your business's actual work, with the workflows, guardrails, governance, and feedback loops baked in. Without one, AI is a clever assistant that occasionally forgets things and occasionally (mostly) hallucinates. With one, AI becomes a consistent, audit-trailed colleague that does the routine work the way YOU need it done. The difference between "fun in demos" and "actually useful every day".
 
 Want to dig into the concept before booking a call? Three posts of mine that go deeper:
 
