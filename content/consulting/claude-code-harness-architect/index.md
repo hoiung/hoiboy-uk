@@ -51,6 +51,10 @@ Your decisions land in days, not quarters, which is exactly why this engagement 
 
 Short version: a harness is a custom-built wrapper around your chosen AI tools (Claude, ChatGPT, Cursor, Copilot, whatever you use), shaped to your business's actual work, with the workflows, guardrails, governance, and feedback loops baked in. Without one, AI is a clever assistant that occasionally forgets things and occasionally (mostly) hallucinates. With one, AI becomes a consistent, audit-trailed colleague that does the routine work the way YOU need it done. The difference between "fun in demos" and "actually useful every day".
 
+Worth being precise about which harness we are talking about, because there are layers. Modern AI tools (Claude Code, Cursor, Copilot, ChatGPT, the lot) already ship with their own general-purpose harnesses underneath, which is what makes them roughly useful for everyone in roughly the same way. The harness I build for you sits ON TOP of that. It is the specialised layer for YOUR business: your workflows, your governance, your domain expertise, your competitive edge.
+
+A common confusion: people see Anthropic's Skills (or similar plug-in spec files from other vendors) and think those ARE a harness. Skills are a PART of a harness. Useful on their own, inadequate alone. A full harness is workflow plus governance plus Skills plus feedback loops plus role-specific automation, all glued together. And here is the bit that matters for your edge: every company does things slightly differently, and the ones that PULL ahead do things differently on purpose. That "doing it differently" lives in the specialised harness. An off-the-shelf SKU cannot ship that for you, because it is built for everyone, not for you.
+
 Want to dig into the concept before booking a call? Three posts of mine that go deeper:
 
 - [Why Do We Need an AI Harness?]({{< ref "/posts/why-do-we-need-an-ai-harness" >}}) (15 Apr 2026)
