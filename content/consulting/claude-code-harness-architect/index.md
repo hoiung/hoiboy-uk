@@ -19,7 +19,7 @@ I help non-technical domain experts adopt AI properly. Not by handing you a tool
 
 I am not here to scale your AWS or your other cloud infrastructure (that's your tech team's job!). I am here to help the people who actually do the work in your business (marketing, sales, ops, design, finance, customer support, wherever you sit) integrate a custom AI harness that automates the routine, so you can focus on your human ingenuity and your domain expertise (the things AI cannot replicate, now or any time soon).
 
-There is a right way and a wrong way to use AI. Most non-technical people are doing it the wrong way. (Honestly most technical people are doing it the wrong way too, which is part of why this market is the way it is right now.) Using AI properly takes a long time to learn. The good news: I have spent that time already, so you do not have to.
+There is a right way and a wrong way to use AI. Getting AI to work consistently in a real business takes a long time to figure out. The good news: I have spent that time already, so you do not have to.
 
 This is a sequential, audit-first engagement. It starts at £1,500 and builds on what already exists in your business (sometimes more than you think it does). I make sure your AI tooling becomes a working harness, then I keep it working.
 
@@ -33,7 +33,7 @@ This is a sequential, audit-first engagement. It starts at £1,500 and builds on
 
 <!-- iamhoi -->
 
-Owner-operator CEOs running 5 to 50 employee businesses. Founder-led. Sometimes with a small team, sometimes solo on the operator side. The team can sit on any side of the business: ops, sales, marketing, customer support, design, finance, engineering, or some mix of those. The common thread is wanting to actually adopt AI effectively, rather than the way most people are using it right now (which is... not quite the right way, and you can probably feel that already).
+Owner-operator CEOs running 5 to 50 employee businesses. Founder-led. Sometimes with a small team, sometimes solo on the operator side. The team can sit on any side of the business: ops, sales, marketing, customer support, design, finance, engineering, or some mix of those. The common thread is wanting to actually adopt AI effectively. If your current experience is the demo-grade kind (works in playgrounds, misses the brief in real work, hallucinates, needs babysitting), you can probably feel the gap already.
 
 With or without a CTO is fine. If you already have one, I work alongside them as an extension (an extra pair of senior hands and a harness pattern that lifts what they are already doing). If you do not, I cover the AI-tooling architecture lane until you decide whether you need a permanent technical hire. Either way, you make AI-spend decisions yourself and you do not need to convince a board.
 
@@ -51,15 +51,15 @@ Your decisions land in days, not quarters, which is exactly why this engagement 
 
 This is going to be a long-ish journey (audit, foundation, multiple harnesses, ongoing maintenance, often more than a year) and I would rather we both have fun along the way. The work itself is going to be hard and sometimes stressful. The last thing we both need is more seriousness breathing down our necks.
 
-So: I work best with people who are down-to-earth, empathetic, real, connected, and grounded. People who treat this as a partnership rather than a vendor relationship. People who can laugh at the absurdity of a Claude session that confidently invented three functions that did not exist, and then get on with fixing it.
+So: I work best with people who are down-to-earth, empathetic, real, connected, and grounded. People who treat this as a partnership rather than a vendor relationship. People who can laugh at the absurdity of a Claude session that confidently invented functions that did not exist, and then get on with fixing it.
 
 People I have worked with label me as the "No Problems, Only Solutions" guy, and I happily live up to that. I am dead serious about the work itself (quality output, delivered on time, no shortcuts on what matters). I am NOT serious about the rest of it. There will be a sprinkle of sarcasm. I will tell you when something is genuinely funny. I will admit when I have cocked something up.
 
 Staying calm, light-hearted, leaning into humour and sarcasm has always been my way of processing high stress and survival instinct (especially during fire-fighting situations). So if that is a problem for you or your stakeholders, then yeah, it will not work for us.
 
-We both have to choose to work with each other and the right environment to perform and excel. Otherwise it is not going forward. If reading my genuine voice and understanding my persona on this page lands for you, we will probably have a great time. If it makes you cringe, I am almost certainly not the consultant for you (and that is also completely fine, I am not for everyone). If that's you, stop reading here and save yourself the time.
+We both have to choose to work with each other and the right working environment for both of us to do our best work. Otherwise it is not going forward. If reading my genuine voice and persona on this page lands for you, we will probably have a great time. If it makes you cringe, I am almost certainly not the consultant for you (and that is also completely fine, I am not for everyone). If that is you, no hard feelings; we are probably not the right consultant-and-client match, and the discovery call will not change that.
 
-I'm a firm believer that starting any relationship with the highest honesty and integrity and continuously is the right way. It'll keep us all sane :)
+I'm a firm believer that starting any relationship with the highest honesty and integrity, and continuing on that basis, is the right way. It'll keep us all sane :)
 
 If you are still with me, keep going. The rest of this page is not selling. It is information to set and manage your expectations: what we will do, why, how, and when.
 
@@ -95,6 +95,8 @@ Claude Code does not have a pretty point-and-click UI, and that is for a good re
 
 That is what I am betting my consultancy on. One tool, learned well, harnessed well, applied across every side of your business.
 
+Most tasks and workflows can be automated. Take an example I am working on right now: Blender and SketchUp 3D modelling for an architecture practice, to speed up building 3D concept designs that take 2D drawings and a collection of furniture-and-fitting ideas and transform them autonomously. The only thing you should be thinking and asking yourself: "What can we automate?" and "What can't be automated yet?" and "What shouldn't we automate for good reasons?"
+
 <!-- iamhoiend -->
 
 ## "What problem am I solving for you?"
@@ -129,7 +131,7 @@ No slide deck, no sales pitch on that call. I am more interested in listening to
 
 And while we are on this. The bigger problem with AI right now is people spending too much time making things LOOK nice that do not actually WORK. The pretty UI on top of the broken bit. The demo that landed on camera after take 17 (and the previous 16 takes you never saw). The "I built a full platform in 1 day with AI" that looks super fancy on a Youtube video (you've seen the genre).
 
-I am not running that play. It's like trying to wrap shit in gold, but end of the day it is still shit. That's basically what AI slop is and I'm sure you know all about it and trying to solve it since you're on my page reading this. I would rather spend my hours building the thing that works (audit, foundation, per-harness build and rollout, ongoing maintenance) because right now, this is what matters. Yes, I will automate the bits of my own marketing where automation makes genuine sense, and yes this page will keep getting a little nicer over time. But the value is not in covering up problems. The value is focussing in something that works reliably, now AND in 12 months, with the minimum maintenance burden possible. That is the actual problem to solve.
+I am not running that play. It's like trying to wrap shit in gold, but end of the day it is still shit. That's basically what AI slop is and I'm sure you know all about it and trying to solve it since you're on my page reading this. I would rather spend my hours building the thing that works (audit, foundation, per-harness build and rollout, ongoing maintenance) because right now, this is what matters. Yes, I will automate the bits of my own marketing where automation makes genuine sense, and yes this page will keep getting a little nicer over time. But the value is not in covering up problems. The value is focussing on something that works reliably, now AND in 12 months, with the minimum maintenance burden possible. That is the actual problem to solve.
 
 That is what I am building for you. Not a pretty thing. A working thing.
 
@@ -151,12 +153,12 @@ I deliver this sequentially, one step at a time, never parallel. Each step close
 
 1. Free 20-minute discovery call (Cal.com booking, Mon to Fri, UK business hours). Tell me your business shape, your AI usage today, what you wish worked better, and how you imagine AI working for you in your head (the result you picture, the workflow you imagine, the daily-life-with-AI you would like to have). That last part lets me set honest expectations and surface any alignment or misalignment between what you imagine and what is realistic right now, well before any money or SOW lands. I tell you whether this is a fit, fast.
 2. Company structure audit (1 to 3 days, written report plus walkthrough call). Three tiers: £1,500 + VAT for 5 to 10 employees. £2,500 + VAT for 10 to 50 employees. £4,500-£5,000 + VAT for 50+ employees (range, scoped on the discovery call). The audit is independent (it is not credited back against build work later, because that would compromise auditor independence).
-3. Foundation setup (£3,000 + VAT for 2 days fixed; overflow at £1,500/extra day, hard-capped at 4 days total). The scaffolding infrastructure that every harness sits on top of. This is what lets me cleanly manage all your harnesses, support and adapt each one when your needs change, capture automated feedback on how they are performing in your day-to-day, and put security controls in place so your company information stays safe and contained. Future-improvement recommendations come naturally out of the usage feedback the foundation gives me (those recommendations are out-of-scope as billable work, but I will surface them so you can decide what to act on).
+3. Foundation setup (£3,000 + VAT for 2 days fixed; overflow at £1,500/extra day, hard-capped at 4 days total). The scaffolding that every harness sits on top of: a clean home in your GitHub for each harness with proper version history, rollback, and audit trail, plus the security controls that keep your company information safe and contained. Future-improvement recommendations come naturally out of working with the harness in your day-to-day (those recommendations are out-of-scope as billable work, but I will surface them so you can decide what to act on).
 4. Per-harness audit (£750 + VAT, one SME-day, where SME means Subject Matter Expert; the consultancy-industry billing unit for one full day of an expert's time). Sequential, one per harness, before each build.
 5. Per-harness build and rollout, custom-scoped per audit (the audit tells us what to build AND how many users we are rolling it out to; the build itself is shaped by the rollout shape, so building a harness for 1 user is a different job from the same harness rolled out across 20). I will not pre-quote it for that reason. Typical band £12K-£30K + VAT depending on harness complexity AND rollout footprint (number of users on your team running it).
 6. SME harness manual and tutoring workshop, per harness (£750 + VAT, one SME-day). Once the harness ships, your subject matter experts get a hands-on session so they can actually USE it confidently. I walk them through the harness, the workflows, the guardrails, the failure modes to watch for, and the bits where they should and should not push back. The manual is also baked INTO the harness itself, so anyone on your team can ask the harness "how do I use you for X?" and get an answer back rooted in your trade's actual rules. No 20-page PDF that nobody reads.
 7. Tier 1 first-month support, per harness (free, capped at 8 hours of my time across the first calendar month post-workshop). Reactive help with anything that surfaces while your team gets used to the harness in their day-to-day. Not full-time on-call availability.
-8. Ongoing Monthly Maintenance Package, per harness, deliverable-anchored (NOT a retainer; you pay for closed drift events plus the monthly maintenance report, not for me being on standby). Pricing starts from £400/mo per harness on month-to-month, or £340/mo per harness on a 12-month annual commit. Covers AI model drift (e.g. Claude Opus 4.6->4.7), dependency drift, configuration drift. Not feature work.
+8. Ongoing Monthly Maintenance Package, per harness, deliverable-anchored (NOT a retainer; you pay for closed drift events plus the monthly maintenance report, not for me being on standby). Pricing starts from £400/mo per harness + VAT on month-to-month, or £340/mo per harness + VAT on a 12-month annual commit. Covers AI model drift (e.g. Claude Opus 4.6->4.7), dependency drift, configuration drift. Not feature work.
 9. Anything outside the current SOW (new features, enhancements, additional harnesses, mid-engagement scope changes). Treated as a new engagement. Anything significant goes through a fresh per-harness audit (£750 + VAT, one SME-day) to scope the change properly, then a custom-quoted build SOW. Smaller pieces of work (half-day to a couple of days, not big enough to warrant a fresh audit) can be billed pro-rata against the SME-day rate (£750 + VAT per SME-day, half-day minimum). Change-orders that qualify as maintenance can sometimes run under the Tier 2 hourly pack if you have one. Same audit-first discipline as the original engagement: I will not pre-quote work I have not scoped.
 
 Need open-scope hours portfolio-wide instead of the monthly maintenance package? Tier 2 hourly pack: £1,500 / 10 hours + VAT. Existing clients only (you already have at least one harness shipped) and maintenance-only scope (drift events, support, troubleshooting). Feature work or new harness builds run as their own per-harness audit + build SOW, not under this pack.
@@ -173,12 +175,12 @@ At a glance. All prices exclude VAT (charged at the prevailing rate; VAT-registe
 |---|---|---|
 | 1. Discovery call | Free | 20-minute Cal.com booking, Mon to Fri UK business hours |
 | 2. Company audit | £1,500 (5-10 emp) / £2,500 (10-50 emp) / £4,500-5,000 (50+ emp) | 1-3 SME-days; written report + walkthrough call; independent (not credited back against build) |
-| 3. Foundation setup | £3,000 base 2 days; £1,500/extra day, hard-capped at 4 days total | The scaffolding infrastructure that every harness sits on |
+| 3. Foundation setup | £3,000 base 2 days; £1,500/extra day, hard-capped at 4 days total (£6,000 max) | Per-harness scaffolding: clean GitHub home, version history, rollback, audit trail, security controls |
 | 4. Per-harness audit | £750 per harness | 1 SME-day; sequential, one per harness, before each build |
 | 5. Per-harness build and rollout | £12K-£30K typical (fixed-fee output of audit; scales with rollout footprint) | Custom-scoped per audit; build is shaped by rollout shape (1-user harness vs 20-user harness = different jobs); single fee covers both dimensions; volume discount for multi-harness commitments at engagement open |
 | 6. SME harness manual + tutoring workshop | £750 per harness | One SME-day post-build; hands-on training for your team; manual baked INTO the harness so it answers "how do I use you?" on demand |
 | 7. Tier 1 first-month support | Free | 8 hours of my time per harness across the first calendar month post-workshop (not full-time availability) |
-| 8. Tier 3 Monthly Maintenance Package | £400/mo per harness on month-to-month, or £340/mo per harness on a 12-month annual commit | Drift events + monthly report; 5 hours per harness per month included; £150/h overage; no rollover |
+| 8. Tier 3 Monthly Maintenance Package | £400/mo per harness on month-to-month, or £340/mo per harness on a 12-month annual commit | Deliverable-anchored: closed drift events + monthly report (NOT a retainer, NOT hours-metered); covers AI model / dependency / configuration drift; not feature work |
 | 9. Out-of-scope work (new features, additional harnesses, mid-engagement changes) | Significant: fresh audit (£750/SME-day) + custom-quoted build SOW. Smaller pieces: pro-rata £750/SME-day, half-day minimum | Same audit-first discipline as the original engagement; maintenance-scoped change-orders may qualify for Tier 2 hourly pack if you have one |
 | Optional. Tier 2 hourly pack | £1,500 / 10 hours | Existing clients only (must have at least one harness shipped); maintenance scope only |
 
@@ -231,15 +233,15 @@ I am UK-based. Most clients land within the UK and pay in GBP, no fuss. Internat
 
 For UK clients specifically: I run an outside-IR35 working-practice posture by design (right of substitution, no mutuality of obligation between SOW phases, phase-gated invoicing, multiple-clients diversification, IR35 contract review on the SOW). If you are inside-UK and AI-spend approval has procurement implications, ask on the discovery call.
 
-## Ready?
-
-{{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}} {{< smallprint >}}<-- (Recruiters: please do not click. I do not have time for bullshit. Please <strong>click</strong> if you are a fun-yet-serious decision maker or their trusted second, who has no time for bullshit and needs to get things done.){{< /smallprint >}}
-
 ## What you are buying, in one diagram
 
 {{< zoom-image src="harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your business. A human checkpoint sits outside the rings." title="What is an AI harness" >}}
 
 <small><em>(Click the diagram to enlarge for details.)</em></small>
+
+## Ready?
+
+{{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}} {{< smallprint >}}<-- (Recruiters: please do not click. I do not have time for bullshit. Please <strong>click</strong> if you are a fun-yet-serious decision maker or their trusted second, who has no time for bullshit and needs to get things done.){{< /smallprint >}}
 
 ---
 
