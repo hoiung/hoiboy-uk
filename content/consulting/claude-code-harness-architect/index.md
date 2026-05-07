@@ -53,9 +53,13 @@ This is going to be a long-ish journey (audit, foundation, multiple harnesses, o
 
 So: I work best with people who are down-to-earth, empathetic, real, connected, and grounded. People who treat this as a partnership rather than a vendor relationship. People who can laugh at the absurdity of a Claude session that confidently invented three functions that did not exist, and then get on with fixing it.
 
-I am dead serious about the work itself (quality output, delivered on time, no shortcuts on what matters). I am NOT serious about the rest of it. There will be a sprinkle of sarcasm. I will tell you when something is genuinely funny. I will admit when I have cocked something up.
+People I have worked with label me as the "No Problems, Only Solutions" guy, and I happily live up to that. I am dead serious about the work itself (quality output, delivered on time, no shortcuts on what matters). I am NOT serious about the rest of it. There will be a sprinkle of sarcasm. I will tell you when something is genuinely funny. I will admit when I have cocked something up.
 
-We both have to choose to work with each other. Otherwise it is not going forward. If reading my voice on this page lands for you, we will probably have a great time. If it makes you cringe, I am almost certainly not the consultant for you (and that is also completely fine, I am not for everyone). If that's you, stop reading here and save yourself the time.
+Staying calm, light-hearted, leaning into humour and sarcasm has always been my way of processing high stress and survival instinct (especially during fire-fighting situations). So if that is a problem for you or your stakeholders, then yeah, it will not work for us.
+
+We both have to choose to work with each other and the right environment to perform and excel. Otherwise it is not going forward. If reading my genuine voice and understanding my persona on this page lands for you, we will probably have a great time. If it makes you cringe, I am almost certainly not the consultant for you (and that is also completely fine, I am not for everyone). If that's you, stop reading here and save yourself the time.
+
+I'm a firm believer that starting any relationship with the highest honesty and integrity and continuously is the right way. It'll keep us all sane :)
 
 If you are still with me, keep going. The rest of this page is not selling. It is information to set and manage your expectations: what we will do, why, how, and when.
 
