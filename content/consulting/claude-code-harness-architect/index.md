@@ -243,6 +243,12 @@ For UK clients specifically: I run an outside-IR35 working-practice posture by d
 
 ## Ready?
 
+<!-- iamhoi -->
+
+Thank you for making it all the way to the bottom. It means we are probably made for each other! So go ahead and click below.
+
+<!-- iamhoiend -->
+
 {{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}} {{< smallprint >}}<-- (Recruiters: please do not click. I do not have time for bullshit. Please <strong>click</strong> if you are a fun-yet-serious decision maker or their trusted second, who has no time for bullshit and needs to get things done.){{< /smallprint >}}
 
 ---
