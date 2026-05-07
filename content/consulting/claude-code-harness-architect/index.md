@@ -105,9 +105,11 @@ So that is what I am offering, on my actual blog where you can read who I am, wh
 
 As a bonus you get my bubbly, fun, no-bullshit (maybe a sprinkle of sarcasm) personality. We will figure out on a 20-minute discovery call whether working together is going to be a wonderful and pleasurable experience for both of us, well before any money or SOW (Statement of Work; the legal contract that locks the scope, deliverables, fees, and terms of a phase) lands on the table.
 
-And while we are on this. The bigger problem with AI right now is people spending too much time making things LOOK nice that do not actually WORK. The pretty UI on top of the broken bit. The demo that landed on camera after take 17 (and the previous 16 takes you never saw). The slider that loads before the bug surfaces. That is the actual problem to solve.
+No slide deck, no sales pitch on that call. I am more interested in listening to your problems and helping you solve them.
 
-I am not running that play. It's like trying to wrap shit in gold, but end of the day it is still shit. I would rather spend my hours building the thing that works (audit, foundation, per-harness build, ongoing maintenance) because right now, this is what matters. Yes, I will automate the bits of my own marketing where automation makes genuine sense, and yes this page will keep getting a little nicer over time. But the value is not in covering up problems. The value is in something that works reliably, now AND in 12 months, with the minimum maintenance burden possible.
+And while we are on this. The bigger problem with AI right now is people spending too much time making things LOOK nice that do not actually WORK. The pretty UI on top of the broken bit. The demo that landed on camera after take 17 (and the previous 16 takes you never saw). The "I built a full platform in 1 day with AI" that looks super fancy on a Youtube video (you've seen the genre).
+
+I am not running that play. It's like trying to wrap shit in gold, but end of the day it is still shit. That's basically what AI slop is and I'm sure you know all about it and trying to solve it since you're on my page reading this. I would rather spend my hours building the thing that works (audit, foundation, per-harness build, ongoing maintenance) because right now, this is what matters. Yes, I will automate the bits of my own marketing where automation makes genuine sense, and yes this page will keep getting a little nicer over time. But the value is not in covering up problems. The value is in something that works reliably, now AND in 12 months, with the minimum maintenance burden possible. That is the actual problem to solve.
 
 That is what I am building for you. Not a pretty thing. A working thing.
 
