@@ -57,13 +57,19 @@ People I have worked with label me as the "No Problems, Only Solutions" guy, and
 
 Staying calm, light-hearted, leaning into humour and sarcasm has always been my way of processing high stress and survival instinct (especially during fire-fighting situations). So if that is a problem for you or your stakeholders, then yeah, it will not work for us.
 
-We both have to choose to work with each other and the right working environment for both of us to do our best work. Otherwise it is not going forward. If reading my genuine voice and persona on this page lands for you, we will probably have a great time. If it makes you cringe, I am almost certainly not the consultant for you (and that is also completely fine, I am not for everyone). If that is you, no hard feelings; we are probably not the right consultant-and-client match, and the discovery call will not change that.
+We both have to choose to work with each other and the right working environment for both of us to do our best work. Otherwise it is not going forward. If reading my genuine voice and persona on this page lands for you, we will probably have a great time and not just get shit done (anyone can do that), but get shit done **PROPERLY**. If it makes you cringe, I am almost certainly not the consultant for you (and that is also completely fine, I am not for everyone). If that is you, no hard feelings; we are probably not the right consultant-and-client match, and the discovery call will not change that.
 
 I'm a firm believer that starting any relationship with the highest honesty and integrity, and continuing on that basis, is the right way. It'll keep us all sane :)
 
 If you are still with me, keep going. The rest of this page is not selling. It is information to set and manage your expectations: what we will do, why, how, and when.
 
 <!-- iamhoiend -->
+
+## What is an AI harness, in one diagram
+
+{{< zoom-image src="harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your business. A human checkpoint sits outside the rings." title="What is an AI harness" >}}
+
+<small><em>(Click the diagram to enlarge for details.)</em></small>
 
 ## What is an AI harness, and why do you need one?
 
@@ -232,12 +238,6 @@ And keep reading me on this blog as I build and deliver more AI-related work (no
 I am UK-based. Most clients land within the UK and pay in GBP, no fuss. International clients are welcome too: if scope needs me on-site somewhere outside the UK, happy to fly, but you cover travel, accommodation, food, and any other reasonable on-site expenses at cost (no markup). Remote-only engagements work the same regardless of geography.
 
 For UK clients specifically: I run an outside-IR35 working-practice posture by design (right of substitution, no mutuality of obligation between SOW phases, phase-gated invoicing, multiple-clients diversification, IR35 contract review on the SOW). If you are inside-UK and AI-spend approval has procurement implications, ask on the discovery call.
-
-## What you are buying, in one diagram
-
-{{< zoom-image src="harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your business. A human checkpoint sits outside the rings." title="What is an AI harness" >}}
-
-<small><em>(Click the diagram to enlarge for details.)</em></small>
 
 ## Ready?
 
