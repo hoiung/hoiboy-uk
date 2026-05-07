@@ -69,7 +69,7 @@ If you are still with me, keep going. The rest of this page is not selling. It i
 
 {{< zoom-image src="harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your business. A human checkpoint sits outside the rings." title="What is an AI harness" >}}
 
-<small><em>(Click the diagram to enlarge for details.)</em></small>
+*(Click the diagram to enlarge for details.)*
 
 ## What is an AI harness, and why do you need one?
 
@@ -77,7 +77,7 @@ If you are still with me, keep going. The rest of this page is not selling. It i
 
 Short version: a harness is a custom-built wrapper around your chosen AI tools (Claude, ChatGPT, Cursor, Copilot, whatever you use), shaped to your business's actual work, with the workflows, guardrails, governance, and feedback loops baked in. Without one, AI is a clever assistant that occasionally forgets things and occasionally (mostly) hallucinates. With one, AI becomes a consistent, audit-trailed colleague that does the routine work the way YOU need it done. The difference between "fun in demos" and "actually useful every day".
 
-(See the hero diagram at the top of the page: two concentric layers, six labelled segments in the specialised outer ring, AI agent at the centre, your human checkpoint outside.)
+*(See the diagram just above: two concentric layers, six labelled segments in the specialised outer ring, AI agent at the centre, your human checkpoint outside.)*
 
 Worth being precise about which harness we are talking about, because there are layers. Modern AI tools (Claude Code, Cursor, Copilot, ChatGPT, the lot) already ship with their own general-purpose harnesses underneath, which is what makes them roughly useful for everyone in roughly the same way. The harness I build for you sits ON TOP of that. It is the specialised layer for YOUR business: your workflows, your governance, your domain expertise, your competitive edge.
 
@@ -102,6 +102,8 @@ Claude Code does not have a pretty point-and-click UI, and that is for a good re
 That is what I am betting my consultancy on. One tool, learned well, harnessed well, applied across every side of your business.
 
 Most tasks and workflows can be automated. Take an example I am working on right now: Blender and SketchUp 3D modelling for an architecture practice, to speed up building 3D concept designs that take 2D drawings and a collection of furniture-and-fitting ideas and transform them autonomously. The only thing you should be thinking and asking yourself: "What can we automate?" and "What can't be automated yet?" and "What shouldn't we automate for good reasons?"
+
+I also want to say that I picked the best of the best at the time for coding, and Claude Code has since become even more of a beast at getting shit done, not just for coding but for other workloads too. I tried others a little, but nah. Also, focus is important. My harness took a long time and lots of refactoring to get right. Throwing in more variables (Codex, or whatever other CLI-based AI option) would have just burned both money and resources for little gain in value. I stuck with Claude Code because I know it works, and works really well.
 
 <!-- iamhoiend -->
 
