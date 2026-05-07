@@ -245,7 +245,7 @@ For UK clients specifically: I run an outside-IR35 working-practice posture by d
 
 <!-- iamhoi -->
 
-Thank you for making it all the way to the bottom. It means we are probably made for each other! So go ahead and click below.
+Wow... You've made it all the way to the bottom of this page. It means we are probably made for each other! So go ahead and click below.
 
 <!-- iamhoiend -->
 
