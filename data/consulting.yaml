@@ -1,27 +1,48 @@
 # V2 cash-engine offer architecture (consulting-ops#2 Phase 2).
 # Single source of truth for consulting-page external URLs + V2 pricing ladder.
-# Referenced from content/consulting/*/index.md via {{ .Site.Data.consulting.<key> }}.
+# Referenced from content/consulting/*/index.md as hardcoded literal values
+# (verified via `grep -F '<value>'` per AC 2.5 verification rule); template-variable
+# reads `{{ .Site.Data.consulting.<key> }}` reserved for future migration.
 #
-# Config Traceability — every key below has a documented reader. AC 2.5.
-#  - business.legal_name                                          -> content/consulting/<slug>/index.md (legal footer)
-#  - business.companies_house                                     -> content/consulting/<slug>/index.md (legal footer)
-#  - business.vat_number                                          -> content/consulting/<slug>/index.md (legal footer; null until HMRC issuance)
-#  - harness_architect.calcom_booking                             -> layouts/_shortcodes/consulting-cta.html (CTA href)
-#  - harness_architect.company_audit.tier_5_to_10.employees_label -> content/consulting/<slug>/index.md (price-ladder bullet)
-#  - harness_architect.company_audit.tier_5_to_10.price_display   -> content/consulting/<slug>/index.md (price-ladder bullet)
-#  - harness_architect.company_audit.tier_10_to_50.employees_label -> content/consulting/<slug>/index.md (price-ladder bullet)
-#  - harness_architect.company_audit.tier_10_to_50.price_display  -> content/consulting/<slug>/index.md (price-ladder bullet)
-#  - harness_architect.company_audit.tier_50_plus.employees_label -> content/consulting/<slug>/index.md (price-ladder bullet)
-#  - harness_architect.company_audit.tier_50_plus.price_display   -> content/consulting/<slug>/index.md (price-ladder bullet)
-#  - harness_architect.per_harness_audit.price_display            -> content/consulting/<slug>/index.md (per-harness audit bullet)
-#  - harness_architect.foundation_setup.price_display             -> content/consulting/<slug>/index.md (foundation bullet)
-#  - harness_architect.foundation_setup.overflow_rate_display     -> content/consulting/<slug>/index.md (foundation bullet)
-#  - harness_architect.foundation_setup.cap_days                  -> content/consulting/<slug>/index.md (foundation bullet)
-#  - harness_architect.tier_1_first_month_support.scope_text      -> content/consulting/<slug>/index.md (Tier 1 bullet)
-#  - harness_architect.tier_2_hourly_pack.price_display           -> content/consulting/<slug>/index.md (Tier 2 bullet)
-#  - harness_architect.tier_2_hourly_pack.hours_included          -> content/consulting/<slug>/index.md (Tier 2 bullet)
-#  - harness_architect.tier_3_monthly_maintenance.price_display_mtm    -> content/consulting/<slug>/index.md (Tier 3 MTM bullet)
-#  - harness_architect.tier_3_monthly_maintenance.price_display_annual -> content/consulting/<slug>/index.md (Tier 3 annual bullet)
+# Config Traceability — every key below has a documented reader (AC 2.5).
+# Numeric *_gbp keys are present per AC 2.1 spec; some are programmatic-check-only
+# (AC 2.5 carve-out: "OK if unread but document as such").
+#
+#  - business.legal_name                                              -> content/consulting/<slug>/index.md (legal footer)
+#  - business.companies_house                                         -> content/consulting/<slug>/index.md (legal footer)
+#  - business.vat_number                                              -> content/consulting/<slug>/index.md (legal footer; null until HMRC issuance)
+#  - harness_architect.calcom_booking                                 -> layouts/_shortcodes/consulting-cta.html (CTA href)
+#  - harness_architect.company_audit.tier_5_to_10.employees_label    -> content/consulting/<slug>/index.md (price-ladder bullet)
+#  - harness_architect.company_audit.tier_5_to_10.price_gbp          -> AC 2.5 carve-out: optional programmatic check; currently unread
+#  - harness_architect.company_audit.tier_5_to_10.price_display      -> content/consulting/<slug>/index.md (price-ladder bullet, literal "1,500")
+#  - harness_architect.company_audit.tier_10_to_50.employees_label   -> content/consulting/<slug>/index.md (price-ladder bullet)
+#  - harness_architect.company_audit.tier_10_to_50.price_gbp         -> AC 2.5 carve-out: optional programmatic check; currently unread
+#  - harness_architect.company_audit.tier_10_to_50.price_display     -> content/consulting/<slug>/index.md (price-ladder bullet, literal "2,500")
+#  - harness_architect.company_audit.tier_50_plus.employees_label    -> content/consulting/<slug>/index.md (price-ladder bullet)
+#  - harness_architect.company_audit.tier_50_plus.price_display      -> content/consulting/<slug>/index.md (price-ladder bullet, literal "4,500-5,000")
+#  - harness_architect.per_harness_audit.price_gbp_default           -> content/consulting/<slug>/index.md (per-harness audit bullet, literal £750)
+#  - harness_architect.per_harness_audit.price_display_default       -> content/consulting/<slug>/index.md (per-harness audit bullet, literal "750")
+#  - harness_architect.foundation_setup.base_price_gbp               -> content/consulting/<slug>/index.md (foundation bullet, literal £3,000)
+#  - harness_architect.foundation_setup.base_days                    -> content/consulting/<slug>/index.md (foundation bullet, literal "2 days")
+#  - harness_architect.foundation_setup.additional_day_rate_gbp      -> content/consulting/<slug>/index.md (foundation bullet, literal £1,500/extra)
+#  - harness_architect.foundation_setup.max_days                     -> content/consulting/<slug>/index.md (foundation bullet, literal "4 days max")
+#  - harness_architect.tier_1_first_month_support.included           -> content/consulting/<slug>/index.md (Tier 1 bullet) + consulting-ops/templates/sow-harness-architect.md §[Refund]
+#  - harness_architect.tier_1_first_month_support.forfeit_on_refund  -> consulting-ops/templates/sow-harness-architect.md §[Refund] (Tier 1 forfeit clause)
+#  - harness_architect.tier_1_first_month_support.hours_per_harness  -> content/consulting/<slug>/index.md (Tier 1 bullet, literal "8 hours") + consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 1]
+#  - harness_architect.tier_1_first_month_support.scope_text         -> content/consulting/<slug>/index.md (Tier 1 bullet)
+#  - harness_architect.tier_2_hourly_pack.pack_price_gbp             -> content/consulting/<slug>/index.md (Tier 2 bullet, literal £1,500) + consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 2]
+#  - harness_architect.tier_2_hourly_pack.pack_hours                 -> content/consulting/<slug>/index.md (Tier 2 bullet, literal "10 hours") + consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 2]
+#  - harness_architect.tier_2_hourly_pack.rate_per_hour_gbp          -> consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 2] hourly rate
+#  - harness_architect.tier_2_hourly_pack.open_scope                 -> consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 2] open-scope flag
+#  - harness_architect.monthly_maintenance_package.per_harness_mtm_gbp     -> content/consulting/<slug>/index.md (Tier 3 bullet, literal £400/mo) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package]
+#  - harness_architect.monthly_maintenance_package.per_harness_annual_gbp  -> content/consulting/<slug>/index.md (Tier 3 bullet, literal £340/mo annual) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package]
+#  - harness_architect.monthly_maintenance_package.portfolio_cap_published -> content/consulting/<slug>/index.md (Tier 3 "6-harness cap" anchor) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package] cap clause
+#  - harness_architect.monthly_maintenance_package.overage_rate_gbp        -> consulting-ops/templates/sow-harness-architect.md §[Scope] overage clause (AC 4.7, literal £150/h)
+#  - harness_architect.monthly_maintenance_package.monthly_hours_cap       -> consulting-ops/templates/sow-harness-architect.md §[Scope] cap clause (AC 4.7, literal "5 hours per harness per month")
+#  - harness_architect.monthly_maintenance_package.rollover                -> consulting-ops/templates/sow-harness-architect.md §[Scope] no-rollover clause (AC 4.7)
+#  - harness_architect.monthly_maintenance_package.termination_notice_days -> consulting-ops/templates/sow-harness-architect.md §[Term] 14-day mutual termination clause (AC 4.8)
+#  - harness_architect.monthly_maintenance_package.continuity_gap_days     -> consulting-ops/templates/sow-harness-architect.md §[Term] 30-day-after-12-months clause (AC 4.5)
+#  - harness_architect.monthly_maintenance_package.continuity_gap_trigger_months -> consulting-ops/templates/sow-harness-architect.md §[Term] 30-day-after-12-months clause (AC 4.5)
 
 business:
   legal_name: "TANTUNG LTD"
@@ -39,35 +60,50 @@ harness_architect:
   company_audit:
     tier_5_to_10:
       employees_label: "5-10 employees"
+      price_gbp: 1500
       price_display: "1,500"          # £1,500 + VAT
     tier_10_to_50:
       employees_label: "10-50 employees"
+      price_gbp: 2500
       price_display: "2,500"          # £2,500 + VAT
     tier_50_plus:
       employees_label: "50+ employees"
-      price_display: "4,500-5,000"    # £4,500-£5,000 + VAT (range, scoped per call)
+      price_display: "4,500-5,000"    # £4,500-£5,000 + VAT (range, scoped per call; no single price_gbp)
 
   # Per-harness audit (sequential, scoped per harness post company audit).
   per_harness_audit:
-    price_display: "750"              # £750 + VAT per harness audit (1 SME-day)
+    price_gbp_default: 750
+    price_display_default: "750"      # £750 + VAT per harness audit (1 SME-day)
 
   # Foundation setup — flat 2-day base + overflow up to a hard cap.
   foundation_setup:
-    price_display: "3,000"            # £3,000 + VAT for 2 days
-    overflow_rate_display: "1,500"    # £1,500 / extra day
-    cap_days: 4                       # Max 4 days total; harder scope-trim past that
+    base_price_gbp: 3000
+    base_days: 2
+    additional_day_rate_gbp: 1500
+    max_days: 4
 
   # Tier 1 — first month of post-build support included free per harness.
   tier_1_first_month_support:
+    included: true
+    forfeit_on_refund: true
+    hours_per_harness: 8
     scope_text: "First month of support included free per harness shipped, capped at 8 hours of operator time across that first calendar month per harness (not full-time availability)"
-    hours_cap: 8
 
   # Tier 2 — open-scope hourly pack, portfolio-wide.
   tier_2_hourly_pack:
-    price_display: "1,500"            # £1,500 + VAT
-    hours_included: 10                # 10 hours included
+    pack_price_gbp: 1500
+    pack_hours: 10
+    rate_per_hour_gbp: 150
+    open_scope: true
 
   # Tier 3 — Monthly Maintenance Package, per harness, deliverable-anchored.
-  tier_3_monthly_maintenance:
-    price_display_mtm: "400"          # £400/mo per harness, month-to-month
-    price_display_annual: "340"       # £340/mo per harness, 12-month annual commit
+  monthly_maintenance_package:
+    per_harness_mtm_gbp: 400
+    per_harness_annual_gbp: 340
+    portfolio_cap_published: 6
+    overage_rate_gbp: 150
+    monthly_hours_cap: 5
+    rollover: false
+    termination_notice_days: 14
+    continuity_gap_days: 30
+    continuity_gap_trigger_months: 12
