@@ -188,13 +188,34 @@ Cal.com webhooks ARE in the v2 API (`/v2/webhooks`). Configure them to fire on:
 - `BOOKING_CANCELLED` → triggers Template E
 - `MEETING_STARTED` (i.e. event-just-starting) — Cal.com does not natively support pre-event triggers via webhook on free tier, so 24h and 1h reminders need a separate cron worker that polls upcoming bookings and fires Templates B + C
 
-A Cloudflare Worker receives each webhook, picks the appropriate template, sends via Brevo SMTP using `hello@hoiboy.uk` as the From address (matches the existing `docs/email-routing-setup.md` stack — zero subscription cost).
+A Cloudflare Worker receives each webhook, picks the appropriate template, calls Brevo's HTTP API (Workers can't open raw SMTP sockets) with `templateId` + `params` — Brevo renders the template server-side and sends From: `hello@hoiboy.uk`.
 
-**Pros**: branded sender, full HTML/plain control, no "Powered by Cal.com" footer, lives in code (`hoiboy-uk/workers/cal-com-email-bridge/` — proposed location), reproducible runbook for future clients.
+**Pros**: branded sender, no "Powered by Cal.com" footer, lives in code (`hoiboy-uk/workers/cal-com-email-bridge/` — proposed location), reproducible runbook for future clients.
 
-**Cons**: ~80-150 lines of TypeScript across the Worker + cron, plus a `templates/` directory. Requires Brevo SMTP credentials in Worker secrets. The cron-poll for B + C reminders adds a second moving part.
+**Cons**: ~80-150 lines of TypeScript across the Worker + cron, plus the cron-poll for B + C reminders (Cal.com webhooks don't natively fire pre-event triggers on free tier). Requires Brevo API key in Worker secrets.
 
-**This path has not been built yet** as of 2026-05-07 — slated as a follow-up artefact, will become reference architecture for the Harness Sync app pattern.
+### Email infrastructure status — UNBLOCKED 2026-05-08
+
+The email layer Path B depends on is **fully live and verified**:
+
+- ✅ Cloudflare Email Routing inbound (`hello@hoiboy.uk` → `hoiboyuk@gmail.com`)
+- ✅ Brevo domain authenticated (DKIM CNAMEs + DMARC + SPF appended)
+- ✅ Brevo sender registered (`hello@hoiboy.uk` id 2, active)
+- ✅ All 6 Hoi-voice templates pushed as Brevo transactional templates (IDs 1-6, all with `replyTo: hello@hoiboy.uk`)
+- ✅ Brevo HTTP API key + SMTP key both stored in BW
+- ✅ Test send proven: `messageId: <202605081349.74248579397@smtp-relay.mailin.fr>`, headers showed DKIM PASS, TLS encrypted
+
+**What remains for Path B (Worker build):**
+
+- [ ] Generate Cal.com webhook secret (random 32-char), store in BW
+- [ ] Configure Cal.com webhooks via API: `POST /v2/webhooks` for BOOKING_CREATED + BOOKING_RESCHEDULED + BOOKING_CANCELLED triggers, target = Worker URL
+- [ ] Build the Cloudflare Worker: webhook receiver + cron for B/C/operator reminders
+- [ ] Worker secrets via `wrangler secret put`: BREVO_API_KEY (from BW), CAL_API_KEY (long-lived, not the 7-day setup one), CAL_WEBHOOK_SECRET (from BW)
+- [ ] Worker KV namespace for "already-sent" deduplication
+- [ ] Deploy + smoke test (book a real test event, verify A fires; reschedule, verify D fires; cancel, verify E fires; rely on cron logs for B/C/operator)
+- [ ] Patch `data/consulting.yaml` `calcom_booking` to flip the landing page CTA from `mailto:` fallback to live booking URL
+
+See `docs/brevo-api-setup.md` § "The 6 templates pushed" for template IDs the Worker references.
 
 ## The 5 Hoi-voice email templates (canonical, verbatim)
 

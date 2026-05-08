@@ -2,10 +2,14 @@
 
 Operator runbook for the free DIY email stack on `hoiboy.uk`. Goal: receive at `hello@hoiboy.uk` (forwarded to `hoiboyuk@gmail.com`) and reply back AS `hello@hoiboy.uk` from inside Gmail. Zero ongoing subscription cost. No enterprise email account.
 
+**Status as of 2026-05-08**: live and verified end-to-end. SPF + DKIM + DMARC all PASS in real-world delivery. See § "Execution evidence" at the bottom.
+
+This runbook is the **orchestrating overview**. The lower-level mechanics — Cloudflare API tokens, Brevo API setup, transactional templates — live in dedicated runbooks (cross-referenced inline). When automating this for paid clients, this is the entry point; consumers read the per-system runbooks for the specifics.
+
 Two halves:
 
-- **Inbound (receive)**: Cloudflare Email Routing — free tier, included with Cloudflare DNS hosting.
-- **Outbound (send-as)**: Brevo SMTP relay — 300 emails/day free forever + Gmail "Send mail as" feature.
+- **Inbound (receive)**: Cloudflare Email Routing — free tier, included with Cloudflare DNS hosting. See `docs/cloudflare-api-token-setup.md` for the API token + DNS API procedure.
+- **Outbound (send-as)**: Brevo SMTP relay — 300 emails/day free forever + Gmail "Send mail as" feature. See `docs/brevo-api-setup.md` for the API key + SMTP key + transactional templates procedure.
 
 ## Why this stack
 
@@ -29,24 +33,39 @@ Test: send an email from any external account to `hello@hoiboy.uk`; it should ar
 
 ### Step 1: Brevo signup + domain auth
 
-1. Sign up at https://www.brevo.com (free, no card).
-2. In Brevo dashboard -> Senders, Domains & Dedicated IPs -> Domains -> Add `hoiboy.uk`.
-3. Brevo gives 3 DNS records to add:
-    - `brevo-code._domainkey.hoiboy.uk` (TXT, DKIM signing key)
-    - `mail._domainkey.hoiboy.uk` (TXT, second DKIM record)
-    - `_dmarc.hoiboy.uk` (TXT, DMARC policy — Brevo recommends `v=DMARC1; p=none; rua=mailto:hoiboyuk@gmail.com`)
-4. Add all 3 records in Cloudflare DNS. Cloudflare proxy should be OFF for these (they are TXT records; proxy only applies to A/AAAA/CNAME).
-5. Click "Authenticate this domain" in Brevo. Verification takes 5-30 minutes for DNS propagation.
+**See `docs/brevo-api-setup.md` § Phase A + Phase B for the full procedure (mostly API-driven).**
 
-Note: Brevo will also ask for an SPF record. Cloudflare Email Routing already added an SPF record (`v=spf1 include:_spf.mx.cloudflare.net ~all`). Append Brevo's SPF include so both inbound forwarding AND outbound SMTP work: `v=spf1 include:_spf.mx.cloudflare.net include:spf.brevo.com ~all`. Edit the existing TXT record; do NOT add a second SPF record (multiple SPF records break SPF validation entirely).
+Summary:
+
+1. Sign up at https://www.brevo.com (free, no card).
+2. In Brevo dashboard -> Senders, Domains & Dedicated IPs -> Domains -> Add `hoiboy.uk` -> Authenticate the domain yourself.
+3. Brevo gives 4 DNS records to add (Brevo migrated to **CNAME-based DKIM** — better than the older TXT-based DKIM because Brevo can rotate signing keys without forcing DNS edits):
+    - `@` TXT — `brevo-code:<32-hex>` (account-specific verification)
+    - `brevo1._domainkey` CNAME -> `b1.<zone>.dkim.brevo.com` (DKIM 1)
+    - `brevo2._domainkey` CNAME -> `b2.<zone>.dkim.brevo.com` (DKIM 2)
+    - `_dmarc` TXT -> `v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com` (Brevo aggregates DMARC reports for you)
+4. Add all 4 records in Cloudflare DNS. **Proxy must be OFF for the CNAMEs** (orange cloud breaks DKIM). Use the API path documented in `docs/cloudflare-api-token-setup.md` for reproducibility.
+5. Trigger Brevo's verification — either UI button "Authenticate this email domain" OR API: `PUT /v3/senders/domains/hoiboy.uk/authenticate` (see brevo-api-setup.md § Phase B).
+
+**SPF: edit existing record, do NOT add second.** Cloudflare Email Routing's SPF (`v=spf1 include:_spf.mx.cloudflare.net ~all`) needs Brevo's include appended:
+
+```
+v=spf1 include:_spf.mx.cloudflare.net include:spf.brevo.com ~all
+```
+
+Multiple SPF records on the same name break SPF validation entirely.
+
+**Sender registration is required even with domain auth.** Brevo's `POST /v3/senders` registers `hello@hoiboy.uk` as an active sender. Without this step, sends fail with `Sender is invalid / inactive`. See brevo-api-setup.md § Phase F.
 
 ### Step 2: Brevo SMTP credentials
 
-1. Brevo dashboard -> SMTP & API -> SMTP.
-2. Server field: `smtp-relay.brevo.com`
-3. Port field: 587
-4. Login field: your Brevo account email.
-5. SMTP-key field: click "Generate a new SMTP key" to obtain a fresh credential token (this is NOT your Brevo account login; the key is a separate token). Save it locally; Brevo only shows it once.
+1. Brevo dashboard -> SMTP & API -> SMTP tab.
+2. Server: `smtp-relay.brevo.com`
+3. Port: 587
+4. **Login**: NOT your Brevo account email — Brevo issues a separate SMTP-relay address shown on this page, format `aaaXXXXXX@smtp-brevo.com` (e.g. `aaa99a001@smtp-brevo.com`). Using the account email here returns `5.7.8 Authentication failed`. (Originally this runbook said "your Brevo account email" — that was wrong, corrected 2026-05-08 after a real auth failure during execution.)
+5. SMTP key: click **Generate a new SMTP key**, pick **Standard variant** (64-char body, 90 chars total), copy the `xsmtpsib-...` value. Save in BW immediately — Brevo only shows it once.
+
+Both the SMTP login and SMTP key are stored in BW item `brevo-hoiboy-uk-smtp` (login in username field, key in password field). See `docs/brevo-api-setup.md` § Phase D for the full BW pattern.
 
 ### Step 3: Gmail "Send mail as"
 
@@ -57,7 +76,7 @@ Note: Brevo will also ask for an SPF record. Cloudflare Email Routing already ad
 5. Next -> SMTP server settings:
     - SMTP Server field: `smtp-relay.brevo.com`
     - Port field: 587
-    - Username field: your Brevo account email (from Step 2)
+    - Username field: **the Brevo SMTP login** (e.g. `aaa99a001@smtp-brevo.com` — NOT your Brevo account email; see Step 2)
     - SMTP-key field: the SMTP key generated in Step 2
     - Secured connection using TLS (default).
 6. Save. Gmail sends a verification email to `hello@hoiboy.uk`, which Cloudflare forwards back to `hoiboyuk@gmail.com`. Click the verification link.
@@ -94,8 +113,48 @@ Once both halves are wired:
 - No subscription, no card, no auto-renewal trap.
 - DMARC report aggregation: Brevo emails weekly DMARC reports to `hoiboyuk@gmail.com` per the `rua=` setting; review monthly for delivery health.
 
+## Reply-To gotcha
+
+Brevo defaults the Reply-To header on transactional sends to your Brevo account email (`hoiboyuk@gmail.com`). For brand-grade outbound this leaks the operator's personal Gmail. Reply-To MUST match From — set per-template via `PUT /v3/smtp/templates/{id}` body `{"replyTo":"hello@hoiboy.uk"}`, or per-send in `POST /v3/smtp/email`. Replies still route to your Gmail inbox via Cloudflare Email Routing — but the recipient never sees the personal address. See `docs/brevo-api-setup.md` § "Reply-To override pattern" for the full procedure. We hit this exact issue 2026-05-08 during the first test send.
+
+## Execution evidence — 2026-05-08
+
+Both halves of the stack are live and verified end-to-end.
+
+### Inbound (Cloudflare Email Routing)
+
+- Cloudflare Email Routing enabled on `hoiboy.uk`
+- Cloudflare-managed DNS records added: 3 MX (`route1/2/3.mx.cloudflare.net`) + 1 SPF (later edited to append Brevo)
+- Custom address `hello@hoiboy.uk` -> `hoiboyuk@gmail.com` (verified via Cloudflare email confirmation)
+- Real-world test: external account -> `hello@hoiboy.uk` arrives in `hoiboyuk@gmail.com` within seconds
+
+### Outbound (Brevo)
+
+- Brevo free-tier account on `hoiboyuk@gmail.com`, plan `free`, 300 emails/day cap
+- Domain `hoiboy.uk` authenticated via API trigger (`PUT /v3/senders/domains/.../authenticate`) — DNS records: brevo-code TXT, brevo1+brevo2 CNAMEs (CNAME-based DKIM), DMARC TXT, SPF appended
+- Sender `Hoi <hello@hoiboy.uk>` registered, id 2, active, SPF + DKIM passing
+- API key + SMTP key (Standard variant) in BW: items `brevo-hoiboy-uk-worker-api` + `brevo-hoiboy-uk-smtp`
+- 6 transactional templates pushed (IDs 1-6), all with `replyTo: hello@hoiboy.uk` after the Reply-To fix
+- Test send 2026-05-08 13:49 UTC — `messageId: <202605081349.74248579397@smtp-relay.mailin.fr>` — delivered, headers show `signed-by: hoiboy.uk` (DKIM PASS), TLS encrypted
+
+### Credentials live in BW
+
+| Item | Type | Owner | Notes |
+|---|---|---|---|
+| `hoiboy-uk-cloudflare-automation` | Cloudflare API token | (account) | DNS:Read,Edit + Zone:Read + Email Routing Rules:Read on `hoiboy.uk`. 90-day TTL, expires 2026-08-06. Account-scoped (NOT user-scoped — see cloudflare-api-token-setup.md § "User vs Account API tokens") |
+| `brevo-hoiboy-uk-worker-api` | Brevo HTTP API key | (Brevo account login) | Used by Cloudflare Worker (Path B). Calendar rotation 2026-08-06 |
+| `brevo-hoiboy-uk-smtp` | Brevo SMTP key (Standard variant) | (Brevo SMTP login) | Used by Gmail Send-as. Calendar rotation 2026-08-06 |
+
+### Pending
+
+- Gmail Send-as: still TBD (Phase I in `docs/brevo-api-setup.md`). UI-only, needs the SMTP login + key from BW.
+- Cloudflare Worker (Path B in `docs/cal-com-setup.md`): not yet built. Will consume the Brevo API key for transactional sends triggered by Cal.com webhooks.
+
 ## Cross-reference
 
-- `consulting-ops/playbook-harness-architect.md` — engagement playbook that consumes `hello@hoiboy.uk` as the canonical contact.
-- `consulting-ops/replies.md` — reply templates that direct prospects to email at `hello@hoiboy.uk`.
-- `data/consulting.yaml` `harness_architect.calcom_booking` — Cal.com URL replaces empty string post-Phase-1 (separate from email routing).
+- `docs/cloudflare-api-token-setup.md` — Cloudflare API token recipe + DNS API procedure
+- `docs/brevo-api-setup.md` — Brevo API + SMTP runbook + transactional templates
+- `docs/cal-com-setup.md` — Cal.com booking funnel + Path B Worker plan that consumes this email stack
+- `consulting-ops/playbook-harness-architect.md` — engagement playbook that consumes `hello@hoiboy.uk` as the canonical contact
+- `consulting-ops/replies.md` — reply templates that direct prospects to email at `hello@hoiboy.uk`
+- `data/consulting.yaml` `harness_architect.calcom_booking` — Cal.com URL replaces empty string post-Phase-1 (separate from email routing)
