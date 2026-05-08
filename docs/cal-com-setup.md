@@ -464,7 +464,7 @@ Two distinct credential tiers with different rotation rules:
 - No rotation needed: single-use, dies on Cal.com expiry or manual revoke, whichever comes first.
 - Rationale: blast radius of accidental leak is bounded to 7 days.
 
-**Worker key (long-lived, runtime-persistent — Path B only)**
+**Worker key (long-lived, runtime-persistent, Path B only)**
 - Generated separately from setup key, stored in BW item `cal-com-worker-api` and Worker secret `CAL_API_KEY` (per Path B requirements line 252).
 - Long-lived because the Worker reads it on every webhook invocation; rotating mid-flight breaks live booking confirmations.
 - **Rotation cadence: every 90 days** (matches Cloudflare + Brevo BW rotation reminders set 2026-08-06 per `cloudflare-api-token-setup.md` + `brevo-api-setup.md`).
