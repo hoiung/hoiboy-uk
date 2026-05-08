@@ -375,7 +375,9 @@ The `bw sync` is non-optional for items created in the same session — without 
 | 3 | C — 1h reminder | cron: 1h before event | Attendee |
 | 4 | D — Reschedule confirmation | `BOOKING_RESCHEDULED` | Attendee |
 | 5 | E — Cancellation acknowledgement | `BOOKING_CANCELLED` | Attendee |
-| 6 | Operator — 15 min pre-call brief | cron: 15 min before event | Operator (`hello@hoiboy.uk`) |
+| 6 | Operator — 2 hour pre-call brief | cron: 2 hours before event | Operator (`hello@hoiboy.uk`) |
+
+**Note on cadence iteration**: template 6 was originally drafted at T-15min ("starting in 15 min" framing), bumped to T-30min, then T-1h, settled at **T-2h** (2026-05-08 design iteration with the host). Template subject + body were PUT-updated each time via `PUT /v3/smtp/templates/6` with `{subject, htmlContent}` in body — confirms Brevo's PUT endpoint accepts partial updates (other fields like `replyTo`, `sender`, `templateName` preserved). Template 6 also gained a `distinct_roles` line in body when the Cal.com event-type added the matching booking field 2026-05-08.
 
 The Worker (Path B in `docs/cal-com-setup.md`) will consume these template IDs.
 
