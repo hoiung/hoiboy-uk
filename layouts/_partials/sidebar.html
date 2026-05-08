@@ -11,6 +11,14 @@
         <li><a href="{{ .URL }}"{{ if eq $.RelPermalink .URL }} class="active"{{ end }}>{{ .Name }}</a></li>
       {{- end -}}
     </ul>
+    {{- with site.Menus.consulting -}}
+    <h2>Consulting</h2>
+    <ul>
+      {{- range . -}}
+        <li><a href="{{ .URL }}"{{ if eq $.RelPermalink .URL }} class="active"{{ end }}>{{ .Name }}</a></li>
+      {{- end -}}
+    </ul>
+    {{- end -}}
     <h2>Categories</h2>
     <ul>
       {{- range site.Menus.categories -}}

@@ -1,9 +1,14 @@
 # Sidebar nav. Flat, constant size. Locked in docs/research/06_TAXONOMY.md.
-# Order matters: top section, categories, social.
+# Order matters: top section, consulting, categories, social.
 
 [[main]]
   name = "Home"
   url = "/"
+  weight = 10
+
+[[consulting]]
+  name = "AI Managed Harness Services"
+  url = "/consulting/claude-code-harness-architect/"
   weight = 10
 
 [[categories]]
