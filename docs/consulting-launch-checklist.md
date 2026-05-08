@@ -14,11 +14,11 @@ The consulting landing pages render external CTAs (Cal.com, optionally Stripe) w
 
 ### Gate 2: pre-publish.sh production-errorf
 
-`scripts/pre-publish.sh` check #1 (`consulting-yaml-no-operator-todo`) greps `data/consulting.yaml` for the `OPERATOR_TODO` substring. Non-zero exit blocks publish with stderr message `consulting.yaml contains OPERATOR_TODO placeholder; refusing to publish`. Run `bash scripts/pre-publish.sh content/posts/<slug>/` against an `OPERATOR_TODO`-stuffed yaml — exits 1.
+`scripts/pre-publish.sh` check #1 (`consulting-yaml-no-operator-todo`) greps `data/consulting.yaml` for the `OPERATOR_TODO` substring. Non-zero exit blocks publish with stderr message `consulting.yaml contains OPERATOR_TODO placeholder; refusing to publish`. Run `bash scripts/pre-publish.sh content/posts/<slug>/` against an `OPERATOR_TODO`-stuffed yaml - exits 1.
 
 ### Gate 3: Pre-commit hook
 
-`.pre-commit-config.yaml` hook `consulting-yaml-no-operator-todo` runs on staged changes to `data/consulting.yaml`. Test with `pre-commit run --files data/consulting.yaml` against an `OPERATOR_TODO`-stuffed yaml — exits 1.
+`.pre-commit-config.yaml` hook `consulting-yaml-no-operator-todo` runs on staged changes to `data/consulting.yaml`. Test with `pre-commit run --files data/consulting.yaml` against an `OPERATOR_TODO`-stuffed yaml - exits 1.
 
 ### Gate 4: Lychee rendered-HTML link check
 
@@ -34,11 +34,11 @@ The consulting landing pages render external CTAs (Cal.com, optionally Stripe) w
 
 ## Verifying the gates work
 
-Each gate has a verification command documented above. The historic-failure marker `OPERATOR_TODO_REPLACE_BEFORE_LAUNCH` is intentionally referenced in this file so pattern-matching tools can locate this checklist via grep — appearances in this document are documentation, not live placeholders. Stage 5 reviewers grepping for `OPERATOR_TODO` outside the audit-trail expect to find references only in this checklist (and only on this file under `hoiboy-uk/docs/`).
+Each gate has a verification command documented above. The historic-failure marker `OPERATOR_TODO_REPLACE_BEFORE_LAUNCH` is intentionally referenced in this file so pattern-matching tools can locate this checklist via grep - appearances in this document are documentation, not live placeholders. Stage 5 reviewers grepping for `OPERATOR_TODO` outside the audit-trail expect to find references only in this checklist (and only on this file under `hoiboy-uk/docs/`).
 
 ## Cross-reference
 
 - consulting-ops#2 Phase 0 (this checklist + the four gates above)
 - consulting-ops#2 Phase 1 (Cal.com setup procedure that produces the live URL)
 - consulting-ops#2 Phase 2 (`data/consulting.yaml` V2 ladder structure)
-- `docs/AUTHORING.md` (separate blog-post authoring contract — does NOT cover consulting)
+- `docs/AUTHORING.md` (separate blog-post authoring contract - does NOT cover consulting)
