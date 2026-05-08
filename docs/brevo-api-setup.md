@@ -443,5 +443,5 @@ curl -s -X POST -H "api-key: $BREVO_API_KEY" -H "content-type: application/json"
 - `docs/email-routing-setup.md` - orchestrating runbook (Cloudflare inbound + Brevo outbound)
 - `docs/cloudflare-api-token-setup.md` - companion runbook, same scoped-credential discipline
 - `docs/cal-com-setup.md` - § "Path B" consumes Brevo API key for Worker-driven transactional sends
-- Brevo API docs: https://developers.brevo.com/reference/getting-started-1
-- Brevo transactional templates docs: https://developers.brevo.com/reference/createsmtptemplate
+- Brevo developer hub: https://developers.brevo.com/
+- Brevo API reference index: https://developers.brevo.com/reference
