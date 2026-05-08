@@ -372,7 +372,7 @@ The `bw sync` is non-optional for items created in the same session — without 
 |---|---|---|---|
 | 1 | A — Booking confirmation | `BOOKING_CREATED` | Attendee |
 | 2 | B — 24h reminder | cron: 24h before event | Attendee |
-| 3 | C — 1h reminder | cron: 1h before event | Attendee |
+| 3 | C — 1h reminder | (dormant — Worker does NOT fire) | Attendee |
 | 4 | D — Reschedule confirmation | `BOOKING_RESCHEDULED` | Attendee |
 | 5 | E — Cancellation acknowledgement | `BOOKING_CANCELLED` | Attendee |
 | 6 | Operator — 2 hour pre-call brief | cron: 2 hours before event | Operator (`hello@hoiboy.uk`) |
