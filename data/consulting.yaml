@@ -29,11 +29,10 @@ business:
   vat_number: null      # null until HMRC voluntary-VAT issuance lands per consulting-ops#2 Phase 8 AC 8.2.
 
 harness_architect:
-  # Operator replaces with the live Cal.com URL post-Phase-1 AC 1.2. Empty
-  # string + shortcode mailto fallback covers the pre-launch state; the
-  # pre-publish.sh + pre-commit hook + lychee gates block any unreplaced
-  # placeholder URL from reaching production. See docs/consulting-launch-checklist.md.
-  calcom_booking: ""
+  # Live booking URL (replaced 2026-05-08 — Cal.com EU instance, event-type id 284432).
+  # Pre-Worker (hoiboy-uk#28): bookings fire Cal.com's default emails; post-Worker:
+  # Brevo Hoi-voice templates take over. See docs/cal-com-setup.md for full setup.
+  calcom_booking: "https://cal.eu/hoiboyuk/discovery"
 
   # Company structure audit ladder.
   # OD-PRICE-LADDER LOCKED = LIFT (consulting-ops#2 Phase 7 AC 7.2, 2026-05-06).
