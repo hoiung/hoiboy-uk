@@ -7,7 +7,10 @@
   weight = 10
 
 [[consulting]]
-  name = "AI Managed Harness Services"
+  # &nbsp; glues 'AI Managed' and 'Harness Services' so the only breakable space
+  # is the middle one. On narrow sidebar the link wraps to 2 lines exactly there;
+  # on wider mobile nav block it stays single-line.
+  name = "AI&nbsp;Managed Harness&nbsp;Services"
   url = "/consulting/claude-code-harness-architect/"
   weight = 10
 

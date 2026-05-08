@@ -13,9 +13,9 @@
     </ul>
     {{- with site.Menus.consulting -}}
     <h2>Consulting</h2>
-    <ul>
+    <ul class="consulting-menu">
       {{- range . -}}
-        <li><a href="{{ .URL }}"{{ if eq $.RelPermalink .URL }} class="active"{{ end }}>{{ .Name }}</a></li>
+        <li><a href="{{ .URL }}" class="cta-link{{ if eq $.RelPermalink .URL }} active{{ end }}">{{ .Name | safeHTML }}</a></li>
       {{- end -}}
     </ul>
     {{- end -}}
