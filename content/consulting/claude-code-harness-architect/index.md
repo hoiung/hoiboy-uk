@@ -215,9 +215,10 @@ Phases 4 (per-harness audit), 5 (per-harness build and rollout), and 6 (SME work
 How it works in practice:
 
 - My work month runs the 1st through end of month
-- At the end of each calendar month, I send an invoice covering whatever phases got signed off as complete during that month
-- Each completed harness needs your sign-off (you are happy with the build and the workshop has happened) before it goes on the invoice
-- Smaller harnesses tend to bill in the same month they are built. Larger harnesses (longer build cycles, more rollout users) may straddle months; you only pay for what is signed off
+- At the end of each calendar month, I send an invoice covering everything completed and signed off during that month, whether that is full harnesses or partial-build milestones for a harness still mid-build
+- Sign-off is the gate: each deliverable (harness or milestone) needs your "yes, I am happy with this" before it goes on the invoice. No surprise charges
+- For **smaller harnesses** (audit + build + workshop fits inside one calendar month), the bill lands in that single month after the workshop signs off
+- For **larger harnesses** (longer build cycles, more rollout users, more complex workflows), we agree milestones at build kickoff (typical breakdown: scaffolding, core build, rollout per user cohort, workshop). Each signed-off milestone bills in whatever calendar month it lands. A 3-month harness might bill across 3 separate calendar months, so you pay as we make signed-off progress instead of one lump at the end
 
 The reason for monthly pro-rata instead of "pay at the end of everything": cashflow on my side, fair pacing on yours. If your engagement runs 3 to 6 months across multiple harnesses, neither of us wants to sit on a single huge bill at the end. Rolling monthly keeps both sides honest about what is actually shipping.
 
