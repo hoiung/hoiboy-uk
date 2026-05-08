@@ -196,6 +196,49 @@ At a glance. All prices exclude VAT (charged at the prevailing rate; VAT-registe
 
 **What you cover** (your own subscription with Anthropic, separate from anything I bill you for): your team's everyday production use of the shipped harness. Recommend Claude Max 20x per user, or whichever Anthropic tier fits your usage agreement.
 
+## Billing
+<!-- iamhoi -->
+
+How and when I bill, in plain terms. The structure protects both sides: you do not pay before there is real value committed, and I do not carry months of work-in-progress without cashflow.
+
+### Upfront, before work starts
+
+Two phases get billed upfront, on engagement open:
+
+- **Phase 2 Company audit.** Invoiced and paid before the audit begins. The audit IS the work: 1 to 3 SME-days digging into your business, producing a written report plus the build plan and cost quote for your harnesses. Upfront billing keeps both sides serious. You are not buying a slide deck; you are commissioning real research that lands in your hands whether you proceed past it or not.
+- **Phase 3 Foundation setup.** Invoiced and paid before foundation work begins, after you have seen the audit and accepted the quote (with whatever adjustments we discuss). Foundation is significant scope; upfront billing matches the commitment level.
+
+### Rolling monthly, for ongoing build phases
+
+Phases 4 (per-harness audit), 5 (per-harness build and rollout), and 6 (SME workshop) are billed on a rolling monthly basis, pro-rata for whatever was completed and signed off in that calendar month.
+
+How it works in practice:
+
+- My work month runs the 1st through end of month
+- At the end of each calendar month, I send an invoice covering whatever phases got signed off as complete during that month
+- Each completed harness needs your sign-off (you are happy with the build and the workshop has happened) before it goes on the invoice
+- Smaller harnesses tend to bill in the same month they are built. Larger harnesses (longer build cycles, more rollout users) may straddle months; you only pay for what is signed off
+
+The reason for monthly pro-rata instead of "pay at the end of everything": cashflow on my side, fair pacing on yours. If your engagement runs 3 to 6 months across multiple harnesses, neither of us wants to sit on a single huge bill at the end. Rolling monthly keeps both sides honest about what is actually shipping.
+
+### Recurring, for ongoing maintenance
+
+**Phase 8 Monthly Maintenance Package.** Invoiced monthly or annually depending on your commit choice. Month-to-month is the flexible default; the 12-month annual option exists for clients who want price certainty and a small saving in exchange for the commitment.
+
+### Out-of-scope work
+
+Smaller pieces (a tweak here, a follow-up there) get rolled into the next month's pro-rata invoice. Bigger pieces (a new harness, a substantial feature addition) go through the audit-first discipline again: fresh audit, fresh quote, fresh upfront on Phase 2 + 3 of that mini-engagement.
+
+If you have a Tier 2 hourly pack, smaller maintenance-scope work draws from those pre-paid hours instead of generating new line items.
+
+### What this means in plain language
+
+You pay upfront for the audit and the foundation. After that, you pay monthly for whatever is genuinely complete and signed off. Once your harnesses are running, you choose whether to retain me on the maintenance package and on what cadence.
+
+No big-bang final bills. No vague "we'll figure it out." If you have already paid me, it is because something tangible got delivered and you signed off on it.
+
+<!-- iamhoiend -->
+
 ## What I do not do
 
 - Programme management. I do not run your AI roadmap quarterly review.
