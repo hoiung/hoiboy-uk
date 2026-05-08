@@ -171,7 +171,7 @@ I deliver this sequentially, one step at a time, never parallel. Each step close
 
 Need open-scope hours portfolio-wide instead of the monthly maintenance package? Tier 2 hourly pack: £1,500 / 10 hours + VAT. Existing clients only (you already have at least one harness shipped) and maintenance-only scope (drift events, support, troubleshooting). Feature work or new harness builds run as their own per-harness audit + build SOW, not under this pack.
 
-Per-harness builds and rollouts typically land between £12K and £30K + VAT depending on harness complexity AND rollout footprint (number of users on your team running the same harness; the build itself is shaped by how many users it needs to land on, so this is a single fee covering both dimensions, not a build fee plus a separate per-user rollout fee). The audit gives you the actual scope and quote (the build fee is a fixed-fee output of the audit, not an open hourly tab). Volume discounts may apply for multi-harness commitments at engagement open, discussed on the audit walkthrough call. The Monthly Maintenance Package and hourly pack ARE fully published; those are commodity-shaped.
+Per-harness builds and rollouts typically land between £12K and £30K + VAT depending on harness complexity AND rollout footprint (number of users on your team running the same harness; the build itself is shaped by how many users it needs to land on, so this is a single fee covering both dimensions, not a build fee plus a separate per-user rollout fee). The Phase 2 company audit gives you a budget range for each harness; the **firm fee** locks in at the per-harness audit (Phase 4) once I sit with the SME and see the workflow detail. The build fee is a fixed-fee output of the per-harness audit, not an open hourly tab. Volume discounts may apply for multi-harness commitments at engagement open, discussed on the audit walkthrough call. The Monthly Maintenance Package and hourly pack ARE fully published; those are commodity-shaped.
 
 <!-- iamhoiend -->
 
@@ -205,8 +205,8 @@ How and when I bill, in plain terms. The structure protects both sides: you do n
 
 Two phases get billed upfront, on engagement open:
 
-- **Phase 2 Company audit.** Invoiced and paid before the audit begins. The audit IS the work: 1 to 3 SME-days digging into your business, producing a written report plus the build plan and cost quote for your harnesses. Upfront billing keeps both sides serious. You are not buying a slide deck; you are commissioning real research that lands in your hands whether you proceed past it or not.
-- **Phase 3 Foundation setup.** Invoiced and paid before foundation work begins, after you have seen the audit and accepted the quote (with whatever adjustments we discuss). Foundation is significant scope; upfront billing matches the commitment level.
+- **Phase 2 Company audit.** Invoiced and paid before the audit begins. The audit IS the work: 1 to 3 SME-days digging into your business, producing a written report plus a build plan (which harnesses, in what order) and a budget range for each. The firm per-harness fee locks in later at Phase 4 (Per-harness audit), when I sit with the actual SME and see the workflow detail (what can be automated, what cannot, what should not be). Upfront billing keeps both sides serious. You are not buying a slide deck; you are commissioning real research that lands in your hands whether you proceed past it or not.
+- **Phase 3 Foundation setup.** Invoiced and paid before foundation work begins, after you have seen the audit and accepted the budget direction (with whatever adjustments we discuss). Foundation is significant scope; upfront billing matches the commitment level.
 
 ### Rolling monthly, for ongoing build phases
 
@@ -227,7 +227,7 @@ The reason for monthly pro-rata instead of "pay at the end of everything": cashf
 
 ### Out-of-scope work
 
-Smaller pieces (a tweak here, a follow-up there) get rolled into the next month's pro-rata invoice. Bigger pieces (a new harness, a substantial feature addition) go through the audit-first discipline again: fresh audit, fresh quote, fresh upfront on Phase 2 + 3 of that mini-engagement.
+Smaller pieces (a tweak here, a follow-up there) get rolled into the next month's pro-rata invoice. Bigger pieces (a new harness, a substantial feature addition) go through the audit-first discipline again: fresh per-harness audit (£750 + VAT, billed upfront for that audit), then the build itself folds into the rolling monthly pro-rata cycle.
 
 If you have a Tier 2 hourly pack, smaller maintenance-scope work draws from those pre-paid hours instead of generating new line items.
 
