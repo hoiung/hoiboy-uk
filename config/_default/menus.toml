@@ -7,10 +7,11 @@
   weight = 10
 
 [[consulting]]
-  # &nbsp; glues 'AI Managed' and 'Harness Services' so the only breakable space
-  # is the middle one. On narrow sidebar the link wraps to 2 lines exactly there;
-  # on wider mobile nav block it stays single-line.
-  name = "AI&nbsp;Managed Harness&nbsp;Services"
+  # Explicit <br class="break-sm-up"> forces 2-line wrap on desktop sidebar;
+  # CSS media query hides the <br> below the 768px burger-menu breakpoint so
+  # the burger menu shows a single line. Single-quoted TOML literal string
+  # avoids escaping the inner double quotes.
+  name = 'AI Managed<br class="break-sm-up">Harness Services'
   url = "/consulting/claude-code-harness-architect/"
   weight = 10
 
