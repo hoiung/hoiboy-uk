@@ -69,18 +69,25 @@ Both the SMTP login and SMTP key are stored in BW item `brevo-hoiboy-uk-smtp` (l
 
 ### Step 3: Gmail "Send mail as"
 
+**See `docs/brevo-api-setup.md` § Phase I for the full step-by-step including all Gmail auto-fill gotchas.** Summary here:
+
 1. In `hoiboyuk@gmail.com` -> Settings (cog) -> See all settings -> Accounts and Import -> Send mail as -> "Add another email address".
-2. Name: `Hoi` (or `Hoi Ung`, your call).
+2. Name: `Senh Hoi Ung` (or `Hoi`, your call).
 3. Email: `hello@hoiboy.uk`.
-4. Untick "Treat as an alias" (this makes the From: header show `hello@hoiboy.uk`, not `hoiboyuk@gmail.com via brevo`).
+4. **Tick** "Treat as an alias" — the send-as address belongs to the same person as the Gmail account. (Original guidance in this runbook said untick, that was wrong; the "via" annotation people worry about is controlled by DKIM alignment, not this checkbox. Corrected 2026-05-08.)
+5. **Leave** "Specify a different reply-to address" BLANK — replies should go to `hello@hoiboy.uk` which already routes back to Gmail. Putting the personal Gmail in this field would leak the operator address.
 5. Next -> SMTP server settings:
     - SMTP Server field: `smtp-relay.brevo.com`
     - Port field: 587
     - Username field: **the Brevo SMTP login** (e.g. `aaa99a001@smtp-brevo.com` — NOT your Brevo account email; see Step 2)
     - SMTP-key field: the SMTP key generated in Step 2
     - Secured connection using TLS (default).
+
+⚠️ **Gmail auto-fills the WRONG SMTP server.** Gmail reads MX records and pre-populates `route3.mx.cloudflare.net` (or similar). Cloudflare's MX is INBOUND only — you MUST override. Same gotcha for Username field: Gmail pre-fills just `hello` (the local part), not the actual SMTP login. Override all four fields explicitly.
+
 6. Save. Gmail sends a verification email to `hello@hoiboy.uk`, which Cloudflare forwards back to `hoiboyuk@gmail.com`. Click the verification link.
-7. Test: compose a new email in Gmail; in the From: dropdown, pick `hello@hoiboy.uk`. Send to a different external address (your personal Gmail, a friend, or a temp address). Verify the received email shows From: `hello@hoiboy.uk`.
+7. After verification, set `hello@hoiboy.uk` as the **default** Send-as (under Send mail as: section, click `make default` next to it).
+8. Test: compose a new email in Gmail; in the From: dropdown, pick `hello@hoiboy.uk`. Send to a different external address (your personal Gmail, a friend, or a temp address). Verify the received email shows From: `hello@hoiboy.uk`.
 
 ### Step 4: default From: address
 

@@ -224,19 +224,103 @@ If any of these fail, the email layer is not production-ready. SPF can be debugg
 
 ### Phase I — Gmail "Send mail as" (browser only, ~5 min)
 
-Gmail has no API for adding a send-as identity (technically possible via Gmail API + OAuth, but a 4-hour rabbit hole for a one-time configuration). UI required.
+Gmail has no API for adding a send-as identity. UI required. Multiple gotchas where Gmail auto-fills the wrong values from your MX records — read each step carefully.
 
-1. `hoiboyuk@gmail.com` → **Settings** (cog) → **See all settings** → **Accounts and Import** → **Send mail as** → **Add another email address**.
-2. Name: `Hoi`. Email: `hello@hoiboy.uk`. Untick **Treat as an alias** (so the From: header shows `hello@hoiboy.uk`, not `hoiboyuk@gmail.com via brevo.com`).
-3. **Next** → SMTP server settings:
-   - SMTP Server: `smtp-relay.brevo.com`
-   - Port: `587`
-   - Username: **`aaa99a001@smtp-brevo.com`** (the Brevo SMTP login from your BW item — NOT your Brevo account email; this is the gotcha that cost us time 2026-05-08)
-   - Password: the SMTP key (`xsmtpsib-...`) from your BW item
-   - Secured connection using TLS (default).
-4. Save. Gmail sends a verification email to `hello@hoiboy.uk` which Cloudflare forwards to `hoiboyuk@gmail.com`. Click the link.
-5. Settings → **Accounts and Import** → "When replying to a message" → **Reply from the same address the message was sent to**. Auto-defaults reply From: when replying to mail addressed to `hello@hoiboy.uk`.
-6. Test: compose new email in Gmail, in the From: dropdown pick `hello@hoiboy.uk`, send to your phone email or external account. Verify it arrives From: `hello@hoiboy.uk` with no "via brevo.com" annotation.
+#### Step I-1 — Open Send-as setup
+
+1. Go to https://mail.google.com (logged in as `hoiboyuk@gmail.com`)
+2. Top-right **cog** ⚙ → **See all settings**
+3. **Accounts and Import** tab
+4. **Send mail as:** section → **Add another email address**
+
+#### Step I-2 — Identity
+
+A popup opens with three fields:
+
+- **Name:** `Senh Hoi Ung` (or `Hoi`, your call — appears in recipients' From: dropdown)
+- **Email address:** `hello@hoiboy.uk`
+- **Treat as an alias:** ✅ **TICK**
+
+##### "Treat as an alias" — what it actually means
+
+Gmail's documentation is sparse here. The actual semantics:
+
+| State | Meaning | Use when |
+|---|---|---|
+| ✅ Ticked (alias) | Gmail treats `hello@hoiboy.uk` as the SAME PERSON as the Gmail account. Replies thread normally; no `Sender:` header added. | The send-as address is YOU (different brand/domain, same person). This is our case. |
+| ❌ Unticked (separate identity) | Gmail adds a `Sender: hoiboyuk@gmail.com` header revealing your actual Gmail account, then displays "via gmail.com" in some clients. Use for delegated sending (assistant on behalf of CEO, service account on behalf of role). | The send-as address is SOMEONE ELSE you have permission to send for. |
+
+For solo consultancy where `hello@hoiboy.uk` IS you: **TICK**. Untick is a delegation pattern, not a deliverability pattern. The "via brevo.com" annotation people sometimes worry about is controlled by **DKIM signing alignment** (handled at Brevo domain auth level), NOT by this checkbox. With proper DKIM (which we have), there's no "via" annotation regardless of this setting.
+
+Click **Next Step**.
+
+#### Step I-3 — SMTP credentials
+
+⚠️ **Gmail auto-fills the WRONG values** because it reads your MX records to pre-populate. You must override all three.
+
+| Field | Gmail auto-fill (WRONG) | Correct value | Source |
+|---|---|---|---|
+| SMTP Server | `route3.mx.cloudflare.net` (or similar `route1/2/3.mx.cloudflare.net`) | `smtp-relay.brevo.com` | Hardcoded — Brevo's relay |
+| Port | `587` ✅ | `587` | Hardcoded — leave as-is |
+| Username | `hello` (just the local part) | `aaa99a001@smtp-brevo.com` (your specific value differs) | BW item `brevo-hoiboy-uk-smtp` → **username field** |
+| Password | (empty) | The SMTP key (`xsmtpsib-...`) | BW item `brevo-hoiboy-uk-smtp` → **password field** |
+| Secured connection | TLS ✅ | TLS | Leave as-is |
+
+Why Gmail's auto-fill is wrong: Cloudflare Email Routing's MX records (`route1/2/3.mx.cloudflare.net`) are **inbound-only servers** — they accept incoming mail for forwarding but do NOT accept SMTP connections for outbound. Gmail can't tell from DNS alone. We override with the actual outbound SMTP relay.
+
+⚠️ **The Username gotcha:** Brevo issues a separate SMTP login (`aaaXXXXXX@smtp-brevo.com`) shown on the SMTP page in your Brevo dashboard. Using your Brevo account email (`hoiboyuk@gmail.com`) returns `5.7.8 Authentication failed`. The BW item we created in Phase D already has the correct value in the username field — paste from there.
+
+⚠️ **There's also an optional "Specify a different reply-to address" field** in the identity step. **LEAVE BLANK.** With it blank, replies go to the From: address (`hello@hoiboy.uk`) which routes through Cloudflare → Gmail anyway. Putting `hoiboyuk@gmail.com` here would defeat the Reply-To leak fix we applied at the Brevo template layer. Three concepts to distinguish:
+
+- **Treat as alias** (Gmail) — same-person flag, controls the `Sender:` header
+- **Reply-to field** (Gmail Send-as) — overrides Reply-To header for compose-time sends from Gmail
+- **Brevo template `replyTo`** — overrides Reply-To for transactional sends from the Worker
+
+All three must point to `hello@hoiboy.uk` (or be left blank where blank means "use From"). Never put the personal Gmail in any of them.
+
+Click **Add Account**.
+
+#### Step I-4 — Verify ownership
+
+Gmail sends a verification email to `hello@hoiboy.uk`. Path:
+
+1. Brevo doesn't see this email — it goes via Google's outbound to Cloudflare's MX
+2. Cloudflare Email Routing forwards it to `hoiboyuk@gmail.com`
+3. You see a Gmail message from `Gmail Team` titled "Gmail Confirmation - Send Mail as hello@hoiboy.uk"
+4. Click the verification link inside (or copy the confirmation code into the popup)
+
+This step doubles as an **end-to-end inbound test**: if the verification email lands, the Cloudflare Email Routing layer is healthy.
+
+#### Step I-5 — Set as default + reply behaviour
+
+After verification, Gmail returns you to **Settings → Accounts and Import**.
+
+1. Under **Send mail as:** — find `Senh Hoi Ung <hello@hoiboy.uk>` → click **make default**
+2. Under **When replying to a message:** — pick **Reply from the same address the message was sent to**
+
+The default-default ensures any new compose starts From: `hello@hoiboy.uk` (no dropdown click needed each time). The reply-from-same-address ensures replies to mail received at `hello@hoiboy.uk` go out From: `hello@hoiboy.uk` automatically.
+
+Optional but recommended:
+
+3. Under **Sender information** (if shown) — pick **Show this address only (hello@hoiboy.uk)** to suppress any "sent by hoiboyuk@gmail.com" annotation in clients that respect it.
+
+#### Step I-6 — Round-trip test
+
+This proves the entire stack — inbound + outbound + DKIM signing — under real-world load.
+
+1. From your phone or any non-Gmail account, send TO `hello@hoiboy.uk` (subject and body anything)
+2. Wait ~30 sec — should arrive in `hoiboyuk@gmail.com` Gmail inbox
+3. **Reply** from Gmail. The From: dropdown should auto-show `hello@hoiboy.uk` (default + reply-from-same-address combined)
+4. **Send** the reply
+5. **Check** the external account — reply should appear From: `hello@hoiboy.uk`, no "via gmail.com" or "via brevo.com" annotations
+
+For full verification, "Show original" the received reply on the external side and confirm:
+- `signed-by: hoiboy.uk` (DKIM PASS — proves outbound DKIM signing works)
+- `mailed-by: smtp-relay.brevo.com` (proves it went through Brevo, not via Gmail's own SMTP)
+- TLS encrypted in transit
+- No `Sender:` header revealing `hoiboyuk@gmail.com`
+
+If any check fails, debug at https://www.mail-tester.com — send a test, get a 9/10+ score, fix anything that drops points (typically SPF alignment if you forgot to merge include:spf.brevo.com into the existing record, or DKIM if the CNAMEs aren't propagating).
 
 ## Rotation cadence
 
@@ -308,6 +392,10 @@ The Worker (Path B in `docs/cal-com-setup.md`) will consume these template IDs.
 9. **Brevo templates use `{{ params.X }}` substitution on the server.** Don't double-substitute on the Worker side. Pass raw user data, let Brevo render.
 10. **Empty params render as blank, not error.** During the first test send, `meeting_url` was not passed and the line "Google Meet:" rendered with nothing after the colon. Brevo doesn't fail the send; it just leaves the placeholder empty. Worker must always pass all expected params, or templates need defensive defaults.
 11. **Reply-To defaults to the Brevo account email, NOT the From: address.** Hit this 2026-05-08: first test send had `from: Hoi <hello@hoiboy.uk>` but `reply-to: hoiboyuk@gmail.com`. For brand-grade outbound, Reply-To MUST match From — leaks the operator's personal Gmail otherwise. Fix: either set `replyTo` per-template via `PUT /v3/smtp/templates/{id}` body `{"replyTo":"hello@hoiboy.uk"}`, or set `replyTo` per-send in `POST /v3/smtp/email`. We patched all 6 templates with the correct Reply-To. Worker should also set `replyTo` defensively in case template defaults change.
+
+12. **Gmail Send-as auto-fills the WRONG SMTP server.** It reads MX records and pre-populates `route3.mx.cloudflare.net` (Cloudflare Email Routing's inbound MX). Cloudflare's MX is inbound-only — it cannot send. You MUST override to `smtp-relay.brevo.com`. Same gotcha for Username field: Gmail pre-fills just `hello` (local part of address being added), not the actual SMTP login.
+13. **Gmail "Treat as alias" semantics are widely misunderstood.** The right value depends on whether the send-as address represents the SAME PERSON or a delegated identity. For solo-operator brand emails (`hello@hoiboy.uk` IS Hoi): TICK. For "assistant sends on behalf of CEO" patterns: untick. The "via" annotation is controlled by DKIM alignment, NOT by this checkbox — earlier draft of this runbook had this wrong, corrected 2026-05-08.
+14. **Three Reply-To controls exist, all need consistent values.** (a) Gmail Send-as Reply-To field, (b) Brevo template `replyTo` field, (c) Brevo per-send `replyTo` override. All three must point to `hello@hoiboy.uk` (or be left blank where blank means "use From"). Putting the personal Gmail in any of them leaks the operator address. Document explicitly when teaching this pattern to clients — it's the single most error-prone deliverability config.
 
 ### Reply-To override pattern
 
