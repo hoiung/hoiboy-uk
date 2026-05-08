@@ -31,4 +31,9 @@ exclude = [
   # which is not a real HTTP status. Sidebar profile link cannot be liveness-
   # checked from CI without a logged-in cookie. added: 2026-05-06; expires: 2026-08-04 (90 days)
   "^https?://(www\\.)?linkedin\\.com(/.*)?$",
+  # Cloudflare dashboard URLs require authentication; anonymous lychee
+  # requests get 403. Referenced in cloudflare-api-token-setup.md runbook
+  # as documented destinations for operator UI actions (token creation,
+  # dashboard navigation). added: 2026-05-08; expires: 2026-08-06 (90 days)
+  "^https?://dash\\.cloudflare\\.com(/.*)?$",
 ]
