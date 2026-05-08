@@ -80,26 +80,21 @@ strong, b { font-weight: 550; }
 }
 .sidebar nav a:hover, .sidebar nav a.active { color: var(--accent); }
 
-/* Consulting CTA — bordered button-style link in the sidebar nav.
+/* Consulting CTA — green-text link in the sidebar nav (no border).
    The single menu entry under [[consulting]] in menus.toml renders with
    class="cta-link". &nbsp; in the label glues 'AI Managed' and
    'Harness Services' so the natural wrap happens only at the middle
    space (2 lines on narrow desktop sidebar, single line on wider
    mobile nav block). */
-.sidebar nav .consulting-menu li { margin: 0.5rem 0; }
 .sidebar nav a.cta-link {
-  border: 1.5px solid #1f883d;
-  border-radius: 4px;
-  padding: 0.55rem 0.75rem;
-  text-align: center;
+  color: #1f883d;
+  font-weight: 600;
   line-height: 1.35;
-  font-weight: 500;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: color 0.15s ease;
 }
 .sidebar nav a.cta-link:hover,
 .sidebar nav a.cta-link.active {
-  background: rgba(31, 136, 61, 0.08);
-  color: #1f883d;
+  color: #166834;
 }
 
 .main { min-width: 0; max-width: 42rem; }
@@ -178,12 +173,9 @@ strong, b { font-weight: 550; }
   .reader-warning { background: #2a1612; border-left-color: #ff6b5a; }
   .reader-warning strong { color: #ff6b5a; }
   /* Brighten the consulting CTA green for dark-mode contrast */
-  .sidebar nav a.cta-link { border-color: #2ea043; }
+  .sidebar nav a.cta-link { color: #2ea043; }
   .sidebar nav a.cta-link:hover,
-  .sidebar nav a.cta-link.active {
-    background: rgba(46, 160, 67, 0.15);
-    color: #2ea043;
-  }
+  .sidebar nav a.cta-link.active { color: #4ac26b; }
 }
 
 /* Draft notice banner: used by draft-notice shortcode for unfinished posts */
