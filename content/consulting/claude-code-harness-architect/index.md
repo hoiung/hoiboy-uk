@@ -271,7 +271,7 @@ I built [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness), a multi-ag
 
 I shipped [ebay-seller-tool](https://github.com/hoiung/ebay-seller-tool), an MCP server I use on my own businesses. Commercial use, not a toy.
 
-I run a [live automated pullback swing trading platform](https://hoiboy.uk/trading/) on real capital. I designed it, Claude implemented, I babysit it daily. Nine thousand commits and counting. Eleven thousand strategy evaluations.
+I run a live [automated pullback swing trading platform](https://hoiboy.uk/trading/) on real capital. I designed it, Claude implemented, I babysit it daily. Nine thousand commits and counting. Eleven thousand strategy evaluations.
 
 The harness I install in your business is not a theoretical pattern. It is the one that survives contact with my own code (which is the one harness anyone honestly should be selling).
 
