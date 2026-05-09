@@ -15,9 +15,9 @@ When a sub-processor is added or replaced, affected clients are emailed the chan
 
 | Vendor | Service | Categories of data processed | Location of processing | Transfer mechanism (UK to data location) | DPA link | Last-verified date |
 |---|---|---|---|---|---|---|
-| **Anthropic** (Anthropic, PBC) | Claude API for transcript review and 8-section summarisation | Operator-redacted transcripts, summarisation prompts | US (Anthropic primary) | DPF + UK Extension (verify at https://www.dataprivacyframework.gov/list at engagement start); SCCs + UK IDTA + TRA fallback | https://www.anthropic.com/legal/dpa | 2026-05-09 |
-| **Google** (Google LLC / Google Ireland Limited via Google Workspace EU instance) | Google Meet recording + storage | Audio + video stream of recorded meetings (operator-controlled record toggle) | EU (Google Workspace EU region) | DPF + UK Extension; SCCs + UK IDTA fallback | https://workspace.google.com/terms/dpa_terms.html | 2026-05-09 |
-| **Backblaze** (Backblaze, Inc.) | B2 encrypted cloud backup of per-client encrypted volume | Encrypted blobs (Restic chunk-encrypted; Backblaze sees ciphertext only) | US (Backblaze primary US datacentres) | DPF + UK Extension; SCCs + UK IDTA + TRA fallback | https://www.backblaze.com/company/data-processing-addendum.html | 2026-05-09 |
+| **Anthropic** (Anthropic, PBC) | Claude API for transcript review and 8-section summarisation | Operator-redacted transcripts, summarisation prompts | US (Anthropic primary) | DPF + UK Extension (verify at https://www.dataprivacyframework.gov/list at engagement start); SCCs + UK IDTA + TRA fallback | https://www.anthropic.com/legal/commercial-terms (DPA available on request via sales) | 2026-05-09 |
+| **Google** (Google LLC / Google Ireland Limited via Google Workspace EU instance) | Google Meet recording + storage | Audio + video stream of recorded meetings (operator-controlled record toggle) | EU (Google Workspace EU region) | DPF + UK Extension; SCCs + UK IDTA fallback | https://cloud.google.com/terms/data-processing-addendum/ | 2026-05-09 |
+| **Backblaze** (Backblaze, Inc.) | B2 encrypted cloud backup of per-client encrypted volume | Encrypted blobs (Restic chunk-encrypted; Backblaze sees ciphertext only) | US (Backblaze primary US datacentres) | DPF + UK Extension; SCCs + UK IDTA + TRA fallback | https://www.backblaze.com/company/policy/dpa-for-eea-eu-residents | 2026-05-09 |
 | **Whisper-local** (representational entry; OpenAI Whisper open-source model running on operator workstation) | Local audio-to-text transcription | Raw audio (decrypted in-memory only during transcription) | UK (operator workstation in UK) | N/A (no third-party transfer; on-device processing) | N/A (open-source model; no DPA needed) | 2026-05-09 |
 | **Cloudflare** (Cloudflare, Inc.) | Email Routing for `hello@hoiboy.uk` inbound (consent / objection / erasure-request emails relating to recordings) | Inbound email metadata + body (transient routing only) | US (Cloudflare primary, global edge network) | DPF + UK Extension; SCCs + UK IDTA fallback | https://www.cloudflare.com/cloudflare-customer-dpa/ | 2026-05-09 |
 | **Brevo** (Sendinblue SAS) | SMTP relay for outbound transactional emails (consent confirmations, erasure receipts, sub-processor change notifications) | Email metadata + body (transient relay; Brevo retains delivery logs per their DPA) | EU (Brevo France) | EU adequacy + UK adequacy (Brevo France-resident); no SCCs needed for UK to EU | https://www.brevo.com/legal/termsofuse/ (DPA section) | 2026-05-09 |
@@ -37,7 +37,7 @@ When this page updates, affected Clients on active engagements receive an email 
 - **MSA §13** Data protection + meeting recording - cross-cutting framework.
 - **SOW §7.7** Recording + AI-transcription anchor - controller-classification + activation gate + retention table.
 - **DPA Schedule Annex 2** - source-of-truth canonical version of this list (per-engagement attached to each MSA + SOW).
-- **[Privacy Notice](/legal/privacy/)** - data-subject-facing Privacy Notice for site visitors and engaged clients.
+- **[Privacy Notice](https://hoiboy.uk/legal/privacy/)** - data-subject-facing Privacy Notice for site visitors and engaged clients.
 
 ## Update cadence
 

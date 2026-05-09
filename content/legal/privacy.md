@@ -63,7 +63,7 @@ We do NOT use voice biometric identification or face-recognition; speaker-verifi
 
 ### Recipients of your personal data (sub-processors)
 
-Recordings and transcripts pass through a sub-processor pipeline. The current vendor list, location of processing, transfer mechanism, and per-vendor DPA reference are documented at the **[Sub-Processors](/legal/sub-processors/)** page on this site.
+Recordings and transcripts pass through a sub-processor pipeline. The current vendor list, location of processing, transfer mechanism, and per-vendor DPA reference are documented at the **[Sub-Processors](https://hoiboy.uk/legal/sub-processors/)** page on this site.
 
 When we add or replace a sub-processor, we email affected Clients the change with effective-date **at least 30 days out**. Clients (and, indirectly, data subjects acting through Clients) may object on reasonable grounds within those 30 days.
 
