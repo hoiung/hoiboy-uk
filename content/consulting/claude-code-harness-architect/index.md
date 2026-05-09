@@ -76,9 +76,23 @@ If you are still with me, keep going. The rest of this page is not selling. It i
 
 <!-- iamhoi -->
 
-Short version: a harness is a custom-built wrapper around your chosen AI tools (Claude, ChatGPT, Cursor, Copilot, whatever you use), shaped to your business's actual work, with the workflows, guardrails, governance, and feedback loops baked in. Without one, AI is a clever assistant that occasionally forgets things and occasionally (mostly) hallucinates. With one, AI becomes a consistent, audit-trailed colleague that does the routine work the way YOU need it done. The difference between "fun in demos" and "actually useful every day".
+Short version: a harness is a custom-built wrapper around your chosen AI tools (Claude, ChatGPT, Cursor, Copilot, whatever you use), shaped to your business's actual work. Without one, AI is a clever assistant that occasionally forgets things and occasionally (mostly) hallucinates. With one, AI becomes a consistent, audit-trailed colleague that does the routine work the way YOU need it done. The difference between "fun in demos" and "actually useful every day".
 
 *(See the diagram just above: two concentric layers, six labelled segments in the specialised outer ring, AI agent at the centre, your human checkpoint outside.)*
+
+The "why do you need one" answer in plain English: it turns your subject matter experts into amplified versions of themselves. A meaningful chunk of every SME's week goes on work that is repeatable, well-understood, and (honestly) below their pay grade. Recurring spreadsheets. Compliance checks. Listing formats. Brief-to-copy translations. Audit reconciliations. Necessary work, done a thousand times, done by the wrong person.
+
+The harness digitises and automates that bottom layer. It runs the repeatable parts of their day as workflows the AI executes reliably, gated by your standards. Your SME stops being the person who DOES the routine work, and becomes the person who DIRECTS, REVIEWS, and applies their actual expertise on top. The thinking. The strategic calls. The customer relationships. The judgement calls only somebody with a decade in the trade can make. The bits AI cannot replicate, now or any time soon.
+
+A hero suit, basically. The harness is the suit. Your SME is still the one calling the shots. The suit amplifies. Same headcount, more output, less drained.
+
+How does the harness actually pull that off? Two halves working together.
+
+**Automation half.** Every business has work that is complex but repeatable. The harness takes those workflows, breaks them into smaller automation pieces, and stitches them back together as a sequence the AI runs reliably every time. Same input, same shape, same quality. Every time.
+
+**Governance half.** Without this layer, automation just generates slop faster. The harness wraps the workflow in rules, anti-patterns, validators, voice checks, evidence-enforced approvals, fail-loud guardrails, and a three-tier review. Every output passes through that gate BEFORE it reaches the human-in-the-loop checkpoint at the end. Your reviewer signs off what the harness has already vetted, instead of red-penning everything from scratch.
+
+Both halves matter. Automation without governance is a faster way to ship rubbish. Governance without automation is a thicker rule book nobody follows. Together they make the AI accountable AND the SME productive.
 
 Worth being precise about which harness we are talking about, because there are layers. Modern AI tools (Claude Code, Cursor, Copilot, ChatGPT, the lot) already ship with their own general-purpose harnesses underneath, which is what makes them roughly useful for everyone in roughly the same way. The harness I build for you sits ON TOP of that. It is the specialised layer for YOUR business: your workflows, your governance, your domain expertise, your competitive edge.
 
