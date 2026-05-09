@@ -1,20 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" width="1600" height="1200" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif" role="img" aria-labelledby="diagramTitle diagramDesc">
   <title id="diagramTitle">What is an AI harness</title>
-  <desc id="diagramDesc">Diagram of an AI harness with two concentric layers, on a dark background. The inner layer (dashed light grey ring) is the general-purpose harness that ships with Claude Code, Cursor, Anthropic Skills, and the Agent SDK. The outer layer (solid terracotta ring) is the specialised harness, divided into six segments arranged clockwise: Decision Rules at 12 o'clock, Research Method at 2 o'clock, Data Sources at 4 o'clock, Source Reliability at 6 o'clock, Problem Detectors at 8 o'clock, and Anti-Patterns at 10 o'clock. Each segment carries a two-line description of what that component does. The AI agent sits at the centre as a terracotta box. A brief enters from the left, flows through the layers, and exits as audit-trailed output to the right. A human-checkpoint box below the rings represents the SME reviewing before anything ships.</desc>
+  <desc id="diagramDesc">Diagram of an AI harness with two concentric layers, on a dark background. The inner layer (dashed light grey ring) is the general-purpose harness that ships with Claude Code, Cursor, Anthropic Skills, and the Agent SDK. The outer layer (solid terracotta ring) is the specialised harness governance layer, divided into six segments arranged clockwise: Decision Rules at 12 o'clock, Research Method at 2 o'clock, Data Sources at 4 o'clock, Source Reliability at 6 o'clock, Problem Detectors at 8 o'clock, and Anti-Patterns at 10 o'clock. Each segment carries a two-line description of what that component does. The AI agent sits at the centre as a terracotta box. A brief enters from the left, flows through the layers, and exits as audit-trailed output to the right. A green dashed automation arc surrounds both rings with clockwise arrowheads at NE, SE, SW, and NW positions, with an AUTOMATION label inside the arc near the top. A GOVERNANCE LAYER annotation in the upper-left points at the outer ring with a dashed terracotta arrow. A SPECIALISED HARNESS umbrella label in the upper-right has two fan-out arrows: a green arrow pointing at the green automation arc, and a terracotta arrow pointing at the red governance ring, indicating that the specialised harness encompasses both halves built for your business. A human-checkpoint box below the rings represents the SME reviewing before anything ships.</desc>
 
   <defs>
     <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
       <polygon points="0 0, 10 4, 0 8" fill="#e8e8e8"/>
     </marker>
+    <marker id="govarrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#c0533a"/>
+    </marker>
+    <marker id="autoarrow-marker" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#7aa869"/>
+    </marker>
+    <path id="auto-label-arc-b" d="M 385 600 A 415 415 0 0 1 1215 600" fill="none"/>
   </defs>
 
   <rect x="0" y="0" width="1600" height="1200" fill="#1a1a1a"/>
 
   <text x="800" y="60" text-anchor="middle" font-size="32" font-weight="600" fill="#e8e8e8">What is an AI harness?</text>
-  <text x="800" y="100" text-anchor="middle" font-size="18" font-style="italic" fill="#999">Inside the specialised layer is your trade's craft, codified.</text>
+  <text x="800" y="95" text-anchor="middle" font-size="18" font-style="italic" fill="#999">Inside the specialised layer is your trade's craft, codified.</text>
+  <text x="800" y="120" text-anchor="middle" font-size="16" font-style="italic" fill="#999">Two halves working together: governance (the rings) plus automation (the workflow loop).</text>
 
-  <text x="800" y="180" text-anchor="middle" font-size="22" font-weight="700" fill="#c0533a">SPECIALISED HARNESS: built for your business</text>
+  <!-- AUTOMATION arc (visual at r=440); text follows a separate path at r=415 inside the arc near the top -->
+  <circle cx="800" cy="600" r="440" fill="none" stroke="#7aa869" stroke-width="4" stroke-dasharray="14,8" opacity="0.9"/>
+  <g fill="#7aa869">
+    <polygon points="0,0 -14,-8 -14,8" transform="translate(1111, 289) rotate(45)"/>
+    <polygon points="0,0 -14,-8 -14,8" transform="translate(1111, 911) rotate(135)"/>
+    <polygon points="0,0 -14,-8 -14,8" transform="translate(489, 911) rotate(225)"/>
+    <polygon points="0,0 -14,-8 -14,8" transform="translate(489, 289) rotate(315)"/>
+  </g>
+  <text font-size="18" font-weight="700" fill="#7aa869" letter-spacing="6">
+    <textPath href="#auto-label-arc-b" startOffset="50%" text-anchor="middle">AUTOMATION</textPath>
+  </text>
+
+  <!-- GOVERNANCE LAYER annotation (upper-left); arrow now points AT the red outer ring at NW (531, 331) -->
+  <text x="100" y="335" font-size="22" font-weight="700" fill="#c0533a">GOVERNANCE LAYER</text>
+  <text x="100" y="362" font-size="13" fill="#999">rules, gates, anti-patterns,</text>
+  <text x="100" y="380" font-size="13" fill="#999">reviews, checkpoint</text>
+  <path d="M 280 360 Q 410 320 531 331" fill="none" stroke="#c0533a" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#govarrow)"/>
+
+  <!-- SPECIALISED HARNESS umbrella label (upper-right); two fan-out arrows: green to AUTOMATION arc, red to outer ring -->
+  <text x="1420" y="295" text-anchor="middle" font-size="20" font-weight="700"><tspan fill="#c0533a">SPECIALISED</tspan> <tspan fill="#7aa869">HARNESS</tspan></text>
+  <text x="1420" y="320" text-anchor="middle" font-size="14" font-style="italic" fill="#c0533a">built for your business</text>
+  <!-- Arrow 1 (green): umbrella -> green AUTOMATION arc at angle 60 (1181, 380) -->
+  <path d="M 1340 345 Q 1280 365 1181 380" fill="none" stroke="#7aa869" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#autoarrow-marker)"/>
+  <!-- Arrow 2 (red): umbrella -> red outer ring at angle 75 (1167, 502) -->
+  <path d="M 1340 345 Q 1280 400 1167 502" fill="none" stroke="#c0533a" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#govarrow)"/>
 
   <circle cx="800" cy="600" r="380" fill="none" stroke="#c0533a" stroke-width="6"/>
 
@@ -29,21 +61,21 @@
   <text x="800" y="308" text-anchor="middle" font-size="13" fill="#999">when to act, when to escalate</text>
   <text x="800" y="326" text-anchor="middle" font-size="13" fill="#999">what needs human sign-off</text>
 
-  <text x="1051" y="430" text-anchor="middle" font-size="17" font-weight="700" fill="#e8e8e8">RESEARCH METHOD</text>
+  <text x="1030" y="430" text-anchor="middle" font-size="17" font-weight="700" fill="#e8e8e8">RESEARCH METHOD</text>
   <text x="1051" y="453" text-anchor="middle" font-size="13" fill="#999">what to look for, in order</text>
   <text x="1051" y="471" text-anchor="middle" font-size="13" fill="#999">when to stop, when to dig</text>
 
   <text x="1051" y="745" text-anchor="middle" font-size="17" font-weight="700" fill="#e8e8e8">DATA SOURCES</text>
-  <text x="1051" y="768" text-anchor="middle" font-size="13" fill="#999">which APIs, docs, databases</text>
-  <text x="1051" y="786" text-anchor="middle" font-size="13" fill="#999">how to fetch, where to cache</text>
+  <text x="1025" y="768" text-anchor="middle" font-size="13" fill="#999">which APIs, docs, databases</text>
+  <text x="1025" y="786" text-anchor="middle" font-size="13" fill="#999">how to fetch, where to cache</text>
 
   <text x="800" y="900" text-anchor="middle" font-size="17" font-weight="700" fill="#e8e8e8">SOURCE RELIABILITY</text>
   <text x="800" y="923" text-anchor="middle" font-size="13" fill="#999">what to trust, what to flag</text>
   <text x="800" y="941" text-anchor="middle" font-size="13" fill="#999">verification before citing</text>
 
   <text x="549" y="745" text-anchor="middle" font-size="17" font-weight="700" fill="#e8e8e8">PROBLEM DETECTORS</text>
-  <text x="549" y="768" text-anchor="middle" font-size="13" fill="#999">known failure modes</text>
-  <text x="549" y="786" text-anchor="middle" font-size="13" fill="#999">drift indicators, regressions</text>
+  <text x="580" y="768" text-anchor="middle" font-size="13" fill="#999">known failure modes</text>
+  <text x="580" y="786" text-anchor="middle" font-size="13" fill="#999">drift indicators, regressions</text>
 
   <text x="549" y="430" text-anchor="middle" font-size="17" font-weight="700" fill="#e8e8e8">ANTI-PATTERNS</text>
   <text x="549" y="453" text-anchor="middle" font-size="13" fill="#999">what NEVER to do</text>
@@ -63,7 +95,7 @@
   <line x1="1015" y1="600" x2="1540" y2="600" stroke="#e8e8e8" stroke-width="3" marker-end="url(#arrowhead)"/>
   <text x="1540" y="578" text-anchor="end" font-size="16" font-weight="600" fill="#e8e8e8">audit-trailed output</text>
 
-  <rect x="660" y="1060" width="280" height="56" fill="none" stroke="#e8e8e8" stroke-width="3" rx="8"/>
-  <text x="800" y="1096" text-anchor="middle" font-size="18" font-weight="700" fill="#e8e8e8">HUMAN CHECKPOINT</text>
-  <text x="800" y="1145" text-anchor="middle" font-size="14" fill="#999">(your SME reviews before anything ships)</text>
+  <rect x="660" y="1080" width="280" height="56" fill="none" stroke="#e8e8e8" stroke-width="3" rx="8"/>
+  <text x="800" y="1116" text-anchor="middle" font-size="18" font-weight="700" fill="#e8e8e8">HUMAN CHECKPOINT</text>
+  <text x="800" y="1165" text-anchor="middle" font-size="14" fill="#999">(your SME reviews before anything ships)</text>
 </svg>
