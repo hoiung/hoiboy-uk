@@ -80,10 +80,13 @@ strong, b { font-weight: 550; }
 }
 .sidebar nav a:hover, .sidebar nav a.active { color: var(--accent); }
 
-/* Consulting menu link inherits default nav styling. The label includes a
-   <br class="break-sm-up"> which forces a 2-line wrap on desktop sidebar.
-   On mobile burger menu the <br> is hidden via the media query below so
-   the link shows on a single line. */
+/* Consulting menu link inherits default nav styling. The label is split into
+   two .cta-line spans; on desktop they become block-level (forcing a 2-line
+   wrap), on mobile they stay inline so the link renders on a single line.
+   Desktop block toggle lives in the min-width:769px media query below. */
+@media (min-width: 769px) {
+  .consulting-menu .cta-line { display: block; }
+}
 
 .main { min-width: 0; max-width: 42rem; }
 .breadcrumbs {
@@ -252,9 +255,6 @@ footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule);
   .menu-toggle-input:checked ~ .menu-toggle-btn span::before { top: 0; transform: rotate(45deg); }
   .menu-toggle-input:checked ~ .menu-toggle-btn span::after { top: 0; transform: rotate(-45deg); }
 
-  /* Consulting menu CTA: hide the desktop <br> on mobile burger menu so
-     'AI Managed Harness Services' renders on a single line. */
-  br.break-sm-up { display: none; }
 }
 
 /* Stats tables */

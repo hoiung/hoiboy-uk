@@ -7,11 +7,13 @@
   weight = 10
 
 [[consulting]]
-  # Explicit <br class="break-sm-up"> forces 2-line wrap on desktop sidebar;
-  # CSS media query hides the <br> below the 768px burger-menu breakpoint so
-  # the burger menu shows a single line. Single-quoted TOML literal string
+  # Two .cta-line spans force 2-line wrap on desktop sidebar via CSS
+  # display:block at min-width:769px; on mobile they stay inline and the
+  # literal space between them is the word separator. Span approach avoids
+  # the <br>+whitespace minifier trap (tdewolff strips whitespace adjacent
+  # to <br> in production builds). Single-quoted TOML literal string
   # avoids escaping the inner double quotes.
-  name = 'AI Managed <br class="break-sm-up">Harness Services'
+  name = '<span class="cta-line">AI Managed</span> <span class="cta-line">Harness Services</span>'
   url = "/consulting/claude-code-harness-architect/"
   weight = 10
 
