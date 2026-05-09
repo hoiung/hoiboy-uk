@@ -11,7 +11,7 @@
   # CSS media query hides the <br> below the 768px burger-menu breakpoint so
   # the burger menu shows a single line. Single-quoted TOML literal string
   # avoids escaping the inner double quotes.
-  name = 'AI Managed<br class="break-sm-up">Harness Services'
+  name = 'AI Managed <br class="break-sm-up">Harness Services'
   url = "/consulting/claude-code-harness-architect/"
   weight = 10
 
