@@ -84,7 +84,9 @@ The "why do you need one" answer in plain English: it turns your subject matter 
 
 The harness digitises and automates that bottom layer. It runs the repeatable parts of their day as workflows the AI executes reliably, gated by your standards. Your SME stops being the person who DOES the routine work, and becomes the person who DIRECTS, REVIEWS, and applies their actual expertise on top. The thinking. The strategic calls. The customer relationships. The judgement calls only somebody with a decade in the trade can make. The bits AI cannot replicate, now or any time soon.
 
-A hero suit, basically. The harness is the suit. Your SME is still the one calling the shots. The suit amplifies. Same headcount, more output, less drained.
+A hero suit, basically. The harness is the suit. Your SME is still the one calling the shots. The suit amplifies. Same headcount, more output, less drained. Picture Iron Man: it is a suit that still needs the hero to wear it.
+
+Why not just go full automation and replace the human entirely? Android instead of cyborg? Good question if that is what you are thinking. Ask yourself: with the state of AI today, would you put 100% faith and trust in AI? (You have probably seen the stories of AI deleting a company's entire production database in 9 seconds. Not here to scaremonger. That was almost certainly poor architecture and giving AI full control over every layer. That is just dumb.) Right now a hero suit makes more sense. We still need the human in the loop. The human orchestrator. The subject matter expert who can sanity-check that the AI is doing it right, steer it through small errors and refinements, and make the calls that should not be made by AI and need the kind of complex thought only humans bring.
 
 How does the harness actually pull that off? Two halves working together.
 
