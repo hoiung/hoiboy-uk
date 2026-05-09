@@ -80,7 +80,7 @@ Short version: a harness is a custom-built wrapper around your chosen AI tools (
 
 *(See the diagram just above: two concentric layers, six labelled segments in the specialised outer ring, AI agent at the centre, your human checkpoint outside.)*
 
-The "why do you need one" answer in plain English: it turns your subject matter experts into amplified versions of themselves. A meaningful chunk of every SME's week goes on work that is repeatable, well-understood, and (honestly) below their pay grade. Recurring spreadsheets. Compliance checks. Listing formats. Brief-to-copy translations. Audit reconciliations. Necessary work, done a thousand times, done by the wrong person.
+The "why do you need one" answer in plain English: it turns your subject matter experts into amplified versions of themselves. A meaningful chunk of every SME's week goes on work that is repeatable, well-understood, and (honestly) a poor use of their hours. Recurring spreadsheets. Compliance checks. Listing formats. Brief-to-copy translations. Audit reconciliations. Necessary work, done a thousand times manually. The SME is the right person to DESIGN the workflow that handles it. Running it by hand a thousand times is what the harness takes off their plate.
 
 The harness digitises and automates that bottom layer. It runs the repeatable parts of their day as workflows the AI executes reliably, gated by your standards. Your SME stops being the person who DOES the routine work, and becomes the person who DIRECTS, REVIEWS, and applies their actual expertise on top. The thinking. The strategic calls. The customer relationships. The judgement calls only somebody with a decade in the trade can make. The bits AI cannot replicate, now or any time soon.
 
