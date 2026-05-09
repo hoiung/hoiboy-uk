@@ -189,7 +189,7 @@ At a glance. All prices exclude VAT (charged at the prevailing rate; VAT-registe
 | 5. Per-harness build and rollout | £12K-£30K typical (fixed-fee output of audit; scales with rollout footprint) | Custom-scoped per audit; build is shaped by rollout shape (1-user harness vs 20-user harness = different jobs); single fee covers both dimensions; volume discount for multi-harness commitments at engagement open |
 | 6. SME harness manual + tutoring workshop | £750 per harness | One SME-day post-build; hands-on training for your team; manual baked INTO the harness so it answers "how do I use you?" on demand |
 | 7. Tier 1 first-month support | Free | 8 hours of my time per harness across the first calendar month post-workshop (not full-time availability) |
-| 8. Tier 3 Monthly Maintenance Package | £400/mo per harness on month-to-month, or £340/mo per harness on a 12-month annual commit | Deliverable-anchored: closed drift events + monthly report (NOT a retainer, NOT hours-metered); covers AI model / dependency / configuration drift; not feature work |
+| 8. Tier 3 Monthly Maintenance Package | £400/mo per harness on month-to-month, or £340/mo per harness on a 12-month annual commit | Deliverable-anchored: closed drift events + monthly report (NOT a retainer, NOT hours-metered); covers AI model / dependency / configuration drift; not feature work. Effort cap (my side, internal): up to 5 hours per harness per month; overage rate £150/h, agreed in writing on the engagement Issue before I exceed the cap; unused hours do NOT roll over month-to-month; 14-day termination notice either side |
 | 9. Out-of-scope work (new features, additional harnesses, mid-engagement changes) | Significant: fresh audit (£750/SME-day) + custom-quoted build SOW. Smaller pieces: pro-rata £750/SME-day, half-day minimum | Same audit-first discipline as the original engagement; maintenance-scoped change-orders may qualify for Tier 2 hourly pack if you have one |
 | Optional. Tier 2 hourly pack | £1,500 / 10 hours | Existing clients only (must have at least one harness shipped); maintenance scope only |
 
@@ -285,6 +285,17 @@ And keep reading me on this blog as I build and deliver more AI-related work (no
 I am UK-based. Most clients land within the UK and pay in GBP, no fuss. International clients are welcome too: if scope needs me on-site somewhere outside the UK, happy to fly, but you cover travel, accommodation, food, and any other reasonable on-site expenses at cost (no markup). Remote-only engagements work the same regardless of geography.
 
 For UK clients specifically: I run an outside-IR35 working-practice posture by design (right of substitution, no mutuality of obligation between SOW phases, phase-gated invoicing, multiple-clients diversification, IR35 contract review on the SOW). If you are inside-UK and AI-spend approval has procurement implications, ask on the discovery call.
+
+## What You Need to Get Started
+
+The short pre-flight checklist before we kick off. None of this is exotic; if you have shipped any modern software at your business, you almost certainly have it already.
+
+- **A GitHub account** (Pro, Team, or Enterprise on your side). Your custom harness lives in a private repo in your own GitHub org with full version history, rollback, and audit trail. If your team has no GitHub presence yet, I have a setup runbook and we cover the org/account creation on the kickoff call.
+- **Team machines that can run the AI tool**. Mac, Windows, or Linux all work; the team members who interact with the harness day-to-day need a workstation each. No special hardware.
+- **A Claude Max subscription per active user** (your direct subscription with Anthropic). Recommend Claude Max 20x per user for daily harness operation, or whichever Anthropic tier fits your usage agreement. This is separate from anything I bill you for.
+- **Existing infrastructure ownership stays your lane**. Machine procurement, backups for any data your existing apps generate, data-residency decisions for your existing tools. I build and run the harness inside your GitHub; everything else stays where it already lives.
+
+If any of these is a blocker, raise it on the discovery call and we work the path forward together (I have setup runbooks for each one).
 
 ## Ready?
 
