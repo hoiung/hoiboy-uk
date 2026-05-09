@@ -49,7 +49,7 @@ We record and AI-transcribe consultancy sessions to capture decisions, action it
 
 Our **lawful basis** is **Article 6(1)(f) Legitimate Interest**. The Legitimate Interest Assessment (LIA) for each engagement is filed before the first recording session commences. We do NOT rely on a consent tickbox as the lawful basis; you are notified of the recording behaviour (this notice + the engagement-letter §7 + the verbal-on-record script) and have a standalone Article 21 right to object.
 
-For HMRC-retained financial artefacts (time-logs, invoices, VAT records), our lawful basis is **Article 6(1)(c) Legal Obligation** (HMRC 6+1 year retention via Article 17(3)(b) override).
+For HMRC-retained financial artefacts (time-logs, invoices, VAT records), our lawful basis is **Article 6(1)(c) Legal Obligation** (HMRC 6+1 year retention via Article 17(3)(b) override; statutory bases: Companies Act 2006 s.388 + VAT Act 1994 s.21 + VAT Regulations 1995 reg.31 + Corporation Tax Act 2010 enquiry-window buffer).
 
 ### Categories of personal data processed
 
