@@ -52,6 +52,7 @@ _ALLOW_SINGLE = frozenset(
         "consulting",
         "skills",
         "about",
+        "legal",  # /legal/ section index (consulting-ops#6 Phase 6)
         "index.xml",
         "sitemap.xml",
     ]
@@ -62,7 +63,7 @@ _ALLOW_SINGLE = frozenset(
 # segment). /consulting/<slug>/ is a content page bundle; /tags|series/<slug>/
 # is a taxonomy term page; /<section>/index.xml is the per-section RSS feed
 # Hugo emits for each _index.md.
-_ALLOW_TWO_PREFIX = frozenset(["consulting", "tags", "series"])
+_ALLOW_TWO_PREFIX = frozenset(["consulting", "tags", "series", "legal"])
 
 # Pre-compiled patterns.
 # Shortcode strip — Hugo shortcodes look like `{{< name args >}}` or `{{% ... %}}`.
