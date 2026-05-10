@@ -262,7 +262,7 @@ table { border-collapse: collapse; width: auto; margin: 1.5rem 0; }
 th, td { border: 1px solid var(--rule); padding: 0.4rem 0.75rem; text-align: left; color: var(--fg); }
 th { background: var(--bg-card); font-weight: 600; }
 
-/* Wide-content tables (e.g. /legal/sub-processors/) — fixed layout, smaller font, scoped column widths */
+/* Wide-content tables (e.g. /legal/sub-processors/): fixed layout, smaller font, scoped column widths */
 .sub-processor-table { width: 100%; overflow-x: auto; }
 .sub-processor-table table { width: 100%; table-layout: fixed; font-size: 0.82rem; margin: 1rem 0; }
 .sub-processor-table th, .sub-processor-table td { padding: 0.3rem 0.5rem; word-wrap: break-word; overflow-wrap: break-word; vertical-align: top; }
