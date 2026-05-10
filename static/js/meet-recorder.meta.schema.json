@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://hoiboy.uk/private/tools/meet-recorder/meta.schema.json",
+  "title": "Meet recorder sidecar metadata (.meta.json)",
+  "type": "object",
+  "required": [
+    "engagement_id",
+    "session_id",
+    "date_utc",
+    "start_time_utc",
+    "end_time_utc",
+    "duration_minutes",
+    "topic",
+    "google_meet_url",
+    "attendees",
+    "processing_metadata",
+    "retention_schedule",
+    "ropa_close_out"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "engagement_id":     { "type": "string", "minLength": 1 },
+    "session_id":        { "type": "string", "pattern": "^S[0-9]{6}$" },
+    "date_utc":          { "type": "string", "format": "date" },
+    "start_time_utc":    { "type": "string", "format": "date-time" },
+    "end_time_utc":      { "type": "string", "format": "date-time" },
+    "duration_minutes":  { "type": "number", "minimum": 0 },
+    "topic":             { "type": "string", "minLength": 1 },
+    "google_meet_url":   { "type": "string", "format": "uri" },
+    "attendees": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "email"],
+        "additionalProperties": false,
+        "properties": {
+          "name":  { "type": "string", "minLength": 1 },
+          "email": { "type": "string", "format": "email" },
+          "role":  { "type": "string" }
+        }
+      }
+    },
+    "processing_metadata": {
+      "type": "object",
+      "required": [
+        "recording_stack",
+        "transcription_engine",
+        "speaker_diarisation",
+        "ai_review_model",
+        "ai_review_status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "recording_stack":      { "type": "string" },
+        "transcription_engine": { "type": "string" },
+        "speaker_diarisation":  { "type": "string" },
+        "ai_review_model":      { "type": "string" },
+        "ai_review_status":     {
+          "type": "string",
+          "enum": ["pending", "fired", "skipped"]
+        }
+      }
+    },
+    "retention_schedule": {
+      "type": "object",
+      "required": [
+        "raw_destruction_date",
+        "transcript_destruction_date",
+        "summary_destruction_date",
+        "hmrc_override_applies"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "raw_destruction_date":        { "type": "string", "format": "date" },
+        "transcript_destruction_date": { "type": "string", "format": "date" },
+        "summary_destruction_date":    { "type": "string", "format": "date" },
+        "hmrc_override_applies":       { "type": "boolean" }
+      }
+    },
+    "ropa_close_out": {
+      "type": "object",
+      "required": [
+        "transcript_location",
+        "ai_review_fired_timestamp",
+        "retention_clock_set",
+        "consent_method_used",
+        "jurisdiction_screen_result",
+        "vulnerable_attendee_assessment_result",
+        "dpf_re_verification_result"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "transcript_location":                     { "type": "string" },
+        "ai_review_fired_timestamp":               { "type": "string", "format": "date-time" },
+        "retention_clock_set":                     { "type": "string", "format": "date" },
+        "consent_method_used":                     { "type": "string" },
+        "jurisdiction_screen_result":              {
+          "type": "string",
+          "enum": [
+            "uk-only",
+            "cipa-state-with-addendum",
+            "bdsg-german-employee",
+            "cnil-french-employee",
+            "unknown-jurisdiction-off"
+          ]
+        },
+        "vulnerable_attendee_assessment_result": {
+          "type": "string",
+          "enum": [
+            "clear",
+            "language-barrier-interpreter-needed",
+            "capacity-concern-recording-off",
+            "coercion-pattern-flagged"
+          ]
+        },
+        "dpf_re_verification_result": {
+          "type": "string",
+          "enum": ["all-active", "fallback-to-sccs", "skipped"]
+        }
+      }
+    }
+  }
+}
