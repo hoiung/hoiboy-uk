@@ -1,0 +1,36 @@
+{
+  "engagement_id": "singerandsteel",
+  "session_id": "S000001",
+  "date_utc": "2026-05-12",
+  "start_time_utc": "2026-05-12T13:30:00Z",
+  "end_time_utc": "2026-05-12T14:17:00Z",
+  "duration_minutes": 47,
+  "topic": "audit-kickoff",
+  "google_meet_url": "https://meet.google.com/abc-defg-hij",
+  "attendees": [
+    {"name": "Sarah Mock", "email": "sarah@example.com", "role": "client-lead"},
+    {"name": "Hoi Ng",    "email": "hello@hoiboy.uk", "role": "operator"}
+  ],
+  "processing_metadata": {
+    "recording_stack": "browser-fsa-meet-recorder",
+    "transcription_engine": "faster-whisper-1.2.0+whisperx-3.0.0",
+    "speaker_diarisation": "pyannote-3.1.0",
+    "ai_review_model": "claude-haiku-4-5-20251001",
+    "ai_review_status": "fired"
+  },
+  "retention_schedule": {
+    "raw_destruction_date": "2026-06-11",
+    "transcript_destruction_date": "2026-11-08",
+    "summary_destruction_date": "2032-05-12",
+    "hmrc_override_applies": false
+  },
+  "ropa_close_out": {
+    "transcript_location": "private/consulting/engagements/singerandsteel/transcripts/20260512-1330_singerandsteel_audit-kickoff_S000001.transcript.md",
+    "ai_review_fired_timestamp": "2026-05-12T14:25:00Z",
+    "retention_clock_set": "2026-05-12",
+    "consent_method_used": "verbal-on-record-all-attendees",
+    "jurisdiction_screen_result": "uk-only",
+    "vulnerable_attendee_assessment_result": "clear",
+    "dpf_re_verification_result": "all-active"
+  }
+}
