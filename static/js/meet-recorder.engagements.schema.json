@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://hoiboy.uk/private/tools/meet-recorder/engagements.schema.json",
+  "title": "Local FSA engagements registry (.engagements.json)",
+  "type": "object",
+  "required": ["engagements"],
+  "additionalProperties": false,
+  "properties": {
+    "engagements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slug", "recording_status"],
+        "additionalProperties": false,
+        "properties": {
+          "slug":             { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,14}$" },
+          "recording_status": {
+            "type": "string",
+            "enum": [
+              "enabled-and-attendees-notified",
+              "mixed",
+              "disabled-this-engagement"
+            ]
+          },
+          "engagement_letter_signed_date": { "type": "string", "format": "date" },
+          "client_legal_name":             { "type": "string" }
+        }
+      }
+    }
+  }
+}
