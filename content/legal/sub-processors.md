@@ -13,6 +13,8 @@ When a sub-processor is added or replaced, affected clients are emailed the chan
 
 ## Current sub-processors
 
+<div class="sub-processor-table">
+
 | Vendor | Service | Categories of data processed | Location of processing | Transfer mechanism (UK to data location) | DPA link | Last-verified date |
 |---|---|---|---|---|---|---|
 | **Anthropic** (Anthropic, PBC) | Claude API for transcript review and 8-section summarisation | Operator-redacted transcripts, summarisation prompts | US (Anthropic primary) | DPF + UK Extension (verify at https://www.dataprivacyframework.gov/list at engagement start); SCCs + UK IDTA + TRA fallback | https://www.anthropic.com/legal/commercial-terms (DPA available on request via sales) | 2026-05-09 |
@@ -23,6 +25,8 @@ When a sub-processor is added or replaced, affected clients are emailed the chan
 | **Whisper-local: pyannote 3.1** (open-source, pyannote.audio 3.1 speaker diarisation; runs on master tier; HuggingFace model download requires HF token, which is operator-only and never transmitted to clients) | Speaker diarisation labelling segments as SPEAKER_<n> generic tags only (Article 9 stack-config: never names) | In-memory diarisation labels | UK (master tier; same workstation as above) | N/A on-device for diarisation; one-time HuggingFace model download via DPF/UK Extension when first installed | N/A (open-source; one-time HF download covered by HuggingFace DPF entry) | 2026-05-10 |
 | **Cloudflare** (Cloudflare, Inc.) | Email Routing for `hello@hoiboy.uk` inbound (consent / objection / erasure-request emails relating to recordings) | Inbound email metadata + body (transient routing only) | US (Cloudflare primary, global edge network) | DPF + UK Extension; SCCs + UK IDTA fallback | https://www.cloudflare.com/cloudflare-customer-dpa/ | 2026-05-09 |
 | **Brevo** (Sendinblue SAS) | SMTP relay for outbound transactional emails (consent confirmations, erasure receipts, sub-processor change notifications) | Email metadata + body (transient relay; Brevo retains delivery logs per their DPA) | EU (Brevo France) | EU adequacy + UK adequacy (Brevo France-resident); no SCCs needed for UK to EU | https://www.brevo.com/legal/termsofuse/ (DPA section) | 2026-05-09 |
+
+</div>
 
 ## Change-notification mechanism
 
