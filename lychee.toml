@@ -11,6 +11,14 @@ timeout = 20
 retry_wait_time = 2
 accept = [200, 201, 202, 203, 204, 301, 302, 307, 308]
 
+# Base URL for resolving root-relative links (href="/js/...") found in raw
+# markdown. Hugo rewrites these at render but lychee scans raw .md and would
+# otherwise fail with "Cannot convert path to URI: To resolve root-relative
+# links in local files, provide a root dir". Resolved URLs go through the
+# hoiboy.uk allowlist exclude below, so the production site doesn't get
+# hammered by CI -- the path-construction just has to succeed.
+base = "https://hoiboy.uk"
+
 # File path globs to skip (lychee scans args from CLI, this filters them).
 # `public/posts` is excluded because per-post pre-publish.sh already validates
 # the rendered HTML for blog posts; `public/consulting` is INTENTIONALLY NOT
