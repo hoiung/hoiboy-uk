@@ -220,26 +220,27 @@ test('volume-probe: write-failure surfaces fail-loud message', async () => {
 
 // AC 2.7 -- inbox-path-coupling: dirHandle resolved-name compared to
 // operator-configured WHISPER_INBOX; mismatch surfaces visible warning DOM
-// node.
+// node. IDs mirror production index.md exactly.
 test('inbox-path-coupling: mismatch surfaces visible warning', () => {
   const doc = makeDom(`
-    <span id="inbox-resolved-label"></span>
-    <div id="inbox-mismatch-warning" hidden></div>`);
-  function reflectInbox(resolvedName, configured) {
-    doc.getElementById('inbox-resolved-label').textContent = resolvedName;
-    const warn = doc.getElementById('inbox-mismatch-warning');
-    if (resolvedName !== configured) {
-      warn.hidden = false;
-      warn.textContent = `Mismatch: FSA dir "${resolvedName}" != WHISPER_INBOX "${configured}". Pipeline will not fire.`;
-    } else {
-      warn.hidden = true;
-      warn.textContent = '';
-    }
+    <input id="whisper-inbox-config" type="text" />
+    <code id="inbox-resolved">(none picked yet)</code>
+    <p id="inbox-path-warning" hidden role="alert"></p>`);
+  function reflectInboxLabel(handle) {
+    const expected = (doc.getElementById('whisper-inbox-config')?.value || '').trim();
+    doc.getElementById('inbox-resolved').textContent = handle.name;
+    const warn = doc.getElementById('inbox-path-warning');
+    const mismatch = expected && !expected.endsWith(handle.name);
+    warn.hidden = !mismatch;
+    warn.textContent = mismatch
+      ? `Picked dir "${handle.name}" does not match WHISPER_INBOX configured leaf "${expected}". Recorder will refuse to start until they agree (lab-vs-master pipeline coupling).`
+      : '';
   }
-  reflectInbox('whisper-inbox', 'whisper-inbox');
-  assert.equal(doc.getElementById('inbox-mismatch-warning').hidden, true);
-  reflectInbox('Downloads', 'whisper-inbox');
-  const warn = doc.getElementById('inbox-mismatch-warning');
+  doc.getElementById('whisper-inbox-config').value = 'whisper-inbox';
+  reflectInboxLabel({ name: 'whisper-inbox' });
+  assert.equal(doc.getElementById('inbox-path-warning').hidden, true);
+  reflectInboxLabel({ name: 'Downloads' });
+  const warn = doc.getElementById('inbox-path-warning');
   assert.equal(warn.hidden, false);
-  assert.match(warn.textContent, /Mismatch.*WHISPER_INBOX/);
+  assert.match(warn.textContent, /does not match WHISPER_INBOX/);
 });
