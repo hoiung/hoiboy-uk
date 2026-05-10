@@ -391,8 +391,13 @@
         rec.onstop = async () => {
           stream.getTracks().forEach(t => t.stop());
           ctx.close();
-          const audio = new Audio(URL.createObjectURL(new Blob(chunks, { type: 'audio/webm' })));
-          await audio.play().catch(() => { /* user-gesture failure tolerated */ });
+          const blobUrl = URL.createObjectURL(new Blob(chunks, { type: 'audio/webm' }));
+          const audio = new Audio(blobUrl);
+          try {
+            await audio.play().catch(() => { /* user-gesture failure tolerated */ });
+          } finally {
+            URL.revokeObjectURL(blobUrl);
+          }
           window.dispatchEvent(new Event('meet-recorder:step6-playback-ok'));
           // Tickbox stays disabled; user clicks "Playback OK" to enable.
         };
