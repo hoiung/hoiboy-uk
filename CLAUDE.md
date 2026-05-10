@@ -340,6 +340,10 @@ wrangler pages deploy public --project-name=hoiboy-uk --branch=main
 - Voice profile (in-repo, distilled): `docs/research/11_VOICE_PROFILE.md`
 - Voice profile (canonical, full ~80K corpus analysis): `../job-hunter/cv-linkedin/VOICE_PROFILE.md`
 
+## Operator-only tools (unlisted, noindex)
+
+- `/private/tools/meet-recorder/` — operator-only Meet capture page (consulting-ops#8). Browser File System Access API writes `.webm` + `.meta.json` to the operator-picked directory; the path-unit on NAD9 master fires the local Whisper pipeline. Chromium-only (fail-loud on Firefox/Safari). CSP scoped via `static/_headers`. Voice-guard exclusion in CI for the verbatim consent-script literal.
+
 ---
 
 *Template Version: SST3.0.0*
