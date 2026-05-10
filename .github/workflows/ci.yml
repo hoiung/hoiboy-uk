@@ -86,15 +86,18 @@ jobs:
 
       - name: Em-dash voice guard (zero tolerance)
         # content/posts/ excluded: voice-sacred legacy import (pre-AI corpus, issue #2)
+        # content/private/tools/meet-recorder/ excluded: tool page must reproduce the
+        # consulting-ops verbal-consent script verbatim (em-dashes in source, AC 1.4
+        # diffs DOM textContent against runbook line 30). consulting-ops#8.
         # scripts/ excluded: source code, not voice prose. Voice rules apply only
         # inside <!-- iamhoi --> markers per SST3 marker-driven model (dotfiles b874c01).
         run: |
           set -e
-          MATCHES=$(grep -rln --exclude-dir=posts $'\u2014' content layouts assets config docs README.md 2>/dev/null || true)
+          MATCHES=$(grep -rln --exclude-dir=posts --exclude-dir=meet-recorder $'\u2014' content layouts assets config docs README.md 2>/dev/null || true)
           if [ -n "$MATCHES" ]; then
             echo "::error::Em dashes found in tracked files (voice rule):"
             echo "$MATCHES"
-            grep -rn --exclude-dir=posts $'\u2014' content layouts assets config docs README.md 2>/dev/null || true
+            grep -rn --exclude-dir=posts --exclude-dir=meet-recorder $'\u2014' content layouts assets config docs README.md 2>/dev/null || true
             exit 1
           fi
 
