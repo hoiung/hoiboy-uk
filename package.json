@@ -1,0 +1,14 @@
+{
+  "name": "hoiboy-uk",
+  "version": "0.1.0",
+  "description": "hoiboy.uk Hugo site — JS test deps for the meet-recorder tool only.",
+  "private": true,
+  "scripts": {
+    "test": "node --test static/js/meet-recorder.test.js"
+  },
+  "devDependencies": {
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
+    "jsdom": "^24.0.0"
+  }
+}
