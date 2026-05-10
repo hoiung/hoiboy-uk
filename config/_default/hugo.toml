@@ -49,7 +49,7 @@ disableHugoGeneratorInject = true
 
 [markup]
   [markup.goldmark.renderer]
-    unsafe = false
+    unsafe = true
   [markup.highlight]
     style = "github"
     noClasses = false
