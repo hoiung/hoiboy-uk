@@ -36,11 +36,11 @@ test('slugify: topic with non-ASCII normalises', () => {
 test('slugify: topic "abc 123 xyz" -> "abc-123-xyz"', () => {
   assert.equal(slugify('abc 123 xyz', 25), 'abc-123-xyz');
 });
-test('slugify: client-slug "Singer And Steel International" -> 15-char "singer-and-stee"', () => {
-  assert.equal(slugify('Singer And Steel International', 15), 'singer-and-stee');
+test('slugify: long-name truncation -> 15-char prefix', () => {
+  assert.equal(slugify('Acme Widgets International', 15), 'acme-widgets-in');
 });
-test('slugify: client-slug "DUCK & BEAR LTD" -> "duck-bear-ltd"', () => {
-  assert.equal(slugify('DUCK & BEAR LTD', 15), 'duck-bear-ltd');
+test('slugify: ampersand + LTD suffix collapse', () => {
+  assert.equal(slugify('Foo & Bar LTD', 15), 'foo-bar-ltd');
 });
 test('slugify: client-slug "Acme Corp" -> "acme-corp"', () => {
   assert.equal(slugify('Acme Corp', 15), 'acme-corp');
