@@ -49,7 +49,11 @@ disableHugoGeneratorInject = true
 
 [markup]
   [markup.goldmark.renderer]
-    unsafe = false
+    # Raw HTML allowed: meet-recorder tool page (consulting-ops#8) embeds form HTML
+    # inline so AC 1.3 grep-count for data-runbook-step lands on index.md, not on a
+    # layout/shortcode. hoiboy-uk content is operator-authored only - no user-generated
+    # input pipeline that would make this risky.
+    unsafe = true
   [markup.highlight]
     style = "github"
     noClasses = false
