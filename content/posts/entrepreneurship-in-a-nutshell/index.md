@@ -15,7 +15,7 @@ description: "From a karaoke bar that never opened to the AI business I'm runnin
 ---
 
 <!-- iamhoi -->
-2005. I was 23, fresh into my first proper job as a Systems Administrator at SunGard Availability Services in London. Earning a real salary for the first time. Three months in, I had the role figured out and my brain was already drifting. The work was fine. The work was boring. I wanted something bigger.
+2005\. I was 23, fresh into my first proper job as a Systems Administrator at SunGard Availability Services in London. Earning a real salary for the first time. Three months in, I had the role figured out and my brain was already drifting. The work was fine. The work was boring. I wanted something bigger.
 
 Then a friend pitched me a karaoke bar. Then it became a karaoke restaurant, because a pure karaoke bar only really makes money on room rental and snacks and drinks, and a restaurant catches lunch trade too. That was the logic, anyway.
 
