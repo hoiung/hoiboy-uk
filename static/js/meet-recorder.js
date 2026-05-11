@@ -107,8 +107,13 @@
 
   // ---------- Mode toggle (#9 AC 2.1 / 2.3 / 2.5) ----------
   // Sections hidden by `mode-personal` (default). Compliance mode reveals all 13.
+  // section-engagement stays VISIBLE in personal mode because it contains the
+  // one-line `attestation-engagement-letter-signed` self-attestation which is
+  // required in both modes per #9 AC 2.5 (the engagement-letter-signed gate
+  // protects pre-signature S&S dry-run recording). The 8 sections below are
+  // the truly-dormant compliance UI.
   const PERSONAL_HIDE_SECTIONS = [
-    'section-engagement', 'section-runbook-checklist', 'section-jurisdiction',
+    'section-runbook-checklist', 'section-jurisdiction',
     'section-vulnerable', 'section-dpf', 'section-lpp', 'section-attestations-art9',
     'section-mode-toggles', 'section-notes',
   ];

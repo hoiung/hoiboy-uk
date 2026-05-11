@@ -260,8 +260,11 @@ function makeMeetRecorderDom() {
     </section>`);
 }
 
+// section-engagement intentionally NOT in the hide list — it carries the
+// one-line engagement-letter-signed self-attestation that #9 AC 2.5 requires
+// in both modes (engagementSignedAttested() stays required to gate Record).
 const PERSONAL_HIDE_SECTIONS = [
-  'section-engagement', 'section-runbook-checklist', 'section-jurisdiction',
+  'section-runbook-checklist', 'section-jurisdiction',
   'section-vulnerable', 'section-dpf', 'section-lpp', 'section-attestations-art9',
   'section-mode-toggles', 'section-notes',
 ];
