@@ -325,4 +325,4 @@ Wow... You've made it all the way to the bottom of this page. It means we are pr
 
 ---
 
-TANTUNG LTD, registered in England and Wales (Companies House 10566169). VAT registration: pending HMRC issuance. Contact: hello@hoiboy.uk.
+Hoiboy AI Ltd, registered in England and Wales (Companies House 17211412). VAT registration: pending HMRC issuance. Contact: hello@hoiboy.uk.
