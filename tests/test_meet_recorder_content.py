@@ -8,7 +8,7 @@ engagement gate, or JS-script tag would fail loud before a re-deploy.
 
 Validates:
   * YAML frontmatter parses + has the noindex/sitemap-disable safety flags
-  * Verbatim consent script literal is intact (TANTUNG LTD + hoiboy.uk +
+  * Verbatim consent script literal is intact (HOIBOY AI LTD + hoiboy.uk +
     UK GDPR Article 17 references all present)
   * 13 named <section> elements covering the 10 pre-meeting checklist +
     engagement gate + Article 9 attestations + recording fields
@@ -61,7 +61,7 @@ def test_verbatim_consent_script_intact(frontmatter_and_body):
         "data-verbal-consent-script",
         "starting the recording",
         "transcribed with the help of AI tools",
-        "TANTUNG LTD as data controller",
+        "HOIBOY AI LTD as data controller",
         "hello@hoiboy.uk",
         "UK GDPR Article 17",
         "Is everyone here happy for me to continue recording",
