@@ -65,17 +65,17 @@
     "retention_schedule": {
       "type": "object",
       "required": [
-        "raw_destruction_date",
-        "transcript_destruction_date",
-        "summary_destruction_date",
-        "hmrc_override_applies"
+        "audio_delete_target_days",
+        "transcript_delete_target",
+        "summary_delete_target",
+        "brief_retention_target_years"
       ],
       "additionalProperties": false,
       "properties": {
-        "raw_destruction_date":        { "type": "string", "format": "date" },
-        "transcript_destruction_date": { "type": "string", "format": "date" },
-        "summary_destruction_date":    { "type": "string", "format": "date" },
-        "hmrc_override_applies":       { "type": "boolean" }
+        "audio_delete_target_days":     { "type": "number", "minimum": 0 },
+        "transcript_delete_target":     { "type": "string" },
+        "summary_delete_target":        { "type": "string" },
+        "brief_retention_target_years": { "type": "number", "minimum": 0 }
       }
     },
     "ropa_close_out": {
@@ -84,40 +84,17 @@
         "transcript_location",
         "ai_review_fired_timestamp",
         "retention_clock_set",
-        "consent_method_used",
-        "jurisdiction_screen_result",
-        "vulnerable_attendee_assessment_result",
-        "dpf_re_verification_result"
+        "consent_method_used"
       ],
       "additionalProperties": false,
       "properties": {
         "transcript_location":                     { "type": "string" },
         "ai_review_fired_timestamp":               { "type": "string", "format": "date-time" },
         "retention_clock_set":                     { "type": "string", "format": "date" },
-        "consent_method_used":                     { "type": "string" },
-        "jurisdiction_screen_result":              {
-          "type": "string",
-          "enum": [
-            "uk-only",
-            "cipa-state-with-addendum",
-            "bdsg-german-employee",
-            "cnil-french-employee",
-            "unknown-jurisdiction-off"
-          ]
-        },
-        "vulnerable_attendee_assessment_result": {
-          "type": "string",
-          "enum": [
-            "clear",
-            "language-barrier-interpreter-needed",
-            "capacity-concern-recording-off",
-            "coercion-pattern-flagged"
-          ]
-        },
-        "dpf_re_verification_result": {
-          "type": "string",
-          "enum": ["all-active", "fallback-to-sccs", "skipped"]
-        }
+        "consent_method_used":                     { "type": ["string", "null"] },
+        "jurisdiction_screen_result":              { "type": ["string", "null"] },
+        "vulnerable_attendee_assessment_result":   { "type": ["string", "null"] },
+        "dpf_re_verification_result":              { "type": ["string", "null"] }
       }
     }
   }
