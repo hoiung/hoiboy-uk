@@ -144,7 +144,7 @@ sitemap:
   <label>Attendees: one per line. Just a name is fine, or use <code>Name &lt;email&gt; (role)</code> with the brackets/parens to include details (helps the AI label speakers):
     <textarea id="field-attendees" rows="4" placeholder="Sarah Mock&#10;Tom Steel &lt;tom@example.com&gt; (cto)"></textarea>
   </label>
-  <p>Next session ID: <output id="session-id-display">S000001</output> <small>(auto-generated, written into .meta.json + filename in compliance mode)</small></p>
+  <p>Next session ID: <output id="session-id-display">S000001</output> <small>(auto-generated; written into .meta.json + filename)</small></p>
 
   <div data-personal-hide="true" id="meta-fields-compliance-only">
     <hr />
