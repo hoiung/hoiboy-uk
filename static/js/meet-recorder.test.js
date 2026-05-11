@@ -248,6 +248,7 @@ function makeMeetRecorderDom() {
     <section id="section-meta-fields">
       <input id="engagement-id" type="text" list="engagement-id-history" />
       <datalist id="engagement-id-history"></datalist>
+      <label data-personal-hide="true"><input id="field-session-id" /></label>
       <label data-personal-hide="true"><input id="field-attendees" /></label>
       <fieldset data-personal-hide="true">
         <input type="radio" name="consent-method" value="verbal-on-record-all-attendees" checked />
@@ -403,6 +404,56 @@ test('#9 AC 2.10: banner-cal-com-never-recorded visible in personal mode with th
   const banner = doc.getElementById('banner-cal-com-never-recorded');
   assert.equal(banner.hidden, false, 'banner visible by default (informational, not blocking)');
   assert.match(banner.textContent, /Pre-engagement Cal\.com discovery calls are NEVER recorded/);
+});
+
+// nextSessionId spec mirror -- production lives at meet-recorder.js:397-411.
+// Personal mode reads a localStorage counter and pads to S\d{6}; compliance
+// mode reads field-session-id and validates the same pattern. Drift between
+// the padStart(6,'0') and the schema's '^S[0-9]{6}$' regex would corrupt
+// every personal-mode .meta.json sidecar with no test guard otherwise.
+function specNextSessionId(doc, storage) {
+  const mode = doc.querySelector('input[name="mode"]:checked')?.value;
+  if (mode === 'personal') {
+    const key = 'meet-recorder:auto-session-counter';
+    const n = (Number(storage.getItem(key)) || 0) + 1;
+    storage.setItem(key, String(n));
+    return 'S' + String(n).padStart(6, '0');
+  }
+  const v = (doc.getElementById('field-session-id')?.value || '').trim();
+  if (!/^S[0-9]{6}$/.test(v)) throw new Error('session_id must match S\\d{6}');
+  return v;
+}
+function makeStorageStub() {
+  const data = new Map();
+  return {
+    getItem: (k) => (data.has(k) ? data.get(k) : null),
+    setItem: (k, v) => { data.set(k, v); },
+  };
+}
+
+test('#9 AC 2.6/2.7: nextSessionId personal mode increments localStorage counter and pads to S\\d{6}', () => {
+  const doc = makeMeetRecorderDom();
+  const storage = makeStorageStub();
+  const a = specNextSessionId(doc, storage);
+  const b = specNextSessionId(doc, storage);
+  const c = specNextSessionId(doc, storage);
+  assert.equal(a, 'S000001');
+  assert.equal(b, 'S000002');
+  assert.equal(c, 'S000003');
+  assert.match(a, /^S[0-9]{6}$/, 'matches schema pattern');
+  assert.equal(storage.getItem('meet-recorder:auto-session-counter'), '3');
+});
+
+test('#9 AC 2.6/2.7: nextSessionId compliance mode reads field-session-id and validates S\\d{6}; throws on mismatch', () => {
+  const doc = makeMeetRecorderDom();
+  doc.getElementById('mode-personal').checked = false;
+  doc.getElementById('mode-compliance').checked = true;
+  const storage = makeStorageStub();
+  const input = doc.getElementById('field-session-id');
+  input.value = 'S000042';
+  assert.equal(specNextSessionId(doc, storage), 'S000042');
+  input.value = 'session-42';
+  assert.throws(() => specNextSessionId(doc, storage), /session_id must match/);
 });
 
 
