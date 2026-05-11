@@ -45,9 +45,9 @@
 #  - harness_architect.monthly_maintenance_package.continuity_gap_trigger_months -> consulting-ops/templates/sow-harness-architect.md §[Term] 30-day-after-12-months clause (AC 4.5)
 
 business:
-  legal_name: "TANTUNG LTD"
-  companies_house: "10566169"
-  vat_number: null      # null until HMRC voluntary-VAT issuance lands per consulting-ops#2 Phase 8 AC 8.2.
+  legal_name: "Hoiboy AI Ltd"
+  companies_house: "17211412"
+  vat_number: null      # null until HMRC voluntary-VAT issuance lands; Hoiboy AI Ltd not yet at £90k threshold, no paid clients yet (consulting-ops#10 AC 2.7 deferred per same logic that closed TANTUNG VAT AC).
 
 harness_architect:
   # Live booking URL (replaced 2026-05-08 — Cal.com EU instance, event-type id 284432).
