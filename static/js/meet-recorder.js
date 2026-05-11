@@ -265,15 +265,12 @@
         appendEngagementIdHistory(engagementIdRaw);
       } catch (e) { /* persistence is non-fatal — keep recording */ }
 
-      // Personal mode (#9 Stage 5 follow-up): drop session_id from the filename
-      // for a clean human-facing artefact (S-id stays inside .meta.json for
-      // schema validity + dormant compliance), and use second-precision so
-      // collisions are physically impossible in a manual click flow.
-      // Compliance mode keeps the original minute-precision + S-id schema
-      // because the S-id is the ROPA row key + audit-trail anchor.
-      const baseName = currentMode() === 'personal'
-        ? `${ymdHms(state.startedAt)}_${clientSlug}_${topicSlug}`
-        : `${ymdHm(state.startedAt)}_${clientSlug}_${topicSlug}_${sessionId}`;
+      // #9 Stage 5 follow-up — unified filename schema for both modes now that
+      // session_id is auto-generated + visible to the operator (the read-only
+      // session-id-display element drives this). Second-precision stamp
+      // (ymdHms) makes intra-minute collision physically impossible and
+      // sorts more cleanly in a file picker.
+      const baseName = `${ymdHms(state.startedAt)}_${clientSlug}_${topicSlug}_${sessionId}`;
 
       state.fileHandle = await state.fsaDirHandle.getFileHandle(`${baseName}.webm`,      { create: true });
       state.metaHandle = await state.fsaDirHandle.getFileHandle(`${baseName}.meta.json`, { create: true });

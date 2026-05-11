@@ -61,10 +61,8 @@ function ymdHms(d) {
   const pad = n => String(n).padStart(2, '0');
   return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}-${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}`;
 }
-function buildBaseName(mode, startedAt, clientSlug, topicSlug, sessionId) {
-  return mode === 'personal'
-    ? `${ymdHms(startedAt)}_${clientSlug}_${topicSlug}`
-    : `${ymdHm(startedAt)}_${clientSlug}_${topicSlug}_${sessionId}`;
+function buildBaseName(startedAt, clientSlug, topicSlug, sessionId) {
+  return `${ymdHms(startedAt)}_${clientSlug}_${topicSlug}_${sessionId}`;
 }
 
 test('ymdHm + ymdHms: UTC zero-padded; second-precision adds trailing SS', () => {
@@ -73,16 +71,10 @@ test('ymdHm + ymdHms: UTC zero-padded; second-precision adds trailing SS', () =>
   assert.equal(ymdHms(d), '20260511-114532');
 });
 
-test('#9 Stage 5: personal-mode filename drops session_id and uses second-precision', () => {
+test('#9 Stage 5 follow-up: unified filename schema (second-precision + session_id, both modes)', () => {
   const d = new Date(Date.UTC(2026, 4, 11, 11, 45, 32));
-  assert.equal(buildBaseName('personal', d, 'singerandsteel', 'audit-kickoff', 'S000001'),
-               '20260511-114532_singerandsteel_audit-kickoff');
-});
-
-test('#9 Stage 5: compliance-mode filename keeps minute-precision + session_id', () => {
-  const d = new Date(Date.UTC(2026, 4, 11, 11, 45, 32));
-  assert.equal(buildBaseName('compliance', d, 'singerandsteel', 'audit-kickoff', 'S000001'),
-               '20260511-1145_singerandsteel_audit-kickoff_S000001');
+  assert.equal(buildBaseName(d, 'singerandsteel', 'audit-kickoff', 'S000001'),
+               '20260511-114532_singerandsteel_audit-kickoff_S000001');
 });
 
 // #9 Stage 5 follow-up — ropa_close_out audit fields branch by mode.
