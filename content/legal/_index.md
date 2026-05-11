@@ -8,7 +8,7 @@ hideDate: true
 
 This section publishes the data-protection and sub-processor disclosure documentation for **TANTUNG LTD** (UK Companies House 10566169), the legal entity behind hoiboy.uk's AI Managed Harness Services consultancy.
 
-- **[Privacy Notice](https://hoiboy.uk/legal/privacy/)** - covers personal data collected via the site and via consultancy engagements (including meeting recordings and AI-transcription).
+- **[Privacy Notice](https://hoiboy.uk/legal/privacy/)** - covers site visitor data (analytics, contact-form enquiries, Cal.com booking) and, secondarily, the personal data processed during signed consultancy engagements.
 - **[Sub-Processors](https://hoiboy.uk/legal/sub-processors/)** - current vendor list with locations, transfer mechanisms, and DPA references.
 
 Updates are date-stamped via the `lastmod` field on each page; clients on active engagements are notified of material changes by email.
