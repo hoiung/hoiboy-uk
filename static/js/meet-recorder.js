@@ -70,8 +70,74 @@
     };
   })();
 
+  // ---------- IndexedDB session persistence (#9 AC 2.6 / 2.6b / 2.7) ----------
+  const sessionStore = (() => {
+    const DB = 'meet-recorder-session', STORE = 'session', KEY = 'lastSession';
+    function open() {
+      return new Promise((res, rej) => {
+        const req = indexedDB.open(DB, 1);
+        req.onupgradeneeded = () => req.result.createObjectStore(STORE);
+        req.onsuccess = () => res(req.result);
+        req.onerror   = () => rej(req.error);
+      });
+    }
+    return {
+      async save(record) {
+        const db = await open();
+        await new Promise((r, j) => {
+          const tx = db.transaction(STORE, 'readwrite');
+          tx.objectStore(STORE).put(record, KEY);
+          tx.oncomplete = r; tx.onerror = () => j(tx.error);
+        });
+        db.close();
+      },
+      async load() {
+        const db = await open();
+        const record = await new Promise((r, j) => {
+          const tx = db.transaction(STORE, 'readonly');
+          const req = tx.objectStore(STORE).get(KEY);
+          req.onsuccess = () => r(req.result || null);
+          req.onerror   = () => j(req.error);
+        });
+        db.close();
+        return record;
+      },
+    };
+  })();
+
+  // ---------- Mode toggle (#9 AC 2.1 / 2.3 / 2.5) ----------
+  // Sections hidden by `mode-personal` (default). Compliance mode reveals all 13.
+  const PERSONAL_HIDE_SECTIONS = [
+    'section-engagement', 'section-runbook-checklist', 'section-jurisdiction',
+    'section-vulnerable', 'section-dpf', 'section-lpp', 'section-attestations-art9',
+    'section-mode-toggles', 'section-notes',
+  ];
+
+  function currentMode() {
+    const checked = document.querySelector('input[name="mode"]:checked');
+    return checked ? checked.value : 'personal';
+  }
+  function applyModeToggle() {
+    const personal = currentMode() === 'personal';
+    PERSONAL_HIDE_SECTIONS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.hidden = personal;
+    });
+    document.querySelectorAll('[data-personal-hide="true"]').forEach(el => {
+      el.hidden = personal;
+    });
+    refreshRecordButtonState();
+  }
+  function wireModeToggle() {
+    document.querySelectorAll('input[name="mode"]').forEach(radio => {
+      radio.addEventListener('change', applyModeToggle);
+    });
+    applyModeToggle();
+  }
+
   // ---------- Top-level flow ----------
   document.addEventListener('DOMContentLoaded', async () => {
+    wireModeToggle();            // #9 AC 2.1 — personal/compliance mode
     wireRunbookChecklist();      // AC 1.3 — 10-item runbook step UI
     wireJurisdictionScreen();    // AC 1.5
     wireVulnerableAssessment();  // AC 1.6
@@ -82,6 +148,7 @@
     wireMidMeetingControls();    // AC 1.16
     wireConsentDeclineAbort();   // AC 1.17
     wireArticle9Attestations();  // AC 1.19
+    await wireSessionPersistence();  // #9 AC 2.6 / 2.6b / 2.7
 
     document.getElementById('btn-pick-inbox')?.addEventListener('click', pickInboxDir);
     document.getElementById('btn-record')?.addEventListener('click', startRecording);
@@ -168,14 +235,29 @@
       // AC 1.18 — encrypted-volume write-time probe (1 byte)
       await writeProbe(state.fsaDirHandle);
 
-      // Filename + slug schema (AC 1.12)
-      const clientSlug = slugify(document.getElementById('field-client-slug').value, 15);
+      // Filename + slug schema (AC 1.12). Personal mode (#9 AC 2.2) hides the
+      // separate client-slug input; engagement-id doubles as the client slug.
+      const engagementIdRaw = (document.getElementById('engagement-id')?.value || '').trim();
+      const clientSlug = currentMode() === 'personal'
+        ? slugify(engagementIdRaw, 15)
+        : slugify(document.getElementById('field-client-slug').value, 15);
       const topicSlug  = slugify(document.getElementById('field-topic-slug').value,  25);
-      if (!clientSlug || !topicSlug) { failLoud('Client + topic slugs required.'); return; }
+      if (!clientSlug || !topicSlug) { failLoud('Engagement + topic required.'); return; }
 
       const sessionId = await nextSessionId();
       state.sessionId = sessionId;
       state.startedAt = new Date();
+
+      // #9 AC 2.6 — persist session state to IndexedDB on Record-start.
+      try {
+        await sessionStore.save({
+          engagementId:       engagementIdRaw,
+          topicSlug:          topicSlug,
+          lastInboxDirHandle: state.fsaDirHandle,
+          lastUsedAtIso:      state.startedAt.toISOString(),
+        });
+        appendEngagementIdHistory(engagementIdRaw);
+      } catch (e) { /* persistence is non-fatal — keep recording */ }
 
       const stamp = ymdHm(state.startedAt);
       const baseName = `${stamp}_${clientSlug}_${topicSlug}_${sessionId}`;
@@ -308,6 +390,14 @@
     return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}-${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}`;
   }
   async function nextSessionId() {
+    // Personal mode auto-generates a session-id from a localStorage counter
+    // (the section-meta-fields session-id input is hidden in personal mode).
+    if (currentMode() === 'personal') {
+      const key = 'meet-recorder:auto-session-counter';
+      const n = (Number(localStorage.getItem(key)) || 0) + 1;
+      localStorage.setItem(key, String(n));
+      return 'S' + String(n).padStart(6, '0');
+    }
     // Browser cannot read consulting-ops/dpa/session-registry.md — operator-typed value used here.
     // Service-side session-id.py owns the canonical increment; this is the operator-supplied claim.
     const v = (document.getElementById('field-session-id')?.value || '').trim();
@@ -315,6 +405,8 @@
     return v;
   }
   function attestationsAllChecked() {
+    const mode = currentMode();
+    if (mode === 'personal') return true;  // #9 AC 2.5 — short-circuit in personal mode (no 13-section gate)
     const required = ['attestation-claude-art9', 'attestation-meet-art9'];   // AC 1.19 (2 boxes)
     return required.every(name => document.querySelector(`input[name="${name}"]`)?.checked);
   }
@@ -326,7 +418,7 @@
     const d = state.startedAt;
     const end = new Date();
     return {
-      engagement_id: document.getElementById('field-engagement-id').value,
+      engagement_id: document.getElementById('engagement-id').value,
       session_id:    state.sessionId,
       date_utc:      d.toISOString().slice(0, 10),
       start_time_utc: d.toISOString(),
@@ -474,6 +566,68 @@
   function wireConsentDeclineAbort() { document.getElementById('btn-abort-delete')?.addEventListener('click', abortAndDelete); }
   function wireArticle9Attestations() { /* tickboxes live in index.md; checked via attestationsAllChecked */ }
 
+  // ---------- Session persistence + datalist autocomplete (#9 AC 2.6 / 2.6b / 2.7) ----------
+  const ENGAGEMENT_ID_HISTORY_KEY = 'meet-recorder:engagement-id-history';
+  function readEngagementIdHistory() {
+    try { return JSON.parse(localStorage.getItem(ENGAGEMENT_ID_HISTORY_KEY) || '[]'); }
+    catch { return []; }
+  }
+  function appendEngagementIdHistory(id) {
+    if (!id) return;
+    const list = readEngagementIdHistory().filter(x => x !== id);
+    list.unshift(id);
+    localStorage.setItem(ENGAGEMENT_ID_HISTORY_KEY, JSON.stringify(list.slice(0, 20)));
+    populateEngagementIdDatalist();
+  }
+  function populateEngagementIdDatalist() {
+    const dl = document.getElementById('engagement-id-history');
+    if (!dl) return;
+    dl.innerHTML = '';
+    for (const id of readEngagementIdHistory()) {
+      const opt = document.createElement('option');
+      opt.value = id;
+      dl.appendChild(opt);
+    }
+  }
+  async function wireSessionPersistence() {
+    // Datalist seeds from localStorage history.
+    populateEngagementIdDatalist();
+
+    // Engagement-id input controls Record-button enablement (AC 2.6b).
+    const idInput = document.getElementById('engagement-id');
+    idInput?.addEventListener('input', refreshRecordButtonState);
+
+    // Confirm-banner from last session: surface DOM but do NOT auto-populate the input (AC 2.6b).
+    const banner = document.getElementById('banner-last-session');
+    if (!banner) return;
+    let last = null;
+    try { last = await sessionStore.load(); } catch { last = null; }
+    if (!last || !last.engagementId) return;
+    banner.hidden = false;
+    banner.textContent = `Last session: ${last.engagementId} / ${last.topicSlug || ''} (${last.lastUsedAtIso || ''}). `;
+    const useBtn = document.createElement('button');
+    useBtn.type = 'button';
+    useBtn.id = 'btn-use-last-session';
+    useBtn.textContent = 'Use these values';
+    useBtn.addEventListener('click', () => {
+      if (idInput) {
+        idInput.value = last.engagementId;
+        idInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      const topicEl = document.getElementById('field-topic-slug');
+      if (topicEl && last.topicSlug) topicEl.value = last.topicSlug;
+      banner.hidden = true;
+    });
+    const clearBtn = document.createElement('button');
+    clearBtn.type = 'button';
+    clearBtn.id = 'btn-clear-last-session';
+    clearBtn.textContent = 'Clear';
+    clearBtn.addEventListener('click', () => { banner.hidden = true; });
+    banner.appendChild(useBtn);
+    banner.appendChild(document.createTextNode(' '));
+    banner.appendChild(clearBtn);
+  }
+
   // ---------- Permission-log queue (writes back to FSA at session close) ----------
   function queuePermissionLogRow(row) {
     const buf = JSON.parse(localStorage.getItem('meet-recorder:permission-queue') || '[]');
@@ -485,7 +639,10 @@
   function refreshRecordButtonState() {
     const btn = document.getElementById('btn-record');
     if (!btn) return;
-    btn.disabled = !state.fsaDirHandle || !attestationsAllChecked() || !engagementSignedAttested();
+    const engagementIdEl = document.getElementById('engagement-id');
+    const hasEngagementId = !!(engagementIdEl && engagementIdEl.value.trim());
+    btn.disabled = !state.fsaDirHandle || !attestationsAllChecked()
+                || !engagementSignedAttested() || !hasEngagementId;
   }
   function setRunningUI(running) {
     document.getElementById('btn-record')?.toggleAttribute('disabled', running);
