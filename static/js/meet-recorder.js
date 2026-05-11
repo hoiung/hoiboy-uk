@@ -154,6 +154,7 @@
     wireConsentDeclineAbort();   // AC 1.17
     wireArticle9Attestations();  // AC 1.19
     await wireSessionPersistence();  // #9 AC 2.6 / 2.6b / 2.7
+    refreshSessionIdDisplay();       // #9 Stage 5 follow-up — show NEXT auto S-id
 
     document.getElementById('btn-pick-inbox')?.addEventListener('click', pickInboxDir);
     document.getElementById('btn-record')?.addEventListener('click', startRecording);
@@ -408,20 +409,28 @@
     const pad = n => String(n).padStart(2, '0');
     return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}-${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}`;
   }
+  function peekNextSessionId() {
+    const key = 'meet-recorder:auto-session-counter';
+    const n = (Number(localStorage.getItem(key)) || 0) + 1;
+    return 'S' + String(n).padStart(6, '0');
+  }
   async function nextSessionId() {
-    // Personal mode auto-generates a session-id from a localStorage counter
-    // (the section-meta-fields session-id input is hidden in personal mode).
-    if (currentMode() === 'personal') {
-      const key = 'meet-recorder:auto-session-counter';
-      const n = (Number(localStorage.getItem(key)) || 0) + 1;
-      localStorage.setItem(key, String(n));
-      return 'S' + String(n).padStart(6, '0');
-    }
-    // Browser cannot read consulting-ops/dpa/session-registry.md — operator-typed value used here.
-    // Service-side session-id.py owns the canonical increment; this is the operator-supplied claim.
-    const v = (document.getElementById('field-session-id')?.value || '').trim();
-    if (!/^S[0-9]{6}$/.test(v)) throw new Error('session_id must match S\\d{6}');
-    return v;
+    // #9 Stage 5 follow-up: session_id is now ALWAYS auto-generated from the
+    // browser-local counter, in both personal and compliance modes. The
+    // manual field-session-id input has been removed — there is no
+    // operator-typed override path. Display element session-id-display
+    // shows the value pre-record (refreshSessionIdDisplay) and refreshes
+    // after each increment so the operator always sees the NEXT S-id.
+    const key = 'meet-recorder:auto-session-counter';
+    const n = (Number(localStorage.getItem(key)) || 0) + 1;
+    localStorage.setItem(key, String(n));
+    const id = 'S' + String(n).padStart(6, '0');
+    refreshSessionIdDisplay();
+    return id;
+  }
+  function refreshSessionIdDisplay() {
+    const el = document.getElementById('session-id-display');
+    if (el) el.textContent = peekNextSessionId();
   }
   function attestationsAllChecked() {
     const mode = currentMode();

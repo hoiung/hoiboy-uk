@@ -337,8 +337,8 @@ function makeMeetRecorderDom() {
       <label><input id="field-topic-slug" type="text" /></label>
       <label><input id="field-meet-url" type="url" /></label>
       <label><textarea id="field-attendees"></textarea></label>
+      <output id="session-id-display">S000001</output>
       <div data-personal-hide="true" id="meta-fields-compliance-only">
-        <label><input id="field-session-id" type="text" /></label>
         <label><input id="field-client-slug" type="text" /></label>
         <fieldset>
           <input type="radio" name="consent-method" value="verbal-on-record-all-attendees" checked />
@@ -497,22 +497,21 @@ test('#9 AC 2.10: banner-cal-com-never-recorded visible in personal mode with th
   assert.match(banner.textContent, /Pre-engagement Cal\.com discovery calls are NEVER recorded/);
 });
 
-// nextSessionId spec mirror -- production lives at meet-recorder.js:397-411.
-// Personal mode reads a localStorage counter and pads to S\d{6}; compliance
-// mode reads field-session-id and validates the same pattern. Drift between
-// the padStart(6,'0') and the schema's '^S[0-9]{6}$' regex would corrupt
-// every personal-mode .meta.json sidecar with no test guard otherwise.
-function specNextSessionId(doc, storage) {
-  const mode = doc.querySelector('input[name="mode"]:checked')?.value;
-  if (mode === 'personal') {
-    const key = 'meet-recorder:auto-session-counter';
-    const n = (Number(storage.getItem(key)) || 0) + 1;
-    storage.setItem(key, String(n));
-    return 'S' + String(n).padStart(6, '0');
-  }
-  const v = (doc.getElementById('field-session-id')?.value || '').trim();
-  if (!/^S[0-9]{6}$/.test(v)) throw new Error('session_id must match S\\d{6}');
-  return v;
+// nextSessionId spec mirror — production lives at meet-recorder.js (post
+// #9 Stage 5 follow-up). Both personal AND compliance modes auto-generate
+// the session_id from a single browser-local localStorage counter. The
+// manual field-session-id input has been removed. peekNextSessionId is
+// the increment-free reader used by refreshSessionIdDisplay.
+function specPeekNextSessionId(storage) {
+  const key = 'meet-recorder:auto-session-counter';
+  const n = (Number(storage.getItem(key)) || 0) + 1;
+  return 'S' + String(n).padStart(6, '0');
+}
+function specNextSessionId(storage) {
+  const key = 'meet-recorder:auto-session-counter';
+  const n = (Number(storage.getItem(key)) || 0) + 1;
+  storage.setItem(key, String(n));
+  return 'S' + String(n).padStart(6, '0');
 }
 function makeStorageStub() {
   const data = new Map();
@@ -522,12 +521,11 @@ function makeStorageStub() {
   };
 }
 
-test('#9 AC 2.6/2.7: nextSessionId personal mode increments localStorage counter and pads to S\\d{6}', () => {
-  const doc = makeMeetRecorderDom();
+test('#9 AC 2.6/2.7: nextSessionId increments the localStorage counter and pads to S\\d{6} (both modes)', () => {
   const storage = makeStorageStub();
-  const a = specNextSessionId(doc, storage);
-  const b = specNextSessionId(doc, storage);
-  const c = specNextSessionId(doc, storage);
+  const a = specNextSessionId(storage);
+  const b = specNextSessionId(storage);
+  const c = specNextSessionId(storage);
   assert.equal(a, 'S000001');
   assert.equal(b, 'S000002');
   assert.equal(c, 'S000003');
@@ -535,16 +533,20 @@ test('#9 AC 2.6/2.7: nextSessionId personal mode increments localStorage counter
   assert.equal(storage.getItem('meet-recorder:auto-session-counter'), '3');
 });
 
-test('#9 AC 2.6/2.7: nextSessionId compliance mode reads field-session-id and validates S\\d{6}; throws on mismatch', () => {
-  const doc = makeMeetRecorderDom();
-  doc.getElementById('mode-personal').checked = false;
-  doc.getElementById('mode-compliance').checked = true;
+test('#9 Stage 5 follow-up: nextSessionId works identically regardless of mode (no manual input)', () => {
   const storage = makeStorageStub();
-  const input = doc.getElementById('field-session-id');
-  input.value = 'S000042';
-  assert.equal(specNextSessionId(doc, storage), 'S000042');
-  input.value = 'session-42';
-  assert.throws(() => specNextSessionId(doc, storage), /session_id must match/);
+  // Personal mode call
+  assert.equal(specNextSessionId(storage), 'S000001');
+  // Compliance mode call uses same counter, no mode argument needed
+  assert.equal(specNextSessionId(storage), 'S000002');
+});
+
+test('#9 Stage 5 follow-up: peekNextSessionId reports the NEXT id without incrementing the counter (drives session-id-display)', () => {
+  const storage = makeStorageStub();
+  assert.equal(specPeekNextSessionId(storage), 'S000001');
+  assert.equal(specPeekNextSessionId(storage), 'S000001', 'multiple peeks stay idempotent');
+  assert.equal(specNextSessionId(storage),      'S000001');
+  assert.equal(specPeekNextSessionId(storage), 'S000002', 'after one increment, peek reports the next');
 });
 
 
