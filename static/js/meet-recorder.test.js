@@ -85,6 +85,56 @@ test('#9 Stage 5: compliance-mode filename keeps minute-precision + session_id',
                '20260511-1145_singerandsteel_audit-kickoff_S000001');
 });
 
+// #9 Stage 5 follow-up — ropa_close_out audit fields branch by mode.
+// Personal mode writes null for the 4 compliance-only fields so the JSON
+// does not over-claim user-confirmed audit answers (the underlying form
+// dropdowns/radios have default first-option selected values that would
+// otherwise leak through). Compliance mode reads the actual values.
+function buildRopaCloseOut(mode, retentionClockSet, complianceValues) {
+  if (mode === 'personal') {
+    return {
+      transcript_location:                   '',
+      ai_review_fired_timestamp:             '',
+      retention_clock_set:                   retentionClockSet,
+      consent_method_used:                   null,
+      jurisdiction_screen_result:            null,
+      vulnerable_attendee_assessment_result: null,
+      dpf_re_verification_result:            null,
+    };
+  }
+  return {
+    transcript_location:                   '',
+    ai_review_fired_timestamp:             '',
+    retention_clock_set:                   retentionClockSet,
+    consent_method_used:                   complianceValues.consent ?? null,
+    jurisdiction_screen_result:            complianceValues.jurisdiction ?? null,
+    vulnerable_attendee_assessment_result: complianceValues.vulnerable ?? null,
+    dpf_re_verification_result:            complianceValues.dpf ?? null,
+  };
+}
+
+test('#9 Stage 5: personal-mode ropa_close_out nulls the 4 compliance audit fields', () => {
+  const r = buildRopaCloseOut('personal', '2026-05-11', {});
+  assert.equal(r.consent_method_used, null, 'consent_method_used must be null in personal mode');
+  assert.equal(r.jurisdiction_screen_result, null);
+  assert.equal(r.vulnerable_attendee_assessment_result, null);
+  assert.equal(r.dpf_re_verification_result, null);
+  assert.equal(r.retention_clock_set, '2026-05-11', 'retention_clock_set still populated');
+});
+
+test('#9 Stage 5: compliance-mode ropa_close_out reads actual user-confirmed values', () => {
+  const r = buildRopaCloseOut('compliance', '2026-05-11', {
+    consent:      'verbal-on-record-all-attendees',
+    jurisdiction: 'uk-only',
+    vulnerable:   'clear',
+    dpf:          'all-active',
+  });
+  assert.equal(r.consent_method_used, 'verbal-on-record-all-attendees');
+  assert.equal(r.jurisdiction_screen_result, 'uk-only');
+  assert.equal(r.vulnerable_attendee_assessment_result, 'clear');
+  assert.equal(r.dpf_re_verification_result, 'all-active');
+});
+
 // ----------------------------------------------------------------------
 // DOM-mock tests (jsdom-driven). Each mirrors the AC verification's
 // testNamePattern. Spec functions live here and must mirror the IIFE

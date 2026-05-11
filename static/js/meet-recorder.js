@@ -459,15 +459,31 @@
         summary_delete_target:        'on-engagement-close',
         brief_retention_target_years: 6,
       },
-      ropa_close_out: {
-        transcript_location:                     '',
-        ai_review_fired_timestamp:               '',
-        retention_clock_set:                     d.toISOString().slice(0, 10),
-        consent_method_used:                     document.querySelector('input[name="consent-method"]:checked')?.value ?? null,
-        jurisdiction_screen_result:              document.querySelector('select[name="jurisdiction"]')?.value ?? null,
-        vulnerable_attendee_assessment_result:   document.querySelector('select[name="vulnerable-assessment"]')?.value ?? null,
-        dpf_re_verification_result:              document.querySelector('input[name="dpf-status"]:checked')?.value ?? null,
-      },
+      // #9 Stage 5 follow-up: in personal mode the 4 audit fields below get
+      // null because the user never interacted with the (hidden) compliance
+      // radios/dropdowns. Default first-option selected values were leaking
+      // through as if the user had confirmed them — small but real over-
+      // claim. Schema declares these as nullable (Phase 1 AC 1.1). In
+      // compliance mode buildMeta reads from the actual user-confirmed values.
+      ropa_close_out: currentMode() === 'personal'
+        ? {
+            transcript_location:                   '',
+            ai_review_fired_timestamp:             '',
+            retention_clock_set:                   d.toISOString().slice(0, 10),
+            consent_method_used:                   null,
+            jurisdiction_screen_result:            null,
+            vulnerable_attendee_assessment_result: null,
+            dpf_re_verification_result:            null,
+          }
+        : {
+            transcript_location:                   '',
+            ai_review_fired_timestamp:             '',
+            retention_clock_set:                   d.toISOString().slice(0, 10),
+            consent_method_used:                   document.querySelector('input[name="consent-method"]:checked')?.value ?? null,
+            jurisdiction_screen_result:            document.querySelector('select[name="jurisdiction"]')?.value ?? null,
+            vulnerable_attendee_assessment_result: document.querySelector('select[name="vulnerable-assessment"]')?.value ?? null,
+            dpf_re_verification_result:            document.querySelector('input[name="dpf-status"]:checked')?.value ?? null,
+          },
     };
   }
   function parseAttendees() {
