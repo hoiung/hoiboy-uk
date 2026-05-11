@@ -297,7 +297,7 @@ Hoi
 hello@hoiboy.uk
 hoiboy.uk/consulting/claude-code-harness-architect/
 
-TANTUNG LTD (Companies House 10566169)
+HOIBOY AI LTD (Companies House 17211412)
 ```
 
 ### Template B - 24-hour reminder
