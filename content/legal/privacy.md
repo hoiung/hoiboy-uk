@@ -2,23 +2,23 @@
 title: Privacy Notice
 date: 2026-05-09
 lastmod: 2026-05-09
-description: Privacy Notice for TANTUNG LTD covering site personal data and consultancy engagements (including meeting recordings and AI-transcription).
+description: Privacy Notice for HOIBOY AI LTD covering site personal data and consultancy engagements (including meeting recordings and AI-transcription).
 hideDate: true
 version: 1.0.0
 ---
 
-This Privacy Notice covers the processing of personal data by **TANTUNG LTD** (UK Companies House 10566169), trading as hoiboy.uk for the AI Managed Harness Services consultancy.
+This Privacy Notice covers the processing of personal data by **HOIBOY AI LTD** (UK Companies House 17211412), trading as hoiboy.uk for the AI Managed Harness Services consultancy.
 
 It satisfies the controller's obligations under **UK GDPR Article 13** (information to be provided where personal data are collected from the data subject) and **UK GDPR Article 14** (information to be provided where personal data have not been obtained from the data subject, including the **30-day clock** for notification under Article 14(3)(a)).
 
 ## 1. Who we are (controller identity)
 
-- **Controller**: TANTUNG LTD (UK Companies House 10566169)
+- **Controller**: HOIBOY AI LTD (UK Companies House 17211412)
 - **Registered office**: address recorded in the prevailing engagement-letter for engaged clients; available on request via `hello@hoiboy.uk` for general enquiries
 - **Contact email**: `hello@hoiboy.uk`
 - **Data Protection contact**: Senh Hoi Ung (sole director). Email `hello@hoiboy.uk` for all data-protection queries, subject-access requests, erasure requests, and Article 21 objections
 
-TANTUNG LTD does not have a separate Data Protection Officer (DPO). The sole director is the Data Protection contact and is accountable for all data-protection responsibilities under UK GDPR.
+HOIBOY AI LTD does not have a separate Data Protection Officer (DPO). The sole director is the Data Protection contact and is accountable for all data-protection responsibilities under UK GDPR.
 
 ## 2. What this notice covers
 
