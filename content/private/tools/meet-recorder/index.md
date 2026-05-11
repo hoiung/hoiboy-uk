@@ -141,8 +141,8 @@ sitemap:
   <label data-personal-hide="true">Client slug (≤15 lowercase a-z 0-9 -): <input id="field-client-slug" type="text" maxlength="15" placeholder="singerandsteel" /></label>
   <label>Topic slug (≤25 lowercase a-z 0-9 -): <input id="field-topic-slug" type="text" maxlength="25" placeholder="audit-kickoff" /></label>
   <label>Google Meet URL: <input id="field-meet-url" type="url" placeholder="https://meet.google.com/abc-defg-hij" /></label>
-  <label data-personal-hide="true">Attendees (one per line, <code>Name &lt;email&gt; (role)</code>):
-    <textarea id="field-attendees" rows="4" placeholder="Sarah Mock <sarah@example.com> (client-lead)"></textarea>
+  <label>Attendees (one name per line; <code>Name &lt;email&gt; (role)</code> also accepted for compliance mode):
+    <textarea id="field-attendees" rows="4" placeholder="Sarah Mock&#10;Tom Steel"></textarea>
   </label>
   <fieldset data-personal-hide="true"><legend>Consent method used:</legend>
     <label><input type="radio" name="consent-method" value="verbal-on-record-all-attendees" checked /> Verbal on-record (all attendees)</label>
