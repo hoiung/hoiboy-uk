@@ -248,11 +248,16 @@ function makeMeetRecorderDom() {
     <section id="section-meta-fields">
       <input id="engagement-id" type="text" list="engagement-id-history" />
       <datalist id="engagement-id-history"></datalist>
-      <label data-personal-hide="true"><input id="field-session-id" /></label>
-      <label data-personal-hide="true"><input id="field-attendees" /></label>
-      <fieldset data-personal-hide="true">
-        <input type="radio" name="consent-method" value="verbal-on-record-all-attendees" checked />
-      </fieldset>
+      <label><input id="field-topic-slug" type="text" /></label>
+      <label><input id="field-meet-url" type="url" /></label>
+      <label><textarea id="field-attendees"></textarea></label>
+      <div data-personal-hide="true" id="meta-fields-compliance-only">
+        <label><input id="field-session-id" type="text" /></label>
+        <label><input id="field-client-slug" type="text" /></label>
+        <fieldset>
+          <input type="radio" name="consent-method" value="verbal-on-record-all-attendees" checked />
+        </fieldset>
+      </div>
     </section>
     <section id="section-mode-toggles"></section>
     <section id="section-notes" hidden></section>

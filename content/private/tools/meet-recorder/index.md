@@ -135,20 +135,27 @@ sitemap:
 
 <section id="section-meta-fields" aria-label="Session metadata">
   <h2>10. Session metadata (written into <code>.meta.json</code> sidecar)</h2>
+  <p>The four fields below are shared between personal and compliance modes. The compliance-only block below the separator appears only when compliance mode is selected.</p>
+
   <label>Engagement ID: <input id="engagement-id" type="text" list="engagement-id-history" placeholder="singerandsteel" /></label>
   <datalist id="engagement-id-history"></datalist>
-  <label data-personal-hide="true">Session ID (S\d{6}, source: <code>dpa/session-registry.md</code>): <input id="field-session-id" type="text" pattern="^S[0-9]{6}$" placeholder="S000001" /></label>
-  <label data-personal-hide="true">Client slug (≤15 lowercase a-z 0-9 -): <input id="field-client-slug" type="text" maxlength="15" placeholder="singerandsteel" /></label>
   <label>Topic slug (≤25 lowercase a-z 0-9 -): <input id="field-topic-slug" type="text" maxlength="25" placeholder="audit-kickoff" /></label>
   <label>Google Meet URL: <input id="field-meet-url" type="url" placeholder="https://meet.google.com/abc-defg-hij" /></label>
   <label>Attendees (one name per line; <code>Name &lt;email&gt; (role)</code> also accepted for compliance mode):
     <textarea id="field-attendees" rows="4" placeholder="Sarah Mock&#10;Tom Steel"></textarea>
   </label>
-  <fieldset data-personal-hide="true"><legend>Consent method used:</legend>
-    <label><input type="radio" name="consent-method" value="verbal-on-record-all-attendees" checked /> Verbal on-record (all attendees)</label>
-    <label><input type="radio" name="consent-method" value="operator-self-recording (no attendee)" /> Operator-self-recording (no attendee)</label>
-    <label><input type="radio" name="consent-method" value="consent-declined-recording-off" /> Consent declined — recording OFF</label>
-  </fieldset>
+
+  <div data-personal-hide="true" id="meta-fields-compliance-only">
+    <hr />
+    <p><strong>Compliance-only fields (visible in compliance mode):</strong></p>
+    <label>Session ID (S\d{6}, source: <code>dpa/session-registry.md</code>): <input id="field-session-id" type="text" pattern="^S[0-9]{6}$" placeholder="S000001" /></label>
+    <label>Client slug (≤15 lowercase a-z 0-9 -): <input id="field-client-slug" type="text" maxlength="15" placeholder="singerandsteel" /></label>
+    <fieldset><legend>Consent method used:</legend>
+      <label><input type="radio" name="consent-method" value="verbal-on-record-all-attendees" checked /> Verbal on-record (all attendees)</label>
+      <label><input type="radio" name="consent-method" value="operator-self-recording (no attendee)" /> Operator-self-recording (no attendee)</label>
+      <label><input type="radio" name="consent-method" value="consent-declined-recording-off" /> Consent declined — recording OFF</label>
+    </fieldset>
+  </div>
 </section>
 
 <section id="section-mode-toggles" aria-label="Mode toggles">
