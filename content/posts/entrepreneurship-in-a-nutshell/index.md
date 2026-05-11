@@ -21,7 +21,7 @@ Then a friend pitched me a karaoke bar. Then it became a karaoke restaurant, bec
 
 Stupid? Absolutely. Exciting? Even more so. That's how it always starts.
 
-Twenty years later, I have started, run, walked away from, partnered into, partnered out of, and quietly buried more businesses than I can count without using my fingers. Karaoke. Design and print. A family takeaway in a properly bad state. An LED import/export company, many small ideas that did or didn't work but stopped for good reasons. A dance company that bloomed for seven years until COVID. A dating platform stuck in stop-and-start mode. A small property thing we deliberately kept small. And now an AI business that mostly just runs out of my laptop.
+Twenty years later, I have started, run, walked away from, partnered into, partnered out of, and quietly buried more businesses than I can count without using my fingers. Karaoke. Design and print. A family takeaway in a properly bad state. An LED import/export company, many small ideas that did or didn't work but stopped for good reasons. A dance company that bloomed for seven years until COVID. A dating platform stuck in stop-and-start mode. A small property thing we deliberately kept small. And now an AI business that mostly just runs out of my home.
 
 This is the honest version of all of it.
 
