@@ -63,7 +63,7 @@ sitemap:
 
 <section id="section-verbal-consent" aria-label="Verbal-consent script">
   <h2>4. Verbal-consent script (read verbatim, ~30s, capture verbal yes ON the recording)</h2>
-  <p data-verbal-consent-script>I'm starting the recording. This session is being recorded on video and audio and will be transcribed with the help of AI tools so I can review it accurately during the [PURPOSE] for [CLIENT]. The recording, transcript, and any AI-generated summary are stored encrypted on my workstation under TANTUNG LTD as data controller, retained per our engagement letter, and you can ask for them to be deleted at any time by emailing hello@hoiboy.uk — I'll confirm deletion in writing within one calendar month under UK GDPR Article 17. Is everyone here happy for me to continue recording? [PAUSE FOR VERBAL YES.]</p>
+  <p data-verbal-consent-script>I'm starting the recording. This session is being recorded on video and audio and will be transcribed with the help of AI tools so I can review it accurately during the [PURPOSE] for [CLIENT]. The recording, transcript, and any AI-generated summary are stored encrypted on my workstation under HOIBOY AI LTD as data controller, retained per our engagement letter, and you can ask for them to be deleted at any time by emailing hello@hoiboy.uk — I'll confirm deletion in writing within one calendar month under UK GDPR Article 17. Is everyone here happy for me to continue recording? [PAUSE FOR VERBAL YES.]</p>
   <p>Tokens: <code>[PURPOSE]</code> = audit / foundation setup / per-harness build / SME interview / handover. <code>[CLIENT]</code> = Client legal name from engagement-letter.</p>
 </section>
 
