@@ -343,19 +343,19 @@
         ai_review_status:     'pending',
       },
       retention_schedule: {
-        raw_destruction_date:        addDays(d, 30).toISOString().slice(0, 10),
-        transcript_destruction_date: addDays(d, 180).toISOString().slice(0, 10),
-        summary_destruction_date:    addDays(d, 365 * 6).toISOString().slice(0, 10),
-        hmrc_override_applies:       false,
+        audio_delete_target_days:     7,
+        transcript_delete_target:     'on-scope-lock',
+        summary_delete_target:        'on-engagement-close',
+        brief_retention_target_years: 6,
       },
       ropa_close_out: {
         transcript_location:                     '',
         ai_review_fired_timestamp:               '',
         retention_clock_set:                     d.toISOString().slice(0, 10),
-        consent_method_used:                     document.querySelector('input[name="consent-method"]:checked')?.value || 'verbal-on-record-all-attendees',
-        jurisdiction_screen_result:              document.querySelector('select[name="jurisdiction"]')?.value || 'uk-only',
-        vulnerable_attendee_assessment_result:   document.querySelector('select[name="vulnerable-assessment"]')?.value || 'clear',
-        dpf_re_verification_result:              document.querySelector('input[name="dpf-status"]:checked')?.value || 'all-active',
+        consent_method_used:                     document.querySelector('input[name="consent-method"]:checked')?.value ?? null,
+        jurisdiction_screen_result:              document.querySelector('select[name="jurisdiction"]')?.value ?? null,
+        vulnerable_attendee_assessment_result:   document.querySelector('select[name="vulnerable-assessment"]')?.value ?? null,
+        dpf_re_verification_result:              document.querySelector('input[name="dpf-status"]:checked')?.value ?? null,
       },
     };
   }
