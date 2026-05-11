@@ -39,7 +39,7 @@ This notice covers two scopes:
 
 This section applies ONLY to clients with a signed engagement-letter. Pre-engagement Cal.com discovery calls are NEVER recorded.
 
-I take digital notes during our calls — typed by hand, occasionally backed by an audio recording that I transcribe and summarise locally with AI assistance. The purpose is personal accuracy: I cross-check notes against the transcript so the brief matches what you said.
+I take digital notes during our calls. Typed by hand, occasionally backed by an audio recording that I transcribe and summarise locally with AI assistance. The purpose is personal accuracy: I cross-check notes against the transcript so the brief matches what you said.
 
 Audio is deleted within 7 days of transcript verification. The transcript is deleted once we've locked the scope in writing. The brief itself I keep per HMRC's 6-year business-record rule.
 
