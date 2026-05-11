@@ -49,6 +49,42 @@ test('slugify: empty input throws', () => {
   assert.throws(() => slugify('', 15), /slugify: empty input/);
 });
 
+// #9 Stage 5 follow-up — spec mirrors of ymdHm + ymdHms must stay in
+// lock-step with meet-recorder.js lines 393-403. Personal-mode filenames
+// use second-precision (ymdHms) and drop the session_id; compliance keeps
+// minute-precision (ymdHm) + session_id.
+function ymdHm(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}-${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}`;
+}
+function ymdHms(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}-${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}`;
+}
+function buildBaseName(mode, startedAt, clientSlug, topicSlug, sessionId) {
+  return mode === 'personal'
+    ? `${ymdHms(startedAt)}_${clientSlug}_${topicSlug}`
+    : `${ymdHm(startedAt)}_${clientSlug}_${topicSlug}_${sessionId}`;
+}
+
+test('ymdHm + ymdHms: UTC zero-padded; second-precision adds trailing SS', () => {
+  const d = new Date(Date.UTC(2026, 4, 11, 11, 45, 32));
+  assert.equal(ymdHm(d),  '20260511-1145');
+  assert.equal(ymdHms(d), '20260511-114532');
+});
+
+test('#9 Stage 5: personal-mode filename drops session_id and uses second-precision', () => {
+  const d = new Date(Date.UTC(2026, 4, 11, 11, 45, 32));
+  assert.equal(buildBaseName('personal', d, 'singerandsteel', 'audit-kickoff', 'S000001'),
+               '20260511-114532_singerandsteel_audit-kickoff');
+});
+
+test('#9 Stage 5: compliance-mode filename keeps minute-precision + session_id', () => {
+  const d = new Date(Date.UTC(2026, 4, 11, 11, 45, 32));
+  assert.equal(buildBaseName('compliance', d, 'singerandsteel', 'audit-kickoff', 'S000001'),
+               '20260511-1145_singerandsteel_audit-kickoff_S000001');
+});
+
 // ----------------------------------------------------------------------
 // DOM-mock tests (jsdom-driven). Each mirrors the AC verification's
 // testNamePattern. Spec functions live here and must mirror the IIFE

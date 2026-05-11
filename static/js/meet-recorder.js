@@ -264,8 +264,15 @@
         appendEngagementIdHistory(engagementIdRaw);
       } catch (e) { /* persistence is non-fatal — keep recording */ }
 
-      const stamp = ymdHm(state.startedAt);
-      const baseName = `${stamp}_${clientSlug}_${topicSlug}_${sessionId}`;
+      // Personal mode (#9 Stage 5 follow-up): drop session_id from the filename
+      // for a clean human-facing artefact (S-id stays inside .meta.json for
+      // schema validity + dormant compliance), and use second-precision so
+      // collisions are physically impossible in a manual click flow.
+      // Compliance mode keeps the original minute-precision + S-id schema
+      // because the S-id is the ROPA row key + audit-trail anchor.
+      const baseName = currentMode() === 'personal'
+        ? `${ymdHms(state.startedAt)}_${clientSlug}_${topicSlug}`
+        : `${ymdHm(state.startedAt)}_${clientSlug}_${topicSlug}_${sessionId}`;
 
       state.fileHandle = await state.fsaDirHandle.getFileHandle(`${baseName}.webm`,      { create: true });
       state.metaHandle = await state.fsaDirHandle.getFileHandle(`${baseName}.meta.json`, { create: true });
@@ -393,6 +400,13 @@
   function ymdHm(d) {
     const pad = n => String(n).padStart(2, '0');
     return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}-${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}`;
+  }
+  // Second-precision stamp used for personal-mode filenames (#9 Stage 5
+  // follow-up: drop session_id from personal-mode filename; second-precision
+  // makes collision physically impossible in a manual click flow).
+  function ymdHms(d) {
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}-${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}`;
   }
   async function nextSessionId() {
     // Personal mode auto-generates a session-id from a localStorage counter
@@ -664,8 +678,8 @@
 
   // ---------- Test surface (Node --test imports the module via dynamic import in Node 22) ----------
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { slugify, ymdHm, addDays, parseAttendees, buildMeta };
+    module.exports = { slugify, ymdHm, ymdHms, addDays, parseAttendees, buildMeta };
   } else {
-    window.__meetRecorder = { slugify, ymdHm, addDays, parseAttendees };
+    window.__meetRecorder = { slugify, ymdHm, ymdHms, addDays, parseAttendees };
   }
 })();
