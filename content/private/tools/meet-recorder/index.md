@@ -12,6 +12,16 @@ sitemap:
 <div id="fail-loud-banner" hidden role="alert"></div>
 <p id="background-throttle-warning" hidden role="alert">Tab is hidden — Chromium may throttle MediaRecorder. Keep this tab visible during recording.</p>
 
+<section id="section-mode-toggle-top" aria-label="Recording mode">
+  <fieldset>
+    <legend>Recording mode</legend>
+    <label><input type="radio" name="mode" id="mode-personal" value="personal" checked /> Personal recording for my own notes (default)</label>
+    <label><input type="radio" name="mode" id="mode-compliance" value="compliance" /> Client session needing full compliance recording</label>
+  </fieldset>
+  <p id="banner-cal-com-never-recorded" role="note">Pre-engagement Cal.com discovery calls are NEVER recorded. Engagement-letter must be signed before recording.</p>
+  <p id="banner-last-session" hidden role="note"></p>
+</section>
+
 <section id="section-inbox" aria-label="Inbox directory">
   <h2>1. Pick the encrypted-volume inbox directory</h2>
   <p>Browser writes <code>.webm</code> + <code>.meta.json</code> here. Directory MUST equal <code>${WHISPER_INBOX}</code> on the master so the systemd path-unit fires.</p>
@@ -125,15 +135,16 @@ sitemap:
 
 <section id="section-meta-fields" aria-label="Session metadata">
   <h2>10. Session metadata (written into <code>.meta.json</code> sidecar)</h2>
-  <label>Engagement ID: <input id="field-engagement-id" type="text" placeholder="singerandsteel" /></label>
-  <label>Session ID (S\d{6}, source: <code>dpa/session-registry.md</code>): <input id="field-session-id" type="text" pattern="^S[0-9]{6}$" placeholder="S000001" /></label>
-  <label>Client slug (≤15 lowercase a-z 0-9 -): <input id="field-client-slug" type="text" maxlength="15" placeholder="singerandsteel" /></label>
+  <label>Engagement ID: <input id="engagement-id" type="text" list="engagement-id-history" placeholder="singerandsteel" /></label>
+  <datalist id="engagement-id-history"></datalist>
+  <label data-personal-hide="true">Session ID (S\d{6}, source: <code>dpa/session-registry.md</code>): <input id="field-session-id" type="text" pattern="^S[0-9]{6}$" placeholder="S000001" /></label>
+  <label data-personal-hide="true">Client slug (≤15 lowercase a-z 0-9 -): <input id="field-client-slug" type="text" maxlength="15" placeholder="singerandsteel" /></label>
   <label>Topic slug (≤25 lowercase a-z 0-9 -): <input id="field-topic-slug" type="text" maxlength="25" placeholder="audit-kickoff" /></label>
   <label>Google Meet URL: <input id="field-meet-url" type="url" placeholder="https://meet.google.com/abc-defg-hij" /></label>
-  <label>Attendees (one per line, <code>Name &lt;email&gt; (role)</code>):
+  <label data-personal-hide="true">Attendees (one per line, <code>Name &lt;email&gt; (role)</code>):
     <textarea id="field-attendees" rows="4" placeholder="Sarah Mock <sarah@example.com> (client-lead)"></textarea>
   </label>
-  <fieldset><legend>Consent method used:</legend>
+  <fieldset data-personal-hide="true"><legend>Consent method used:</legend>
     <label><input type="radio" name="consent-method" value="verbal-on-record-all-attendees" checked /> Verbal on-record (all attendees)</label>
     <label><input type="radio" name="consent-method" value="operator-self-recording (no attendee)" /> Operator-self-recording (no attendee)</label>
     <label><input type="radio" name="consent-method" value="consent-declined-recording-off" /> Consent declined — recording OFF</label>

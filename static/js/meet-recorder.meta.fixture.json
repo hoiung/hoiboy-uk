@@ -19,10 +19,10 @@
     "ai_review_status": "fired"
   },
   "retention_schedule": {
-    "raw_destruction_date": "2026-06-11",
-    "transcript_destruction_date": "2026-11-08",
-    "summary_destruction_date": "2032-05-12",
-    "hmrc_override_applies": false
+    "audio_delete_target_days": 7,
+    "transcript_delete_target": "on-scope-lock",
+    "summary_delete_target": "on-engagement-close",
+    "brief_retention_target_years": 6
   },
   "ropa_close_out": {
     "transcript_location": "private/consulting/engagements/test-engagement/transcripts/20260512-1330_test-engagement_audit-kickoff_S000001.transcript.md",

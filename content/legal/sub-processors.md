@@ -40,7 +40,7 @@ When this page updates, affected Clients on active engagements receive an email 
 
 ## Cross-references
 
-- **MSA §13** Data protection + meeting recording - cross-cutting framework.
+- **MSA §13** Notes, AI-assisted summaries, and data handling - 7-day audio / scope-lock transcript / HMRC-6yr brief retention; nothing leaves the workstation; 24h breach-notification.
 - **SOW §7.7** Recording + AI-transcription anchor - controller-classification + activation gate + retention table.
 - **DPA Schedule Annex 2** - source-of-truth canonical version of this list (per-engagement attached to each MSA + SOW).
 - **[Privacy Notice](https://hoiboy.uk/legal/privacy/)** - data-subject-facing Privacy Notice for site visitors and engaged clients.

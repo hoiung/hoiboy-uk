@@ -35,58 +35,17 @@ This notice covers two scopes:
 - Operator notes and engagement metadata (timestamps, attendee lists, meeting purpose, engagement-reference codes).
 - Time-logs, invoices, and VAT records for billing and statutory retention.
 
-## 3. Recording + AI-transcription (consultancy-engagement scope)
+## 3. Notes + AI-assisted summaries (consultancy-engagement scope)
 
-This section applies ONLY to clients who have signed an engagement-letter with TANTUNG LTD. Pre-engagement informal calls (discovery, scoping, qualification, including the 20-minute Cal.com discovery call at `cal.eu/hoiboyuk/discovery`) are NEVER recorded. The engagement-letter signature is the activation gate.
+This section applies ONLY to clients with a signed engagement-letter. Pre-engagement Cal.com discovery calls are NEVER recorded.
 
-### Purposes and lawful basis (Article 6(1)(f))
+I take digital notes during our calls — typed by hand, occasionally backed by an audio recording that I transcribe and summarise locally with AI assistance. The purpose is personal accuracy: I cross-check notes against the transcript so the brief matches what you said.
 
-We record and AI-transcribe consultancy sessions to capture decisions, action items, and verbatim quotes faithfully. Specifically:
+Audio is deleted within 7 days of transcript verification. The transcript is deleted once we've locked the scope in writing. The brief itself I keep per HMRC's 6-year business-record rule.
 
-- Faithful capture of B2B-consultancy decisions and verbatim quotes so that engagement outputs (audit reports, architecture proposals, build handovers, monthly maintenance reports) are anchored to the actual conversation rather than operator-recall.
-- AI-assisted review for completeness via the operator-side AI-review pipeline.
-- Audit-trail for billing and scope disputes.
+Nothing leaves my workstation beyond the sub-processors listed on the [Sub-Processors](https://hoiboy.uk/legal/sub-processors/) page. PII redaction is applied before any external AI-review call; speaker-verification and face-recognition are disabled.
 
-Our **lawful basis** is **Article 6(1)(f) Legitimate Interest**. The Legitimate Interest Assessment (LIA) for each engagement is filed before the first recording session commences. We do NOT rely on a consent tickbox as the lawful basis; you are notified of the recording behaviour (this notice + the engagement-letter §7 + the verbal-on-record script) and have a standalone Article 21 right to object.
-
-For HMRC-retained financial artefacts (time-logs, invoices, VAT records), our lawful basis is **Article 6(1)(c) Legal Obligation** (HMRC 6+1 year retention via Article 17(3)(b) override; statutory bases: Companies Act 2006 s.388 + VAT Act 1994 s.21 + VAT Regulations 1995 reg.31 + Corporation Tax Act 2010 enquiry-window buffer).
-
-### Categories of personal data processed
-
-- Audio: voice recordings of meeting speech.
-- Video: camera frames where camera is enabled.
-- Transcripts: speech-to-text content.
-- AI-summaries: structured derived output from the LLM-review pipeline.
-- Operator notes and metadata.
-
-We do NOT use voice biometric identification or face-recognition; speaker-verification and face-recognition features are explicitly disabled across the recording stack.
-
-### Recipients of your personal data (sub-processors)
-
-Recordings and transcripts pass through a sub-processor pipeline. The current vendor list, location of processing, transfer mechanism, and per-vendor DPA reference are documented at the **[Sub-Processors](https://hoiboy.uk/legal/sub-processors/)** page on this site.
-
-When we add or replace a sub-processor, we email affected Clients the change with effective-date **at least 30 days out**. Clients (and, indirectly, data subjects acting through Clients) may object on reasonable grounds within those 30 days.
-
-### Cross-border transfers and safeguards
-
-Some sub-processors are located outside the United Kingdom. We rely on the following transfer mechanisms:
-
-- **UK Extension to the EU-US Data Privacy Framework (DPF)** for US-resident vendors that are DPF-active (verified at https://www.dataprivacyframework.gov/list).
-- **Standard Contractual Clauses (SCCs) + UK International Data Transfer Addendum (IDTA) + Transfer Risk Assessment (TRA)** as fallback where a vendor is not DPF-active or delists.
-- **UK adequacy decision** for EU-resident vendors.
-
-Supplementary measures include encryption at rest, encryption in transit, and operator-side PII redaction before transmission to AI-review sub-processors.
-
-### Retention periods
-
-| Artefact | Retention period |
-|---|---|
-| Raw audio + video recording | 30 days post-engagement-close OR 7 days post-transcript-verification, whichever is later |
-| Transcript | 180 days post-engagement-close |
-| Sanitised AI-summary | 6 years post-engagement-close (Limitation Act 1980 mirror) |
-| Time-logs, invoices, VAT records (where personal data appears) | 6+1 years (HMRC statutory obligation; sanitise-and-retain) |
-
-After the retention window, we destroy the per-engagement encryption key (NIST 800-88 Purge), rendering all artefacts encrypted with that key cryptographically inaccessible.
+You can ask me to stop, or delete anything at any time, by emailing hello@hoiboy.uk.
 
 ## 4. Site visitor data
 
@@ -96,7 +55,7 @@ We use privacy-preserving analytics that aggregate page-view counts without sett
 
 ### Contact-form / email enquiries
 
-When you email `hello@hoiboy.uk`, your email address and message content are processed for the purpose of responding to your enquiry. Lawful basis: Article 6(1)(f) Legitimate Interest (responding to inbound enquiries is a routine business communication purpose). Retention: enquiry threads are retained for 12 months from last reply, then deleted unless you have entered a paid engagement (in which case the engagement scope below applies).
+When you email `hello@hoiboy.uk`, your email address and message content are used to respond to your enquiry. Enquiry threads are kept for 12 months from last reply, then deleted unless you have entered a paid engagement (in which case the engagement scope below applies).
 
 ## 5. Your data-subject rights
 
