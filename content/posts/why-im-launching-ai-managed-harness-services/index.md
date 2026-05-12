@@ -1,6 +1,6 @@
 ---
 title: "Done With Building AI for Machines? I'm Building AI for People."
-date: 2026-05-12
+date: 2026-05-12T17:00:00Z
 draft: false
 categories: [entrepreneurship, tech-ai]
 tags: [ai, harness, consulting, sme, launch, ai-managed-harness-services]
