@@ -116,7 +116,7 @@ Then the live pipeline ran. And it failed. Five different ways.
 
 Three were whisperx 3.8.5 API drift: a dropped `__version__` attribute, the `DiarizationPipeline` class moved to a submodule, a kwarg renamed from `use_auth_token` to `token`. One was pip's resolver quietly upgrading my CPU torch pin back to a CUDA build via a transitive pyannote dep. One was a third HuggingFace licence gate the runbook didn't know existed (pyannote.audio 4.0.4 added `speaker-diarization-community-1` for the speaker-embedding step). Plus a regex bug in the PII redactor that was eating filename timestamps as phone numbers.
 
-Zero of the five caught by the 36 unit tests. All five caught by what the harness calls the sample-invocation gate: before you declare a thing done because the unit tests pass, run the real CLI against real data on the real machine. Watch what happens.
+Zero of the five caught by the 36 unit tests. They were integration bugs by definition: different libraries, deps, and licences colliding at runtime. Unit tests can't catch those, that's a different layer of testing. The harness calls it the sample-invocation gate: real CLI, real data, real machine.
 
 That rule paid for itself in one afternoon.
 
@@ -163,7 +163,7 @@ Two rules surfaced. Both obvious in retrospect, both skipped on the first attemp
 
 **Build for the use case in front of you.** Mark the rest dormant. Don't delete it (you might need it one day). Just don't make it the default. The dormant-classify pattern lets the over-engineered scaffolding stay one mode-flip away without poisoning today's UX.
 
-**Before you declare a thing done because the unit tests pass: run it for real, against real data, on the real machine.** Unit tests are necessary. They are not sufficient. The harness has this as a sample-invocation gate that fires for any pipeline / CLI / orchestration change before close. Following it on attempt 3 caught five bugs in one afternoon. It paid for itself that day.
+**Unit tests pass = each piece is built right. Doesn't mean the pieces fit together.** You need three layers. Unit tests (each cog works). Workflow tests (a subset of cogs work together). End-to-end tests (the whole thing runs in production, against real data, on the real machine). Skip the last one and you ship code that passes 36/36 in isolation and fails five ways the moment someone hits Record. The harness calls the last one the sample-invocation gate. Following it on attempt 3 caught all five bugs in one afternoon.
 
 And the experiment itself answered its own question. Self-hosted transcription in 2026 on the main computer I use for work is accurate enough to be useful as a notes complement. £0/month, no vendor in the loop, runs while I'm doing something else. Whatever else this build did or didn't do, the experiment came in green.
 
