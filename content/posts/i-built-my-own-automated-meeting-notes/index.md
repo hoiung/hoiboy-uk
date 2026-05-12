@@ -173,4 +173,8 @@ I don't vibe-code entire platforms or apps in one go. I try to build my workflow
 
 But doing it this way, you also learn a lot about the architecture. Writing the blog about my journey really helps me understand the cogs and wheels turning inside. So you know if it's been built right. Or not.
 
+That gap I covered earlier, where Claude Code wrote 36 unit tests and called it done? I've noticed it do that often. My SST3 workflow tries to prevent it, but I haven't got a permanent fix yet. The AI still skims over it. Which is why I have to review and re-align the implementations along the way.
+
+This is also one of the reasons you need an engineer mindset to build something. You have to know exactly what you're trying to build, why, and for who. Vibe-coding and leaving the AI to do its own shit doesn't work. Not yet.
+
 <!-- iamhoiend -->
