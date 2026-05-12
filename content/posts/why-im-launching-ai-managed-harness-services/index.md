@@ -41,7 +41,7 @@ There are also different ways to use subagents and agentic AI (the broader name 
 
 Sorry for the long explanation, but I had to try and fit the reason, and dumb my explanation down, for why single-chat AI use has extreme limitations, why it's so restricted, and not too effective when it comes to more complex tasks that have multiple layers of research, planning, and implementation (simplified for brevity). I didn't even mention the quality-control loop back for each stage, and more. But let's stop here at the technical explanations.
 
-Before you ask me, *oh they have a project folder to put project files in to remember stuff*, er... yeah, I don't know if I should answer that question. I've used it before. It's so hard to manage and goes stale. I mean, it's probably an early idea, but terrible to manage information in the long run, or for bigger and more complex projects with many moving parts.
+Before you ask me, *oh they have a project folder to put project files in to remember stuff*, er... yeah, I don't know if I should answer that question. I've used it before. It's so hard to manage and goes stale. I mean, it's probably an early idea the AI companies had, but terrible to manage information in the long run, or for bigger and more complex projects with many moving parts.
 
 Every single SME user I spoke to has been bitten by an AI hallucination of some form. Confident, fluent, completely wrong. Names invented. Numbers invented. Citations invented. Caught it in time? Lucky. Did not catch it? Embarrassing at best, expensive at worst. Once that happens too often, they stop trusting the tool for anything that matters, and they retreat back to the assistant-tier safe stuff. Summaries. Tidying. Prioritising. The low-stakes corner.
 
