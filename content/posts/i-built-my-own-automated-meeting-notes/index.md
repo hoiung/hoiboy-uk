@@ -1,7 +1,7 @@
 ---
 title: "I Built My Own Automated Meeting Notes. Three Attempts."
 date: 2026-05-12
-draft: true
+draft: false
 categories: [tech-ai]
 tags: [meeting-notes, transcription, self-hosted, whisper, automation, over-engineering]
 description: "Bypassed the £9-40/month meeting-notes SaaS market entirely. Ended up with £0/month transcription that bills against the Claude plan I already pay for."
