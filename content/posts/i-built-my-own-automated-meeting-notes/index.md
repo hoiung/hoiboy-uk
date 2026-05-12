@@ -25,7 +25,7 @@ Google Meet add-ons. Many of them. The free ones either crashed before they even
 
 (Some of these tools are genuinely good. The teams who build them are doing real work. But £9-40/month forever for what is, fundamentally, a transcription pipeline plus a summariser? Maths doesn't add.)
 
-For larger organisations the SaaS makes sense. The overhead of running your own transcript tools doesn't scale, and £9-40/month is a drop in the ocean at that size. There's also a tool-adoption barrier for non-techies. I don't have that barrier.
+For larger organisations it probably makes sense for SaaS. Running your own transcript tools doesn't scale economically due to costs vs value to design, build and maintain. The cost is probably just a drop in the ocean. Tool adoption is a problem for non-techies. I don't have that barrier.
 
 ## Attempt 1: Claude Code overengineered when I asked for simple
 
