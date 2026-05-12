@@ -1,5 +1,5 @@
 ---
-title: "Done With Building AI for Machines. I'm Building AI for People."
+title: "Done With Building AI for Machines? I'm Building AI for People."
 date: 2026-05-12
 draft: false
 categories: [entrepreneurship, tech-ai]
