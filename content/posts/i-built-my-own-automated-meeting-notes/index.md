@@ -23,7 +23,7 @@ Turned out: yes. Took three attempts.
 
 Google Meet add-ons. Many of them. The free ones either crashed before they even started, didn't install properly, or got stuck in a login loop. The free tiers that did work were capped. Two recordings a month. For a feature I'd run on every client call. Useless. The paid tiers were £9-40 a month. Forever.
 
-(Some of these tools are genuinely good. The teams who build them are doing real work. But £9-40/month forever for what is, fundamentally, a transcription pipeline plus a summariser? Maths doesn't maths.)
+(Some of these tools are genuinely good. The teams who build them are doing real work. But £9-40/month forever for what is, fundamentally, a transcription pipeline plus a summariser? Maths doesn't add.)
 
 ## Attempt 1: Claude Code overengineered when I asked for simple
 
