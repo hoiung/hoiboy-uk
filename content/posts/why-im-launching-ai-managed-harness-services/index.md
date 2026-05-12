@@ -33,6 +33,14 @@ So what do people actually do with it? They figure out the bits that work and qu
 
 But it is *assistant-tier* usefulness. Low-level. The thing fetches your coffee, it does not run your workflow.
 
+I understand why people use it the way they do. It's the limitations of a single AI chat interface (not quite the same as Claude Code). The problem with using a single chat (instead of a workflow with an orchestrator agent plus swarms of subagents) is the *context window* (the chat's working memory). A single chat has one, capped at 1M tokens (was 200K! until recently). There is not enough context window to retrieve, process, and store whatever the task at hand needs. You're only able to "skim" the surface of whatever task you're trying to do, rather than a deep dive.
+
+Using subagents effectively allows each agent to have its own token window. That frees the main orchestrator agent from doing the doing. Instead, it collates and presents tasks, and coordinates with you, the user.
+
+There are also different ways to use subagents and agentic AI (the broader name for AI that goes off and acts on its own, not just chats back at you). I use mine completely differently. My workflow doesn't allow subagents to implement. They can only research and dump into research files, and summarise, and then provide feedback to the main orchestrator, who is the only allowed agent to implement any changes.
+
+Sorry for the long explanation, but I had to try and fit the reason why single-chat AI use has extreme limitations, why it's so restricted, and not too effective when it comes to more complex tasks that have multiple layers of research, planning, and implementation (simplified for brevity). I didn't even mention the quality-control loop back for each stage, and more. But let's stop here at the technical explanations.
+
 Every single SME user I spoke to has been bitten by an AI hallucination of some form. Confident, fluent, completely wrong. Names invented. Numbers invented. Citations invented. Caught it in time? Lucky. Did not catch it? Embarrassing at best, expensive at worst. Once that happens too often, they stop trusting the tool for anything that matters, and they retreat back to the assistant-tier safe stuff. Summaries. Tidying. Prioritising. The low-stakes corner.
 
 What stood out the most: every user I spoke to does not know how to use subagents (think of them as specialist mini-AIs that handle one part of a job and report back), they do not know what a harness is, and they do not know how to set up their AI properly to unleash its real capabilities. Yes, there are generic skills and installable packages out there, but it is like a minefield. Who has time to learn, test, and fine-tune all of that on top of their own work and deliverables? Work already has enough pressure as it is, and here come the staff layoffs, so now you have even more on your plate!
