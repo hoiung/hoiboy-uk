@@ -34,8 +34,8 @@
 #  - harness_architect.tier_2_hourly_pack.pack_hours                 -> content/consulting/<slug>/index.md (Tier 2 bullet, literal "10 hours") + consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 2]
 #  - harness_architect.tier_2_hourly_pack.rate_per_hour_gbp          -> consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 2] hourly rate
 #  - harness_architect.tier_2_hourly_pack.open_scope                 -> consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 2] open-scope flag
-#  - harness_architect.monthly_maintenance_package.per_harness_mtm_gbp     -> content/consulting/<slug>/index.md (Tier 3 bullet, literal £400/mo) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package]
-#  - harness_architect.monthly_maintenance_package.per_harness_annual_gbp  -> content/consulting/<slug>/index.md (Tier 3 bullet, literal £340/mo annual) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package]
+#  - harness_architect.monthly_maintenance_package.per_harness_mtm_gbp     -> content/consulting/<slug>/index.md (Tier 3 bullet, literal £200/mo) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package]
+#  - harness_architect.monthly_maintenance_package.per_harness_annual_gbp  -> content/consulting/<slug>/index.md (Tier 3 bullet, literal £170/mo annual) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package]
 #  - harness_architect.monthly_maintenance_package.portfolio_cap_published -> content/consulting/<slug>/index.md (Tier 3 "6-harness cap" anchor) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package] cap clause
 #  - harness_architect.monthly_maintenance_package.overage_rate_gbp        -> consulting-ops/templates/sow-harness-architect.md §[Scope] overage clause (AC 4.7, literal £150/h)
 #  - harness_architect.monthly_maintenance_package.monthly_hours_cap       -> consulting-ops/templates/sow-harness-architect.md §[Scope] cap clause (AC 4.7, literal "5 hours per harness per month")
@@ -98,11 +98,11 @@ harness_architect:
 
   # Tier 3 — Monthly Maintenance Package, per harness, deliverable-anchored.
   monthly_maintenance_package:
-    per_harness_mtm_gbp: 400
-    per_harness_annual_gbp: 340
+    per_harness_mtm_gbp: 200
+    per_harness_annual_gbp: 170
     portfolio_cap_published: 6
     overage_rate_gbp: 150
-    monthly_hours_cap: 5
+    monthly_hours_cap: 2.5
     rollover: false
     termination_notice_days: 14
     continuity_gap_days: 30
