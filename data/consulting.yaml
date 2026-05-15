@@ -38,7 +38,7 @@
 #  - harness_architect.monthly_maintenance_package.per_harness_annual_gbp  -> content/consulting/<slug>/index.md (Tier 3 bullet, literal £170/mo annual) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package]
 #  - harness_architect.monthly_maintenance_package.portfolio_cap_published -> content/consulting/<slug>/index.md (Tier 3 "6-harness cap" anchor) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package] cap clause
 #  - harness_architect.monthly_maintenance_package.overage_rate_gbp        -> consulting-ops/templates/sow-harness-architect.md §[Scope] overage clause (AC 4.7, literal £150/h)
-#  - harness_architect.monthly_maintenance_package.monthly_hours_cap       -> consulting-ops/templates/sow-harness-architect.md §[Scope] cap clause (AC 4.7, literal "5 hours per harness per month")
+#  - harness_architect.monthly_maintenance_package.monthly_hours_cap       -> consulting-ops/templates/sow-harness-architect.md §[Scope] cap clause (AC 4.7, literal "2.5 hours per harness per month")
 #  - harness_architect.monthly_maintenance_package.rollover                -> consulting-ops/templates/sow-harness-architect.md §[Scope] no-rollover clause (AC 4.7)
 #  - harness_architect.monthly_maintenance_package.termination_notice_days -> consulting-ops/templates/sow-harness-architect.md §[Term] 14-day mutual termination clause (AC 4.8)
 #  - harness_architect.monthly_maintenance_package.continuity_gap_days     -> consulting-ops/templates/sow-harness-architect.md §[Term] 30-day-after-12-months clause (AC 4.5)
