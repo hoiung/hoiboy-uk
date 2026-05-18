@@ -9,9 +9,9 @@ description: "Undiagnosed dyslexia, diagnosed ADHD, and a decade of book-stuffin
 
 <!-- iamhoi -->
 
-My entire life, I've struggled with learning. Until I learned how to learn, probably only about 10-11 years ago, into my early 30s.
-
 Funny thing first. When I finally got the ADHD diagnosis I went round to my friends, "Hey guys, look, I got ADHD", and showed them the report. They just looked at me puzzled. "Hoi, we all knew, we thought you knew?". I was like... er what?! I never even knew what ADHD was until then. lol. Talk about lack of self-awareness (and I'm the one always preaching this). Some friends I have, right? They all thought I knew and never said a word, yet they all knew or thought it anyway. haha. Could've saved me £900 for the assessment! But oh well. At least I know now. Not that it changes anything.
+
+My entire life, I've struggled with learning. Until I learned how to learn, probably only about 10-11 years ago, into my early 30s.
 
 My biggest struggle was languages. I probably had undiagnosed dyslexia, ADHD which is 100% diagnosed last year aged 42 (attention deficit hyperactivity disorder), and OCD (obsessive compulsive disorder). Even now I still get letters in the wrong order. So if anything in here reads a little sideways, you know why.
 
