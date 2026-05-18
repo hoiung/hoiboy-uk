@@ -49,7 +49,17 @@ exclude = [
   # (anti-bot), so the booking URL https://cal.eu/hoiboyuk/discovery
   # (docs/cal-com-setup.md) flakes CI non-deterministically and cascade-skips
   # Deploy. Known-good anti-bot domain, same class as linkedin/cloudflare
-  # above -- NOT a broken link. added: 2026-05-18; expires: 2026-08-16 (90 days)
+  # above -- NOT a broken link.
+  # consulting-ops#2 AC 0.4 interaction (intentional): this also suppresses
+  # the SECONDARY lychee liveness check in pre-publish.sh:167
+  # consulting_link_check for cal.* URLs in rendered public/consulting HTML.
+  # That secondary check is anti-bot-403-unreliable for cal.* by nature
+  # (same flake this entry fixes), so it was never a dependable guarantee.
+  # The BINDING guard against a stale cal.com/OPERATOR_TODO URL is the
+  # URL-agnostic literal string check (pre-publish.sh:89 consulting_yaml_check
+  # + the independent .pre-commit-config.yaml OPERATOR_TODO hook) — neither
+  # uses lychee or this allowlist, so the primary defence is unaffected.
+  # added: 2026-05-18; expires: 2026-08-16 (90 days)
   "^https?://(www\\.)?cal\\.(eu|com)(/.*)?$",
   # Root-relative paths (href="/js/...", href="/legal/...", href="/private/...")
   # are Hugo internal paths that get rewritten at render time. Lychee scans
