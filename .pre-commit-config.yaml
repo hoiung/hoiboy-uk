@@ -93,22 +93,6 @@ repos:
         pass_filenames: false
         files: ^data/consulting\.yaml$
 
-      - id: sst3-mirror-drift
-        name: SST3 vendored file drift check (manifest-driven)
-        entry: python3 scripts/check-mirror-drift.py --repo hoiboy-uk
-        language: system
-        pass_filenames: false
-        always_run: true
-
-      - id: sst3-mirror-drift-strict
-        name: SST3 vendored file drift check (strict, push-time repo-wide)
-        entry: python3 scripts/check-mirror-drift.py --repo hoiboy-uk --strict
-        language: system
-        pass_filenames: false
-        always_run: true
-        stages: [pre-push]
-
-
       - id: sst3-closure-loop-applied
         name: Stage 1 closure-loop applied_in propagation gate (#460 Phase 6 W1; consumer-repo propagation)
         # Fires on commits with Phase: 4 or Phase: 5 trailer. Invokes the
@@ -134,3 +118,35 @@ repos:
         stages: [commit-msg]
         always_run: true
         verbose: true
+
+      # >>> SST3 MANAGED BLOCK — DO NOT EDIT — propagated by propagate-block.py >>>
+      - id: sst3-mirror-drift
+        name: SST3 vendored file drift check (manifest-driven, staged-aware)
+        entry: python3 scripts/check-mirror-drift.py --repo hoiboy-uk
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      - id: sst3-mirror-drift-strict
+        name: SST3 vendored file drift check (strict, push-time repo-wide)
+        entry: python3 scripts/check-mirror-drift.py --repo hoiboy-uk --strict
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+
+      - id: sst3-managed-block-drift
+        name: SST3 managed-block drift check (boundary-marker integrity, staged-aware)
+        entry: python3 scripts/check-mirror-drift.py --repo hoiboy-uk --managed-blocks
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      - id: sst3-managed-block-drift-strict
+        name: SST3 managed-block drift check (strict, push-time)
+        entry: python3 scripts/check-mirror-drift.py --repo hoiboy-uk --managed-blocks --strict
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+      # <<< END SST3 MANAGED BLOCK — propagated by propagate-block.py <<<
