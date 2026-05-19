@@ -46,7 +46,7 @@
       {{- /* share-card.* uses .Resize (preserves aspect) so the diagram is not cropped.
              Hero falls back to .Fill 1200x630 (the social-card landscape aspect) for
              photo-style heroes that are already landscape. */ -}}
-      {{- $og := cond (and $shareCard (eq $shareCard.RelPermalink .RelPermalink)) (.Resize "1200x webp q85") (.Fill "1200x630 webp q85") }}
+      {{- $og := cond (and $shareCard (eq $shareCard.RelPermalink .RelPermalink)) (.Resize "1200x jpg q85") (.Fill "1200x630 jpg q85") }}
 <meta property="og:image" content="{{ $og.Permalink }}">
 <meta property="og:image:width" content="{{ $og.Width }}">
 <meta property="og:image:height" content="{{ $og.Height }}">
@@ -62,7 +62,7 @@
   {{- $ldSocialImage := $ldShareCard | default $ldHero -}}
   {{- $ldHeroUrl := "" -}}
   {{- with $ldSocialImage }}{{- if not (strings.HasSuffix .Name ".svg") -}}
-    {{- $ldHeroUrl = (cond (and $ldShareCard (eq $ldShareCard.RelPermalink .RelPermalink)) (.Resize "1200x webp q85") (.Fill "1200x630 webp q85")).Permalink -}}
+    {{- $ldHeroUrl = (cond (and $ldShareCard (eq $ldShareCard.RelPermalink .RelPermalink)) (.Resize "1200x jpg q85") (.Fill "1200x630 jpg q85")).Permalink -}}
   {{- end }}{{- end }}
   {{- $ld := dict
     "@context" "https://schema.org"
