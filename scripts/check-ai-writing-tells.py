@@ -18,7 +18,7 @@ Human-readable companion: cv-linkedin/VOICE_PROFILE.md Section 8 / 19.
 
 Issue: hoiung/dotfiles#404 (canonical) + hoiung/hoiboy-uk#3 (mirror, since
        merged via hoiung/dotfiles#460 --mode unification, which also fixes
-       the blog-priv research-file silent-skip bug).
+       the voice-staging research-file silent-skip bug).
 Exit codes: 0 = clean, 1 = findings (block commit / fail CI)
 """
 
@@ -463,7 +463,7 @@ def main() -> int:
     )
     parser.add_argument(
         "--no-check-only-new", dest="check_only_new", action="store_false",
-        help="(blog mode) Disable cutoff filter; scan all dated posts (e.g. blog-priv research files).",
+        help="(blog mode) Disable cutoff filter; scan all dated posts (e.g. voice-staging research files).",
     )
     parser.add_argument("paths", nargs="*", help="Files / dirs to scan; uses mode defaults if empty.")
     args = parser.parse_args()
