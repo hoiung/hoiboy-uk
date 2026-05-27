@@ -1,26 +1,65 @@
-# 15 - LinkedIn Promotion Posts (Click-Driving Format)
+# 15 - LinkedIn Promotion Posts (Register Catalogue + Click-Driving Format)
 
-**Last updated**: 2026-04-25
-**Applies to**: every LinkedIn post written to drive readers from the LinkedIn feed to a hoiboy.uk blog post.
-**Does NOT apply to**: LinkedIn posts written for native engagement only (no external link), thought-leadership essays kept entirely on-platform, or comments.
+**Last updated**: 2026-05-27 (register catalogue + STEP 0 ASK FIRST added after `my-baby-steps-to-becoming-a-professional-trader` post-publish feedback)
+**Applies to**: every LinkedIn post written to drive readers from the LinkedIn feed to a hoiboy.uk blog post, OR every LinkedIn post written as native engagement (observation, rant, reflection) that happens to also link a hoiboy.uk piece as receipts.
+**Does NOT apply to**: comments, or LinkedIn DMs.
 
-## TL;DR
+## STEP 0 — ASK FIRST. Never draft from a template
 
-| Metric | Target | Hard ceiling |
-|---|---|---|
-| Word count | 50-90 (sweet spot ~70) | 100 |
-| Character count | 350-600 | 700 |
-| Hook (line 1) | Under 140 characters | 210 (desktop "see more" cutoff) |
-| Hashtags | 3-5 at the end | 5 |
-| Links in body | ONE only (the blog URL) | 1 |
+Before composing a single line, ask the operator:
 
-A click-driving LinkedIn post is a **tease**, not a mini-blog. If the reader can get the answer from the post, they will not click. The post's job is to land a hook above the "see more" cutoff and open a curiosity loop the blog post closes.
+1. **How are you feeling about this post?** What's the emotion or observation you want to land?
+2. **What angle do you want to strike at readers?** (curiosity tease / personal reflection / observation or rant / full-circle moment / announcement?)
+3. **Any specific phrase or framing already in your head?**
+
+The operator's feeling IS the post. Do NOT default to the click-driving 4-line skeleton and pour voice persona on top — that produces an AI-marketing-skeleton with voice paint, which is the exact AI-slop pattern the operator called out in his `2026-05-19 — Bring Back Originality` post on Drive (the "fake-contrast pivot" — e.g. `Not because X. Because Y.` — is one of the tells he named). Voice rules at the WORD level can pass while voice rules at the STRUCTURE level fail. Canonical rule: `~/.claude/projects/-home-hoiung-DevProjects/memory/feedback_linkedin_post_ask_feeling_first.md`.
+
+## Register catalogue
+
+LinkedIn posts split into registers. Match the register to the operator's STEP 0 answer:
+
+| Register | When | Length | Shape | Canonical worked example |
+|---|---|---|---|---|
+| **Tease-share** | Specific quantified discovery; curiosity loop the blog closes | 50-90 words, 350-600 chars | 4-line skeleton (hook / stake / curiosity-gap / link + CTA) | §"Worked example: too long vs target" below — overthink-mode promo |
+| **Personal-reflection** | Full-circle moment, observation, "thought I'd write this one down" | Flexible — length follows feeling | First-person observation, develops the feeling, link as parenthetical footnote or `If anyone cares:` URL on own line. Post must stand alone without the link. | Operator's authentic share register — develop from STEP 0 answer. See §"Personal-reflection — when this register is right" below. |
+| **Sarcastic-callout (R10)** | Population-level pattern operator finds lazy; linked piece carries the receipts | Often 300-500+ words | Personal-journey opener, genre-template enumeration, sincere positive close, link as parenthetical footnote | `2026-05-19 — Bring Back Originality` (Drive `linkedin_Posts.md`). Full schema: `cv-linkedin/voice-analysis-reports/17_sarcastic_callout_register.md` + `VOICE_PROFILE.md` §15 R10 |
+| **Social-Announcer (R5a)** | Launch, milestone, "BIG NEWS" | 50-200 words | Bullet checklist OK, emoji OK, urgency signals OK | `VOICE_PROFILE.md` §15 R5a |
+
+**The post-stands-alone test (every register):** if you remove the link, does the post still read as a quality piece of personal sharing or observation? Yes → soft sell, on-brand. No → it's a sales pitch with voice paint, rewrite. (Same test as `memory/feedback_always_use_sst3_harness.md`.)
+
+**Tease-share metrics are register-specific, NOT universal.** The 50-90 word "sweet spot" applies ONLY to tease-share. Personal-reflection regularly lands 120-200 words; sarcastic-callout 300-500+. Forcing a personal-reflection into 90 words guts the feeling. Length follows feeling.
+
+## Personal-reflection — when this register is right
+
+The operator's angle is the experience itself, not a discovery to click for. Hook is a personal observation or memory, not a contrarian claim. Link is a parenthetical footnote ("Wrote it up here if anyone cares: <url>") or a dismissive standalone ("If anyone cares:\n<url>"), not a CTA. Length follows feeling.
+
+Shape:
+
+```
+Opening: first-person observation, memory, or "Years ago I..." entry.
+Body: 2-5 short paragraphs developing the feeling, with parenthetical asides.
+   Single-sentence beats are fine ("Years pass." / "So I came back to it.").
+Close: sincere positive turn or "thought I'd write this down" handoff.
+Link (parenthetical footnote): "(Wrote it up here if anyone cares: <url> )" with
+   trailing space before `)`, OR "If anyone cares:" on its own line, URL on next line.
+Hashtags on the final line.
+```
+
+The post must work without the link. The link is the footnote, not the destination.
+
+## Tease-share — when this register is right
+
+The post has a specific quantified discovery the reader will get only by clicking. Numbers in the hook, curiosity gap in line 3, link as CTA. This IS the original click-driving format the rest of this doc was built for. Don't force a tease frame onto a personal reflection.
 
 ## Why this exists
 
-Drafts kept landing at 150-200+ words because the writing model defaults to "summarise the blog." User feedback 2026-04-25 on the overthink-mode promotion draft: too long, want them to click the link to read more. Research dispatched same day; this doc captures the findings and locks the format.
+Drafts kept landing at 150-200+ words because the writing model defaults to "summarise the blog." User feedback 2026-04-25 on the overthink-mode promotion draft: too long, want them to click the link to read more. The tease-share register and its 4-line skeleton are the response to that.
 
-## The four-line skeleton
+The register catalogue (this doc, top half) and `STEP 0 ASK FIRST` are the 2026-05-27 response to the OPPOSITE failure mode: applying the tease-share skeleton to a post that wanted to be a personal-reflection share, producing AI-marketing-skeleton with voice paint. Both failure modes mean the same thing: the structural shape of the post must come from the operator's intent, not from a template the model picks by default.
+
+## The four-line skeleton (TEASE-SHARE REGISTER ONLY)
+
+> This skeleton is for the **tease-share register** — when the post has a specific quantified discovery and the link is the destination. For personal-reflection / sarcastic-callout / announcement registers, see the Register catalogue above. Do NOT apply this skeleton when the operator's STEP 0 answer points at a different register.
 
 ```
 Line 1 (HOOK, <140 chars, 5-10 words ideal):
@@ -39,6 +78,10 @@ Hashtags on the final line: #Tag1 #Tag2 #Tag3 (3-5).
 ```
 
 Total post: 50-90 words, 350-600 characters.
+
+**Anti-pattern the operator named explicitly (do not produce):**
+
+- The **fake-contrast pivot** — `Not because X. Because Y.` — is one of the AI-slop tells the operator called out in his 2026-05-19 post. A tease-share that opens with the fake-contrast pivot has the SHAPE of AI marketing skeleton even if every word passes the voice guard. Find a different way to open the curiosity gap, or move to the personal-reflection register if the post wants to be that instead.
 
 ## What the research found
 
@@ -154,15 +197,16 @@ Supporting:
 
 ## How to apply
 
-When `/blog write <slug>` is followed by a LinkedIn post draft:
+When `/blog write <slug>` (or any blog publish flow) reaches the LinkedIn post step:
 
-1. Compose the body in the four-line skeleton above.
-2. Verify total word count is 50-90 (target ~70).
-3. Verify total character count is 350-600 (hard ceiling 700).
-4. Verify line 1 (the hook) is under 140 characters.
-5. Run the voice guard against the LinkedIn post even though it lives on Drive - same banned-word rules apply.
-6. ONE link only. NEVER add a repo link.
-7. 3-5 hashtags at the end.
-8. Append to `linkedin_Posts.md` newest-at-top with `## YYYY-MM-DD - <Title> (DRAFT, not published)`.
+1. **STEP 0 — ASK FIRST** (see top of this doc). Get the operator's feeling + angle + any specific framing. Don't draft before this.
+2. **Match the register to the operator's answer** (see Register catalogue). Tease-share → 4-line skeleton + tease metrics below. Personal-reflection → length follows feeling, link as parenthetical footnote, post stands alone. Sarcastic-callout → R10 schema. Announcer → R5a schema.
+3. **Run the post-stands-alone test** (every register): remove the link mentally — does the post still read as a quality piece of personal sharing? Yes → keep. No → rewrite.
+4. **Tease-share register only**: verify total word count 50-90 (target ~70), total character count 350-600 (hard ceiling 700), hook (line 1) under 140 chars.
+5. **Every register**: zero em dashes, zero banned words, voice rules apply, plain English (acronyms expanded on first use), British spelling, professional channel (strip personal/NSFW/juvenile).
+6. **ONE link only.** NEVER add a repo link.
+7. **3-5 hashtags at the end.**
+8. **URL formatting**: standalone on its own line for clean unfurl, OR parenthetical-footnote form `(... url )` with a trailing space before `)`. NEVER `(url)` without trailing space — LinkedIn eats the `)` into the fetched URL and the preview card fails.
+9. **Append to `linkedin_Posts.md` newest-at-top** with `## YYYY-MM-DD — <Title> (DRAFT, not published)`.
 
-When in doubt: if removing 30% of the words would still leave a coherent tease, the draft is too long.
+Tease-share self-check: if removing 30% of the words would still leave a coherent tease, the draft is too long. (This check is register-specific. Personal-reflection length is set by the feeling, not the formula.)
