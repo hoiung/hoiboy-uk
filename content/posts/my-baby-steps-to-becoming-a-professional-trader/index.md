@@ -18,7 +18,7 @@ A long long time ago, probably over 12-13 years ago, I tried to get into trading
 
 It was only when COVID happened (just over 6 years ago now) that I started dabbling in stocks. Not quite trading yet. Just buying things and holding.
 
-Then 3 years ago, another turning point. Full circle. This time I had more capital that I could trade with, and more importantly, I wanted to learn something I could do alone. No team to build. No boss telling me what to do. No clients to manage. I was tired of a 10 year career in IT. Tired of 20 years running my own businesses. Tired of the taxes and the admin that comes with all of it. I was totally burnt out with life itself. It was a tough period. Am I happy? No.
+Then 3 years ago, another turning point. Full circle. This time I had more capital that I could trade with, and more importantly, I wanted to learn something I could do alone. No team to build. No boss telling me what to do. No clients to manage. I was tired of a 10 year career in IT. Tired of 20 years running my own businesses. Tired of the taxes and the admin that comes with all of it. I was totally burnt out with life itself. It was a tough period. Was I happy? No.
 
 So trading. I thought yeah, it ticks a lot of boxes. I want to be alone. I want to work alone. I want to make decisions for myself that don't affect others.
 
