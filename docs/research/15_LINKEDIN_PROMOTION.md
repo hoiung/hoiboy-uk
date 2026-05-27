@@ -4,7 +4,7 @@
 **Applies to**: every LinkedIn post written to drive readers from the LinkedIn feed to a hoiboy.uk blog post, OR every LinkedIn post written as native engagement (observation, rant, reflection) that happens to also link a hoiboy.uk piece as receipts.
 **Does NOT apply to**: comments, or LinkedIn DMs.
 
-## STEP 0, ASK FIRST. Never draft from a template
+## STEP 0: ASK FIRST. Never draft from a template
 
 Before composing a single line, ask the operator:
 
@@ -29,7 +29,7 @@ LinkedIn posts split into registers. Match the register to the operator's STEP 0
 
 **Tease-share metrics are register-specific, NOT universal.** The 50-90 word "sweet spot" applies ONLY to tease-share. Personal-reflection regularly lands 120-200 words; sarcastic-callout 300-500+. Forcing a personal-reflection into 90 words guts the feeling. Length follows feeling.
 
-## Personal-reflection, when this register is right
+## Personal-reflection: when this register is right
 
 The operator's angle is the experience itself, not a discovery to click for. Hook is a personal observation or memory, not a contrarian claim. Link is a parenthetical footnote ("Wrote it up here if anyone cares: <url>") or a dismissive standalone ("If anyone cares:\n<url>"), not a CTA. Length follows feeling.
 
@@ -47,7 +47,7 @@ Hashtags on the final line.
 
 The post must work without the link. The link is the footnote, not the destination.
 
-## Tease-share, when this register is right
+## Tease-share: when this register is right
 
 The post has a specific quantified discovery the reader will get only by clicking. Numbers in the hook, curiosity gap in line 3, link as CTA. This IS the original click-driving format the rest of this doc was built for. Don't force a tease frame onto a personal reflection.
 
