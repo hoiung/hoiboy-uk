@@ -168,7 +168,7 @@ Personal blog at **hoiboy.uk**, owned by Senh Hoi Ung (Hoi). Republishes ~22 yea
 
 1. `docs/research/11_VOICE_PROFILE.md` (in-repo distilled voice rules)
 2. `docs/research/12_AI_WRITING_TELLS.md` (in-repo research, why the rules exist)
-3. `../job-hunter/cv-linkedin/VOICE_PROFILE.md` (canonical ~80K corpus analysis with verbatim sentence templates)
+3. `../dotfiles/voice/base/VOICE_PROFILE.md` (canonical ~80K corpus analysis with verbatim sentence templates)
 
 Then, before commit: `python3 scripts/check-ai-writing-tells.py --check-only-new content/posts/<slug>/index.md`. This is the marker-driven voice guard (default = SKIP, opt in per region with `<!-- iamhoi -->` ... `<!-- iamhoiend -->` markers). It runs as a pre-commit hook AND in CI. Legacy posts (date < 2026-04-07) and untagged sections are silently skipped. See `docs/research/11_VOICE_PROFILE.md` "How to use the voice guard hook".
 
@@ -248,7 +248,7 @@ pre-commit install
 - **pre-commit**: file hygiene + markdownlint + frontmatter validator + config traceability
 - **GitHub Actions ci.yml**: Hugo build, markdownlint-cli2, lychee, em-dash grep guard, frontmatter validator, config traceability
 - **GitHub Actions deploy.yml**: POSTs Cloudflare deploy hook ONLY on green CI (auto-build disabled in Cloudflare to prevent racing)
-- **No AI tells in NEW pages** (date >= 2026-04-07) written in Hoi's voice. RAG from `docs/research/11_VOICE_PROFILE.md` first, then the canonical `../job-hunter/cv-linkedin/VOICE_PROFILE.md`. Republished legacy posts (date < 2026-04-07) are exempt (pre-AI corpus = voice research itself, never touched).
+- **No AI tells in NEW pages** (date >= 2026-04-07) written in Hoi's voice. RAG from `docs/research/11_VOICE_PROFILE.md` first, then the canonical `../dotfiles/voice/base/VOICE_PROFILE.md`. Republished legacy posts (date < 2026-04-07) are exempt (pre-AI corpus = voice research itself, never touched).
 
 ### Adding a Post
 
@@ -256,7 +256,7 @@ See `docs/AUTHORING.md` for the full contract: frontmatter rules, image placemen
 
 1. `content/posts/<slug>/index.md` with frontmatter: `title`, `date`, `categories: [<one of food-booze, adventure, dance, tech-ai, life, entrepreneurship, trading>]`, `tags: [...]`
 2. Images in same folder as `index.md`, referenced by relative path with mandatory alt text
-3. For any new prose (date >= 2026-04-07) written in Hoi's voice: RAG from `docs/research/11_VOICE_PROFILE.md` (in-repo) AND `../job-hunter/cv-linkedin/VOICE_PROFILE.md` (canonical) BEFORE drafting (no generic outputs, ever)
+3. For any new prose (date >= 2026-04-07) written in Hoi's voice: RAG from `docs/research/11_VOICE_PROFILE.md` (in-repo) AND `../dotfiles/voice/base/VOICE_PROFILE.md` (canonical) BEFORE drafting (no generic outputs, ever)
 4. Commit, push. CI runs, then deploy hook fires, then live in ~90 seconds
 
 ### Importing Legacy Posts
@@ -314,7 +314,7 @@ wrangler pages deploy public --project-name=hoiboy-uk --branch=main
 - Research trail: `docs/research/`
 - SST3 standards: `../dotfiles/SST3/standards/STANDARDS.md`
 - Voice profile (in-repo, distilled): `docs/research/11_VOICE_PROFILE.md`
-- Voice profile (canonical, full ~80K corpus analysis): `../job-hunter/cv-linkedin/VOICE_PROFILE.md`
+- Voice profile (canonical, full ~80K corpus analysis): `../dotfiles/voice/base/VOICE_PROFILE.md`
 
 ## Operator-only tools (unlisted, noindex)
 
