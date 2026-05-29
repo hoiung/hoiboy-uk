@@ -1,7 +1,7 @@
 # Voice Profile for hoiboy.uk
 
 **Captured**: 2026-04-08
-**Source**: distilled from `../../../job-hunter/cv-linkedin/VOICE_PROFILE.md` (canonical, ~80K word corpus analysis across 37 pre-AI blogs).
+**Source**: distilled from `../../../dotfiles/voice/base/VOICE_PROFILE.md` (canonical, ~80K word corpus analysis across 37 pre-AI blogs).
 **Cutoff date**: **2026-04-07**. See "Voice cutoff rule" below.
 
 ## Voice cutoff rule (load-bearing)
@@ -158,7 +158,7 @@ delve, leverage (verb), spearhead, synergy, stakeholder, robust, seamless, cutti
 
 ## Practical workflow for writing a new post
 
-1. **RAG first**. Read this file PLUS the full canonical at `../../../job-hunter/cv-linkedin/VOICE_PROFILE.md` (Section 12 has verbatim sentence templates). Generic = lazy.
+1. **RAG first**. Read this file PLUS the full canonical at `../../../dotfiles/voice/base/VOICE_PROFILE.md` (Section 12 has verbatim sentence templates). Generic = lazy.
 2. **Draft loose**. Don't filter. Get the story out.
 3. **Voice pass**:
    - Search and destroy every em-dash character (U+2014)
@@ -222,7 +222,7 @@ Back to voice prose, scanned.
 ## References
 
 - AI writing tells research (in-repo, why the rules exist): `12_AI_WRITING_TELLS.md`
-- Canonical voice profile (full ~80K corpus analysis): `../../../job-hunter/cv-linkedin/VOICE_PROFILE.md`
+- Canonical voice profile (full ~80K corpus analysis): `../../../dotfiles/voice/base/VOICE_PROFILE.md`
 - Voice corpus (37 pre-AI blogs, ~80,000 words): `../../../job-hunter/cv-linkedin/voice-corpus/blogs/`
 - AI writing tells script: `../../../dotfiles/SST3/scripts/check-ai-writing-tells.py`
 - AI writing tells research (canonical, 25+ sources): `../../../job-hunter/cv-linkedin/job-research/18_AI_WRITING_TELLS_AND_DETECTION.md`
