@@ -3,7 +3,7 @@
 Single source of truth for operator-voice guard rules.
 
 Canonical Python copy of the rules described in the human-readable companion
-`cv-linkedin/VOICE_PROFILE.md` Section 8 (anti-vocabulary) and Section 19
+`dotfiles/voice/base/VOICE_PROFILE.md` Section 8 (anti-vocabulary) and Section 19
 (banned phrases / AI tells the operator never makes).
 
 This module is consumed by:
@@ -55,7 +55,7 @@ UNICODE_ARROW_CHARS: tuple[str, ...] = ("\u2192", "\u21d2", "\u2190", "\u21d0")
 # KEEP list — authentic the operator vocabulary (NEVER add to BANNED_WORDS)
 # ---------------------------------------------------------------------------
 # These words are used sincerely by the operator 50+ times across his pre-AI corpus.
-# Documented in cv-linkedin/VOICE_PROFILE.md Section 8.
+# Documented in dotfiles/voice/base/VOICE_PROFILE.md Section 8.
 KEEP_LIST: tuple[str, ...] = (
     "passion",
     "passionate",

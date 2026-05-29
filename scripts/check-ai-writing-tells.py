@@ -14,7 +14,7 @@ Modes (selected via --mode):
       HOIBOY_CUTOFF_DATE are skipped (legacy voice-sacred corpus).
 
 Rules: imported from voice_rules.py (single source of truth).
-Human-readable companion: cv-linkedin/VOICE_PROFILE.md Section 8 / 19.
+Human-readable companion: dotfiles/voice/base/VOICE_PROFILE.md Section 8 / 19.
 
 Issue: hoiung/dotfiles#404 (canonical) + hoiung/hoiboy-uk#3 (mirror, since
        merged via hoiung/dotfiles#460 --mode unification, which also fixes
@@ -87,12 +87,22 @@ REGION_SCAN_GLOBS_CV: tuple[str, ...] = (
 # whitelist from sanitising thousands of authentic Hoi vocabulary uses).
 EXEMPT_PATHS_CV: tuple[str, ...] = (
     "SST3/",
+    # dotfiles#513: relocated voice persona base layer (VOICE_PROFILE +
+    # WRITTEN_LIFE_SUMMARY + voice-dimension/register reports) lives in
+    # dotfiles/voice/base/. These analysis docs quote banned words verbatim as
+    # examples, so the BASE subtree is never CV-prose to scan. Narrowed from the
+    # whole "voice/" prefix to "voice/base/" (#513 Phase 6 AC6.1) so the
+    # replacement dotfiles-side gate can still scan + fail on a banned word inside
+    # an iamhoi region of a NON-base voice file (voice/tones/, voice/CLASSIFICATION.md,
+    # future voice/ prose) — those are marker-driven per the scan_file matrix.
+    "voice/base/",
     "cv-linkedin/job-research/",
     "cv-linkedin/voice-corpus/",
     "cv-linkedin/voice-analysis-reports/",
     "cv-linkedin/MASTER_PROFILE.md",
     "cv-linkedin/METRIC_PROVENANCE.md",
-    "cv-linkedin/VOICE_PROFILE.md",
+    # cv-linkedin/VOICE_PROFILE.md removed (#513): relocated to dotfiles/voice/base/ (covered
+    # by the "voice/base/" prefix above); the job-hunter pointer stub at the old path is iamhoi-exempt.
     "cv-linkedin/PERSONA_CONTEXT.md",
     "cv-linkedin/INTERVIEW_PREP_BANK.md",
     "cv-linkedin/HIRER_PROFILE.md",
@@ -117,6 +127,11 @@ PUBLIC_FACING_GLOBS_BLOG: tuple[str, ...] = ()
 # guard plan / profile / AI tells docs quote banned words verbatim
 # in code fences and would trip the state machine.
 EXEMPT_PATHS_BLOG: tuple[str, ...] = (
+    # dotfiles#513: relocated voice persona BASE layer — never scanned in either
+    # mode (analysis docs quote banned words verbatim as examples). Narrowed from
+    # "voice/" to "voice/base/" (#513 Phase 6 AC6.1) so non-base voice files stay
+    # marker-driven-scannable by the replacement dotfiles-side gate.
+    "voice/base/",
     "legacy/",
     ".github/",
     "node_modules/",
@@ -549,7 +564,7 @@ def main() -> int:
 
     print(f"TOTAL: {len(all_findings)} tells in {len(files_to_scan)} files")
     print()
-    print("Fix: cv-linkedin/VOICE_PROFILE.md Sections 8 + 19")
+    print("Fix: dotfiles/voice/base/VOICE_PROFILE.md Sections 8 + 19")
     print("Wrap quoted/example prose in <!-- iamhoi-skip --> ... <!-- iamhoi-skipend -->")
     return 1
 
