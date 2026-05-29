@@ -10,7 +10,9 @@ can write a full Hoi-voice post and the voice guard silently skips it
 Decision matrix (default = PASS):
   --check-only-new and date < HOIBOY_CUTOFF_DATE  -> PASS (legacy corpus)
   first non-blank line is `<!-- iamhoi-exempt -->` -> PASS (whole-file bypass)
-  body contains `<!-- iamhoi -->`                  -> PASS (wrapped)
+  a standalone line is exactly `<!-- iamhoi -->`    -> PASS (wrapped; a mere
+                                                      mention of the token in
+                                                      prose does NOT count)
   body has first-person prose AND no marker        -> FAIL exit 1
 
 First-person detection:
@@ -76,6 +78,19 @@ def is_exempt(body: str) -> bool:
     return False
 
 
+def has_marker(body: str) -> bool:
+    """True if any STANDALONE line is exactly `<!-- iamhoi -->` (a real region open).
+
+    Mirrors the region-open detection in check-ai-writing-tells.py
+    (`line.strip() == OPEN`) and is_exempt above. A plain `in body` substring
+    test would let a file that merely *mentions* the marker token (e.g.
+    backtick-wrapped in documentation prose, as the voice/tones/*.md specs do)
+    bypass the gate without ever wrapping its first-person prose — defeating
+    the gate's entire purpose. The marker must open a region on its own line.
+    """
+    return any(line.strip() == _MARKER_OPEN for line in body.split("\n"))
+
+
 def has_voice_prose(body: str) -> bool:
     """Return True if body contains first-person prose (I, I'm, I've, Hoi, my, me).
 
@@ -108,7 +123,7 @@ def check_file(path: Path, check_only_new: bool) -> tuple[bool, str]:
     if is_exempt(body):
         return True, ""
 
-    if _MARKER_OPEN in body:
+    if has_marker(body):
         return True, ""
 
     if has_voice_prose(body):
