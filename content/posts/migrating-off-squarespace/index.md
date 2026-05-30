@@ -1,5 +1,5 @@
 ---
-title: "Where Automated Checks Stop and Eyes Start"
+title: "Migrating Off Squarespace to Cloudflare"
 date: 2026-05-30
 categories: [tech-ai, entrepreneurship]
 tags: [hugo, squarespace, cloudflare, migration, ai, web-design]
