@@ -1,8 +1,8 @@
 # 15 - LinkedIn Promotion Register Catalogue (relocated)
 
-The canonical LinkedIn promotion register catalogue — the four sub-registers (tease-share,
+The canonical LinkedIn promotion register catalogue, the four sub-registers (tease-share,
 personal-reflection, sarcastic-callout R10, Social-Announcer R5a), the STEP 0 ASK FIRST rule,
-the post-stands-alone test, and the tease-share four-line skeleton — now lives once in the
+the post-stands-alone test, and the tease-share four-line skeleton, now lives once in the
 central voice persona:
 
   voice/tones/blog.md  ("Canonical LinkedIn promotion register catalogue", dotfiles#513)
