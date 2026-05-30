@@ -67,7 +67,7 @@ Same thing every time. It formed an opinion about the page before it had properl
 
 First I looked at the easy option. There's an official frontend-design tool you can bolt onto Claude, and we talked about it. But it's built for "design me something nice". My problem was the opposite: "match this exact thing that already exists, and tell me where I'm off". Different job entirely.
 
-So I came up with my own approach and built it into a small reusable skill in the harness. (Building that skill was where I dogfooded a new piece of the harness, the Claude Dynamic Workflow and Security Guidance Plugin that we integrated into SST3.) The idea is dead simple. One page at a time:
+So I came up with my own approach and built it into a small reusable skill in the harness. (Building that skill was where I dogfooded a new piece of the harness, the Claude Code Dynamic Workflow and Security Guidance Plugin that we integrated into SST3.) The idea is dead simple. One page at a time:
 
 1. Take a full-page screenshot of the live site and of my rebuild, at both desktop and mobile widths.
 2. Read the live site's actual computed styles, the real colours, spacing and fonts the browser ends up using (not what the code claims, what it actually renders), and print the difference against mine.
