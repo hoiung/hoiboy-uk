@@ -67,7 +67,7 @@ Same thing every time. It formed an opinion about the page before it had properl
 
 First I looked at the easy option. There's an official frontend-design tool you can bolt onto Claude, and we talked about it. But it's built for "design me something nice". My problem was the opposite: "match this exact thing that already exists, and tell me where I'm off". Different job entirely.
 
-So I came up with my own approach and built it into a small reusable skill in the harness. (Building that skill was where I dogfooded a new piece of the harness, the Claude Code Dynamic Workflow and Security Guidance Plugin that we integrated into SST3.) The idea is dead simple. One page at a time:
+So I came up with my own approach and built it into a small reusable skill in the harness, called /web-design. (Building that skill was where I dogfooded a new piece of the harness, the Claude Code Dynamic Workflow and Security Guidance Plugin that we integrated into SST3.) The idea is dead simple. One page at a time:
 
 1. Take a full-page screenshot of the live site and of my rebuild, at both desktop and mobile widths.
 2. Read the live site's actual computed styles, the real colours, spacing and fonts the browser ends up using (not what the code claims, what it actually renders), and print the difference against mine.
@@ -87,7 +87,7 @@ Two honest caveats I hit. The closeness number is a blunt instrument: when two p
 
 Here's the funny ending. After all that, I'm letting the id8u domain lapse. It expires in a few days, a transfer that close to expiry costs money for almost nothing, and the best ideas from id8u are getting folded into a newer dating platform project I'm building instead. So the replica lives on its free Cloudflare address rather than taking over the real domain. You can have a look here: [id8u-655.pages.dev](https://id8u-655.pages.dev/).
 
-So what was the point? The point was never the live domain. It was learning how to lift a site off Squarespace, finding out exactly where the automated safety net stops and your own eyes have to take over (and where even your eyes give up), and walking away with a reusable screenshot loop I'll use on the next migration, and the one after that. (I'm pulling it out into a standalone skill in [sst3-skills](https://github.com/hoiung/sst3-skills), part of my [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) kit, so anyone can run the same loop on their own site.)
+So what was the point? The point was never the live domain. It was learning how to lift a site off Squarespace, finding out exactly where the automated safety net stops and your own eyes have to take over (and where even your eyes give up), and walking away with a reusable screenshot loop I'll use on the next migration, and the one after that. (I'm pulling /web-design out into a standalone skill in [sst3-skills](https://github.com/hoiung/sst3-skills), part of my [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) kit, so anyone can run the same loop on their own site.)
 
 Green checks are necessary. They are not sufficient. A passing build tells you the site works. It tells you nothing about whether it looks like the thing you set out to copy. For that, there's no shortcut. You shoot it, you put it side by side, and you actually look.
 
