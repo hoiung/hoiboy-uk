@@ -270,8 +270,14 @@ NUMBER_TOKEN_PATTERN: re.Pattern[str] = re.compile(r"\$\d[\d.,]*|\b\d[\d.,]*\s?(
 # carries several hype-numbers (>= MIN_NUMBERS) that are dense (ratio >= RATIO).
 # Evidence-numbers in Hoi's narrative are sparse + bare; hype stat-stacks pile
 # unit-numbers. Tuned to 0 flags on the 64-file authentic corpus.
+# MIN_NUMBERS=5 (raised from 4, #517 Stage 5): a terse first-person trading recap
+# ("I put 25% in, made 30%, lost 40%, then recovered 35%") carries 4 unit-numbers
+# as AUTHENTIC evidence, not hype — the HARD constraint is over-factual != no-
+# numbers. Marketing stat-stacks pile 5+ ("3x faster, 40% more, 10x ROI, 200%
+# growth, 50% cheaper"). Requiring 5 keeps the AI signal while not punishing a
+# 4-number evidence sentence. Corpus max is 3 unit-numbers, so 0-FP is preserved.
 NUMERIC_DENSITY_MIN_WORDS: int = 8
-NUMERIC_DENSITY_MIN_NUMBERS: int = 4
+NUMERIC_DENSITY_MIN_NUMBERS: int = 5
 NUMERIC_DENSITY_RATIO: float = 0.10
 
 # --- RULE_OF_THREE (abstract-noun triple) ---
@@ -284,25 +290,32 @@ NUMERIC_DENSITY_RATIO: float = 0.10
 # domain-grounded abstract words Hoi actually uses. Lower recall, ~0 FPs — the
 # JBGE trade the operator approved (build minimal, do not punish authentic).
 GENERIC_AI_ABSTRACT: frozenset[str] = frozenset({
-    "presence", "curiosity", "clarity", "synergy", "authenticity",
+    "presence", "curiosity", "clarity", "authenticity",
     "mindfulness", "intentionality", "scalability", "efficiency",
-    "connection", "empowerment", "alignment", "resilience", "gratitude",
+    "connection", "empowerment", "resilience", "gratitude",
     "abundance", "transformation", "innovation", "creativity", "positivity",
     "wellness", "wholeness", "purpose", "serenity", "harmony",
-    "synergies", "engagement", "belonging", "fulfilment",
+    "engagement", "belonging", "fulfilment",
     "fulfillment", "mindset", "wellbeing",
 })
+# Build-time guarantee: GENERIC_AI_ABSTRACT never overlaps KEEP_LIST. An operator-
+# authentic word (alignment / synergy / synergies live in KEEP_LIST per the
+# 2026-04-22 whitelist) must NOT also sit in the AI-cliche set, or RULE_OF_THREE
+# would false-positive on Hoi's natural vocab (e.g. "connection, alignment, and
+# resilience"). Mirrors the KEEP_LIST/BANNED_WORDS guard above. (#517 Stage 5.)
+_generic_lower = {w.lower() for w in GENERIC_AI_ABSTRACT}
+_keep_generic_overlap = _keep_lower & _generic_lower
+if _keep_generic_overlap:
+    raise RuntimeError(
+        "voice_rules.py: KEEP_LIST and GENERIC_AI_ABSTRACT overlap: "
+        f"{sorted(_keep_generic_overlap)}"
+    )
 # Matches "word, word, and word" / "word, word and word" (3 single-word items).
 RULE_OF_THREE_PATTERN: re.Pattern[str] = re.compile(
     r"\b([A-Za-z][A-Za-z'-]+),\s+([A-Za-z][A-Za-z'-]+),?\s+and\s+([A-Za-z][A-Za-z'-]+)\b"
 )
 # How many of the 3 items must be in GENERIC_AI_ABSTRACT to flag (all 3 = strict).
 RULE_OF_THREE_MIN_ABSTRACT: int = 3
-# Retained for back-compat / the _is_abstract helper (suffix signal, advisory).
-ABSTRACT_SUFFIX_PATTERN: re.Pattern[str] = re.compile(
-    r"(?:ity|ness|tion|sion|ment|ance|ence|ism|ship|bility)$", re.IGNORECASE
-)
-ABSTRACT_NOUN_EXTRA: frozenset[str] = GENERIC_AI_ABSTRACT
 
 # --- RHYTHM_UNIFORM (smooth uniform sentence run) ---
 # Flags a run of K+ CONSECUTIVE sentences all in the AI "smooth band"
@@ -343,7 +356,7 @@ __all__ = [
     "HTML_TAG_PATTERN", "URL_PATTERN", "MD_LINK_TARGET_PATTERN", "LIST_LINE_PATTERN",
     "NUMBER_TOKEN_PATTERN", "WORD_TOKEN_PATTERN",
     "NUMERIC_DENSITY_MIN_WORDS", "NUMERIC_DENSITY_MIN_NUMBERS", "NUMERIC_DENSITY_RATIO",
-    "ABSTRACT_SUFFIX_PATTERN", "ABSTRACT_NOUN_EXTRA", "GENERIC_AI_ABSTRACT",
+    "GENERIC_AI_ABSTRACT",
     "RULE_OF_THREE_PATTERN", "RULE_OF_THREE_MIN_ABSTRACT",
     "SENTENCE_SPLIT_PATTERN", "RHYTHM_UNIFORM_RUN",
     "RHYTHM_UNIFORM_LOW", "RHYTHM_UNIFORM_HIGH", "RHYTHM_UNIFORM_MAX_STDEV",
