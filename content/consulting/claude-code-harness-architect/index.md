@@ -1,7 +1,7 @@
 ---
 title: "AI Managed Harness Services"
 date: 2026-04-25
-description: "I help non-technical domain experts adopt AI properly. Audit-first ladder, custom AI harness that automates the routine work, freeing you to focus on the human-ingenuity work AI cannot replicate. UK-based, international clients welcome."
+description: "I help non-technical domain experts and subject matter experts adopt AI properly. Audit-first ladder, custom AI harness that automates the routine work, freeing you to focus on the human-ingenuity work AI cannot replicate. UK-based, international clients welcome."
 hideDate: true
 ---
 
@@ -16,7 +16,7 @@ I designed, run, and babysit daily a live automated pullback swing trading platf
 
 <!-- iamhoi -->
 
-I help non-technical domain experts adopt AI properly. Not by handing you a tool and saying "off you go". Not by writing a hand-wavy AI strategy deck either!
+I help non-technical domain experts and subject matter experts adopt AI properly. Not by handing you a tool and saying "off you go". Not by writing a hand-wavy AI strategy deck either!
 
 I am not here to scale your AWS or your other cloud infrastructure (that's your tech team's job!). I am here to help the people who actually do the work in your business (marketing, sales, ops, design, finance, customer support, wherever you sit) integrate a custom AI harness that automates the routine, so you can focus on your human ingenuity and your domain expertise (the things AI cannot replicate, now or any time soon).
 
