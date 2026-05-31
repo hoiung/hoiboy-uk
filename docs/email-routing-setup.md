@@ -2,7 +2,7 @@
 
 Operator runbook for the free DIY email stack on `hoiboy.uk`. Goal: receive at `hello@hoiboy.uk` (forwarded to `hoiboyuk@gmail.com`) and reply back AS `hello@hoiboy.uk` from inside Gmail. Zero ongoing subscription cost. No enterprise email account.
 
-**Status as of 2026-05-08**: live and verified end-to-end. SPF + DKIM + DMARC all PASS in real-world delivery. See § "Execution evidence" at the bottom.
+**Status as of 2026-05-08** (re-verified via DNS 2026-06-01: MX + merged SPF + DKIM + DMARC all live): live and verified end-to-end. SPF + DKIM + DMARC all PASS in real-world delivery. See § "Verify DNS health (no token needed)" for the token-free re-check and § "Execution evidence" at the bottom.
 
 This runbook is the **orchestrating overview**. The lower-level mechanics - Cloudflare API tokens, Brevo API setup, transactional templates - live in dedicated runbooks (cross-referenced inline). When automating this for paid clients, this is the entry point; consumers read the per-system runbooks for the specifics.
 
@@ -113,12 +113,27 @@ Once both halves are wired:
 4. Confirm outbound: the external recipient sees the reply From: `hello@hoiboy.uk`, NOT `hoiboyuk@gmail.com`.
 5. Spam-check: send a test to `https://www.mail-tester.com` (free tool); aim for 9/10 or higher. SPF + DKIM + DMARC alignment determines deliverability. Common failure: SPF has both `include:_spf.mx.cloudflare.net` and `include:spf.brevo.com` correctly merged into a single TXT record (NOT two separate SPF records).
 
+## Verify DNS health (no token needed)
+
+All email-critical records are public DNS, so you can confirm the setup is live with zero Cloudflare token (re-verified green 2026-06-01):
+
+```bash
+DOH(){ curl -s -H 'accept: application/dns-json' "https://1.1.1.1/dns-query?name=$1&type=$2"; }
+DOH hoiboy.uk MX             | jq -r '.Answer[]?.data'              # 3x route{1,2,3}.mx.cloudflare.net = inbound routing live
+DOH hoiboy.uk TXT            | jq -r '.Answer[]?.data' | grep spf1 # one merged SPF: include _spf.mx.cloudflare.net + spf.brevo.com
+DOH _dmarc.hoiboy.uk TXT     | jq -r '.Answer[]?.data'             # v=DMARC1; p=...
+DOH brevo1._domainkey.hoiboy.uk CNAME | jq -r '.Answer[]?.data'    # b1.hoiboy-uk.dkim.brevo.com (DKIM selector 1; brevo2 = selector 2)
+```
+
+Clean MX + a single merged SPF + resolving DKIM CNAMEs + a DMARC record = inbound routing and outbound auth are both healthy. The forwarding **destination** (`hoiboyuk@gmail.com`) and its verified state are NOT in public DNS - confirm those via the Email Routing API (`GET /zones/{id}/email/routing/rules`, read-only token is enough) or the dashboard.
+
 ## Ongoing maintenance
 
 - Brevo SMTP key rotates only if compromised; otherwise indefinite.
 - DNS records are static; Cloudflare auto-renews any verifications it owns.
 - No subscription, no card, no auto-renewal trap.
 - DMARC report aggregation: Brevo emails weekly DMARC reports to `hoiboyuk@gmail.com` per the `rua=` setting; review monthly for delivery health.
+- **Tightening DMARC (optional hardening):** the policy starts at `p=none` (monitor-only, the safe default). Once the weekly Brevo reports confirm all legit mail (Gmail send-as + Brevo) passes SPF/DKIM alignment, ramp the `_dmarc` TXT `p=none` -> `p=quarantine` -> `p=reject` (optionally gate with `pct=25` first to apply the policy to a fraction of mail while you build confidence). This is a single **DNS edit**: do it in the Cloudflare dashboard (DNS -> edit the `_dmarc` TXT record), or via `PATCH /zones/{id}/dns_records/{record_id}` using a short-lived **DNS:Edit** per-task control token. The standing read-only `cloudflare-verify-readonly` token CANNOT write - that is by design. See the two-token model in `dotfiles/docs/runbooks/cloudflare-control.md`.
 
 ## Reply-To gotcha
 
