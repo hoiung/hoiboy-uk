@@ -223,7 +223,7 @@ Back to voice prose, scanned.
 
 - AI writing tells research (in-repo, why the rules exist): `12_AI_WRITING_TELLS.md`
 - Canonical voice profile (full ~80K corpus analysis): `../../../dotfiles/voice/base/VOICE_PROFILE.md`
-- Voice corpus (37 pre-AI blogs, ~80,000 words): `../../../job-hunter/cv-linkedin/voice-corpus/blogs/`
+- Voice corpus (37 pre-AI blogs, ~80,000 words): `../../../dotfiles/voice/corpus/blogs/`
 - AI writing tells script: `../../../dotfiles/SST3/scripts/check-ai-writing-tells.py`
 - AI writing tells research (canonical, 25+ sources): `../../../job-hunter/cv-linkedin/job-research/18_AI_WRITING_TELLS_AND_DETECTION.md`
 - Master profile (career evidence for any factual claim): `../../../job-hunter/cv-linkedin/MASTER_PROFILE.md`

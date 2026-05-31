@@ -36,6 +36,11 @@ except ImportError:  # consumer mirror without sst3_utils vendored
         return None
 
 from voice_rules import (
+    GENERIC_AI_ABSTRACT,
+    HTML_TAG_PATTERN,
+    LIST_LINE_PATTERN,
+    MD_LINK_TARGET_PATTERN,
+    URL_PATTERN,
     BANNED_PHRASES_PATTERN,
     BANNED_WORDS_PATTERN,
     BOLD_BULLET_PATTERN,
@@ -56,8 +61,20 @@ from voice_rules import (
     MARKER_SKIP_OPEN_HASH,
     MARKER_SKIP_OPEN_HTML,
     NEGATION_PATTERN,
+    NUMBER_TOKEN_PATTERN,
+    NUMERIC_DENSITY_MIN_NUMBERS,
+    NUMERIC_DENSITY_MIN_WORDS,
+    NUMERIC_DENSITY_RATIO,
+    RHYTHM_UNIFORM_HIGH,
+    RHYTHM_UNIFORM_LOW,
+    RHYTHM_UNIFORM_MAX_STDEV,
+    RHYTHM_UNIFORM_RUN,
+    RULE_OF_THREE_MIN_ABSTRACT,
+    RULE_OF_THREE_PATTERN,
+    SENTENCE_SPLIT_PATTERN,
     SMART_QUOTE_CHARS,
     UNICODE_ARROW_CHARS,
+    WORD_TOKEN_PATTERN,
 )
 
 fix_windows_console()
@@ -96,8 +113,12 @@ EXEMPT_PATHS_CV: tuple[str, ...] = (
     # an iamhoi region of a NON-base voice file (voice/tones/, voice/CLASSIFICATION.md,
     # future voice/ prose) — those are marker-driven per the scan_file matrix.
     "voice/base/",
+    # Raw ground-truth corpus — relocated from job-hunter (the old cv-linkedin/
+    # voice corpus) to dotfiles/voice/corpus/ per dotfiles#517 Phase F (operator-
+    # approved override of the #513 PRIVATE-STAY). Never CV-prose to scan (may
+    # contain authentic "banned" words used sincerely).
+    "voice/corpus/",
     "cv-linkedin/job-research/",
-    "cv-linkedin/voice-corpus/",
     "cv-linkedin/voice-analysis-reports/",
     "cv-linkedin/MASTER_PROFILE.md",
     "cv-linkedin/METRIC_PROVENANCE.md",
@@ -132,6 +153,7 @@ EXEMPT_PATHS_BLOG: tuple[str, ...] = (
     # "voice/" to "voice/base/" (#513 Phase 6 AC6.1) so non-base voice files stay
     # marker-driven-scannable by the replacement dotfiles-side gate.
     "voice/base/",
+    "voice/corpus/",  # relocated raw corpus (#517 Phase F) — never scanned
     "legacy/",
     ".github/",
     "node_modules/",
@@ -337,16 +359,188 @@ def _check_bold_bullets(text: str, file: str, is_cv: bool) -> list[Finding]:
 
 
 # ---------------------------------------------------------------------------
+# Structural AI-tell detectors (dotfiles#517 Phase E)
+#
+# Whole-text checks (like _check_bold_bullets), NOT per-line. They are NOT run
+# in the default marker-gated CV/blog scan (which would risk false positives on
+# metric-dense CVs); they fire only via run_structural_checks(), invoked by the
+# --structural CLI flag and by the test/sample-invocation harness. Each is tuned
+# (thresholds in voice_rules.py) so the authentic Hoi corpus yields ZERO flags.
+# ---------------------------------------------------------------------------
+def _strip_markup(s: str) -> str:
+    """Remove URLs, HTML tags, and markdown link targets — incidental digit
+    sources that are not prose."""
+    s = URL_PATTERN.sub(" ", s)
+    s = MD_LINK_TARGET_PATTERN.sub(" ", s)
+    s = HTML_TAG_PATTERN.sub(" ", s)
+    return s
+
+
+def _split_paragraphs(text: str) -> list[tuple[int, str]]:
+    """Return (start_line_no, paragraph_text) for blank-line-separated PROSE
+    blocks. Skips code fences, markdown table rows, list/inventory lines, and
+    strips URLs/HTML/markdown — all incidental-number sources that are not prose
+    AI tells (the false-positive class: affiliate links, addresses, packing lists).
+    """
+    out: list[tuple[int, str]] = []
+    lines = text.split("\n")
+    buf: list[str] = []
+    start = 1
+    in_fence = False
+
+    def flush() -> None:
+        nonlocal buf
+        if buf:
+            out.append((start, " ".join(buf)))
+            buf = []
+
+    for i, line in enumerate(lines, 1):
+        stripped = line.strip()
+        if stripped.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        # Blank, table row, or list/inventory line ends the current paragraph
+        # and is itself NOT prose to analyse.
+        if (not stripped) or stripped.startswith("|") or LIST_LINE_PATTERN.match(line):
+            flush()
+            continue
+        cleaned = _strip_markup(stripped).strip()
+        if not cleaned:
+            flush()
+            continue
+        if not buf:
+            start = i
+        buf.append(cleaned)
+    flush()
+    return out
+
+
+def _check_numeric_density(text: str, file: str) -> list[Finding]:
+    """STAT_STACK: a substantial prose paragraph where numbers are dense.
+
+    Evidence-numbers in narrative sit well below the ratio; AI stat-stacks
+    ("3x faster, 40% more efficient, 10x ROI, 200% growth") sit far above it.
+    """
+    findings: list[Finding] = []
+    for ln, para in _split_paragraphs(text):
+        n_numbers = len(NUMBER_TOKEN_PATTERN.findall(para))
+        n_words = len(WORD_TOKEN_PATTERN.findall(para))
+        if n_words < NUMERIC_DENSITY_MIN_WORDS or n_numbers < NUMERIC_DENSITY_MIN_NUMBERS:
+            continue
+        ratio = n_numbers / (n_words + n_numbers)
+        if ratio >= NUMERIC_DENSITY_RATIO:
+            findings.append(Finding(
+                file, ln, "STAT_STACK",
+                f"{n_numbers} numbers / {n_words} words (ratio {ratio:.2f} >= "
+                f"{NUMERIC_DENSITY_RATIO}): {para[:70]}",
+            ))
+    return findings
+
+
+def _check_rule_of_three(text: str, file: str) -> list[Finding]:
+    """RULE_OF_THREE: the AI 'X, Y, and Z' triple where ALL THREE items are
+    GENERIC AI-cliché abstract nouns. Hoi writes tricolons too, including
+    domain-abstract ones, so the detector flags ONLY the curated-generic set
+    (deliberately excludes Hoi's domain words) — minimal recall, ~0 FPs.
+    """
+    findings: list[Finding] = []
+    for m in RULE_OF_THREE_PATTERN.finditer(text):
+        items = [m.group(1), m.group(2), m.group(3)]
+        n_generic = sum(w.lower() in GENERIC_AI_ABSTRACT for w in items)
+        if n_generic >= RULE_OF_THREE_MIN_ABSTRACT:
+            ln = text[: m.start()].count("\n") + 1
+            findings.append(Finding(
+                file, ln, "RULE_OF_THREE",
+                f"generic AI abstract-noun triple: {', '.join(items)}",
+            ))
+    return findings
+
+
+def _sentence_word_counts(text: str) -> list[int]:
+    # Strip markdown table rows / fences before sentence splitting.
+    prose_lines = []
+    in_fence = False
+    for line in text.split("\n"):
+        s = line.strip()
+        if s.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence or s.startswith("|") or s.startswith("#") or LIST_LINE_PATTERN.match(line):
+            continue
+        prose_lines.append(_strip_markup(line))
+    prose = " ".join(prose_lines)
+    counts: list[int] = []
+    for sent in SENTENCE_SPLIT_PATTERN.split(prose):
+        n = len(WORD_TOKEN_PATTERN.findall(sent))
+        if n > 0:
+            counts.append(n)
+    return counts
+
+
+def _pop_stdev(xs: list[int]) -> float:
+    n = len(xs)
+    if n == 0:
+        return 0.0
+    mean = sum(xs) / n
+    return (sum((x - mean) ** 2 for x in xs) / n) ** 0.5
+
+
+def _check_rhythm_uniform(text: str, file: str) -> list[Finding]:
+    """RHYTHM_UNIFORM: a run of K+ consecutive sentences all in the AI smooth
+    band (LOW..HIGH words) with low variance. Hoi's rhythm is lumpy."""
+    counts = _sentence_word_counts(text)
+    findings: list[Finding] = []
+    run_start = None
+    for i, n in enumerate(counts):
+        if RHYTHM_UNIFORM_LOW <= n <= RHYTHM_UNIFORM_HIGH:
+            if run_start is None:
+                run_start = i
+        else:
+            run_start = None
+        if run_start is not None:
+            run = counts[run_start : i + 1]
+            if len(run) >= RHYTHM_UNIFORM_RUN and _pop_stdev(run) <= RHYTHM_UNIFORM_MAX_STDEV:
+                findings.append(Finding(
+                    file, 0, "RHYTHM_UNIFORM",
+                    f"{len(run)} consecutive sentences in {RHYTHM_UNIFORM_LOW}-"
+                    f"{RHYTHM_UNIFORM_HIGH} word band, stdev {_pop_stdev(run):.1f}",
+                ))
+                run_start = None  # report once per run, then reset
+    return findings
+
+
+def run_structural_checks(text: str, file: str) -> list[Finding]:
+    """Aggregate the 3 structural detectors. The single entry point used by the
+    --structural CLI flag, the test suite, and the sample-invocation gate."""
+    findings: list[Finding] = []
+    findings.extend(_check_numeric_density(text, file))
+    findings.extend(_check_rule_of_three(text, file))
+    findings.extend(_check_rhythm_uniform(text, file))
+    return findings
+
+
+# ---------------------------------------------------------------------------
 # File scan dispatcher (mode-aware)
 # ---------------------------------------------------------------------------
 def is_exempt(file_path: Path, repo_root: Path, exempt_paths: tuple[str, ...]) -> bool:
-    rel = str(file_path.relative_to(repo_root))
+    # A file outside repo_root cannot match a repo-relative exempt prefix, so it
+    # is simply not exempt (e.g. --structural scanning a sibling-repo corpus path
+    # before #517 Phase F relocates it into dotfiles/voice/corpus/).
+    try:
+        rel = str(file_path.relative_to(repo_root))
+    except ValueError:
+        return False
     return any(rel.startswith(p) for p in exempt_paths)
 
 
 def is_whitelisted(file_path: Path, repo_root: Path, whitelist: tuple[str, ...]) -> bool:
     """Whole-file scan whitelist."""
-    rel = str(file_path.relative_to(repo_root))
+    try:
+        rel = str(file_path.relative_to(repo_root))
+    except ValueError:
+        return False
     return rel in whitelist
 
 
@@ -430,6 +624,9 @@ TYPE_LABELS = {
     "UNICODE_ARROW": "Unicode Arrows (use plain text)",
     "BOLD_BULLET": "Bold-First Bullet Pattern",
     "NEGATION_FRAME": "Negation Framing (\"It's not X, it's Y\")",
+    "STAT_STACK": "Numeric Density / Stat-Stacking (numbers-as-hype, not evidence)",
+    "RULE_OF_THREE": "Rule-of-Three Abstract-Noun Triple (AI scaffold)",
+    "RHYTHM_UNIFORM": "Rhythm Uniformity (smooth AI sentence band)",
     "MARKER_ERROR": "Voice Guard Marker Error (hard fail)",
     "READ_ERROR": "File Read Error",
 }
@@ -479,6 +676,12 @@ def main() -> int:
     parser.add_argument(
         "--no-check-only-new", dest="check_only_new", action="store_false",
         help="(blog mode) Disable cutoff filter; scan all dated posts (e.g. voice-staging research files).",
+    )
+    parser.add_argument(
+        "--structural", action="store_true",
+        help="(dotfiles#517 Phase E) ALSO run the structural AI-tell detectors "
+             "(STAT_STACK / RULE_OF_THREE / RHYTHM_UNIFORM) on each passed file's "
+             "whole text, bypassing marker-gating. Off by default (no CV-scan regression).",
     )
     parser.add_argument("paths", nargs="*", help="Files / dirs to scan; uses mode defaults if empty.")
     args = parser.parse_args()
@@ -538,6 +741,14 @@ def main() -> int:
     all_findings: list[Finding] = []
     for f in files_to_scan:
         all_findings.extend(scan_file(f, repo_root, args.mode))
+        if args.structural:
+            try:
+                raw = f.read_text(encoding="utf-8-sig")
+            except (OSError, UnicodeDecodeError) as e:
+                all_findings.append(Finding(str(f), 0, "READ_ERROR", str(e)))
+                continue
+            text = raw.replace("\r\n", "\n").replace("\r", "\n")
+            all_findings.extend(run_structural_checks(text, str(f)))
 
     if not all_findings:
         print(f"[OK] No voice tells found in {len(files_to_scan)} files")

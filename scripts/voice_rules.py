@@ -232,6 +232,90 @@ FRONTMATTER_DATE_PATTERN: re.Pattern[str] = re.compile(
     re.MULTILINE,
 )
 
+# ---------------------------------------------------------------------------
+# Structural AI-tell detectors (dotfiles#517 Phase E)
+# ---------------------------------------------------------------------------
+# These three detectors target STRUCTURE, not vocabulary. They are tuned
+# (thresholds below) so the authentic Hoi corpus (62 raws + 2 near-publish
+# blogs + 3 drafts) produces ZERO flags, while an AI-structured sample is
+# flagged. The load-bearing rule (dotfiles#517): "over-factual" is NOT
+# "no numbers" — Hoi uses numbers as EVIDENCE; only stat-stacking is the tell.
+# The fixture gate `sample_invocation_voice_detectors.py` (AC E.5) is the
+# regression guard that keeps these tuned. If a detector cannot be tuned to
+# 0 authentic-flags it must fall back to prose-only (documented), NOT ship
+# false positives.
+
+# --- markup-stripping (shared) ---
+# Strip HTML tags, URLs, and markdown link targets BEFORE structural analysis —
+# they carry incidental digits/short-lines that are not prose AI tells (the
+# false-positive class found in the corpus: Amazon affiliate links, addresses).
+HTML_TAG_PATTERN: re.Pattern[str] = re.compile(r"<[^>]+>")
+URL_PATTERN: re.Pattern[str] = re.compile(r"https?://\S+|www\.\S+")
+MD_LINK_TARGET_PATTERN: re.Pattern[str] = re.compile(r"\]\([^)]*\)")
+# Lines that are list/inventory/reference content (not prose) — skipped by the
+# paragraph splitter so packing lists / address blocks do not register as
+# stat-stacking. Leading list marker OR a "N x item" quantity pattern.
+LIST_LINE_PATTERN: re.Pattern[str] = re.compile(r"^\s*(?:[-*+]\s|\d+[.)]\s|\d+\s*x\s)")
+
+# --- NUMERIC_DENSITY / STAT_STACK ---
+# A "word" token: alphabetic run (for the density denominator).
+WORD_TOKEN_PATTERN: re.Pattern[str] = re.compile(r"\b[A-Za-z][A-Za-z'-]*\b")
+# STAT_STACK counts only UNIT-BEARING / hype-flavoured numbers: a figure with a
+# %, x, or $ unit ("40%", "10x", "$200", "200-500%", "3x"). Bare integers
+# (years, counts, addresses, postcodes) are NOT counted — that is what made the
+# first pass false-positive on addresses + packing lists. Multiplier-hype
+# ("3x faster, 40% more efficient, 10x ROI, 200% growth") is exactly unit-bearing.
+NUMBER_TOKEN_PATTERN: re.Pattern[str] = re.compile(r"\$\d[\d.,]*|\b\d[\d.,]*\s?(?:%|x\b)")
+# A paragraph is flagged ONLY if it is substantial prose (>= MIN_WORDS) AND
+# carries several hype-numbers (>= MIN_NUMBERS) that are dense (ratio >= RATIO).
+# Evidence-numbers in Hoi's narrative are sparse + bare; hype stat-stacks pile
+# unit-numbers. Tuned to 0 flags on the 64-file authentic corpus.
+NUMERIC_DENSITY_MIN_WORDS: int = 8
+NUMERIC_DENSITY_MIN_NUMBERS: int = 4
+NUMERIC_DENSITY_RATIO: float = 0.10
+
+# --- RULE_OF_THREE (abstract-noun triple) ---
+# The AI scaffold "X, Y, and Z" where ALL THREE items are GENERIC AI-cliché
+# abstract nouns ("presence, curiosity, and clarity"). Hoi DOES write tricolons,
+# including domain-abstract ones ("sensitivity, awareness, perception" in dance;
+# "radiation, evaporation, respiration" in bushcraft) — so a generic abstract-
+# suffix rule over-fires on authentic Hoi. The detector therefore requires all 3
+# items to be in a CURATED generic-AI-cliché set that deliberately EXCLUDES the
+# domain-grounded abstract words Hoi actually uses. Lower recall, ~0 FPs — the
+# JBGE trade the operator approved (build minimal, do not punish authentic).
+GENERIC_AI_ABSTRACT: frozenset[str] = frozenset({
+    "presence", "curiosity", "clarity", "synergy", "authenticity",
+    "mindfulness", "intentionality", "scalability", "efficiency",
+    "connection", "empowerment", "alignment", "resilience", "gratitude",
+    "abundance", "transformation", "innovation", "creativity", "positivity",
+    "wellness", "wholeness", "purpose", "serenity", "harmony",
+    "synergies", "engagement", "belonging", "fulfilment",
+    "fulfillment", "mindset", "wellbeing",
+})
+# Matches "word, word, and word" / "word, word and word" (3 single-word items).
+RULE_OF_THREE_PATTERN: re.Pattern[str] = re.compile(
+    r"\b([A-Za-z][A-Za-z'-]+),\s+([A-Za-z][A-Za-z'-]+),?\s+and\s+([A-Za-z][A-Za-z'-]+)\b"
+)
+# How many of the 3 items must be in GENERIC_AI_ABSTRACT to flag (all 3 = strict).
+RULE_OF_THREE_MIN_ABSTRACT: int = 3
+# Retained for back-compat / the _is_abstract helper (suffix signal, advisory).
+ABSTRACT_SUFFIX_PATTERN: re.Pattern[str] = re.compile(
+    r"(?:ity|ness|tion|sion|ment|ance|ence|ism|ship|bility)$", re.IGNORECASE
+)
+ABSTRACT_NOUN_EXTRA: frozenset[str] = GENERIC_AI_ABSTRACT
+
+# --- RHYTHM_UNIFORM (smooth uniform sentence run) ---
+# Flags a run of K+ CONSECUTIVE sentences all in the AI "smooth band"
+# (LOW..HIGH words) with low length variance. Hoi's rhythm is lumpy. Tightened
+# after the first pass FP'd on legitimate 6-sentence runs: longer run (8),
+# narrower band (18-25), lower variance ceiling (2.0). AI text produces much
+# longer, much flatter runs than authentic Hoi ever does.
+SENTENCE_SPLIT_PATTERN: re.Pattern[str] = re.compile(r"(?<=[.!?])\s+")
+RHYTHM_UNIFORM_RUN: int = 8           # consecutive sentences
+RHYTHM_UNIFORM_LOW: int = 18          # words (inclusive band lower bound)
+RHYTHM_UNIFORM_HIGH: int = 25         # words (inclusive band upper bound)
+RHYTHM_UNIFORM_MAX_STDEV: float = 2.0  # population stdev of the run's lengths
+
 
 # ---------------------------------------------------------------------------
 # Finding dataclass — used by all checkers
@@ -255,5 +339,13 @@ __all__ = [
     "BANNED_WORDS_PATTERN", "BANNED_PHRASES_PATTERN",
     "BOLD_BULLET_PATTERN", "NEGATION_PATTERN", "FRONTMATTER_DATE_PATTERN",
     "BOLD_BULLET_THRESHOLD_CV", "BOLD_BULLET_THRESHOLD_DEFAULT",
+    # Structural AI-tell detectors (dotfiles#517 Phase E)
+    "HTML_TAG_PATTERN", "URL_PATTERN", "MD_LINK_TARGET_PATTERN", "LIST_LINE_PATTERN",
+    "NUMBER_TOKEN_PATTERN", "WORD_TOKEN_PATTERN",
+    "NUMERIC_DENSITY_MIN_WORDS", "NUMERIC_DENSITY_MIN_NUMBERS", "NUMERIC_DENSITY_RATIO",
+    "ABSTRACT_SUFFIX_PATTERN", "ABSTRACT_NOUN_EXTRA", "GENERIC_AI_ABSTRACT",
+    "RULE_OF_THREE_PATTERN", "RULE_OF_THREE_MIN_ABSTRACT",
+    "SENTENCE_SPLIT_PATTERN", "RHYTHM_UNIFORM_RUN",
+    "RHYTHM_UNIFORM_LOW", "RHYTHM_UNIFORM_HIGH", "RHYTHM_UNIFORM_MAX_STDEV",
     "Finding",
 ]
