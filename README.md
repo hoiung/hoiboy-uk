@@ -38,7 +38,7 @@ hoiboy-uk/
 │   ├── posts/<slug>/        # Page bundles
 │   └── {food,adventure,dance,tech}/  # Category section landings
 ├── scripts/                 # Frontmatter + traceability validators
-├── docs/research/           # Planning trail (00 to 10)
+├── docs/research/           # Planning trail (numbered NN_TITLE.md, non-contiguous)
 ├── lychee.toml              # Link checker config
 ├── .github/workflows/       # ci.yml + deploy.yml
 └── CLAUDE.md                # AI workflow + project context
