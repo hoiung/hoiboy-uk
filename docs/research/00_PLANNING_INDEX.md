@@ -13,6 +13,7 @@ This folder maps the journey from "I have 22 years of blogs" to a live, Claude-m
 7. [07_DESIGN_TOKENS.md](07_DESIGN_TOKENS.md) .  Accent colour, fonts, contrast, dark mode decision.
 9. [09_DEPLOYMENT.md](09_DEPLOYMENT.md) .  Cloudflare Pages setup, GHA-gated deploy, rollback, break-glass, theme upgrade procedure.
 10. [10_BASELINE_METRICS.md](10_BASELINE_METRICS.md) .  Captured baselines for regression detection in Phase 1+.
+16. [16_AI_BOT_AND_SEO_POLICY.md](16_AI_BOT_AND_SEO_POLICY.md) .  AI bot + SEO crawl-policy decision record: per-class ALLOW verdict, training-vs-citation correction, Cloudflare operator checklist, deferred block-training variant.
 
 (`08_FRONTMATTER_SCHEMA.md` deferred to Phase 1: with one stub post there is no schema yet. Phase 0 contract is captured as a header comment in `scripts/validate_frontmatter.py`.)
 
