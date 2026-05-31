@@ -207,7 +207,7 @@ hoiboy-uk/
 ├── scripts/
 │   ├── validate_frontmatter.py
 │   └── check_config_traceability.py
-├── docs/research/           # Planning trail (00 to 10)
+├── docs/research/           # Planning trail (numbered NN_TITLE.md, non-contiguous)
 ├── legacy/                  # Raw blog exports for Phase 1+ (gitignored)
 ├── .github/workflows/
 │   ├── ci.yml               # Build, lint, voice, traceability, lychee
