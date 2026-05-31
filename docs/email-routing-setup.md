@@ -8,7 +8,7 @@ This runbook is the **orchestrating overview**. The lower-level mechanics - Clou
 
 Two halves:
 
-- **Inbound (receive)**: Cloudflare Email Routing - free tier, included with Cloudflare DNS hosting. See `docs/cloudflare-api-token-setup.md` for the API token + DNS API procedure.
+- **Inbound (receive)**: Cloudflare Email Routing - free tier, included with Cloudflare DNS hosting. See `docs/cloudflare-api-token-setup.md` for the DNS API procedure + hoiboy.uk token history; the generic token recipe now lives in `dotfiles/docs/runbooks/cloudflare-control.md`.
 - **Outbound (send-as)**: Brevo SMTP relay - 300 emails/day free forever + Gmail "Send mail as" feature. See `docs/brevo-api-setup.md` for the API key + SMTP key + transactional templates procedure.
 
 ## Why this stack
@@ -148,7 +148,7 @@ Both halves of the stack are live and verified end-to-end.
 
 | Item | Type | Owner | Notes |
 |---|---|---|---|
-| `hoiboy-uk-cloudflare-automation` | Cloudflare API token | (account) | DNS:Read,Edit + Zone:Read + Email Routing Rules:Read on `hoiboy.uk`. 90-day TTL, expires 2026-08-06. Account-scoped (NOT user-scoped - see cloudflare-api-token-setup.md § "User vs Account API tokens") |
+| `hoiboy-uk-cloudflare-automation` | Cloudflare API token | (account) | DNS:Read,Edit + Zone:Read + Email Routing Rules:Read on `hoiboy.uk`. 90-day TTL, expires 2026-08-06. Account-scoped (NOT user-scoped - see the User-vs-Account distinction in `dotfiles/docs/runbooks/cloudflare-control.md`) |
 | `brevo-hoiboy-uk-worker-api` | Brevo HTTP API key | (Brevo account login) | Used by Cloudflare Worker (Path B). Calendar rotation 2026-08-06 |
 | `brevo-hoiboy-uk-smtp` | Brevo SMTP key (Standard variant) | (Brevo SMTP login) | Used by Gmail Send-as. Calendar rotation 2026-08-06 |
 
@@ -159,7 +159,7 @@ Both halves of the stack are live and verified end-to-end.
 
 ## Cross-reference
 
-- `docs/cloudflare-api-token-setup.md` - Cloudflare API token recipe + DNS API procedure
+- `docs/cloudflare-api-token-setup.md` - hoiboy.uk token history + DNS API procedure (generic token recipe relocated to `dotfiles/docs/runbooks/cloudflare-control.md`)
 - `docs/brevo-api-setup.md` - Brevo API + SMTP runbook + transactional templates
 - `docs/cal-com-setup.md` - Cal.com booking funnel + Path B Worker plan that consumes this email stack
 - `consulting-ops/playbook-harness-architect.md` - engagement playbook that consumes `hello@hoiboy.uk` as the canonical contact
