@@ -148,7 +148,7 @@ Both halves of the stack are live and verified end-to-end.
 
 | Item | Type | Owner | Notes |
 |---|---|---|---|
-| `hoiboy-uk-cloudflare-automation` | Cloudflare API token | (account) | DNS:Read,Edit + Zone:Read + Email Routing Rules:Read on `hoiboy.uk`. 90-day TTL, expires 2026-08-06. Account-scoped (NOT user-scoped - see the User-vs-Account distinction in `dotfiles/docs/runbooks/cloudflare-control.md`) |
+| `cloudflare-verify-readonly` | Cloudflare API token (read-only) | (account) | RETIRED + REPLACED the old `hoiboy-uk-cloudflare-automation` token on 2026-06-01. Standing read-only across ALL zones (Zone/Zone Settings/DNS/Email Routing/Pages/Workers Scripts/Account Settings Read), no expiry. DNS/email **writes** now use a short-lived per-task control token, not a standing one. Two-token model: `dotfiles/docs/runbooks/cloudflare-control.md` |
 | `brevo-hoiboy-uk-worker-api` | Brevo HTTP API key | (Brevo account login) | Used by Cloudflare Worker (Path B). Calendar rotation 2026-08-06 |
 | `brevo-hoiboy-uk-smtp` | Brevo SMTP key (Standard variant) | (Brevo SMTP login) | Used by Gmail Send-as. Calendar rotation 2026-08-06 |
 

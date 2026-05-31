@@ -467,7 +467,7 @@ Two distinct credential tiers with different rotation rules:
 **Worker key (long-lived, runtime-persistent, Path B only)**
 - Generated separately from setup key, stored in BW item `cal-com-worker-api` and Worker secret `CAL_API_KEY` (per Path B requirements line 252).
 - Long-lived because the Worker reads it on every webhook invocation; rotating mid-flight breaks live booking confirmations.
-- **Rotation cadence: every 90 days** (matches Cloudflare + Brevo BW rotation reminders set 2026-08-06 per `cloudflare-api-token-setup.md` + `brevo-api-setup.md`).
+- **Rotation cadence: every 90 days** (matches the Brevo BW rotation reminder set 2026-08-06 per `brevo-api-setup.md`; the old Cloudflare automation token was retired 2026-06-01 to a no-expiry read-only verify token, so it no longer carries a rotation date).
 - Procedure on rotation day: (1) generate new long-lived key in Cal.com UI; (2) update BW item; (3) `wrangler secret put CAL_API_KEY` with new value; (4) trigger one test webhook to confirm Worker accepts new key; (5) revoke old key in Cal.com.
 - Calendar reminder: set at 80-day mark to allow 10-day rollover window.
 - Skip-clean if Path A (Cal.com-native workflows): no Worker, no long-lived key, only the 7-day setup key applies.

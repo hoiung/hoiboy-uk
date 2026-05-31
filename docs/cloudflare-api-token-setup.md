@@ -34,9 +34,9 @@ Token created and used during the email-routing-setup execution:
   - Adding 4 new Brevo DNS records (1 TXT for verification, 2 CNAME for DKIM, 1 TXT for DMARC) via `POST /v4/zones/{id}/dns_records`
   - Patching existing SPF record (TXT) via `PATCH /v4/zones/{id}/dns_records/{record_id}` to append `include:spf.brevo.com`
   - Verifying with `GET /v4/accounts/{id}/tokens/verify`
-- **Rotation reminder**: 2026-08-06 (rotate at 2026-07-27 with 10-day buffer). NOTE: this token is being retired into the two-token model per the replacement procedure in the dotfiles canonical runbook.
+- **Rotation reminder**: N/A - this token was retired on 2026-06-01 (deleted from Cloudflare and Bitwarden), replaced by the two-token model in the dotfiles canonical runbook.
 
-**Status**: ACTIVE (slated for replacement).
+**Status**: RETIRED 2026-06-01 - deleted from Cloudflare and Bitwarden. Its read scope is now covered across all zones by the standing `cloudflare-verify-readonly` token; DNS writes go through a per-task control token. See `dotfiles/docs/runbooks/cloudflare-control.md`. (The execution evidence above is kept as a historical record of what this token did.)
 
 ### Actual API calls made (for reference)
 
