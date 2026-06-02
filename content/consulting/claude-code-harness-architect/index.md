@@ -18,6 +18,8 @@ I designed, run, and babysit daily a live automated pullback swing trading platf
 
 I help non-technical domain experts and subject matter experts (SME) adopt AI properly. Not by handing you a tool and saying "off you go". Not by writing a hand-wavy AI strategy deck either!
 
+Plainly: I write software with AI, and use it to build automation workflows around the way your business actually works.
+
 I am not here to scale your AWS or your other cloud infrastructure (that's your tech team's job!). I am here to help the people who actually do the work in your business (marketing, sales, ops, design, finance, customer support, wherever you sit) integrate a custom AI harness that automates the routine, so you can focus on your human ingenuity and your domain expertise (the things AI cannot replicate, now or any time soon).
 
 There is a right way and a wrong way to use AI. Getting AI to work consistently in a real business takes a long time to figure out. The good news: I have spent that time already, so you do not have to.
