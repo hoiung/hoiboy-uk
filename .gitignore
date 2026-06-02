@@ -11,6 +11,11 @@ resources/
 # Legacy import staging (raw exports, not committed)
 legacy/
 
+# Legacy-import per-post logs: leak local absolute FS paths, never publish
+# (removed from the repo in #33 — git history retains them; gitignored so the
+# import pipeline cannot re-add them)
+docs/import-logs/
+
 # OS / editor
 .DS_Store
 Thumbs.db
