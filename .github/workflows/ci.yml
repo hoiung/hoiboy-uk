@@ -118,6 +118,19 @@ jobs:
       - name: Voice guard tells (marker-driven, new posts only)
         run: python3 scripts/check-ai-writing-tells.py --mode blog --check-only-new content/ docs/
 
+      - name: iamhoi wrapping guard (new posts) — CI mirror of pre-commit hook
+        run: python3 scripts/check-iamhoi-wrapping.py --check-only-new
+
+      - name: Em-dash guard (new posts, date-gated) — covers unmarked new-post prose
+        run: python3 scripts/check_emdash_newposts.py
+
+      - name: consulting.yaml OPERATOR_TODO guard — CI mirror of pre-commit hook
+        run: |
+          if [ -f data/consulting.yaml ] && grep -F OPERATOR_TODO data/consulting.yaml; then
+            echo "::error::data/consulting.yaml contains OPERATOR_TODO placeholder; replace before commit"
+            exit 1
+          fi
+
       - name: Word-count ceiling
         run: |
           python3 scripts/check_wordcount.py $(git ls-files 'content/posts/*/index.md')
@@ -128,6 +141,12 @@ jobs:
       - name: Word-count hook unit tests
         run: python3 -m pytest scripts/test_check_wordcount.py -q
 
+      - name: Internal-links + meet-recorder content unit tests
+        run: python3 -m pytest scripts/test_validate_internal_links.py tests/test_meet_recorder_content.py -q
+
+      - name: Em-dash new-post guard unit tests
+        run: python3 -m pytest scripts/test_check_emdash_newposts.py -q
+
       - name: Frontmatter validator
         run: python3 scripts/validate_frontmatter.py
 
@@ -136,6 +155,17 @@ jobs:
 
       - name: Validate internal markdown links
         run: python3 scripts/validate_internal_links.py
+
+      - name: Setup Node (meet-recorder JS tests)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install JS deps
+        run: npm ci
+
+      - name: meet-recorder JS tests
+        run: npm test
 
       - name: Hugo build (production)
         run: |
