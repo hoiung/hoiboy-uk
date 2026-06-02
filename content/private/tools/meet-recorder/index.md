@@ -35,7 +35,7 @@ sitemap:
 
 <section id="section-engagement" aria-label="Engagement gate">
   <h2>2. Engagement-letter gate</h2>
-  <p>Recorder reads <code>.engagements.json</code> at page load. Tick to attest the engagement letter is signed and Recording §3 = <code>enabled-and-attendees-notified</code> (or <code>mixed</code> with this session ticked enabled). See <a href="https://hoiboy.uk/legal/privacy/" rel="noopener">Privacy Notice</a>.</p>
+  <p>Manual attestation gate (the recorder does not auto-read the registry at page load). Tick to attest the engagement letter is signed and Recording §3 = <code>enabled-and-attendees-notified</code> (or <code>mixed</code> with this session ticked enabled). See <a href="https://hoiboy.uk/legal/privacy/" rel="noopener">Privacy Notice</a>.</p>
   <label><input type="checkbox" id="attestation-engagement-letter-signed" /> I attest engagement letter is signed and Recording row §3 enables this session.</label>
   <p>Engagements registry source: <code>{fsa-dir}/.engagements.json</code> — see <a href="/js/meet-recorder.engagements.schema.json">engagements.json schema</a>. Operator hand-edits this file.</p>
 </section>

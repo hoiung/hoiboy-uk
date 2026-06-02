@@ -29,7 +29,8 @@
     "google_meet_url":   { "type": "string", "format": "uri" },
     "attendees": {
       "type": "array",
-      "minItems": 1,
+      "minItems": 0,
+      "description": "Empty is valid: operator-self-recording (no attendee) mode is first-class (see the self-recording toggle in index.md). buildMeta emits [] for a blank attendees field in that mode; compliance sessions list the real attendees.",
       "items": {
         "type": "object",
         "required": ["name", "email"],

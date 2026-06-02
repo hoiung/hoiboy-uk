@@ -25,6 +25,7 @@
     fileHandle:      null,    // current .webm file handle
     metaHandle:      null,    // current .meta.json file handle
     writableStream:  null,    // FSA WritableStream
+    writeChain:      null,    // serialises ondataavailable writes (no interleave)
     recorder:        null,    // MediaRecorder
     micStream:       null,    // getUserMedia stream
     tabStream:       null,    // getDisplayMedia stream
@@ -299,13 +300,22 @@
 
       const mime = 'audio/webm;codecs=opus';
       state.writableStream = await state.fileHandle.createWritable();
+      state.writeChain = Promise.resolve();
       state.recorder = new MediaRecorder(state.mixerDest.stream, {
         mimeType:           mime,
         audioBitsPerSecond: 96000,
       });
-      state.recorder.ondataavailable = async (ev) => {
+      // Serialise chunk writes through a single promise chain. Each
+      // ondataavailable handler awaits its OWN write, but separate events are
+      // not ordered relative to each other — under a slow disk a later event
+      // could call write() while an earlier write() is still pending, letting
+      // chunks interleave on the shared WritableStream. Chaining guarantees
+      // each chunk is written only after the previous one resolves.
+      state.recorder.ondataavailable = (ev) => {
         if (ev.data && ev.data.size > 0 && state.writableStream) {
-          await state.writableStream.write(ev.data);
+          const ws = state.writableStream;
+          state.writeChain = state.writeChain.then(() => ws.write(ev.data));
+          state.writeChain.catch(err => failLoud(`Chunk write failed: ${err && err.message ? err.message : err}`));
         }
       };
       state.recorder.onstop = onRecorderStop;
@@ -348,6 +358,9 @@
 
   async function onRecorderStop() {
     try {
+      // Drain any queued chunk writes before closing so the final chunk is
+      // flushed in order (the ondataavailable chain may still be pending).
+      if (state.writeChain) { await state.writeChain; state.writeChain = null; }
       if (state.writableStream) { await state.writableStream.close(); state.writableStream = null; }
       stopAllStreams();
       // AC 1.13 — write sidecar .meta.json

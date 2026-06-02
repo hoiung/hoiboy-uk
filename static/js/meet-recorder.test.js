@@ -568,3 +568,69 @@ test('inbox-path-coupling: mismatch surfaces visible warning', () => {
   assert.equal(warn.hidden, false);
   assert.match(warn.textContent, /does not match WHISPER_INBOX/);
 });
+
+// ---------------------------------------------------------------------------
+// #33 AC 4.5 -- schema/fixture wiring (ajv) + serialised chunk writes
+// ---------------------------------------------------------------------------
+const fs = require('fs');
+const path = require('path');
+const Ajv = require('ajv');
+const addFormats = require('ajv-formats');
+
+function loadJson(name) {
+  return JSON.parse(fs.readFileSync(path.join(__dirname, name), 'utf8'));
+}
+function compileMetaSchema() {
+  const ajv = new Ajv({ allErrors: true, strict: false });
+  addFormats(ajv);
+  return ajv.compile(loadJson('meet-recorder.meta.schema.json'));
+}
+
+test('#33 AC 4.5: meta.fixture.json validates against meta.schema.json (ajv)', () => {
+  const validate = compileMetaSchema();
+  const ok = validate(loadJson('meet-recorder.meta.fixture.json'));
+  assert.ok(ok, 'fixture must satisfy schema: ' + JSON.stringify(validate.errors));
+});
+
+test('#33 AC 4.5: personal-mode empty attendees ([]) is schema-valid', () => {
+  const validate = compileMetaSchema();
+  const meta = loadJson('meet-recorder.meta.fixture.json');
+  meta.attendees = [];   // operator-self-recording (no attendee) mode
+  assert.ok(
+    validate(meta),
+    'empty attendees must validate after minItems:0 fix: ' + JSON.stringify(validate.errors),
+  );
+});
+
+test('#33 AC 4.5: schema rejects a meta missing a required field (discriminating)', () => {
+  const validate = compileMetaSchema();
+  const meta = loadJson('meet-recorder.meta.fixture.json');
+  delete meta.session_id;
+  assert.equal(validate(meta), false, 'missing session_id must fail validation');
+});
+
+// Spec mirror of the meet-recorder.js ondataavailable write-chain (must stay
+// in lock-step with startRecording's state.writeChain by code review).
+function serialisedWriter(ws) {
+  let chain = Promise.resolve();
+  return {
+    write(d) { chain = chain.then(() => ws.write(d)); return chain; },
+    drain() { return chain; },
+  };
+}
+
+test('#33 AC 4.5: ondataavailable chunk writes are serialised (no interleave)', async () => {
+  const order = [];
+  const ws = {
+    // First chunk resolves SLOWER than the second; without serialisation the
+    // second chunk's write() would land first and interleave the stream.
+    write: (d) => new Promise(resolve => {
+      setTimeout(() => { order.push(d); resolve(); }, d === 'A' ? 20 : 1);
+    }),
+  };
+  const w = serialisedWriter(ws);
+  w.write('A');
+  w.write('B');
+  await w.drain();
+  assert.deepEqual(order, ['A', 'B'], 'chunks must persist in enqueue order');
+});
