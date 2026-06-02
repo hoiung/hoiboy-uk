@@ -52,6 +52,8 @@ The bits that make the cone narrow are not glamorous. JSON schemas that refuse m
 
 This is what the industry has quietly converged on. Simon Willison [calls the whole wrapper a harness](https://simonwillison.net/guides/agentic-engineering-patterns/how-coding-agents-work/). Berkeley's research lab calls it a [compound AI system](https://bair.berkeley.edu/blog/2024/02/18/compound-ai-systems/). Anthropic [draws a line between workflows and agents](https://www.anthropic.com/research/building-effective-agents). Different names, same idea. The harness does not make the LLM deterministic. It makes your **business outcome** deterministic.
 
+Put simply, a harness is a hybrid: deterministic scaffolding (the schemas, validators, and tool calls above, which run the same way every time) wrapped around the probabilistic LLM, and you drive the whole thing through the Claude Code CLI rather than a normal chat window.
+
 ## We accidentally built one
 
 I am an engineer. Just not an ML engineer. Twenty years in IT, data centres and infrastructure. Serial entrepreneur. Reseller. Swing trader. PMP project management certification, once upon a time. All of that taught me how to plan, design, build, and ship anything of high quality execution. Which is pretty much what you need to build a harness. Got burned enough times by the random-answer problem to build the guardrails I needed. Nine months of twelve-to-fifteen-hour days, one harness later. It is public, MIT licensed, and free to use: [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness). You need Claude Code to run it end-to-end, and it is opinionated, but it is real, and it ships. I publish my work for the public so other small operators and domain experts can see what they might build for themselves.
