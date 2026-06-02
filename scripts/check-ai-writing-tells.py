@@ -213,7 +213,14 @@ def extract_voice_regions(text: str) -> list[tuple[int, str]]:
         MARKER_OPEN_HASH, MARKER_CLOSE_HASH, MARKER_EXEMPT_HASH,
         MARKER_SKIP_OPEN_HASH, MARKER_SKIP_CLOSE_HASH,
     )
-    has_html = any(m in text for m in html_markers)
+    # Both syntaxes detect a marker only as a STANDALONE line (line.strip() == m),
+    # never a bare substring. A backtick mention of `<!-- iamhoi -->` in prose
+    # (as the voice/tones/*.md specs carry) must NOT flip the file into HTML
+    # syntax mode — otherwise a hash-marked file that merely documents the HTML
+    # token falsely trips the mixed-syntax hard fail (#33 AC 4.3).
+    has_html = any(
+        any(line.strip() == m for line in lines) for m in html_markers
+    )
     has_hash = any(
         any(line.strip() == m for line in lines) for m in hash_markers
     )
