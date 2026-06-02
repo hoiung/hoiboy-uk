@@ -30,8 +30,6 @@ This is a sequential, audit-first engagement. It starts at £1,500 and builds on
 
 <!-- iamhoiend -->
 
-{{< consulting-success-banner >}}
-
 ## Who this is for
 
 <!-- iamhoi -->
