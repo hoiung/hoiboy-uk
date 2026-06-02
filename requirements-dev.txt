@@ -4,3 +4,4 @@
 # or let pre-commit's own venv provide pyyaml transitively.
 pytest
 pyyaml
+piexif
