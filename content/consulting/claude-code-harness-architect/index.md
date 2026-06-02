@@ -20,7 +20,7 @@ I help non-technical domain experts and subject matter experts (SME) adopt AI pr
 
 Plainly: I write software with AI, and use it to build automation workflows around the way your business actually works.
 
-I am not here to scale your AWS or your other cloud infrastructure (that's your tech team's job!). I am here to help the people who actually do the work in your business (marketing, sales, ops, design, finance, customer support, wherever you sit) integrate a custom AI harness that automates the routine, so you can focus on your human ingenuity and your domain expertise (the things AI cannot replicate, now or any time soon).
+I am not here to scale your AWS or your other cloud infrastructure (that's your tech team's job!). I am here to help the people who actually do the work in your business (marketing, sales, ops, design, finance, customer support, wherever you sit) integrate a custom AI harness that automates the routine, so you can focus on your human ingenuity, your domain expertise and subject matter expertise (the things AI cannot replicate, now or any time soon).
 
 There is a right way and a wrong way to use AI. Getting AI to work consistently in a real business takes a long time to figure out. The good news: I have spent that time already, so you do not have to.
 
@@ -98,7 +98,7 @@ How does the harness actually pull that off? Two halves working together.
 
 Both halves matter. Automation without governance is a faster way to ship rubbish. Governance without automation is a thicker rule book nobody follows. Together they make the AI accountable AND the SME productive.
 
-Worth being precise about which harness we are talking about, because there are layers. Modern AI tools (Claude Code, Cursor, Copilot, ChatGPT, the lot) already ship with their own general-purpose harnesses underneath, which is what makes them roughly useful for everyone in roughly the same way. The harness I build for you sits ON TOP of that. It is the specialised layer for YOUR business: your workflows, your governance, your domain expertise, your competitive edge.
+Worth being precise about which harness we are talking about, because there are layers. Modern AI tools (Claude Code, Cursor, Copilot, ChatGPT, the lot) already ship with their own general-purpose harnesses underneath, which is what makes them roughly useful for everyone in roughly the same way. The harness I build for you sits ON TOP of that. It is the specialised layer for YOUR business: your workflows, your governance, your domain and subject matter expertise, your competitive edge.
 
 A common confusion: people see Anthropic's Skills (or similar plug-in spec files from other vendors) and think those ARE a harness. Skills are a PART of a harness. Useful on their own, inadequate alone. A full harness is workflow plus governance plus Skills plus feedback loops plus role-specific automation, all glued together. And here is the bit that matters for your edge: every company does things slightly differently, and the ones that PULL ahead do things differently on purpose. That "doing it differently" lives in the specialised harness. An off-the-shelf SKU cannot ship that for you, because it is built for everyone, not for you.
 
@@ -107,6 +107,28 @@ Want to dig into the concept before booking a call? Three posts of mine that go 
 - [Why Do We Need an AI Harness?]({{< ref "/posts/why-do-we-need-an-ai-harness" >}}) (15 Apr 2026)
 - [Every Domain Expert Needs Their Own AI Harness]({{< ref "/posts/every-sme-needs-their-own-harness" >}}) (21 Apr 2026)
 - [SST3-AI-Harness. Why I Built a Hero Suit for AI.]({{< ref "/posts/sst3-ai-harness-reshapeable-knife" >}}) (14 Apr 2026)
+
+<!-- iamhoiend -->
+
+## Two kinds of expert, and why you want both harnessed
+
+<!-- iamhoi -->
+
+Quick clarification, because not everyone draws this line and the two get muddled. A **domain expert** is the person who understands the whole business workflow, end to end, across teams. How the pieces connect, how work flows from sales to ops to finance to delivery. The big picture of how your business actually runs. A **subject matter expert (SME)** is the person deep in one specific subject or process inside that workflow. The finance lead who knows reconciliations cold. The marketer who lives in brief-to-copy. The ops person who owns the listing format. Narrow, but they know their corner better than anyone.
+
+You want automation for both, and they are not the same job.
+
+The **domain-level** harness automates the business workflow that runs across teams. The handoffs, the cross-team process, the thing that usually lives in your head as the founder (or in a messy spreadsheet nobody fully trusts). Get that right and the whole business moves more smoothly, not just one corner of it.
+
+The **subject-matter-level** harness automates the deep, repetitive work inside a single team or role, so that team operates faster and cleaner within the bigger workflow. The SME stops grinding through the repeatable parts by hand and gets their hours back for the judgement work only they can do.
+
+Both matter, equally. The domain harness makes the business flow. The subject-matter harnesses make each team sharp inside that flow. One without the other leaves value sitting there: a smooth cross-team process still jams if every team is drowning in manual work, and a brilliantly efficient team still loses hours if the work bounces awkwardly between departments.
+
+Here is the gap most people miss. Almost all of the agentic AI work out there aims at the domain level: big, cross-team, business-wide automation. Very little of it (sometimes none) goes deep at the subject-matter level, where the actual daily grind lives. That is exactly where I focus, and where I am strongest.
+
+A practical note on size. For domain-level work (mapping and harnessing the whole cross-team business workflow) I prefer small-to-medium businesses, where I can realistically get my arms around the end-to-end flow. For subject-matter-level work (harnessing one specific team or role) I can help a business of any size, because that work scopes to a single team's process, not the whole company.
+
+So when I audit your company (Phase 2 below), part of what I am mapping is exactly this: where the domain-level workflow lives, and which subject-matter roles need their own harness inside it. Then we build both, in the right order.
 
 <!-- iamhoiend -->
 
