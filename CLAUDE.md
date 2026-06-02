@@ -203,10 +203,11 @@ hoiboy-uk/
 │   ├── _index.md            # Homepage stub
 │   ├── about.md
 │   ├── posts/<slug>/        # Page bundles
-│   └── {food,adventure,dance,tech}/_index.md  # Section landings
-├── scripts/
-│   ├── validate_frontmatter.py
-│   └── check_config_traceability.py
+│   ├── {food-booze,adventure,dance,tech-ai,life,entrepreneurship,trading}/_index.md  # 7 category landings
+│   └── {consulting,legal,skills,private}/_index.md  # non-category sections (private = noindex)
+├── scripts/                 # 18 gate/validator scripts (frontmatter, config-traceability,
+│                            #   voice: iamhoi/tells/wordcount, EXIF, secret-scan, internal-links,
+│                            #   mirror-drift) + repo-authored tests + strip-exif/pre-publish/cloudflare-build
 ├── docs/research/           # Planning trail (numbered NN_TITLE.md, non-contiguous)
 ├── legacy/                  # Raw blog exports for Phase 1+ (gitignored)
 ├── .github/workflows/

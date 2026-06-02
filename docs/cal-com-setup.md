@@ -4,7 +4,7 @@ purpose: Reproducible recipe for setting up the discovery-call booking funnel on
 last_verified: 2026-05-07
 related:
   - data/consulting.yaml (calcom_booking field)
-  - layouts/shortcodes/consulting-cta.html (UI consumer)
+  - layouts/_shortcodes/consulting-cta.html (UI consumer)
   - docs/email-routing-setup.md (Brevo SMTP stack - relevant if going webhook→Worker route)
 ---
 
@@ -186,7 +186,7 @@ curl -s -X PATCH -H "Authorization: Bearer ${CAL_API_KEY}" -H "cal-api-version: 
 
 #### Step 6 - Patch the consulting page
 
-The page consumes `data/consulting.yaml` via the `consulting-cta` shortcode at `layouts/shortcodes/consulting-cta.html`, which auto-flips between `mailto:hello@hoiboy.uk` fallback and the live booking URL based on the presence of `calcom_booking`.
+The page consumes `data/consulting.yaml` via the `consulting-cta` shortcode at `layouts/_shortcodes/consulting-cta.html`, which auto-flips between `mailto:hello@hoiboy.uk` fallback and the live booking URL based on the presence of `calcom_booking`.
 
 ```yaml
 # data/consulting.yaml

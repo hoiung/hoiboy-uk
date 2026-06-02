@@ -9,11 +9,18 @@ This folder maps the journey from "I have 22 years of blogs" to a live, Claude-m
 3. [03_PRECOMMIT_DECISIONS.md](03_PRECOMMIT_DECISIONS.md) .  Which pre-commit hooks and CI checks to copy from the trading repo and SST3, and which to skip.
 4. [04_CLAUDE_MANAGED_WORKFLOW.md](04_CLAUDE_MANAGED_WORKFLOW.md) .  How the GitHub repo + Cloudflare Pages + Claude Code loop works day to day.
 5. [05_PHASING_AND_SOURCES.md](05_PHASING_AND_SOURCES.md) .  Confirmed sources (WordPress backup, HTML scraps, Google Docs/docx) and the 4-phase rollout (Foundation → WP → HTML → docx).
-6. [06_TAXONOMY.md](06_TAXONOMY.md) .  Categories (food, adventure, dance, tech) as primary nav, tags as secondary, import categorisation strategy.
+6. [06_TAXONOMY.md](06_TAXONOMY.md) .  Categories (food-booze, adventure, dance, tech-ai, life, entrepreneurship, trading) as primary nav, tags as secondary, import categorisation strategy.
 7. [07_DESIGN_TOKENS.md](07_DESIGN_TOKENS.md) .  Accent colour, fonts, contrast, dark mode decision.
 9. [09_DEPLOYMENT.md](09_DEPLOYMENT.md) .  Cloudflare Pages setup, GHA-gated deploy, rollback, break-glass, theme upgrade procedure.
 10. [10_BASELINE_METRICS.md](10_BASELINE_METRICS.md) .  Captured baselines for regression detection in Phase 1+.
+11. [11_VOICE_PROFILE.md](11_VOICE_PROFILE.md) .  In-repo distilled voice rules + how to use the marker-driven voice guard.
+12. [12_AI_WRITING_TELLS.md](12_AI_WRITING_TELLS.md) .  Research behind the voice rules: the AI writing tells they guard against.
+13. [13_VOICE_GUARD_PLAN.md](13_VOICE_GUARD_PLAN.md) .  Voice-guard hook design: marker-driven opt-in, cutoff-date filter, CI wiring.
+14. [14_BLOG_CRAFT.md](14_BLOG_CRAFT.md) .  Long-form craft guidance + the wordcount-ceiling negative example.
+15. [15_LINKEDIN_PROMOTION.md](15_LINKEDIN_PROMOTION.md) .  LinkedIn promotion strategy for new posts.
 16. [16_AI_BOT_AND_SEO_POLICY.md](16_AI_BOT_AND_SEO_POLICY.md) .  AI bot + SEO crawl-policy decision record: per-class ALLOW verdict, training-vs-citation correction, Cloudflare operator checklist, deferred block-training variant.
+
+**Tooling not in the numbered trail**: the operator-only **meet-recorder** tool (`content/private/tools/meet-recorder/`, consulting-ops#8; noindex + sitemap-excluded) and the **consulting** shortcodes + landing pages (`content/consulting/`, `layouts/_shortcodes/consulting-cta.html`, `data/consulting.yaml`). These post-date the planning trail; see their in-tree sources plus `docs/cal-com-setup.md`.
 
 (`08_FRONTMATTER_SCHEMA.md` deferred to Phase 1: with one stub post there is no schema yet. Phase 0 contract is captured as a header comment in `scripts/validate_frontmatter.py`.)
 
@@ -30,7 +37,7 @@ This folder maps the journey from "I have 22 years of blogs" to a live, Claude-m
 | Theme | **Congo** (per voice-profile fit, see 01_STACK_AND_DESIGN.md). Risotto is fallback. | 2026-04-07 |
 | Design tokens | Greyscale base + ONE warm accent, humanist sans (Inter). Diverges from Diehl greyscale-only. | 2026-04-07 |
 | Voice rule | Hoi's prose is sacred. Never edited. Cleanup only. | 2026-04-07 |
-| Taxonomy | **Categories** (primary): food, adventure, dance, tech. **Tags** (secondary): freeform. | 2026-04-07 |
+| Taxonomy | **Categories** (primary): food-booze, adventure, dance, tech-ai, life, entrepreneurship, trading. **Tags** (secondary): freeform. | 2026-04-07 |
 | Relationship category | Added in Phase 1.0 for the 2 iD8u dating posts. | 2026-04-08 |
 | Phase 1 import outcome | 33 corpus posts imported via 7 parallel subagents (1 SQL helper, 5 era batches, 1 verification). 34 total posts live (5 adventure, 22 dance, 3 food, 2 tech, 2 relationship). | 2026-04-08 |
 | Voice-sacred CI scope | content/posts/ skipped from em-dash, lychee, and markdownlint guards. Other dirs still hard-fail. | 2026-04-08 |

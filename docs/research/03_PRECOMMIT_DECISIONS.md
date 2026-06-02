@@ -34,13 +34,13 @@ All 7 (`check-modularity`, `no-temp-folder`, `check-unix-timestamps`, `validate-
 | `markdownlint-cli` | Heading hierarchy, link syntax, list consistency | **ADD** (with relaxed config .  `MD013` line length off, `MD033` HTML allowed for any embeds) |
 | `markdown-link-check` | Catch broken markdown link syntax | DEFERRED .  `lychee` in CI covers this better |
 | `cspell` | Spell check | SKIP .  Hoi has 22 years of prose with proper nouns and slang. Too noisy. |
-| Frontmatter validator | Ensure `title`, `date`, `tags` present | DEFERRED .  Hugo build will fail if frontmatter is broken. CI catches it. |
+| Frontmatter validator | Ensure `title`, `date`, `tags` present | WIRED + BLOCKING .  pre-commit hook (`content/posts/*.md`) + CI step (`validate_frontmatter.py`). |
 
 ## From SST3
 
 | Tool | Purpose | Decision |
 |---|---|---|
-| `check-ai-writing-tells.py` | Detect em dashes, AI-flagged words, bold-first bullets | **AVAILABLE BUT NOT BLOCKING.** False-positive risk on republished pre-AI corpus is high. Run manually on NEW posts only, never enforce on `content/posts/` automatically. |
+| `check-ai-writing-tells.py` | Detect em dashes, AI-flagged words, bold-first bullets | **WIRED + BLOCKING** (marker-driven, `--check-only-new`): pre-commit hook + CI step. Legacy pre-AI corpus (date < 2026-04-07) is auto-skipped and only `<!-- iamhoi -->`-marked new-post regions are scanned, so the false-positive risk on the republished corpus is contained. |
 
 Documented in CLAUDE.md so future-me doesn't wire it as a pre-commit hook by accident.
 

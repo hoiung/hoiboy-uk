@@ -62,7 +62,7 @@ No skipped levels (`##` then `####`). Markdownlint enforces.
 |---|---|---|
 | Zero em dashes (the U+2014 character, looks like a long dash) | `feedback_no_em_dashes` memory | CI grep guard, hard fail |
 | No AI-flagged words for NEW Hoi-voice prose | `VOICE_PROFILE.md` Section 0 | Manual: `python3 ../dotfiles/SST3/scripts/check-ai-writing-tells.py <file>` |
-| iamhoi marker wrapping required for new Hoi-voice prose | AP #15 + `feedback_hoiboy_uk_voice_markers.md` | `python3 scripts/check-iamhoi-wrapping.py --check-only-new` (pre-commit hook 6) |
+| iamhoi marker wrapping required for new Hoi-voice prose | AP #15 + `feedback_hoiboy_uk_voice_markers.md` | `python3 scripts/check-iamhoi-wrapping.py --check-only-new` (pre-commit hook 4) |
 | Legacy imports voice-sacred | `02_BLOG_IMPORT_PIPELINE.md` | Cleanup limited to format/encoding/dead links/image rehost. Words byte-identical to source. |
 | British English | UK spelling, no Americanisms | Manual review |
 | RAG before writing | Always retrieve from `MASTER_PROFILE.md` / `VOICE_PROFILE.md` Section 9 (anchor anecdotes) and Section 12 (verbatim sentences) before drafting | Skill rule, no auto-enforce |
@@ -150,7 +150,7 @@ Hugo skips drafts in production builds. Public repo + draft frontmatter = safe (
 - [ ] Frontmatter has all required fields (title, date, categories, tags)
 - [ ] Category is one of {food-booze, adventure, dance, tech-ai, life, entrepreneurship, trading}
 - [ ] If part of a series: `series: <name>` + `order: <int>` set; `/series/<name>/` index renders correctly under `hugo server`
-- [ ] First-person Hoi-voice prose wrapped in `<!-- iamhoi --> ... <!-- iamhoiend -->` (pre-commit hook 6 enforces)
+- [ ] First-person Hoi-voice prose wrapped in `<!-- iamhoi --> ... <!-- iamhoiend -->` (pre-commit hook 4 enforces)
 - [ ] Voice tells clean (manual `check-ai-writing-tells.py` for new prose, skip for legacy)
 - [ ] Zero em dashes (CI catches it but check locally first)
 - [ ] Images in same folder, alt text present, max 1600px wide

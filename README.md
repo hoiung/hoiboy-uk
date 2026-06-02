@@ -36,8 +36,9 @@ hoiboy-uk/
 │   ├── _index.md            # Homepage
 │   ├── about.md
 │   ├── posts/<slug>/        # Page bundles
-│   └── {food,adventure,dance,tech}/  # Category section landings
-├── scripts/                 # Frontmatter + traceability validators
+│   ├── {food-booze,adventure,dance,tech-ai,life,entrepreneurship,trading}/  # 7 category landings
+│   └── {consulting,legal,skills,private}/  # non-category sections (private = noindex)
+├── scripts/                 # 18 gate/validator scripts: frontmatter, config-traceability, voice (iamhoi/tells/wordcount), EXIF, secret-scan, internal-links, mirror-drift
 ├── docs/research/           # Planning trail (numbered NN_TITLE.md, non-contiguous)
 ├── lychee.toml              # Link checker config
 ├── .github/workflows/       # ci.yml + deploy.yml

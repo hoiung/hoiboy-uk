@@ -98,15 +98,17 @@ hoiboy-uk/
 │   ├── medium/posts/
 │   └── tumblr/*.json
 ├── scripts/
-│   ├── import.sh                 # Orchestrator: runs each converter
-│   ├── normalise_frontmatter.py  # YAML cleanup, tag collapse
-│   ├── download_images.py        # Rehost remote images locally
-│   ├── fix_encoding.py           # ftfy pass
-│   └── check_links.sh            # lychee runner
+│   └── import_aam_sql.py         # AS-BUILT: the only import script that exists
 └── content/posts/<slug>/index.md
 ```
 
-Flow:
+> **AS-BUILT note**: the multi-converter pipeline below was the original plan. In
+> practice only `scripts/import_aam_sql.py` was built (it parses the AdventureAnd.Me
+> mysqldump for dates + image filenames); post bodies came from the voice-corpus
+> (canonical), not auto-converters, so `import.sh` / `normalise_frontmatter.py` /
+> `download_images.py` / `fix_encoding.py` / `check_links.sh` were never needed.
+
+Flow (original plan, superseded by the AS-BUILT note above):
 1. User dumps raw exports into `legacy/`
 2. `scripts/import.sh` runs each converter into `content/posts/`
 3. Python post-processor normalises frontmatter
