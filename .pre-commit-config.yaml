@@ -64,9 +64,10 @@ repos:
         language: system
         pass_filenames: true
         files: '\.(jpg|jpeg|png|webp|JPG|JPEG|PNG|WEBP)$'
-      # voice-rules-drift removed (#33 AC 4.4): voice_rules.py is a manifest-tracked
-      # vendored mirror, so the sst3-mirror-drift hooks below already enforce its
-      # drift against canonical. Two hooks guarding the same file was redundant.
+      # The bespoke voice_rules drift hook was removed (#33 AC 4.4): voice_rules.py
+      # is a manifest-tracked vendored mirror, so the sst3-mirror-drift hooks below
+      # already enforce its drift against canonical. Two hooks guarding the same file
+      # was redundant.
 
       - id: check-public-repo-secrets
         name: Check for secrets in public repo
