@@ -61,6 +61,32 @@ class TestRegions:
         with pytest.raises(ValueError, match="first non-blank"):
             cvt.extract_voice_regions("hello\n<!-- iamhoi-exempt -->")
 
+    def test_exempt_after_frontmatter_accepted(self):
+        # #33 AC 6.7 — iamhoi-exempt as the first non-blank BODY line (after a
+        # YAML frontmatter block) is valid; the leading --- block is skipped,
+        # consistent with check-iamhoi-wrapping.py's strip_frontmatter.
+        r = cvt.extract_voice_regions(
+            "---\ntitle: Privacy\ndate: 2026-05-09\n---\n\n"
+            "<!-- iamhoi-exempt -->\n\nI wrote this prose.\n"
+        )
+        assert r == []
+
+    def test_exempt_not_first_body_line_still_fails(self):
+        with pytest.raises(ValueError, match="first non-blank"):
+            cvt.extract_voice_regions(
+                "---\ntitle: X\n---\n\nIntro prose.\n<!-- iamhoi-exempt -->\n"
+            )
+
+    def test_backtick_html_mention_does_not_flip_syntax_mode(self):
+        # #33 AC 4.3 — a hash-marked file that merely mentions the HTML marker
+        # token in backticks (as the voice/tones/*.md specs do) must NOT trip
+        # the mixed-syntax hard fail. Marker presence is standalone-line only.
+        r = cvt.extract_voice_regions(
+            "# iamhoi\nI built this myself.\n# iamhoiend\n"
+            "Docs mention the `<!-- iamhoi -->` token.\n"
+        )
+        assert r == [(2, "I built this myself.")]
+
 
 # 2. Frontmatter date parser
 class TestParseDate:
