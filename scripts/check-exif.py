@@ -102,7 +102,13 @@ def _load_png_exif(path: Path) -> dict | None:
             payload = raw[data_start:data_end]
             try:
                 return piexif.load(b"Exif\x00\x00" + payload)
-            except Exception:
+            except Exception as e:
+                # A PNG carrying an eXIf chunk we cannot parse could hide
+                # identifying data — surface it rather than silently passing.
+                sys.stderr.write(
+                    f"WARN: {path}: PNG eXIf chunk present but unparseable "
+                    f"({e}); cannot scan for identifying tags\n"
+                )
                 return None
         if ctype == b"IDAT" or ctype == b"IEND":
             break  # eXIf must precede image data; stop early
@@ -119,8 +125,14 @@ def scan_image(path: Path) -> list[str]:
     # .jpg / .jpeg / .webp — piexif parses natively.
     try:
         exif = piexif.load(str(path))
-    except Exception:
-        # "doesnot have exif" / unparseable → no identifying metadata.
+    except Exception as e:
+        # piexif raises "doesnot have exif" for a clean JPEG/WebP — the normal
+        # clean case, kept silent. Any OTHER failure means the image is
+        # unparseable; surface it so a corrupt file is not silently passed.
+        if "doesnot have exif" not in str(e):
+            sys.stderr.write(
+                f"WARN: {path}: EXIF unparseable ({e}); treated as clean\n"
+            )
         return []
     return _identifying_tags(exif)
 
