@@ -5,6 +5,7 @@ Greps layouts/ (NOT vendored themes) for each top-level key in params.toml.
 Dead key (declared but never read) = FAIL. Standards Fail Fast.
 """
 from __future__ import annotations
+import re
 import sys
 from pathlib import Path
 
@@ -15,6 +16,19 @@ ASSETS = ROOT / "assets"
 
 # Keys declared but not greppable in layouts (none currently). Document each.
 EXEMPT: set[str] = set()
+
+
+def is_key_referenced(key: str, text: str) -> bool:
+    """True if `key` appears in `text` as a standalone identifier token.
+
+    A plain substring test is toothless: a dead key that is a substring of an
+    unrelated token reads as referenced (e.g. `accent` inside `--accent-color`
+    or `author` inside `authorSameAs`). Require an identifier boundary on both
+    sides — treating `-` as part of a token — so `accent` does NOT match
+    `accent-color` but `site.Params.accentColor` still matches `accentColor`.
+    """
+    pattern = r"(?<![A-Za-z0-9_-])" + re.escape(key) + r"(?![A-Za-z0-9_-])"
+    return re.search(pattern, text) is not None
 
 
 def extract_keys(toml: str) -> list[str]:
@@ -49,7 +63,7 @@ def main() -> int:
     for k in keys:
         if k in EXEMPT:
             continue
-        if k not in layout_text:
+        if not is_key_referenced(k, layout_text):
             dead.append(k)
 
     if dead:
