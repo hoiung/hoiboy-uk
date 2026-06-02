@@ -7,7 +7,7 @@
   X-Robots-Tag: noindex, nofollow
   Cache-Control: no-store
   Permissions-Policy: microphone=(self), camera=()
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self' https://www.dataprivacyframework.gov; frame-ancestors 'none'; form-action 'self'; base-uri 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'
 
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
