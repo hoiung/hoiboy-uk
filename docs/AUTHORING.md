@@ -154,10 +154,10 @@ Hugo skips drafts in production builds. Public repo + draft frontmatter = safe (
 - [ ] Voice tells clean (manual `check-ai-writing-tells.py` for new prose, skip for legacy)
 - [ ] Zero em dashes (CI catches it but check locally first)
 - [ ] Images in same folder, alt text present, max 1600px wide
-- [ ] **Hero image EXIF stripped**: `bash scripts/strip-exif.sh content/posts/<slug>/hero.webp` (manual step before commit; mutates files in-place, so NOT a pre-commit hook)
+- [ ] **Hero image EXIF stripped**: `bash scripts/strip-exif.sh content/posts/<slug>/hero.webp` (manual step before commit; mutates files in-place, so NOT a pre-commit hook). Detection IS auto-enforced: the read-only `scripts/check-exif.py` runs in pre-commit + CI and fails on identifying EXIF (camera Make/Model/serial/Artist/GPS).
 - [ ] Local preview: `hugo server`, click around the post
 - [ ] Headings start at `##`, no skipped levels
 - [ ] Internal links resolve, external links live
-- [ ] **Pre-publish gate**: `bash scripts/pre-publish.sh content/posts/<slug>/`. Runs em-dash + voice-tells + frontmatter + word-count + secrets in one go (exit 0 = clean to publish)
+- [ ] **Pre-publish gate**: `bash scripts/pre-publish.sh content/posts/<slug>/`. Runs all 9 checks (consulting-yaml, em-dash, voice-tells, frontmatter, word-count, secrets, hugo-build, rendered-link-liveness, consulting-link-liveness) in one go (exit 0 = clean to publish). The rendered-HTML lychee (`rendered-link-liveness`) and `consulting-link-liveness` checks are **manual-only, NOT CI-enforced**: they need a full local `hugo --buildDrafts` build plus live external-URL probing, so they stay in this manual pre-publish step. CI runs the markdown-level lychee (`./**/*.md`) as the automated link tier; nothing elsewhere claims these two rendered checks are CI-enforced.
 - [ ] Commit with descriptive message
 - [ ] Push, watch CI green, then live in ~90s
