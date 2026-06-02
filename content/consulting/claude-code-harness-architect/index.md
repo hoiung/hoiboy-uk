@@ -36,7 +36,7 @@ This is a sequential, audit-first engagement. It starts at £1,500 and builds on
 
 <!-- iamhoi -->
 
-Owner-operator CEOs running 5 to 50 employee businesses. Founder-led. Sometimes with a small team, sometimes solo on the operator side. The team can sit on any side of the business: ops, sales, marketing, customer support, design, finance, engineering, or some mix of those. The common thread is wanting to actually adopt AI effectively. If your current experience is the demo-grade kind (works in playgrounds, misses the brief in real work, hallucinates, needs babysitting), you can probably feel the gap already.
+Owner-operator CEOs and startup founders running 5 to 50 employee businesses. Founder-led. Sometimes with a small team, sometimes solo on the operator side. The team can sit on any side of the business: ops, sales, marketing, customer support, design, finance, engineering, or some mix of those. The common thread is wanting to actually adopt AI effectively. If your current experience is the demo-grade kind (works in playgrounds, misses the brief in real work, hallucinates, needs babysitting), you can probably feel the gap already.
 
 With or without a CTO is fine. If you already have one, I work alongside them as an extension (an extra pair of senior hands and a harness pattern that lifts what they are already doing). If you do not, I cover the AI-tooling architecture lane until you decide whether you need a permanent technical hire. Either way, you make AI-spend decisions yourself and you do not need to convince a board.
 
@@ -126,7 +126,7 @@ Both matter, equally. The domain harness makes the business flow. The subject-ma
 
 Here is the gap most people miss. Almost all of the agentic AI work out there aims at the domain level: big, cross-team, business-wide automation. Very little of it (sometimes none) goes deep at the subject-matter level, where the actual daily grind lives. That is exactly where I focus, and where I am strongest.
 
-A practical note on size. For domain-level work (mapping and harnessing the whole cross-team business workflow) I prefer small-to-medium businesses, where I can realistically get my arms around the end-to-end flow. For subject-matter-level work (harnessing one specific team or role) I can help a business of any size, because that work scopes to a single team's process, not the whole company.
+A practical note on size. For domain-level work (mapping and harnessing the whole cross-team business workflow) I prefer small, founder-led businesses and startups (the owner-operator shape this page is built for, roughly up to 50 employees), where I can realistically get my arms around the end-to-end flow. For subject-matter-level work (harnessing one specific team or role) I can help a business of any size, because that work scopes to a single team's process, not the whole company.
 
 So when I audit your company (Phase 2 below), part of what I am mapping is exactly this: where the domain-level workflow lives, and which subject-matter roles need their own harness inside it. Then we build both, in the right order.
 
