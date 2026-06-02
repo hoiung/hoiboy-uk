@@ -147,6 +147,9 @@ jobs:
       - name: Em-dash new-post guard unit tests
         run: python3 -m pytest scripts/test_check_emdash_newposts.py -q
 
+      - name: Config-traceability + iamhoi-wrapping unit tests
+        run: python3 -m pytest scripts/test_check_config_traceability.py scripts/test_check_iamhoi_wrapping.py -q
+
       - name: Frontmatter validator
         run: python3 scripts/validate_frontmatter.py
 
