@@ -1,3 +1,8 @@
+# Whole /private/ section: noindex (covers the section index + any future tool
+# page). The meet-recorder block below adds its page-specific headers on top.
+/private/*
+  X-Robots-Tag: noindex, nofollow
+
 /private/tools/meet-recorder/*
   X-Robots-Tag: noindex, nofollow
   Cache-Control: no-store
