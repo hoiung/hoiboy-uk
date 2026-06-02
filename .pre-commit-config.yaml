@@ -64,12 +64,9 @@ repos:
         language: system
         pass_filenames: true
         files: '\.(jpg|jpeg|png|webp|JPG|JPEG|PNG|WEBP)$'
-      - id: voice-rules-drift
-        name: Voice rules vendored copy drift check
-        entry: bash -c 'if [ -d ../dotfiles ]; then cmp -s ../dotfiles/SST3/scripts/voice_rules.py scripts/voice_rules.py || { echo "[drift] scripts/voice_rules.py differs from canonical at ../dotfiles/SST3/scripts/voice_rules.py"; exit 1; }; else echo "[sync] dotfiles canonical not present, skipping" >&2; fi'
-        language: system
-        pass_filenames: false
-        always_run: true
+      # voice-rules-drift removed (#33 AC 4.4): voice_rules.py is a manifest-tracked
+      # vendored mirror, so the sst3-mirror-drift hooks below already enforce its
+      # drift against canonical. Two hooks guarding the same file was redundant.
 
       - id: check-public-repo-secrets
         name: Check for secrets in public repo
