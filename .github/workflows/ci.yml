@@ -109,6 +109,12 @@ jobs:
       - name: Install Python deps
         run: pip install --quiet -r requirements-dev.txt
 
+      - name: EXIF detector (no identifying metadata in tracked images)
+        run: python3 scripts/check-exif.py
+
+      - name: EXIF detector unit tests
+        run: python3 -m pytest scripts/test_check_exif.py -q
+
       - name: Voice guard tells (marker-driven, new posts only)
         run: python3 scripts/check-ai-writing-tells.py --mode blog --check-only-new content/ docs/
 

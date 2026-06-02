@@ -58,6 +58,12 @@ repos:
         pass_filenames: true
         files: ^content/posts/.*/index\.md$
         always_run: false
+      - id: check-exif
+        name: Detect identifying EXIF in images (read-only)
+        entry: python3 scripts/check-exif.py
+        language: system
+        pass_filenames: true
+        files: '\.(jpg|jpeg|png|webp|JPG|JPEG|PNG|WEBP)$'
       - id: voice-rules-drift
         name: Voice rules vendored copy drift check
         entry: bash -c 'if [ -d ../dotfiles ]; then cmp -s ../dotfiles/SST3/scripts/voice_rules.py scripts/voice_rules.py || { echo "[drift] scripts/voice_rules.py differs from canonical at ../dotfiles/SST3/scripts/voice_rules.py"; exit 1; }; else echo "[sync] dotfiles canonical not present, skipping" >&2; fi'
