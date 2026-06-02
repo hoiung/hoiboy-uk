@@ -246,7 +246,20 @@ def extract_voice_regions(text: str) -> list[tuple[int, str]]:
             raise ValueError(
                 f"multiple iamhoi-exempt markers (lines {[n+1 for n in exempt_lines]}) (hard fail)"
             )
-        first_nonblank = next((i for i, line in enumerate(lines) if line.strip()), None)
+        # Skip a leading YAML frontmatter block (---…---) so an iamhoi-exempt
+        # placed as the first non-blank BODY line is accepted — consistent with
+        # check-iamhoi-wrapping.py's strip_frontmatter. Without this, the file's
+        # first non-blank line is the frontmatter `---`, so a content page (legal
+        # boilerplate etc.) could never carry a valid iamhoi-exempt (#33 AC 6.7).
+        body_start = 0
+        if lines and lines[0].strip() == "---":
+            for j in range(1, len(lines)):
+                if lines[j].strip() == "---":
+                    body_start = j + 1
+                    break
+        first_nonblank = next(
+            (i for i in range(body_start, len(lines)) if lines[i].strip()), None
+        )
         if exempt_lines[0] != first_nonblank:
             raise ValueError(
                 f"iamhoi-exempt must be the first non-blank line (found at line {exempt_lines[0]+1}) (hard fail)"

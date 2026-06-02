@@ -7,6 +7,8 @@ hideDate: true
 version: 1.0.0
 ---
 
+<!-- iamhoi-exempt -->
+
 This Privacy Notice covers the processing of personal data by **HOIBOY AI LTD** (UK Companies House 17211412), trading as hoiboy.uk for the AI Managed Harness Services consultancy.
 
 It satisfies the controller's obligations under **UK GDPR Article 13** (information to be provided where personal data are collected from the data subject) and **UK GDPR Article 14** (information to be provided where personal data have not been obtained from the data subject, including the **30-day clock** for notification under Article 14(3)(a)).

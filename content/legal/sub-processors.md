@@ -7,6 +7,8 @@ hideDate: true
 version: 1.0.0
 ---
 
+<!-- iamhoi-exempt -->
+
 This page lists the sub-processors engaged by **HOIBOY AI LTD** (UK Companies House 17211412) for the AI Managed Harness Services consultancy. It mirrors the source-of-truth Annex 2 of the **Data Processing Agreement (DPA) Schedule** attached to the Master Services Agreement (MSA) and to each Statement of Work (SOW) signed under it.
 
 When a sub-processor is added or replaced, affected clients are emailed the change with an effective-date at least 30 days out. Clients may object on reasonable grounds within those 30 days; an unresolved objection means the affected SOW may be terminated with pro-rata refund per SOW §5.
