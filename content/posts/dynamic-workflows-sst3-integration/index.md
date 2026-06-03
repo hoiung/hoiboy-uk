@@ -14,7 +14,7 @@ When Opus 4.8 dropped (Claude's biggest model, the one I lean on most), I did wh
 
 I'm not going to explain what they are in full. The official Claude docs do that better than I can, go read them. What I can give you is my own read on why they're useful, and what happened when I bolted them into my own setup. Because one of them I'd basically been hand-building for six months. And the first time I really used it, it torched half my weekly token allowance in four repos.
 
-Let me back up.
+Let me take a step back.
 
 ## The gap I'd been filling by hand
 
