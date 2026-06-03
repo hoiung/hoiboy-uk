@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 300" role="img" aria-label="End-to-end test: known input flows through the system's modules, components and helpers and must come out matching the expected result" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0533a"/>
+    </marker>
+    <style>
+      .bg { fill: #fafafa; }
+      .card { fill: #ffffff; }
+      .label { fill: #1a1a1a; font-weight: 600; }
+      .muted { fill: #6a6a6a; }
+      .boxstroke { stroke: #9aa0a6; }
+      .accent { fill: #c0533a; }
+      .accentstroke { stroke: #c0533a; }
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #141414; }
+        .card { fill: #1f1f1f; }
+        .label { fill: #f0f0f0; }
+        .muted { fill: #a6a6a6; }
+        .boxstroke { stroke: #6a6a6a; }
+      }
+    </style>
+  </defs>
+
+  <!-- own background so text contrast holds on any host -->
+  <rect x="0" y="0" width="880" height="300" class="bg"/>
+
+  <!-- title -->
+  <text x="440" y="30" text-anchor="middle" class="accent" font-size="13" font-weight="700" letter-spacing="2.5">ONE END-TO-END TEST</text>
+
+  <!-- bracket over the system -->
+  <text x="425" y="64" text-anchor="middle" class="muted" font-size="11.5" letter-spacing="1.5">THE SYSTEM (MODULES, COMPONENTS, HELPERS)</text>
+  <path d="M190,76 L190,84 M660,76 L660,84 M190,76 L660,76" fill="none" class="boxstroke" stroke-width="1.2"/>
+
+  <!-- boxes -->
+  <!-- INPUT -->
+  <rect x="20" y="100" width="120" height="64" rx="10" class="card accentstroke" stroke-width="2.5"/>
+  <text x="80" y="138" text-anchor="middle" class="label" font-size="17">INPUT</text>
+
+  <!-- MODULE -->
+  <rect x="190" y="100" width="120" height="64" rx="10" class="card boxstroke" stroke-width="1.8"/>
+  <text x="250" y="138" text-anchor="middle" class="label" font-size="16">MODULE</text>
+
+  <!-- COMPONENT -->
+  <rect x="360" y="100" width="140" height="64" rx="10" class="card boxstroke" stroke-width="1.8"/>
+  <text x="430" y="138" text-anchor="middle" class="label" font-size="15">COMPONENT</text>
+
+  <!-- HELPER -->
+  <rect x="540" y="100" width="120" height="64" rx="10" class="card boxstroke" stroke-width="1.8"/>
+  <text x="600" y="138" text-anchor="middle" class="label" font-size="16">HELPER</text>
+
+  <!-- RESULT -->
+  <rect x="710" y="100" width="150" height="64" rx="10" class="card accentstroke" stroke-width="2.5"/>
+  <text x="785" y="138" text-anchor="middle" class="label" font-size="17">RESULT</text>
+
+  <!-- arrows -->
+  <line x1="140" y1="132" x2="188" y2="132" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+  <line x1="310" y1="132" x2="358" y2="132" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+  <line x1="500" y1="132" x2="538" y2="132" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+  <line x1="660" y1="132" x2="708" y2="132" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+
+  <!-- end captions -->
+  <text x="80" y="188" text-anchor="middle" class="muted" font-size="12.5">known values in</text>
+  <text x="785" y="188" text-anchor="middle" class="muted" font-size="12.5">what came out</text>
+
+  <!-- verdict line -->
+  <text x="440" y="262" text-anchor="middle" font-size="14.5">
+    <tspan class="muted">came out = expected? keep going.</tspan><tspan class="accent" font-weight="700" dx="12">mismatch &#8594; fail loud.</tspan>
+  </text>
+</svg>
