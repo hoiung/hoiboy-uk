@@ -1,13 +1,16 @@
 #!/bin/bash
 # Pre-publish gate aggregator for hoiboy.uk new blog posts.
 #
-# Runs 9 sequential checks fail-fast on first non-zero exit:
+# Runs 10 sequential checks fail-fast on first non-zero exit:
 #   1. Consulting YAML   (data/consulting.yaml MUST NOT contain OPERATOR_TODO
 #                         substring — global gate, blocks publish whenever a
 #                         placeholder URL is unreplaced. consulting-ops#2 AC 0.2.)
 #   2. Em-dash grep      (any U+2014 = fail)
 #   3. Voice tells       (check-ai-writing-tells.py --check-only-new)
 #   4. Frontmatter       (validate_frontmatter.py — whole-tree)
+#   4b.Future date       (check_future_date.py — fail if date is future in the
+#                         site timeZone vs now-UTC; Hugo would silently drop a
+#                         future-dated post from the production build)
 #   5. Word count        (check_wordcount.py >3000 = fail)
 #   6. Private leaks     (check-public-repo-secrets.py)
 #   7. Hugo build        (hugo --buildDrafts so cross-link resolution + permalinks
@@ -118,6 +121,13 @@ run_check "voice-tells" python3 scripts/check-ai-writing-tells.py --check-only-n
 # 3. Frontmatter validator (walks content/posts/ unconditionally).
 run_check "frontmatter" python3 scripts/validate_frontmatter.py
 
+# 3b. Future-date guard. Hugo drops future-dated posts from the production
+#     build (buildFuture off) and Cloudflare builds in UTC, so a post-dated
+#     entry silently vanishes from the live site + all listings. Fail if this
+#     post's date (read in the site timeZone from hugo.toml) is still in the
+#     future relative to now (UTC). See docs/AUTHORING.md section 2.
+run_check "no-future-date" python3 scripts/check_future_date.py "$TARGET"
+
 # 4. Word count ceiling (>3000 fails; legacy + grandfathered skipped).
 run_check "wordcount" python3 scripts/check_wordcount.py "$POST_FILE"
 
@@ -185,4 +195,4 @@ consulting_link_check() {
 run_check "consulting-link-liveness" consulting_link_check
 
 print_summary
-printf '[OK] all 9 pre-publish checks passed for %s\n' "$TARGET"
+printf '[OK] all %d pre-publish checks passed for %s\n' "${#results[@]}" "$TARGET"
