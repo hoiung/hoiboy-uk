@@ -1,6 +1,6 @@
 ---
 title: "3 Types of Tests I Build for Production Systems"
-date: 2026-06-03
+date: 2026-06-04
 categories: [tech-ai]
 tags: [testing, ai, claude-code, production, trading-systems]
 description: "Unit, workflow, and end-to-end tests are how I know a system works. What each one catches, why AI forgets the wiring, and the one final check that's all human."
