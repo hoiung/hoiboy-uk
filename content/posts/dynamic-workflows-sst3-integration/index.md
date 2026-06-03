@@ -1,11 +1,11 @@
 ---
-title: "Claude Built What My Harness Faked for Six Months. It Ate My Tokens."
+title: "Dynamic Workflow and Security Guidance integration into SST3-AI-Harness"
 date: 2026-06-03
 draft: false
 categories: [tech-ai]
 tags: [ai, claude-code, dynamic-workflows, sst3, ai-orchestration, tokens]
 slug: dynamic-workflows-sst3-integration
-description: "Anthropic shipped multi-agent dynamic workflows. My harness had been faking the same idea for six months. The first dogfood run torched half my weekly tokens."
+description: "Anthropic shipped multi-agent dynamic workflows, basically what I'd built into my own harness six months earlier. Integrating it, the token burn, and the model-selection fix."
 ---
 
 <!-- iamhoi -->
@@ -24,7 +24,7 @@ The trick was slicing. A big job (review this entire codebase, find every gap) i
 
 Sound familiar? It should. I've read enough to know other people building their own harnesses landed on more or less the same shape. We all saw the same gap in how the general Claude setups worked, and we all reached for the same fix. Funny how that goes.
 
-I try not to compete with Claude on this stuff. They sit on a mountain of data about how people actually use their tools, and they use it heavily inside the company too. They see the gaps. So when they finally shipped a proper version of the thing my harness had been bodging for half a year, my honest reaction was relief, not annoyance. At least I know I was barking up the right tree.
+I try not to compete with Claude on this stuff. They sit on a mountain of data about how people actually use their tools, and they use it heavily inside the company too. They see the gaps. So when they shipped an official version of what my harness had already been doing for half a year, my honest reaction was relief, not annoyance. My own version worked fine, but theirs means it is one less thing I have to maintain. At least I know I was barking up the right tree.
 
 It doesn't fully replace what I built in my SST3 harness, but it slots right into it.
 
@@ -96,6 +96,6 @@ Dynamic Workflows, though, I'm genuinely pleased with. Once the model selection 
 
 One gripe remains. I still get that rate-limit error even after the second refactor, so I reckon it's unrelated to anything I changed. My best guess: I usually run between four and eight Claude chats at once depending on what I'm working on, and Max 20x or not, hammering Anthropic with that many parallel workflow connections probably rubs something the wrong way. Feels a bit silly to advertise handling vast swarms of subagents when I'm tripping a limit well before I get anywhere near the numbers on the tin. I hope they sort it.
 
-But that's a small gripe on top of a feature I waited six months for someone to build properly. The funny part is I'd already built my own version, learned the same lessons the hard way, and the main thing the official one taught me was that I was barking up the right tree with my harness architecture. [Quality and the right tool beat raw scale, every time.](/posts/scaling-without-quality/) Don't bring a sledgehammer to a panel pin.
+But that's a small gripe on top of a feature I'd wanted to exist for six months. The funny part is I'd already built my own version, it worked fine, and Anthropic shipping the official one means I can finally stop maintaining my hand-rolled version and just use theirs. Turns out I was barking up the right tree with my harness architecture all along. [Quality and the right tool beat raw scale, every time.](/posts/scaling-without-quality/) Don't bring a sledgehammer to a panel pin.
 
 <!-- iamhoiend -->
