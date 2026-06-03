@@ -33,6 +33,8 @@ Folder name = canonical slug. Date prefix optional but recommended for sort stab
 
 **Validator**: `python3 scripts/validate_frontmatter.py` (also runs in CI and pre-commit). Hard fail on missing required fields, unknown categories, or malformed YAML. Optional fields are not enforced for backward compatibility.
 
+**`date` and the production build (don't future-date)**: Hugo silently drops **future-dated** posts from the production build (`buildFuture` is off), the same way `draft: true` does (§7). The trap is timezone: the site is configured `timeZone = "Europe/London"` in `hugo.toml`, but Cloudflare builds in **UTC**. A post dated `YYYY-MM-DD` (midnight) published in the small hours of UK time can still be "the future" in UTC. The London `timeZone` setting makes a bare date resolve to UK midnight (e.g. `2026-06-04` = `23:00Z` on the 3rd) so a same-day UK publish builds correctly, but do not date a post **ahead** of the day you actually publish, or Cloudflare will build the site without it (it vanishes from its URL and every category/section listing while a stale copy may still appear to serve). Symptom + fix history: the 3-types-of-tests post, 2026-06-04. Never remove the `timeZone` line from `hugo.toml`.
+
 ## 3. Image rules
 
 | Rule | Detail |
