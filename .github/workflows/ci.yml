@@ -31,10 +31,23 @@ jobs:
         if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BEFORE_SHA: ${{ github.event.before }}
         run: |
+          # On a force-push the before-SHA sits on a rewritten (now-unreachable) line and
+          # is absent from the checkout, so `git log <before>..HEAD` would exit 128 and red
+          # the build for a non-content reason. Fall back to scanning the tip commit only
+          # in that case (its message is the one the rewrite just introduced). BEFORE_SHA is
+          # passed via env: (not inline interpolation) per workflow-injection hardening.
+          if git rev-parse -q --verify "${BEFORE_SHA}^{commit}" >/dev/null 2>&1 \
+             && git merge-base --is-ancestor "$BEFORE_SHA" HEAD 2>/dev/null; then
+            SINCE="$BEFORE_SHA"
+          else
+            echo "::notice::before SHA $BEFORE_SHA unreachable (force-push/rewrite) - scanning HEAD commit only"
+            SINCE='HEAD~1'
+          fi
           python3 scripts/check-public-repo-secrets.py \
             --scan-commit-messages \
-            --since ${{ github.event.before }}
+            --since "$SINCE"
 
       - name: Commit-message secret scan — PR events (blocking)
         if: github.event_name == 'pull_request'
