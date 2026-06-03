@@ -1,5 +1,5 @@
 ---
-title: "Dynamic Workflow and Security Guidance integration into SST3-AI-Harness"
+title: "Dynamic Workflows and Security Guidance integration into SST3-AI-Harness"
 date: 2026-06-03
 draft: false
 categories: [tech-ai]
