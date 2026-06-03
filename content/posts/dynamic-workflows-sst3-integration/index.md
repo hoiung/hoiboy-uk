@@ -92,7 +92,7 @@ I do hope Anthropic adds per-subagent effort control before long. Right now I ca
 
 As for Security Guidance, the other new feature? Honestly, not much to report. It sits in the background, looking over code as it's written and flagging anything dodgy. It's quiet and not very transparent about what it's up to, so I've not formed strong opinions either way. It does its thing. Fine for now.
 
-Dynamic Workflows, though, I'm genuinely pleased with. Once the model selection was tuned to the job, it's a proper upgrade to how my harness runs its research and review swarms.
+Dynamic Workflows, though, I'm genuinely pleased with. I wouldn't call it a proper upgrade on my own swarm, but it gave me one thing I never had: I can actually watch what the subagents are doing while they explore and plan across a whole codebase. My own hand-rolled swarm ran in the dark.
 
 One gripe remains. I still get that rate-limit error even after the second refactor, so I reckon it's unrelated to anything I changed. My best guess: I usually run between four and eight Claude chats at once depending on what I'm working on, and Max 20x or not, hammering Anthropic with that many parallel workflow connections probably rubs something the wrong way. Feels a bit silly to advertise handling vast swarms of subagents when I'm tripping a limit well before I get anywhere near the numbers on the tin. I hope they sort it.
 
