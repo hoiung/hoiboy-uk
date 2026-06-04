@@ -13,7 +13,7 @@ I wrote this on Facebook about eight years ago. I've been off social media for a
 
 And guess what? It's now been 15 years of dancing and still going strong! The last 3 years I've leaned more into solo stuff, Hip Hop and Afrobeats. I'm so glad I found dancing. It shaped me and strengthened me in every single way I can think of: physically, mentally, emotionally. The lot.
 
-The post below is from my 35th birthday. A close mate dug up a video of where the whole thing started, my very first contemporary dance class, filmed in secret (the cheek of it!). So read it, watch it, and have a little laugh at my expense.
+The post below is from my 35th birthday. A close mate dug up a video of where the whole thing started, my very first contemporary dance class, filmed in secret (lol, fuckers!). So read it, watch it, and have a little laugh at my expense.
 
 <!-- iamhoiend -->
 
