@@ -2,7 +2,7 @@
 title: "Born Different. Here's How I Learned to Learn."
 date: 2026-05-15T12:00:00+01:00
 draft: false
-categories: [life, dance, entrepreneurship, adventure]
+categories: [life, dance, entrepreneurship, adventure, tech-ai, trading]
 tags: [learning, adhd, dyslexia, memory, self-development, dance]
 description: "Undiagnosed dyslexia, diagnosed ADHD, and a decade of book-stuffing that didn't work. Then I got curious about how the mind actually learns."
 ---
