@@ -1,10 +1,10 @@
 ---
-title: "Every Domain Expert Needs Their Own AI Harness"
+title: "Every Subject Matter Expert (SME) Needs Their Own AI Harness"
 date: 2026-04-21
 draft: false
 categories: [tech-ai, entrepreneurship]
 tags: [ai, sme, harness, claude, domain-experts]
-description: "Frontier labs are productising general-to-specialised AI. Their SKUs are not your workflow. Every domain expert should be building their own harness."
+description: "Frontier labs are productising general-to-specialised AI. Their SKUs are not your workflow. Every subject matter expert (SME) should be building their own harness."
 ---
 
 <!-- iamhoi -->
@@ -15,7 +15,7 @@ Here is the shape. The frontier labs build one big model. They discover it is go
 
 But that slice will be optimised for *their* funnel, not your trade. It will be priced for their revenue target. It will be designed around the parts of your job that happen to be easy to automate for everyone, not the parts where *your* expertise earns a living. When it lands, it will look like a sharper version of the chatbot you already have, and it will leave a hole where the vertical-specific knowledge ought to be.
 
-The real play is different. Every domain expert should be building their own harness.
+The real play is different. Every subject matter expert (SME) should be building their own harness.
 
 AI is not going to replace you. The lazy framing is that it will. AI assists. It does the generic bit well. What it does not do is *your* unique angle: the skillset, the creativity, the small judgment calls, the problem solving that only makes sense if you know the craft. Ingenuity is where humans still excel.
 
@@ -83,7 +83,7 @@ Since then, I have reshaped the same harness for other verticals. My CV and Link
 
 Two friends now want my help to implement the harness for their own trades. One is a coach, one is an architect. I am onboarding them both, and will write more about the journey of helping their businesses grow by tailoring their hero suits in future posts. Watch this space.
 
-The approach is reproducible. Any domain expert with a trade worth automating can build their own harness the same way. The lab ships the general-purpose model. The expert ships the trade-specific harness on top. Whoever knows the trade best writes that harness best. That is you. Not the lab. Once the harness is built, every new skill your discipline needs gets built under the same governance. No starting from scratch. The expertise compounds.
+The approach is reproducible. Any subject matter expert (SME) with a trade worth automating can build their own harness the same way. The lab ships the general-purpose model. The expert ships the trade-specific harness on top. Whoever knows the trade best writes that harness best. That is you. Not the lab. Once the harness is built, every new skill your discipline needs gets built under the same governance. No starting from scratch. The expertise compounds.
 
 ## How to start (without writing any code yourself)
 
