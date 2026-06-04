@@ -62,16 +62,16 @@ I'll be honest about the cost. Build a system this way and every change you make
 
 Worth it though. How else would you actually *know* what you built is working? So I get the AI to help build and maintain all three tiers as a system moves from concept, to beta, to a production release, and through every refinement after that. The tests grow up alongside the thing they're testing.
 
-## The fourth test: the one no machine runs
+## The fourth test: human intuition
 
-There's a final test, and it's all human.
+There's a final test, and it's the one no machine can run. It comes down to human intuition.
 
 No matter how green every tier is, you still have to use the thing. Take it for a test drive on the real roads. For the trading system that meant running real tickers and just... letting it run. Reviewing every page and feature, clicking every button. Using it day to day. Watching whether it *feels* like it's behaving right.
 
-That part is subjective, and you need an eye for detail to do it well. You have to notice when something feels slightly off, especially in the calculations, the metrics, the grades, even when nothing technically failed. That instinct, that something isn't quite right. It sends me back in, questioning and deep-diving with Claude Code at each step, to work out whether something really is wrong, or whether I'm just seeing ghosts and having a human hallucination.
+That part is subjective, and you need an eye for detail to do it well. You have to notice when something feels slightly off, especially when it comes to calculations, metrics, grades, even when nothing technically failed. That instinct, that something feels off or doesn't seem right. It sends me back in, questioning and deep-diving with Claude Code at each step, to work out whether something really is wrong, or whether I'm just seeing ghosts and having a human hallucination.
 
 Funny how we worry about AI hallucinating. We do plenty of it ourselves.
 
-So that's the stack. Three tiers of tests that prove the parts, the wiring, and the whole machine. Then one pair of human eyes that no test suite can replace. The first three tell me the system is correct. The last one tells me it's right.
+So that's the stack. Three tiers of tests that prove the parts, the wiring, and the whole machine. Then human intuition, the one thing no test suite can replace. The first three tell me the system is correct. The last one tells me it's right.
 
 <!-- iamhoiend -->
