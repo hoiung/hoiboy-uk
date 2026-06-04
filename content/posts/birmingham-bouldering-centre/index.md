@@ -1,6 +1,6 @@
 ---
 title: "Birmingham Bouldering Centre"
-date: 2014-10-02
+date: 2014-10-02T12:00:00+01:00
 categories: [adventure]
 tags: [bouldering, climbing, birmingham, review, sport]
 source_file: "voice-corpus/blogs/10_birmingham-bouldering-centre.md"

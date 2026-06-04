@@ -1,6 +1,6 @@
 ---
 title: "Every Book I've Read in 20 Years. All 127 of Them."
-date: 2026-04-12
+date: 2026-04-12T12:00:00+01:00
 categories: [tech-ai, entrepreneurship, life, trading]
 tags: [books, reading, audiobooks, kindle, self-development]
 slug: every-book-ive-read-in-20-years

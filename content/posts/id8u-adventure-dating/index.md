@@ -1,6 +1,6 @@
 ---
 title: "iD8u: The Idea That Won't Die"
-date: 2026-04-10
+date: 2026-04-10T11:00:00+01:00
 categories: [entrepreneurship]
 tags: [startup, dating, adventure, side-project, ai, lessons-learned]
 slug: id8u-adventure-dating

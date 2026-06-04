@@ -1,6 +1,6 @@
 ---
 title: "Entrepreneurship in a Nutshell. 20 Years In, Still Building."
-date: 2026-05-10
+date: 2026-05-10T12:00:00+01:00
 categories:
   - entrepreneurship
   - life

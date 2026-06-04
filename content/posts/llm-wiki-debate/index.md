@@ -1,6 +1,6 @@
 ---
 title: "Do We Actually Need LLM Wiki?"
-date: 2026-04-10
+date: 2026-04-10T12:00:00+01:00
 categories: [tech-ai]
 tags: [ai, llm, knowledge-management, obsidian, markdown]
 slug: llm-wiki-debate

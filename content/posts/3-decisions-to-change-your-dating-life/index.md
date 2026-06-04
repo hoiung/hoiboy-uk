@@ -1,6 +1,6 @@
 ---
 title: "3 Decisions To Change Your Dating Life, Forever"
-date: 2021-06-06
+date: 2021-06-06T12:00:00+01:00
 categories: [life]
 tags: [dating, mindset, decisions]
 source_file: "voice-corpus/blogs/01_three-decisions-to-change-your-dating-life.md"

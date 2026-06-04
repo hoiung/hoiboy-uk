@@ -1,6 +1,6 @@
 ---
 title: "i r back!"
-date: 2026-04-07
+date: 2026-04-07T12:00:00+01:00
 categories: [tech-ai]
 tags: [foundation, hugo, cloudflare-pages, claude-code]
 slug: foundation

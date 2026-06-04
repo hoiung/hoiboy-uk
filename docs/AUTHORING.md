@@ -22,7 +22,7 @@ Folder name = canonical slug. Date prefix optional but recommended for sort stab
 | Field | Required | Type | Rule | Example |
 |---|---|---|---|---|
 | `title` | yes | string | Quote the whole value if it contains a colon | `title: "Why: a manifesto"` |
-| `date` | yes | ISO 8601 | `YYYY-MM-DD` minimum | `date: 2026-04-07` |
+| `date` | yes | ISO 8601 | Use a **full timestamp** `YYYY-MM-DDTHH:MM:SS+01:00` (BST) / `+00:00` (GMT), not a bare date (see ordering note below) | `date: 2026-06-04T13:00:00+01:00` |
 | `categories` | yes | list | Must be one of: `food-booze`, `adventure`, `dance`, `tech-ai`, `life`, `entrepreneurship`, `trading` | `categories: [food-booze]` |
 | `tags` | yes | list | Lowercase, hyphenated, freeform | `tags: [ramen, tokyo, japan]` |
 | `slug` | no | string | Overrides folder name in URL | `slug: best-ramen` |
@@ -34,6 +34,8 @@ Folder name = canonical slug. Date prefix optional but recommended for sort stab
 **Validator**: `python3 scripts/validate_frontmatter.py` (also runs in CI and pre-commit). Hard fail on missing required fields, unknown categories, or malformed YAML. Optional fields are not enforced for backward compatibility.
 
 **`date` and the production build (don't future-date)**: Hugo silently drops **future-dated** posts from the production build (`buildFuture` is off), the same way `draft: true` does (§7). The trap is timezone: the site is configured `timeZone = "Europe/London"` in `hugo.toml`, but Cloudflare builds in **UTC**. A post dated `YYYY-MM-DD` (midnight) published in the small hours of UK time can still be "the future" in UTC. The London `timeZone` setting makes a bare date resolve to UK midnight (e.g. `2026-06-04` = `23:00Z` on the 3rd) so a same-day UK publish builds correctly, but do not date a post **ahead** of the day you actually publish, or Cloudflare will build the site without it (it vanishes from its URL and every category/section listing while a stale copy may still appear to serve). Symptom + fix history: the 3-types-of-tests post, 2026-06-04. Never remove the `timeZone` line from `hugo.toml`.
+
+**`date` and listing order (always stamp a time)**: Hugo sorts listings by date descending; when two posts share the same **calendar day** with a bare `YYYY-MM-DD` (which resolves to 00:00), the dates tie and Hugo falls back to an arbitrary tiebreak (title / file path), so a newer post can render **below** an older one. Fix: give every post a **full timestamp** with a real time component, so same-day posts have a strictly later instant and the newest sorts on top. The site renders date-only everywhere a reader sees it (`single.html` = `"2 January 2006"`, listings = `"2 Jan"`), so the time is invisible on the page; it only sharpens `article:published_time` / JSON-LD `datePublished` (a plus). When publishing a second post on a day that already has one, set its time later than the existing post's. Use the correct London offset for the date: `+01:00` during BST (late Mar to late Oct), `+00:00` during GMT. All existing posts were backfilled to timestamps on 2026-06-04 (order-preserving). Symptom: the observability post landing below 3-types-of-tests, 2026-06-04.
 
 ## 3. Image rules
 

@@ -1,6 +1,6 @@
 ---
 title: "For The Love Of Wine"
-date: 2014-12-09
+date: 2014-12-09T12:00:00+00:00
 categories: [food-booze]
 tags: [wine, food, lifestyle, learning]
 source_file: "voice-corpus/blogs/11_for-the-love-of-wine.md"

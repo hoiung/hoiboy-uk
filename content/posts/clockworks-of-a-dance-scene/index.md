@@ -1,6 +1,6 @@
 ---
 title: "The Clockworks of a Dance Scene"
-date: 2017-11-17
+date: 2017-11-17T12:00:00+00:00
 categories: [dance]
 tags: [zouk, community, scene, systems, ecosystem]
 source_file: "voice-corpus/blogs/30_clockworks-of-a-dance-scene.md"

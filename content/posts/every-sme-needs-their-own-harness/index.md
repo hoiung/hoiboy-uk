@@ -1,6 +1,6 @@
 ---
 title: "Every Subject Matter Expert (SME) Needs Their Own AI Harness"
-date: 2026-04-21
+date: 2026-04-21T12:00:00+01:00
 draft: false
 categories: [tech-ai, entrepreneurship]
 tags: [ai, sme, harness, claude, domain-experts]

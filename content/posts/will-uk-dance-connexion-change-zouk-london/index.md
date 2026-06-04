@@ -1,6 +1,6 @@
 ---
 title: "Will UK Dance Connexion change Zouk in London"
-date: 2017-08-03
+date: 2017-08-03T12:00:00+01:00
 categories: [dance]
 tags: [zouk, london, uk, community, scene]
 source_file: "voice-corpus/blogs/35_will-uk-dance-connexion-change-zouk-london.md"

@@ -1,6 +1,6 @@
 ---
 title: "Scenic Lovers must Visit Grindelwald, Switzerland"
-date: 2014-10-29
+date: 2014-10-29T12:00:00+00:00
 categories: [adventure]
 tags: [travel, switzerland, mountains, scenic, adventure]
 source_file: "voice-corpus/blogs/13_grindelwald-switzerland.md"

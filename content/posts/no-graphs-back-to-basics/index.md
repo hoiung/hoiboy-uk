@@ -1,6 +1,6 @@
 ---
 title: "Reverted code review graphs. Going back to basics"
-date: 2026-04-25
+date: 2026-04-25T11:00:00+01:00
 categories: [tech-ai]
 tags: [mcp, claude-code, ast, code-review, sst3]
 slug: no-graphs-back-to-basics

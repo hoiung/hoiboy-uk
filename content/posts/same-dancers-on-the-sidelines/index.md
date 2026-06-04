@@ -1,6 +1,6 @@
 ---
 title: "14 Years of Zouk. Same Dancers on the Sidelines."
-date: 2026-04-24
+date: 2026-04-24T12:00:00+01:00
 categories: [dance]
 tags: [zouk, london, practice, reflection, covid]
 slug: same-dancers-on-the-sidelines

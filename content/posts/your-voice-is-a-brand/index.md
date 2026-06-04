@@ -1,6 +1,6 @@
 ---
 title: "Brands Have Voices. People Do Too."
-date: 2026-04-22
+date: 2026-04-22T12:00:00+01:00
 lastmod: 2026-04-22T11:00:00Z
 draft: false
 categories: [tech-ai]

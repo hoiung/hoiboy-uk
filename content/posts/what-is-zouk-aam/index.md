@@ -1,6 +1,6 @@
 ---
 title: "What is Zouk?"
-date: 2014-10-03
+date: 2014-10-03T11:00:00+01:00
 categories: [dance]
 tags: [zouk, dance, guide, brazilian-zouk]
 source_file: "voice-corpus/blogs/17_what-is-zouk.md"

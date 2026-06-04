@@ -1,6 +1,6 @@
 ---
 title: "Falling in Zouk Love Again. My Russian Saga"
-date: 2019-07-17
+date: 2019-07-17T12:00:00+01:00
 categories: [dance]
 tags: [zouk, russia, travel, congresses, story]
 source_file: "voice-corpus/blogs/26_falling-zouk-love-russian-saga.md"

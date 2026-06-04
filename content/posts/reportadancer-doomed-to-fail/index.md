@@ -1,6 +1,6 @@
 ---
 title: "ReportaDancer.com. Why it was DOOMED to Fail"
-date: 2020-06-18
+date: 2020-06-18T12:00:00+01:00
 categories: [tech-ai, dance]
 tags: [webapp, postmortem, community, project, lessons]
 source_file: "voice-corpus/blogs/29_reportadancer-doomed-to-fail.md"

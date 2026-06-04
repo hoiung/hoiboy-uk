@@ -1,6 +1,6 @@
 ---
 title: "16 Skills That Makes The Ultimate Adventurer"
-date: 2015-02-06
+date: 2015-02-06T12:00:00+00:00
 categories: [adventure]
 tags: [adventure, travel, bushcraft, climbing, lifestyle]
 source_file: "voice-corpus/blogs/06_16-skills-ultimate-adventurer.md"

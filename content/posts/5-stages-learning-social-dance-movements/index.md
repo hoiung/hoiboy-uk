@@ -1,6 +1,6 @@
 ---
 title: "5 Stages of Learning Social Dance Movements"
-date: 2019-09-09
+date: 2019-09-09T12:00:00+01:00
 categories: [dance]
 tags: [zouk, learning, methodology, stages, social-dance]
 source_file: "voice-corpus/blogs/22_5-stages-learning-social-dance-movements.md"

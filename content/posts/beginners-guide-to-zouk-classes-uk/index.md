@@ -1,6 +1,6 @@
 ---
 title: "A Beginners Guide to Zouk Classes in UK"
-date: 2014-10-04
+date: 2014-10-04T12:00:00+01:00
 categories: [dance]
 tags: [dance, zouk, beginners, guide, uk, london]
 source_file: "voice-corpus/blogs/09_beginners-guide-zouk-classes-uk.md"

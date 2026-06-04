@@ -1,6 +1,6 @@
 ---
 title: "10 AI Harnesses. One Job. Who Will Win?"
-date: 2026-04-26
+date: 2026-04-26T12:00:00+01:00
 draft: false
 categories: [tech-ai]
 tags: [bakeoff, harness, methodology, sst3-ai-harness, ai-agents]

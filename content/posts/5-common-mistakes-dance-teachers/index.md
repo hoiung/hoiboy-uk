@@ -1,6 +1,6 @@
 ---
 title: "5 Common Mistakes Dance Teachers Make At Congresses"
-date: 2014-11-12
+date: 2014-11-12T12:00:00+00:00
 categories: [dance]
 tags: [dance, zouk, teaching, congresses, methodology]
 source_file: "voice-corpus/blogs/07_5-common-mistakes-dance-teachers.md"

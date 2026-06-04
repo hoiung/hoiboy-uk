@@ -1,6 +1,6 @@
 ---
 title: "My Baby Steps to Becoming a Professional Trader"
-date: 2026-05-27
+date: 2026-05-27T12:00:00+01:00
 categories: [trading]
 tags: [trading, swing-trading, scalping, momentum-bursts, qullamaggie, stockbee, journey, learning]
 description: "Three years in. Two years of learning. One year building auto_pb. The strategies I tried, the account I blew, and what I'm still figuring out."

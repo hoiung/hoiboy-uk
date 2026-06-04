@@ -1,6 +1,6 @@
 ---
 title: "Prompts, Agents, Harnesses. The Fourth Is Where It Gets Good."
-date: 2026-04-20
+date: 2026-04-20T12:00:00+01:00
 draft: false
 categories: [tech-ai]
 tags: [ai, claude, agents, harness, overview]

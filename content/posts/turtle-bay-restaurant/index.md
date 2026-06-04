@@ -1,6 +1,6 @@
 ---
 title: "Turtle Bay Restaurant"
-date: 2014-09-18
+date: 2014-09-18T12:00:00+01:00
 categories: [food-booze]
 tags: [restaurant, caribbean, review, birmingham, food]
 source_file: "voice-corpus/blogs/16_turtle-bay-restaurant.md"

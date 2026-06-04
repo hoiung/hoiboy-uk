@@ -1,6 +1,6 @@
 ---
 title: "Poland's Big Bang Zouk Theory"
-date: 2017-11-12
+date: 2017-11-12T12:00:00+00:00
 categories: [dance]
 tags: [zouk, poland, community, growth, scene]
 source_file: "voice-corpus/blogs/28_poland-big-bang-zouk-theory.md"

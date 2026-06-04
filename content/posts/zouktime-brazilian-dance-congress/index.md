@@ -1,6 +1,6 @@
 ---
 title: "ZoukTime! 5th Brazilian Dance Congress"
-date: 2014-09-30
+date: 2014-09-30T12:00:00+01:00
 categories: [dance]
 tags: [zouk, congress, brazil, dance, zouktime]
 source_file: "voice-corpus/blogs/19_zouktime-brazilian-dance-congress.md"

@@ -1,6 +1,6 @@
 ---
 title: "The Biggest Zouk Family Gathering in Europe - DutchZouk! International Congress 2014"
-date: 2014-12-04
+date: 2014-12-04T12:00:00+00:00
 categories: [dance]
 tags: [zouk, congress, netherlands, dance, travel]
 source_file: "voice-corpus/blogs/14_dutchzouk-international-congress-2014.md"

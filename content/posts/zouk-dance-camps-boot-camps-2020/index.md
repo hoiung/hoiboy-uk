@@ -1,6 +1,6 @@
 ---
 title: "Zouk Dance Camps and Boot Camps 2020"
-date: 2019-11-28
+date: 2019-11-28T11:00:00+00:00
 categories: [dance]
 tags: [zouk, camps, congresses, learning, travel]
 source_file: "voice-corpus/blogs/36_zouk-dance-camps-boot-camps-2020.md"

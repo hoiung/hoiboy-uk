@@ -1,6 +1,6 @@
 ---
 title: "What To Practice in Zouk Solo"
-date: 2017-09-21
+date: 2017-09-21T11:00:00+01:00
 categories: [dance]
 tags: [zouk, practice, solo, technique, methodology]
 source_file: "voice-corpus/blogs/33_what-to-practice-zouk-solo.md"

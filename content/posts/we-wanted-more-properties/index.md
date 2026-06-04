@@ -1,6 +1,6 @@
 ---
 title: "We Wanted More Properties. Then We Did the Maths."
-date: 2026-04-11
+date: 2026-04-11T12:00:00+01:00
 categories: [entrepreneurship]
 tags: [property, landlord, uk, tax, buy-to-let, entrepreneurship]
 description: "93,000 landlords quit in 2025. The tax changed, the rates changed, the law changed. Here's why we stopped expanding our property portfolio."

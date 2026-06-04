@@ -1,6 +1,6 @@
 ---
 title: "Become The Dance Listener By Using The 3 Dance Approach"
-date: 2017-05-29
+date: 2017-05-29T12:00:00+01:00
 categories: [dance]
 tags: [zouk, dance, teaching, workshop, musicality]
 source_file: "voice-corpus/blogs/20_dance-listener-3-dance-approach.md"

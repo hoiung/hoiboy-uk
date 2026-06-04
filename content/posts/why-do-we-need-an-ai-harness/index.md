@@ -1,6 +1,6 @@
 ---
 title: "Why Do We Need an AI Harness?"
-date: 2026-04-15
+date: 2026-04-15T12:00:00+01:00
 draft: false
 slug: why-do-we-need-an-ai-harness
 categories: [tech-ai]

@@ -1,6 +1,6 @@
 ---
 title: "Hen & Chickens Pub Grill"
-date: 2014-10-02
+date: 2014-10-02T11:00:00+01:00
 categories: [food-booze]
 tags: [food, pub, restaurant, review, london]
 source_file: "voice-corpus/blogs/12_hen-and-chickens-pub-grill.md"

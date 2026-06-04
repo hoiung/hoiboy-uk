@@ -1,6 +1,6 @@
 ---
 title: "7 Great Reasons To Practice Zouk Solo"
-date: 2017-09-20
+date: 2017-09-20T12:00:00+01:00
 categories: [dance]
 tags: [zouk, practice, solo, methodology, learning]
 source_file: "voice-corpus/blogs/23_7-reasons-practice-zouk-solo.md"

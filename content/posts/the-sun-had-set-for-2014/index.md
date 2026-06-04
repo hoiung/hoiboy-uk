@@ -1,6 +1,6 @@
 ---
 title: "The Sun Had Set For 2014. Here Rises The Sun For 2015."
-date: 2015-01-07
+date: 2015-01-07T12:00:00+00:00
 categories: [adventure]
 tags: [reflection, new-year, travel, 2014, 2015]
 source_file: "voice-corpus/blogs/15_sun-set-2014-rises-2015.md"

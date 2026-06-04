@@ -1,6 +1,6 @@
 ---
 title: "Shipped Ralph Review Trio, But What Is It?"
-date: 2026-04-24
+date: 2026-04-24T11:00:00+01:00
 categories: [tech-ai]
 tags: [ai, claude-code, sst3, code-review, plugin-marketplace]
 slug: shipping-ralph-review-trio

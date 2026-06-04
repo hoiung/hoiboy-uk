@@ -1,6 +1,6 @@
 ---
 title: "Migrating Off Squarespace to Cloudflare"
-date: 2026-05-30
+date: 2026-05-30T12:00:00+01:00
 categories: [tech-ai, entrepreneurship]
 tags: [hugo, squarespace, cloudflare, migration, ai, web-design]
 slug: migrating-off-squarespace

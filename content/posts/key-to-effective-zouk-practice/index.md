@@ -1,6 +1,6 @@
 ---
 title: "The Key To Effective Zouk Practice"
-date: 2017-09-21
+date: 2017-09-21T12:00:00+01:00
 categories: [dance]
 tags: [zouk, practice, methodology, technique, learning]
 source_file: "voice-corpus/blogs/31_key-to-effective-zouk-practice.md"

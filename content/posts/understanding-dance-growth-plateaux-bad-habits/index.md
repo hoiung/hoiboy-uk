@@ -1,6 +1,6 @@
 ---
 title: "Understanding Dance Growth, Plateaux and Bad Habits"
-date: 2017-09-07
+date: 2017-09-07T12:00:00+01:00
 categories: [dance]
 tags: [zouk, learning, growth, plateaux, habits]
 source_file: "voice-corpus/blogs/32_understanding-dance-growth-plateaux-bad-habits.md"

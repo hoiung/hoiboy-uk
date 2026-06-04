@@ -1,6 +1,6 @@
 ---
 title: "Food for Thoughts for Dance Teachers and Organisers"
-date: 2019-11-28
+date: 2019-11-28T12:00:00+00:00
 categories: [dance]
 tags: [zouk, teaching, community, organisers, reflection]
 source_file: "voice-corpus/blogs/27_food-for-thoughts-dance-teachers-organisers.md"

@@ -1,6 +1,6 @@
 ---
 title: "I Built My Own Automated Meeting Notes. Three Attempts."
-date: 2026-05-12
+date: 2026-05-12T12:00:00+01:00
 draft: false
 categories: [tech-ai]
 tags: [meeting-notes, transcription, self-hosted, whisper, automation, over-engineering]

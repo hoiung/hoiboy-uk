@@ -1,6 +1,6 @@
 ---
 title: "Learning AI Is Hard. Really."
-date: 2026-04-23
+date: 2026-04-23T12:00:00+01:00
 draft: false
 slug: learning-ai-is-hard
 categories: [tech-ai]

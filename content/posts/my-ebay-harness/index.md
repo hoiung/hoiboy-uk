@@ -1,6 +1,6 @@
 ---
 title: "I Built an eBay Harness in 15 Days. Here's What 17 Tools Look Like."
-date: 2026-04-25
+date: 2026-04-25T12:00:00+01:00
 draft: false
 slug: my-ebay-harness
 categories: [tech-ai, entrepreneurship]

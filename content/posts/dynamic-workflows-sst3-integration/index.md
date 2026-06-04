@@ -1,6 +1,6 @@
 ---
 title: "Dynamic Workflows and Security Guidance integration into SST3-AI-Harness"
-date: 2026-06-03
+date: 2026-06-03T12:00:00+01:00
 draft: false
 categories: [tech-ai]
 tags: [ai, claude-code, dynamic-workflows, sst3, ai-orchestration, tokens]

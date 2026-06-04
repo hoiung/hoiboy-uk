@@ -1,6 +1,6 @@
 ---
 title: "Woodsmoke - Woodlanders Bushcraft Course"
-date: 2014-08-10
+date: 2014-08-10T12:00:00+01:00
 categories: [adventure]
 tags: [bushcraft, survival, woodlands, outdoor, course-review, adventure]
 source_file: "voice-corpus/blogs/18_woodsmoke-bushcraft-course.md"

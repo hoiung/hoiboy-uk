@@ -1,6 +1,6 @@
 ---
 title: "7 Dance Tips from Zero to Hero"
-date: 2014-10-03
+date: 2014-10-03T12:00:00+01:00
 categories: [dance]
 tags: [zouk, beginner, tips, social-dance, learning, congresses]
 source_file: "voice-corpus/blogs/08_7-dance-tips-zero-to-hero.md"

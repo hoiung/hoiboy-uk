@@ -1,6 +1,6 @@
 ---
 title: "What are basic movements and why are they so important?"
-date: 2019-09-03
+date: 2019-09-03T12:00:00+01:00
 categories: [dance]
 tags: [zouk, basics, fundamentals, technique, learning]
 source_file: "voice-corpus/blogs/34_what-are-basic-movements-and-why-important.md"

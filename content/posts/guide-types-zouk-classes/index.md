@@ -1,6 +1,6 @@
 ---
 title: "A Guide to Different Types of Zouk Classes"
-date: 2017-08-26
+date: 2017-08-26T12:00:00+01:00
 categories: [dance]
 tags: [zouk, classes, learning, guide, beginner]
 source_file: "voice-corpus/blogs/24_guide-types-zouk-classes.md"
