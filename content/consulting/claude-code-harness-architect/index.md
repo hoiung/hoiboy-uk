@@ -20,7 +20,7 @@ I help non-technical domain experts and subject matter experts (SME) adopt AI pr
 
 Plainly: I write software with AI, and use it to build automation workflows around the way your business actually works.
 
-I am not here to scale your AWS or your other cloud infrastructure (that's your tech team's job!). I am here to help the people who actually do the work in your business (marketing, sales, ops, design, finance, customer support, wherever you sit) integrate a custom AI harness that automates the routine, so you can focus on your human ingenuity, your domain expertise and subject matter expertise (the things AI cannot replicate, now or any time soon).
+Frankly speaking, I am not here to scale your AWS or your other cloud infrastructure (that's your tech team's job!). I am here to help the people who actually do the work in your business (marketing, sales, ops, design, finance, customer support, wherever you sit) integrate a custom AI harness that automates the routine, so you can focus on your human ingenuity, your domain expertise and subject matter expertise (the things AI cannot replicate, now or any time soon).
 
 There is a right way and a wrong way to use AI. Getting AI to work consistently in a real business takes a long time to figure out. The good news: I have spent that time already, so you do not have to.
 
