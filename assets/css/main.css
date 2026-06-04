@@ -200,6 +200,15 @@ strong, b { font-weight: 550; }
 .zoom-image:hover { cursor: zoom-in; }
 .zoom-image:hover img { opacity: 0.9; }
 
+/* youtube-short shortcode: responsive privacy-enhanced YouTube embed.
+   Vertical (9:16) variant for Shorts is capped so it does not dominate the
+   column on desktop; wide (16:9) variant fills the content column. */
+.video-embed { margin: 1.5rem 0; }
+.video-embed iframe { width: 100%; height: auto; border: 0; border-radius: 4px; display: block; }
+.video-embed--vertical { max-width: 360px; margin-left: auto; margin-right: auto; }
+.video-embed--vertical iframe { aspect-ratio: 9 / 16; }
+.video-embed--wide iframe { aspect-ratio: 16 / 9; }
+
 /* glightbox: force SVG slides to fill the lightbox container.
    Without this, SVG can render at its natural size (small) inside the slide. */
 .gslide-image img[src$=".svg"] {

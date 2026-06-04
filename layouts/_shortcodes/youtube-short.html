@@ -1,0 +1,25 @@
+{{- /*
+  Inline YouTube embed, privacy-enhanced (youtube-nocookie.com — no cookies
+  until the viewer hits play). Defaults to the vertical (9:16) Shorts aspect
+  ratio; pass ratio="wide" for a standard 16:9 landscape video.
+
+  Requires the site CSP to allow YouTube frames: `frame-src
+  https://www.youtube-nocookie.com` is set in static/_headers (the /* block).
+
+  Args:
+    id    = YouTube video / Short ID (e.g. "5-ZH21Xd2es")
+    title = iframe title for accessibility (also screen-reader label)
+    ratio = "vertical" (default, 9:16 Shorts) | "wide" (16:9)
+*/ -}}
+{{- $id := .Get "id" -}}
+{{- $title := .Get "title" | default "YouTube video" -}}
+{{- $ratio := .Get "ratio" | default "vertical" -}}
+<div class="video-embed video-embed--{{ $ratio }}">
+  <iframe
+    src="https://www.youtube-nocookie.com/embed/{{ $id }}"
+    title="{{ $title }}"
+    loading="lazy"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen></iframe>
+</div>
