@@ -16,7 +16,7 @@ I designed, run, and babysit daily a live automated pullback swing trading platf
 
 <!-- iamhoi -->
 
-I help non-technical domain experts and subject matter experts (SME) adopt AI properly. Not by handing you a tool and saying "off you go". Not by writing a hand-wavy AI strategy deck either!
+I help non-technical domain experts and subject matter experts (SME) adopt AI properly. Not by handing you a tool and saying "off you go". Not by writing a hand-wavy AI strategy deck either! My strength is people and moving parts: a serial entrepreneur who has run real businesses, a qualified project manager who was PMP certified (PMI, 2023), with donkey years of programme management on projects of scale.
 
 Plainly: I write software with AI, and use it to build automation workflows around the way your business actually works.
 
