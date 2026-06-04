@@ -9,9 +9,7 @@ description: "Eight years ago I posted this on Facebook. Fifteen years into danc
 
 <!-- iamhoi -->
 
-Quick one before you scroll.
-
-About eight years ago I wrote this on Facebook. I'm not on social media anymore (gone, and I don't miss it one bit), so a post I'm actually quite fond of was just sitting there, rotting away in a feed nobody opens. Felt like a waste. So here it is, copied across word for word, with the original video tacked on at the bottom.
+I wrote this on Facebook about eight years ago. I've been off social media for about three years now, but I logged in this week to reconnect with a few old friends before deactivating again, and this post turned up in my feed. Brought back some funny memories, and I thought it was worth sharing here on the blog, so here it is word for word, with the original video at the bottom.
 
 And guess what? It's now been 15 years of dancing and still going strong! The last 3 years I've leaned more into solo stuff, Hip Hop and Afrobeats. I'm so glad I found dancing. It shaped me and strengthened me in every single way I can think of: physically, mentally, emotionally. The lot.
 
