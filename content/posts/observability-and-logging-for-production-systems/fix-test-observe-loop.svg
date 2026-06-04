@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 480" role="img" aria-label="A triangular loop with three corners: Fix at the top, Test at the bottom left, Observe at the bottom right. Arrows cycle from Fix to Test to Observe and back to Fix. The loop repeats until the symptom is actually gone, not masked. All three test tiers plus logs at every layer catch a fake fix." font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <marker id="loop-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0533a"/>
+    </marker>
+    <style>
+      .bg { fill: #fafafa; }
+      .card { fill: #ffffff; }
+      .label { fill: #1a1a1a; font-weight: 600; }
+      .muted { fill: #6a6a6a; }
+      .accent { fill: #c0533a; }
+      .accentstroke { stroke: #c0533a; }
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #141414; }
+        .card { fill: #1f1f1f; }
+        .label { fill: #f0f0f0; }
+        .muted { fill: #a6a6a6; }
+      }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="620" height="480" class="bg"/>
+
+  <!-- title -->
+  <text x="310" y="34" text-anchor="middle" class="accent" font-size="13" font-weight="700" letter-spacing="2.5">FIX. TEST. OBSERVE. REPEAT.</text>
+
+  <!-- cycle arrows (drawn first, behind the node cards) -->
+  <!-- FIX -> TEST (left edge): tail 10px below FIX, head 10px above TEST -->
+  <path d="M250,134 Q120,235 140,328" fill="none" class="accentstroke" stroke-width="2.4" marker-end="url(#loop-arrow)"/>
+  <!-- TEST -> OBSERVE (bottom edge): tail 10px right of TEST, head 10px left of OBSERVE -->
+  <path d="M200,372 Q310,416 420,372" fill="none" class="accentstroke" stroke-width="2.4" marker-end="url(#loop-arrow)"/>
+  <!-- OBSERVE -> FIX (right edge, mirror of left): tail 10px above OBSERVE, head 10px below FIX -->
+  <path d="M480,328 Q500,235 370,134" fill="none" class="accentstroke" stroke-width="2.4" marker-end="url(#loop-arrow)"/>
+
+  <!-- nodes -->
+  <rect x="235" y="66" width="150" height="58" rx="10" class="card accentstroke" stroke-width="2.2"/>
+  <text x="310" y="102" text-anchor="middle" class="label" font-size="18">FIX</text>
+
+  <rect x="40" y="338" width="150" height="58" rx="10" class="card accentstroke" stroke-width="2.2"/>
+  <text x="115" y="374" text-anchor="middle" class="label" font-size="18">TEST</text>
+
+  <rect x="430" y="338" width="150" height="58" rx="10" class="card accentstroke" stroke-width="2.2"/>
+  <text x="505" y="374" text-anchor="middle" class="label" font-size="17">OBSERVE</text>
+
+  <!-- centre message -->
+  <text x="310" y="262" text-anchor="middle" class="muted" font-size="14.5">round the loop until the symptom is</text>
+  <text x="310" y="286" text-anchor="middle" class="accent" font-size="14.5" font-weight="700">actually gone, not masked</text>
+
+  <!-- caption -->
+  <text x="310" y="462" text-anchor="middle" class="muted" font-size="13">three test tiers + logs at every layer catch the fake fix.</text>
+</svg>

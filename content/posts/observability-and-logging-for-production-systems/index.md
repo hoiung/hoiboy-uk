@@ -1,5 +1,5 @@
 ---
-title: "You Can't Fix What You Can't See"
+title: "Observability, You Can't Fix What You Can't See"
 date: 2026-06-04T13:00:00+01:00
 categories: [tech-ai]
 tags: [observability, logging, ai, claude-code, production]
@@ -55,6 +55,14 @@ You will leave gaps. The AI will leave gaps. And it is exactly these gaps that b
 {{< zoom-image src="observability.svg" alt="Data flows through three steps to a result. The first two steps each drop a breadcrumb onto a log trail. The third step fails silently with no log, so the data is swallowed and never reaches the result." title="A gap with no log is how data goes missing quietly" >}}
 
 This is where a decent logging system earns its keep. It helps you pinpoint when and where the data flow disappears. And it is the other half of why the three types of tests matter so much. They track and trace your entire system end to end, and in doing so they flush out these observability gaps so you can fill them in. You end up with something cohesive, wired together properly, where you can follow one piece of data all the way from input, through every transformation, to the expected result at the other end.
+
+## Fix, test, observe, repeat
+
+So how do the two halves actually fix anything? In a loop. When something is wrong, I go round the same three steps: fix, test, observe. Make a change, run the tests, watch what the system does with proper logging underneath. If the symptom is still there, round again. I keep going until it clears.
+
+{{< zoom-image src="fix-test-observe-loop.svg" alt="A triangular loop with Fix at the top, Test at the bottom left and Observe at the bottom right, arrows cycling fix to test to observe and back, repeating until the symptom is actually gone, not masked." title="Fix, test, observe, repeat until the symptom is truly gone" >}}
+
+But here is the part that matters most: clearing the symptom has to mean the cause is gone, not just hidden. This is something AI loves to do. Make the red turn green, make the error stop showing, get the test to pass, while the real problem sits there untouched. It will happily pretend it works when it doesn't. That is exactly why I run all three types of tests and keep observability at every layer. A masked symptom slips past one lazy check. It does not slip past unit, workflow and end-to-end tests all watching, with logs at every step showing where the data really went.
 
 ## The last layer is you
 
