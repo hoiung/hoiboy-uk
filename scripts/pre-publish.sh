@@ -1,7 +1,7 @@
 #!/bin/bash
 # Pre-publish gate aggregator for hoiboy.uk new blog posts.
 #
-# Runs 10 sequential checks fail-fast on first non-zero exit:
+# Runs 11 sequential checks fail-fast on first non-zero exit:
 #   1. Consulting YAML   (data/consulting.yaml MUST NOT contain OPERATOR_TODO
 #                         substring — global gate, blocks publish whenever a
 #                         placeholder URL is unreplaced. consulting-ops#2 AC 0.2.)
@@ -133,6 +133,10 @@ run_check "wordcount" python3 scripts/check_wordcount.py "$POST_FILE"
 
 # 5. Private blocklist + secrets (PLATFORM_TOKEN + PRIVATE_PATH + BLOCKLIST).
 run_check "secrets" python3 scripts/check-public-repo-secrets.py "$TARGET"
+
+# 5b. SVG dimensions: every page-bundle SVG needs root width/height or it renders
+#     tiny in the glightbox lightbox (zoom-image shortcode). See check_svg_dimensions.py.
+run_check "svg-dimensions" python3 scripts/check_svg_dimensions.py "$TARGET"
 
 # 6. Hugo build with --buildDrafts so the rendered HTML in public/ matches
 #    what production will serve (excluding the auto-deploy gate). Builds ALL

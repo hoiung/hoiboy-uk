@@ -71,6 +71,7 @@ Fonts: `font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-ser
 ```
 
 Rules:
+- **Declare root `width` AND `height` on the `<svg>` (match the viewBox), e.g. `viewBox="0 0 880 360" width="880" height="360"`.** Not optional. Without intrinsic dimensions, the `zoom-image` lightbox (glightbox) has no natural size to scale from and renders the SVG TINY when clicked (caught 2026-06-04 on pipeline.svg / observability.svg / fix-test-observe-loop.svg; harness-layers.svg always worked because it carried width/height). Inline display stays responsive via CSS (`.zoom-image img { width:100% }`); the attributes only fix the lightbox. Enforced by `scripts/check_svg_dimensions.py` (wired into `pre-publish.sh`).
 - Always paint an explicit `.bg` rect covering the whole viewBox (never rely on the page background; a transparent SVG shows dark text on a dark host and vice-versa).
 - Card fills carry the readable text. The dark-mode card (`#1f1f1f`) keeps `.label` text legible; do NOT leave cards white in dark mode (white card + dark host chrome around it looks broken, and was the readability complaint on the first pass of observability.svg).
 - Use `.ok` green ONLY for positive/healthy/logged/automation; use `.accent` for endpoints, the active data path, and failure/verdict emphasis. No other colours.

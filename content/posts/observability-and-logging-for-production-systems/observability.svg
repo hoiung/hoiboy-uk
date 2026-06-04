@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" role="img" aria-label="Data flows left to right through Step 1 and Step 2 to a result. Each step should drop a breadcrumb onto the log trail below. Step 1 is logged, Step 2 fails silently with no log, so the data is swallowed and never reaches the result." font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" width="880" height="360" role="img" aria-label="Data flows left to right through Step 1 and Step 2 to a result. Each step should drop a breadcrumb onto the log trail below. Step 1 is logged, Step 2 fails silently with no log, so the data is swallowed and never reaches the result." font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#c0533a"/>
