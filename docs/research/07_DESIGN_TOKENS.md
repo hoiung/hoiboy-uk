@@ -25,3 +25,70 @@
 - Inter loaded from Google Fonts (`?family=Inter:wght@400;600;700`). System fonts as fallback so first paint never blocks on font load.
 - No custom dark-mode toggle in Phase 0. System preference rules. Revisit in a later phase if user demand exists.
 - Accent contrast checked manually via WebAIM Contrast Checker. Re-check if accent is changed.
+
+---
+
+## Inline SVG Illustration Tokens (brand template)
+
+Hand-drawn schematic SVGs (data-flow diagrams, pipelines, layer diagrams) are the house style for blog and consulting illustrations: code-drawn, not AI-generated (an AI image is "mood not meaning" for a schematic). This section is the **single source of truth** for their colours so every diagram looks like part of the same family. In use: `posts/3-types-of-tests-for-production-systems/pipeline.svg`, `posts/observability-and-logging-for-production-systems/observability.svg`, `consulting/claude-code-harness-architect/harness-layers.svg`.
+
+### Palette
+
+| Role | Class | Light | Dark | Notes |
+|---|---|---|---|---|
+| Accent (terracotta) | `.accent` / `.accentstroke` | `#c0533a` | `#c0533a` | same in both modes; the ONLY warm colour. Endpoints, arrows, failure/verdict emphasis |
+| Background | `.bg` | `#fafafa` | `#141414` | the SVG paints its OWN background rect so text contrast holds on any host page |
+| Card / box fill | `.card` | `#ffffff` | `#1f1f1f` | boxes sit on the bg |
+| Label text | `.label` | `#1a1a1a` | `#f0f0f0` | primary box/diagram text, `font-weight:600` |
+| Muted text | `.muted` | `#6a6a6a` | `#a6a6a6` | captions, secondary labels, neutral lines |
+| Box / trail stroke | `.boxstroke` / `.trailstroke` | `#9aa0a6` | `#6a6a6a` | neutral borders + connector/trail lines |
+| OK / positive green | `.ok` | `#7aa869` | `#7aa869` | "logged / healthy / passing / automation" markers; same in both modes |
+
+Fonts: `font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"` on the root `<svg>` (matches the site body font). Boxes use `rx="10"` rounded corners; accent arrowheads via a shared `<marker>`.
+
+### Canonical class block (copy-paste into a new diagram's `<defs>`)
+
+```xml
+<style>
+  .bg { fill: #fafafa; }
+  .card { fill: #ffffff; }
+  .label { fill: #1a1a1a; font-weight: 600; }
+  .muted { fill: #6a6a6a; }
+  .boxstroke { stroke: #9aa0a6; }
+  .trailstroke { stroke: #9aa0a6; }
+  .accent { fill: #c0533a; }
+  .accentstroke { stroke: #c0533a; }
+  .ok { fill: #7aa869; }
+  @media (prefers-color-scheme: dark) {
+    .bg { fill: #141414; }
+    .card { fill: #1f1f1f; }
+    .label { fill: #f0f0f0; }
+    .muted { fill: #a6a6a6; }
+    .boxstroke { stroke: #6a6a6a; }
+    .trailstroke { stroke: #6a6a6a; }
+  }
+</style>
+```
+
+Rules:
+- Always paint an explicit `.bg` rect covering the whole viewBox (never rely on the page background; a transparent SVG shows dark text on a dark host and vice-versa).
+- Card fills carry the readable text. The dark-mode card (`#1f1f1f`) keeps `.label` text legible; do NOT leave cards white in dark mode (white card + dark host chrome around it looks broken, and was the readability complaint on the first pass of observability.svg).
+- Use `.ok` green ONLY for positive/healthy/logged/automation; use `.accent` for endpoints, the active data path, and failure/verdict emphasis. No other colours.
+- Embed via the `zoom-image` shortcode, never a bare markdown image: `{{</* zoom-image src="diagram.svg" alt="..." title="..." */>}}`. The shortcode trips the `.HasShortcode` guard in `single.html` so the theme does NOT also dump the SVG into the auto-gallery (double-render bug).
+
+### Exporting to PNG (social cards, fixed-dark diagrams)
+
+The `prefers-color-scheme` media query does **not** apply when a rasteriser flattens an SVG to PNG: there is no "system" to query, so it renders the **default (light) branch** and any media-query overrides are dropped. So an exported PNG is ALWAYS a single fixed appearance. Pick the mode deliberately and bake an **opaque** background (never a transparent PNG: transparent + a dark client = invisible text).
+
+- **Light export (default, for hoiboy.uk `og:image` social cards and light contexts):** render the light branch on an opaque `#fafafa` canvas. Text `#1a1a1a`, cards `#ffffff`, accent `#c0533a`, green `#7aa869`. The `.bg` rect already supplies `#fafafa`, so a normal rasterise of the inline SVG gives the correct light card.
+- **Fixed-dark export (standalone dark diagrams, e.g. `harness-layers.svg`):** these are authored WITHOUT the media query, with a baked `#1a1a1a` background and `#e8e8e8` text (the dark-token text colour). Use this only when the diagram is meant to be dark everywhere (a poster/standalone asset), not an inline dual-mode illustration.
+
+Rasterise command (resvg / rsvg-convert / Inkscape all honour an explicit background):
+
+```bash
+# Light social card (1200x630) on opaque #fafafa
+rsvg-convert -w 1200 -h 630 --background-color '#fafafa' diagram.svg -o diagram-card.png
+# (resvg)  resvg --background '#fafafa' --width 1200 diagram.svg diagram-card.png
+```
+
+Rule of thumb: **inline SVG = dual-mode (media query); exported PNG = one mode + an opaque baked background.** For hoiboy.uk, default to the LIGHT export for any shared/social PNG.

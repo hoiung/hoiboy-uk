@@ -1,6 +1,6 @@
 ---
 title: "3 Types of Tests I Build for Production Systems"
-date: 2026-06-04
+date: 2026-06-04T12:00:00+01:00
 categories: [tech-ai]
 tags: [testing, ai, claude-code, production, trading-systems]
 description: "Unit, workflow, and end-to-end tests are how I know a system works. What each one catches, why AI forgets the wiring, and the one final check that's all human."
@@ -54,7 +54,7 @@ Take the car out for a driving test. Not "the engine runs on the bench," but the
 
 Every one of these tests runs on pre-defined inputs where I already know the expected output. That's the whole game. I know what should come out, so if something else comes out, the test fails loudly and points at where it went wrong. No quiet shrug, no plausible-looking-but-wrong answer slipping through. A loud, ugly, unmissable failure. Then I kick off the AI to go investigate.
 
-For the workflow and E2E tiers especially, this only works if the system was built with proper observability underneath. Clear logging at every step, alerts or messages when something breaks, and fail-loud errors that are actually readable so I (or the AI) can diagnose them fast. A test can tell you *that* something broke. Good observability tells you *where* and *why*. I won't go into that here, it deserves its own post. Watch this space.
+For the workflow and E2E tiers especially, this only works if the system was built with proper observability underneath. Clear logging at every step, alerts or messages when something breaks, and fail-loud errors that are actually readable so I (or the AI) can diagnose them fast. A test can tell you *that* something broke. Good observability tells you *where* and *why*. I won't go into that here, it deserves its own post, [which is now up](/posts/observability-and-logging-for-production-systems/).
 
 ## The catch nobody mentions: they need upkeep
 
