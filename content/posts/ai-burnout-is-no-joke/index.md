@@ -22,6 +22,10 @@ Then there were the days when shit breaks. Major regressions when I made changes
 
 At the peak I would be working with up to 8 orchestrator chats running simultaneously (an orchestrator chat is the main Claude Code session that manages one piece of work and fires off its own smaller jobs). I worked them in rotation, spending the in-between time reviewing each of their work before setting them off again to continue doing what AI does... work without stopping.
 
+Here is what that actually looked like: 3 of the screens with a total of 5 of 6 Claude Code sessions open and work in progress. Sometimes it's all 4 screens, each with a 2-split window of Claude Code.
+
+{{< zoom-image src="four-screens-claude-code.jpg" alt="Four-monitor workstation with Claude Code sessions open and work in progress across three of the screens" title="5 of 6 Claude Code sessions open across 3 of the 4 screens" >}}
+
 And here's the part that crept up on me. I was becoming a reflection of AI, working like a machine. There was no stopping either. Most nights I would wake up in the middle of the night to review code and implementations, trigger the next set of jobs, then go back to bed.
 
 ## Two Max Accounts, Still Not Enough
