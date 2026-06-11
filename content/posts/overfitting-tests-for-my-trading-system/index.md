@@ -3,14 +3,14 @@ title: "Is 10 Years of Backtest Data Too Much? My Overfitting Tests"
 date: 2026-06-10T17:30:00+01:00
 categories: [trading, tech-ai]
 tags: [trading, backtesting, overfitting, claude-code]
-description: "I paused my live trading system and ran over 340,000 backtests across 17 sliced date periods to find out if it was overfitted. Here is what changed."
+description: "I paused my live trading system and ran over 340,000 backtests across 17 sliced date periods and a final sanity check to find out if it was overfitted. Here is what changed."
 ---
 
 <!-- iamhoi -->
 
 Four months ago, [my trading system](/posts/building-a-production-grade-trading-system-with-claude-code/) went live. At that point it was running on a flat 10 years of backtest data (a backtest is replaying your strategy over historical data to see how it would have done), right up to today's date, for all 3 timeframes I trade: daily, weekly, and monthly. Then I decided to put it on pause for a few weeks, because I realised I hadn't done any overfitting tests, and I had optimised my system according to that one slice of data.
 
-A few weeks. Lol. It turned into 3 months.
+A few weeks or 1-2 months at best. Lol. It turned into 3-4 months.
 
 ## So What Is Overfitting?
 
@@ -26,17 +26,17 @@ Well, my trading system was built as a stock personality finder (it profiles how
 
 ## 17 Slices, 340,000 Backtests
 
-That became the last 3 months of work, finishing just 2 weeks ago. 17 sliced date periods:
+That became the last 3-4 months of work, finishing just 2 weeks ago. 17 sliced date periods, with the exact counts straight from the database:
 
-- 1x 10 years
-- 2x 5 years
-- 3x 3 years
-- 1x 15 years (monthly timeframe only)
-- 10x 1 year (daily timeframe only)
+- 1x 10 years: 51,730 backtests, 1.03 million simulated trades
+- 2x 5 years: 65,771 backtests, 818,000 simulated trades
+- 3x 3 years: 62,451 backtests, 613,000 simulated trades
+- 1x 15 years (monthly timeframe only): 6,112 backtests, 17,000 simulated trades
+- 10x 1 year (daily timeframe only): 124,624 backtests, 962,000 simulated trades
 
 Each slice ran the same 1,022 tickers across the 3 timeframes (daily, weekly, monthly) for 8 different strategies. Those 1,022 tickers are 20% of my stock universe, which is just over 5,000 stocks after filtering my minimum criteria on TC2000 (the market scanning software I use). And on top of all that, the final optimised backtest data was also used to sanity check the overfitting tests of all 17 slices.
 
-I asked Claude to count the total from the database while writing this post: just over 340,000 individual backtests.
+I asked Claude to count the total from the database while writing this post: just over 340,000 individual backtests. To be exact, 341,976: the 17 slices add up to 310,688, and the final optimised config used for the sanity check adds the rest. Worth being clear on the units, because they are two different things: a backtest is one ticker, on one timeframe, with one strategy, replayed over the slice's date period, and each backtest simulates a whole history of trades. Counting everything in the database today, that's over 3.7 million simulated trades, which deduplicate down to 938,680 unique ones. That dedup set is the research base the rest of the analysis is built on.
 
 Running so many backtests actually helped iron out even more bugs, especially as the Claude Code models kept improving mid-flight. They changed from Opus 4.5, to Opus 4.6, then 4.7, and now Opus 4.8 is already here! And here comes Fable 5!
 
