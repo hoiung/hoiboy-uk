@@ -104,11 +104,14 @@ consulting_yaml_check() {
 run_check "consulting-yaml-no-operator-todo" consulting_yaml_check
 
 # 2. Em-dash grep (recurses into directory; fails if any U+2014 found).
+# -I skips binary files: this is a PROSE check, and a binary image can contain
+# the U+2014 byte sequence (0xE2 0x80 0x94) by chance (e.g. a DSLR JPEG), which
+# is a false positive. Text files (.md, .svg) are still scanned.
 EM_DASH=$'\xe2\x80\x94'
 em_dash_check() {
-    if grep -rn "$EM_DASH" "$TARGET" >/dev/null 2>&1; then
+    if grep -rnI "$EM_DASH" "$TARGET" >/dev/null 2>&1; then
         printf >&2 '  Em dashes found in %s:\n' "$TARGET"
-        grep -rn "$EM_DASH" "$TARGET" >&2 || true
+        grep -rnI "$EM_DASH" "$TARGET" >&2 || true
         return 1
     fi
     return 0
