@@ -69,6 +69,16 @@ But knowing that is the entire point. It is what helps you cut the hallucination
 
 So far I have been talking about the problems with short term memory. I have not said much about long term memory for AI, and the honest truth is there isn't a worthwhile solution for it yet. There was an attempt at it called LLM Wiki, which I wrote about in [one of my own posts](/posts/llm-wiki-debate/). I don't think it is a good approach, though. It creates more problems than it solves. Others have tried to build on top of it, and Google recently put out something along similar lines. I still reckon we are a long way off solving long term memory properly, but we will get there eventually, at the pace AI is moving.
 
+## How to go about it
+
+Like I said, I lean on a harness, something that wraps all of this in guardrails, governance, and a fair bit more, so the AI has less room to wander off. I have written about why that matters in [why every subject matter expert needs their own AI harness](/posts/every-sme-needs-their-own-harness/).
+
+A few other tips. Keep your implementations small. Build in little blocks, one piece at a time, rather than trying to spin up an entire system, platform or app in one go. Try to build the whole thing at once and you will get slop. (I wrote a whole post on that one too: [why I spend more tokens refining scope than writing code](/posts/why-scope-beats-code/).)
+
+Because at the end of the day, engineering is about substance. Functional, practical, reliable, robust, self-healing. If your software cannot do those, and it is just a flashy app or platform, then it is all air and no substance. And the way you get there is not by piling on cleverness. It is the opposite: the KISS principle. Keep it simple, stupid.
+
+And remember, using AI is not about making your idea look pretty. Otherwise you just end up with something pretty. Pretty shit, that is. It is like wrapping shit in gold foil. If it smells like shit, and tastes like shit, even if it does not quite look like shit, it is still shit.
+
 ## What I actually do about it
 
 So that is my take, after a lot of hours sat with the likes of ChatGPT and the Claude models. None of it is gospel. It is observation.
