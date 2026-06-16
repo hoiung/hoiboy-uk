@@ -75,7 +75,9 @@ Like I said, I lean on a harness, something that wraps all of this in guardrails
 
 A few other tips. Keep your implementations small. Build in little blocks, one piece at a time, just like Lego, rather than trying to spin up an entire system, platform or app in one go. Try to build the whole thing at once and you will get slop. (I wrote a whole post on that one too: [why I spend more tokens refining scope than writing code](/posts/why-scope-beats-code/).)
 
-Because at the end of the day, engineering is about substance. Functional, practical, reliable, robust, self-healing. If your software cannot do those, and it is just a flashy app or platform, then it is all air and no substance. And the way you get there is not by piling on cleverness. It is the opposite: the KISS principle. Keep it simple, stupid.
+And there is more to building one small block at a time. You learn as you go. You start to understand your own architecture and your design intent. It does not matter whether you can code or not, you will learn to read code just by staring at the screen while it builds each small block. That part matters more than people think. Because if you do not know how your own app or platform works, then who does?
+
+At the end of the day, engineering is about substance. Functional, practical, reliable, robust, self-healing. If your software cannot do those, and it is just a flashy app or platform, then it is all air and no substance. And the way you get there is not by piling on cleverness. It is the opposite: the KISS principle. Keep it simple, stupid.
 
 And remember, using AI is not about making your idea look pretty. Otherwise you just end up with something pretty. Pretty shit, that is. It is like wrapping shit in gold foil. If it smells like shit, and tastes like shit, even if it does not quite look like shit, it is still shit.
 
