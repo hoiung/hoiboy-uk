@@ -31,7 +31,7 @@
   <rect x="0" y="0" width="900" height="534" class="bg"/>
 
   <!-- brand watermark (top-right) -->
-  <text x="884" y="30" text-anchor="end" class="watermark" font-size="11" font-weight="300" letter-spacing="0.3">hoiboy.uk</text>
+  <text x="885" y="24" text-anchor="end" class="watermark" font-size="11" font-weight="400" letter-spacing="0.5">hoiboy.uk</text>
 
   <!-- title + subtitle -->
   <text x="450" y="28" text-anchor="middle" class="accent" font-size="13" font-weight="700" letter-spacing="2">THE CONTEXT WINDOW IS A CAP, NOT THE CEILING</text>
