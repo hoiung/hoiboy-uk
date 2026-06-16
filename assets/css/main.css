@@ -209,15 +209,16 @@ strong, b { font-weight: 550; }
 .video-embed--vertical iframe { aspect-ratio: 9 / 16; }
 .video-embed--wide iframe { aspect-ratio: 16 / 9; }
 
-/* glightbox: force SVG slides to fill the lightbox container.
-   Without this, SVG can render at its natural size (small) inside the slide. */
+/* glightbox: scale SVG slides UP to fill the lightbox viewport.
+   width:100% only filled the slide container, which glightbox sizes to the
+   SVG's natural width (e.g. 900px) and never enlarges, so big diagrams looked
+   small when zoomed. object-fit:contain on a viewport-sized box scales the SVG
+   up to fit while preserving aspect (no distortion). The SVG carries its own
+   .bg rect, so no extra card background is needed. */
 .gslide-image img[src$=".svg"] {
-  width: 100% !important;
-  height: auto !important;
-  max-width: 95vw;
-  max-height: 90vh;
-  background: var(--bg-card);
-  padding: 1rem;
+  width: 95vw !important;
+  height: 90vh !important;
+  object-fit: contain !important;
   border-radius: 4px;
 }
 
