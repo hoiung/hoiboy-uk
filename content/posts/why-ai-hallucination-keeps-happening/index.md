@@ -69,9 +69,24 @@ And here is the part most people get the wrong way round. That limit is not real
 
 The way I picture it is simple. Every word in your chat has to be related to every other word, and the engine can only juggle so many of those connections at once before it loses the thread.
 
-{{< zoom-image src="context-window-mesh.svg" alt="Three chat windows side by side. A few words make a handful of links that stay manageable within the limit. Lots of words become a dense tangle the engine cannot handle, with its box straining at the limit. The same words wrapped in your own harness stay grouped and compacted. All three feed one bar labelled the LLM engine and its general harness, the real ceiling. The context window is a cap set to stay inside that ceiling." title="The context window is a cap, not the ceiling" >}}
+{{< zoom-image src="context-window-mesh.svg" alt="Three chat windows side by side. A few words make a handful of links that stay manageable within the limit. Lots of words become a dense tangle the engine cannot handle, with its box straining at the limit, where cracks show as hallucinations. The same words wrapped in your own harness stay grouped and compacted. All three feed one bar labelled the LLM engine and its general harness, the real ceiling. The context window is a cap set to stay inside that ceiling." title="The context window is a cap, not the ceiling" >}}
 
 The longer the chat runs, the less you can trust it. Context bloat. It has more and more variables to juggle, more relationships to build between all of it, more data to make sense of, all so it can hand you back something a human understands. That is why I lean on guardrails and loops inside a harness to keep it sane a bit longer, or to force a compact (squash the chat down, summarise it, hand it over, so a long session can keep running without losing the plot).
+
+Sounds like how we humans work, right? We are no better. Our own heads overflow, so we take notes, summarise as we go, sanity-check, and get a second pair of eyes before we trust the thing. We follow a process precisely because we know we lose the thread otherwise. None of that is the brain doing the clever bit. It is the scaffolding we wrap around the brain to keep it honest.
+
+It is the same with people. I have never trusted anyone who brags about a great memory, least of all the ones who claim a photographic one (LOL). I have had people claim exactly that to me, and they obviously did not have it. What I trust is their workflow. How their mind works, how they think, the tools they lean on to learn and to keep themselves straight. The smartest people in the world don't rely on their memory. They see it as a limitation.
+
+An AI is no different. Line up what we do to stay sharp against what a harness does for the model, and it maps almost one for one:
+
+| What we do to keep our own minds in check | The harness equivalent |
+|---|---|
+| Take notes, summarise as we go | Compaction (boil the context down, drop the noise) |
+| Hand notes to the next person, or the next day | Handover (pass the important bits forward) |
+| Sanity-check, cross-check, get a second pair of eyes | Verification loops and a second pass over the work |
+| Break a big job into steps, follow a process | A workflow, with parts handed off to subagents |
+
+That is all a harness really is. The notes, the checklist, the process, done for the model instead of for you.
 
 So in reality, 200K or 1M is not a lot. First you feed it the initial context just to get going. Then you factor in the waste: the wrong turns in its searches, the corrections you have to make, and that nasty drop-off once the window starts filling. By my rough reckoning, that leaves you maybe 25% of genuinely useful, high-quality work.
 
