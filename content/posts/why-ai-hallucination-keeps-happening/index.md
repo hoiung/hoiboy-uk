@@ -63,7 +63,13 @@ That is exactly why humans are not getting replaced any time soon. And if they e
 
 ## It fills up faster than you think
 
-It fills up far quicker than you would expect. And a decent chunk gets burned while the AI pokes around trying to work out what you actually want from it. As the context fills, the older 200K models started to crack around the 70% mark, and from there the hallucination got worse fast. Like falling off a cliff. That is more or less why they capped them at 200K in the first place. With the 1M window, I start noticing it more around 50 to 60% full.
+It fills up far quicker than you would expect. And a decent chunk gets burned while the AI pokes around trying to work out what you actually want from it. As the context fills, the older 200K models started to crack around the 70% mark, and from there the hallucination got worse fast. Like falling off a cliff. With the 1M window, I start noticing it more around 50 to 60% full.
+
+And here is the part most people get the wrong way round. That limit is not really about the window. The real ceiling sits deeper, inside the model itself, in the engine and the cogs doing all the actual work. I could not tell you exactly how that part runs, and I am not going to pretend otherwise. But there is only so much it can hold and relate in one go before it starts to buckle. The context window is a limit someone set on purpose, to try to keep you inside what the engine, and the general harness the AI already wraps around it, can sensibly handle.
+
+The way I picture it is simple. Every word in your chat has to be related to every other word, and the engine can only juggle so many of those connections at once before it loses the thread.
+
+{{< zoom-image src="context-window-mesh.svg" alt="Three chat windows side by side. A few words make a handful of clear links. Lots of words become a dense tangle the engine cannot hold straight, with its box straining at the limit. The same words wrapped in your own harness stay grouped and compacted. All three feed one bar labelled the LLM engine and its general harness, the real ceiling. The context window is a cap set to stay inside that ceiling." title="The context window is a cap, not the ceiling" >}}
 
 The longer the chat runs, the less you can trust it. Context bloat. It has more and more variables to juggle, more relationships to build between all of it, more data to make sense of, all so it can hand you back something a human understands. That is why I lean on guardrails and loops inside a harness to keep it sane a bit longer, or to force a compact (squash the chat down, summarise it, hand it over, so a long session can keep running without losing the plot).
 
