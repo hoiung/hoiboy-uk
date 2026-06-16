@@ -73,7 +73,7 @@ So far I have been talking about the problems with short term memory. I have not
 
 Like I said, I lean on a harness, something that wraps all of this in guardrails, governance, and a fair bit more, so the AI has less room to wander off. I have written about why that matters in [why every subject matter expert needs their own AI harness](/posts/every-sme-needs-their-own-harness/).
 
-A few other tips. Keep your implementations small. Build in little blocks, one piece at a time, rather than trying to spin up an entire system, platform or app in one go. Try to build the whole thing at once and you will get slop. (I wrote a whole post on that one too: [why I spend more tokens refining scope than writing code](/posts/why-scope-beats-code/).)
+A few other tips. Keep your implementations small. Build in little blocks, one piece at a time, just like Lego, rather than trying to spin up an entire system, platform or app in one go. Try to build the whole thing at once and you will get slop. (I wrote a whole post on that one too: [why I spend more tokens refining scope than writing code](/posts/why-scope-beats-code/).)
 
 Because at the end of the day, engineering is about substance. Functional, practical, reliable, robust, self-healing. If your software cannot do those, and it is just a flashy app or platform, then it is all air and no substance. And the way you get there is not by piling on cleverness. It is the opposite: the KISS principle. Keep it simple, stupid.
 
