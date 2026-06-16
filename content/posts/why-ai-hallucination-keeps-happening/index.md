@@ -85,7 +85,7 @@ A few other tips. Keep your implementations small. Build in little blocks, one p
 
 And there is more to building one small block at a time. You learn as you go. You start to understand your own architecture and your design intent. It does not matter whether you can code or not, you will learn to read code just by staring at the screen while it builds each small block. That part matters more than people think. Because if you do not know how your own app or platform works, then who does?
 
-At the end of the day, engineering is about substance. Functional, practical, reliable, robust, self-healing. If your software cannot do those, and it is just a flashy app or platform, then it is all air and no substance. And the way you get there is not by piling on cleverness. It is the opposite: the KISS principle. Keep it simple, stupid.
+At the end of the day, engineering is about substance. Functional, practical, reliable, robust, self-healing, observability, and more. If your software cannot do those, and it is just a flashy app or platform, then it is all air and no substance. And the way you get there is not by piling on cleverness. It is the opposite: the KISS principle. Keep it simple, stupid.
 
 And while I am at it, vibe coding does not work. It never has, and it never will. Do not believe the bullshit out there, and especially not the people who act like it does. Vibe coding is not engineering. It is just AI slop, and lazy humans with no real engineering skills to show for it, who use it as clickbait. Don't be fooled.
 
