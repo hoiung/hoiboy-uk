@@ -65,7 +65,7 @@ That is exactly why humans are not getting replaced any time soon. And if they e
 
 It fills up far quicker than you would expect. And a decent chunk gets burned while the AI pokes around trying to work out what you actually want from it. As the context fills, the older 200K models started to crack around the 70% mark, and from there the hallucination got worse fast. Like falling off a cliff. With the 1M window, I start noticing it more around 50 to 60% full.
 
-And here is the part most people get the wrong way round. That limit is not really about the window. The real ceiling sits deeper, inside the model itself, in the engine and the cogs doing all the actual work. I could not tell you exactly how that part runs, and I am not going to pretend otherwise. But there is only so much it can hold and relate in one go before it starts to buckle. The context window is a limit someone set on purpose, to try to keep you inside what the engine, and the general harness the AI already wraps around it, can sensibly handle.
+And here is the part most people get the wrong way round. That limit is not really about the window. The real ceiling sits deeper, inside the model itself, in the engine and the cogs doing all the actual work, the part we never get to see. I could not tell you exactly how that bit runs, and I am not going to pretend otherwise. But there is only so much it can hold and relate in one go before it starts to buckle. The context window is not the limitation itself. It is a cap someone set on purpose, to try to keep you working inside what the engine, and the general harness the AI already wraps around it, can actually handle.
 
 The way I picture it is simple. Every word in your chat has to be related to every other word, and the engine can only juggle so many of those connections at once before it loses the thread.
 
@@ -78,6 +78,8 @@ So in reality, 200K or 1M is not a lot. First you feed it the initial context ju
 Shit, isn't it...
 
 But knowing that is the entire point. It is what helps you cut the hallucinations down, and keep as much quality in your work as you can. Because the moment a hallucination creeps in, it does not just cost you that one bad answer. It quietly creates more work for you to find and fix later, often long after you have moved on. Anyone who has used AI for real work for a while knows that sinking feeling. It is part of why I keep saying that [learning this stuff properly is hard](/posts/learning-ai-is-hard/).
+
+And that is the real takeaway here. Managing that context window is one of the biggest levers you have. Keep it lean and deliberate and you do two things at once: you cut the hallucinations down, and you keep each implementation pointed at the goal you started with. Let it bloat and you tend to lose both. It drifts off, forgets what you were actually building, and quietly starts solving its own version of the job.
 
 ## Short term memory vs long term memory
 
