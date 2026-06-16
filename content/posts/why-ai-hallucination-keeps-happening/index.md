@@ -91,7 +91,7 @@ And remember, using AI is not about making your idea look pretty. Otherwise you 
 
 ## What I actually do about it
 
-So that is my take, after a lot of hours sat with the likes of ChatGPT and the Claude models. None of it is gospel. It is observation.
+So that is my take, after a lot of hours sat with the likes of Claude and ChatGPT. None of it is gospel. It is observation.
 
 Understanding why it hallucinates is what lets me build the right tooling around it. It tells me when to compact, how to break a big job into smaller pieces, when to hand parts off to subagents, and how to shape a workflow so the context memory stays manageable instead of quietly rotting. Most of that runs on its own now, baked into my harness, [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness), which I built for Claude Code specifically and tuned around exactly these limits. You can tweak it for other models if you fancy. I made it free for anyone to use on GitHub, so go have a look.
 
