@@ -87,7 +87,7 @@ And there is more to building one small block at a time. You learn as you go. Yo
 
 At the end of the day, engineering is about substance. Functional, practical, reliable, robust, self-healing. If your software cannot do those, and it is just a flashy app or platform, then it is all air and no substance. And the way you get there is not by piling on cleverness. It is the opposite: the KISS principle. Keep it simple, stupid.
 
-And while I am at it, vibe coding does not work. It never has, and it never will. Do not believe the bullshit out there, and especially not the people who act like it does. Vibe coding is not engineering. It is just AI slop, and lazy humans with no real skills to show for it, who use it as clickbait.
+And while I am at it, vibe coding does not work. It never has, and it never will. Do not believe the bullshit out there, and especially not the people who act like it does. Vibe coding is not engineering. It is just AI slop, and lazy humans with no real engineering skills to show for it, who use it as clickbait. Don't be fooled.
 
 And remember, using AI is not about making your idea look pretty. Otherwise you just end up with something pretty. Pretty shit, that is. It is like wrapping shit in gold foil. If it smells like shit, and tastes like shit, even if it does not quite look like shit, it is still shit.
 
