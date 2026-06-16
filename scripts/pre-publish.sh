@@ -132,7 +132,19 @@ run_check "frontmatter" python3 scripts/validate_frontmatter.py
 run_check "no-future-date" python3 scripts/check_future_date.py "$TARGET"
 
 # 4. Word count ceiling (>3000 fails; legacy + grandfathered skipped).
-run_check "wordcount" python3 scripts/check_wordcount.py "$POST_FILE"
+#    POSTS ONLY. Consulting / legal / skills / private landing pages are
+#    long-form by design and are NOT gated. This matches the pre-commit hook
+#    (files: ^content/posts/.*/index\.md$) and CI (git ls-files content/posts/*),
+#    both already posts-scoped; pre-publish was the only caller that leaked.
+case "$POST_FILE" in
+    content/posts/*/index.md|*/content/posts/*/index.md)
+        run_check "wordcount" python3 scripts/check_wordcount.py "$POST_FILE"
+        ;;
+    *)
+        printf '[SKIP] wordcount (not a blog post: %s)\n' "$POST_FILE"
+        results+=("SKIP  wordcount (non-post)")
+        ;;
+esac
 
 # 5. Private blocklist + secrets (PLATFORM_TOKEN + PRIVATE_PATH + BLOCKLIST).
 run_check "secrets" python3 scripts/check-public-repo-secrets.py "$TARGET"
