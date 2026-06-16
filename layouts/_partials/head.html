@@ -37,29 +37,35 @@
 <meta property="article:tag" content="{{ . }}">
 {{- end }}
 {{- end }}
+{{- /* og:image: a page's own share-card.* or hero, else the site-wide default
+       (the home page's hoi-mug.jpg). Emitted on every page kind (home / list / page)
+       so the homepage and any heroless page still get a proper 1200x630 card instead
+       of letting scrapers grab and crop the square logo. */ -}}
+{{- $hero := "" -}}
+{{- $shareCard := "" -}}
 {{- if .IsPage -}}
-  {{- $hero := partial "hero-pick.html" . -}}
-  {{- $shareCard := .Resources.GetMatch "share-card.*" -}}
-  {{- $socialImage := $shareCard | default $hero -}}
-  {{- with $socialImage -}}
-    {{- if not (strings.HasSuffix .Name ".svg") -}}
-      {{- /* share-card.* uses .Resize (preserves aspect) so the diagram is not cropped.
-             Hero falls back to .Fill 1200x630 (the social-card landscape aspect) for
-             photo-style heroes that are already landscape. */ -}}
-      {{- $og := cond (and $shareCard (eq $shareCard.RelPermalink .RelPermalink)) (.Resize "1200x jpg q85") (.Fill "1200x630 jpg q85") }}
+  {{- $hero = partial "hero-pick.html" . -}}
+  {{- $shareCard = .Resources.GetMatch "share-card.*" -}}
+{{- end -}}
+{{- $defaultCard := site.Home.Resources.GetMatch "hoi-mug.jpg" -}}
+{{- $socialImage := $shareCard | default $hero | default $defaultCard -}}
+{{- with $socialImage -}}
+  {{- if not (strings.HasSuffix .Name ".svg") -}}
+    {{- /* share-card.* uses .Resize (preserves aspect) so a diagram is not cropped.
+           Hero / default photo use .Fill 1200x630 (the social-card landscape aspect). */ -}}
+    {{- $og := cond (and $shareCard (eq $shareCard.RelPermalink .RelPermalink)) (.Resize "1200x jpg q85") (.Fill "1200x630 jpg q85") }}
 <meta property="og:image" content="{{ $og.Permalink }}">
 <meta property="og:image:width" content="{{ $og.Width }}">
 <meta property="og:image:height" content="{{ $og.Height }}">
-<meta property="og:image:alt" content="{{ $.Title }}">
+<meta property="og:image:alt" content="{{ $.Title | default site.Title }}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="{{ $og.Permalink }}">
-    {{- end -}}
   {{- end -}}
-{{- end }}
+{{- end -}}
 {{- if and .IsPage (eq .Section "posts") }}
   {{- $ldHero := partial "hero-pick.html" . -}}
   {{- $ldShareCard := .Resources.GetMatch "share-card.*" -}}
-  {{- $ldSocialImage := $ldShareCard | default $ldHero -}}
+  {{- $ldSocialImage := $ldShareCard | default $ldHero | default (site.Home.Resources.GetMatch "hoi-mug.jpg") -}}
   {{- $ldHeroUrl := "" -}}
   {{- with $ldSocialImage }}{{- if not (strings.HasSuffix .Name ".svg") -}}
     {{- $ldHeroUrl = (cond (and $ldShareCard (eq $ldShareCard.RelPermalink .RelPermalink)) (.Resize "1200x jpg q85") (.Fill "1200x630 jpg q85")).Permalink -}}
