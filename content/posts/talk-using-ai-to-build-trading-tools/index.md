@@ -24,6 +24,6 @@ I'm making my presentation slider available here, along with my keynotes. It's a
 - [Download the slides (PDF)](using-ai-to-build-trading-tools-slides.pdf)
 - [Download my keynotes (PDF)](using-ai-to-build-trading-tools-keynotes.pdf)
 
-PS. The blogs I write on this site are pretty much drafted in detail by me first, and I only use AI for very lite touch ups. So these are not AI written blogs. Just FYI, because I see too many blogs these days written mostly by AI. They sound clever, but they're full of fluff and overzealous on facts and numbers. It all reads like a whitepaper for a university dissertation or research, and I can tell the author doesn't really know what they're talking or writing about, because of how confusing and difficult it is to read and make sense of. :)
+PS. The blogs I write on this site are pretty much drafted in detail by me first, and I only use AI for very lite touch ups. So these are not AI written blogs. Well, mostly. I have one or two on here from when I tested how AI writes versus how I write, and they still sit there. I'll let you guess which ones! Historically it just wasn't worth my time to rewrite them. Just FYI, because I see too many blogs these days written mostly by AI. They sound clever, but they're full of fluff and overzealous on facts and numbers. It all reads like a whitepaper for a university dissertation or research, and I can tell the author doesn't really know what they're talking or writing about, because of how confusing and difficult it is to read and make sense of. :)
 
 <!-- iamhoiend -->
