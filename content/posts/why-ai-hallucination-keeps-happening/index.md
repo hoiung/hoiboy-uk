@@ -53,6 +53,14 @@ You are probably thinking, that is loads. All those words, in a single chat. Esp
 
 Wrong.
 
+## Still just scratching the surface
+
+Think about what real work actually involves. A whole platform. A system. Large, messy, complex databases. The entire internet. Years of knowledge and hard-won expertise. That is a world away from the two-or-so books, or even the eight to ten, that today's models can hold in one chat without losing the plot.
+
+So it always surprises me when people lean on AI like it knows everything, and follow its advice without a second thought. A single chat can only take in a small slice of all that. Even a whole swarm of them working together still struggles. AI is still just a tool, and it is only ever scratching the surface of any real subject matter or domain expertise.
+
+That is exactly why humans are not getting replaced any time soon. And if they ever are, then we have a serious problem! I suspect a lot of the corporate cuts you hear about are either using AI as a convenient excuse to downsize, or they are a mistake that someone will be quietly trying to undo before long.
+
 ## It fills up faster than you think
 
 It fills up far quicker than you would expect. And a decent chunk gets burned while the AI pokes around trying to work out what you actually want from it. As the context fills, the older 200K models started to crack around the 70% mark, and from there the hallucination got worse fast. Like falling off a cliff. That is more or less why they capped them at 200K in the first place. With the 1M window, I start noticing it more around 50 to 60% full.
