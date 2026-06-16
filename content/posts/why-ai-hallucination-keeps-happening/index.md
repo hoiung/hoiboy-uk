@@ -13,7 +13,7 @@ You have used an AI chat at some point. And at some point, it forgot what it was
 
 People have a name for this. AI hallucination, or something along those lines. We all know what it looks like by now. What almost nobody explains is *why* it happens, and how. So here I am, writing about it based on my own experience and observation.
 
-I have seen AI hallucinate so much, and in so many different ways, that I ended up building my own harness around it. Scripts, rules, standards, loops, workflows, whatever it took to stop it going off the rails or doing cowboy shit (destructive changes, or architecture and design logic that is the exact opposite of what was actually spec'd). And even with all of that, it still happens.
+I have seen AI hallucinate so much, and in so many different ways, that I ended up building my own harness around it. Scripts, rules, standards, loops, workflows, whatever it took to stop it going off the rails or doing cowboy shit (destructive changes, or architecture and design logic that is the exact opposite of what was actually spec'd). And even with all of that, it still happens, just less often.
 
 So we know roughly what happens when AI hallucinates. The question not many of us stop to ask is the obvious one. Why?
 
