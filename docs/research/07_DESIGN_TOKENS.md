@@ -87,7 +87,7 @@ Every illustration carries a subtle `hoiboy.uk` signature in the **top-right cor
 - **Scale it to the viewBox width** so it appears the same size on every illustration (these SVGs display responsively, so a fixed `font-size` would look bigger on a narrow viewBox and smaller on a wide one). Reference: a **900-unit-wide** viewBox uses `font-size="11"`, baseline `y="24"`, `x = W − 15` (anchored `end`), `letter-spacing="0.5"`. For a diagram of width `W`, multiply each by `W / 900`:
   - `font-size = 11 × W/900`  ·  `x = W − 15×W/900`  ·  `y = 24 × W/900`  ·  `letter-spacing = 0.5 × W/900`
   - Worked: W=880 → size 10.8, x 865, y 23.5 · W=620 → size 7.6, x 610, y 16.5 · W=1600 → size 19.6, x 1573, y 43
-- This yields an equal (reference ~16px) inset from the top and right edges. Always render the diagram and eyeball the corner — the watermark must not overlap a title, label, or any content.
+- This yields an equal (reference ~16px) inset from the top and right edges. Always render the diagram and eyeball the corner so the watermark does not overlap a title, label, or any content.
 
 ### Exporting to PNG (social cards, fixed-dark diagrams)
 
