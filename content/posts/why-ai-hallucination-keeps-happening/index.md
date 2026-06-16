@@ -43,7 +43,7 @@ None of that quite answers why it hallucinates. But it builds the picture. Becau
 
 About six months ago, context memory sat at around 200K. This year we crossed into 1 million (1M) for the newer models, the Claude Sonnet upgrade and the Opus models.
 
-The way I see it, context memory is working memory. The capacity of one chat window. (Most people call it the context window. I call it context memory because it fits the way I have been describing all this, but it is the same thing.) It is the short term workspace where your prompts, and the AI's input and output, all live while you work inside that one chat.
+The way I see it, context memory is working memory, a form of short term memory for AI. The capacity of one chat window. (Most people call it the context window. I call it context memory because it fits the way I have been describing all this, but it is the same thing.) It is the short term workspace where your prompts, and the AI's input and output from the user's or agent's end, all live while you work inside that one chat.
 
 But how much is that, really? 200K, 1M, those numbers mean nothing to a normal person. So let me put it in context (no pun intended).
 
