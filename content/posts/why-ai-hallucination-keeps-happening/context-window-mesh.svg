@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 534" width="900" height="534" role="img" aria-label="Three chat windows showing word relationships: a few words is clear; lots of words becomes a dense tangle the engine cannot hold straight; the same words wrapped in your own harness stay grouped and compacted. The real ceiling is the LLM engine and its built-in general harness, not the context window. The window is a cap set on purpose to stay inside that ceiling." font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 534" width="900" height="534" role="img" aria-label="Three chat windows showing word relationships: a few words stays within the limit and is manageable; lots of words becomes a dense tangle the engine cannot handle; the same words wrapped in your own harness stay grouped and compacted. The real ceiling is the LLM engine and its built-in general harness, not the context window. The window is a cap set on purpose to stay inside that ceiling." font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 z" fill="#c0533a"/>
@@ -40,8 +40,10 @@
   <!-- ===================== PANEL A: A FEW WORDS ===================== -->
   <rect x="20" y="70" width="260" height="340" rx="10" class="card boxstroke" stroke-width="1.6"/>
   <text x="150" y="98" text-anchor="middle" class="label" font-size="14.5">A FEW WORDS</text>
-  <text x="150" y="120" text-anchor="middle" class="ok" font-size="10.5" font-weight="700" letter-spacing="1.5">CLEAR</text>
+  <text x="150" y="120" text-anchor="middle" class="ok" font-size="10.5" font-weight="700" letter-spacing="1.5">WITHIN LIMIT</text>
 
+  <!-- Panel A network shifted up 15px to close the title-to-drawing gap (balanced with Panel B) -->
+  <g transform="translate(0,-15)">
   <!-- links (behind pills) -->
   <g class="trailstroke" stroke-width="1.3">
     <line x1="88" y1="182" x2="206" y2="184"/>
@@ -70,8 +72,9 @@
   <text x="120" y="348" text-anchor="middle" class="label" font-size="12.5">test</text>
   <rect x="185" y="332" width="50" height="24" rx="9" class="card boxstroke" stroke-width="1.4"/>
   <text x="210" y="348" text-anchor="middle" class="label" font-size="12.5">fix</text>
+  </g>
 
-  <text x="150" y="392" text-anchor="middle" class="muted" font-size="11">every link is easy to follow</text>
+  <text x="150" y="383" text-anchor="middle" class="muted" font-size="11">every link is manageable<tspan x="150" dy="14">within architectural limits</tspan></text>
 
   <!-- ===================== PANEL B: LOTS OF WORDS (overloaded) ===================== -->
   <rect x="320" y="70" width="260" height="340" rx="10" class="card accentstroke" stroke-width="2.6"/>
@@ -140,7 +143,7 @@
     <circle cx="470" cy="350" r="4" class="node"/>
   </g>
 
-  <text x="450" y="392" text-anchor="middle" class="muted" font-size="11">more links than it can hold</text>
+  <text x="450" y="392" text-anchor="middle" class="muted" font-size="11">more links than it can handle</text>
 
   <!-- ===================== PANEL C: SAME + YOUR HARNESS ===================== -->
   <rect x="620" y="70" width="260" height="340" rx="10" class="card boxstroke" stroke-width="1.6"/>
@@ -148,7 +151,7 @@
   <text x="750" y="120" text-anchor="middle" class="ok" font-size="10.5" font-weight="700" letter-spacing="1.5">KEPT IN CHECK</text>
 
   <!-- harness frame: its top dashed line runs through the centre of the YOUR HARNESS label; sized to leave equal left/right margins and clear the inner clusters top + bottom -->
-  <rect x="632" y="145" width="236" height="215" rx="8" fill="none" class="accentstroke" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <rect x="632" y="145" width="236" height="208" rx="8" fill="none" class="accentstroke" stroke-width="1.4" stroke-dasharray="5 4"/>
   <!-- label sits on the frame's top edge; its card fill breaks the dashed line like a legend -->
   <rect x="688" y="136" width="88" height="18" rx="9" class="card accentstroke" stroke-width="1.2"/>
   <text x="732" y="148.5" text-anchor="middle" class="accent" font-size="9.5" font-weight="700" letter-spacing="1">YOUR HARNESS</text>
@@ -213,7 +216,7 @@
   <circle cx="777" cy="164" r="3.2" class="ok"/>
   <circle cx="649" cy="268" r="3.2" class="ok"/>
 
-  <text x="750" y="376" text-anchor="middle" class="muted" font-size="11">tasks broken down +<tspan x="750" dy="14">regularly compacted per implementation</tspan></text>
+  <text x="750" y="369" text-anchor="middle" class="muted" font-size="11">tasks broken down +<tspan x="750" dy="14">regularly compacted with handover</tspan><tspan x="750" dy="14">per implementation</tspan></text>
 
   <!-- ===================== arrows down to the engine ===================== -->
   <line x1="150" y1="412" x2="150" y2="446" class="accentstroke" stroke-width="2" marker-end="url(#arrow)"/>
