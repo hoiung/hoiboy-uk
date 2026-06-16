@@ -43,6 +43,7 @@ Hand-drawn schematic SVGs (data-flow diagrams, pipelines, layer diagrams) are th
 | Muted text | `.muted` | `#6a6a6a` | `#a6a6a6` | captions, secondary labels, neutral lines |
 | Box / trail stroke | `.boxstroke` / `.trailstroke` | `#9aa0a6` | `#6a6a6a` | neutral borders + connector/trail lines |
 | OK / positive green | `.ok` | `#7aa869` | `#7aa869` | "logged / healthy / passing / automation" markers; same in both modes |
+| Brand watermark (sky blue) | `.watermark` | `#87ceeb` | `#87ceeb` | the `hoiboy.uk` signature, top-right corner; the logo's blue; same in both modes |
 
 Fonts: `font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"` on the root `<svg>` (matches the site body font). Boxes use `rx="10"` rounded corners; accent arrowheads via a shared `<marker>`.
 
@@ -59,6 +60,7 @@ Fonts: `font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-ser
   .accent { fill: #c0533a; }
   .accentstroke { stroke: #c0533a; }
   .ok { fill: #7aa869; }
+  .watermark { fill: #87ceeb; }
   @media (prefers-color-scheme: dark) {
     .bg { fill: #141414; }
     .card { fill: #1f1f1f; }
@@ -76,6 +78,16 @@ Rules:
 - Card fills carry the readable text. The dark-mode card (`#1f1f1f`) keeps `.label` text legible; do NOT leave cards white in dark mode (white card + dark host chrome around it looks broken, and was the readability complaint on the first pass of observability.svg).
 - Use `.ok` green ONLY for positive/healthy/logged/automation; use `.accent` for endpoints, the active data path, and failure/verdict emphasis. No other colours.
 - Embed via the `zoom-image` shortcode, never a bare markdown image: `{{</* zoom-image src="diagram.svg" alt="..." title="..." */>}}`. The shortcode trips the `.HasShortcode` guard in `single.html` so the theme does NOT also dump the SVG into the auto-gallery (double-render bug).
+
+### Brand watermark (every illustration)
+
+Every illustration carries a subtle `hoiboy.uk` signature in the **top-right corner**, in the logo's sky blue (`#87ceeb`). It is identical on every diagram so the brand mark reads consistently across the site. `#87ceeb` is the same in both colour schemes (no dark-mode override needed).
+
+- Element (dual-mode SVG with a `<style>` block): `<text x="..." y="..." text-anchor="end" class="watermark" font-size="..." font-weight="400" letter-spacing="...">hoiboy.uk</text>`, placed right after the background `<rect>` so it sits under nothing. For a fixed-dark SVG with no `<style>` (e.g. `harness-layers.svg`), use inline `fill="#87ceeb"` instead of the class.
+- **Scale it to the viewBox width** so it appears the same size on every illustration (these SVGs display responsively, so a fixed `font-size` would look bigger on a narrow viewBox and smaller on a wide one). Reference: a **900-unit-wide** viewBox uses `font-size="11"`, baseline `y="24"`, `x = W − 15` (anchored `end`), `letter-spacing="0.5"`. For a diagram of width `W`, multiply each by `W / 900`:
+  - `font-size = 11 × W/900`  ·  `x = W − 15×W/900`  ·  `y = 24 × W/900`  ·  `letter-spacing = 0.5 × W/900`
+  - Worked: W=880 → size 10.8, x 865, y 23.5 · W=620 → size 7.6, x 610, y 16.5 · W=1600 → size 19.6, x 1573, y 43
+- This yields an equal (reference ~16px) inset from the top and right edges. Always render the diagram and eyeball the corner — the watermark must not overlap a title, label, or any content.
 
 ### Exporting to PNG (social cards, fixed-dark diagrams)
 

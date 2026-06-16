@@ -18,6 +18,9 @@
 
   <rect x="0" y="0" width="1600" height="1200" fill="#1a1a1a"/>
 
+  <!-- brand watermark (top-right) -->
+  <text x="1573" y="43" text-anchor="end" fill="#87ceeb" font-size="19.6" font-weight="400" letter-spacing="0.9">hoiboy.uk</text>
+
   <text x="800" y="60" text-anchor="middle" font-size="32" font-weight="600" fill="#e8e8e8">What is an AI harness?</text>
   <text x="800" y="95" text-anchor="middle" font-size="18" font-style="italic" fill="#999">Inside the specialised layer is your trade's craft, codified.</text>
   <text x="800" y="120" text-anchor="middle" font-size="16" font-style="italic" fill="#999">Two halves working together: governance (the rings) plus automation (the workflow loop).</text>

@@ -213,7 +213,7 @@
   <circle cx="777" cy="164" r="3.2" class="ok"/>
   <circle cx="649" cy="268" r="3.2" class="ok"/>
 
-  <text x="750" y="376" text-anchor="middle" class="muted" font-size="11">tasks broken down +<tspan x="750" dy="14">regularly compacted per execution</tspan></text>
+  <text x="750" y="376" text-anchor="middle" class="muted" font-size="11">tasks broken down +<tspan x="750" dy="14">regularly compacted per implementation</tspan></text>
 
   <!-- ===================== arrows down to the engine ===================== -->
   <line x1="150" y1="412" x2="150" y2="446" class="accentstroke" stroke-width="2" marker-end="url(#arrow)"/>
