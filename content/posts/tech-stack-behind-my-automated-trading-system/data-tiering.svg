@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400" role="img" aria-label="Market data provider tiering" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0533a"/>
+    </marker>
+    <style>
+      .bg { fill: #fafafa; }
+      .card { fill: #ffffff; }
+      .label { fill: #1a1a1a; font-weight: 600; }
+      .muted { fill: #6a6a6a; }
+      .boxstroke { stroke: #9aa0a6; }
+      .trailstroke { stroke: #9aa0a6; }
+      .accent { fill: #c0533a; }
+      .accentstroke { stroke: #c0533a; }
+      .ok { fill: #7aa869; }
+      .watermark { fill: #87ceeb; }
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #141414; }
+        .card { fill: #1f1f1f; }
+        .label { fill: #f0f0f0; }
+        .muted { fill: #a6a6a6; }
+        .boxstroke { stroke: #6a6a6a; }
+        .trailstroke { stroke: #6a6a6a; }
+      }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="400" class="bg"/>
+  <text x="885" y="24" text-anchor="end" class="watermark" font-size="11" font-weight="400" letter-spacing="0.5">hoiboy.uk</text>
+
+  <text x="450" y="30" text-anchor="middle" class="accent" font-size="13" font-weight="700" letter-spacing="2">WHERE THE PRICES COME FROM</text>
+  <text x="450" y="52" text-anchor="middle" class="muted" font-size="11.5">three feeds for the live system, one for backtests.</text>
+
+  <!-- live row -->
+  <text class="muted" x="24" y="124" font-size="12" font-weight="700" letter-spacing="1">LIVE SYSTEM</text>
+  <text class="muted" x="24" y="140" font-size="10">(real-time)</text>
+  <rect class="card accentstroke" x="150" y="88" width="180" height="72" rx="10" stroke-width="2.5"/>
+  <text class="label" x="240" y="120" text-anchor="middle" font-size="14">Finnhub</text>
+  <text class="ok" x="240" y="141" text-anchor="middle" font-size="10.5" font-weight="700" letter-spacing="1">PRIMARY</text>
+
+  <rect class="card boxstroke" x="400" y="88" width="180" height="72" rx="10" stroke-width="1.8"/>
+  <text class="label" x="490" y="120" text-anchor="middle" font-size="14">Alpha Vantage</text>
+  <text class="muted" x="490" y="141" text-anchor="middle" font-size="10.5" font-weight="700" letter-spacing="1">FALLBACK</text>
+
+  <rect class="card boxstroke" x="650" y="88" width="180" height="72" rx="10" stroke-width="1.8"/>
+  <text class="label" x="740" y="120" text-anchor="middle" font-size="14">yfinance</text>
+  <text class="muted" x="740" y="141" text-anchor="middle" font-size="10.5" font-weight="700" letter-spacing="1">LAST RESORT</text>
+
+  <line x1="330" y1="124" x2="398" y2="124" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+  <text class="muted" x="364" y="112" text-anchor="middle" font-size="10">if it fails</text>
+  <line x1="580" y1="124" x2="648" y2="124" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+  <text class="muted" x="614" y="112" text-anchor="middle" font-size="10">if it fails</text>
+
+  <line x1="40" y1="208" x2="860" y2="208" class="trailstroke" stroke-width="1" stroke-dasharray="3 5"/>
+
+  <!-- backtest row -->
+  <text class="muted" x="24" y="266" font-size="12" font-weight="700" letter-spacing="1">BACKTESTS</text>
+  <rect class="card boxstroke" x="150" y="230" width="180" height="72" rx="10" stroke-width="1.8"/>
+  <text class="label" x="240" y="262" text-anchor="middle" font-size="14">yfinance</text>
+  <text class="muted" x="240" y="283" text-anchor="middle" font-size="11.5">the only feed</text>
+
+  <rect class="card boxstroke" x="400" y="230" width="190" height="72" rx="10" stroke-width="1.8"/>
+  <text class="label" x="495" y="262" text-anchor="middle" font-size="14">PostgreSQL</text>
+  <text class="muted" x="495" y="283" text-anchor="middle" font-size="11">stored temp for performance</text>
+
+  <line x1="330" y1="266" x2="398" y2="266" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+  <text class="muted" x="364" y="254" text-anchor="middle" font-size="10">stored</text>
+  <text class="muted" x="650" y="270" font-size="11.5">one feed, no fallback needed</text>
+
+  <text x="450" y="372" text-anchor="middle" font-size="14"><tspan class="muted">If one feed goes dark, the next picks up. </tspan><tspan class="accent" font-weight="700" dx="6">the system never goes blind.</tspan></text>
+</svg>

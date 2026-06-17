@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 410" width="900" height="410" role="img" aria-label="The broker market-data and order split" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0533a"/>
+    </marker>
+    <style>
+      .bg { fill: #fafafa; }
+      .card { fill: #ffffff; }
+      .label { fill: #1a1a1a; font-weight: 600; }
+      .muted { fill: #6a6a6a; }
+      .boxstroke { stroke: #9aa0a6; }
+      .trailstroke { stroke: #9aa0a6; }
+      .accent { fill: #c0533a; }
+      .accentstroke { stroke: #c0533a; }
+      .ok { fill: #7aa869; }
+      .watermark { fill: #87ceeb; }
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #141414; }
+        .card { fill: #1f1f1f; }
+        .label { fill: #f0f0f0; }
+        .muted { fill: #a6a6a6; }
+        .boxstroke { stroke: #6a6a6a; }
+        .trailstroke { stroke: #6a6a6a; }
+      }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="410" class="bg"/>
+  <text x="885" y="24" text-anchor="end" class="watermark" font-size="11" font-weight="400" letter-spacing="0.5">hoiboy.uk</text>
+
+  <text x="450" y="30" text-anchor="middle" class="accent" font-size="13" font-weight="700" letter-spacing="2">ONE DOOR IN, ONE DOOR OUT</text>
+  <text x="450" y="52" text-anchor="middle" class="muted" font-size="11.5">prices come in through the data service, orders go out only through the controllers.</text>
+
+  <!-- broker centre -->
+  <rect class="card accentstroke" x="345" y="150" width="210" height="92" rx="10" stroke-width="2.5"/>
+  <text class="label" x="450" y="188" text-anchor="middle" font-size="15">Interactive Brokers</text>
+  <text class="muted" x="450" y="210" text-anchor="middle" font-size="11.5">broker gateway</text>
+
+  <!-- data service left -->
+  <rect class="card boxstroke" x="40" y="156" width="210" height="80" rx="10" stroke-width="1.8"/>
+  <text class="label" x="145" y="190" text-anchor="middle" font-size="14">Rust Data Service</text>
+  <text class="muted" x="145" y="210" text-anchor="middle" font-size="11.5">market data</text>
+
+  <!-- controllers right -->
+  <rect class="card boxstroke" x="650" y="156" width="210" height="80" rx="10" stroke-width="1.8"/>
+  <text class="label" x="755" y="190" text-anchor="middle" font-size="14">Controllers</text>
+  <text class="muted" x="755" y="210" text-anchor="middle" font-size="11.5">paper + live</text>
+
+  <!-- dashboard bottom -->
+  <rect class="card boxstroke" x="345" y="300" width="210" height="64" rx="10" stroke-width="1.8"/>
+  <text class="label" x="450" y="328" text-anchor="middle" font-size="14">Dashboard</text>
+  <text class="muted" x="450" y="348" text-anchor="middle" font-size="11.5">React · what I see</text>
+
+  <!-- prices in: broker -> DS -->
+  <line x1="343" y1="190" x2="252" y2="190" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+  <text class="ok" x="297" y="178" text-anchor="middle" font-size="11" font-weight="700">prices in</text>
+
+  <!-- orders out: controllers -> broker -->
+  <line x1="648" y1="190" x2="557" y2="190" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+  <text class="accent" x="603" y="178" text-anchor="middle" font-size="11" font-weight="700">orders out</text>
+
+  <!-- dashboard asks controllers -->
+  <line x1="555" y1="322" x2="668" y2="238" class="trailstroke" stroke-width="1.3"/>
+  <text class="muted" x="630" y="292" text-anchor="middle" font-size="10">asks</text>
+
+  <!-- dashboard cannot reach broker -->
+  <line x1="450" y1="300" x2="450" y2="244" class="trailstroke" stroke-width="1.3" stroke-dasharray="5 4"/>
+  <line x1="441" y1="263" x2="459" y2="281" class="accentstroke" stroke-width="2.5"/>
+  <line x1="459" y1="263" x2="441" y2="281" class="accentstroke" stroke-width="2.5"/>
+
+  <text x="450" y="392" text-anchor="middle" font-size="14"><tspan class="muted">The screen I click can ask for a trade. </tspan><tspan class="accent" font-weight="700" dx="6">it can never place one.</tspan></text>
+</svg>

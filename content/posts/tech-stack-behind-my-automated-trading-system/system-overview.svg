@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 472" width="900" height="472" role="img" aria-label="System overview of the automated trading system" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c0533a"/>
+    </marker>
+    <style>
+      .bg { fill: #fafafa; }
+      .card { fill: #ffffff; }
+      .label { fill: #1a1a1a; font-weight: 600; }
+      .muted { fill: #6a6a6a; }
+      .boxstroke { stroke: #9aa0a6; }
+      .trailstroke { stroke: #9aa0a6; }
+      .accent { fill: #c0533a; }
+      .accentstroke { stroke: #c0533a; }
+      .ok { fill: #7aa869; }
+      .watermark { fill: #87ceeb; }
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #141414; }
+        .card { fill: #1f1f1f; }
+        .label { fill: #f0f0f0; }
+        .muted { fill: #a6a6a6; }
+        .boxstroke { stroke: #6a6a6a; }
+        .trailstroke { stroke: #6a6a6a; }
+      }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="472" class="bg"/>
+  <text x="885" y="24" text-anchor="end" class="watermark" font-size="11" font-weight="400" letter-spacing="0.5">hoiboy.uk</text>
+
+  <text x="450" y="30" text-anchor="middle" class="accent" font-size="13" font-weight="700" letter-spacing="2">HOW IT ALL FITS TOGETHER</text>
+  <text x="450" y="52" text-anchor="middle" class="muted" font-size="11.5">market data comes in on the left, gets cleaned and cached in the middle, the trading logic sits on the right.</text>
+
+  <!-- Market data sources -->
+  <rect class="card boxstroke" x="24" y="158" width="190" height="120" rx="10" stroke-width="1.8"/>
+  <text class="label" x="119" y="186" text-anchor="middle" font-size="15">Market data</text>
+  <text class="muted" x="119" y="210" text-anchor="middle" font-size="11.5">Finnhub</text>
+  <text class="muted" x="119" y="229" text-anchor="middle" font-size="11.5">Alpha Vantage</text>
+  <text class="muted" x="119" y="248" text-anchor="middle" font-size="11.5">yfinance</text>
+  <text class="muted" x="119" y="267" text-anchor="middle" font-size="11.5">Interactive Brokers</text>
+
+  <!-- Rust data service -->
+  <rect class="card accentstroke" x="268" y="158" width="190" height="120" rx="10" stroke-width="2.5"/>
+  <text class="label" x="363" y="194" text-anchor="middle" font-size="15">Rust Data Service</text>
+  <text class="muted" x="363" y="218" text-anchor="middle" font-size="11.5">clean · cache · stream</text>
+  <text class="ok" x="363" y="242" text-anchor="middle" font-size="10.5" font-weight="700" letter-spacing="1">ACTIVE + WARM SPARE</text>
+
+  <!-- Redis -->
+  <rect class="card boxstroke" x="512" y="168" width="150" height="100" rx="10" stroke-width="1.8"/>
+  <text class="label" x="587" y="208" text-anchor="middle" font-size="15">Redis</text>
+  <text class="muted" x="587" y="230" text-anchor="middle" font-size="11.5">live price cache</text>
+
+  <!-- Dashboard -->
+  <rect class="card boxstroke" x="716" y="112" width="160" height="64" rx="10" stroke-width="1.8"/>
+  <text class="label" x="796" y="140" text-anchor="middle" font-size="15">Dashboard</text>
+  <text class="muted" x="796" y="160" text-anchor="middle" font-size="11.5">React · what I see</text>
+
+  <!-- Controllers -->
+  <rect class="card boxstroke" x="716" y="208" width="160" height="64" rx="10" stroke-width="1.8"/>
+  <text class="label" x="796" y="236" text-anchor="middle" font-size="15">Controllers</text>
+  <text class="muted" x="796" y="256" text-anchor="middle" font-size="11.5">paper + live</text>
+
+  <!-- PostgreSQL base -->
+  <rect class="card boxstroke" x="268" y="328" width="394" height="62" rx="10" stroke-width="1.8"/>
+  <text class="label" x="465" y="355" text-anchor="middle" font-size="15">PostgreSQL</text>
+  <text class="muted" x="465" y="376" text-anchor="middle" font-size="11.5">stores everything: prices, backtests, trades, live state</text>
+
+  <!-- Broker orders -->
+  <rect class="card boxstroke" x="716" y="328" width="160" height="62" rx="10" stroke-width="1.8"/>
+  <text class="label" x="796" y="355" text-anchor="middle" font-size="14">Interactive Brokers</text>
+  <text class="accent" x="796" y="376" text-anchor="middle" font-size="10.5" font-weight="700" letter-spacing="1">ORDERS OUT</text>
+
+  <!-- accent flows -->
+  <line x1="214" y1="218" x2="262" y2="218" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+  <line x1="458" y1="218" x2="506" y2="218" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+  <line x1="662" y1="200" x2="710" y2="148" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+  <line x1="662" y1="234" x2="710" y2="238" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+  <line x1="796" y1="272" x2="796" y2="322" class="accentstroke" stroke-width="2.2" marker-end="url(#arrow)"/>
+  <text class="muted" x="806" y="304" font-size="10">orders</text>
+
+  <!-- grey storage links -->
+  <line x1="363" y1="278" x2="363" y2="326" class="trailstroke" stroke-width="1.3"/>
+  <text class="muted" x="372" y="306" font-size="9.5">history</text>
+  <line x1="716" y1="258" x2="664" y2="346" class="trailstroke" stroke-width="1.3"/>
+  <text class="muted" x="668" y="304" text-anchor="end" font-size="9.5">trades · state</text>
+
+  <text x="450" y="438" text-anchor="middle" font-size="14"><tspan class="muted">Two languages, one broker, one database. </tspan><tspan class="accent" font-weight="700" dx="6">everything else hangs off that.</tspan></text>
+</svg>
