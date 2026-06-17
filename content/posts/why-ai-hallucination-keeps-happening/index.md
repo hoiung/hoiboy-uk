@@ -100,6 +100,8 @@ And that is the real takeaway here. Managing that context window is one of the b
 
 So far I have been talking about the problems with short term memory. I have not said much about long term memory for AI, and the honest truth is there isn't a worthwhile solution for it yet. There was an attempt at it called LLM Wiki, which I wrote about in [one of my own posts](/posts/llm-wiki-debate/). I don't think it is a good approach, though. It creates more problems than it solves. Others have tried to build on top of it, and Google recently put out something along similar lines. I still reckon we are a long way off solving long term memory properly, but we will get there eventually, at the pace AI is moving.
 
+Failing ideas are stepping stones to better ideas. I may be critical at times, but I do respect the idea trying to solve a big problem.
+
 ## What I actually do about it
 
 Like I said, I lean on a harness, something that wraps all of this in guardrails, governance, and a fair bit more, so the AI has less room to wander off. I have written about why that matters in [why every subject matter expert needs their own AI harness](/posts/every-sme-needs-their-own-harness/).
