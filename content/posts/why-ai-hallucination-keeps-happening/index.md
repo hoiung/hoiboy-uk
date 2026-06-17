@@ -29,7 +29,7 @@ Most of this comes down to memory. So how does memory work?
 
 I understand memory in a logical way, not the way a brain surgeon would. I spent years studying it, mostly trying to improve my own, and nearly everything I read came back to the same two things. Short term memory and long term memory. Why we need both. And why we also need to forget.
 
-Forgetting is not a weakness. It is a feature. Your brain has to forget, otherwise it overloads, and it ends up clinging to stuff that does nothing for your survival. (I will skip the part about how movement and emotion help you hold on to memories. Let us keep it simple. Short term and long term.)
+Forgetting is not a weakness. It is a feature. Your brain has to forget, otherwise it overloads, and it ends up clinging to stuff that does nothing for your survival. (I will skip the part about how physical movement/sensory and emotion help you hold on to memories. Let us keep it simple. Short term and long term.)
 
 During the day you are constantly storing short term memory, and pulling it straight back out again. You read three things off a shopping list, walk down the aisle, and grab them, otherwise you would forget the moment you looked up. At the same time you are pulling from long term memory without even noticing. You know which bank card you want to pay with, and you know how to pay, because money matters that much in this lovely capitalist world. You glance at a price and think, bloody hell, that has gone up since last month. We are ridiculously efficient. We remember a lot. We also forget a lot. In fact we have to forget far more than we keep.
 
