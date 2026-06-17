@@ -91,4 +91,8 @@ Sometimes the boring tool that works is the right tool.
 
 Bear sat through the whole rant without saying much. He's probably still giggling inside knowing exactly who wrote the LLM Wiki gist while I was sat there tearing it apart without a clue. We'll probably need another dinner to settle this one.
 
+At the end of the day, I do respect Andrej Karpathy and all he's done. We don't know unless we try and he's trying :)
+
+I like people who try, what can I say? I love tryers!
+
 <!-- iamhoiend -->
