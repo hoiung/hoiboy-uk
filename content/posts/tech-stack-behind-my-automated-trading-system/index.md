@@ -17,7 +17,7 @@ If you want the story of how it all came together (the crashes, the rebuilds, th
 
 ## AI tooling
 
-[Claude Code](https://www.anthropic.com/claude-code) by Anthropic, on the Max 20x subscription (it gets difficult with anything less than the 20x usage limit). The whole thing is 100% coded with it, across Haiku, Sonnet, Opus, and a slight whiff of Fable before it got taken down.
+[Claude Code](https://www.anthropic.com/claude-code) by Anthropic, on the Max 20x subscription (it gets difficult with anything less than the 20x usage limit). The whole thing is 100% coded with AI, across Haiku, Sonnet, Opus, and a slight whiff of Fable before it got taken down.
 
 One thing up front. I don't hand-write the code, but I can read it well enough since it's not new to me. I am the technical architect. I created the design intent for every component and module, made the calls on what goes where and how the internal parts of the system work together, and directed Claude Code to build it under my own [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness). I'm the product owner and the engineering lead. The AI is the one typing, the one I'm swearing at and fighting most of the time to keep it focused on the goal at hand.
 
