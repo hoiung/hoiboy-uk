@@ -31,7 +31,7 @@ Two languages do the work. [Python](https://www.python.org) for crunching the nu
 
 {{< zoom-image src="language-split.svg" alt="The stack split by language: Python owns the dashboard, backtester and controllers; Rust owns the data services and redundancy managers; PostgreSQL and Redis are the shared storage and messaging layer." title="Who's written in what" >}}
 
-Truth be told, I'd have happily built the whole thing in Rust, or in Go (it was close to a coin flip between the two), if the libraries had been there. What kept the rest on Python was exactly that: the serious data-science tools just aren't mature in Rust or Go yet. So the number-crunching stays where the libraries already live.
+Truth be told, I'd have happily built the whole thing in Rust, or in Go (it was close to a coin flip between the two), if the libraries had been there. What kept the rest on Python was exactly that: the serious data-science tools just aren't mature in Rust or Go yet. So the number-crunching stays where the libraries already live. I just don't like reinventing the wheel and reuse what's readily available to build on top.
 
 ## PostgreSQL: the memory
 
