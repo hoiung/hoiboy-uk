@@ -100,7 +100,7 @@ It barely breaks a sweat most of the time. The live trading side is tiny, the Ru
 
 A couple of things that never show up on screen but matter more than the flashy parts.
 
-**Logging.** Both sides keep detailed logs ([loguru](https://github.com/Delgan/loguru) on the Python side, [tracing](https://github.com/tokio-rs/tracing) on the Rust side), so when something misbehaves I can see exactly what happened and when, instead of guessing.
+**Logging.** Both sides keep detailed logs ([loguru](https://github.com/Delgan/loguru) on the Python side, [tracing](https://github.com/tokio-rs/tracing) on the Rust side), so when something misbehaves I can see exactly what happened and when, instead of guessing. If you want the longer version of why I care about this, there's a whole post on it: [Observability, You Can't Fix What You Can't See](/posts/observability-and-logging-for-production-systems/).
 
 **A watchdog.** Every process has to check in on a timer. If one goes quiet, the operating system restarts it on its own. Between that and the redundancy managers, the system is built to pick itself back up without me sitting there watching it.
 
