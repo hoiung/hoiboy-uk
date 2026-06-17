@@ -61,9 +61,13 @@ The market-data side runs on Rust, because it has to be fast and it cannot fall 
 
 **Data Services.** These own every connection to the outside world: the price feeds and the broker's live quote stream. They pull prices in, sanity-check them (one bad tick can do real damage), cache them, and push them out to everything else as a live stream. Two copies run at all times, one active and one warm spare.
 
-**Redundancy Managers.** These are the babysitters. Their whole job is to make sure exactly one Data Service is live at any moment, keep checking it's healthy, and if it stumbles, flip over to the spare without me lifting a finger. Belt and braces. They come as a pair too, so even the babysitter is babysat by its counterpart, and the two swap the leader and warm-standby roles between them if they need to.
+**Redundancy Managers.** These are the babysitters. Their main job is to make sure exactly one Data Service is live at any moment, keep checking it's healthy, and if it stumbles, flip over to the spare without me lifting a finger. Belt and braces. They come as a pair too, so even the babysitter is babysat by its counterpart, and the two swap the leader and warm-standby roles between them if they need to.
 
 {{< zoom-image src="redundancy.svg" alt="The redundancy setup: a pair of redundancy managers watch a pair of data services, keep exactly one active and one on warm standby, and automatically fail over to the spare if the active one becomes unhealthy." title="Staying up when things break" >}}
+
+They don't only watch the data services, though. The dashboard and the two controllers (paper and live) each run as a single copy, with no twin sitting in reserve. So for those three the babysitting is simpler: the managers keep a pulse on each one, and the moment it goes quiet, they restart it on the spot. No flip, no spare, just back on its feet. The live one gets the closest eye of the lot, on a shorter leash than the rest, because it's the one playing with real money.
+
+{{< zoom-image src="singletons.svg" alt="The redundancy managers also keep the single-copy processes alive: the same manager pair health-checks the dashboard, the paper controller and the live controller every thirty seconds, and restarts any one of them in place if it goes quiet; there is no spare to fail over to, so the live controller is watched the closest." title="The ones without a spare" >}}
 
 ## The broker: Interactive Brokers
 
