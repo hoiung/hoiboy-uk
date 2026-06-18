@@ -1,13 +1,24 @@
 {{- /*
-  Read Next: up to 3 newest posts that share at least one category with the
-  current post, excluding the post itself. Renders nothing when the post has
-  no categories or no siblings share one. Called from _default/single.html.
+  Read Next: up to 5 posts that share at least one category with the current
+  post, excluding the post itself:
+    - the newest 3 in the shared category (promote recent work), plus
+    - the post immediately AFTER this one chronologically (if it exists), plus
+    - the post immediately BEFORE this one chronologically (if it exists).
+  Deduped and sorted newest-first. Renders nothing when the post has no
+  categories or no siblings share one. Called from _default/single.html.
 */ -}}
 {{- $self := . -}}
 {{- with .Params.categories -}}
-  {{- $related := where (where site.RegularPages "Section" "posts") "Params.categories" "intersect" . -}}
-  {{- $related = where $related "Permalink" "!=" $self.Permalink -}}
-  {{- with first 3 $related.ByDate.Reverse -}}
+  {{- $siblings := where (where site.RegularPages "Section" "posts") "Params.categories" "intersect" . -}}
+  {{- $siblings = where $siblings "Permalink" "!=" $self.Permalink -}}
+  {{- $picks := first 3 (sort $siblings "Date" "desc") -}}
+  {{- with first 1 (sort (where $siblings "Date" "gt" $self.Date) "Date" "asc") -}}
+    {{- $picks = $picks | union . -}}
+  {{- end -}}
+  {{- with first 1 (sort (where $siblings "Date" "lt" $self.Date) "Date" "desc") -}}
+    {{- $picks = $picks | union . -}}
+  {{- end -}}
+  {{- with first 5 (sort $picks "Date" "desc") -}}
   <nav class="read-next" aria-label="Read next">
     <h2>Read Next</h2>
     <ul class="read-next-list">

@@ -138,10 +138,11 @@ strong, b { font-weight: 550; }
 .photo-gallery a:hover img { opacity: 0.85; }
 @media (max-width: 600px) { .photo-gallery { columns: 1; } }
 
-.read-next { margin: 2.5rem 0 0; padding-top: 1.25rem; border-top: 1px solid var(--rule); }
-.read-next h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-muted); font-weight: 550; margin: 0 0 0.6rem; }
+.read-next { margin: 2.5rem 0 0; padding-top: 1.4rem; border-top: 2px solid var(--accent); }
+.read-next h2 { font-size: 1.15rem; font-weight: 650; color: var(--fg); margin: 0 0 0.75rem; }
 .read-next-list { list-style: none; padding: 0; margin: 0; }
-.read-next-list li { margin: 0.3rem 0; }
+.read-next-list li { position: relative; padding-left: 1.7rem; margin: 0.55rem 0; font-size: 1.05rem; line-height: 1.4; }
+.read-next-list li::before { content: "➵"; position: absolute; left: 0; top: 0; color: var(--accent); font-weight: 700; }
 .read-next-list a { color: var(--fg); text-decoration: none; }
 .read-next-list a:hover { color: var(--accent); }
 
