@@ -142,7 +142,7 @@ strong, b { font-weight: 550; }
 .read-next h2 { font-size: 1.15rem; font-weight: 650; color: var(--fg); margin: 0 0 0.75rem; }
 .read-next-list { list-style: none; padding: 0; margin: 0; }
 .read-next-list li { position: relative; padding-left: 1.7rem; margin: 0.55rem 0; font-size: 1.05rem; line-height: 1.4; }
-.read-next-list li::before { content: "➵"; position: absolute; left: 0; top: 0; color: var(--accent); font-weight: 700; }
+.read-next-list li::before { content: "➵" / ""; position: absolute; left: 0; top: 0; color: var(--accent); font-weight: 700; }
 .read-next-list a { color: var(--fg); text-decoration: none; }
 .read-next-list a:hover { color: var(--accent); }
 
