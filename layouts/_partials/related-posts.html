@@ -1,0 +1,20 @@
+{{- /*
+  Read Next: up to 3 newest posts that share at least one category with the
+  current post, excluding the post itself. Renders nothing when the post has
+  no categories or no siblings share one. Called from _default/single.html.
+*/ -}}
+{{- $self := . -}}
+{{- with .Params.categories -}}
+  {{- $related := where (where site.RegularPages "Section" "posts") "Params.categories" "intersect" . -}}
+  {{- $related = where $related "Permalink" "!=" $self.Permalink -}}
+  {{- with first 3 $related.ByDate.Reverse -}}
+  <nav class="read-next" aria-label="Read next">
+    <h2>Read Next</h2>
+    <ul class="read-next-list">
+      {{- range . }}
+      <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+      {{- end }}
+    </ul>
+  </nav>
+  {{- end -}}
+{{- end -}}

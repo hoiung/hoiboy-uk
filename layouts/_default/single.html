@@ -18,6 +18,7 @@
     <img class="post-hero" src="{{ .RelPermalink }}" alt="{{ $.Title }}">
   {{- end -}}
   {{ .Content }}
+  {{ partial "related-posts.html" . }}
   {{- if not (or (.HasShortcode "gallery") (.HasShortcode "zoom-image")) -}}
   {{- $images := .Resources.ByType "image" -}}
   {{- $rest := slice -}}
