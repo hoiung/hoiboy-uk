@@ -62,6 +62,17 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+      - id: check-emdash-newposts
+        name: Em-dash guard for new posts (CI parity; date-gated, scans content/posts)
+        # CI parity for the ci.yml "Em-dash guard (new posts, date-gated)" step via the
+        # SAME script. The zero-tolerance grep above excludes content/posts (legacy
+        # voice-sacred posts legitimately use em dashes), so NEW posts (date >= the
+        # 2026-04-07 cutoff) are guarded here instead, exempting <!-- iamhoi-skip -->
+        # blocks. Runs argless like CI (scans all new posts). blog-priv#38 parity sweep.
+        entry: python3 scripts/check_emdash_newposts.py
+        language: system
+        pass_filenames: false
+        always_run: true
       - id: check-wordcount
         name: Word-count ceiling (>3000 fails, skip legacy)
         entry: python3 scripts/check_wordcount.py
