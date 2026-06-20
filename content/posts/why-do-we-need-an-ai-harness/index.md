@@ -38,13 +38,17 @@ Most AI projects you see in "here is how I built X in one weekend" videos are de
 
 ## The radar cone
 
-Picture a radar. Without a harness, the LLM sprays its outputs in a wide cone. Your target is a tiny dot in the distance. A few outputs land near it. Most miss. Some miss wildly.
+Picture a radar firing outputs at a target. Your target is a tiny dot in the distance.
 
-A harness takes that wide cone and narrows it. Same AI. Same target. A lot fewer wild misses. You still need luck, just a lot less of it. As I put it in a previous post: *AI is probabilistic. The harness shifts the odds. It does not erase them.*
+A raw LLM has no cone at all. It sprays everywhere. A few outputs land near the target. Most miss. Some miss wildly.
 
-Not magic. Just better odds.
+Here is the bit to get straight. Every AI tool already comes with a general harness baked in. Claude, ChatGPT, Perplexity, the agents, they all ship with one by default. That is what turns the spray into a cone in the first place. Same AI, same target, a lot fewer wild misses. Better. But it is built for everyone, so it still scatters around a generic target, not yours, and the lab keeps changing it without asking you.
 
-![AI output variance: wide cone without a harness, narrow cone with one](cone.webp)
+The part you actually bolt on is your own custom harness, stacked on top of theirs. That is when the cone tightens right onto your bullseye. You still need a little luck, just a lot less of it. And because that top layer is yours, it holds steady even when the lab ships an update underneath. As I put it in a previous post: *AI is probabilistic. The harness shifts the odds. It does not erase them.*
+
+{{< zoom-image src="cones.svg" alt="Three panels showing the same probabilistic LLM with more deterministic harness stacked on top. A raw LLM sprays outputs at random with no cone. The general harness that ships with every AI tool gives a wide cone that lands a few on target, with most falling short and several scattering outside. Your own custom harness, bolted on top, tightens the cone onto your bullseye, with only the odd stray outside." title="Raw LLM, the general harness it ships with, then your own on top" >}}
+
+Notice the odd dot still landing outside the cone, even with a harness. Not magic. Just better odds.
 
 ## What a harness actually does
 

@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="900" height="560" role="img" aria-label="Three panels showing the same probabilistic LLM with increasing deterministic harness. A raw LLM sprays outputs at random with no cone. The general harness that ships by default with every AI tool gives a wide cone that lands a few on target, most falling short, several scattering outside. Your own custom harness stacked on top tightens the cone onto your bullseye with only a couple of strays. A harness shifts the odds, it does not erase them." font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #fafafa; }
+      .label { fill: #1a1a1a; font-weight: 600; }
+      .muted { fill: #6a6a6a; }
+      .mutedstroke { stroke: #6a6a6a; }
+      .boxstroke { stroke: #9aa0a6; }
+      .accent { fill: #c0533a; }
+      .accentstroke { stroke: #c0533a; }
+      .ok { fill: #7aa869; }
+      .watermark { fill: #87ceeb; }
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #141414; }
+        .label { fill: #f0f0f0; }
+        .muted { fill: #a6a6a6; }
+        .mutedstroke { stroke: #a6a6a6; }
+        .boxstroke { stroke: #6a6a6a; }
+      }
+    </style>
+  </defs>
+
+  <!-- own background so text contrast holds on any host -->
+  <rect x="0" y="0" width="900" height="560" class="bg"/>
+
+  <!-- brand watermark (top-right) -->
+  <text x="885" y="24" text-anchor="end" class="watermark" font-size="11" font-weight="400" letter-spacing="0.5">hoiboy.uk</text>
+
+  <!-- title + subtitle -->
+  <text x="450" y="32" text-anchor="middle" class="accent" font-size="14" font-weight="700" letter-spacing="2.5">THREE LEVELS OF CONTROL</text>
+  <text x="450" y="54" text-anchor="middle" class="muted" font-size="12" letter-spacing="0.5">the same probabilistic LLM, with more deterministic harness stacked on top</text>
+
+  <!-- panel dividers -->
+  <line x1="300" y1="72" x2="300" y2="500" class="boxstroke" stroke-width="1" stroke-opacity="0.5"/>
+  <line x1="600" y1="72" x2="600" y2="500" class="boxstroke" stroke-width="1" stroke-opacity="0.5"/>
+
+  <!-- ===================== PANEL 1: LLM (no cone, pure scatter) ===================== -->
+  <text x="155" y="90" text-anchor="middle" class="label" font-size="13">LLM</text>
+  <text x="155" y="106" text-anchor="middle" class="muted" font-size="10">the raw model</text>
+  <!-- target reticle -->
+  <circle cx="155" cy="150" r="25" fill="none" class="boxstroke" stroke-width="1.4"/>
+  <circle cx="155" cy="150" r="16" fill="none" class="boxstroke" stroke-width="1.4"/>
+  <circle cx="155" cy="150" r="8" fill="none" class="boxstroke" stroke-width="1.4"/>
+  <circle cx="155" cy="150" r="3" class="accent"/>
+  <!-- output dots: scattered at random across the whole panel, almost none on target -->
+  <g class="muted">
+    <circle cx="70" cy="180" r="4"/><circle cx="118" cy="220" r="4"/><circle cx="50" cy="265" r="4"/>
+    <circle cx="96" cy="315" r="4"/><circle cx="210" cy="180" r="4"/><circle cx="248" cy="145" r="4"/>
+    <circle cx="182" cy="260" r="4"/><circle cx="60" cy="360" r="4"/><circle cx="132" cy="392" r="4"/>
+    <circle cx="226" cy="315" r="4"/><circle cx="162" cy="340" r="4"/><circle cx="92" cy="430" r="4"/>
+    <circle cx="206" cy="430" r="4"/><circle cx="250" cy="378" r="4"/><circle cx="112" cy="265" r="4"/>
+    <circle cx="176" cy="210" r="4"/><circle cx="238" cy="245" r="4"/><circle cx="56" cy="140" r="4"/>
+  </g>
+  <!-- status tag -->
+  <text x="155" y="528" text-anchor="middle" class="muted" font-size="12.5" font-weight="600">crazy random</text>
+
+  <!-- ===================== PANEL 2: LLM + GENERAL HARNESS (the default that ships with the AI) ===================== -->
+  <text x="450" y="90" text-anchor="middle" class="label" font-size="12.5">LLM + GENERAL HARNESS</text>
+  <text x="450" y="106" text-anchor="middle" class="muted" font-size="10">what every AI ships with</text>
+  <!-- cone (wide); mouth reaches the top of the target and covers it completely -->
+  <path d="M450,480 L378,124 L522,124 Z" class="muted" fill-opacity="0.12"/>
+  <path d="M450,480 L378,124 M450,480 L522,124" fill="none" class="mutedstroke" stroke-width="1.4" stroke-opacity="0.7"/>
+  <!-- target reticle (drawn over the cone) -->
+  <circle cx="450" cy="150" r="25" fill="none" class="boxstroke" stroke-width="1.4"/>
+  <circle cx="450" cy="150" r="16" fill="none" class="boxstroke" stroke-width="1.4"/>
+  <circle cx="450" cy="150" r="8" fill="none" class="boxstroke" stroke-width="1.4"/>
+  <circle cx="450" cy="150" r="3" class="accent"/>
+  <!-- a few outputs land on target (green hits), most fall short of it -->
+  <g class="ok">
+    <circle cx="449" cy="149" r="4"/><circle cx="443" cy="145" r="4"/><circle cx="457" cy="153" r="4"/>
+    <circle cx="452" cy="142" r="4"/><circle cx="440" cy="155" r="4"/>
+  </g>
+  <g class="muted">
+    <circle cx="430" cy="190" r="4"/><circle cx="472" cy="196" r="4"/><circle cx="450" cy="215" r="4"/>
+    <circle cx="420" cy="235" r="4"/><circle cx="478" cy="240" r="4"/><circle cx="444" cy="262" r="4"/>
+    <circle cx="466" cy="285" r="4"/><circle cx="432" cy="305" r="4"/><circle cx="458" cy="325" r="4"/>
+    <circle cx="448" cy="350" r="4"/><circle cx="414" cy="210" r="4"/>
+  </g>
+  <!-- the strays, outside the cone (a general harness lets several slip through) -->
+  <g class="muted">
+    <circle cx="530" cy="210" r="4"/><circle cx="370" cy="245" r="4"/><circle cx="548" cy="300" r="4"/>
+    <circle cx="360" cy="330" r="4"/><circle cx="522" cy="365" r="4"/>
+  </g>
+  <!-- apex -->
+  <circle cx="450" cy="480" r="4" class="muted"/>
+  <!-- status tag -->
+  <text x="450" y="528" text-anchor="middle" class="muted" font-size="12.5" font-weight="600">closer, still not yours</text>
+
+  <!-- ===================== PANEL 3: + CUSTOM HARNESS (the one you build on top) ===================== -->
+  <text x="745" y="90" text-anchor="middle" class="label" font-size="12.5">LLM + GENERAL HARNESS</text>
+  <text x="745" y="106" text-anchor="middle" class="accent" font-size="12.5" font-weight="700">+ CUSTOM HARNESS</text>
+  <!-- cone (narrow, accent); mouth reaches the top of the target and covers it completely, slightly wider than the target (harnesses are not perfect) -->
+  <path d="M745,480 L715,124 L775,124 Z" class="accent" fill-opacity="0.16"/>
+  <path d="M745,480 L715,124 M745,480 L775,124" fill="none" class="accentstroke" stroke-width="2"/>
+  <!-- target reticle (drawn over the cone) -->
+  <circle cx="745" cy="150" r="25" fill="none" class="boxstroke" stroke-width="1.4"/>
+  <circle cx="745" cy="150" r="16" fill="none" class="boxstroke" stroke-width="1.4"/>
+  <circle cx="745" cy="150" r="8" fill="none" class="boxstroke" stroke-width="1.4"/>
+  <circle cx="745" cy="150" r="3" class="accent"/>
+  <!-- output dots: tight cluster ON the bullseye = green hits -->
+  <g class="ok">
+    <circle cx="745" cy="150" r="4"/><circle cx="738" cy="142" r="4"/><circle cx="752" cy="146" r="4"/>
+    <circle cx="745" cy="134" r="4"/><circle cx="740" cy="160" r="4"/><circle cx="753" cy="157" r="4"/>
+    <circle cx="733" cy="151" r="4"/><circle cx="758" cy="149" r="4"/><circle cx="746" cy="167" r="4"/>
+    <circle cx="736" cy="162" r="4"/><circle cx="755" cy="164" r="4"/><circle cx="745" cy="132" r="4"/>
+    <circle cx="729" cy="150" r="4"/><circle cx="761" cy="151" r="4"/>
+    <circle cx="745" cy="244" r="4"/><circle cx="744" cy="334" r="4"/>
+  </g>
+  <!-- the strays, outside the cone (even your own harness cannot erase the randomness) -->
+  <g class="muted">
+    <circle cx="700" cy="210" r="4"/><circle cx="792" cy="258" r="4"/>
+  </g>
+  <!-- apex -->
+  <circle cx="745" cy="480" r="4.5" class="accent"/>
+  <!-- status tag -->
+  <text x="745" y="528" text-anchor="middle" class="accent" font-size="12.5" font-weight="700">on your bullseye</text>
+
+  <!-- verdict line -->
+  <text x="450" y="552" text-anchor="middle" font-size="14">
+    <tspan class="muted">Raw LLM, pure noise. The harness it ships with, closer.</tspan><tspan class="accent" font-weight="700" dx="6">Add your own on top, on target.</tspan>
+  </text>
+</svg>
