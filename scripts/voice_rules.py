@@ -109,6 +109,9 @@ KEEP_LIST: tuple[str, ...] = (
     "domain expert", "domain experts",
     "subject matter expert", "subject matter experts",
     "SME", "SMEs",
+    # resonate* — operator confirmed natural vocabulary 2026-06-20 ("resonate is a
+    # word I use, it should be whitelisted"). Same meta-rule "if I type it, I use it".
+    "resonate", "resonates", "resonating",
 )
 
 # ---------------------------------------------------------------------------
@@ -143,7 +146,6 @@ BANNED_WORDS: tuple[str, ...] = (
     "commendable",
     "noteworthy",
     "invaluable",
-    "resonate", "resonates", "resonating",
     "crucial",
     # Multi-word AI/CV-speak phrases
     "low-hanging fruit",
