@@ -56,7 +56,7 @@ And those dots still landing outside the cones, even with a harness? A general o
 
 Here is the bit that surprised even me. When someone [reverse-engineered Claude Code and counted the lines](https://arxiv.org/abs/2604.14228), under 2% of it was the actual AI decision logic. The other 98% was plain deterministic plumbing. (A third-party line count of the code, mind you, not Anthropic's own number, and not a measure of where the cleverness lives. The intelligence is still all in the model. But the sheer bulk of the machine bolted around it? Deterministic.)
 
-The probabilistic part is the magic. The deterministic part is most of the actual engineering. You need both, working together. A hybrid approach is what makes it reliable.
+The probabilistic part is the magic. The deterministic part is most of the actual engineering. You need both, working together. A hybrid approach is what makes it reliable-ish.
 
 AI is probabilistic. The harness shifts the odds. It does not erase them. If you want the long version, start here: [Why Do We Need an AI Harness?](/posts/why-do-we-need-an-ai-harness/)
 
