@@ -40,7 +40,7 @@ AI-generated images and illustrations? I am completely cool with those (honestly
 
 Take photos. The ones I really enjoy looking at, I love that little nostalgic feeling of an unfiltered photo. Something real, something a bit raw. Not brushed up with filters, not AI-refined into something glossier than the moment actually was. I just enjoy the honest version more. Always have.
 
-And here is one that caught me off guard. I am a big music listener. Always have been. And these days I have somehow become quite attuned to spotting AI-generated songs! Genuinely. Once your ear clocks it, you start hearing it everywhere, same song structure and that immaculate vocal pitch. What a world we are living in.
+And here is one that caught me off guard. I am a big music listener. For the last 25 years anyway. And these days I have somehow become quite attuned to spotting AI-generated songs! Genuinely. Once your ear clocks it, you start hearing it everywhere, same song structure and that immaculate vocal pitch. What a world we are living in.
 
 So that leaves me with one quiet little question. And I really do not have the answer to it.
 
