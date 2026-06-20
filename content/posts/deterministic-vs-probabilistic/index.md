@@ -12,7 +12,7 @@ description: "Same input, same answer, or a different one every time? It is the 
 
 Two words. They explain almost everything that feels strange about AI.
 
-Deterministic, and probabilistic. Boring words, I know. Stick with me, because the gap between the two is the whole game, and almost nobody spells it out before throwing you in.
+Deterministic, and probabilistic. More boring words for you to learn about AI, I know. Stick with me since these are very important and because the gap between the two is the whole game, and almost nobody spells it out before throwing you in.
 
 ## Deterministic: same input, same output
 
