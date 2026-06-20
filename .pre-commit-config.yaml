@@ -51,6 +51,17 @@ repos:
         language: system
         pass_filenames: true
         files: ^content/posts/.*\.md$
+      - id: check-emdash-zero-tolerance
+        name: Em-dash zero-tolerance guard (CI parity; blocks docs/ em dashes locally)
+        # CI parity for the ci.yml "Em-dash voice guard (zero tolerance)" step via the
+        # SAME script. Closes the gap where an em dash in unmarked docs prose (e.g.
+        # docs/research/11_VOICE_PROFILE.md) passed the marker-driven voice guard,
+        # failed CI only after the push, and silently froze Deploy (blog-priv#38).
+        # Whole-tree (pass_filenames: false + always_run) to mirror CI exactly.
+        entry: bash scripts/check_emdash_zero_tolerance.sh
+        language: system
+        pass_filenames: false
+        always_run: true
       - id: check-wordcount
         name: Word-count ceiling (>3000 fails, skip legacy)
         entry: python3 scripts/check_wordcount.py

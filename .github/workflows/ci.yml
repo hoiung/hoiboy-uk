@@ -98,21 +98,13 @@ jobs:
             hugo-${{ runner.os }}-
 
       - name: Em-dash voice guard (zero tolerance)
-        # content/posts/ excluded: voice-sacred legacy import (pre-AI corpus, issue #2)
-        # content/private/tools/meet-recorder/ excluded: tool page must reproduce the
-        # consulting-ops verbal-consent script verbatim (em-dashes in source, AC 1.4
-        # diffs DOM textContent against runbook line 30). consulting-ops#8.
-        # scripts/ excluded: source code, not voice prose. Voice rules apply only
-        # inside <!-- iamhoi --> markers per SST3 marker-driven model (dotfiles b874c01).
-        run: |
-          set -e
-          MATCHES=$(grep -rln --exclude-dir=posts --exclude-dir=meet-recorder $'\u2014' content layouts assets config docs README.md 2>/dev/null || true)
-          if [ -n "$MATCHES" ]; then
-            echo "::error::Em dashes found in tracked files (voice rule):"
-            echo "$MATCHES"
-            grep -rn --exclude-dir=posts --exclude-dir=meet-recorder $'\u2014' content layouts assets config docs README.md 2>/dev/null || true
-            exit 1
-          fi
+        # Single source: scripts/check_emdash_zero_tolerance.sh \u2014 the SAME script the
+        # check-emdash-zero-tolerance pre-commit hook runs, so local commit gate + CI
+        # can never drift. Before the script existed this grep was CI-only, so an em
+        # dash in unmarked docs prose passed pre-commit and silently froze the deploy
+        # (blog-priv#38). Scope rationale (posts / meet-recorder / scripts exclusions)
+        # lives in that script.
+        run: bash scripts/check_emdash_zero_tolerance.sh
 
       - name: Setup Python
         uses: actions/setup-python@v6
