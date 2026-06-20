@@ -112,6 +112,21 @@ KEEP_LIST: tuple[str, ...] = (
     # resonate* — operator confirmed natural vocabulary 2026-06-20 ("resonate is a
     # word I use, it should be whitelisted"). Same meta-rule "if I type it, I use it".
     "resonate", "resonates", "resonating",
+    # 2026-06-20 bulk sweep — operator scanned the full BANNED_WORDS list and flagged
+    # these as natural vocabulary ("I use ... lol"). Same meta-rule "if I type it, I use it".
+    "iterate", "iterating", "iterated",
+    "crucial",
+    "invaluable",
+    "low-hanging fruit",
+    "touch base", "touching base", "touched base",
+    "circle back", "circling back", "circled back",
+    "moving forward",
+    "at scale",
+    "gain traction", "gaining traction", "gained traction",
+    "reach out", "reaching out", "reached out",
+    "results-driven",
+    "detail-oriented",
+    "proven track record",
 )
 
 # ---------------------------------------------------------------------------
@@ -140,24 +155,11 @@ BANNED_WORDS: tuple[str, ...] = (
     "testament",
     "holistic", "holistically",
     "ecosystem",
-    "iterate", "iterating",
     "unpack", "unpacking",
     "utilize", "utilizing", "utilized", "utilise", "utilising", "utilised",
     "commendable",
     "noteworthy",
-    "invaluable",
-    "crucial",
     # Multi-word AI/CV-speak phrases
-    "low-hanging fruit",
-    "touch base",
-    "circle back",
-    "moving forward",
-    "at scale",
-    "gain traction",
-    "reach out",
-    "results-driven",
-    "detail-oriented",
-    "proven track record",
     "strategic initiative",
     "drive measurable impact",
     "committed to excellence",
