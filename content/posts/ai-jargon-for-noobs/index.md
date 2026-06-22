@@ -105,7 +105,7 @@ The unglamorous half that decides whether any of this is safe to ship.
 
 ## So, the honest tally
 
-Count them up. Of the twenty-six, I'm in maybe half every single day (tokens, context, prompting, agents, guardrails, grounding, the lot), plus the two the lists skip that I basically live in (sub-agents and the harness). A good chunk I have never once touched (fine-tuning, LoRA, vectors, the deep-ML end). And a few I just need to know exist.
+Count them up. Of the twenty-six, I'm in maybe half every single day (tokens, context, prompting, agents, guardrails, grounding, the lot), plus the two the lists skip that I basically live in (sub-agents and the harness). Only a few I have never once touched (fine-tuning, LoRA, vectors, the deep-ML end). And a couple I just need to know exist.
 
 That's the real picture of working with AI, by the way. It is not magic. It's a dice machine with a ton of plumbing bolted round it, and the skill is almost all in the plumbing. The AI was the builder, not the brain.
 
