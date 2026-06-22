@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" width="900" height="480" role="img" aria-label="An agent loop of four boxes, Plan then Act by calling a tool then Observe the result then Decide, with curved arrows cycling back to Plan. The whole loop sits inside a dashed terracotta box labelled the harness, the guardrails it can't break. An arrow exits the harness to a green safe result. On its own an agent wanders; inside a harness it stays on the job." font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #fafafa; }
+      .card { fill: #ffffff; }
+      .label { fill: #1a1a1a; font-weight: 600; }
+      .muted { fill: #6a6a6a; }
+      .boxstroke { stroke: #9aa0a6; }
+      .accent { fill: #c0533a; }
+      .accentstroke { stroke: #c0533a; }
+      .ok { fill: #7aa869; }
+      .okstroke { stroke: #7aa869; }
+      .watermark { fill: #87ceeb; }
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #141414; }
+        .card { fill: #1f1f1f; }
+        .label { fill: #f0f0f0; }
+        .muted { fill: #a6a6a6; }
+        .boxstroke { stroke: #6a6a6a; }
+      }
+    </style>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 Z" class="accent"/></marker>
+    <marker id="ahg" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 Z" class="ok"/></marker>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="480" class="bg"/>
+  <text x="885" y="24" text-anchor="end" class="watermark" font-size="11" font-weight="400" letter-spacing="0.5">hoiboy.uk</text>
+
+  <text x="450" y="34" text-anchor="middle" class="accent" font-size="14" font-weight="700" letter-spacing="2.5">AGENTS, AND THE HARNESS AROUND THEM</text>
+  <text x="450" y="56" text-anchor="middle" class="muted" font-size="12" letter-spacing="0.5">an agent loops on its own; the harness is the fence</text>
+
+  <!-- harness boundary -->
+  <rect x="120" y="92" width="540" height="338" rx="16" fill="none" class="accentstroke" stroke-width="1.8" stroke-dasharray="7 5"/>
+  <text x="140" y="116" class="accent" font-size="11.5" font-weight="700" letter-spacing="1.2">THE HARNESS, the guardrails it can't break</text>
+
+  <!-- loop boxes (clockwise: Plan -> Act -> Observe -> Decide -> Plan), centred ~ (390,275) -->
+  <rect x="330" y="150" width="120" height="46" rx="10" class="card"/><rect x="330" y="150" width="120" height="46" rx="10" fill="none" class="boxstroke"/><text x="390" y="178" text-anchor="middle" class="label" font-size="13">Plan</text>
+  <rect x="500" y="252" width="130" height="46" rx="10" class="card"/><rect x="500" y="252" width="130" height="46" rx="10" fill="none" class="boxstroke"/><text x="565" y="274" text-anchor="middle" class="label" font-size="12.5">Act</text><text x="565" y="289" text-anchor="middle" class="muted" font-size="10">call a tool</text>
+  <rect x="325" y="352" width="130" height="46" rx="10" class="card"/><rect x="325" y="352" width="130" height="46" rx="10" fill="none" class="boxstroke"/><text x="390" y="374" text-anchor="middle" class="label" font-size="12.5">Observe</text><text x="390" y="389" text-anchor="middle" class="muted" font-size="10">read the result</text>
+  <rect x="150" y="252" width="120" height="46" rx="10" class="card"/><rect x="150" y="252" width="120" height="46" rx="10" fill="none" class="boxstroke"/><text x="210" y="280" text-anchor="middle" class="label" font-size="13">Decide</text>
+
+  <!-- curved loop arrows -->
+  <path d="M452,182 Q520,205 540,250" fill="none" class="accentstroke" stroke-width="2" marker-end="url(#ah)"/>
+  <path d="M540,300 Q500,348 458,366" fill="none" class="accentstroke" stroke-width="2" marker-end="url(#ah)"/>
+  <path d="M323,372 Q260,350 246,300" fill="none" class="accentstroke" stroke-width="2" marker-end="url(#ah)"/>
+  <path d="M228,250 Q260,200 328,180" fill="none" class="accentstroke" stroke-width="2" marker-end="url(#ah)"/>
+
+  <!-- exit to safe result -->
+  <path d="M660,275 L726,275" fill="none" class="okstroke" stroke-width="2" marker-end="url(#ahg)"/>
+  <rect x="730" y="252" width="150" height="46" rx="10" class="card"/><rect x="730" y="252" width="150" height="46" rx="10" fill="none" class="okstroke" stroke-width="2"/><text x="805" y="280" text-anchor="middle" class="ok" font-size="13" font-weight="700">safe result</text>
+
+  <text x="450" y="462" text-anchor="middle" font-size="13.5"><tspan class="accent" font-weight="700">On its own, an agent wanders.</tspan><tspan class="muted" dx="6">Inside a harness, it stays on the job.</tspan></text>
+</svg>

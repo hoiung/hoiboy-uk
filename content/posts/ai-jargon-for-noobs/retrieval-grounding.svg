@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" width="900" height="430" role="img" aria-label="Two paths. Top path: a question goes straight to an AI answering from memory and produces a confident but wrong output in terracotta. Bottom path: the same question first reads the real file as grounding, feeds it to the AI, and produces an output backed by the source in green. A note says Hoi's version uses plain markdown files, not a vector database." font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #fafafa; }
+      .card { fill: #ffffff; }
+      .label { fill: #1a1a1a; font-weight: 600; }
+      .muted { fill: #6a6a6a; }
+      .boxstroke { stroke: #9aa0a6; }
+      .accent { fill: #c0533a; }
+      .accentstroke { stroke: #c0533a; }
+      .ok { fill: #7aa869; }
+      .okstroke { stroke: #7aa869; }
+      .watermark { fill: #87ceeb; }
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #141414; }
+        .card { fill: #1f1f1f; }
+        .label { fill: #f0f0f0; }
+        .muted { fill: #a6a6a6; }
+        .boxstroke { stroke: #6a6a6a; }
+      }
+    </style>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 Z" class="accent"/></marker>
+    <marker id="ahg" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 Z" class="ok"/></marker>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="430" class="bg"/>
+  <text x="885" y="24" text-anchor="end" class="watermark" font-size="11" font-weight="400" letter-spacing="0.5">hoiboy.uk</text>
+
+  <text x="450" y="34" text-anchor="middle" class="accent" font-size="14" font-weight="700" letter-spacing="2.5">GROUNDING vs HALLUCINATION</text>
+  <text x="450" y="56" text-anchor="middle" class="muted" font-size="12" letter-spacing="0.5">read the real source first, or let the model freestyle</text>
+
+  <!-- LANE A: no source -->
+  <text x="80" y="104" class="muted" font-size="11" font-weight="600" letter-spacing="1.5">NO SOURCE</text>
+  <rect x="80" y="116" width="120" height="46" rx="10" class="card"/><rect x="80" y="116" width="120" height="46" rx="10" fill="none" class="boxstroke"/><text x="140" y="144" text-anchor="middle" class="label" font-size="12.5">your question</text>
+  <path d="M200,139 L262,139" fill="none" class="accentstroke" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="266" y="116" width="150" height="46" rx="10" class="card"/><rect x="266" y="116" width="150" height="46" rx="10" fill="none" class="boxstroke"/><text x="341" y="138" text-anchor="middle" class="label" font-size="12.5">AI from memory</text><text x="341" y="153" text-anchor="middle" class="muted" font-size="10">no source checked</text>
+  <path d="M416,139 L478,139" fill="none" class="accentstroke" stroke-width="2" marker-end="url(#ah)"/>
+  <rect x="482" y="116" width="210" height="46" rx="10" class="card"/><rect x="482" y="116" width="210" height="46" rx="10" fill="none" class="accentstroke" stroke-width="2"/><text x="587" y="138" text-anchor="middle" class="accent" font-size="12.5" font-weight="700">confident, but WRONG</text><text x="587" y="153" text-anchor="middle" class="muted" font-size="10">a hallucination</text>
+
+  <!-- LANE B: grounded -->
+  <text x="80" y="248" class="muted" font-size="11" font-weight="600" letter-spacing="1.5">WITH GROUNDING</text>
+  <rect x="80" y="260" width="120" height="46" rx="10" class="card"/><rect x="80" y="260" width="120" height="46" rx="10" fill="none" class="boxstroke"/><text x="140" y="288" text-anchor="middle" class="label" font-size="12.5">your question</text>
+  <path d="M200,283 L246,283" fill="none" class="okstroke" stroke-width="2" marker-end="url(#ahg)"/>
+  <rect x="250" y="260" width="150" height="46" rx="10" class="card"/><rect x="250" y="260" width="150" height="46" rx="10" fill="none" class="okstroke" stroke-width="2"/><text x="325" y="282" text-anchor="middle" class="ok" font-size="12.5" font-weight="700">read the real file</text><text x="325" y="297" text-anchor="middle" class="muted" font-size="10">the source decides</text>
+  <path d="M400,283 L442,283" fill="none" class="okstroke" stroke-width="2" marker-end="url(#ahg)"/>
+  <rect x="446" y="260" width="110" height="46" rx="10" class="card"/><rect x="446" y="260" width="110" height="46" rx="10" fill="none" class="boxstroke"/><text x="501" y="288" text-anchor="middle" class="label" font-size="12.5">AI answers</text>
+  <path d="M556,283 L598,283" fill="none" class="okstroke" stroke-width="2" marker-end="url(#ahg)"/>
+  <rect x="602" y="260" width="200" height="46" rx="10" class="card"/><rect x="602" y="260" width="200" height="46" rx="10" fill="none" class="okstroke" stroke-width="2"/><text x="702" y="282" text-anchor="middle" class="ok" font-size="12.5" font-weight="700">backed by the source</text><text x="702" y="297" text-anchor="middle" class="muted" font-size="10">grounded</text>
+
+  <text x="450" y="354" text-anchor="middle" class="muted" font-size="11">(my version points the AI at plain markdown files, not a fancy vector database)</text>
+  <text x="450" y="396" text-anchor="middle" font-size="13.5"><tspan class="accent" font-weight="700">Hallucination isn't fixed by a smarter model.</tspan><tspan class="muted" dx="6">It's fixed by reading the right source first.</tspan></text>
+</svg>
