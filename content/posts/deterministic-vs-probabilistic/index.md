@@ -24,11 +24,13 @@ This is what we have built software on for decades. You write a test, you assert
 
 A probabilistic system rolls a dice. Same question in, and you can get a different answer out, run after run.
 
-An LLM (the thing under ChatGPT, Claude, all of them) is probabilistic right down to the bone. For every word it writes, it ranks the candidates with a probability attached, then it picks one off a weighted dice. Fresh roll, every token. So the same prompt hands you a different answer tomorrow. Sometimes slightly. Sometimes wildly. (I wrote a whole post on the dice machine, so I will spare you the rerun here.)
+An LLM (the thing under Claude, ChatGPT, all of them) is probabilistic right down to the bone. For every word it writes, it ranks the candidates with a probability attached, then it picks one off a weighted dice. Fresh roll, every token. So the same prompt hands you a different answer tomorrow. Sometimes slightly. Sometimes wildly. (I wrote a whole post on the dice machine, so I will spare you the rerun here.)
 
 And no, setting `temperature = 0` does not save you. People swear it does. It doesn't... the odds get sharper, the dice are still dice. A raw LLM cannot be made 100% deterministic. That is simply how the thing works.
 
 ## So why does the distinction matter?
+
+Now, the examples up top were dumbed right down to make the point land. Push more complex inputs through and the gap starts to show. Ask an AI for `2 + 2` and you will still get `4` every time. But that is likely because it quietly reaches for a tool, runs the sum through a calculator, then joins that clean answer back up with its own probabilistic words.
 
 Because the moment you know which half you are holding, you know how to build with it.
 
