@@ -30,8 +30,6 @@ And no, setting `temperature = 0` does not save you. People swear it does. It do
 
 ## So why does the distinction matter?
 
-Now, the examples up top were dumbed right down to make the point land. Push more complex inputs through and the gap starts to show. Ask an AI for `2 + 2` and you will still get `4` every time. But that is likely because it quietly reaches for a tool, runs the sum through a calculator, then joins that clean answer back up with its own probabilistic words.
-
 Because the moment you know which half you are holding, you know how to build with it.
 
 Here is the part people skip. On its own, a raw probabilistic LLM is so unpredictable that it is barely usable for anything serious. No control, no guarantees, nothing you would trust with real money or real users. It dazzles you on Monday and embarrasses you on Tuesday. Brilliant and useless at the same time. Without a deterministic layer built around it, the value drops to roughly nothing.
@@ -39,6 +37,8 @@ Here is the part people skip. On its own, a raw probabilistic LLM is so unpredic
 So the fix is a hybrid. You take the probabilistic LLM and wrap it in deterministic scaffolding. Schemas that refuse junk. Validators that retry when the model lies about its own output. Tool calls where a number has to be a real number. The boring same-every-time stuff, wrapped around the clever never-the-same stuff. One half gives you the control. The other gives you the magic. You need both, working together. Take either away and the whole thing falls over.
 
 That wrapper has a name. The harness.
+
+Now, the examples up top were dumbed right down to make the point land. Push more complex inputs through and the gap starts to show. Ask an AI for `2 + 2` and you will still get `4` every time. But that is likely because it quietly reaches for a tool, runs the sum through a calculator, then joins that clean answer back up with its own probabilistic words.
 
 ## Same model, three levels of control
 
