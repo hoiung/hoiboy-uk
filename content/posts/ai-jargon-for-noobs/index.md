@@ -95,7 +95,7 @@ This is the heavy end, retraining the actual brain. I don't go here. I govern at
 
 The unglamorous half that decides whether any of this is safe to ship.
 
-**Evals.** Tests that check the AI behaves, instead of judging it by vibes. Mine run on three tiers, and for a laugh I even built a bake-off that pits ten different setups against the exact same job to see which one wins (the review side of it: [Shipping the Ralph Review Trio](/posts/shipping-ralph-review-trio/)).
+**Evals.** Tests that check the AI behaves, instead of judging it by vibes. Mine run on [three tiers](/posts/3-types-of-tests-for-production-systems/), and for a laugh I even built a bake-off that pits ten different setups against the exact same job to see which one wins (the review side of it: [Shipping the Ralph Review Trio](/posts/shipping-ralph-review-trio/)).
 
 **Guardrails.** The rules the AI is not allowed to break. Schemas that refuse junk, validators that catch it lying about its own work, hard stops. This is the heart of a [harness](https://github.com/hoiung/sst3-ai-harness), and it's most of why mine exists.
 
@@ -109,6 +109,6 @@ Count them up. Of the twenty-six, I'm in maybe half every single day (tokens, co
 
 That's the real picture of working with AI, by the way. It is not magic. It's a dice machine with a ton of plumbing bolted round it, and the skill is almost all in the plumbing. The AI was the builder, not the brain.
 
-Got one wrong? Good. Tell me. That's how the iceberg gets smaller.
+Got one wrong? Good. Tell me. Got more than one wrong? I beg you, please tell me! That's how the iceberg gets smaller.
 
 <!-- iamhoiend -->
