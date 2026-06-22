@@ -2,7 +2,8 @@
 title: "AI Jargon for Noobs"
 date: 2026-06-22T12:00:00+01:00
 draft: false
-slug: ai-jargon-for-noobs
+slug: ai-jargon-for-newbies
+aliases: ["/posts/ai-jargon-for-noobs/"]
 categories: [tech-ai]
 tags: [ai, llm, jargon, beginners, harness]
 description: "26 AI buzzwords (plus two the lists skip) in plain English, with an honest note on which I actually use and which I have never touched. Shoot me down."
