@@ -1,16 +1,26 @@
 #!/usr/bin/env python3
-"""Guard: every content SVG must declare root width AND height attributes.
+"""Guard: every content SVG must be house-compliant — root width/height + brand chrome.
 
-Why: the zoom-image shortcode opens an SVG in a glightbox lightbox. An SVG with
-a viewBox but no intrinsic width/height has no natural size for the lightbox to
-scale from, so it renders TINY when clicked (the bug fixed on 2026-06-04 for the
-3-types-of-tests + observability posts; the consulting harness-layers.svg always
-worked because it carried width/height). The inline display stays responsive via
-CSS (.zoom-image img { width:100% }); the attributes only fix the lightbox.
+Three structural assertions on each SVG under content/ (exit 1 + offender list on any miss):
 
-Checks the ROOT <svg> opening tag of each SVG under content/. Fails (exit 1) and
-lists offenders if width or height is missing. Wired into scripts/pre-publish.sh
-and runnable standalone:  python3 scripts/check_svg_dimensions.py [path ...]
+1. Root width AND height. The zoom-image shortcode opens an SVG in a glightbox lightbox; an
+   SVG with a viewBox but no intrinsic width/height has no natural size to scale from, so it
+   renders TINY when clicked (the bug fixed 2026-06-04 for the 3-types-of-tests + observability
+   posts; harness-layers.svg always worked because it carried width/height). Inline display
+   stays responsive via CSS; the attributes only fix the lightbox.
+
+2. Brand watermark present — the `hoiboy.uk` signature in the logo's sky blue `#87ceeb`. Every
+   illustration carries it (07_DESIGN_TOKENS.md "Brand watermark"), so a missing one is drift.
+
+3. Canonical class block — when the SVG uses a dual-mode `<style>` block it MUST declare the
+   core house classes `.bg` + `.accent` + `.watermark` (07_DESIGN_TOKENS.md "Canonical class
+   block"), so a diagram cannot ship with ad-hoc off-brand class names. The fixed-dark inline
+   form (no `<style>`, e.g. harness-layers.svg) is exempt from (3) — it carries the watermark
+   inline (`fill="#87ceeb"`), which (2) already checks.
+
+This is a STRUCTURAL gate (presence/shape), not a visual one — always also RENDER and eyeball
+(overlap, arrow endpoints, watermark corner) per ../dotfiles/docs/guides/diagram-annotation-qa.md.
+Wired into scripts/pre-publish.sh; runnable standalone: python3 scripts/check_svg_dimensions.py [path ...]
 """
 import sys
 import re
@@ -20,27 +30,50 @@ ROOT_SVG = re.compile(r"<svg\b[^>]*>", re.IGNORECASE)
 HAS_W = re.compile(r"\bwidth\s*=", re.IGNORECASE)
 HAS_H = re.compile(r"\bheight\s*=", re.IGNORECASE)
 
+# Brand watermark: the hoiboy.uk text in the signature sky blue. Both must be present.
+WATERMARK_TEXT = re.compile(r"hoiboy\.uk", re.IGNORECASE)
+SKY_BLUE = re.compile(r"#87ceeb", re.IGNORECASE)
+
+# Canonical class block (only enforced when a <style> block exists — the dual-mode form).
+HAS_STYLE = re.compile(r"<style\b", re.IGNORECASE)
+CORE_CLASSES = {
+    ".bg": re.compile(r"\.bg\s*\{", re.IGNORECASE),
+    ".accent": re.compile(r"\.accent\s*\{", re.IGNORECASE),
+    ".watermark": re.compile(r"\.watermark\s*\{", re.IGNORECASE),
+}
+
 
 def offenders(paths):
+    """Return [(path, [reason, ...]), ...] for every SVG that fails any house assertion."""
     bad = []
     for p in paths:
         try:
             text = open(p, encoding="utf-8").read()
         except OSError as e:
-            bad.append((p, f"unreadable: {e}"))
+            bad.append((p, [f"unreadable: {e}"]))
             continue
+        reasons = []
         m = ROOT_SVG.search(text)
         if not m:
-            bad.append((p, "no <svg> root element found"))
+            bad.append((p, ["no <svg> root element found"]))
             continue
         tag = m.group(0)
-        missing = []
-        if not HAS_W.search(tag):
-            missing.append("width")
-        if not HAS_H.search(tag):
-            missing.append("height")
+        # (1) root width/height
+        missing = [d for d, rx in (("width", HAS_W), ("height", HAS_H)) if not rx.search(tag)]
         if missing:
-            bad.append((p, f"root <svg> missing {', '.join(missing)} (glightbox renders it tiny)"))
+            reasons.append(f"root <svg> missing {', '.join(missing)} (glightbox renders it tiny)")
+        # (2) brand watermark
+        if not (WATERMARK_TEXT.search(text) and SKY_BLUE.search(text)):
+            reasons.append("missing brand watermark (hoiboy.uk text in #87ceeb, top-right)")
+        # (3) canonical class block — only for the dual-mode <style> form
+        if HAS_STYLE.search(text):
+            absent = [name for name, rx in CORE_CLASSES.items() if not rx.search(text)]
+            if absent:
+                reasons.append(
+                    f"<style> block missing canonical class(es) {', '.join(absent)} "
+                    "(use the 07_DESIGN_TOKENS.md canonical class block, not ad-hoc names)")
+        if reasons:
+            bad.append((p, reasons))
     return bad
 
 
@@ -61,13 +94,17 @@ def main(argv):
 
     bad = offenders(sorted(set(paths)))
     if bad:
-        print("FAIL: SVG(s) missing root width/height (will render tiny in the lightbox):")
-        for p, why in bad:
-            print(f"  - {p}: {why}")
-        print("Fix: add width/height to the root <svg> matching the viewBox, e.g. "
-              'viewBox="0 0 880 360" width="880" height="360".')
+        print("FAIL: SVG(s) not house-compliant (dimensions / watermark / canonical class block):")
+        for p, reasons in bad:
+            for why in reasons:
+                print(f"  - {p}: {why}")
+        print("Fix: see ../dotfiles/docs/guides/diagram-annotation-qa.md (reproduce-list) + "
+              "07_DESIGN_TOKENS.md. Root e.g. viewBox=\"0 0 880 360\" width=\"880\" height=\"360\"; "
+              "watermark <text class=\"watermark\" ...>hoiboy.uk</text> (#87ceeb); copy the "
+              "canonical <style> class block into <defs>.")
         return 1
-    print(f"PASS: all {len(paths)} content SVG(s) declare root width + height")
+    print(f"PASS: all {len(paths)} content SVG(s) house-compliant "
+          "(root width/height + #87ceeb watermark + canonical class block)")
     return 0
 
 
