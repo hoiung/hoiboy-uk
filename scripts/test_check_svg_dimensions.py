@@ -79,3 +79,33 @@ def test_multiple_violations_collected(tmp_path):
             '<rect width="400" height="200"/></svg>')
     res = offenders([_write(tmp_path, "both.svg", both)])
     assert res and len(res[0][1]) >= 2
+
+
+def test_grouped_selectors_pass(tmp_path):
+    # #534 Stage-5: a legitimately house-compliant SVG that GROUPS the canonical selectors
+    # (`.bg, .card { }`) must PASS — the old `\.bg\s*\{` regex false-rejected grouping.
+    grouped = (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" width="400" height="200">'
+        '<defs><style>'
+        '.bg, .card { fill: #fafafa; } .label, .muted { fill: #1a1a1a; }'
+        '.accent, .ok { fill: #c0533a; } .watermark, .trailstroke { fill: #87ceeb; }'
+        '</style></defs>'
+        '<rect class="bg" width="400" height="200"/>'
+        '<text x="385" y="18" text-anchor="end" class="watermark">hoiboy.uk</text>'
+        '</svg>'
+    )
+    assert offenders([_write(tmp_path, "grouped.svg", grouped)]) == []
+
+
+def test_near_miss_class_names_still_fail(tmp_path):
+    # The grouped-tolerant regex must NOT over-match: `.bgfoo`/`.accentstroke`/`.watermarked`
+    # are DIFFERENT classes, so an SVG declaring only those (not the exact core trio) FAILS.
+    near = (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" width="400" height="200">'
+        '<defs><style>.bgfoo { fill: #fafafa; } .accentstroke { stroke: #c0533a; }'
+        '.watermarked { fill: #87ceeb; }</style></defs>'
+        '<text x="385" y="18" text-anchor="end" fill="#87ceeb">hoiboy.uk</text>'
+        '<rect class="bgfoo" width="400" height="200"/></svg>'
+    )
+    res = offenders([_write(tmp_path, "near.svg", near)])
+    assert res and any("canonical class" in r for r in res[0][1])
