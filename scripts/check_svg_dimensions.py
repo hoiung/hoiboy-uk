@@ -35,11 +35,14 @@ WATERMARK_TEXT = re.compile(r"hoiboy\.uk", re.IGNORECASE)
 SKY_BLUE = re.compile(r"#87ceeb", re.IGNORECASE)
 
 # Canonical class block (only enforced when a <style> block exists — the dual-mode form).
+# Each class must be DECLARED as a selector. `(?![\w-])` keeps `.bg` from matching a different
+# class (`.bgfoo`, `.bg-x`); `\s*[,{]` accepts BOTH a one-per-line rule (`.bg {`) AND a grouped
+# selector (`.bg, .panel {` / `.panel, .bg {`) — the old `\.bg\s*\{` false-rejected grouping.
 HAS_STYLE = re.compile(r"<style\b", re.IGNORECASE)
 CORE_CLASSES = {
-    ".bg": re.compile(r"\.bg\s*\{", re.IGNORECASE),
-    ".accent": re.compile(r"\.accent\s*\{", re.IGNORECASE),
-    ".watermark": re.compile(r"\.watermark\s*\{", re.IGNORECASE),
+    ".bg": re.compile(r"\.bg(?![\w-])\s*[,{]", re.IGNORECASE),
+    ".accent": re.compile(r"\.accent(?![\w-])\s*[,{]", re.IGNORECASE),
+    ".watermark": re.compile(r"\.watermark(?![\w-])\s*[,{]", re.IGNORECASE),
 }
 
 
