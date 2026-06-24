@@ -17,6 +17,8 @@ There was one topic that slipped my mind, because my slide deck went back and fo
 
 I built this presentation with entry level AI users in mind. People who are less technical in IT, but who are still subject matter experts or domain experts in their own right. It is also useful for anyone starting out in their professional life and still learning. Basically, it covers the ground for people who have probably only used AI as far as the web chat prompts. Really, this is about the pathway to AI adoption, the proper way.
 
+The way I see it, web chat prompting is like the gateway drug into AI. Easily accessible, available and cheap. But what I'm trying to get people onto is the harder stuff (Claude Code and proper workflow automation by building your own custom harnesses). Call me the AI dealer and put me on quick dial. You know who to call when you need your AI fix lol.
+
 A few people also asked why I am not selling the trading platform I have built. My answer was simple. I am not here to give you a fish, I am here to show you how to fish, and how to make your own tools to do so. And that tool is knowing how to use AI properly, not the sloppy way.
 
 I'm making my presentation slider available here, along with my keynotes. It's a very lite introduction, just short bullet points of my keynotes, not the details. That part was my vocal talk. I try to avoid scripted talks, and instead feel the crowd and their needs, filling in the gaps as necessary with my expertise and knowledge in Tech & AI and more. If you missed the talk, most of my knowledge can be found on this blogsite. And obviously I haven't put all of it into words yet, so if you find gaps, more blogs will come as I find the time to sit and write.
