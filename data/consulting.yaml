@@ -49,6 +49,13 @@ business:
   companies_house: "17211412"
   vat_number: null      # null until HMRC voluntary-VAT issuance lands; HOIBOY AI LTD not yet at £90k threshold, no paid clients yet (consulting-ops#10 AC 2.7 deferred per same logic that closed the prior VAT AC).
 
+# Automation Services offer (consulting-ops#19). Same discovery call as the harness
+# offer (one Cal.com event triages both), so calcom_booking reuses the live URL.
+# Read by: layouts/_shortcodes/consulting-cta.html (CTA href, via offer="automation_services")
+#          -> content/consulting/automation-services/index.md.
+automation_services:
+  calcom_booking: "https://cal.eu/hoiboyuk/discovery"
+
 harness_architect:
   # Live booking URL (replaced 2026-05-08 — Cal.com EU instance, event-type id 284432).
   # Pre-Worker (hoiboy-uk#28): bookings fire Cal.com's default emails; post-Worker:
