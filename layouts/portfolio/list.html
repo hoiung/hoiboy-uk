@@ -1,0 +1,20 @@
+{{- /* Portfolio section list (consulting-ops#19).
+       The default _default/list.html is cross-cut-filtered for content/posts/
+       by category and would emit "No posts yet" for this section, so the
+       Portfolio section sets `type: portfolio` in its _index.md to select
+       this template. Iterates the section's own child pages (one per client,
+       append-over-time) and links to each. */ -}}
+{{- define "main" -}}
+<h1>{{ .Title }}</h1>
+{{- with .Content }}<div>{{ . }}</div>{{- end -}}
+{{- $clients := .Pages -}}
+{{- if eq (len $clients) 0 -}}
+  <p class="empty-state">Portfolio coming soon.</p>
+{{- else -}}
+  <ul class="portfolio-list">
+  {{- range $clients.ByDate.Reverse -}}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ with .Description }}<p>{{ . }}</p>{{ end }}</li>
+  {{- end -}}
+  </ul>
+{{- end -}}
+{{- end -}}
