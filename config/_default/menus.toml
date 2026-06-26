@@ -17,6 +17,11 @@
   url = "/consulting/claude-code-harness-architect/"
   weight = 10
 
+[[consulting]]
+  name = "Automation Services"
+  url = "/consulting/automation-services/"
+  weight = 20
+
 [[categories]]
   name = "Tech & AI"
   url = "/tech-ai/"
