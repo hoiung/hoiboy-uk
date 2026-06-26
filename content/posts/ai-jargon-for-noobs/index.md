@@ -29,7 +29,7 @@ You don't need most of this to use AI well. But someone always asks, so here's t
 
 {{< zoom-image src="dice-temperature.svg" alt="A diagram of next-token prediction as a weighted dice. The phrase 'the cat sat on the' points to a list of candidate next words with probability bars: 'mat' 61 percent, 'sofa' 18 percent, 'floor' 9 percent, 'roof' 2 percent. A temperature dial sits beside it, low temperature sharpening the odds toward the top choice, high temperature flattening them so longer-shot words get picked." title="Every word is a weighted dice roll. Temperature is the knob." >}}
 
-**3. Temperature.** A knob for how wild those dice rolls get. Turn it low and it plays safe, turn it high and it gets creative (and risky). Everyone thinks temperature 0 makes it predictable. It doesn't. The odds get sharper, the dice are still dice. I don't touch this one. The tools I use hide it anyway.
+**3. Temperature.** A knob for how wild those dice rolls get. Turn it low and it plays safe, turn it high and it gets creative (and risky). Some think temperature 0 makes it predictable. It doesn't. The odds get sharper, the dice are still dice. I don't touch this one. The tools I use hide it anyway.
 
 **4. Context window.** The AI's short-term memory for one chat, measured in tokens. It used to be tiny, now it goes up to a million. Here's the bit people skip: stuffing it full makes the AI dumber, not smarter. I compact mine well before it's full, around the point things start to drift. Overfill it and you invite [hallucinations](/posts/why-ai-hallucination-keeps-happening/).
 

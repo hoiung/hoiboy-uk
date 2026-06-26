@@ -108,7 +108,7 @@ Failing ideas are stepping stones to better ideas. I may be critical at times, b
 
 Memory is most of it, but there is one more thing underneath, nothing to do with the window. The AI does not really think out an answer. It guesses the next chunk of text, then the next, then the next, rolling a weighted dice every time. Most rolls land on the sensible word. Now and then it lands on a long shot that just happens to read well, said in the same calm voice as the truth. That is a hallucination at its rawest.
 
-Temperature is the knob for how wild those rolls get. And no, nothing to do with room temperature or a hot laptop (the word throws everyone). Low, it plays safe and picks the obvious word. High, it gets creative, a polite way of saying it makes more up. People assume setting temperature 0 makes it predictable. It doesn't. The odds just get sharper. The dice are still dice.
+Temperature is the knob for how wild those rolls get. And no, nothing to do with room temperature or a hot laptop (the word throws everyone). Low, it plays safe and picks the obvious word. High, it gets creative, a polite way of saying it makes more up. Some assume setting temperature 0 makes it predictable. It doesn't. The odds just get sharper. The dice are still dice.
 
 I don't touch this one. The tools I use hide it anyway. Grounding does the real job: point it at the real source so the dice has less room to invent. The source decides, not the model.
 
