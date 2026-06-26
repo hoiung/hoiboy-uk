@@ -45,6 +45,8 @@ About six months ago, context memory sat at around 200K. This year we crossed in
 
 The way I see it, context memory is working memory, a form of short term memory for AI. The capacity of one chat window. (Most people call it the context window. I call it context memory because it fits the way I have been describing all this, but it is the same thing.) It is the short term workspace where your prompts, and the AI's input and output from the user's or agent's end, all live while you work inside that one chat.
 
+{{< zoom-image src="tokens-context.svg" alt="A diagram of the context window as a container. Text on the left is chopped into token chunks that flow into a tall window labelled 'context window, up to 1 million tokens'. The window has a fill bar that shades smoothly from a green healthy zone at the bottom, through an 'accuracy drifts more often as it fills' middle, up to a red 'overfilled, hallucination risk' zone near the top, with a marker around the middle showing where Hoi tries to compact, well before full." title="Tokens fill the context window. Full is not better." >}}
+
 But how much is that, really? 200K, 1M, those numbers mean nothing to a normal person. So let me put it in context (no pun intended).
 
 It is measured in tokens, which are just chunks of text, not quite the same as words. A rough rule of thumb is that 1,000 tokens works out to about 750 words. An average novel runs somewhere between 70,000 and 100,000 words. So 200K tokens is about two novels' worth. And 1M is somewhere around eight to ten novels.
@@ -101,6 +103,16 @@ And that is the real takeaway here. Managing that context window is one of the b
 So far I have been talking about the problems with short term memory. I have not said much about long term memory for AI, and the honest truth is there isn't a worthwhile solution for it yet. There was an attempt at it called LLM Wiki, which I wrote about in [one of my own posts](/posts/llm-wiki-debate/). I don't think it is a good approach, though. It creates more problems than it solves. Others have tried to build on top of it, and Google recently put out something along similar lines. I still reckon we are a long way off solving long term memory properly, but we will get there eventually, at the pace AI is moving.
 
 Failing ideas are stepping stones to better ideas. I may be critical at times, but I do respect the idea trying to solve a big problem.
+
+## And it is rolling a dice the whole time
+
+Memory is most of it, but there is one more thing underneath, and it has nothing to do with the window. The AI does not really think out an answer. It guesses the next chunk of text, then the next, then the next, rolling a weighted dice every time. Most rolls land on the sensible word. Now and then it lands on a long shot that just happens to read well, said in the same calm voice as the truth. That is a hallucination at its rawest.
+
+Temperature is the knob for how wild those rolls get. And no, nothing to do with room temperature or a hot laptop (the word throws everyone). Low, it plays safe and picks the obvious word. High, it gets creative, a polite way of saying it makes more up. People assume temperature zero makes it predictable. It doesn't. The odds just get sharper. The dice are still dice.
+
+I don't touch this one. The tools I use hide it anyway. Grounding does the real job: point it at the real source so the dice has less room to invent. The source decides, not the model.
+
+{{< zoom-image src="dice-temperature.svg" alt="A diagram of next-token prediction as a weighted dice. The phrase 'the cat sat on the' points to a list of candidate next words with probability bars: 'mat' 61 percent, 'sofa' 18 percent, 'floor' 9 percent, 'roof' 2 percent. A temperature dial sits beside it, low temperature sharpening the odds toward the top choice, high temperature flattening them so longer-shot words get picked." title="Every word is a weighted dice roll. Temperature is the knob." >}}
 
 ## What I actually do about it
 
