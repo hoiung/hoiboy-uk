@@ -22,6 +22,11 @@
   url = "/consulting/automation-services/"
   weight = 20
 
+[[consulting]]
+  name = "Portfolio"
+  url = "/consulting/portfolio/"
+  weight = 30
+
 [[categories]]
   name = "Tech & AI"
   url = "/tech-ai/"
