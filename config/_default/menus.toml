@@ -7,6 +7,11 @@
   weight = 10
 
 [[consulting]]
+  name = "Work with Hoi"
+  url = "/consulting/work-with-hoi/"
+  weight = 5
+
+[[consulting]]
   # Two .cta-line spans force 2-line wrap on desktop sidebar via CSS
   # display:block at min-width:769px; on mobile they stay inline and the
   # literal space between them is the word separator. Span approach avoids
@@ -18,9 +23,19 @@
   weight = 10
 
 [[consulting]]
-  name = "Automation Services"
+  name = "Business Automation Services"
   url = "/consulting/automation-services/"
   weight = 20
+
+[[consulting]]
+  name = "AI Adoption Training"
+  url = "/consulting/ai-adoption-training/"
+  weight = 22
+
+[[consulting]]
+  name = "Pricing & Billing"
+  url = "/consulting/pricing-billing/"
+  weight = 25
 
 [[consulting]]
   name = "Portfolio"
