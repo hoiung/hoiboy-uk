@@ -12,6 +12,8 @@ Sessions can be 1:1 or group. It can be a single-day session to get a team movin
 
 This is the middle path between the other two services. With a harness or an automation, I build the thing for you. Here, I get your people genuinely capable themselves, so the skill stays in the building after I leave.
 
+I like to work in smaller groups. I usually start with an initial run-through to share my AI knowledge and get everyone grounded, and then the practical part is exactly what it sounds like: literally sitting and working alongside your team for a week or two, however complex their roles are. I make myself available to each individual as they work through their actual day with AI, giving pointers and getting into the details of their setup and workflow. It is not quite a harness service, but it lets me guide them in that direction: building their own automation and workflow around their real work, rather than a workflow that gets pushed onto them.
+
 ## How it works
 
 I run training as a short sequence of phases. Each phase closes before the next opens, and you can pause at any handover.
@@ -26,11 +28,15 @@ I run training as a short sequence of phases. Each phase closes before the next 
 
 Teams who want to actually own the capability rather than outsource it. Owner-operators and team leads whose people are smart and busy, sense there is real value in AI, but have not had anyone show them how to use it properly on their own work. If you would rather I just built the thing for you, the harness or automation route fits better, and the discovery call is where we work out which one is right.
 
+## Why me
+
+Why am I qualified for this, you may ask? Hm, good question. Probably because I led and ran one of the most successful international Brazilian Zouk dance schools in Europe, and possibly the world, for over seven years, offering structured dance programmes. My business partner and I built it from the ground up, and pre-Covid we had a planning team of up to 15 people. Between us, we changed the lives of hundreds of dancers. Our reputation and reach went far enough that dancers would flock to us from all over the world, as far as Australia and Hawaii. So I know a little more than the average person about coaching, mentoring, and building educational programmes. Just a little. ;)
+
 ## Pricing summary
 
 Positioning only, no published number here, billed at the same internal rate as my other work. The fee model is mixed: discovery is free, the programme design is a paid scoping step, and delivery is then billed in the shape the design produces (a single-day session fee, a day-scoped drawdown for a multi-week programme, or a defined programme fee). You get the price off the design, before delivery starts. Full pricing and billing terms across all three services are on the [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/consulting/work-with-hoi" >}}).
 
-{{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}}
+{{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}} {{< smallprint >}}<-- (Please <strong>click</strong> if you are a fun-yet-serious decision maker or their trusted second, who has no time for bullshit and needs to get things done.){{< /smallprint >}}
 
 <!-- iamhoiend -->
 
