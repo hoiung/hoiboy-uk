@@ -21,9 +21,11 @@ I like to stay grounded in reality: what is possible, what is not, and what is g
 
 I have a wide breadth of experience, but what I know is still the tip of the iceberg in the real world. There is still much I do not know, and I am open to learning along the way; I will not pretend I know everything. In some areas I know a little more than the average person, which can sometimes seem like a lot. What I do have is a dynamic approach to whatever problem gets thrown at me. There really is no such thing as a problem, only solutions, which we explore and discover together. People perceive value for their business in different ways. Mine comes in many forms: it may not always relate directly to profit, but it can be efficiency, better communication and alignment across teams and departments, decoupled risk, a reorganised structure (or an organised mess, whichever you prefer), and a breath of fresh air from my Duracell-powered personality.
 
+With AI becoming such a big thing right now, many people think it will speed up your business growth and get things done faster. Speed is not the only measurement, and we need to be careful of that. Speed without precision, quality control, or other governance is a loose cannon that will backfire. I focus on quality when delivering AI services; speed is already a given by the nature of AI, so this combination produces the natural efficiency in the outcome. You will understand more later as you go through my services page with this approach. I am just flagging the danger that every other company seems to be seeking scale, scale, scale without even looking ahead, and now they are getting burned with a massive token bill and negative value to show for it.
+
 This page is also a deterrent for the kind of client I really do not want to work with. Yes, I am turning down business. I do not want to, and do not need to, serve everyone. This first page is here to save time for both of us: delivering what I say I do will not be the problem, so I would rather we check we have synergy first and filter each other in or out right here.
 
-Hi, I am Hoi. I have loved taking technology apart since I was about 7, and I never really stopped. I have spent roughly 20 years building my own businesses as a serial entrepreneur (design and print, import and export, hospitality, a dance school, and a handful of smaller ventures), running concurrently with about 12 years of a corporate career, including 8 years at Canonical (the company behind Ubuntu), where I spent my days translating infrastructure realities for non-engineering people. So I have sat at both ends of the table: the owner signing the cheques and the person delivering the work. Now I am back to my own gig, at my own pace, doing the part I love most, which is being on the ground helping you get real value out of AI.
+Hi, I am Hoi. Late introduction, now that I have gotten some of my bits above out of the way. I have loved taking technology apart since I was about 7, and I never really stopped. I have spent roughly 20 years building my own businesses as a serial entrepreneur (design and print, import and export, hospitality, a dance school, and a handful of smaller ventures), running concurrently with about 12 years of a corporate career, including 8 years at Canonical (the company behind Ubuntu), where I spent my days translating infrastructure realities for non-engineering people. So I have sat at both ends of the table: the owner signing the cheques and the person delivering the work. Now I am back to my own gig, at my own pace, doing the part I love most, which is being on the ground helping you get real value out of AI.
 
 Three ways I can help, depending on what you need:
 
@@ -54,18 +56,18 @@ Not sure which fits? That is exactly what the discovery call is for. You make AI
 
 <!-- iamhoi -->
 
-Setting expectations up front, the do and the don't side by side.
+Setting expectations up front, the do and the don't.
 
 - Programme management. I do not run your AI roadmap quarterly review.
 - C-level convincing. If your leadership is not already bought in, the discovery call (and, for a harness engagement, the company audit) will surface that and I will stop.
-- Frontier-lab work where the ultimate customer is another engineering team.
+- Deep AI research and engineering for other tech teams. If what I build would be used by another company's developers rather than by you and your business directly, that is not my lane.
 - Build your cloud infrastructure or your customer-facing agentic AI itself. I am not here to spin up your AWS, Azure, or Google Cloud, or to run your production agents for you. I CAN build harnesses or automation for the tech team that does that work (so they ship faster and stay consistent), but I will not do their work for them.
 - Anything past the ongoing support scope (the harness Monthly Maintenance Package, or the optional Support phase on a Business Automation engagement): dataset construction, uptime SLAs, running your production agents day to day. Those are different engagement shapes; I can refer.
 - Politics, emotion management, or "how is everyone feeling today" steering (not too much anyways!). I am here to deliver what I said I would deliver. What I will absolutely talk about: how we do this work together, how we problem-solve through whatever surfaces, and how we keep the engagement on track.
 
 <!-- iamhoiend -->
 
-## Who I work with
+## Who I work best with
 
 <!-- iamhoi -->
 
@@ -81,7 +83,7 @@ We both have to choose to work with each other and the right working environment
 
 I'm a firm believer that starting any relationship with the highest honesty and integrity, and continuing on that basis, is the right way. It'll keep us all sane :)
 
-If you are still with me, keep going. The rest of this page is not selling. It is information to set and manage your expectations: what we will do, why, how, and when.
+If you are still with me, keep going. The rest of this page and the other pages are not selling. It is information to set and manage your expectations: what we will do, why, how, and when.
 
 <!-- iamhoiend -->
 
@@ -97,7 +99,7 @@ Yes and I won't be changing this! I had businesses where I managed large teams (
 
 <!-- iamhoi -->
 
-Fair question. Because I could spin up a fancy "AI consultancy" website in a day (templated trust signals, stock photography, an "Our Process" section in a sans-serif font, you've seen it). Gold foil wrapping and the full sales pitch from a true salesman who talks big but isn't the one delivering it. You do not want any of that. You want someone genuinely good at the actual work, who delivers on time, at high quality, and goes above and beyond when the work surfaces something you did not expect.
+Fair question. Because I could spin up a fancy "AI consultancy" website in a few days (templated trust signals, stock photography, an "Our Process" section in a sans-serif font, you've seen it). Gold foil wrapping and the full sales pitch from a true salesman who talks big but isn't the one delivering it. You do not want any of that. You want someone genuinely good at the actual work, who delivers on time, at high quality, and goes above and beyond when the work surfaces something you did not expect.
 
 So that is what I am offering, on my actual blog where you can read who I am, what I am, what I am not, what I think about, what I build, what I cock up, what I learn. Reading me here is easier than reading a pitch deck someone else wrote for me.
 
@@ -107,7 +109,7 @@ No slide deck, no sales pitch on that call. I am more interested in listening to
 
 And while we are on this. The bigger problem with AI right now is people spending too much time making things LOOK nice that do not actually WORK. The pretty UI on top of the broken bit. The demo that landed on camera after take 17 (and the previous 16 takes you never saw). The "I built a full platform in 1 day with AI" that looks super fancy on a Youtube video (you've seen the genre).
 
-I am not running that play. It's like trying to wrap shit in gold, but end of the day it is still shit. That's basically what AI slop is and I'm sure you know all about it and trying to solve it since you're on my page reading this. I would rather spend my hours building the thing that works (the actual audit, build, training, and support work) because right now, this is what matters. Yes, I will automate the bits of my own marketing where automation makes genuine sense, and yes this page will keep getting a little nicer over time. But the value is not in covering up problems. The value is focussing on something that works reliably, now AND in 12 months, with the minimum maintenance burden possible. That is the actual problem to solve.
+I am not running that play. It's like trying to wrap shit in gold foil, but end of the day, if it smells like shit and tastes like shit, it is still shit no matter how you present it. That's basically what AI slop is and I'm sure you know all about it and trying to solve it since you're on my page reading this. I would rather spend my hours building the thing that works (the actual audit, mapping workflows and repetitive workloads, building it into automation, training, and support work) because right now, this is what matters. Yes, I will automate the bits of my own marketing where automation makes genuine sense, and yes this page will keep getting a little nicer over time. But the value is not in covering up problems. The value is focussing on something that works reliably, now AND in 12 months, with the minimum maintenance burden possible. That is the actual problem to solve.
 
 That is what I am building for you. Not a pretty thing. A working thing.
 
@@ -117,7 +119,7 @@ That is what I am building for you. Not a pretty thing. A working thing.
 
 <!-- iamhoi -->
 
-I built my own multi-agent harness and run it on every repo I own (linked on the blog post about it). Solo workflow, three-tier review loop, subagent swarm pattern, governance hooks. I dogfood it daily.
+I built my own multi-agent harness and run it on every repo I own (linked on the blog post about it). Solo workflow, three-tier review loop, subagent swarm pattern, governance hooks. I dogfood it daily. Below are just a few samples from the full list. You can also check out [my portfolio]({{< ref "/consulting/portfolio" >}}) to see what I am doing or have done for other clients.
 
 [Ralph Review Trio](https://hoiboy.uk/posts/shipping-ralph-review-trio/), one of the skills from that harness, ships as a public Claude Code plugin. It has caught real bugs in its own shipping and in the private codebases it reviews.
 
@@ -150,7 +152,7 @@ The honest pre-flight, whichever service fits. None of it is exotic.
 - A real problem worth solving. The discovery call is where we work out whether AI is even the right tool for it.
 - Willingness to let your team be part of it. Whether I am building for you, with you, or training them, the work lands better when the people who do the job are in the room.
 - For harness and automation work, somewhere for the work to live (a GitHub organisation, or willingness to set one up) and machines that can run the AI tool. For training, mostly just your team and their real work.
-- A Claude Max subscription per active user for ongoing AI use (your direct subscription with Anthropic), separate from anything I bill you for.
+- A Claude Max or Team subscription per active user for ongoing AI use (your direct subscription with Anthropic), separate from anything I bill you for.
 
 If any of these is a blocker, raise it on the discovery call and we work the path forward together.
 
