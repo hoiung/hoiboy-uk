@@ -15,11 +15,13 @@ I build it and deliver it, then hand it off. You get documented manuals and a cl
 
 Most leaders get automation wrong. They think automate and fire staff. Not when staff loyalty means something to a business owner. The point is to make your people's lives easier, take the toil off their plate, and free them up for the work only they can do. Same headcount, more output, less drained.
 
+After speaking with many of my business friends, not everyone on their team wants to learn or adopt AI. These are leaders who are not out to replace loyal staff with AI. Instead, they asked whether I could help automate certain tasks to make their team's lives easier. That is true leadership, and the answer is yes, I can. This is why I decided to offer this service.
+
 ## Same engine, different shape
 
 Same delivery and the same rate as my AI Managed Harness work. The difference is the shape: sometimes a simpler interface, sometimes fully automating routine work away so people rarely touch it, always with documented manuals and a clean handover so you own it and can drop it when you are done.
 
-For automation engagements I scope the work by days and map your goals to build time, deliberately leaving headroom so the work does not stop mid-build, and I draw down from that budget as we go. Same rate as the harness ladder, just a drawdown budget rather than a fixed audit-tier price.
+For automation engagements I scope the work by days and map your goals to build time, deliberately leaving headroom so the work does not stop mid-build, and I draw down from that budget as we go. Same rate as the harness ladder, just a drawdown budget rather than a fixed audit-tier price (full terms on the [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}) page).
 
 ## How it works
 
@@ -29,13 +31,19 @@ I deliver automation as a short sequence of phases. Each phase closes before the
 2. **Requirements.** I sit with the relevant people and map the by-hand workflow end to end: what gets automated, what stays human-in-the-loop and always attended (the judgment calls stay with your people), the data in and out, and the success criteria. This phase produces the day-scoped drawdown budget.
 3. **Build.** I build the automation against the requirements, one workflow at a time, with governance and guardrails baked in, and draw down from the budget as increments are completed and signed off. The routine toil ends up running unattended, so your team rarely has to touch it.
 4. **Deployment.** I roll the automation out to the agreed users, write the documented manuals (baked in, so the team can ask it "how do I use you for X?"), and run a short handover so your team can operate it without me. You own the result.
-5. **Support (optional).** Ongoing support after handover on the same deliverable-anchored basis as the harness Monthly Maintenance Package: drift events plus a monthly report, month-to-month, dropped the moment it is no longer earning its place.
+5. **Support (optional, always offered).** Once a job is signed off as complete, ongoing support is always on the table, on whichever terms suit you (full options on the [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}) page). Like all hardware and software, shit breaks and needs fixing, sometimes for a clear reason and sometimes for none at all. The support door stays open for as long as you want it, and you can stop the moment you no longer need it.
+
+## What you need to get started
+
+It depends on what we are automating. Some of it runs on what you already have. Some needs somewhere to live: a machine or a bit of hardware, cloud hosting, or a SaaS subscription or two. It varies with the job.
+
+You do not have to work that out yourself. Figuring out what is needed, then reviewing and comparing the options for fit and cost, is part of the requirements phase. I send you my recommendations and you buy them directly on your own accounts (same as your Anthropic subscription), so you own them and can keep or drop them when you are done. Nothing much to worry about beyond approving the shortlist.
 
 ## Who this is for
 
 Built for owner-operator teams of roughly 10 to 50 people who feel understaffed and want output without hiring. Book a free 20-minute discovery call and tell me what eats your team's hours. I will tell you fast what is worth automating, what cannot be automated yet, and what should not be automated even if it technically could.
 
-{{< consulting-cta type="calcom" offer="automation_services" label="Book a 20-min discovery call" >}}
+{{< consulting-cta type="calcom" offer="automation_services" label="Book a 20-min discovery call" >}} {{< smallprint >}}<-- (Please <strong>click</strong> if you are a fun-yet-serious decision maker or their trusted second, who has no time for bullshit and needs to get things done.){{< /smallprint >}}
 
 ## Pricing summary
 
