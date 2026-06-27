@@ -4,9 +4,11 @@
 # (verified via `grep -F '<value>'` per AC 2.5 verification rule); template-variable
 # reads `{{ .Site.Data.consulting.<key> }}` reserved for future migration.
 #
-# Config Traceability — every key below has a documented reader (AC 2.5).
+# Config Traceability - every key below has a documented reader (AC 2.5).
 # Numeric *_gbp keys are present per AC 2.1 spec; some are programmatic-check-only
 # (AC 2.5 carve-out: "OK if unread but document as such").
+#
+# Canonical detailed Pricing-Matrix + Billing reader (hoiboy-uk#40): content/consulting/pricing-billing/index.md
 #
 #  - business.legal_name                                              -> content/consulting/<slug>/index.md (legal footer)
 #  - business.companies_house                                         -> content/consulting/<slug>/index.md (legal footer)
@@ -49,7 +51,7 @@ business:
   companies_house: "17211412"
   vat_number: null      # null until HMRC voluntary-VAT issuance lands; HOIBOY AI LTD not yet at £90k threshold, no paid clients yet (consulting-ops#10 AC 2.7 deferred per same logic that closed the prior VAT AC).
 
-# Automation Services offer (consulting-ops#19). Same discovery call as the harness
+# Business Automation Services offer (consulting-ops#19). Same discovery call as the harness
 # offer (one Cal.com event triages both), so calcom_booking reuses the live URL.
 # Read by: layouts/_shortcodes/consulting-cta.html (CTA href, via offer="automation_services")
 #          -> content/consulting/automation-services/index.md.
@@ -57,7 +59,7 @@ automation_services:
   calcom_booking: "https://cal.eu/hoiboyuk/discovery"
 
 harness_architect:
-  # Live booking URL (replaced 2026-05-08 — Cal.com EU instance, event-type id 284432).
+  # Live booking URL (replaced 2026-05-08 - Cal.com EU instance, event-type id 284432).
   # Pre-Worker (hoiboy-uk#28): bookings fire Cal.com's default emails; post-Worker:
   # Brevo Hoi-voice templates take over. See docs/cal-com-setup.md for full setup.
   calcom_booking: "https://cal.eu/hoiboyuk/discovery"
@@ -82,28 +84,28 @@ harness_architect:
     price_gbp_default: 750
     price_display_default: "750"      # £750 + VAT per harness audit (1 SME-day)
 
-  # Foundation setup — flat 2-day base + overflow up to a hard cap.
+  # Foundation setup - flat 2-day base + overflow up to a hard cap.
   foundation_setup:
     base_price_gbp: 3000
     base_days: 2
     additional_day_rate_gbp: 1500
     max_days: 4
 
-  # Tier 1 — first month of post-build support included free per harness.
+  # Tier 1 - first month of post-build support included free per harness.
   tier_1_first_month_support:
     included: true
     forfeit_on_refund: true
     hours_per_harness: 8
     scope_text: "First month of support included free per harness shipped, capped at 8 hours of operator time across that first calendar month per harness (not full-time availability)"
 
-  # Tier 2 — open-scope hourly pack, portfolio-wide.
+  # Tier 2 - open-scope hourly pack, portfolio-wide.
   tier_2_hourly_pack:
     pack_price_gbp: 1500
     pack_hours: 10
     rate_per_hour_gbp: 150
     open_scope: true
 
-  # Tier 3 — Monthly Maintenance Package, per harness, deliverable-anchored.
+  # Tier 3 - Monthly Maintenance Package, per harness, deliverable-anchored.
   monthly_maintenance_package:
     per_harness_mtm_gbp: 200
     per_harness_annual_gbp: 170
