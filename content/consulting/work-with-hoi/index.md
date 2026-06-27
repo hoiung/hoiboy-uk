@@ -4,6 +4,15 @@ description: "The front door to working with me. Who I am, who this is for, what
 hideDate: true
 ---
 
+<!-- iamhoi-claims
+Every personal "I built / I shipped / I run / I designed" claim on this page is listed here with a verifiable URL. Stage 5 audit greps this block, tallies it against page claims, and flags anything unmatched.
+
+I built SST3-AI-Harness and dogfood it on every project I own -> https://github.com/hoiung/sst3-ai-harness
+I shipped Ralph Review Trio as a public Claude Code plugin -> https://hoiboy.uk/posts/shipping-ralph-review-trio/
+I built and published ebay-seller-tool, an MCP server I use daily -> https://github.com/hoiung/ebay-seller-tool
+I designed, run, and babysit daily a live automated pullback swing trading platform on real capital -> https://hoiboy.uk/trading/
+-->
+
 <!-- iamhoi -->
 
 Welcome to the no bullshit sales page. This is a place to work out whether we can actually work together: where I add value to your business by automating the work that drains your team, training your people to use AI properly, or building AI harnesses for them. Most salespeople are bullshit artists who oversell and under-deliver, because they are never the ones who have to deliver what they sold. I have sat in every role in a business, including sales. So I will not sell you bullshit, and I only offer what I can deliver as a Lead AI Engineer.
