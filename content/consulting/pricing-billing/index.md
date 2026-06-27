@@ -55,17 +55,22 @@ How and when I bill, in plain terms. The structure protects both sides: you do n
 
 ### Upfront, before work starts
 
-On a harness engagement, two phases bill upfront on engagement open: the Phase 2 company audit (invoiced and paid before the audit begins, so both sides stay serious; you commission real research that lands in your hands whether you proceed past it or not), and the Phase 3 foundation setup (invoiced and paid before foundation work begins, after you have seen the audit and accepted the budget). On a training engagement, the paid programme-design step bills before delivery starts, because that is where the custom prep happens.
+On a **harness** engagement, two phases bill upfront on engagement open: the Phase 2 company audit (invoiced and paid before the audit begins, so both sides stay serious; you commission real research that lands in your hands whether you proceed past it or not), and the Phase 3 foundation setup (invoiced and paid before foundation work begins, after you have seen the audit and accepted the budget). On a **training** engagement, the paid programme-design step bills before delivery starts, because that is where the custom prep happens.
 
 ### Rolling monthly, for ongoing build phases
 
-On a harness engagement, the per-harness audit, build and rollout, and SME workshop bill on a rolling monthly basis, pro-rata for whatever was completed and signed off in that calendar month. Sign-off is the gate: each deliverable needs your "yes, I am happy with this" before it goes on the invoice. For a longer build we agree milestones at kickoff (scaffolding, core build, rollout per user cohort, workshop), and each signed-off milestone bills in the calendar month it lands, so you pay as we make signed-off progress instead of one lump at the end.
+On a **harness** engagement, the per-harness audit, build and rollout, and SME workshop bill on a rolling monthly basis, pro-rata for whatever was completed and signed off in that calendar month. Sign-off is the gate: each deliverable needs your "yes, I am happy with this" before it goes on the invoice. For a longer build we agree milestones at kickoff (scaffolding, core build, rollout per user cohort, workshop), and each signed-off milestone bills in the calendar month it lands, so you pay as we make signed-off progress instead of one lump at the end.
 
-On a Business Automation engagement the same rhythm applies against the day-scoped drawdown budget: I draw down as build increments are completed and signed off, and both sides reconcile against the budget as the engagement runs. On a training engagement, delivery bills in the shape the programme design produces: a single-day session fee, a day-scoped drawdown for a multi-week programme, or a defined programme fee.
+On a **Business Automation** engagement the same rhythm applies against the day-scoped drawdown budget: I draw down as build increments are completed and signed off, and both sides reconcile against the budget as the engagement runs. On a **training** engagement, delivery bills in the shape the programme design produces: a single-day session fee, a day-scoped drawdown for a multi-week programme, or a defined programme fee.
 
 ### Recurring, for ongoing maintenance
 
-The harness Monthly Maintenance Package is invoiced monthly or annually depending on your commit choice. Business Automation engagements can keep the same optional deliverable-anchored support after handover, dropped the moment it is no longer earning its place.
+The **harness** Monthly Maintenance Package is invoiced monthly or annually depending on your commit choice. **Business Automation** support works the same deliverable-anchored way, in whichever of two shapes suits you:
+
+- **Pay-as-you-go.** You call when something needs fixing or tweaking, and you are billed for the time it takes. No standing commitment, nothing ticking when you are not using it.
+- **Pre-paid support block.** A set monthly amount covering drift events and fixes, deliverable-anchored (not a retainer, not an hours-metered seat), dropped the moment it is no longer earning its place.
+
+Either way, support is always on the table once a job is signed off, because like all software and hardware, things break and need fixing, sometimes for a reason and sometimes for none.
 
 ### Out-of-scope work
 
@@ -73,7 +78,7 @@ Smaller pieces get rolled into the next invoice. Bigger pieces (a new harness, a
 
 ### What this means in plain language
 
-You pay upfront for the audit and foundation on a harness engagement, for the programme design on a training engagement, and you draw down against an agreed budget on a Business Automation engagement. After that, you pay for whatever is genuinely complete and signed off. Once the work is running, you choose whether to retain me for ongoing maintenance and on what cadence.
+You pay upfront for the audit and foundation on a **harness** engagement, for the programme design on a **training** engagement, and you draw down against an agreed budget on a **Business Automation** engagement. After that, you pay for whatever is genuinely complete and signed off. Once the work is running, you choose whether to retain me for ongoing maintenance and on what cadence.
 
 No big-bang final bills. No vague "we'll figure it out." If you have already paid me, it is because something tangible got delivered and you signed off on it.
 
