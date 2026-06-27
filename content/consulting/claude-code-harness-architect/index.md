@@ -8,10 +8,7 @@ hideDate: true
 <!-- iamhoi-claims
 Every personal "I built / I shipped / I run / I designed" claim on this page is listed here with a verifiable URL. Stage 5 audit greps this block, tallies it against page claims, and flags anything unmatched.
 
-I built SST3-AI-Harness and dogfood it on every project I own -> https://github.com/hoiung/sst3-ai-harness
-I shipped Ralph Review Trio as a public Claude Code plugin -> https://hoiboy.uk/posts/shipping-ralph-review-trio/
-I built and published ebay-seller-tool, an MCP server I use daily -> https://github.com/hoiung/ebay-seller-tool
-I designed, run, and babysit daily a live automated pullback swing trading platform on real capital -> https://hoiboy.uk/trading/
+(No URL-backed personal product claims remain on this page: the "Why me" credibility section, and the SST3 / Ralph Review Trio / ebay-seller-tool / trading-platform claims it carried, relocated to the Work with Hoi front-door page (content/consulting/work-with-hoi/index.md) per issue #40. The claims-tally block moved with them.)
 -->
 
 <!-- iamhoi -->
@@ -45,26 +42,6 @@ You feel the AI-tooling drift. You know Claude (or ChatGPT, Cursor, Copilot, Not
 You probably feel understaffed. You are always under pressure. Things slip through the cracks because the team is running too lean, and the slippage compounds (you can feel it). That is when bringing me in starts to make sense. Not to hire more humans (expensive, slow to onboard, adds management overhead), but to automate the work that does not need a human in the first place. Same team, more output, less drained.
 
 Your decisions land in days, not quarters, which is exactly why this engagement shape works for you.
-
-<!-- iamhoiend -->
-
-## Who I work with
-
-<!-- iamhoi -->
-
-This is going to be a long-ish journey (audit, foundation, multiple harnesses, ongoing maintenance, often more than a year) and I would rather we both have fun along the way. The work itself is going to be hard and sometimes stressful. The last thing we both need is more seriousness breathing down our necks.
-
-So: I work best with people who are down-to-earth, empathetic, real, connected, and grounded. People who treat this as a partnership rather than a vendor relationship. People who can laugh at the absurdity of a Claude session that confidently invented functions that did not exist, and then get on with fixing it.
-
-People I have worked with label me as the "No Problems, Only Solutions" guy, and I happily live up to that. I am dead serious about the work itself (quality output, delivered on time, no shortcuts on what matters). I am NOT serious about the rest of it. There will be a sprinkle of sarcasm. I will tell you when something is genuinely funny. I will admit when I have cocked something up.
-
-Staying calm, light-hearted, leaning into humour and sarcasm has always been my way of processing high stress and survival instinct (especially during fire-fighting situations). So if that is a problem for you or your stakeholders, then yeah, it will not work for us.
-
-We both have to choose to work with each other and the right working environment for both of us to do our best work. Otherwise it is not going forward. If reading my genuine voice and persona on this page lands for you, we will probably have a great time and not just get shit done (anyone can do that), but get shit done **PROPERLY**. If it makes you cringe, I am almost certainly not the consultant for you (and that is also completely fine, I am not for everyone). If that is you, no hard feelings; we are probably not the right consultant-and-client match, and the discovery call will not change that.
-
-I'm a firm believer that starting any relationship with the highest honesty and integrity, and continuing on that basis, is the right way. It'll keep us all sane :)
-
-If you are still with me, keep going. The rest of this page is not selling. It is information to set and manage your expectations: what we will do, why, how, and when.
 
 <!-- iamhoiend -->
 
@@ -166,34 +143,6 @@ So your domain expert's day-to-day with the harness in place: the routine work g
 
 <!-- iamhoiend -->
 
-## "Why is a managed service offer on a blog site?"
-
-<!-- iamhoi -->
-
-Fair question. Because I could spin up a fancy "AI consultancy" website in a day (templated trust signals, stock photography, an "Our Process" section in a sans-serif font, you've seen it). Gold foil wrapping and the full sales pitch from a true salesman who talks big but isn't the one delivering it. You do not want any of that. You want someone genuinely good at the actual work, who delivers on time, at high quality, and goes above and beyond when the audit surfaces something you did not expect.
-
-So that is what I am offering, on my actual blog where you can read who I am, what I am, what I am not, what I think about, what I build, what I cock up, what I learn. Reading me here is easier than reading a pitch deck someone else wrote for me.
-
-As a bonus you get my bubbly, fun, no-bullshit (maybe a sprinkle of sarcasm) personality. We will figure out on a 20-minute discovery call whether working together is going to be a wonderful and pleasurable experience for both of us, well before any money or SOW (Statement of Work; the legal contract that locks the scope, deliverables, fees, and terms of a phase) lands on the table.
-
-No slide deck, no sales pitch on that call. I am more interested in listening to your problems and helping you solve them.
-
-And while we are on this. The bigger problem with AI right now is people spending too much time making things LOOK nice that do not actually WORK. The pretty UI on top of the broken bit. The demo that landed on camera after take 17 (and the previous 16 takes you never saw). The "I built a full platform in 1 day with AI" that looks super fancy on a Youtube video (you've seen the genre).
-
-I am not running that play. It's like trying to wrap shit in gold, but end of the day it is still shit. That's basically what AI slop is and I'm sure you know all about it and trying to solve it since you're on my page reading this. I would rather spend my hours building the thing that works (audit, foundation, per-harness build and rollout, ongoing maintenance) because right now, this is what matters. Yes, I will automate the bits of my own marketing where automation makes genuine sense, and yes this page will keep getting a little nicer over time. But the value is not in covering up problems. The value is focussing on something that works reliably, now AND in 12 months, with the minimum maintenance burden possible. That is the actual problem to solve.
-
-That is what I am building for you. Not a pretty thing. A working thing.
-
-<!-- iamhoiend -->
-
-## "Are you a one-man band?"
-
-<!-- iamhoi -->
-
-Yes and I won't be changing this! I had businesses where I managed large teams (which is its own full-time job, and a different one to actually doing the work). With AI assistants doing the heavy lifting now, I genuinely do not need that overhead any more. The AI is the team working for me. So now I can focus on what I'm passionate about: being out there helping you on the ground, sharing my expertise!
-
-<!-- iamhoiend -->
-
 ## How it works
 
 <!-- iamhoi -->
@@ -216,115 +165,13 @@ Per-harness builds and rollouts typically land between £12K and £30K + VAT dep
 
 <!-- iamhoiend -->
 
-## Pricing Matrix
-
-At a glance. All prices exclude VAT (charged at the prevailing rate; VAT-registered from invoice #1).
-
-| Phase | Price | Notes |
-|---|---|---|
-| 1. Discovery call | Free | 20-minute Cal.com booking, Mon to Fri UK business hours |
-| 2. Company audit | £1,500 (5-10 emp) / £2,500 (10-50 emp) / £4,500-5,000 (50+ emp) | 1-3 SME-days; written report + walkthrough call; independent (not credited back against build) |
-| 3. Foundation setup | £3,000 base 2 days; £1,500/extra day, hard-capped at 4 days total (£6,000 max) | Per-harness scaffolding: clean GitHub home, version history, rollback, audit trail, security controls |
-| 4. Per-harness audit | £750 per harness | 1 SME-day; sequential, one per harness, before each build |
-| 5. Per-harness build and rollout | £12K-£30K typical (fixed-fee output of audit; scales with rollout footprint) | Custom-scoped per audit; build is shaped by rollout shape (1-user harness vs 20-user harness = different jobs); single fee covers both dimensions; volume discount for multi-harness commitments at engagement open |
-| 6. SME harness manual + tutoring workshop | £750 per harness | One SME-day post-build; hands-on training for your team; manual baked INTO the harness so it answers "how do I use you?" on demand |
-| 7. Tier 1 first-month support | Free | 8 hours of my time per harness across the first calendar month post-workshop (not full-time availability) |
-| 8. Tier 3 Monthly Maintenance Package | £200/mo per harness on month-to-month, or £170/mo per harness on a 12-month annual commit | Deliverable-anchored: closed drift events + monthly report (NOT a retainer, NOT hours-metered); covers AI model / dependency / configuration drift; not feature work. Effort cap (my side, internal): up to 2.5 hours per harness per month; overage rate £150/h, agreed in writing on the engagement Issue before I exceed the cap; unused hours do NOT roll over month-to-month; 14-day termination notice either side |
-| 9. Out-of-scope work (new features, additional harnesses, mid-engagement changes) | Significant: fresh audit (£750/SME-day) + custom-quoted build SOW. Smaller pieces: pro-rata £750/SME-day, half-day minimum | Same audit-first discipline as the original engagement; maintenance-scoped change-orders may qualify for Tier 2 hourly pack if you have one |
-| Optional. Tier 2 hourly pack | £1,500 / 10 hours | Existing clients only (must have at least one harness shipped); maintenance scope only |
-
-**What I cover** (absorbed in the phase fees, not separately billed): all AI tooling costs for my own work. Claude Max subscriptions, Anthropic API top-ups, MCP server hosting, agent-orchestration overhead during build phases and under the Monthly Maintenance Package or Tier 2 hourly pack.
-
-**What you cover** (your own subscription with Anthropic, separate from anything I bill you for): your team's everyday production use of the shipped harness. Recommend Claude Max 20x per user, or whichever Anthropic tier fits your usage agreement.
-
-## Billing
-<!-- iamhoi -->
-
-How and when I bill, in plain terms. The structure protects both sides: you do not pay before there is real value committed, and I do not carry months of work-in-progress without cashflow.
-
-### Upfront, before work starts
-
-Two phases get billed upfront, on engagement open:
-
-- **Phase 2 Company audit.** Invoiced and paid before the audit begins. Upfront billing keeps both sides serious. You are not buying a slide deck; you are commissioning real research that lands in your hands whether you proceed past it or not. (For what the audit actually produces, see the **How it works** section above.)
-- **Phase 3 Foundation setup.** Invoiced and paid before foundation work begins, after you have seen the audit and accepted the budget (with whatever adjustments we discuss). Foundation is significant scope; upfront billing matches the commitment level.
-
-### Rolling monthly, for ongoing build phases
-
-Phases 4 (per-harness audit), 5 (per-harness build and rollout), and 6 (SME workshop) are billed on a rolling monthly basis, pro-rata for whatever was completed and signed off in that calendar month.
-
-How it works in practice:
-
-- My work month runs the 1st through end of month
-- At the end of each calendar month, I send an invoice covering everything completed and signed off during that month, whether that is full harnesses or partial-build milestones for a harness still mid-build
-- Sign-off is the gate: each deliverable (harness or milestone) needs your "yes, I am happy with this" before it goes on the invoice. No surprise charges
-- For **smaller harnesses** (audit + build + workshop fits inside one calendar month), the bill lands in that single month after the workshop signs off
-- For **larger harnesses** (longer build cycles, more rollout users, more complex workflows), we agree milestones at build kickoff (typical breakdown: scaffolding, core build, rollout per user cohort, workshop). Each signed-off milestone bills in whatever calendar month it lands. A 3-month harness might bill across 3 separate calendar months, so you pay as we make signed-off progress instead of one lump at the end
-
-The reason for monthly pro-rata instead of "pay at the end of everything": cashflow on my side, fair pacing on yours. If your engagement runs 3 to 6 months across multiple harnesses, neither of us wants to sit on a single huge bill at the end. Rolling monthly keeps both sides honest about what is actually shipping.
-
-### Recurring, for ongoing maintenance
-
-**Phase 8 Monthly Maintenance Package.** Invoiced monthly or annually depending on your commit choice. Month-to-month is the flexible default; the 12-month annual option exists for clients who want price certainty and a small saving in exchange for the commitment.
-
-### Out-of-scope work
-
-Smaller pieces (a tweak here, a follow-up there) get rolled into the next month's pro-rata invoice. Bigger pieces (a new harness, a substantial feature addition) go through the audit-first discipline again: fresh per-harness audit (£750 + VAT, billed upfront for that audit), then the build itself folds into the rolling monthly pro-rata cycle.
-
-If you have a Tier 2 hourly pack, smaller maintenance-scope work draws from those pre-paid hours instead of generating new line items.
-
-### What this means in plain language
-
-You pay upfront for the audit and the foundation. After that, you pay monthly for whatever is genuinely complete and signed off. Once your harnesses are running, you choose whether to retain me on the maintenance package and on what cadence.
-
-No big-bang final bills. No vague "we'll figure it out." If you have already paid me, it is because something tangible got delivered and you signed off on it.
-
-<!-- iamhoiend -->
-
-## What I do not do
-
-- Programme management. I do not run your AI roadmap quarterly review.
-- C-level convincing. If your CEO is not already bought in, the company audit will surface that and I will stop.
-- Frontier-lab work where the ultimate customer is another engineering team.
-- Build your cloud infrastructure or your customer-facing agentic AI itself. I am not here to spin up your AWS, Azure, or Google Cloud, or to run your production agents for you. I CAN build harnesses for the tech team that does that work (so they ship faster and stay consistent), but I will not do their work for them.
-- Anything past the Monthly Maintenance Package scope (training, dataset construction, prompt-optimisation playbooks, uptime SLAs). Those are different engagement shapes; I can refer.
-- Politics, emotion management, or "how is everyone feeling today" steering (not too much anyways!). I am here to deliver what I said I would deliver. What I will absolutely talk about: how we do this work together, how we problem-solve through whatever surfaces, and how we keep the engagement on track.
-
-## What I cover, what you cover, what you own, what I keep
-
-**My side, costs absorbed (build fee + MMP fee):** all AI tooling costs for my own work. Claude Max subscriptions, Anthropic API top-ups, MCP server hosting, agent-orchestration overhead during build phases and under the Monthly Maintenance Package. You will never see "Anthropic API: £487.32" as a line item on an invoice from me.
-
-**Your side, your subscription with Anthropic:** the everyday use of the shipped harness by your team. The harness runs against your own Anthropic accounts in production. I recommend **Claude Max 20x per user** on your team for daily harness operation, or whichever Anthropic tier fits your usage agreement. This is a direct subscription between you and Anthropic, separate from anything I bill you for.
-
-**Your side, IT infrastructure:** a GitHub organisation (or willingness to set one up). I keep your custom harness source-controlled in your own GitHub repo with proper version history, rollback, and audit trail (the standard professional way to manage code; we have battle-tested this on every project I run). Each user on your team also needs a machine that can run the AI tool (Mac, Windows, Linux all fine; the Anthropic subscription is covered in the bullet above). Beyond that, your IT infrastructure stays your lane: machine procurement, backup for any data your existing apps generate, data-residency decisions for your existing tools. My responsibility is building and managing the harness inside your GitHub, not your underlying infrastructure.
-
-**What you own (yours on payment clearance):** the custom harnesses I build for your business (skills, hooks, configurations, integrations specific to YOUR context) plus the audit report, architecture proposal, monthly maintenance reports, and any client-specific tailoring of governance documents. I will NOT reuse your custom harness deliverables for other clients (it would not be fair on you, and it is in the SOW).
-
-**What I keep (my pre-existing IP):** the SST3 framework I bring into every engagement, my generalised methodology and patterns, my operational infrastructure for running the consultancy. You get a perpetual right to USE the framework as installed in your business; you do not get the right to resell it as your own product. I retain the right to use generalised patterns (redacted of any of your specifics) in my own future work, blog posts, and teaching.
-
-## Why me
+## Pricing summary
 
 <!-- iamhoi -->
 
-I built my own multi-agent harness and run it on every repo I own (linked at the top of this page and the blog post on it above). Solo workflow, three-tier review loop, subagent swarm pattern, governance hooks. I dogfood it daily.
-
-[Ralph Review Trio](https://hoiboy.uk/posts/shipping-ralph-review-trio/), one of the skills from that harness, ships as a public Claude Code plugin. It has caught real bugs in its own shipping and in the private codebases it reviews.
-
-I shipped [ebay-seller-tool](https://github.com/hoiung/ebay-seller-tool), an MCP server I use on my own businesses. Commercial use, not a toy.
-
-I run a live [automated pullback swing trading platform](https://hoiboy.uk/trading/) on real capital. I designed it, Claude implemented, I babysit it daily. Nine thousand commits and counting. Eleven thousand strategy evaluations.
-
-The harness I install in your business is not a theoretical pattern. It is the one that survives contact with my own code (which is the one harness anyone honestly should be selling).
-
-And keep reading me on this blog as I build and deliver more AI-related work (non-confidential, obviously). [Tech & AI posts]({{< ref "/tech-ai" >}}).
+The numbers above (audit tiers, foundation, the per-harness build band, the Monthly Maintenance Package) are the harness positioning prices. Full pricing and billing terms, across all three services, are on the [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/consulting/work-with-hoi" >}}).
 
 <!-- iamhoiend -->
-
-## Working with me from outside the UK
-
-I am UK-based. Most clients land within the UK and pay in GBP, no fuss. International clients are welcome too: if scope needs me on-site somewhere outside the UK, happy to fly, but you cover travel, accommodation, food, and any other reasonable on-site expenses at cost (no markup). Remote-only engagements work the same regardless of geography.
-
-For UK clients specifically: I run an outside-IR35 working-practice posture by design (right of substitution, no mutuality of obligation between SOW phases, phase-gated invoicing, multiple-clients diversification, IR35 contract review on the SOW). If you are inside-UK and AI-spend approval has procurement implications, ask on the discovery call.
 
 ## What You Need to Get Started
 
