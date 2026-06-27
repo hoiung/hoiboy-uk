@@ -23,7 +23,7 @@
   weight = 10
 
 [[consulting]]
-  name = "Business Automation Services"
+  name = '<span class="cta-line">Business Automation</span> <span class="cta-line">Services</span>'
   url = "/consulting/automation-services/"
   weight = 20
 
