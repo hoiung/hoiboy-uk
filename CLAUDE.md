@@ -263,9 +263,9 @@ See `docs/AUTHORING.md` for the full contract: frontmatter rules, image placemen
 
 ### Social Cards (consulting pages)
 
-Every consulting page (`content/consulting/*`) gets its own **1200×630** Open Graph / Twitter share card, so a feed share shows a branded, correctly-sized card instead of the shared `hoi-mug.jpg` default. Reusable design + full detail: `scripts/social-cards/README.md` (brand tokens from `docs/research/07_DESIGN_TOKENS.md` + retro VT323 / IBM Plex Mono type + the square `hoiboy.uk` logo signature at a symmetric corner inset). Quick version:
+Every consulting page (`content/consulting/*`) **and client case-study (portfolio) page** gets its own **1200×630** Open Graph / Twitter share card, so a feed share shows a branded, correctly-sized card instead of the shared `hoi-mug.jpg` default. Reusable design + full detail: `scripts/social-cards/README.md` (brand tokens from `docs/research/07_DESIGN_TOKENS.md` + retro VT323 / IBM Plex Mono type + the square `hoiboy.uk` logo signature at a symmetric corner inset). Client case-study cards use the **same template, no client logo** (consistency with the service cards). Quick version:
 
-1. Add a row to `scripts/social-cards/cards.tsv`: `<slug><TAB><title><TAB><AI-explicit tagline>` (slug = the page-bundle dir under `content/consulting/`)
+1. Add a row to `scripts/social-cards/cards.tsv`: `<slug><TAB><title><TAB><AI-explicit tagline>` (slug = the page-bundle dir under `content/consulting/`; **nested slugs work as-is**, e.g. `portfolio/cu-architects`)
 2. Run `python3 scripts/social-cards/gen_card.py` (needs `rsvg-convert` + Pillow) → writes `content/consulting/<slug>/share-card.png` at 1200×630
 3. No template change needed: `layouts/_partials/head.html` auto-resolves `share-card.*` as the page's `og:image` on every page kind (page / section / home)
 4. Commit the PNG + the cards.tsv row; rebuild and confirm `og:image` is 1200×630. LinkedIn/X cache OG images hard — use their post inspector to force a re-scrape.
