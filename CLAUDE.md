@@ -261,6 +261,15 @@ See `docs/AUTHORING.md` for the full contract: frontmatter rules, image placemen
 3. For any new prose (date >= 2026-04-07) written in Hoi's voice: RAG from `docs/research/11_VOICE_PROFILE.md` (in-repo) AND `../dotfiles/voice/base/VOICE_PROFILE.md` (canonical) BEFORE drafting (no generic outputs, ever)
 4. Commit, push. CI runs, then deploy hook fires, then live in ~90 seconds
 
+### Social Cards (consulting pages)
+
+Every consulting page (`content/consulting/*`) gets its own **1200×630** Open Graph / Twitter share card, so a feed share shows a branded, correctly-sized card instead of the shared `hoi-mug.jpg` default. Reusable design + full detail: `scripts/social-cards/README.md` (brand tokens from `docs/research/07_DESIGN_TOKENS.md` + retro VT323 / IBM Plex Mono type + the square `hoiboy.uk` logo signature at a symmetric corner inset). Quick version:
+
+1. Add a row to `scripts/social-cards/cards.tsv`: `<slug><TAB><title><TAB><AI-explicit tagline>` (slug = the page-bundle dir under `content/consulting/`)
+2. Run `python3 scripts/social-cards/gen_card.py` (needs `rsvg-convert` + Pillow) → writes `content/consulting/<slug>/share-card.png` at 1200×630
+3. No template change needed: `layouts/_partials/head.html` auto-resolves `share-card.*` as the page's `og:image` on every page kind (page / section / home)
+4. Commit the PNG + the cards.tsv row; rebuild and confirm `og:image` is 1200×630. LinkedIn/X cache OG images hard — use their post inspector to force a re-scrape.
+
 ### Importing Legacy Posts
 - Raw exports go in `legacy/` (gitignored)
 - Conversion scripts in `scripts/import_*.{sh,py}`
