@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" width="920" height="420" role="img" aria-label="The dashboard card: BSG plus maturity. Left, the live 6-grade stack with BSG open/closed/total and one larger maturity grade. Right, the building D/W/M ripple row with the own timeframe bold and a white shape symbol." font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #fafafa; }
+      .label { fill: #1a1a1a; font-weight: 600; }
+      .muted { fill: #6a6a6a; }
+      .accent { fill: #c0533a; }
+      .accentstroke { stroke: #c0533a; }
+      .boxstroke { stroke: #9aa0a6; }
+      .ok { fill: #7aa869; }
+      .watermark { fill: #87ceeb; }
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #141414; }
+        .label { fill: #f0f0f0; }
+        .muted { fill: #a6a6a6; }
+        .boxstroke { stroke: #6a6a6a; }
+      }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="920" height="420" class="bg"/>
+  <text x="905" y="24.5" text-anchor="end" class="watermark" font-size="11.2" font-weight="400" letter-spacing="0.51">hoiboy.uk</text>
+
+  <text x="460" y="34" text-anchor="middle" class="accent" font-size="13" font-weight="700" letter-spacing="2">THE CARD &#8212; BSG + MATURITY ON THE DASHBOARD</text>
+  <text x="460" y="58" text-anchor="middle" class="muted" font-size="12" letter-spacing="0.5">two reads at a glance (the dashboard is dark, shown as it really looks)</text>
+
+  <!-- ============ LEFT: grade stack (live) ============ -->
+  <text x="80" y="92" class="ok" font-size="11" font-weight="700" letter-spacing="1.5">LIVE NOW</text>
+  <text x="410" y="92" text-anchor="end" class="muted" font-size="11.5">the 6-grade stack</text>
+  <rect x="50" y="104" width="360" height="180" rx="12" fill="#20242b"/>
+  <text x="76" y="132" fill="#9aa6b2" font-size="12" font-weight="700" letter-spacing="1">BSG</text>
+  <!-- O / C / T rows -->
+  <text x="82" y="166" fill="#ffffff" font-size="15" font-weight="700">O</text>
+  <rect x="104" y="150" width="42" height="26" rx="6" fill="#22c55e"/><text x="125" y="169" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="700">A</text>
+  <text x="82" y="204" fill="#cfd4da" font-size="15">C</text>
+  <rect x="104" y="188" width="42" height="26" rx="6" fill="#14b8a6"/><text x="125" y="207" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="700">B</text>
+  <text x="82" y="242" fill="#cfd4da" font-size="15">T</text>
+  <rect x="104" y="226" width="42" height="26" rx="6" fill="#14b8a6"/><text x="125" y="245" text-anchor="middle" fill="#ffffff" font-size="15" font-weight="700">B</text>
+  <!-- separator -->
+  <line x1="200" y1="140" x2="200" y2="248" stroke="#39414d" stroke-width="1.4"/>
+  <!-- M grade, larger -->
+  <text x="250" y="132" fill="#9aa6b2" font-size="12" font-weight="700" letter-spacing="1">M</text>
+  <rect x="250" y="150" width="96" height="96" rx="12" fill="#22c55e"/><text x="298" y="214" text-anchor="middle" fill="#ffffff" font-size="48" font-weight="700">A</text>
+  <!-- annotations -->
+  <text x="80" y="304" fill="#6a6a6a" class="muted" font-size="11">O/C/T = bounce grade per market regime,</text>
+  <text x="80" y="319" fill="#6a6a6a" class="muted" font-size="11">current regime in bold (here: Open)</text>
+  <text x="298" y="266" text-anchor="middle" fill="#cfd4da" font-size="11">one maturity grade</text>
+
+  <!-- ============ RIGHT: D/W/M ripple row (building) ============ -->
+  <text x="510" y="92" class="accent" font-size="11" font-weight="700" letter-spacing="1.5">BUILDING</text>
+  <text x="870" y="92" text-anchor="end" class="muted" font-size="11.5">the one-line D/W/M ripple</text>
+  <rect x="510" y="104" width="360" height="100" rx="12" fill="#20242b"/>
+  <!-- the row: D: A  W: B  M: E  (down-right symbol) -->
+  <text x="536" y="162" fill="#cfd4da" font-size="15">D</text>
+  <rect x="552" y="138" width="40" height="34" rx="7" fill="#22c55e"/><text x="572" y="162" text-anchor="middle" fill="#ffffff" font-size="17" font-weight="700">A</text>
+  <text x="624" y="162" fill="#ffffff" font-size="15" font-weight="700">W</text>
+  <rect x="644" y="138" width="40" height="34" rx="7" fill="#14b8a6" stroke="#ffffff" stroke-width="2"/><text x="664" y="162" text-anchor="middle" fill="#ffffff" font-size="17" font-weight="700">B</text>
+  <text x="716" y="162" fill="#cfd4da" font-size="15">M</text>
+  <rect x="732" y="138" width="40" height="34" rx="7" fill="#ef4444"/><text x="752" y="162" text-anchor="middle" fill="#ffffff" font-size="17" font-weight="700">E</text>
+  <!-- white ripple symbol (climbing = ripe), drawn so it survives rasterise -->
+  <line x1="808" y1="168" x2="846" y2="142" stroke="#ffffff" stroke-width="3.2"/>
+  <path d="M846,142 l-11,1 l4,9 z" fill="#ffffff"/>
+  <!-- annotations -->
+  <text x="664" y="230" text-anchor="middle" class="label" font-size="11.5" font-weight="700">own timeframe</text>
+  <text x="664" y="245" text-anchor="middle" class="muted" font-size="11">(weekly) in bold, white box</text>
+  <text x="827" y="230" text-anchor="middle" class="label" font-size="11.5" font-weight="700">white symbol</text>
+  <text x="827" y="245" text-anchor="middle" class="muted" font-size="11">shape = cycle direction</text>
+  <text x="827" y="260" text-anchor="middle" class="muted" font-size="11">brightness = rank (#1 brightest)</text>
+  <line x1="664" y1="200" x2="664" y2="214" class="boxstroke" stroke-width="1.2"/>
+  <line x1="827" y1="172" x2="827" y2="214" class="boxstroke" stroke-width="1.2"/>
+
+  <!-- ============ legend strip ============ -->
+  <line x1="510" y1="285" x2="870" y2="285" class="boxstroke" stroke-width="1" stroke-dasharray="3 3"/>
+  <rect x="528" y="300" width="20" height="20" rx="4" fill="#22c55e"/>
+  <rect x="550" y="300" width="20" height="20" rx="4" fill="#14b8a6"/>
+  <rect x="572" y="300" width="20" height="20" rx="4" fill="#f59e0b"/>
+  <rect x="594" y="300" width="20" height="20" rx="4" fill="#f97316"/>
+  <rect x="616" y="300" width="20" height="20" rx="4" fill="#ef4444"/>
+  <text x="648" y="315" class="muted" font-size="11.5">colour = quality (A green &#8594; E red)</text>
+
+  <!-- takeaway -->
+  <text x="460" y="402" text-anchor="middle" font-size="13.5">
+    <tspan class="muted">colour answers</tspan><tspan class="label" font-weight="700" dx="5">how good</tspan><tspan class="muted">; the white symbol,</tspan><tspan class="accent" font-weight="700" dx="5">where in the cycle and how it ranks.</tspan>
+  </text>
+</svg>

@@ -1,0 +1,328 @@
+<!doctype html>
+<!--
+  Maturity badge intensity tuner - a freebie from hoiboy.uk
+  https://hoiboy.uk/posts/maturity-grading-from-backtest-data/
+
+  A live tuner for the maturity SYMBOL badge brightness. Each (Daily.Weekly.Monthly)
+  maturity combo's badge glows by OUR RANKING:
+
+    Brightness = the combo's POSITION in our 2pc (fixed) TSLC-A/B confidence-weighted
+    ranking (the SAME ranking behind the re-rank stars): #1 = brightest, last =
+    dimmest, everyone in between by their weighted rank. NOTHING about the ranking
+    changes - same equal weighting (stop% / R:R / expectancy) and the same n/(n+100)
+    shrinkage. The badge re-scores nothing; it just shows the ranking as light.
+    (Supersedes an earlier geometric "cycleScore" guess that read the grade-curve
+    shape but never the backtest - dropped as a wrong-ranking beta placeholder.)
+
+  Drag the sliders to tune the brightness curve; the table re-lights live:
+
+    f        = (e^(k.t) - 1) / (e^k - 1),  t = intensity/100,  k = 3.4
+    glyph L  = 17% + 83%.f      fill a = 0.02 + 0.56.f
+    border a = 0.07 + 0.56.f    glow   = intensity >= 66
+
+  Rows are the (D.W.M) combos of the 2pc (fixed) TSLC-A/B cut, IN RANKING ORDER
+  (#1 first). The shape glyph is derived from classify() below; the intensity
+  (= rank position, #1 = 100) + trade stats come from our ranking (COMBO_DATA).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Maturity badge intensity tuner - hoiboy.uk</title>
+<style>
+  :root{ --bg-base:#0a0a0a; --bg-card:#111; --bd-default:#222; --bd-strong:#333;
+    --tx:#fff; --tx2:#ccc; --tx-muted:#888; --tx-subtle:#666; }
+  *{box-sizing:border-box}
+  body{background:var(--bg-base);color:var(--tx2);font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;padding:24px 30px 48px}
+  h1{font-size:19px;color:#fff;margin:0 0 4px}
+  .sub{color:var(--tx-muted);font-size:12px;margin:0 0 18px;max-width:900px;line-height:1.5}
+  .wrap{display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start}
+  .panel{background:var(--bg-card);border:1px solid var(--bd-default);border-radius:10px;padding:16px}
+  .panel h3{font-size:13px;color:#fff;margin:0 0 12px}
+  .ctl{margin-bottom:13px}
+  .ctl label{display:flex;justify-content:space-between;font-size:11px;color:var(--tx-muted);margin-bottom:4px}
+  .ctl label b{color:#4caf50;font-variant-numeric:tabular-nums}
+  .ctl input[type=range]{width:100%}
+  .params{margin-top:14px;background:#0a0a0a;border:1px solid var(--bd-strong);border-radius:7px;padding:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;color:#9ad;white-space:pre-wrap;line-height:1.5}
+  .reset{margin-top:10px;font-size:11px;color:#4caf50;background:none;border:1px solid var(--bd-strong);border-radius:6px;padding:5px 10px;cursor:pointer}
+
+  .preview{background:var(--bg-card);border:1px solid var(--bd-default);border-radius:10px;padding:16px}
+  .preview h3{font-size:13px;color:#fff;margin:0 0 12px}
+  .bprow{display:flex;align-items:center;border-top:1px solid var(--bd-default);padding:8px 4px;font-size:13px}
+  .bprow:first-of-type{border-top:none}
+  .mlabel{color:var(--tx2);font-weight:600;margin-right:7px}
+  .badge{display:inline-flex;align-items:center;justify-content:center;border-radius:7px;padding:2px 9px;min-width:30px}
+  .sym{font-size:1.4em;line-height:1;font-weight:600}
+  .star{font-size:0.72em;color:#fff;font-weight:700;margin-left:5px}
+  .grades{display:flex;gap:12px;margin-left:16px;font-variant-numeric:tabular-nums}
+  .g{font-weight:700}
+  .ga{color:#22c55e}.gb{color:#14b8a6}.gc{color:#f59e0b}.gd{color:#f97316}.ge{color:#ef4444}
+  .meta{margin-left:auto;text-align:right;color:var(--tx-subtle);font-size:11px;min-width:120px}
+  .meta .cs{color:var(--tx-muted)}
+  .grouphdr{display:flex;align-items:baseline;gap:10px;margin:20px 0 2px;padding:6px 4px 5px;border-bottom:1px solid var(--bd-strong)}
+  .grouphdr:first-child{margin-top:0}
+  .ghsym{font-size:1.5em;color:#fff;font-weight:700;min-width:26px;text-align:center;line-height:1}
+  .ghphase{color:#fff;font-weight:700;font-size:12px;letter-spacing:.3px}
+  .ghmean{color:var(--tx-muted);font-size:11px}
+  .ghguide{margin-left:auto;font-size:11px;color:var(--tx2);white-space:nowrap}
+  .ghcount{color:var(--tx-subtle);font-size:10px;font-variant-numeric:tabular-nums}
+  .brandbar{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin:0 0 4px;}
+  .brandbar h1{margin:0;}
+  .brandbar .sub{margin:4px 0 0;}
+  .brand{display:flex;align-items:center;gap:9px;flex-shrink:0;text-decoration:none;color:#87ceeb;font-weight:600;font-size:13px;white-space:nowrap;}
+  .brand:hover{text-decoration:underline;}
+  .brand img{width:40px;height:40px;border-radius:8px;display:block;}
+  .copyright{color:#6e7681;font-size:11px;margin:18px 0 0;border-top:1px solid #21262d;padding-top:10px;}
+  .copyright a{color:#87ceeb;text-decoration:none;}
+  .copyright a:hover{text-decoration:underline;}
+
+  /* old-vs-new comparison table */
+  .cmp{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+  .cmp th{position:sticky;top:0;background:var(--bg-card);color:var(--tx2);font-size:10.5px;font-weight:600;
+    text-align:right;padding:7px 8px;border-bottom:1px solid var(--bd-strong);white-space:nowrap;cursor:help}
+  .cmp th[title]{text-decoration:underline dotted var(--bd-strong);text-underline-offset:3px}
+  .cmp th.l,.cmp td.l{text-align:left}
+  .cmp th.c,.cmp td.c{text-align:center}
+  .cmp td{padding:6px 8px;border-top:1px solid var(--bd-default);text-align:right;color:var(--tx2)}
+  .cmp tr:hover td{background:rgba(255,255,255,0.025)}
+  .cmp .combo{font-weight:700;letter-spacing:.3px;color:#fff}
+  .badgecell{padding:5px 6px}
+  .cell-old{border-left:1px solid var(--bd-default)}
+  .cell-new{border-left:1px solid var(--bd-strong)}
+  .scoreval{font-size:10px;color:var(--tx-muted);margin-top:2px;display:block;text-align:center}
+  .neg{color:#ef4444}.pos{color:#22c55e}
+  .delta{font-weight:700;font-size:11px}
+  .delta-up{color:#22c55e}.delta-down{color:#ef4444}.delta-flat{color:var(--tx-subtle)}
+  .movers{background:#0a0a0a;border:1px solid var(--bd-strong);border-radius:8px;padding:12px 14px;margin:0 0 14px;font-size:12px;line-height:1.6}
+  .movers h4{margin:0 0 6px;font-size:12px;color:#fff}
+  .movers b{color:#fff}
+  .colkey{font-size:10.5px;color:var(--tx-subtle);margin:10px 0 0}
+  .scroller{max-height:62vh;overflow-y:auto;border:1px solid var(--bd-default);border-radius:8px}
+  .cmp tr.row-neutral td{opacity:0.5}
+</style>
+</head>
+<body>
+  <div class="brandbar"><div><h1>Maturity badge intensity tuner</h1>
+  <p class="sub">Tune the brightness of the maturity SYMBOL badge. Brightness = each (Daily·Weekly·Monthly) combo's <b>position in our 2pc (fixed) confidence-weighted ranking</b> - the same ranking behind the re-rank ★ (#1 brightest, last dimmest; nothing re-scored). <b>Note (#1619):</b> the live badge ★ is now SERVER-ADAPTIVE (current 2pc rank when robust, else the fixed Xpc rank); this tuner visualises a frozen 2pc-fixed snapshot purely to tune the brightness curve, which #1619 leaves unchanged. Drag the sliders to tune the brightness curve; the table re-lights live. A freebie from <a href="https://hoiboy.uk/posts/maturity-grading-from-backtest-data/" style="color:#4caf50;text-decoration:none">hoiboy.uk</a>.</p></div><a class='brand' href='https://hoiboy.uk/' target='_blank' rel='noopener'><img src='data:image/png;base64,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' alt='hoiboy.uk logo' width='40' height='40'>hoiboy.uk</a></div>
+
+  <div class="wrap">
+    <div class="panel">
+      <h3>Curve controls</h3>
+      <div class="ctl"><label>k (exponential steepness) <b id="vk">3.4</b></label><input id="k" type="range" min="1" max="5" step="0.1" value="3.4"></div>
+      <div class="ctl"><label>glyph lightness floor % <b id="vlmin">17</b></label><input id="lmin" type="range" min="5" max="45" step="1" value="17"></div>
+      <div class="ctl"><label>glyph lightness range % <b id="vlrange">83</b></label><input id="lrange" type="range" min="45" max="95" step="1" value="83"></div>
+      <div class="ctl"><label>fill alpha base <b id="vfbase">0.02</b></label><input id="fbase" type="range" min="0" max="0.15" step="0.005" value="0.02"></div>
+      <div class="ctl"><label>fill alpha range <b id="vfrange">0.56</b></label><input id="frange" type="range" min="0.2" max="0.8" step="0.01" value="0.56"></div>
+      <div class="ctl"><label>border alpha base <b id="vbbase">0.07</b></label><input id="bbase" type="range" min="0" max="0.2" step="0.005" value="0.07"></div>
+      <div class="ctl"><label>border alpha range <b id="vbrange">0.56</b></label><input id="brange" type="range" min="0.2" max="0.8" step="0.01" value="0.56"></div>
+      <div class="ctl"><label>glow threshold (intensity) <b id="vgth">66</b></label><input id="gth" type="range" min="40" max="95" step="1" value="66"></div>
+      <button class="reset" id="reset">Reset to shipped (k=3.4)</button>
+      <div class="params" id="params"></div>
+    </div>
+
+    <div class="preview">
+      <h3>Maturity badge intensity - by ranking position (best first)</h3>
+      <div class="scroller"><table class="cmp"><thead id="cmphead"></thead><tbody id="rows"></tbody></table></div>
+      <p class="colkey" id="colkey"></p>
+    </div>
+  </div>
+
+<script>
+  const gcls = {A:'ga',B:'gb',C:'gc',D:'gd',E:'ge'};
+
+  // ── OLD MODEL (geometric) - maturity classification + cycleScore. No backtest input: the badge
+  //    lights up wherever the (D,W,M) grade curve LOOKS ripe (fast hot, slow cold). Kept LIVE so the
+  //    OLD intensity stays derived (not hand-typed); each COMBO_DATA row's `old`/`sym` reproduce
+  //    these functions exactly (cross-check against the recorded snapshot). ──
+  const LEVELS = {A:4,B:3,C:2,D:1,E:0};
+  const SHAPE_SYM = {descending:'↗',premature:'⤳',tent:'⋀',flatHigh:'→',flatLow:'↔',valley:'⋁',ascending:'↘'};
+  function classify(d,w,m){
+    if(w>d && w>m) return 'tent';
+    if(w<d && w<m) return 'valley';
+    const range = Math.max(d,w,m)-Math.min(d,w,m);
+    if(range<=1) return ((d+w+m)/3)>=2.5 ? 'flatHigh' : 'flatLow';
+    if(d>m) return w>=3 ? 'descending' : 'premature';
+    return 'ascending';
+  }
+  function cycleScore(d,w,m){
+    const fast=(d+2*w)/3, front=fast-m, level=(d+w+m)/3, raw=2*front+level;
+    return Math.max(0,Math.min(100,Math.round(((raw+8)/20)*100)));
+  }
+
+  // ── NEW MODEL - operator-blessed (2026-06-24). Brightness = OUR EXISTING RANKING, shown as light.
+  //    Each combo's badge brightness = its POSITION in our 2pc (fixed) TSLC-A/B confidence-weighted
+  //    ranking (`_shrink_sorted` - the SAME ranking behind the re-rank ★): #1 = brightest (100), last
+  //    = dimmest (0), everything in between by its weighted rank. NOTHING about the ranking changes -
+  //    same equal weighting across stop% / R:R / expectancy, same n/(n+100) shrinkage. The badge does
+  //    not re-score anything; it just visualises the ranking. Generated from the ranking, not hand-typed.
+  const COMBO_DATA = [
+    {D:'B',W:'B',M:'E',sym:'↗',old:80,nw:100,rank:1,n:509,mr:3.44,sl:11.2,rr:4.09,win:86.2},
+    {D:'C',W:'B',M:'E',sym:'⋀',old:75,nw:99,rank:2,n:76,mr:8.76,sl:5.3,rr:7.62,win:94.7},
+    {D:'A',W:'B',M:'E',sym:'↗',old:85,nw:97,rank:3,n:209,mr:2.66,sl:11.0,rr:2.96,win:87.6},
+    {D:'C',W:'C',M:'E',sym:'⤳',old:67,nw:96,rank:4,n:937,mr:2.18,sl:13.4,rr:2.49,win:84.6},
+    {D:'B',W:'C',M:'E',sym:'⤳',old:72,nw:95,rank:5,n:400,mr:2.27,sl:15.2,rr:2.73,win:83.0},
+    {D:'A',W:'A',M:'E',sym:'↗',old:93,nw:94,rank:6,n:305,mr:3.41,sl:18.7,rr:4.21,win:80.0},
+    {D:'C',W:'B',M:'C',sym:'⋀',old:58,nw:92,rank:7,n:299,mr:2.19,sl:17.1,rr:2.66,win:80.6},
+    {D:'A',W:'A',M:'C',sym:'↗',old:77,nw:91,rank:8,n:444,mr:2.01,sl:19.8,rr:2.53,win:78.8},
+    {D:'B',W:'B',M:'D',sym:'↗',old:72,nw:90,rank:9,n:553,mr:1.61,sl:18.3,rr:2.16,win:79.2},
+    {D:'B',W:'C',M:'D',sym:'⤳',old:63,nw:88,rank:10,n:317,mr:1.73,sl:17.7,rr:2.16,win:81.1},
+    {D:'B',W:'A',M:'E',sym:'⋀',old:88,nw:87,rank:11,n:19,mr:9.07,sl:0.0,rr:2.05,win:100.0},
+    {D:'A',W:'A',M:'D',sym:'↗',old:85,nw:86,rank:12,n:205,mr:1.87,sl:24.9,rr:2.47,win:74.6},
+    {D:'A',W:'C',M:'E',sym:'⤳',old:77,nw:85,rank:13,n:22,mr:3.16,sl:4.5,rr:2.43,win:95.5},
+    {D:'B',W:'A',M:'C',sym:'⋀',old:72,nw:83,rank:14,n:86,mr:1.98,sl:15.1,rr:2.06,win:84.9},
+    {D:'A',W:'C',M:'C',sym:'⤳',old:60,nw:82,rank:15,n:14,mr:4.28,sl:0.0,rr:2.05,win:100.0},
+    {D:'D',W:'D',M:'E',sym:'↔',old:53,nw:81,rank:16,n:1011,mr:1.65,sl:17.9,rr:2.01,win:81.0},
+    {D:'C',W:'C',M:'A',sym:'↘',old:33,nw:79,rank:17,n:92,mr:2.31,sl:30.4,rr:3.57,win:67.4},
+    {D:'A',W:'C',M:'A',sym:'⋁',old:43,nw:78,rank:18,n:63,mr:1.22,sl:14.3,rr:2.25,win:76.2},
+    {D:'A',W:'C',M:'B',sym:'⋁',old:52,nw:77,rank:19,n:12,mr:3.26,sl:25.0,rr:3.82,win:75.0},
+    {D:'A',W:'A',M:'B',sym:'→',old:68,nw:76,rank:20,n:1298,mr:1.38,sl:25.0,rr:2.08,win:73.2},
+    {D:'D',W:'C',M:'E',sym:'⋀',old:62,nw:74,rank:21,n:126,mr:1.71,sl:12.7,rr:1.85,win:86.5},
+    {D:'D',W:'E',M:'E',sym:'↔',old:45,nw:73,rank:22,n:156,mr:1.42,sl:14.1,rr:1.91,win:82.1},
+    {D:'B',W:'A',M:'D',sym:'⋀',old:80,nw:72,rank:23,n:52,mr:1.83,sl:15.4,rr:1.95,win:84.6},
+    {D:'D',W:'B',M:'B',sym:'↘',old:45,nw:71,rank:24,n:7,mr:3.45,sl:0.0,rr:2.05,win:100.0},
+    {D:'A',W:'B',M:'D',sym:'↗',old:77,nw:69,rank:25,n:181,mr:1.19,sl:22.1,rr:2.17,win:70.7},
+    {D:'B',W:'D',M:'A',sym:'⋁',old:30,nw:68,rank:26,n:11,mr:1.27,sl:0.0,rr:2.05,win:100.0},
+    {D:'E',W:'C',M:'C',sym:'↘',old:40,nw:67,rank:27,n:6,mr:2.99,sl:0.0,rr:2.05,win:100.0},
+    {D:'A',W:'B',M:'C',sym:'↗',old:68,nw:65,rank:28,n:315,mr:1.34,sl:27.9,rr:2.17,win:70.2},
+    {D:'C',W:'B',M:'D',sym:'⋀',old:67,nw:64,rank:29,n:218,mr:1.75,sl:34.9,rr:2.71,win:64.7},
+    {D:'E',W:'C',M:'D',sym:'⋀',old:48,nw:63,rank:30,n:6,mr:2.12,sl:0.0,rr:2.05,win:100.0},
+    {D:'D',W:'E',M:'B',sym:'⋁',old:20,nw:62,rank:31,n:32,mr:1.15,sl:12.5,rr:2.04,win:81.2},
+    {D:'D',W:'E',M:'A',sym:'⋁',old:12,nw:60,rank:32,n:8,mr:0.82,sl:0.0,rr:2.05,win:100.0},
+    {D:'C',W:'E',M:'B',sym:'⋁',old:25,nw:59,rank:33,n:5,mr:1.73,sl:0.0,rr:2.05,win:100.0},
+    {D:'D',W:'C',M:'A',sym:'↘',old:28,nw:58,rank:34,n:11,mr:1.08,sl:36.4,rr:2.91,win:54.5},
+    {D:'E',W:'D',M:'E',sym:'⋀',old:48,nw:56,rank:35,n:135,mr:1.34,sl:24.4,rr:2.04,win:71.1},
+    {D:'E',W:'E',M:'E',sym:'↔',old:40,nw:55,rank:36,n:740,mr:1.38,sl:19.6,rr:1.79,win:79.2},
+    {D:'D',W:'C',M:'B',sym:'↘',old:37,nw:54,rank:37,n:119,mr:1.34,sl:29.4,rr:2.17,win:68.9},
+    {D:'C',W:'D',M:'E',sym:'⤳',old:58,nw:53,rank:38,n:339,mr:1.37,sl:20.6,rr:1.81,win:77.9},
+    {D:'A',W:'B',M:'B',sym:'→',old:60,nw:51,rank:39,n:513,mr:1.14,sl:27.1,rr:2.12,win:67.6},
+    {D:'B',W:'D',M:'D',sym:'⤳',old:55,nw:50,rank:40,n:1,mr:-1.33,sl:100.0,rr:2.05,win:0.0},
+    {D:'E',W:'E',M:'B',sym:'↘',old:15,nw:49,rank:41,n:2,mr:-0.45,sl:50.0,rr:0.22,win:50.0},
+    {D:'A',W:'A',M:'A',sym:'→',old:60,nw:47,rank:42,n:3257,mr:1.16,sl:32.8,rr:2.15,win:65.3},
+    {D:'D',W:'D',M:'A',sym:'↘',old:20,nw:46,rank:43,n:4,mr:0.11,sl:50.0,rr:1.21,win:50.0},
+    {D:'B',W:'D',M:'E',sym:'⤳',old:63,nw:45,rank:44,n:13,mr:0.54,sl:38.5,rr:1.85,win:53.8},
+    {D:'B',W:'B',M:'C',sym:'→',old:63,nw:44,rank:45,n:1271,mr:1.19,sl:27.9,rr:1.90,win:70.9},
+    {D:'B',W:'C',M:'C',sym:'↔',old:55,nw:42,rank:46,n:476,mr:1.03,sl:25.0,rr:1.88,win:69.7},
+    {D:'C',W:'C',M:'D',sym:'↔',old:58,nw:41,rank:47,n:1253,mr:1.11,sl:25.4,rr:1.75,win:72.5},
+    {D:'C',W:'A',M:'B',sym:'⋀',old:58,nw:40,rank:48,n:8,mr:-1.18,sl:100.0,rr:2.05,win:0.0},
+    {D:'D',W:'B',M:'A',sym:'↘',old:37,nw:38,rank:49,n:7,mr:-0.58,sl:57.1,rr:0.38,win:28.6},
+    {D:'E',W:'D',M:'C',sym:'↘',old:32,nw:37,rank:50,n:95,mr:0.92,sl:27.4,rr:1.72,win:66.3},
+    {D:'D',W:'D',M:'D',sym:'↔',old:45,nw:36,rank:51,n:1396,mr:1.07,sl:24.4,rr:1.71,win:72.8},
+    {D:'B',W:'C',M:'A',sym:'⋁',old:38,nw:35,rank:52,n:250,mr:1.03,sl:31.6,rr:1.98,win:64.4},
+    {D:'C',W:'D',M:'D',sym:'↔',old:50,nw:33,rank:53,n:370,mr:1.02,sl:23.0,rr:1.52,win:75.7},
+    {D:'E',W:'D',M:'B',sym:'↘',old:23,nw:32,rank:54,n:14,mr:0.23,sl:42.9,rr:1.07,win:57.1},
+    {D:'C',W:'A',M:'A',sym:'↘',old:50,nw:31,rank:55,n:6,mr:-0.90,sl:83.3,rr:0.11,win:16.7},
+    {D:'A',W:'B',M:'A',sym:'⋁',old:52,nw:29,rank:56,n:444,mr:1.01,sl:30.2,rr:1.94,win:66.4},
+    {D:'C',W:'D',M:'B',sym:'⋁',old:33,nw:28,rank:57,n:134,mr:0.64,sl:47.8,rr:2.41,win:47.0},
+    {D:'B',W:'D',M:'B',sym:'⋁',old:38,nw:27,rank:58,n:13,mr:-0.23,sl:38.5,rr:0.52,win:53.8},
+    {D:'B',W:'D',M:'C',sym:'⋁',old:47,nw:26,rank:59,n:9,mr:-0.68,sl:66.7,rr:0.16,win:33.3},
+    {D:'C',W:'B',M:'A',sym:'↘',old:42,nw:24,rank:60,n:148,mr:0.77,sl:24.3,rr:1.50,win:70.3},
+    {D:'B',W:'A',M:'B',sym:'⋀',old:63,nw:23,rank:61,n:211,mr:0.92,sl:25.1,rr:1.44,win:73.0},
+    {D:'D',W:'C',M:'C',sym:'↔',old:45,nw:22,rank:62,n:280,mr:0.97,sl:32.9,rr:1.89,win:64.6},
+    {D:'C',W:'B',M:'B',sym:'→',old:50,nw:21,rank:63,n:373,mr:0.81,sl:36.5,rr:1.95,win:59.2},
+    {D:'C',W:'C',M:'C',sym:'↔',old:50,nw:19,rank:64,n:1342,mr:1.00,sl:33.2,rr:1.85,win:65.6},
+    {D:'E',W:'D',M:'D',sym:'↔',old:40,nw:18,rank:65,n:125,mr:0.76,sl:32.0,rr:1.52,win:66.4},
+    {D:'E',W:'E',M:'C',sym:'↘',old:23,nw:17,rank:66,n:92,mr:0.59,sl:33.7,rr:1.53,win:59.8},
+    {D:'D',W:'C',M:'D',sym:'⋀',old:53,nw:15,rank:67,n:260,mr:0.90,sl:32.7,rr:1.73,win:65.4},
+    {D:'C',W:'D',M:'A',sym:'⋁',old:25,nw:14,rank:68,n:59,mr:0.21,sl:30.5,rr:1.19,win:55.9},
+    {D:'B',W:'B',M:'B',sym:'→',old:55,nw:13,rank:69,n:1673,mr:0.90,sl:33.4,rr:1.90,win:62.8},
+    {D:'C',W:'C',M:'B',sym:'↔',old:42,nw:12,rank:70,n:694,mr:0.80,sl:38.8,rr:1.93,win:58.6},
+    {D:'B',W:'A',M:'A',sym:'→',old:55,nw:10,rank:71,n:454,mr:0.86,sl:34.8,rr:1.80,win:63.2},
+    {D:'D',W:'D',M:'B',sym:'↘',old:28,nw:9,rank:72,n:185,mr:0.48,sl:48.6,rr:1.90,win:49.2},
+    {D:'E',W:'E',M:'D',sym:'↔',old:32,nw:8,rank:73,n:445,mr:0.85,sl:36.2,rr:1.79,win:62.2},
+    {D:'D',W:'E',M:'D',sym:'⋁',old:37,nw:6,rank:74,n:135,mr:0.61,sl:33.3,rr:1.33,win:65.9},
+    {D:'D',W:'E',M:'C',sym:'⋁',old:28,nw:5,rank:75,n:74,mr:0.03,sl:54.1,rr:1.44,win:41.9},
+    {D:'D',W:'D',M:'C',sym:'↔',old:37,nw:4,rank:76,n:829,mr:0.60,sl:36.3,rr:1.59,win:59.6},
+    {D:'B',W:'B',M:'A',sym:'→',old:47,nw:3,rank:77,n:650,mr:0.58,sl:39.1,rr:1.69,win:57.2},
+    {D:'B',W:'C',M:'B',sym:'⋁',old:47,nw:1,rank:78,n:359,mr:0.43,sl:39.8,rr:1.48,win:56.5},
+    {D:'C',W:'D',M:'C',sym:'⋁',old:42,nw:0,rank:79,n:353,mr:0.35,sl:38.5,rr:1.26,win:57.8},
+  ];
+
+  const ids = ['k','lmin','lrange','fbase','frange','bbase','brange','gth'];
+  const def = {k:3.4,lmin:17,lrange:83,fbase:0.02,frange:0.56,bbase:0.07,brange:0.56,gth:66};
+  function P(){ const o={}; ids.forEach(id=>o[id]=parseFloat(document.getElementById(id).value)); return o; }
+
+  // Shared brightness curve - maps a 0-100 intensity (OLD cycleScore OR NEW perf score) to the badge
+  // fill/border/glyph/glow. BOTH badges use the SAME curve so you compare the SOURCES, not the curve.
+  function badgeStyle(cs, p){
+    if(cs===null) return {color:'var(--tx-muted)',bg:'rgba(255,255,255,0.03)',bd:'1px solid var(--bd-default)',glow:''};
+    const t = Math.max(0,Math.min(1,cs/100));
+    const f = (Math.exp(p.k*t)-1)/(Math.exp(p.k)-1);
+    const L = (p.lmin + p.lrange*f).toFixed(1);
+    const fa = (p.fbase + p.frange*f).toFixed(3);
+    const ba = (p.bbase + p.brange*f).toFixed(3);
+    let glow='';
+    if(cs>=p.gth){ const g=Math.min(0.6, 0.32 + (t-p.gth/100)*1.8).toFixed(2); glow=`box-shadow:0 0 8px rgba(255,255,255,${g});`; }
+    return {color:`hsl(0,0%,${L}%)`, bg:`rgba(255,255,255,${fa})`, bd:`1px solid rgba(255,255,255,${ba})`, glow};
+  }
+
+  function badge(intensity, sym, p){
+    const s = badgeStyle(intensity, p);
+    return `<span class="badge" style="background:${s.bg};border:${s.bd};${s.glow}">`+
+      `<span class="sym" style="color:${s.color}">${sym}</span></span>`+
+      `<span class="scoreval">${intensity===null?'-':intensity}</span>`;
+  }
+
+  function comboCell(D,W,M){
+    return `<span class="combo"><span class="${gcls[D]||''}">${D}</span>·`+
+      `<span class="${gcls[W]||''}">${W}</span>·<span class="${gcls[M]||''}">${M}</span></span>`;
+  }
+
+  function deltaCell(oldv, nw){
+    if(nw===null) return `<span class="delta delta-flat">-</span>`;
+    const d = nw - oldv;
+    if(d===0) return `<span class="delta delta-flat">·</span>`;
+    const up = d>0;
+    return `<span class="delta ${up?'delta-up':'delta-down'}">${up?'▲':'▼'} ${Math.abs(d)}</span>`;
+  }
+
+  function render(){
+    const p = P();
+    ids.forEach(id=>{ document.getElementById('v'+id).textContent = document.getElementById(id).value; });
+
+    document.getElementById('cmphead').innerHTML =
+      `<tr>`+
+      `<th class="l" title="The Daily·Weekly·Monthly maturity-grade triple (A = fully expanded / hot, E = dormant / flat).">Combo</th>`+
+      `<th class="c" title="The maturity 'ripple' shape this combo classifies to (↗ peak · ⤳ premature · ⋀ weekly-led · → late · ↔ dormant · ⋁ divergent · ↘ backside). Shape-based - unchanged by the new model.">Shape</th>`+
+      `<th class="c" title="Badge brightness = this combo's POSITION in our 2pc (fixed) confidence-weighted ranking (#1 brightest, last dimmest). Same ranking behind the re-rank ★; nothing re-scored.">Badge</th>`+
+      `<th title="This combo's place in our 2pc (fixed) TSLC-A/B confidence-weighted ranking (1 = best).">Rank</th>`+
+      `<th title="Number of tradeable (A/B) backtest trades for this combo - the sample size behind its stats (small samples are shrunk toward the pool average).">n</th>`+
+      `<th title="Average R-multiple (reward ÷ initial risk) across this combo's trades - its expectancy. Green = positive, red = negative.">Mean R</th>`+
+      `<th title="Share of this combo's trades that hit the initial stop (r ≤ −0.9). Lower is better.">Stop%</th>`+
+      `<th title="Reward:risk - mean winner ÷ |mean loser|. Higher is better.">R:R</th>`+
+      `<th title="Share of this combo's trades that closed positive (r > 0).">Win%</th>`+
+      `</tr>`;
+
+    // OLD sym + score derived LIVE from classify()/cycleScore(); NEW intensity + trade stats from COMBO_DATA.
+    document.getElementById('rows').innerHTML = COMBO_DATA.map(r=>{
+      const d=LEVELS[r.D], w=LEVELS[r.W], m=LEVELS[r.M];
+      const sym = SHAPE_SYM[classify(d,w,m)];
+      const rr = (r.rr===null) ? '-' : r.rr.toFixed(2);
+      const neutral = r.nw===null;
+      return `<tr class="${neutral?'row-neutral':''}"><td class="l">${comboCell(r.D,r.W,r.M)}</td>`+
+        `<td class="c" style="font-size:1.3em;color:#fff">${sym}</td>`+
+        `<td class="c badgecell cell-new">${badge(r.nw,sym,p)}</td>`+
+        `<td>${neutral?'-':'#'+r.rank}</td><td>${r.n.toLocaleString()}</td>`+
+        `<td class="${r.mr>=0?'pos':'neg'}">${r.mr>=0?'+':''}${r.mr.toFixed(2)}R</td>`+
+        `<td>${r.sl.toFixed(1)}%</td><td>${rr}</td><td>${r.win.toFixed(1)}%</td></tr>`;
+    }).join('');
+
+    document.getElementById('colkey').textContent =
+      'Badge = our existing 2pc (fixed) confidence-weighted ranking shown as brightness - #1 brightest, '+
+      'last dimmest, everyone in between by their weighted rank. Same ranking that drives the re-rank ★; '+
+      'the badge re-scores nothing, it just visualises the ranking (equal weighting + n/(n+100) shrinkage, '+
+      'all unchanged). Mean R / Stop% / R:R / Win% are the combo\'s underlying trade stats.';
+
+    document.getElementById('params').textContent =
+      `f = (e^(${p.k}·t) − 1)/(e^${p.k} − 1),  t = intensity/100\n`+
+      `glyph L  = ${p.lmin}% + ${p.lrange}%·f\n`+
+      `fill α   = ${p.fbase} + ${p.frange}·f\n`+
+      `border α = ${p.bbase} + ${p.brange}·f\n`+
+      `glow     = intensity ≥ ${p.gth}`;
+  }
+
+  ids.forEach(id=>document.getElementById(id).addEventListener('input',render));
+  document.getElementById('reset').addEventListener('click',()=>{ ids.forEach(id=>document.getElementById(id).value=def[id]); render(); });
+  render();
+</script>
+<p class='copyright'>© 2009–2026 Senh Hoi Ung. CC BY-SA. · <a href='https://hoiboy.uk/' target='_blank' rel='noopener'>hoiboy.uk</a></p>
+</body>
+</html>

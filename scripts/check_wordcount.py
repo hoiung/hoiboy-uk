@@ -43,6 +43,7 @@ GRANDFATHERED_SLUGS: frozenset[str] = frozenset({
     "sst3-ai-harness-reshapeable-knife",
     "every-book-ive-read-in-20-years",
     "scaling-without-quality",
+    "maturity-grading-from-backtest-data",
 })
 
 _FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
