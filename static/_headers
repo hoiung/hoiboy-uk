@@ -9,17 +9,6 @@
   Permissions-Policy: microphone=(self), camera=()
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'
 
-# Data artifacts for the maturity-grading post are self-contained interactive
-# HTML (4-tab switching, combo highlight, the badge tuner) built on inline JS.
-# The site-wide strict CSP (script-src 'self') blocks inline scripts, which
-# kills that interactivity once served from hoiboy.uk (it only works when the
-# file is downloaded and opened locally, where no CSP applies). Allowlist inline
-# scripts for just these read-only data files — no inputs, no auth, no secrets —
-# same per-path carve-out pattern as the meet-recorder block above. Everything
-# else (HSTS, X-Frame-Options, etc.) still inherits from the /* block below.
-/posts/maturity-grading-from-backtest-data/maturity_*
-  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; frame-src https://www.youtube-nocookie.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
-
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-Frame-Options: DENY
