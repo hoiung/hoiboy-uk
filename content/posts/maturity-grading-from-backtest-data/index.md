@@ -165,7 +165,7 @@ A quick word on the numbers below, because it matters. They come from the roughl
 | A·A·E | 292 | 0.8% | +2.88R | 16% | top tier |
 | A·A·D | 246 | 0.7% | +2.34R | 17% | top tier |
 | B·B·E | 582 | 1.6% | +2.28R | 19% | top tier |
-| *a real ~0.8R cliff sits here* | | | | | |
+| *a real ~0.9R cliff sits here* | | | | | |
 | B·B·D | 673 | 1.9% | +1.07R | 28% | falls off |
 | A·B·E | 352 | 1.0% | +1.38R | 24% | early peak, weekly confirming |
 | A·B·D | 201 | 0.6% | +0.81R | 33% | early peak, weekly confirming |
@@ -174,7 +174,7 @@ A quick word on the numbers below, because it matters. They come from the roughl
 
 Read it left to right: each pattern is Daily·Weekly·Monthly, A is the most expanded, E is dead cold. The stop-out % is how often that pattern hit its initial stop, so a lower number means the trade rarely got shaken out and was more likely to just keep running.
 
-The box was a lie. In this 4% cut, only three of the eight corners stand out (all above +2.28R with one-in-six odds of stopping out). Below them there's a real cliff, a drop of roughly 0.8R, and the rest fall off hard. The A·B ones (A·B·E, A·B·D) sit lower here because the daily has run hotter than the weekly. Not out of sync exactly, the weekly is still confirming underneath, just a notch less mature than the leaders.
+The box was a lie. In this 4% cut, only three of the eight corners stand out (all above +2.28R with one-in-six odds of stopping out). Below them there's a real cliff, a drop of roughly 0.9R, and the rest fall off hard. The A·B ones (A·B·E, A·B·D) sit lower here because the daily has run hotter than the weekly. Not out of sync exactly, the weekly is still confirming underneath, just a notch less mature than the leaders.
 
 Then there's B·A·E, sitting at the bottom looking like the best thing on the whole board at +4.64R. Ignore it. It's 25 trades. Out of a tradeable pool of around 36,000, that is far too small a sample to trust: one or two lucky runs and the average flatters itself. It's noise, not an edge, which is exactly why I don't lean on it. The strong patterns rest on over a thousand trades between them, a bit over 3% of the pool, which is enough to mean something.
 
