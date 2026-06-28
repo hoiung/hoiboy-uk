@@ -42,11 +42,14 @@
        so the homepage and any heroless page still get a proper 1200x630 card instead
        of letting scrapers grab and crop the square logo. */ -}}
 {{- $hero := "" -}}
-{{- $shareCard := "" -}}
 {{- if .IsPage -}}
   {{- $hero = partial "hero-pick.html" . -}}
-  {{- $shareCard = .Resources.GetMatch "share-card.*" -}}
 {{- end -}}
+{{- /* share-card.* is resolved on every page kind (page / section / home) so a
+       section page like /consulting/portfolio/ uses its own card, not the default.
+       hero-pick stays page-only (it targets post bundles). .Resources.GetMatch is
+       safe on any kind: it returns nil when the bundle has no matching resource. */ -}}
+{{- $shareCard := .Resources.GetMatch "share-card.*" -}}
 {{- $defaultCard := site.Home.Resources.GetMatch "hoi-mug.jpg" -}}
 {{- $socialImage := $shareCard | default $hero | default $defaultCard -}}
 {{- with $socialImage -}}
