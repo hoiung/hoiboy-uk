@@ -126,7 +126,8 @@
     </div>
   </div>
 
-<script>
+<script>(function(){if(window.__tunerInit)return;window.__tunerInit=1;
+
   const gcls = {A:'ga',B:'gb',C:'gc',D:'gd',E:'ge'};
 
   // ── OLD MODEL (geometric) - maturity classification + cycleScore. No backtest input: the badge
@@ -322,7 +323,8 @@
   ids.forEach(id=>document.getElementById(id).addEventListener('input',render));
   document.getElementById('reset').addEventListener('click',()=>{ ids.forEach(id=>document.getElementById(id).value=def[id]); render(); });
   render();
-</script>
+
+})();</script><script src='maturity_badge_tuner.js'></script>
 <p class='copyright'>© 2009–2026 Senh Hoi Ung. CC BY-SA. · <a href='https://hoiboy.uk/' target='_blank' rel='noopener'>hoiboy.uk</a></p>
 </body>
 </html>
