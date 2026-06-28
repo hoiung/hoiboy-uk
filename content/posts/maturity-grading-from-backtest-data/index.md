@@ -1,6 +1,6 @@
 ---
 title: "How I Analysed Backtested Data To Build A Maturity Graded Framework"
-date: 2026-06-20T21:45:00+01:00
+date: 2026-06-27T21:45:00+01:00
 draft: false
 categories: ["tech-ai", "trading"]
 tags: ["backtesting", "swing-trading", "data-analysis", "claude-code", "trading-system", "maturity-grade"]
