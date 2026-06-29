@@ -1,17 +1,23 @@
 {{- /* Pick the hero image for a post bundle.
        Priority order:
          1. hero.* (explicit author override)
-         2. 2e1ax_vintage_entry_* (AdventureAnd.Me Joomla "main entry" prefix)
-         3. *main* (general convention)
-         4. first raster image resource (jpg/jpeg/png/webp/gif), alphabetical
-       SVGs are EXCLUDED from candidate 4 because legacy bundles often
+         2. share-card.*: ONLY on an individual portfolio project page
+            (/consulting/portfolio/<client>/): the social card IS the hero there.
+            Real screenshots in the same bundle still render as the gallery below.
+         3. 2e1ax_vintage_entry_* (AdventureAnd.Me Joomla "main entry" prefix)
+         4. *main* (general convention)
+         5. first raster image resource (jpg/jpeg/png/webp/gif), alphabetical
+       SVGs are EXCLUDED from candidate 5 because legacy bundles often
        contain inline diagram SVGs that are never standalone hero photos.
-       share-card.* is EXCLUDED from candidate 4 because it is a
-       social-share-only image (used by head.html for og:image) and
-       should never render as the visible hero at the top of the page.
+       share-card.* is EXCLUDED from candidate 5 (and from the single.html
+       gallery) everywhere EXCEPT the portfolio-project hero case above, because
+       it is a social-share-only image (used by head.html for og:image): on
+       service pages it stays hidden, og:image only.
        Authors who want an SVG hero must rename it to hero.svg explicitly.
        Returns nil if the bundle has no eligible images. Callers must guard with `with`. */ -}}
 {{- $hero := .Resources.GetMatch "hero.*" -}}
+{{- $isPortfolioProject := and (eq .Kind "page") (strings.Contains .RelPermalink "/consulting/portfolio/") -}}
+{{- if and (not $hero) $isPortfolioProject }}{{ $hero = .Resources.GetMatch "share-card.*" }}{{ end -}}
 {{- if not $hero }}{{ $hero = .Resources.GetMatch "2e1ax_vintage_entry_*" }}{{ end -}}
 {{- if not $hero }}{{ $hero = .Resources.GetMatch "*main*" }}{{ end -}}
 {{- if not $hero -}}

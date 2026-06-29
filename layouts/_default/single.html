@@ -22,7 +22,11 @@
   {{- $images := .Resources.ByType "image" -}}
   {{- $rest := slice -}}
   {{- range $images -}}
-    {{- if or (not $hero) (ne .RelPermalink $hero.RelPermalink) -}}
+    {{- /* share-card.* is a social-share-only image (head.html og:image); it must
+           never appear in the bottom photo-gallery on any page. On portfolio project
+           pages it is the hero (see hero-pick.html), so real screenshots still gallery. */ -}}
+    {{- $isShareCard := strings.HasPrefix .Name "share-card." -}}
+    {{- if and (not $isShareCard) (or (not $hero) (ne .RelPermalink $hero.RelPermalink)) -}}
       {{- $rest = $rest | append . -}}
     {{- end -}}
   {{- end -}}
