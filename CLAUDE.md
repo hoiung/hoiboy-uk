@@ -270,6 +270,8 @@ Every consulting page (`content/consulting/*`) **and client case-study (portfoli
 3. No template change needed: `layouts/_partials/head.html` auto-resolves `share-card.*` as the page's `og:image` on every page kind (page / section / home)
 4. Commit the PNG + the cards.tsv row; rebuild and confirm `og:image` is 1200×630. LinkedIn/X cache OG images hard — use their post inspector to force a re-scrape.
 
+**Placement standard (where the card shows visibly):** `share-card.*` is social-share-only. On **service pages** it is `og:image` ONLY (hidden, never a hero or in the bottom photo-gallery). On an **individual portfolio project page** (`/consulting/portfolio/<client>/`) it is the **hero** at the top (unless an explicit `hero.*` exists), and real screenshots in that bundle still gallery below. Enforced in `layouts/_partials/hero-pick.html` (share-card hero only on portfolio-project pages) + `layouts/_default/single.html` (share-card always excluded from the auto photo-gallery). Don't regress this by reintroducing share-card into the gallery.
+
 ### Importing Legacy Posts
 - Raw exports go in `legacy/` (gitignored)
 - Conversion scripts in `scripts/import_*.{sh,py}`

@@ -29,6 +29,15 @@ title, **IBM Plex Mono** for the eyebrow / tagline / signature — vendored unde
 `fonts/` (OFL; licenses alongside) and embedded as base64 `@font-face` so they
 render identically anywhere. No photos — title + tagline + logo wordmark.
 
+## Where the card renders (placement standard)
+
+`share-card.*` is a **social-share-only** image. Its visible placement depends on the page type — this is enforced in `layouts/_partials/hero-pick.html` + `layouts/_default/single.html`:
+
+- **Service pages** (`/consulting/work-with-hoi`, `/automation-services`, `/ai-adoption-training`, `/claude-code-harness-architect`, `/pricing-billing`, and the portfolio index): the card is **hidden** (the page's `og:image` only). It must NOT appear as a hero or in the bottom photo-gallery.
+- **Individual portfolio project pages** (`/consulting/portfolio/<client>/`): the card is the **hero** image at the top of the page (unless the bundle has an explicit `hero.*`). Real project **screenshots** in the same bundle still render as the gallery below.
+
+So: drop `share-card.png` into any bundle for the og:image; on a portfolio project page it doubles as the hero, everywhere else it stays out of the visible page.
+
 ## Regenerate
 
 ```bash
