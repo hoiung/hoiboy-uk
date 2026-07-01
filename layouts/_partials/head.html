@@ -90,3 +90,11 @@
 {{- if or (.HasShortcode "gallery") (.Resources.ByType "image") }}
 <link rel="stylesheet" href="/vendor/glightbox/glightbox.min.css">
 {{- end }}
+{{- /* Cloudflare Web Analytics: privacy-friendly, cookieless. Production only,
+       and skipped on /private/ operator pages (their tighter CSP would block the
+       beacon and they must not be tracked). CSP allowlist in static/_headers. */ -}}
+{{- if and hugo.IsProduction (not (strings.HasPrefix .RelPermalink "/private/")) }}
+<!-- Cloudflare Web Analytics -->
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "730339831e074059bd495aabfc1584ff"}'></script>
+<!-- End Cloudflare Web Analytics -->
+{{- end }}
