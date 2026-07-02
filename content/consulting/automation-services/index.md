@@ -21,7 +21,7 @@ After speaking with many of my business friends, not everyone on their team want
 
 Same delivery engine as my AI Managed Harness work. The difference is the shape: sometimes a simpler interface, sometimes fully automating routine work away so people rarely touch it, always with documented manuals and a clean handover so you own it and can drop it when you are done.
 
-For automation engagements the pricing is two steps. Requirements first, at £1,500 per day + VAT (1-3 days by scope, sized on the discovery call), then a day-scoped drawdown budget instead of a fixed audit-tier price: I map your goals to build time, deliberately leaving headroom so the work does not stop mid-build, and I draw down from that budget as we go (full terms on the [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}) page).
+For automation engagements the pricing is two steps. Requirements first, at £1,500 per day + VAT (1-3 days by scope, sized on the discovery call), then a day-scoped drawdown budget instead of a fixed per-phase price: I map your goals to build time, deliberately leaving headroom so the work does not stop mid-build, and I draw down from that budget as we go (full terms on the [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}) page).
 
 ## How it works
 
@@ -47,7 +47,7 @@ Built for owner-operator teams of roughly 10 to 50 people who feel understaffed 
 
 ## Pricing summary
 
-Requirements is £1,500 per day + VAT (1-3 days by scope), billed upfront, and the build then runs as a day-scoped drawdown budget rather than a fixed audit-tier ladder. Full pricing and billing terms are on the [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/consulting/work-with-hoi" >}}).
+Requirements is £1,500 per day + VAT (1-3 days by scope), billed upfront, and the build then runs as a day-scoped drawdown budget rather than a fixed-fee phase ladder. Full pricing and billing terms are on the [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/consulting/work-with-hoi" >}}).
 
 <!-- iamhoiend -->
 
