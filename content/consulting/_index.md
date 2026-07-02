@@ -17,13 +17,13 @@ Discovery-first, audit-led, sequential per-harness delivery. Pricing starts at Â
 
 ## Business Automation Services
 
-Too busy to learn AI? Contract me as your AI Engineer and I build the automation for you, then hand it off with documented manuals so your team owns it and can drop it when they are done. Same deliverable-anchored terms and the same rate as my harness work.
+Too busy to learn AI? Contract me as your AI Engineer and I build the automation for you, then hand it off with documented manuals so your team owns it and can drop it when they are done. Same deliverable-anchored terms as my harness work: requirements priced per day, then a day-scoped build budget.
 
 [Read the full offer]({{< ref "/consulting/automation-services" >}})
 
 ## AI Adoption Training
 
-Want your team to own the capability rather than outsource it? Done-with-you training: I get your people genuinely good at using AI on their real work, mainly Claude Code, so the skill stays in the building after I leave. Same rate as my other work.
+Want your team to own the capability rather than outsource it? Done-with-you training: I get your people genuinely good at using AI on their real work, mainly Claude Code, so the skill stays in the building after I leave. Free discovery call, then a paid programme design that produces your delivery plan and one number before delivery starts.
 
 [Read the full offer]({{< ref "/consulting/ai-adoption-training" >}})
 
