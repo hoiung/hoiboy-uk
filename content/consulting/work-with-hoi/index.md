@@ -33,6 +33,8 @@ Three ways I can help, depending on what you need:
 - **[Business Automation Services]({{< ref "/consulting/automation-services" >}})**: done-for-you automation, for when you would rather I build it than learn it.
 - **[AI Adoption Training]({{< ref "/consulting/ai-adoption-training" >}})**: done-with-you training, so your team learns to use AI properly on their real work.
 
+All three run on the same engine (free discovery call, paid scoping step, delivery priced off the scoping), and the numbers for every step live in one place: [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}).
+
 My role is to add value to your business. That is what you hire me for. Once we get started, I am here to listen more than I talk, to investigate, and to ground the truth. Only then can I propose what you need versus what you want, along with a plan of action. Then I execute it as agreed, with your consent and full support, and I keep the plan flexible for the unknowns that only show up once you are actually doing the work. I do not do rigid plans; they are not real. By the way, I have been a programme manager and a PMI PMP certified project manager, accountable for too many programmes and projects to count, so yeah, I know a little about this.
 
 <!-- iamhoiend -->
