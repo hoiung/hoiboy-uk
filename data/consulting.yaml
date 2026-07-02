@@ -14,14 +14,11 @@
 #  - business.companies_house                                         -> content/consulting/<slug>/index.md (legal footer)
 #  - business.vat_number                                              -> content/consulting/<slug>/index.md (legal footer; null until HMRC issuance)
 #  - harness_architect.calcom_booking                                 -> layouts/_shortcodes/consulting-cta.html (CTA href)
-#  - harness_architect.company_audit.tier_5_to_10.employees_label    -> content/consulting/<slug>/index.md (price-ladder bullet)
-#  - harness_architect.company_audit.tier_5_to_10.price_gbp          -> AC 2.5 carve-out: optional programmatic check; currently unread
-#  - harness_architect.company_audit.tier_5_to_10.price_display      -> content/consulting/<slug>/index.md (price-ladder bullet, literal "1,500")
-#  - harness_architect.company_audit.tier_10_to_50.employees_label   -> content/consulting/<slug>/index.md (price-ladder bullet)
-#  - harness_architect.company_audit.tier_10_to_50.price_gbp         -> AC 2.5 carve-out: optional programmatic check; currently unread
-#  - harness_architect.company_audit.tier_10_to_50.price_display     -> content/consulting/<slug>/index.md (price-ladder bullet, literal "2,500")
-#  - harness_architect.company_audit.tier_50_plus.employees_label    -> content/consulting/<slug>/index.md (price-ladder bullet)
-#  - harness_architect.company_audit.tier_50_plus.price_display      -> content/consulting/<slug>/index.md (price-ladder bullet, literal "4,500-5,000")
+#  - harness_architect.company_audit.day_rate_gbp                    -> AC 2.5 carve-out: optional programmatic check; currently unread
+#  - harness_architect.company_audit.day_rate_display                -> content/consulting/<slug>/index.md + pricing-billing (audit bullet/row, literal "1,500 per day")
+#  - harness_architect.company_audit.typical_days.tier_5_to_10       -> content/consulting/<slug>/index.md + pricing-billing (day-band guidance, "1 day")
+#  - harness_architect.company_audit.typical_days.tier_10_to_50      -> content/consulting/<slug>/index.md + pricing-billing (day-band guidance, "2-3 days" / "2 to 3 days")
+#  - harness_architect.company_audit.typical_days.tier_50_plus       -> content/consulting/<slug>/index.md + pricing-billing (50+ scoped and quoted at discovery; published band retired per OD-17)
 #  - harness_architect.per_harness_audit.price_gbp_default           -> content/consulting/<slug>/index.md (per-harness audit bullet, literal £750)
 #  - harness_architect.per_harness_audit.price_display_default       -> content/consulting/<slug>/index.md (per-harness audit bullet, literal "750")
 #  - harness_architect.foundation_setup.base_price_gbp               -> content/consulting/<slug>/index.md (foundation bullet, literal £3,000)
@@ -64,20 +61,17 @@ harness_architect:
   # Brevo Hoi-voice templates take over. See docs/cal-com-setup.md for full setup.
   calcom_booking: "https://cal.eu/hoiboyuk/discovery"
 
-  # Company structure audit ladder.
-  # OD-PRICE-LADDER LOCKED = LIFT (consulting-ops#2 Phase 7 AC 7.2, 2026-05-06).
+  # Company structure audit - day-rate basis.
+  # OD-PRICE-LADDER LOCKED = LIFT (consulting-ops#2 Phase 7 AC 7.2, 2026-05-06);
+  # company-audit line superseded by OD-17 (day-rate basis, 2026-07-02, hoiboy-uk#41):
+  # fixed headcount tiers retired for £1,500/day + VAT with day-band guidance (old values in the OD registry).
   company_audit:
-    tier_5_to_10:
-      employees_label: "5-10 employees"
-      price_gbp: 1500
-      price_display: "1,500"          # £1,500 + VAT
-    tier_10_to_50:
-      employees_label: "10-50 employees"
-      price_gbp: 2500
-      price_display: "2,500"          # £2,500 + VAT
-    tier_50_plus:
-      employees_label: "50+ employees"
-      price_display: "4,500-5,000"    # £4,500-£5,000 + VAT (range, scoped per call; no single price_gbp)
+    day_rate_gbp: 1500
+    day_rate_display: "1,500 per day"   # £1,500 per day + VAT
+    typical_days:
+      tier_5_to_10: "1 day"             # typically, 5-10 employees
+      tier_10_to_50: "2-3 days"         # typically, 10-50 employees
+      tier_50_plus: "scoped and quoted at the discovery call"   # no published band
 
   # Per-harness audit (sequential, scoped per harness post company audit).
   per_harness_audit:
