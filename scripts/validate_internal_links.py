@@ -62,8 +62,10 @@ _ALLOW_SINGLE = frozenset(
 # Two-segment allow-list prefixes (paths that take a slug after the first
 # segment). /consulting/<slug>/ is a content page bundle; /tags|series/<slug>/
 # is a taxonomy term page; /<section>/index.xml is the per-section RSS feed
-# Hugo emits for each _index.md.
-_ALLOW_TWO_PREFIX = frozenset(["consulting", "tags", "series", "legal"])
+# Hugo emits for each _index.md; /artifacts/<file> is a self-contained static
+# download under static/artifacts/ (e.g. a branded showcase), which lives outside
+# the content tree so its existence cannot be checked from the markdown.
+_ALLOW_TWO_PREFIX = frozenset(["consulting", "tags", "series", "legal", "artifacts"])
 
 # Pre-compiled patterns.
 # Shortcode strip — Hugo shortcodes look like `{{< name args >}}` or `{{% ... %}}`.
