@@ -17,18 +17,18 @@ At a glance. All prices exclude VAT (charged at the prevailing rate; VAT-registe
 | Step | AI Managed Harness | Business Automation | AI Adoption Training |
 |---|---|---|---|
 | 1. Discovery | Free 20-min call | Free 20-min call | Free 20-min call |
-| 2. Paid scoping | Company audit, from £1,500 | Requirements, £1,500 per day | Programme design, £1,500 per day |
+| 2. Paid scoping | Company audit, £1,500 per day | Requirements, £1,500 per day | Programme design, £1,500 per day |
 | 3. Delivery, priced off the scoping | Fixed fee per phase + build budget | Day-scoped drawdown budget | One quote off the design |
 | 4. Aftercare (optional) | Free first month, hourly pack, monthly maintenance | Pay-as-you-go or pre-paid block | None |
 
 ### AI Managed Harness Services
 
-The harness engagement runs as a fixed audit-tier ladder. Each phase is a fixed-fee output of the phase before it, so you always know the next number before you commit to it.
+The harness engagement runs as a ladder. Each phase is priced off the phase before it, so you always know the next number before you commit to it.
 
 | Phase | Price | Notes |
 |---|---|---|
 | 1. Discovery call | Free | 20-minute Cal.com booking, Mon to Fri UK business hours |
-| 2. Company audit | £1,500 (5-10 emp) / £2,500 (10-50 emp) / £4,500-5,000 (50+ emp) | 1-3 SME-days; written report + walkthrough call; independent (not credited back against build) |
+| 2. Company audit | £1,500 per day | Typically 1 day (5-10 emp) or 2-3 days (10-50 emp); 50+ scoped and quoted on the discovery call; written report + walkthrough call; independent (not credited back against build) |
 | 3. Foundation setup | £3,000 base 2 days; £1,500/extra day, hard-capped at 4 days total (£6,000 max) | Per-harness scaffolding: clean GitHub home, version history, rollback, audit trail, security controls |
 | 4. Per-harness audit | £750 per harness | 1 SME-day; sequential, one per harness, before each build |
 | 5. Per-harness build and rollout | £12K-£30K typical (fixed-fee output of audit; scales with rollout footprint) | Custom-scoped per audit; build is shaped by rollout shape (1-user harness vs 20-user harness = different jobs); single fee covers both dimensions; volume discount for multi-harness commitments at engagement open |
