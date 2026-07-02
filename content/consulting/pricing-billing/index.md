@@ -8,6 +8,10 @@ hideDate: true
 
 One pricing and billing page for all three services. The detailed numbers live here so each service page can stay about the work, not the invoice. Every service runs on the same engine: a free discovery call, then a paid scoping step, then delivery priced off that scoping. We do not know the size of a job until we understand it, and the discovery call plus the scoping step is exactly where that happens. Each table below states the price of every step, so you always see the number before the work it buys.
 
+One more thing: a special 30% discount for friends and family, and for anyone they refer my way. If that is you, just let me know when you contact me, and tell me who referred you (it makes it easier to know who's singing my praises).
+
+Why can I offer this? Because there are no marketing and sales overheads with friends and family: the people who supported me, know my personality, and understand the value I offer and deliver. A referral from them saves me the same sales-pitch cost of doing business. That saving gets passed straight on. No brainer.
+
 <!-- iamhoiend -->
 
 ## Pricing Matrix
