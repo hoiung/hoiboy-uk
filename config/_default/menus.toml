@@ -77,6 +77,16 @@
   url = "/life/"
   weight = 60
 
+# Community groups section (sidebar heading: "Asians & Gingers in Tech").
+# Heading carries the brand; entries carry the platform, so the LinkedIn
+# group and the future Meetup group never collide on the same name.
+[[groups]]
+  name = "LinkedIn group"
+  url = "https://www.linkedin.com/groups/26310001/"
+  weight = 10
+
+# [[groups]]  Meetup group goes here once the operator re-creates it.
+
 [[social]]
   name = "GitHub"
   url = "https://github.com/hoiung"
