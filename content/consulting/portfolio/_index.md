@@ -5,5 +5,5 @@ description: "Real client work delivered by HOIBOY AI LTD. Each case study cover
 ---
 
 <!-- iamhoi -->
-A running record of client work I have delivered through HOIBOY AI LTD. One page per client, added to over time. Each one covers the problem the client had, how I helped, the outcome, and a link out to their own site.
+Welcome to my bragging rights page. A running record of client work I have delivered through HOIBOY AI LTD. One page per client, added to over time. Each one covers the problem the client had, how I helped, the outcome, and a link out to their own site.
 <!-- iamhoiend -->
