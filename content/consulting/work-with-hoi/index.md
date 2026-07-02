@@ -27,7 +27,7 @@ This page is also a deterrent for the kind of client I really do not want to wor
 
 Hi, I am Hoi. Late introduction, now that I have gotten some of my bits above out of the way. I have loved taking technology apart since I was about 7, and I never really stopped. I have spent roughly 20 years building my own businesses as a serial entrepreneur (design and print, import and export, hospitality, a dance school, and a handful of smaller ventures), running concurrently with about 12 years of a corporate career, including 8 years at Canonical (the company behind Ubuntu), where I spent my days translating infrastructure realities for non-engineering people. So I have sat at both ends of the table: the owner signing the cheques and the person delivering the work. Now I am back to my own gig, at my own pace, doing the part I love most, which is being on the ground helping you get real value out of AI.
 
-In a sense, I am basically a pencil sharpener. My value is helping your team become sharper at what they do. So the three services I offer are just a different grain of the same sharpening service for your team.
+In a sense, I am basically a pencil sharpener. My value is helping your team become sharper at what they do. So the three services I offer are just a different grain of the same sharpening service for your team. Blunt tools give blunt results, sharp tools give sharp results. Simple.
 
 Three ways I can help, depending on what you need:
 
