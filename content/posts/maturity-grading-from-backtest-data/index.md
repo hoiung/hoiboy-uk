@@ -72,7 +72,7 @@ Eventually it landed on something that held up, so we tested it on other edge sc
 
 My answer, typed in frustration somewhere around hour 30: "we want stocks that is increasing in volatility... where money is made. we dont make money if stocks dont move!"
 
-So instead of a clever composite that ranked everything against everything, I graded one honest thing: how stretched is this stock's recent range compared to its own long history? Expansion. Is it waking up, or is it asleep? A to E, A being the most expanded. The nice side effect is you can compute it at any bar in history without needing the rest of the pool, so it works live and it works in a backtest with the exact same code path.
+So instead of a clever composite that ranked everything against everything, I graded one honest thing: how stretched is this stock's recent range compared to its own long history? Expansion. Is it waking up, or is it asleep? A to E, A being the most expanded. And it doesn't care which way price went. A stock that craters counts exactly the same as one that rips, because this measures how hard it's moving, not the direction. Which way to actually bet is a separate question. The nice side effect is you can compute it at any bar in history without needing the rest of the pool, so it works live and it works in a backtest with the exact same code path.
 
 {{< zoom-image src="maturity-grade-scale.svg" alt="The maturity grade scale, A (most expanded, ripe) through E (dormant), coloured green to red" title="The maturity grade: how expanded is the move?" >}}
 
