@@ -7,7 +7,7 @@ hideDate: true
 
 <!-- iamhoi -->
 
-Not every business owner or team wants to learn or use AI. Some are just too busy, and they would rather it was handled for them. That is where this service comes in. Too busy to learn AI? Contract me as your AI Engineer and I build the automation for you, instead of teaching your staff to build their own.
+Not every business owner or team wants to learn or use AI. Some are just too busy, and they would rather it was handled for them. No weakness in that: successful owners are successful because they delegate. They hire the right people with the right skills to add value, focus on the management side, and bring in the right resources to make their team more effective. Handing the AI part to me is the same move. That is where this service comes in. Too busy to learn AI? Contract me as your AI Engineer and I build the automation for you, instead of teaching your staff to build their own.
 
 I sit with your team, map the work they do by hand, and turn the repetitive toil into automation that runs inside your business process. The judgment calls stay with your people, human in the loop (HITL), always attended. The routine toil gets automated away so they rarely have to touch it. Both live side by side: your experts stay in the driver's seat on what matters, and the boring parts run themselves.
 
@@ -15,7 +15,7 @@ I build it and deliver it, then hand it off. You get documented manuals and a cl
 
 Most leaders get automation wrong. They think automate and fire staff. Not when staff loyalty and expertise mean something to a business owner. The point is to make your people's lives easier, take the toil off their plate, and free them up for the work only they can do. Same headcount, more output, less drained. This matters even more when you are understaffed and hiring has been tough. So help your team by making their lives easier, and automate what you can of the work that chips away at their time. I know for a fact I underperform when I am overwhelmed. To be at our best, we need breathing room, time to think. This is another way of adding value, one that raises the quality of the output. Not just a number on the P&L, but team satisfaction and retention, which over the long run also saves you money, time, and the gaps left by staff shortages.
 
-After speaking with many of my business friends, not everyone on their team wants to learn or adopt AI. These are leaders who are not out to replace loyal staff with AI. Instead, they asked whether I could help automate certain tasks to make their team's lives easier. That is true leadership, and the answer is yes, I can. This is why I decided to offer this service.
+This service exists because I asked around to understand what the market wants and needs. After speaking with many of my business friends, clients, and business owners, one thing kept coming back: not everyone on their team wants to learn or adopt AI. These are leaders who are not out to replace loyal staff with AI. Instead, they asked whether I could help automate certain tasks to make their team's lives easier. That is true leadership, and the answer is yes, I can. This is why I decided to offer this service.
 
 ## Same engine, different shape
 
