@@ -35,6 +35,8 @@ Three ways I can help, depending on what you need:
 
 All three run on the same engine (free discovery call, paid scoping step, delivery priced off the scoping), and the numbers for every step live in one place: [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}).
 
+A lot of AI gets built the wrong way round: the solution gets built first (code is cheap now, anyone can vibe-code an app), then someone tries to fit your problem into it. I work the other way. I start from your customer's experience and what your business needs right now and in the near future, then work backwards to a solution that fits YOUR problem. AI can build almost anything these days; the real value is gluing the pieces together in the right order for you. That is exactly why the paid scoping step exists: I spend that time understanding your business before anything gets built.
+
 My role is to add value to your business. That is what you hire me for. Once we get started, I am here to listen more than I talk, to investigate, and to ground the truth. Only then can I propose what you need versus what you want, along with a plan of action. Then I execute it as agreed, with your consent and full support, and I keep the plan flexible for the unknowns that only show up once you are actually doing the work. I do not do rigid plans; they are not real. By the way, I have been a programme manager and a PMI PMP certified project manager, accountable for too many programmes and projects to count, so yeah, I know a little about this.
 
 <!-- iamhoiend -->
