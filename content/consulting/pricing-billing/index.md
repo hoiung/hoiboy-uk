@@ -71,6 +71,10 @@ The harness engagement runs as a ladder. Each phase is priced off the phase befo
 
 How and when I bill, in plain terms. The structure protects both sides: you do not pay before there is real value committed, and I do not carry months of work-in-progress without cashflow.
 
+### What the audit fee covers
+
+The company audit bills on the audit days themselves: the 1 to 3 or more days I spend inside your business. What you are not billed for is the work around them. Once the audit days are done, I still collate everything I found, review it, and build the strategy proposal that comes back to you. None of that goes on the clock. That is why the audit is billed the way it is: the day rate carries the thinking and planning time, not just the days you see me.
+
 ### Upfront, before work starts
 
 On a **harness** engagement, two phases bill upfront on engagement open: the Phase 2 company audit (invoiced and paid before the audit begins, so both sides stay serious; you commission real research that lands in your hands whether you proceed past it or not), and the Phase 3 foundation setup (invoiced and paid before foundation work begins, after you have seen the audit and accepted the budget). On a **Business Automation** engagement, the requirements phase bills upfront the same way, because that is where the workflow mapping happens. On a **training** engagement, the paid programme-design step bills before delivery starts, because that is where the custom prep happens.
