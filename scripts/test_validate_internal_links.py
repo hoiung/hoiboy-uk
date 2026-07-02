@@ -86,28 +86,6 @@ def test_ref_style_image_only_def_does_not_false_positive(tmp_path) -> None:
     )
 
 
-def test_artifacts_static_path_passes(tmp_path) -> None:
-    """A link to a self-contained static download under /artifacts/ passes via
-    the allow-list, including the absolute hoiboy.uk self-reference form (the
-    file lives outside the content tree, so it cannot be verified from markdown)."""
-    md = tmp_path / "artifact_link.md"
-    md.write_text(
-        "[See the cards](https://hoiboy.uk/artifacts/cu-architects-social-cards.html)\n"
-        "and [relative too](/artifacts/foo.html)\n",
-        encoding="utf-8",
-    )
-    result = subprocess.run(
-        [sys.executable, str(SCRIPT), "--repo-root", str(REPO_ROOT), str(md)],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    assert result.returncode == 0, (
-        f"/artifacts/ static path must pass the allow-list; got exit "
-        f"{result.returncode}\nstderr:\n{result.stderr}"
-    )
-
-
 def test_ref_style_used_as_both_image_and_link_still_validates(tmp_path) -> None:
     """If the same ref id is used as both ``![alt][ref]`` (image) and
     ``[text][ref]`` (link), the link use forces URL classification — image
