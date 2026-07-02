@@ -6,13 +6,20 @@ hideDate: true
 
 <!-- iamhoi -->
 
-One pricing and billing page for all three services. The detailed numbers live here so each service page can stay about the work, not the invoice. The same internal build rate runs underneath all three; what changes is the shape of how that rate is packaged, because a managed harness, a done-for-you automation, and a team training programme bill differently.
+One pricing and billing page for all three services. The detailed numbers live here so each service page can stay about the work, not the invoice. Every service runs on the same engine: a free discovery call, then a paid scoping step, then delivery priced off that scoping. We do not know the size of a job until we understand it, and the discovery call plus the scoping step is exactly where that happens. Each table below states the price of every step, so you always see the number before the work it buys.
 
 <!-- iamhoiend -->
 
 ## Pricing Matrix
 
 At a glance. All prices exclude VAT (charged at the prevailing rate; VAT-registered from invoice #1).
+
+| Step | AI Managed Harness | Business Automation | AI Adoption Training |
+|---|---|---|---|
+| 1. Discovery | Free 20-min call | Free 20-min call | Free 20-min call |
+| 2. Paid scoping | Company audit, from £1,500 | Requirements, £1,500 per day | Programme design, £1,500 per day |
+| 3. Delivery, priced off the scoping | Fixed fee per phase + build budget | Day-scoped drawdown budget | One quote off the design |
+| 4. Aftercare (optional) | Free first month, hourly pack, monthly maintenance | Pay-as-you-go or pre-paid block | None |
 
 ### AI Managed Harness Services
 
@@ -35,7 +42,13 @@ The harness engagement runs as a fixed audit-tier ladder. Each phase is a fixed-
 
 <!-- iamhoi -->
 
-Same rate as the harness ladder, different commercial shape. Business Automation engagements are scoped by days rather than fixed audit tiers: I map your goals to build time, deliberately over-budget so the work does not stop mid-build, and draw down from that budget as build increments are completed and signed off. The day-scoped drawdown budget is set after the requirements phase, once the workflow detail is known, and you only pay for build time actually used within the agreed envelope. No published per-phase number here, because the budget is scoped to your workflows, not a fixed ladder.
+| Step | Price | Notes |
+|---|---|---|
+| 1. Discovery call | Free | 20-minute call; honest read on what is worth automating |
+| 2. Requirements | £1,500 per day; 1-3 days depending on scope | I sit with your team and map the by-hand workflow end to end; produces the day-scoped build budget. Sized on the discovery call, priced before it starts |
+| 3. Build | Day-scoped drawdown budget, set off the requirements | Deliberately over-budgeted envelope; you only pay for build time actually used; sign-off gates every drawdown |
+| 4. Deployment + handover | Included in the budget | Rollout, documented manuals, clean handover; you own the result |
+| 5. Support (optional) | Pay-as-you-go, or pre-paid block | Deliverable-anchored, drop it any time |
 
 <!-- iamhoiend -->
 
@@ -43,7 +56,12 @@ Same rate as the harness ladder, different commercial shape. Business Automation
 
 <!-- iamhoi -->
 
-Positioning only, no published number, same internal rate. AI Adoption Training starts with a free discovery call, then a paid programme-design step where I learn your goal and build the adoption programme around it. Delivery is billed in the shape the design produces: a fixed fee for a single-day session, a day-scoped drawdown for a multi-week programme run with your teams, or a programme fee for a defined engagement. You get the price before delivery starts, off the design, not off a public rate card.
+| Step | Price | Notes |
+|---|---|---|
+| 1. Discovery call | Free | 20-minute call; honest read on whether training is even the right move |
+| 2. Programme design | £1,500 per day, billed upfront; days depend on scope and complexity | The scoping work: your goal, your team, the depth you want; produces the delivery plan and your delivery quote |
+| 3. Delivery | One number, off the design | A single day with a team or a programme over several weeks; sign-off gates each increment |
+| 4. Handover | Included | Skills, playbook and materials stay with your team; you do not need me on standby afterwards |
 
 <!-- iamhoiend -->
 
@@ -55,13 +73,13 @@ How and when I bill, in plain terms. The structure protects both sides: you do n
 
 ### Upfront, before work starts
 
-On a **harness** engagement, two phases bill upfront on engagement open: the Phase 2 company audit (invoiced and paid before the audit begins, so both sides stay serious; you commission real research that lands in your hands whether you proceed past it or not), and the Phase 3 foundation setup (invoiced and paid before foundation work begins, after you have seen the audit and accepted the budget). On a **training** engagement, the paid programme-design step bills before delivery starts, because that is where the custom prep happens.
+On a **harness** engagement, two phases bill upfront on engagement open: the Phase 2 company audit (invoiced and paid before the audit begins, so both sides stay serious; you commission real research that lands in your hands whether you proceed past it or not), and the Phase 3 foundation setup (invoiced and paid before foundation work begins, after you have seen the audit and accepted the budget). On a **Business Automation** engagement, the requirements phase bills upfront the same way, because that is where the workflow mapping happens. On a **training** engagement, the paid programme-design step bills before delivery starts, because that is where the custom prep happens.
 
 ### Rolling monthly, for ongoing build phases
 
 On a **harness** engagement, the per-harness audit, build and rollout, and SME workshop bill on a rolling monthly basis, pro-rata for whatever was completed and signed off in that calendar month. Sign-off is the gate: each deliverable needs your "yes, I am happy with this" before it goes on the invoice. For a longer build we agree milestones at kickoff (scaffolding, core build, rollout per user cohort, workshop), and each signed-off milestone bills in the calendar month it lands, so you pay as we make signed-off progress instead of one lump at the end.
 
-On a **Business Automation** engagement the same rhythm applies against the day-scoped drawdown budget: I draw down as build increments are completed and signed off, and both sides reconcile against the budget as the engagement runs. On a **training** engagement, delivery bills in the shape the programme design produces: a single-day session fee, a day-scoped drawdown for a multi-week programme, or a defined programme fee.
+On a **Business Automation** engagement the same rhythm applies against the day-scoped drawdown budget: I draw down as build increments are completed and signed off, and both sides reconcile against the budget as the engagement runs. On a **training** engagement, delivery bills per the design's delivery plan: the one number set before delivery starts, gated by your sign-off like everything else.
 
 ### Recurring, for ongoing maintenance
 
@@ -78,7 +96,7 @@ Smaller pieces get rolled into the next invoice. Bigger pieces (a new harness, a
 
 ### What this means in plain language
 
-You pay upfront for the audit and foundation on a **harness** engagement, for the programme design on a **training** engagement, and you draw down against an agreed budget on a **Business Automation** engagement. After that, you pay for whatever is genuinely complete and signed off. Once the work is running, you choose whether to retain me for ongoing maintenance and on what cadence.
+You pay upfront for the audit and foundation on a **harness** engagement, for the requirements phase on a **Business Automation** engagement, and for the programme design on a **training** engagement. The automation build then draws down against the agreed budget. After that, you pay for whatever is genuinely complete and signed off. Once the work is running, you choose whether to retain me for ongoing maintenance and on what cadence.
 
 No big-bang final bills. No vague "we'll figure it out." If you have already paid me, it is because something tangible got delivered and you signed off on it.
 
