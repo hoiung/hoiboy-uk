@@ -11,7 +11,7 @@ UK-based; international clients welcome (travel and accommodation at cost when s
 
 ## AI Managed Harness Services
 
-Discovery-first, audit-led, sequential per-harness delivery. Pricing starts at £1,500 + VAT for the company audit. Monthly Maintenance Package from £200/mo per harness once a harness is in production.
+Discovery-first, audit-led, sequential per-harness delivery. Pricing starts at £1,500 per day + VAT for the company audit (typically 1 to 3 days). Monthly Maintenance Package from £200/mo per harness once a harness is in production.
 
 [Read the full offer]({{< ref "/consulting/claude-code-harness-architect" >}})
 
