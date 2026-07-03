@@ -81,6 +81,8 @@ This is the bit that matters. Because what hurts most is sizing up and then gett
 | Absolute ceiling | never more than 2% of the account, whatever the maths says |
 | Timeframe | weekly and daily setups only |
 
+None of these numbers are guesses. The tiers and the brakes both come straight off the maturity-grade backtest data, the historical stop-out rates and how many trades sit behind each shape. The sizer adjusts to what the numbers actually show, not to a hunch.
+
 ## Why 2x is still safe
 
 This is the table that makes the whole case. The elite weekly setups stopped out around 5.6 to 6.9% of the time on the held-out data. A normal trade stops out around 22.8%.
