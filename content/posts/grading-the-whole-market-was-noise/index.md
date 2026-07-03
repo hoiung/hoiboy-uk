@@ -1,6 +1,6 @@
 ---
 title: "Maturity Grading Worked on Stocks. The Market? Pure Noise."
-date: 2026-06-27T17:00:00+01:00
+date: 2026-07-03T08:30:00+01:00
 categories: [trading, tech-ai]
 tags: [trading, backtesting, overfitting, market-regime, claude-code]
 description: "I wanted to grade the whole market so I could size my risk to it. 30 hours in, the numbers looked great. Then the proof killed it."
