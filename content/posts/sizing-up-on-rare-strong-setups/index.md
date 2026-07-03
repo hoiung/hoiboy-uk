@@ -42,6 +42,8 @@ More edge AND more risk control. That is the whole thing right there. The rare s
 
 It's a toggle on my plan-trade page. A setup qualifies, the button lights up, I click it, and my position size goes up by a tier. Click again, back to base. Nothing auto-places. It's just the maths, sitting there, waiting for me to say yes.
 
+I could work this out by hand on every trade. But I wanted it automated and consistent, human-in-the-loop, not me eyeballing the sizing differently depending on my mood. Same rules, every time.
+
 > yes, I bless it because it is still manual, this is just a calculation as a toggle option if I choose to or not scale the size up.
 
 Here is what that looks like on the actual page. The toggle on, the toggle off, and one that won't let me size up and tells me why. The blue box is the risk it works out, the coloured box is the toggle itself. Click any to zoom in.
