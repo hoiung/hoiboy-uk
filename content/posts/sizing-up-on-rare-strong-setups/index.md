@@ -1,5 +1,5 @@
 ---
-title: "The Market Wouldn't Tell Me When to Press. The Setup Did."
+title: "The Market Wouldn't Tell Me When to Size Up. The Setup Did."
 date: 2026-07-03T10:20:00+01:00
 draft: false
 categories: [trading, tech-ai]
