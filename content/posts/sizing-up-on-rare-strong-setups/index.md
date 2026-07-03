@@ -13,11 +13,11 @@ resources:
   - src: "shots/3-risk-adjust-not-met.webp"
     title: "Condition not met: the toggle is disabled and tells me why. Above the cliff, but stop-out 13.4% is over the 13% size-up band, so it stays at base (6 shares)."
   - src: "shots/4-risk-adjust-on-dashboard.webp"
-    title: "ON, the same panel without the callouts."
+    title: "The full plan-trade page with RISK-ADJUST ON."
   - src: "shots/5-risk-adjust-off-dashboard.webp"
-    title: "OFF, the same panel without the callouts."
+    title: "The full plan-trade page with RISK-ADJUST OFF."
   - src: "shots/6-risk-adjust-not-met-dashboard.webp"
-    title: "Condition not met, the same panel without the callouts."
+    title: "The full plan-trade page, condition not met."
 ---
 
 <!-- iamhoi -->
