@@ -13,11 +13,11 @@ resources:
   - src: "shots/close/not-met.webp"
     title: "Condition not met: the toggle is disabled and tells me why. Above the cliff, but stop-out 13.4% is over the 13% size-up band, so it stays at base (6 shares)."
   - src: "shots/full/on.webp"
-    title: "The full plan-trade page with RISK-ADJUST ON."
+    title: "Plan-trade page view with RISK-ADJUST ON."
   - src: "shots/full/off.webp"
-    title: "The full plan-trade page with RISK-ADJUST OFF."
+    title: "Plan-trade page view with RISK-ADJUST OFF."
   - src: "shots/full/not-met.webp"
-    title: "The full plan-trade page, condition not met."
+    title: "Plan-trade page view, condition not met."
 ---
 
 <!-- iamhoi -->
@@ -48,7 +48,7 @@ Here is what that looks like on the actual page. The toggle on, the toggle off, 
 
 {{< gallery folder="shots/close" >}}
 
-And the same three states, full page:
+And the same three states, the wider page view:
 
 {{< gallery folder="shots/full" >}}
 
