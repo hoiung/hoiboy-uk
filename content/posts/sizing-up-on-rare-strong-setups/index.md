@@ -6,17 +6,17 @@ categories: [trading, tech-ai]
 tags: [position-sizing, risk-management, backtesting, maturity-grading, automated-trading, auto_pb]
 description: "Grading the whole market to size my risk was noise. So I built a toggle that presses harder on the rare strong setups, with the brakes wired in first."
 resources:
-  - src: "shots/1-risk-adjust-on.webp"
+  - src: "shots/close/on.webp"
     title: "RISK-ADJUST ON: the toggle is lit (R2 1.25x band), so account risk goes 0.5% to 0.625% and the size steps up to 13 shares (base would be 10)."
-  - src: "shots/2-risk-adjust-off.webp"
+  - src: "shots/close/off.webp"
     title: "RISK-ADJUST OFF: same setup, toggle off, back to base 0.5% and 10 shares. It still shows what it would size to."
-  - src: "shots/3-risk-adjust-not-met.webp"
+  - src: "shots/close/not-met.webp"
     title: "Condition not met: the toggle is disabled and tells me why. Above the cliff, but stop-out 13.4% is over the 13% size-up band, so it stays at base (6 shares)."
-  - src: "shots/4-risk-adjust-on-dashboard.webp"
+  - src: "shots/full/on.webp"
     title: "The full plan-trade page with RISK-ADJUST ON."
-  - src: "shots/5-risk-adjust-off-dashboard.webp"
+  - src: "shots/full/off.webp"
     title: "The full plan-trade page with RISK-ADJUST OFF."
-  - src: "shots/6-risk-adjust-not-met-dashboard.webp"
+  - src: "shots/full/not-met.webp"
     title: "The full plan-trade page, condition not met."
 ---
 
@@ -46,7 +46,11 @@ It's a toggle on my plan-trade page. A setup qualifies, the button lights up, I 
 
 Here is what that looks like on the actual page. The toggle on, the toggle off, and one that won't let me size up and tells me why. The blue box is the risk it works out, the coloured box is the toggle itself. Click any to zoom in.
 
-{{< gallery folder="shots" >}}
+{{< gallery folder="shots/close" >}}
+
+And the same three states, full page:
+
+{{< gallery folder="shots/full" >}}
 
 ## What gets sized up
 
