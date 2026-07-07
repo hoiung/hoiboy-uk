@@ -159,9 +159,13 @@ BANNED_WORDS: tuple[str, ...] = (
     "utilize", "utilizing", "utilized", "utilise", "utilising", "utilised",
     "commendable",
     "noteworthy",
-    # 2026-07-07 (operator-flagged): "boring" is an AI tell, the trope of
-    # calling plain, dependable engineering "boring but reliable". Operator:
-    # "it's not boring, it's simple. basic engineering." Use "simple" instead.
+    # 2026-07-07 (operator-flagged): "boring" is an AI tell because AI OVERUSES
+    # it, especially the trope of calling plain, dependable engineering "boring
+    # but reliable" (say "simple" instead). Flagged by default to catch overuse.
+    # It IS legitimate where something is GENUINELY boring in lived narrative (a
+    # dull job, school, a stale dance partner): wrap those authentic uses in
+    # <!-- iamhoi-skip --> ... <!-- iamhoi-skipend --> so the guard passes them.
+    # Full rule: VOICE_PROFILE.md Section 8 "Context-dependent — boring".
     "boring",
     # Multi-word AI/CV-speak phrases
     "strategic initiative",
