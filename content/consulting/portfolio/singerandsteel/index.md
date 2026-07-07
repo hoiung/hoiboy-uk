@@ -12,9 +12,9 @@ hideDate: true
 
 ## The problem
 
-Singer & Steel wanted to know if their 3D design work could be automated. The idea was to take the modelling they do in Blender and SketchUp and get a script to do the heavy lifting, so they could turn concepts into visuals faster.
+Singer & Steel spend real money and real time on every project, working with an interior designer to get each space looking the way they envision it. That is how good design happens, no complaint there. But they had a fair question: could AI take some of that on? Could you automate the 3D modelling of their architectural designs in Blender or SketchUp, turn concepts into visuals faster, and cut the per project cost and the back and forth?
 
-It is a fair question. Everyone is asking it right now. So instead of guessing, I built them the answer.
+Everyone is asking a version of that right now. So instead of guessing, I built them the answer.
 
 ## What I built
 
@@ -22,13 +22,15 @@ A two-day MVP. A real working demo that drove SketchUp and Blender through autom
 
 ## Knowing when not to automate
 
-Here is the honest part. Once I had built it and reviewed how it actually behaved, I told them not to take it further.
+Here is the honest part. Once I had it working, and actually understood what today's AI tooling can and cannot do, I told them not to take it further.
 
-3D architectural design is not routine work you hand to a script. It is expert judgement, spatial reasoning, and taste, the stuff Holly and Derek have spent years getting good at. Automating it, especially in the hands of someone who is not a Blender or SketchUp expert, does not save time. It hides the complexity in a place where nobody can steer it, and it quietly strips out the very expertise that makes the work good.
+Not because I could not build it. I can. The questions that matter to a business are different: is it cost effective, and will it genuinely help a practice their size? For Singer & Steel the answer was clearly no. What a bespoke automated 3D tool would cost me to build and keep running, and cost them in time, would far outweigh what they already spend hiring an interior designer per project. One is a big ongoing build I have to maintain. The other is a designer they pay only when they need one.
 
-The demo was the point. It was cheap, it was fast, and it was enough to have a proper conversation and help them make the right call. Some things should still be outsourced to the right expert. Knowing which things, and being willing to say so even when I could have kept building and billing, is part of the job too.
+And here is the bit people skip. Could I have answered that with real confidence without building the mock up first? Probably not, not honestly. Anyone can have an opinion on whether AI can do a job. Building the thing, seeing exactly where it strains, and working out the true cost is what turns an opinion into a decision you can stand behind. The two days bought that.
 
-Not everything should be automated. Working out what should and what should not is the actual work.
+There is a craft point too. 3D architectural design is expert work, spatial judgement and taste that Holly and Derek have spent years on, not something you hand to a script and walk away from. But even leaving that aside, the economics alone made the call.
+
+Not everything should be automated. Working out what should and what should not, and being able to prove it rather than guess, is the actual work.
 
 ## What I do for them now
 
