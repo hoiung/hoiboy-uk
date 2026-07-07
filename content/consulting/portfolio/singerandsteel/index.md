@@ -28,7 +28,7 @@ Not because I could not build it. I can. The questions that matter to a business
 
 And here is the bit people skip. Could I have answered that with real confidence without building the mock up first? Probably not, not honestly. Anyone can have an opinion on whether AI can do a job. Building the thing, seeing exactly where it strains, and working out the true cost is what turns an opinion into a decision you can stand behind. The two days bought that.
 
-There is a craft point too. 3D architectural design is expert work, spatial judgement and taste that Holly and Derek have spent years on, not something you hand to a script and walk away from. But even leaving that aside, the economics alone made the call.
+There is a craft point too. This work is specialist coordination between two experts, the architect and the interior designer, each bringing judgement and taste the other does not have. That back and forth is where the design actually happens. It is not something you hand to a script and walk away from. But even leaving that aside, the economics alone made the call.
 
 Not everything should be automated. Working out what should and what should not, and being able to prove it rather than guess, is the actual work.
 
