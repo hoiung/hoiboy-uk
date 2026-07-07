@@ -66,7 +66,9 @@ That is a better outcome than a clever 3D script somebody else owns and maintain
 
 ## The outcome
 
-Singer & Steel got a clear, honest answer on their 3D question, backed by a real demo rather than a sales pitch, and they got it in three days. No half-finished automation limping along in the background. Their site is live at [singerandsteel.co.uk](https://www.singerandsteel.co.uk/), and they now run my Claude Code harness setup on their own machine, which I keep current, while they build their own automation on top of it.
+Singer & Steel got a clear, honest answer on their 3D question, backed by a real demo rather than a sales pitch, and they got it in three days. No half-finished automation limping along in the background. They now run my Claude Code harness setup on their own machine, which I keep current, while they build their own automation on top of it.
+
+I did not build their website, that one is all theirs. But if you want to see their architecture and design work, you will find them at [singerandsteel.co.uk](https://www.singerandsteel.co.uk/).
 
 <!-- iamhoiend -->
 
