@@ -20,6 +20,18 @@ Everyone is asking a version of that right now. So instead of guessing, I built 
 
 A two-day MVP. A real working demo that drove SketchUp and Blender through automation, so we could see the thing with our own eyes rather than argue about it in theory. Two days was enough to build it, run it, and understand exactly where the complexity lived.
 
+## What the demo produced
+
+Here is what those two days actually made. A room modelled in SketchUp, then rendered in Blender, all driven by the pipeline I built.
+
+{{< zoom-image src="demo-sketchup-model.jpg" alt="A plain grey room shell modelled in SketchUp with furniture placed inside" title="The room modelled in SketchUp" >}}
+
+{{< zoom-image src="demo-render-room.jpg" alt="A 3D render of a living room with a sofa, armchair, coffee table, vase and plant" title="The same room rendered in Blender" >}}
+
+{{< zoom-image src="demo-render-detail.jpg" alt="A close-up render of the plant, cushions and coffee table" title="A close-up from the render" >}}
+
+It works, and it makes rooms. Looking at real output, instead of imagining it, is what let us have the honest conversation next.
+
 ## Knowing when not to automate
 
 Here is the honest part. Once I had it working, and actually understood what today's AI tooling can and cannot do, I told them not to take it further.

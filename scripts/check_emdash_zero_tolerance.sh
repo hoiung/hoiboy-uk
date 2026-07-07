@@ -25,13 +25,16 @@ set -euo pipefail
 EMDASH=$'—'
 SCAN_PATHS=(content layouts assets config docs README.md)
 
-matches=$(grep -rln --exclude-dir=posts --exclude-dir=meet-recorder "$EMDASH" "${SCAN_PATHS[@]}" 2>/dev/null || true)
+# -I skips binary files: the em-dash byte sequence (E2 80 94) can occur by chance
+# inside compressed image data (e.g. a committed JPEG render), which is never voice
+# prose. Without -I, grep -r reports "Binary file X matches" as a false positive.
+matches=$(grep -rlnI --exclude-dir=posts --exclude-dir=meet-recorder "$EMDASH" "${SCAN_PATHS[@]}" 2>/dev/null || true)
 
 if [ -n "$matches" ]; then
   echo "::error::Em dashes (U+2014) found in tracked voice files (zero-tolerance voice rule):" >&2
   echo "$matches" >&2
   echo "--- offending lines ---" >&2
-  grep -rn --exclude-dir=posts --exclude-dir=meet-recorder "$EMDASH" "${SCAN_PATHS[@]}" 2>/dev/null || true
+  grep -rnI --exclude-dir=posts --exclude-dir=meet-recorder "$EMDASH" "${SCAN_PATHS[@]}" 2>/dev/null || true
   echo "Replace each em dash with a comma, colon, parentheses, ellipsis, or two sentences." >&2
   exit 1
 fi
