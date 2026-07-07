@@ -36,7 +36,9 @@ The Blender render is the opposite story. It ran entirely on my own machine, an 
 
 Two tools, the same job, so I could judge the output, the setup effort, and how automatable each one really is.
 
-My honest take? Blender wins. It is insanely powerful, it is free and open source, and if I was building this properly with AI automation, that is where I would go. You take the hardware hit once, a decent machine with a good GPU, and then you own it. SketchUp went subscription only a few years back, so it is a bill every year, and that adds up fast. And you do not need the newest kit either. A second hand machine only a few years old, with a proper GPU, could already do something amazing.
+My honest take? Blender wins. It has been around for years, free, open source, and insanely powerful, but it was always a beast to learn. Hundreds of parameters and a steep curve, the kind of tool you had to really commit to. SketchUp won on simplicity, it was the easy option. AI is what flips that. The same way AI has made writing code cheaper and faster, it has knocked the barrier right down on Blender too. The complexity is still there, but now AI can drive it for you. So you get all that free, open source power without paying years of your life to learn it.
+
+The trade is hardware, not a subscription. You take the hit once, a decent machine with a good GPU, and then you own it. SketchUp went subscription only a few years back, so it is a bill every year, and that adds up fast. And you do not need the newest kit either. A second hand machine only a few years old, with a proper GPU, could already do something amazing.
 
 Seeing it side by side, instead of guessing, is what let us have the honest conversation next.
 
