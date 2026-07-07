@@ -32,7 +32,11 @@ Here is what those two days actually made. I tried the same room two ways, once 
 
 A quick note on these. They were rendered on an HP ZBook 15 from 2013, more than twelve years old now, an old i7 laptop with a tiny Quadro GPU that sits in my home lab test rack. So the Blender output is not the sharpest, but for a machine that old, I would say it holds up pretty well. Imagine what it would do on a newer box with a proper GPU.
 
-Two tools, the same job, so I could judge the output, the setup effort, and how automatable each one really is. Seeing it side by side, instead of guessing, is what let us have the honest conversation next.
+Two tools, the same job, so I could judge the output, the setup effort, and how automatable each one really is.
+
+My honest take? Blender wins. It is insanely powerful, it is free and open source, and if I was building this properly with AI automation, that is where I would go. You take the hardware hit once, a decent machine with a good GPU, and then you own it. SketchUp went subscription only a few years back, so it is a bill every year, and that adds up fast. And you do not need the newest kit either. A second hand machine only a few years old, with a proper GPU, could already do something amazing.
+
+Seeing it side by side, instead of guessing, is what let us have the honest conversation next.
 
 ## Knowing when not to automate
 
