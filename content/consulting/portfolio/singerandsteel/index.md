@@ -24,13 +24,15 @@ A two-day MVP. A real working demo that drove SketchUp and Blender through autom
 
 Here is what those two days actually made. I tried the same room two ways, once in SketchUp and once in Blender, to compare how each one performs, how fiddly each is to set up, and how well each one automates. Same brief, two tools, side by side.
 
-{{< zoom-image src="demo-sketchup-model.jpg" alt="A plain grey room shell built in SketchUp with furniture placed inside" title="The room built in SketchUp" >}}
+{{< zoom-image src="demo-sketchup-model.jpg" alt="A basic SketchUp free-tier output showing a plain room shell with furniture inside" title="SketchUp, a basic free-tier output (not its best)" >}}
 
 {{< zoom-image src="demo-render-room.jpg" alt="A photoreal 3D render of a living room with a sofa, armchair, coffee table, vase and plant, built in Blender" title="The same room done in Blender" >}}
 
 {{< zoom-image src="demo-render-detail.jpg" alt="A close-up of the Blender version showing the plant, cushions and coffee table" title="A close-up from the Blender version" >}}
 
-A quick note on these. They were rendered on an HP ZBook 15 from 2013, more than twelve years old now, an old i7 laptop with a tiny Quadro GPU that sits in my home lab test rack. So the Blender output is not the sharpest, but for a machine that old, I would say it holds up pretty well. Imagine what it would do on a newer box with a proper GPU.
+A couple of honest caveats. SketchUp ran on its free tier, which lives in the cloud, so its rendering happened on Trimble's servers, not on my machine, and that tier caps how many renders you get. I just took the first output my AI rendering script produced, so the SketchUp shot here is nowhere near what the tool can really do. Fair is fair.
+
+The Blender render is the opposite story. It ran entirely on my own machine, an HP ZBook 15 from 2013, more than twelve years old now, an old i7 laptop with a tiny Quadro GPU from my home lab test rack. So it is not the sharpest, but for a machine that old, I would say it holds up pretty well. Imagine what it would do on a newer box with a proper GPU.
 
 Two tools, the same job, so I could judge the output, the setup effort, and how automatable each one really is.
 
