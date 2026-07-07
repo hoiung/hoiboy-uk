@@ -9,11 +9,11 @@ description: "I build AI harnesses that run on my clients' machines. Here is the
 
 <!-- iamhoi -->
 
-I build AI harnesses for clients. A harness is the boring scaffolding around Claude Code that makes it actually useful for real work: the rules, the guardrails, the workflow, the standards it has to follow. I have written before about [why you even need one](/posts/why-do-we-need-an-ai-harness/). This post is about what happens after I hand one over.
+I build AI harnesses for clients. A harness is the simple scaffolding around Claude Code that makes it actually useful for real work: the rules, the guardrails, the workflow, the standards it has to follow. I have written before about [why you even need one](/posts/why-do-we-need-an-ai-harness/). This post is about what happens after I hand one over.
 
 Because once I hand a harness over, it does not live on my machine. It lives on theirs.
 
-And that is the whole problem. I improve the harness every week. New rules, a fixed workflow, a tighter guard. On my own repo that is easy, I just commit and move on. But the client's copy is sitting on a laptop in another city, or three laptops, or a machine in their office I have never seen. Is it still the current version? Did someone edit a file they shouldn't have? Is the thing even running? I cannot SSH into a client's computer every time I feel like checking. So for a while, I was flying blind.
+And that is the whole problem. I improve the harness every 2-4 weeks. New rules, a fixed workflow, a tighter guard. On my own repo that is easy, I just commit and move on. But the client's copy is sitting on a laptop in another city, or three laptops, or a machine in their office I have never seen. Is it still the current version? Did someone edit a file they shouldn't have? Is the thing even running? I cannot SSH into a client's computer every time I feel like checking. So for a while, I was flying blind.
 
 I did not want a big platform to fix this. I wanted one screen.
 
@@ -47,16 +47,16 @@ Getting a machine enrolled uses a one-time token that expires in 24 hours. It is
 
 I could have reached for Kubernetes, a message queue, a full monitoring stack, a fancy web app. For watching a handful of machines run a git sync, that is a cannon for a fly.
 
-So the dashboard is server-rendered HTML with zero JavaScript. It loads instantly and there is nothing in the browser to break. The agent is a tiny program that does one job: poll, compare, report. I even kept the heavy async machinery out of it on purpose, so it stays a small, boring binary. And I ship the installers unsigned and let clients click through the OS warning, rather than pay for code-signing I do not need at this stage. Simple where I can be. Careful where it counts. That split is the [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) way of doing things, and this is just the same instinct applied to watching client machines.
+So the dashboard is server-rendered HTML with zero JavaScript. It loads instantly and there is nothing in the browser to break. The agent is a tiny program that does one job: poll, compare, report. I even kept the heavy async machinery out of it on purpose, so it stays a small, simple binary. And I ship the installers unsigned and let clients click through the OS warning, rather than pay for code-signing I do not need at this stage. Simple where I can be. Careful where it counts. That split is the [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) way of doing things, and this is just the same instinct applied to watching client machines.
 
 Onboarding a new machine ended up as one command that does the lot: make the client repo, mint the keys, push the seed, install the agent, and wait for it to show up green on the dashboard.
 
 {{< zoom-image src="architecture-page.webp" alt="The HMS architecture help page showing the five-stage flow, the two deploy-key hops, a four-step onboarding runbook, and a single copy-paste command that automates all of it." title="The help page inside the dashboard. Four steps, and one command that does all four." >}}
 
-## Boring is the point
+## Simple is the point
 
-I have spent [twenty years building things](/posts/entrepreneurship-in-a-nutshell/), and the lesson keeps repeating: the stuff running quietly in the background should be boring. Nobody wants excitement from the system watching their machines.
+I have spent [twenty years building things](/posts/entrepreneurship-in-a-nutshell/), and the lesson keeps repeating: the stuff running quietly in the background should be simple. Nobody needs excitement from the system watching their machines.
 
-So now I glance at one screen and I know. Every client harness, current or not, drifted or clean, alive or dead. That is how I will manage harnesses for clients from here on. Not by hoping. By looking.
+So now I glance at one screen and I know. Every client harness, current or not, drifted or clean, alive or dead. That is how I will manage harnesses for clients from here on. Not by hoping. But by looking.
 
 <!-- iamhoiend -->
