@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 270" width="900" height="270" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="How a remote client machine reaches the home-lab HMS server safely: the client machine in another city and the home-lab server both join a private tailnet, and Tailscale builds a direct encrypted WireGuard tunnel between them. No port is opened on either router. The heartbeat travels inside the tunnel, encrypted end to end. Nothing is exposed to the open internet and the server is invisible to anything not on the tailnet.">
+  <defs>
+    <style>
+      .bg { fill: #fafafa; }
+      .card { fill: #ffffff; }
+      .label { fill: #1a1a1a; font-weight: 600; }
+      .muted { fill: #6a6a6a; }
+      .boxstroke { stroke: #9aa0a6; }
+      .trailstroke { stroke: #9aa0a6; }
+      .accent { fill: #c0533a; }
+      .accentstroke { stroke: #c0533a; }
+      .ok { fill: #7aa869; }
+      .okstroke { stroke: #7aa869; }
+      .watermark { fill: #87ceeb; }
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #141414; }
+        .card { fill: #1f1f1f; }
+        .label { fill: #f0f0f0; }
+        .muted { fill: #a6a6a6; }
+        .boxstroke { stroke: #6a6a6a; }
+        .trailstroke { stroke: #6a6a6a; }
+      }
+    </style>
+    <marker id="ahg2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L7,3 L0,6 Z" class="ok"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="900" height="270"/>
+  <text x="885" y="24" text-anchor="end" class="watermark" font-size="11" font-weight="400" letter-spacing="0.5">hoiboy.uk</text>
+
+  <text x="20" y="42" class="label" font-size="18">Reaching my server over the internet, safely</text>
+
+  <!-- client machine card -->
+  <rect class="card boxstroke" x="20" y="90" width="200" height="115" rx="10" stroke-width="1.5"/>
+  <text x="34" y="114" class="muted" font-size="11" letter-spacing="0.5">CLIENT MACHINE</text>
+  <text x="34" y="137" class="label" font-size="14">The client's laptop.</text>
+  <text x="34" y="158" class="muted" font-size="11.5">In another city,</text>
+  <text x="34" y="174" class="muted" font-size="11.5">behind their router.</text>
+
+  <!-- home-lab server card -->
+  <rect class="card boxstroke" x="680" y="90" width="200" height="115" rx="10" stroke-width="1.5"/>
+  <text x="694" y="114" class="muted" font-size="11" letter-spacing="0.5">MY HOME LAB</text>
+  <text x="694" y="137" class="label" font-size="14">The HMS server.</text>
+  <text x="694" y="158" class="muted" font-size="11.5">Behind my home</text>
+  <text x="694" y="174" class="muted" font-size="11.5">router.</text>
+
+  <!-- heartbeat line: client -> server, passing through the tunnel -->
+  <line x1="222" y1="150" x2="678" y2="150" class="okstroke" stroke-width="2" marker-end="url(#ahg2)"/>
+  <text x="261" y="142" text-anchor="middle" class="muted" font-size="10">heartbeat</text>
+
+  <!-- WireGuard tunnel capsule (opaque, covers the middle of the line) -->
+  <rect class="card okstroke" x="300" y="115" width="300" height="70" rx="35" stroke-width="1.5"/>
+
+  <!-- padlock glyph -->
+  <path d="M444,130 v-5 a6,6 0 0,1 12,0 v5" fill="none" class="okstroke" stroke-width="2"/>
+  <rect class="ok" x="440" y="130" width="20" height="13" rx="2"/>
+
+  <text x="450" y="162" text-anchor="middle" class="label" font-size="13">Encrypted WireGuard tunnel</text>
+  <text x="450" y="178" text-anchor="middle" class="muted" font-size="10.5">Tailscale connects the two machines directly.</text>
+
+  <text x="450" y="207" text-anchor="middle" class="muted" font-size="11.5">No port opened on either router. Tailscale builds the tunnel from the inside out.</text>
+
+  <text x="20" y="240" class="ok" font-size="11.5" font-weight="600">Nothing is exposed to the open internet. The server is invisible to anything not on the tailnet.</text>
+</svg>
