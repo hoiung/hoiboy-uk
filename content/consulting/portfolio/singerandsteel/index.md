@@ -8,7 +8,7 @@ hideDate: true
 <!-- iamhoi -->
 
 **Client:** Singer & Steel, an architecture and design practice run by Holly and Derek.
-**Managed by HOIBOY AI LTD.**
+**Base-only harness managed by HOIBOY AI LTD.**
 
 ## The problem
 
