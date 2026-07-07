@@ -71,7 +71,7 @@ The shape ended up being five stages of delivery (research, then a written issue
 
 There are also 14 automatic checks that run every time new code gets saved. The simple housekeeping stuff: is there leftover debug code, are there shortcuts that silently hide bugs, is the AI slipping into generic voice, has it left merge conflicts in, is the file absurdly big. The kind of thing most teams patch after the fact, not before. A custom plugin won't let the AI tick off a checkbox without attaching evidence. Planning mode is the default (meaning the AI has to tell me what it's going to do before it does it, instead of just running off and changing files), so "have a look at this" never quietly turns into "accidentally deletes production".
 
-None of it is glamorous. It's all just friction. Dull, constant, pedantic friction.
+None of it is glamorous. It's all just friction. Bad, constant, pedantic friction.
 
 Numbers, for context: 10,000+ commits across four repos, 1,860+ issues at 99.4% close rate, 11,100+ automated tests running against real broker systems (the actual trading platforms, not test stubs). One person running it. Deliberately.
 

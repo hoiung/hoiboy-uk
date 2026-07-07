@@ -90,7 +90,9 @@ We welcome new dancers. Always. And it's not because we've forgotten the old one
 
 I love dancing with older dancers who are still at a similar level to mine (and still improving), or dancers who are constantly improving and changing their dance. Why? Because the dance isn't the same twice! Every time we connect, there's something new to explore. A new texture, a new idea, a new bit of musicality they've been working on. That's fun. It's all mindset. (There's a book called *Mindset* that I recommend in my [books list](/posts/every-book-ive-read-in-20-years/), and yes it applies to dance too.)
 
-When I dance with someone who hasn't improved in god-knows how many years, it's the same experience every single time. Dull. Can't connect. Can't do much. And worse, to try and do more raises the risk of my own injury. I've strained my back too many times over the years forcing through bad connection to bother doing it again.
+<!-- iamhoi-skip -->
+When I dance with someone who hasn't improved in god-knows how many years, it's the same experience every single time. Boring. Can't connect. Can't do much. And worse, to try and do more raises the risk of my own injury. I've strained my back too many times over the years forcing through bad connection to bother doing it again.
+<!-- iamhoi-skipend -->
 
 Do younger, hotter, prettier, better-looking dancers get more dances? Yeah, they do. Is that fair? Well, fair or not, it's the reality of a social dance floor. My counter is simple. If you're one of those dancers, use this window to improve really really quickly. Looks fade. Dances don't have to.
 
