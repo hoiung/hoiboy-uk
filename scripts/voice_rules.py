@@ -159,6 +159,10 @@ BANNED_WORDS: tuple[str, ...] = (
     "utilize", "utilizing", "utilized", "utilise", "utilising", "utilised",
     "commendable",
     "noteworthy",
+    # 2026-07-07 (operator-flagged): "boring" is an AI tell, the trope of
+    # calling plain, dependable engineering "boring but reliable". Operator:
+    # "it's not boring, it's simple. basic engineering." Use "simple" instead.
+    "boring",
     # Multi-word AI/CV-speak phrases
     "strategic initiative",
     "drive measurable impact",
