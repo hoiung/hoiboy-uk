@@ -1,7 +1,7 @@
 ---
 title: "Singer & Steel"
 date: 2026-07-07T12:00:00+01:00
-description: "How HOIBOY AI LTD built a two-day demo for Singer & Steel, advised them not to automate their 3D design, and instead installed and maintains the Claude Code harness setup that lets them build their own workflow."
+description: "How HOIBOY AI LTD built a three-day demo for Singer & Steel, advised them not to automate their 3D design, and instead installed and maintains the Claude Code harness setup that lets them build their own workflow."
 hideDate: true
 ---
 
@@ -18,7 +18,7 @@ Everyone is asking a version of that right now. So instead of guessing, I built 
 
 ## What I built
 
-A two-day MVP. A real working demo that drove SketchUp and Blender through automation, so we could see the thing with our own eyes rather than argue about it in theory. Two days was enough to build it, run it, and understand exactly where the complexity lived.
+A three-day MVP. A real working demo that drove SketchUp and Blender through automation, so we could see the thing with our own eyes rather than argue about it in theory. Three days was enough to build it, run it, and understand exactly where the complexity lived.
 
 ## What the demo produced
 
@@ -48,7 +48,7 @@ Here is the honest part. Once I had it working, and actually understood what tod
 
 Not because I could not build it. I can. The questions that matter to a business are different: is it cost effective, and will it genuinely help a practice their size? For Singer & Steel the answer was clearly no. What a bespoke automated 3D tool would cost me to build and keep running, and cost them in time, would far outweigh what they already spend hiring an interior designer per project. One is a big ongoing build I have to maintain. The other is a designer they pay only when they need one.
 
-And here is the bit people skip. Could I have answered that with real confidence without building the mock up first? Probably not, not honestly. Anyone can have an opinion on whether AI can do a job. Building the thing, seeing exactly where it strains, and working out the true cost is what turns an opinion into a decision you can stand behind. The two days bought that.
+And here is the bit people skip. Could I have answered that with real confidence without building the mock up first? Probably not, not honestly. Anyone can have an opinion on whether AI can do a job. Building the thing, seeing exactly where it strains, and working out the true cost is what turns an opinion into a decision you can stand behind. The three days bought that.
 
 There is a craft point too. This work is specialist coordination between two experts, the architect and the interior designer, each bringing judgement and taste the other does not have. That back and forth is where the design actually happens. It is not something you hand to a script and walk away from. But even leaving that aside, the economics alone made the call.
 
@@ -66,7 +66,7 @@ That is a better outcome than a clever 3D script somebody else owns and maintain
 
 ## The outcome
 
-Singer & Steel got a clear, honest answer on their 3D question, backed by a real demo rather than a sales pitch, and they got it in two days. No half-finished automation limping along in the background. Their site is live at [singerandsteel.co.uk](https://www.singerandsteel.co.uk/), and they now run my Claude Code harness setup on their own machine, which I keep current, while they build their own automation on top of it.
+Singer & Steel got a clear, honest answer on their 3D question, backed by a real demo rather than a sales pitch, and they got it in three days. No half-finished automation limping along in the background. Their site is live at [singerandsteel.co.uk](https://www.singerandsteel.co.uk/), and they now run my Claude Code harness setup on their own machine, which I keep current, while they build their own automation on top of it.
 
 <!-- iamhoiend -->
 
