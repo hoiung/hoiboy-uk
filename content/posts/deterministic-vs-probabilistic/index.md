@@ -12,7 +12,7 @@ description: "Same input, same answer, or a different one every time? It is the 
 
 Two words. They explain almost everything that feels strange about AI.
 
-Deterministic, and probabilistic. More boring words for you to learn about AI, I know. Stick with me since these are very important and because the gap between the two is the whole game, and almost nobody spells it out before throwing you in.
+Deterministic, and probabilistic. More dry words for you to learn about AI, I know. Stick with me since these are very important and because the gap between the two is the whole game, and almost nobody spells it out before throwing you in.
 
 ## Deterministic: same input, same output
 
@@ -38,7 +38,7 @@ Here is the part people skip. On its own, a raw probabilistic LLM is so unpredic
 
 Now, the examples up top were dumbed right down to make the point land. Push more complex inputs through and the gap starts to show. Ask an AI for `2 + 2` and you will still get `4` every time. But that is likely because it quietly reaches for a tool, runs the sum through a calculator, then joins that clean answer back up with its own probabilistic words.
 
-So the fix is a hybrid. You take the probabilistic LLM and wrap it in deterministic scaffolding. Schemas that refuse junk. Validators that retry when the model lies about its own output. Tool calls where a number has to be a real number. The boring same-every-time stuff, wrapped around the clever never-the-same stuff. One half gives you the control. The other gives you the magic. You need both, working together. Take either away and the whole thing falls over.
+So the fix is a hybrid. You take the probabilistic LLM and wrap it in deterministic scaffolding. Schemas that refuse junk. Validators that retry when the model lies about its own output. Tool calls where a number has to be a real number. The simple same-every-time stuff, wrapped around the clever never-the-same stuff. One half gives you the control. The other gives you the magic. You need both, working together. Take either away and the whole thing falls over.
 
 That wrapper has a name. The harness.
 

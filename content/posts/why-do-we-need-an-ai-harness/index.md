@@ -20,7 +20,7 @@ Nobody really warns you about this bit on the way in. But this is THE thing. Pre
 
 Under the bonnet, an LLM is not a brain. It is a probability machine. For every word-piece it generates, it ranks candidates with a probability attached. "The cat sat on the ___" might give you `mat` at 62%, `floor` at 18%, `sofa` at 9%, and a long tail of stranger options. Then it rolls a weighted dice and picks one. Same dice. Different roll every time.
 
-The three knobs that control the dice are called **temperature** (flattens or sharpens the odds), **top-p** (only consider candidates that cover P% of the probability), and **top-k** (only consider the best K). Narrow settings give you safer, more boring output. Wide settings give you creativity, and also hallucination.
+The three knobs that control the dice are called **temperature** (flattens or sharpens the odds), **top-p** (only consider candidates that cover P% of the probability), and **top-k** (only consider the best K). Narrow settings give you safer, more predictable output. Wide settings give you creativity, and also hallucination.
 
 Here is the kicker. Every single token is a fresh dice roll. A 1% chance of veering off per token, compounded across 200 tokens, is about an [87% chance of drift by the end](https://wand.ai/blog/compounding-error-effect-in-large-language-models-a-growing-challenge). So the 800-word essay it writes for you today? Not the same essay tomorrow. Not even close.
 

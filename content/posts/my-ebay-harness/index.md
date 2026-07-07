@@ -50,7 +50,7 @@ Started 10 April 2026. Latest commit 25 April 2026. Fifteen days. 160 commits. 1
 
 Four phases. Each one bolted on to the previous. None of them rewrote the previous one.
 
-**Phase 1, listing CRUD (create, read, update, delete).** Five tools. `get_active_listings` to enumerate the live ones with title, price, qty, views, watchers. `get_listing_details` to pull the full per-listing detail with HTML, item specifics, photos. `update_listing` to revise title, description, price, condition. `upload_photos` to batch-push local photos through resize and EXIF-strip preprocessing. `create_listing` to stand up a fresh fixed-price listing end to end. Five tools. The boring foundation. You cannot do anything fancy if create-read-update-delete does not work.
+**Phase 1, listing CRUD (create, read, update, delete).** Five tools. `get_active_listings` to enumerate the live ones with title, price, qty, views, watchers. `get_listing_details` to pull the full per-listing detail with HTML, item specifics, photos. `update_listing` to revise title, description, price, condition. `upload_photos` to batch-push local photos through resize and EXIF-strip preprocessing. `create_listing` to stand up a fresh fixed-price listing end to end. Five tools. The simple foundation. You cannot do anything fancy if create-read-update-delete does not work.
 
 **Phase 2, OAuth and REST analytics.** Three tools. `get_traffic_report` for impressions, click-through rate (CTR), views, conversion. `get_listing_returns` for the post-order return search. `compute_return_rate` for the per-stock-keeping-unit (per-SKU) rate that floor pricing later depends on. Phase 2 did not rewrite Phase 1. It bolted on. New auth flow, same pattern.
 
@@ -58,9 +58,9 @@ Four phases. Each one bolted on to the previous. None of them rewrote the previo
 
 **Phase 4, pricing guardrails and listing diagnostics.** Two tools. `floor_price`, which computes the break-even floor under measured return-risk scenarios. `analyse_listing`, which is the one I am proudest of. More on that in a minute.
 
-Plus six supporting read-only tools strung across the phases: `get_sold_listings`, `get_unsold_listings`, `get_seller_transactions`, `get_listing_feedback`, `get_listing_cases`, `get_store_info`. Boring on their own. Critical to feed the diagnostic side of the harness.
+Plus six supporting read-only tools strung across the phases: `get_sold_listings`, `get_unsold_listings`, `get_seller_transactions`, `get_listing_feedback`, `get_listing_cases`, `get_store_info`. Simple on their own. Critical to feed the diagnostic side of the harness.
 
-Five plus three plus one plus two plus six. Seventeen tools. Four phases. Reshapeable knife playing out in code. [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) ran the cadence (Implement, then Haiku review, then Sonnet review, then Opus review, then merge). Ralph caught the bugs that pytest never would have. Restart from Tier 1 on every fail. Boring discipline. Boring discipline is the only kind that ships.
+Five plus three plus one plus two plus six. Seventeen tools. Four phases. Reshapeable knife playing out in code. [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) ran the cadence (Implement, then Haiku review, then Sonnet review, then Opus review, then merge). Ralph caught the bugs that pytest never would have. Restart from Tier 1 on every fail. Simple discipline. Simple discipline is the only kind that ships.
 
 ## The guardrail moves (the bit that makes it more than CRUD)
 

@@ -69,9 +69,9 @@ SST3-AI-Harness is the frame I built (by mistake) to run AI agents under strict 
 
 The shape ended up being five stages of delivery (research, then a written issue, then a triple-check on the scope, then implementation, then a post-implementation review) with a three-model review loop at the end. Haiku, Sonnet, and Opus are three sizes of Claude, small to large. Haiku, the fast one, reads first for surface problems. Sonnet, the mid-size, reads for logic. Opus, the big brain, reads for architecture. If any of them flags something, the whole thing restarts from Haiku.
 
-There are also 14 automatic checks that run every time new code gets saved. The boring housekeeping stuff: is there leftover debug code, are there shortcuts that silently hide bugs, is the AI slipping into generic voice, has it left merge conflicts in, is the file absurdly big. The kind of thing most teams patch after the fact, not before. A custom plugin won't let the AI tick off a checkbox without attaching evidence. Planning mode is the default (meaning the AI has to tell me what it's going to do before it does it, instead of just running off and changing files), so "have a look at this" never quietly turns into "accidentally deletes production".
+There are also 14 automatic checks that run every time new code gets saved. The simple housekeeping stuff: is there leftover debug code, are there shortcuts that silently hide bugs, is the AI slipping into generic voice, has it left merge conflicts in, is the file absurdly big. The kind of thing most teams patch after the fact, not before. A custom plugin won't let the AI tick off a checkbox without attaching evidence. Planning mode is the default (meaning the AI has to tell me what it's going to do before it does it, instead of just running off and changing files), so "have a look at this" never quietly turns into "accidentally deletes production".
 
-None of it is glamorous. It's all just friction. Boring, constant, pedantic friction.
+None of it is glamorous. It's all just friction. Dull, constant, pedantic friction.
 
 Numbers, for context: 10,000+ commits across four repos, 1,860+ issues at 99.4% close rate, 11,100+ automated tests running against real broker systems (the actual trading platforms, not test stubs). One person running it. Deliberately.
 
@@ -121,7 +121,7 @@ That's only possible because of the last nine months of insisting on quality whe
 
 Every pre-commit hook came from getting burned. Silent fallbacks got banned because they hide bugs. The evidence-enforcement rule exists because AI agents will tick any checkbox you give them, cheerfully, if you don't make them show receipts.
 
-None of it looked strategic at the time. It looked like over-engineering, a one-person obsession with pedantic rules. It wasn't. It was me building the groundwork that later made duplicating the harness simpler than duplicating a team, one boring rule at a time.
+None of it looked strategic at the time. It looked like over-engineering, a one-person obsession with pedantic rules. It wasn't. It was me building the groundwork that later made duplicating the harness simpler than duplicating a team, one simple rule at a time.
 
 Fake either/or. Real question: **when you scale, what gets multiplied?**
 

@@ -62,7 +62,7 @@ Most should land in the middle. The interesting questions are whether any of the
 ## The Rules
 
 <!-- iamhoi -->
-A bake-off is only worth reading if it is fair. The setup is deliberately, deliberately, deliberately boring on that front.
+A bake-off is only worth reading if it is fair. The setup is deliberately, deliberately, deliberately plain on that front.
 
 *Same input.* Every harness gets the same frozen brief, packaged as the same tarball. No live editing. No follow-up clarifications. What is in the tarball is what each harness sees... and that's it.
 

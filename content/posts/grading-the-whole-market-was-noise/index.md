@@ -92,7 +92,7 @@ That refusal is the whole job. Build with AI and it will hand you clean, confide
 
 ## What I kept
 
-Nothing was wired into the live system, so there was nothing to unwind. I deleted the grade, scrapped the mockups, and went back to my boring moving-average regime. Open or closed. That's the whole market read I have actual evidence for, and after 30 hours trying to beat it with something cleverer, I trust the boring version more than ever.
+Nothing was wired into the live system, so there was nothing to unwind. I deleted the grade, scrapped the mockups, and went back to my simple moving-average regime. Open or closed. That's the whole market read I have actual evidence for, and after 30 hours trying to beat it with something cleverer, I trust the simple version more than ever.
 
 If you want the longer version of how I learned to test like this, it's in [my overfitting tests](/posts/overfitting-tests-for-my-trading-system/). The [trading system itself](/posts/building-a-production-grade-trading-system-with-claude-code/) is what all of this protects.
 

@@ -124,7 +124,7 @@ That rule paid for itself in one afternoon.
 
 ## What it does today
 
-Boring. Mundane. Exactly what I wanted.
+Simple. Mundane. Exactly what I wanted.
 
 Record a meeting. Wait. Come back later. There's a transcript in the inbox with speakers labelled (SPEAKER_00, SPEAKER_01) and a redacted version where any mentioned email addresses, phone numbers, money amounts, and pre-curated attendee names have been replaced with placeholders. Money mentioned was £10, redacted to `<AMOUNT_A>`. Phone numbers (when there are any) become `<PHONE_A>`, `<PHONE_B>`.
 

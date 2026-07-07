@@ -87,7 +87,7 @@ LLM Wiki is a nice pattern for one specific use case: a solo researcher with a c
 
 For everyone else? I wonder if it creates more problems than it solves. The generated layer adds maintenance, introduces hallucination compounding, creates a cache invalidation problem as it grows, and seems to work against the very principle (forgetting, pruning, staying current) that makes knowledge systems actually work.
 
-Sometimes the boring tool that works is the right tool.
+Sometimes the simple tool that works is the right tool.
 
 Bear sat through the whole rant without saying much. He's probably still giggling inside knowing exactly who wrote the LLM Wiki gist while I was sat there tearing it apart without a clue. We'll probably need another dinner to settle this one.
 

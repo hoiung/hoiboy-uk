@@ -9,7 +9,7 @@ hideDate: true
 
 Not every business owner or team wants to learn or use AI. Some are just too busy, and they would rather it was handled for them. No weakness in that: successful owners are successful because they delegate. They hire the right people with the right skills to add value, focus on the management side, and bring in the right resources to make their team more effective. Handing the AI part to me is the same move. That is where this service comes in. Too busy to learn AI? Contract me as your AI Engineer and I build the automation for you, instead of teaching your staff to build their own.
 
-I sit with your team, map the work they do by hand, and turn the repetitive toil into automation that runs inside your business process. The judgment calls stay with your people, human in the loop (HITL), always attended. The routine toil gets automated away so they rarely have to touch it. Both live side by side: your experts stay in the driver's seat on what matters, and the boring parts run themselves.
+I sit with your team, map the work they do by hand, and turn the repetitive toil into automation that runs inside your business process. The judgment calls stay with your people, human in the loop (HITL), always attended. The routine toil gets automated away so they rarely have to touch it. Both live side by side: your experts stay in the driver's seat on what matters, and the tedious parts run themselves.
 
 I build it and deliver it, then hand it off. You get documented manuals and a clean handover, so your team can run it without me, and drop the service the day you no longer need it. The work is deliverable-anchored, not a day-rate seat I sit in. You own the result.
 

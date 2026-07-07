@@ -18,7 +18,7 @@ Here are the three, smallest to biggest.
 
 ## 1. Unit tests: is this one cog correct?
 
-The first tier is the boring one. But boring is necessary. Thousands of tiny tests that check correctness at the lowest level. Per-function. Per-calculation. Does this maths return the right number, does this helper handle an empty list, does this one little cog do exactly what it's supposed to.
+The first tier is the simple one. But simple is necessary. Thousands of tiny tests that check correctness at the lowest level. Per-function. Per-calculation. Does this maths return the right number, does this helper handle an empty list, does this one little cog do exactly what it's supposed to.
 
 I have a lot of these. Over 6,700 in the trading system alone (more than ten thousand once you count all the parametrised variants, where one test definition quietly fans out into hundreds of cases). They're cheap to run, they run on every change, and they catch the dumb stuff before it ever has a chance to grow up into a real bug.
 

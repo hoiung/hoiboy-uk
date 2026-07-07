@@ -15,11 +15,11 @@ My entire life, I've struggled with learning. Until I learned how to learn, prob
 
 My biggest struggle was languages. I probably had undiagnosed dyslexia, ADHD which is 100% diagnosed last year aged 42 (attention deficit hyperactivity disorder), and OCD (obsessive compulsive disorder). Even now I still get letters in the wrong order. So if anything in here reads a little sideways, you know why.
 
-Back in the 1980s, I don't think neurodiversity was much of a thing teachers were aware of, unless you showed extreme external tell-tale signs. Mine were more subtle, more internal, plus my own suppression of it to blend in. So it went undiagnosed for 42 years. But I always felt different, like I was born different to everyone else. For too long I tried to be normal. It took me ages to love who I am. Now? I love being different. Being normal is boring, and it's not Hoi lol. All that energy, drive, optimism, stubbornness and never giving up is another superpower, and it's what draws people to me. Pros and cons, constantly fighting internally for balance.
+Back in the 1980s, I don't think neurodiversity was much of a thing teachers were aware of, unless you showed extreme external tell-tale signs. Mine were more subtle, more internal, plus my own suppression of it to blend in. So it went undiagnosed for 42 years. But I always felt different, like I was born different to everyone else. For too long I tried to be normal. It took me ages to love who I am. Now? I love being different. Being normal is dull, and it's not Hoi lol. All that energy, drive, optimism, stubbornness and never giving up is another superpower, and it's what draws people to me. Pros and cons, constantly fighting internally for balance.
 
 ## School Was Just Memorise and Forget
 
-School was boring. After 10-15 minutes of focus my mind would drift off. From primary school to college it was the same on repeat: regurgitate a textbook, memorise as much as you can, no meaning, no application, no understanding of why it mattered in real life.
+School was dull. After 10-15 minutes of focus my mind would drift off. From primary school to college it was the same on repeat: regurgitate a textbook, memorise as much as you can, no meaning, no application, no understanding of why it mattered in real life.
 
 University was different. Groups, assignments with actual goals, a dissertation on something you chose. Too late by then though. All I thought about was partying, drinking, and girls lol. A whole new distraction.
 

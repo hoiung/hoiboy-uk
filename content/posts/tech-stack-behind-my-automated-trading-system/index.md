@@ -112,7 +112,7 @@ A couple of things that never show up on screen but matter more than the flashy 
 
 That's the lot. PostgreSQL holding everything, Redis keeping it fast, Python doing the heavy lifting, Rust keeping the data flowing, Interactive Brokers taking the orders, three data feeds for backup, all on one box.
 
-I didn't pick any of this to look clever. Each piece is there because it does a job the others couldn't, and the boring, dependable option usually won. The interesting part was never the tools anyway. It was deciding what talks to what, and what is allowed to touch real money.
+I didn't pick any of this to look clever. Each piece is there because it does a job the others couldn't, and the simple, dependable option usually won. The interesting part was never the tools anyway. It was deciding what talks to what, and what is allowed to touch real money.
 
 If you want the how-it-got-built story instead of the parts list, [it's over here](/posts/building-a-production-grade-trading-system-with-claude-code/). And if you're wondering about the harness I used to direct all of this, that's the [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness).
 

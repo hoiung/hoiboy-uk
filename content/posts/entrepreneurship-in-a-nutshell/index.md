@@ -15,7 +15,7 @@ description: "From a karaoke bar that never opened to the AI business I'm runnin
 ---
 
 <!-- iamhoi -->
-2005\. I was 23, fresh into my first proper job as a Systems Administrator at SunGard Availability Services in London. Earning a real salary for the first time. Three months in, I had the role figured out and my brain was already drifting. The work was fine. The work was boring. I wanted something bigger.
+2005\. I was 23, fresh into my first proper job as a Systems Administrator at SunGard Availability Services in London. Earning a real salary for the first time. Three months in, I had the role figured out and my brain was already drifting. The work was fine. The work was dull. I wanted something bigger.
 
 Then a friend pitched me a karaoke bar. Then it became a karaoke restaurant, because a pure karaoke bar only really makes money on room rental and snacks and drinks, and a restaurant catches lunch trade too. That was the logic, anyway.
 
@@ -47,7 +47,7 @@ The thing about rock bottom is it holds. Nothing under it. The only way from the
 
 ## The Takeaway Years
 
-By late 2010, my brother and I took over the family takeaway. It was in a properly bad state. Mismanaged, neglected, near bankrupt with bailiffs chasing debt, knocking frequently on the doors. We spent four years turning it around. Not by being clever. By doing the boring work. Watching what worked, watching what didn't, changing one thing at a time. There was no Google or YouTube or AI to ask. You had to learn slow, and you had to be patient enough to wait for the result. Should also mention working with family came with its own challenges too. I now understand the saying, "don't work with family." Lol.
+By late 2010, my brother and I took over the family takeaway. It was in a properly bad state. Mismanaged, neglected, near bankrupt with bailiffs chasing debt, knocking frequently on the doors. We spent four years turning it around. Not by being clever. By doing the grunt work. Watching what worked, watching what didn't, changing one thing at a time. There was no Google or YouTube or AI to ask. You had to learn slow, and you had to be patient enough to wait for the result. Should also mention working with family came with its own challenges too. I now understand the saying, "don't work with family." Lol.
 
 Somewhere in that period, another friend invited me into a fresh venture with two other partners (you would think I'd have learned). Three years of people saying "I've got the kids, I've got the day job, I've got something else on, I'll get to it soon." I'm sitting there going, mate, I have all of that too, and I'm still showing up. Three years (2009 to 2011) travelling back and forth between China and Taiwan. Mostly wasted. The lesson finally hit me: I'm genuinely terrible at picking business partners. I still remember juggling 3 jobs at one point back then. I nearly fainted at work from the burnout.
 

@@ -75,7 +75,7 @@ And one more thing. I like to design things simple, because simple works, but do
 
 ## What I want to build instead
 
-I want to work with people, in close proximity. Not over a wall, not via a strategy deck, not as a faceless vendor on a slack channel. I want to sit next to the person whose job it actually is, watch them work, find the friction, and build them a custom AI harness that takes the boring grind off their plate so they can spend their time on the bit only a human can do.
+I want to work with people, in close proximity. Not over a wall, not via a strategy deck, not as a faceless vendor on a slack channel. I want to sit next to the person whose job it actually is, watch them work, find the friction, and build them a custom AI harness that takes the repetitive grind off their plate so they can spend their time on the bit only a human can do.
 
 It does not matter what trade. It does not matter what domain. Lawyer, marketer, ops lead, finance person, recruiter, physio, teacher, designer, architect, interior designer, civil engineer, customer support hero, you name it. If you are a subject matter expert in something, I am confident I can build you a custom harness that automates and helps manage the tedious grinds in your job. The same harness pattern that runs my own businesses (yes, plural, including a side eBay store and a live trading system) is the same one I want to bring to yours.
 

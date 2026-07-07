@@ -59,7 +59,7 @@ This is where the real skill lives, and where I spend most of my time.
 
 **13. Vector databases.** Where you store all those number-ified texts so you can search them by meaning, fast. Honestly? Never used one in anger. The fancy retrieval stack and me have not properly met yet.
 
-**14. Semantic search.** Searching by meaning instead of exact words. I actually went the other way. I once tried a clever code-graph thing for this, it crashed on me constantly, so I ripped it out and went back to plain keyword search. Well, kinda: I built a wrapper, a plain script that searches across both the code and the docs, fast and cheap on tokens. Boring, reliable, mine. The full story: [No Graphs, Back to Basics](/posts/no-graphs-back-to-basics/). (Vectors are still on the someday list.)
+**14. Semantic search.** Searching by meaning instead of exact words. I actually went the other way. I once tried a clever code-graph thing for this, it crashed on me constantly, so I ripped it out and went back to plain keyword search. Well, kinda: I built a wrapper, a plain script that searches across both the code and the docs, fast and cheap on tokens. Simple, reliable, mine. The full story: [No Graphs, Back to Basics](/posts/no-graphs-back-to-basics/). (Vectors are still on the someday list.)
 
 **15. Grounding.** Tying the answer to something real, a document, a tool, an actual fact, so the AI can't just freestyle. My rule is blunt: the source decides, not the model. This is the antidote to the next one.
 
@@ -99,7 +99,7 @@ The unglamorous half that decides whether any of this is safe to ship.
 
 **25. Guardrails.** The rules the AI is not allowed to break. Schemas that refuse junk, validators that catch it lying about its own work, hard stops. This is the heart of a [harness](https://github.com/hoiung/sst3-ai-harness), and it's most of why mine exists.
 
-**26. Observability.** Logs and audit trails so you can actually see what the AI did, step by step, after the fact. I bake this in while I build, not after the first thing blows up (I learned that one the boring way: [Observability and Logging](/posts/observability-and-logging-for-production-systems/)).
+**26. Observability.** Logs and audit trails so you can actually see what the AI did, step by step, after the fact. I bake this in while I build, not after the first thing blows up (I learned that one the hard way: [Observability and Logging](/posts/observability-and-logging-for-production-systems/)).
 
 **+ Harness.** Finally, the big one everyone's throwing around. It's most of the above, prompting, context engineering, tool calls, guardrails, evals, observability, bolted into one repeatable workflow that wraps the AI so it stops wandering off. The model is the engine. The harness is the rest of the car. I built my own, and honestly it's the whole reason any of this holds together ([the long version](/posts/why-do-we-need-an-ai-harness/)).
 
