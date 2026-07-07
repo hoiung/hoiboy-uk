@@ -22,15 +22,15 @@ A two-day MVP. A real working demo that drove SketchUp and Blender through autom
 
 ## What the demo produced
 
-Here is what those two days actually made. A room modelled in SketchUp, then rendered in Blender, all driven by the pipeline I built.
+Here is what those two days actually made. I tried the same room two ways, once in SketchUp and once in Blender, to compare how each one performs, how fiddly each is to set up, and how well each one automates. Same brief, two tools, side by side.
 
-{{< zoom-image src="demo-sketchup-model.jpg" alt="A plain grey room shell modelled in SketchUp with furniture placed inside" title="The room modelled in SketchUp" >}}
+{{< zoom-image src="demo-sketchup-model.jpg" alt="A plain grey room shell built in SketchUp with furniture placed inside" title="The room built in SketchUp" >}}
 
-{{< zoom-image src="demo-render-room.jpg" alt="A 3D render of a living room with a sofa, armchair, coffee table, vase and plant" title="The same room rendered in Blender" >}}
+{{< zoom-image src="demo-render-room.jpg" alt="A photoreal 3D render of a living room with a sofa, armchair, coffee table, vase and plant, built in Blender" title="The same room done in Blender" >}}
 
-{{< zoom-image src="demo-render-detail.jpg" alt="A close-up render of the plant, cushions and coffee table" title="A close-up from the render" >}}
+{{< zoom-image src="demo-render-detail.jpg" alt="A close-up of the Blender version showing the plant, cushions and coffee table" title="A close-up from the Blender version" >}}
 
-It works, and it makes rooms. Looking at real output, instead of imagining it, is what let us have the honest conversation next.
+Two tools, the same job, so I could judge the output, the setup effort, and how automatable each one really is. Seeing it side by side, instead of guessing, is what let us have the honest conversation next.
 
 ## Knowing when not to automate
 
