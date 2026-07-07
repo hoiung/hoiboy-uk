@@ -1,6 +1,6 @@
 ---
 title: "Client Harnesses Drift. Here's the Monitoring Dashboard That Catches It."
-date: 2026-07-07T14:00:00+01:00
+date: 2026-07-06T14:00:00+01:00
 draft: false
 categories: ["tech-ai", "entrepreneurship"]
 tags: ["ai", "claude-code", "harness", "monitoring", "security", "consulting"]
