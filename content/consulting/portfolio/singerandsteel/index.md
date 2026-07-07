@@ -1,7 +1,7 @@
 ---
 title: "Singer & Steel"
 date: 2026-07-07T12:00:00+01:00
-description: "How HOIBOY AI LTD built a two-day demo for Singer & Steel, advised them not to automate their 3D design, and now manages the Claude Code harness that lets them build their own workflow instead."
+description: "How HOIBOY AI LTD built a two-day demo for Singer & Steel, advised them not to automate their 3D design, and instead installed and maintains the Claude Code harness setup that lets them build their own workflow."
 hideDate: true
 ---
 
@@ -34,13 +34,15 @@ Not everything should be automated. Working out what should and what should not 
 
 So we did the more useful thing instead.
 
-I now manage their Claude Code harness. Rather than me automating their domain from the outside, Singer & Steel run the harness on their own machine and learn to build their own automation inside the work they already know better than anyone. They keep the design expertise where it belongs, with them, and get AI helping with the parts that genuinely are routine. I look after the harness so they do not have to babysit the setup.
+This is not my full managed harness service, where I run everything for a client behind the scenes. Singer & Steel wanted to do the building themselves, and that is the right instinct. So I gave them the foundation instead of the finished product. I installed my Claude Code harness setup on their own machine, and I keep it up to date. That is the whole job: the core install, on their device, kept current.
 
-That is a better outcome than a clever 3D script they could not control. They come out of it more capable, not more dependent.
+From there they build their own automation, inside the work they already know better than anyone. The design expertise stays where it belongs, with them, and AI takes the parts that genuinely are routine. No waiting on me for the day to day, no black box they cannot steer.
+
+That is a better outcome than a clever 3D script somebody else owns and maintains. They come out of it more capable, not more dependent.
 
 ## The outcome
 
-Singer & Steel got a clear, honest answer on their 3D question, backed by a real demo rather than a sales pitch, and they got it in two days. No half-finished automation limping along in the background. Their site is live at [singerandsteel.co.uk](https://www.singerandsteel.co.uk/), and they now have a Claude Code harness they are learning to drive themselves, managed by me.
+Singer & Steel got a clear, honest answer on their 3D question, backed by a real demo rather than a sales pitch, and they got it in two days. No half-finished automation limping along in the background. Their site is live at [singerandsteel.co.uk](https://www.singerandsteel.co.uk/), and they now run my Claude Code harness setup on their own machine, which I keep current, while they build their own automation on top of it.
 
 <!-- iamhoiend -->
 
