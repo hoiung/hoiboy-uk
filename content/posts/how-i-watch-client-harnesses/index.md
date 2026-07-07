@@ -43,6 +43,20 @@ The agent on each machine gets a read-only key. It can pull updates. It literall
 
 Getting a machine enrolled uses a one-time token that expires in 24 hours. It is handed over out of band, it is used once, and it never sits in the process list where anything could read it. The credentials the agent stores are locked to the owner account (mode 0600 on Linux and Mac, a locked-down access rule on Windows). Small things. They add up to "I would be comfortable running this on my own laptop", which is the bar.
 
+## Over the internet, without opening a door
+
+Two connections matter here, and they are worth separating.
+
+The harness updates do not come from my home lab at all. Each client has a private repo on GitHub, and the machine pulls from there over a read-only key. GitHub does the hosting and keeps the full history, so I can always roll back, and my server never hands out code.
+
+The only thing that comes back to my lab is the heartbeat. Which raises the obvious question: how does a laptop in another city reach a server behind my home router, without me opening a port to the whole internet?
+
+I do not open one. The server and each machine join a private network called a tailnet (I use Tailscale). It builds a direct, encrypted WireGuard tunnel between the two and punches through both routers on its own. Nothing is exposed to the open internet, my server is invisible to anything that is not on that tailnet, and the heartbeat travels inside the tunnel already encrypted, with a per-machine token on top.
+
+I deliberately skipped a public proxy or a tunnel service in front of it. That is one more thing to run, one more thing that can go down and take the whole fleet dark with it, and it routes traffic out through someone else's edge for no reason. For a client that cannot join the tailnet, the server also speaks plain HTTPS with a pinned certificate. Same result either way: encrypted, and trusting only the machines I allow.
+
+{{< zoom-image src="network.svg" alt="A diagram of the safe network path: a client machine in another city and the home-lab HMS server both join a private tailnet, and Tailscale builds a direct encrypted WireGuard tunnel between them. The heartbeat travels inside the tunnel. No port is opened on either router and nothing is exposed to the open internet." title="No open port. A direct, encrypted tunnel between the two machines, and nothing on the public internet." >}}
+
 ## Not overengineered, on purpose
 
 I could have reached for Kubernetes, a message queue, a full monitoring stack, a fancy web app. For watching a handful of machines run a git sync, that is a cannon for a fly.
