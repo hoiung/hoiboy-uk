@@ -32,7 +32,7 @@ Here is what those two days actually made. I tried the same room two ways, once 
 
 A couple of honest caveats. SketchUp ran on its free tier, which lives in the cloud, so its rendering happened on Trimble's servers, not on my machine, and that tier caps how many renders you get. I just took the first output my AI rendering script produced, so the SketchUp shot here is nowhere near what the tool can really do. Fair is fair.
 
-The Blender render is the opposite story. It ran entirely on my own machine, an HP ZBook 15 from 2013, more than twelve years old now, an old i7 laptop with a tiny Quadro GPU from my home lab test rack. So it is not the sharpest, but for a machine that old, I would say it holds up pretty well. Imagine what it would do on a newer box with a proper GPU.
+The Blender render is the opposite story. It ran entirely on my own machine, an old laptop, more than twelve years old, with a tiny GPU, part of my home lab test rack. So it is not the sharpest, but for a machine that old, I would say it holds up pretty well. Imagine what it would do on a newer box with a proper GPU.
 
 Two tools, the same job, so I could judge the output, the setup effort, and how automatable each one really is.
 
