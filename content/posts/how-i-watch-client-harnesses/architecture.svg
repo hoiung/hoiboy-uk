@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 410" width="900" height="410" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" role="img" aria-label="How a harness update reaches a client device: the canonical harness is seeded into a per-client repo, the HMS server publishes updates to that repo over a write key, each client machine fetches over a read-only key and heartbeats its sync state back to the dashboard. The heartbeat carries only hostname, sync state, git SHA and timestamp; no files and no client data.">
+  <defs>
+    <style>
+      .bg { fill: #fafafa; }
+      .card { fill: #ffffff; }
+      .label { fill: #1a1a1a; font-weight: 600; }
+      .muted { fill: #6a6a6a; }
+      .boxstroke { stroke: #9aa0a6; }
+      .trailstroke { stroke: #9aa0a6; }
+      .accent { fill: #c0533a; }
+      .accentstroke { stroke: #c0533a; }
+      .ok { fill: #7aa869; }
+      .okstroke { stroke: #7aa869; }
+      .watermark { fill: #87ceeb; }
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #141414; }
+        .card { fill: #1f1f1f; }
+        .label { fill: #f0f0f0; }
+        .muted { fill: #a6a6a6; }
+        .boxstroke { stroke: #6a6a6a; }
+        .trailstroke { stroke: #6a6a6a; }
+      }
+    </style>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L7,3 L0,6 Z" class="accent"/>
+    </marker>
+    <marker id="ahg" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L7,3 L0,6 Z" class="ok"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="900" height="410"/>
+  <text x="885" y="24" text-anchor="end" class="watermark" font-size="11" font-weight="400" letter-spacing="0.5">hoiboy.uk</text>
+
+  <text x="20" y="42" class="label" font-size="18">How a harness update reaches a client device</text>
+
+  <!-- 5 stage boxes: x = 20,195,370,545,720 ; width 150 ; gap 25 -->
+  <rect class="card boxstroke" x="20"  y="78" width="150" height="94" rx="10" stroke-width="1.5"/>
+  <text x="34" y="102" class="muted" font-size="11" letter-spacing="0.5">SOURCE</text>
+  <text x="34" y="122" class="label" font-size="14">SST3 harness</text>
+  <text x="34" y="142" class="muted" font-size="11.5">The one</text>
+  <text x="34" y="157" class="muted" font-size="11.5">canonical copy.</text>
+
+  <rect class="card boxstroke" x="195" y="78" width="150" height="94" rx="10" stroke-width="1.5"/>
+  <text x="209" y="102" class="muted" font-size="11" letter-spacing="0.5">SEED</text>
+  <text x="209" y="122" class="label" font-size="14">Seed once</text>
+  <text x="209" y="142" class="muted" font-size="11.5">Copy it into a</text>
+  <text x="209" y="157" class="muted" font-size="11.5">fresh client repo.</text>
+
+  <rect class="card boxstroke" x="370" y="78" width="150" height="94" rx="10" stroke-width="1.5"/>
+  <text x="384" y="102" class="muted" font-size="11" letter-spacing="0.5">CLIENT REPO</text>
+  <text x="384" y="122" class="label" font-size="14">One per client</text>
+  <text x="384" y="142" class="muted" font-size="11.5">Private. Holds the</text>
+  <text x="384" y="157" class="muted" font-size="11.5">expected state.</text>
+
+  <rect class="card boxstroke" x="545" y="78" width="150" height="94" rx="10" stroke-width="1.5"/>
+  <text x="559" y="102" class="muted" font-size="11" letter-spacing="0.5">HMS SERVER</text>
+  <text x="559" y="122" class="label" font-size="14">Publish + watch</text>
+  <text x="559" y="142" class="muted" font-size="11.5">Pushes updates,</text>
+  <text x="559" y="157" class="muted" font-size="11.5">tracks the fleet.</text>
+
+  <rect class="card boxstroke" x="720" y="78" width="150" height="94" rx="10" stroke-width="1.5"/>
+  <text x="734" y="102" class="muted" font-size="11" letter-spacing="0.5">DEVICES</text>
+  <text x="734" y="122" class="label" font-size="14">Client machines</text>
+  <text x="734" y="142" class="muted" font-size="11.5">Fetch, sync,</text>
+  <text x="734" y="157" class="muted" font-size="11.5">heartbeat back.</text>
+
+  <!-- forward arrows between boxes -->
+  <line x1="171" y1="125" x2="192" y2="125" class="accentstroke" stroke-width="2" marker-end="url(#ah)"/>
+  <line x1="346" y1="125" x2="367" y2="125" class="accentstroke" stroke-width="2" marker-end="url(#ah)"/>
+  <line x1="521" y1="125" x2="542" y2="125" class="accentstroke" stroke-width="2" marker-end="url(#ah)"/>
+  <line x1="696" y1="125" x2="717" y2="125" class="accentstroke" stroke-width="2" marker-end="url(#ah)"/>
+
+  <!-- credentialled hops: two compact boxes, left-grouped, clearing the right drop column -->
+  <text x="20" y="206" class="label" font-size="13">The only two credentialled hops:</text>
+
+  <rect class="card accentstroke" x="20" y="218" width="330" height="54" rx="10" stroke-width="1.5"/>
+  <circle cx="45" cy="245" r="9" class="accent"/>
+  <text x="64" y="241" class="label" font-size="12.5">Server → client repo</text>
+  <text x="64" y="259" class="muted" font-size="11">WRITE key. Only the server publishes.</text>
+
+  <rect class="card okstroke" x="362" y="218" width="330" height="54" rx="10" stroke-width="1.5"/>
+  <circle cx="387" cy="245" r="9" class="ok"/>
+  <text x="406" y="241" class="label" font-size="12.5">Device → client repo</text>
+  <text x="406" y="259" class="muted" font-size="11">READ-ONLY key. Fetch, never push.</text>
+
+  <!-- heartbeat return: straight down from the Devices box, one 90-degree turn into the heartbeat box -->
+  <path d="M 795 172 L 795 345 L 667 345" fill="none" class="okstroke" stroke-width="2" marker-end="url(#ahg)"/>
+
+  <rect class="card okstroke" x="235" y="300" width="430" height="90" rx="10" stroke-width="1.5"/>
+  <circle cx="261" cy="345" r="9" class="ok"/>
+  <text x="281" y="333" class="label" font-size="12.5">What each device sends back: a heartbeat</text>
+  <text x="281" y="356" class="muted" font-size="11.5">hostname · sync state · git SHA · timestamp.</text>
+  <text x="281" y="374" class="muted" font-size="11.5">No files. No client data. That is the whole payload.</text>
+</svg>
