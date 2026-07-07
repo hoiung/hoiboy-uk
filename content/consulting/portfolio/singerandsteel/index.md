@@ -30,6 +30,8 @@ Here is what those two days actually made. I tried the same room two ways, once 
 
 {{< zoom-image src="demo-render-detail.jpg" alt="A close-up of the Blender version showing the plant, cushions and coffee table" title="A close-up from the Blender version" >}}
 
+A quick note on these. They were rendered on an HP ZBook 15 from 2013, more than twelve years old now, an old i7 laptop with a tiny Quadro GPU that sits in my home lab test rack. So the Blender output is not the sharpest, but for a machine that old, I would say it holds up pretty well. Imagine what it would do on a newer box with a proper GPU.
+
 Two tools, the same job, so I could judge the output, the setup effort, and how automatable each one really is. Seeing it side by side, instead of guessing, is what let us have the honest conversation next.
 
 ## Knowing when not to automate
