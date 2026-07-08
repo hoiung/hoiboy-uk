@@ -167,6 +167,11 @@ BANNED_WORDS: tuple[str, ...] = (
     # <!-- iamhoi-skip --> ... <!-- iamhoi-skipend --> so the guard passes them.
     # Full rule: VOICE_PROFILE.md Section 8 "Context-dependent — boring".
     "boring",
+    # 2026-07-08 (operator-flagged, emphatic): "ramp" / "ramp up" / "ramp on" is
+    # AI filler the operator does not use ("stop using the word ramp ... I dont
+    # talk like that ... it's such an AI fucking word"). Say "pick up", "get up to
+    # speed", or "learn" instead. \bramp\b also catches "ramp up" and "ramp-up".
+    "ramp", "ramping", "ramped",
     # Multi-word AI/CV-speak phrases
     "strategic initiative",
     "drive measurable impact",
