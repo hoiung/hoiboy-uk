@@ -39,6 +39,13 @@ exclude = [
   # which is not a real HTTP status. Sidebar profile link cannot be liveness-
   # checked from CI without a logged-in cookie. added: 2026-05-06; expires: 2026-08-04 (90 days)
   "^https?://(www\\.)?linkedin\\.com(/.*)?$",
+  # Meetup, Facebook and Instagram return 403/999 (anti-bot) to lychee's
+  # user-agent, same class as linkedin above. Community join links on
+  # /community/asians-gingers-in-tech/ (#43). Verified reachable in-browser
+  # (200/308) 2026-07-10. added: 2026-07-10; expires: 2026-10-08 (90 days)
+  "^https?://(www\\.)?meetup\\.com(/.*)?$",
+  "^https?://(www\\.)?facebook\\.com(/.*)?$",
+  "^https?://(www\\.)?instagram\\.com(/.*)?$",
   # Cloudflare dashboard URLs require authentication; anonymous lychee
   # requests get 403. Referenced in cloudflare-api-token-setup.md runbook
   # as documented destinations for operator UI actions (token creation,
