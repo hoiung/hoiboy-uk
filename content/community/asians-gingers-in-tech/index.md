@@ -58,9 +58,9 @@ Here's what a feature looks like. I'll go first.
 <img src="/hoi-mug.jpg" alt="Hoi aka Hoiboy" width="200">
 
 <!-- iamhoi -->
-**Hoi aka Hoiboy**. Before all the AI stuff, I spent about eight years as a Data Centre Engineer at Canonical, the company behind Ubuntu.
+**Hoi aka Hoiboy**. Before all the AI stuff, I spent eight years at Canonical, the company behind Ubuntu. My title said Data Centre Engineer the whole time. Flat organisation, and I never needed a new title to prove what I could do.
 
-**What I quietly did:** led the physical design, procurement and rollout of Canonical's OpenStack cloud data centres (Prodstack) across London, Boston and Taipei. My favourite kind of win was the unglamorous one. On one build I renegotiated the power rate down far enough to save over a quarter of a million dollars a year. Nobody throws a party for a spreadsheet like that, but that is exactly the kind of thing the quiet ones quietly pull off.
+**What I quietly did:** the role outgrew the title anyway. By the end I was the infrastructure architect, the procurement lead and the data centre manager rolled into one, often running the data centres more or less single-handed. I led the physical design, sourcing and rollout of Canonical's cloud data centres across London, Boston and Taipei, and quietly saved the company a small fortune on the supplier deals. The work spoke for itself, even when the job title didn't. That is usually how it goes for the quiet ones.
 
 **The identity bit:** classic Asian introvert. Head down, headphones on, let the work talk. I'm ADHD, OCD and probably dyslexic, which is either a gift or the reason I've rewritten this sentence four times.
 
