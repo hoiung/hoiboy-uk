@@ -73,7 +73,9 @@ That's why Asians & Gingers in Tech exists. The name makes you smile. The reason
 
 ## Get featured
 
-We're starting a feature series to put a spotlight on the quiet, heads-down people doing brilliant work. Want to be one of them? A submission form is coming soon so you can share your story and get featured. For now, join us on any of our channels and say hello.
+*(self-promotion for people who hate self-bragging)*
+
+This is a feature series for the quiet, heads-down people doing brilliant work. You've got the bragging rights. You just never feel the need to flex them. So let us do the flexing for you. A submission form is coming soon so you can share your story and get featured. For now, join us on any of our channels and say hello. Even a lurk-and-wave counts.
 
 Here's what a feature looks like. I'll go first.
 
