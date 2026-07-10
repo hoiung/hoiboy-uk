@@ -64,7 +64,7 @@ Here's what a feature looks like. I'll go first.
 
 **The identity bit:** classic Asian introvert. Head down, headphones on, let the work talk. I'm ADHD, OCD and probably dyslexic, which is either a gift or the reason I've rewritten this sentence four times.
 
-**The flex, nothing to do with tech:** I started dancing at 28, the only bloke in a room full of women. I never taught myself anything. I went looking for it, practised and practised, explored, kept a curious mind, and got humbled the hard way plenty of times. Years later I'd helped build one of the biggest Brazilian Zouk communities around. Turns out the learning never really stops, and I'm glad it doesn't.
+**The flex, nothing to do with tech:** I started dancing at 28, the only bloke in a room full of women. I went and found teachers, practised and practised, explored, and kept a curious mind wide open. The hard knocks humbled me, and that is exactly how I got good. Years later I'd helped build one of the biggest Brazilian Zouk communities around. The learning never really stops, and I'm glad it doesn't.
 
 **Tech tip:** don't let the AI lead, you lead it. A good harness (rules, guardrails, review gates) beats a clever prompt every time.
 
