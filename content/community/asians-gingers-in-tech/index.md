@@ -58,9 +58,9 @@ Here's what a feature looks like. I'll go first.
 <img src="/hoi-mug.jpg" alt="Hoi aka Hoiboy" width="200">
 
 <!-- iamhoi -->
-**Hoi aka Hoiboy**. Before all the AI stuff, I was a Data Centre Engineer at Canonical, the company behind Ubuntu.
+**Hoi aka Hoiboy**. Before all the AI stuff, I spent about eight years as a Data Centre Engineer at Canonical, the company behind Ubuntu.
 
-**What I quietly did:** helped build and run Prodstack, the production cloud Canonical runs on, plus data centre builds and decommissions across Taipei, Bratislava and London. Thousands of servers racked, wired and configured by hand. Millions of people use Ubuntu and its cloud every day, and almost none of them know someone was stood in a freezing cold aisle at 2am making it work. That someone is usually one of us.
+**What I quietly did:** led the physical design, procurement and rollout of Canonical's OpenStack cloud data centres (Prodstack) across London, Boston and Taipei. My favourite kind of win was the unglamorous one. On one build I renegotiated the power rate down far enough to save over a quarter of a million dollars a year. Nobody throws a party for a spreadsheet like that, but that is exactly the kind of thing the quiet ones quietly pull off.
 
 **The identity bit:** classic Asian introvert. Head down, headphones on, let the work talk. I'm ADHD, OCD and probably dyslexic, which is either a gift or the reason I've rewritten this sentence four times.
 
