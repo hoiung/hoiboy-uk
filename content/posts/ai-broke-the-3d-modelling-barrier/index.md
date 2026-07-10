@@ -48,7 +48,9 @@ That is when the penny dropped.
 
 AI has knocked the barrier down on 3D modelling. The same thing that happened to writing code has now happened here.
 
+<!-- iamhoi-skip -->
 Think about what really changed with coding. The power was always there. Compilers, libraries, the whole stack, sat waiting for anyone who wanted it. The wall was never the tools, it was the years of learning to use them well. AI did not make programming trivial, but it turned that wall into a ramp. You can get moving while you learn now, instead of learning for years before you are allowed to move.
+<!-- iamhoi-skipend -->
 
 3D is the exact same shape. Blender has been around for a very, very long time. It is free, it is open source, and it is genuinely one of the most powerful pieces of software on the planet. The only thing keeping people out was the learning curve, and it is a savage one. SketchUp won a whole market on being simpler, not on being better. Simplicity was the product.
 
