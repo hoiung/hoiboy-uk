@@ -39,6 +39,16 @@ Come join the weirdest niche community. 🧡🤝
 - **TikTok:** coming soon
 - **X:** coming soon
 
+## Run an event in your city
+
+<!-- iamhoi -->
+Right now the meetups are London only, because that's where I am. It's not meant to stay that way.
+
+If you're an Asian or a ginger and you want to run a real-life event in your own city, get in touch. I'll help you set it up, or just talk you through building the community where you are. We do this together.
+
+I'm one man, so I can always use the help. If you've got the energy for it, let's build this home city by city. Email me at [hello@hoiboy.uk](mailto:hello@hoiboy.uk).
+<!-- iamhoiend -->
+
 ## Why we exist
 
 <!-- iamhoi -->
