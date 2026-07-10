@@ -77,15 +77,13 @@
   url = "/life/"
   weight = 60
 
-# Community groups section (sidebar heading: "Asians & Gingers in Tech").
-# Heading carries the brand; entries carry the platform, so the LinkedIn
-# group and the future Meetup group never collide on the same name.
+# Community section (sidebar heading: "Join Community"). Links to the community
+# landing page; the per-platform join links (LinkedIn group, Meetup, FB,
+# Instagram) live on that page, not in the sidebar (#43).
 [[groups]]
-  name = "LinkedIn group"
-  url = "https://www.linkedin.com/groups/26310001/"
+  name = "Asians & Gingers in Tech"
+  url = "/community/asians-gingers-in-tech/"
   weight = 10
-
-# [[groups]]  Meetup group goes here once the operator re-creates it.
 
 [[social]]
   name = "GitHub"
