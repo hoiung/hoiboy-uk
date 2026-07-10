@@ -29,6 +29,16 @@ Come join the weirdest niche community. 🧡🤝
 - Racism? Absolutely not.
 - Being rude? Also not.
 
+## Join and follow us
+
+- **Real-life meetups (London):** [meetup.com/london-asians-gingers-in-tech](https://www.meetup.com/london-asians-gingers-in-tech)
+- **LinkedIn group:** [linkedin.com/groups/26310001](https://www.linkedin.com/groups/26310001/)
+- **Facebook page:** [facebook.com/asians.gingers.in.tech](https://www.facebook.com/asians.gingers.in.tech)
+- **Facebook group:** [facebook.com/groups/london.asians.gingers.in.tech](https://www.facebook.com/groups/london.asians.gingers.in.tech)
+- **Instagram:** [@asians_gingers_in_tech](https://www.instagram.com/asians_gingers_in_tech/)
+- **TikTok:** coming soon
+- **X:** coming soon
+
 ## Why we exist
 
 <!-- iamhoi -->
@@ -51,7 +61,7 @@ That's why Asians & Gingers in Tech exists. The name makes you smile. The reason
 
 ## Get featured
 
-We're starting a feature series to put a spotlight on the quiet, heads-down people doing brilliant work. Want to be one of them? A submission form is coming soon so you can share your story and get featured. For now, join us on any of the channels below and say hello.
+We're starting a feature series to put a spotlight on the quiet, heads-down people doing brilliant work. Want to be one of them? A submission form is coming soon so you can share your story and get featured. For now, join us on any of our channels and say hello.
 
 Here's what a feature looks like. I'll go first.
 
@@ -72,13 +82,3 @@ Here's what a feature looks like. I'll go first.
 
 **To anyone reading who never puts their hand up:** your work is worth more than your comfort with self-promotion. Come say hello, and we'll do the shouting for you.
 <!-- iamhoiend -->
-
-## Join and follow us
-
-- **Real-life meetups (London):** [meetup.com/london-asians-gingers-in-tech](https://www.meetup.com/london-asians-gingers-in-tech)
-- **LinkedIn group:** [linkedin.com/groups/26310001](https://www.linkedin.com/groups/26310001/)
-- **Facebook page:** [facebook.com/asians.gingers.in.tech](https://www.facebook.com/asians.gingers.in.tech)
-- **Facebook group:** [facebook.com/groups/london.asians.gingers.in.tech](https://www.facebook.com/groups/london.asians.gingers.in.tech)
-- **Instagram:** [@asians_gingers_in_tech](https://www.instagram.com/asians_gingers_in_tech/)
-- **TikTok:** coming soon
-- **X:** coming soon
