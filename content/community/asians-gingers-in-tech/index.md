@@ -123,6 +123,11 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
   </div>
 
   <div class="agit-field">
+    <label for="agit-superpowers">Your superpowers <span class="agit-hint">(optional, the wiring that makes you good at what you do)</span></label>
+    <input type="text" id="agit-superpowers" name="superpowers" maxlength="300">
+  </div>
+
+  <div class="agit-field">
     <label for="agit-feature">Your story <span class="agit-hint">(the quiet, brilliant work you never shout about)</span></label>
     <textarea id="agit-feature" name="feature" maxlength="8000" required></textarea>
   </div>
