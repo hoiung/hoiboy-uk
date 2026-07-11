@@ -9,6 +9,10 @@
   Permissions-Policy: microphone=(self), camera=()
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'
 
+# Thanks page (issue #43): thin confirmation page, keep it out of the index.
+/community/asians-gingers-in-tech/thanks/*
+  X-Robots-Tag: noindex, nofollow
+
 # Community submission form (issue #43): full re-declaration of the /* CSP
 # (path blocks REPLACE the header, not merge, so every directive must be
 # repeated or it drops to the browser default) PLUS challenges.cloudflare.com
