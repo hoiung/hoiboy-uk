@@ -112,11 +112,6 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
 <form method="POST" action="/api/contribute" enctype="multipart/form-data">
 
   <div class="agit-field">
-    <label for="agit-title">Feature headline <span class="agit-hint">(what should we call your story?)</span></label>
-    <input type="text" id="agit-title" name="title" maxlength="200" required>
-  </div>
-
-  <div class="agit-field">
     <label for="agit-name">Your name and nickname or alias <span class="agit-hint">(e.g. Hoi aka Hoiboy)</span></label>
     <input type="text" id="agit-name" name="name" maxlength="100" required>
   </div>

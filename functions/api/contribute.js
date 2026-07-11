@@ -40,7 +40,7 @@ const MAX_BODY_BYTES = MAX_IMAGE_BYTES + 256 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 // field name -> max length (server-side length caps; a valid-token bot can still POST garbage)
-const FIELD_CAPS = { title: 200, name: 100, role: 150, superpowers: 300, feature: 8000 };
+const FIELD_CAPS = { name: 100, role: 150, superpowers: 300, feature: 8000 };
 
 function log(event, detail) {
   // Structured observability line (repo AP #12). One per decision branch.
@@ -175,14 +175,13 @@ export async function onRequestPost(context) {
   }
 
   // 4. Text fields: sanitise + length-cap, then presence-check the essentials.
-  const title = clean(form.get("title"), FIELD_CAPS.title);
   const name = clean(form.get("name"), FIELD_CAPS.name);
   const role = clean(form.get("role"), FIELD_CAPS.role);
   const superpowers = clean(form.get("superpowers"), FIELD_CAPS.superpowers);
   const feature = clean(form.get("feature"), FIELD_CAPS.feature);
-  if (!title || !name || !feature) {
-    log("validation-reject", { title: !!title, name: !!name, feature: !!feature });
-    return textResponse(400, "Please fill in the title, your name, and your story.");
+  if (!name || !feature) {
+    log("validation-reject", { name: !!name, feature: !!feature });
+    return textResponse(400, "Please fill in your name and your story.");
   }
 
   // Consent must be explicitly ticked (Art 9 special-category: ethnicity + photo).
@@ -224,9 +223,8 @@ export async function onRequestPost(context) {
     return textResponse(500, "The form is not fully configured yet. Please try again later.");
   }
 
-  const subject = `${title} : ${name}`.slice(0, 240);
+  const subject = `AGIT story: ${name}`.slice(0, 240);
   const bodyText = [
-    `Title: ${title}`,
     `Name: ${name}`,
     `Tech role: ${role || "(not given)"}`,
     `Superpowers: ${superpowers || "(not given)"}`,
@@ -285,7 +283,7 @@ export async function onRequestPost(context) {
     try {
       await env.AGIT_UPLOADS.put(key, photoBytes, {
         httpMetadata: { contentType: photoType },
-        customMetadata: { title, name, submittedAt: new Date().toISOString() },
+        customMetadata: { name, submittedAt: new Date().toISOString() },
       });
       log("r2-store", { key, size: image.size, ok: true });
     } catch (err) {
