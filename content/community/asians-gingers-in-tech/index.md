@@ -75,7 +75,85 @@ That's why Asians & Gingers in Tech exists. The name makes you smile. The reason
 
 *(self-promotion for people who hate self-bragging)*
 
-This is a feature series for the quiet, heads-down people doing brilliant work. You've got the bragging rights. You just never feel the need to flex them. So let us do the flexing for you. A submission form is coming soon so you can share your story and get featured. For now, join us on any of our channels and say hello. Even a lurk-and-wave counts.
+This is a feature series for the quiet, heads-down people doing brilliant work. You've got the bragging rights. You just never feel the need to flex them. So let us do the flexing for you. Fill in the form below to share your story and get featured. Prefer to lurk first? Come say hello on any of our channels. Even a wave counts.
+
+<style>
+.agit-form-wrap { max-width: 40rem; }
+.agit-form-wrap .agit-field { margin: 0 0 1.1rem; }
+.agit-form-wrap label { display: block; font-weight: 600; margin: 0 0 .3rem; }
+.agit-form-wrap .agit-hint { font-weight: 400; opacity: .7; font-size: .9em; }
+.agit-form-wrap input[type="text"],
+.agit-form-wrap input[type="file"],
+.agit-form-wrap textarea {
+  width: 100%; max-width: 100%; box-sizing: border-box;
+  padding: .55rem .6rem; font: inherit; color: inherit;
+  background: rgba(128,128,128,.08);
+  border: 1px solid rgba(128,128,128,.45); border-radius: 6px;
+}
+.agit-form-wrap textarea { min-height: 8rem; resize: vertical; }
+.agit-form-wrap .agit-consent { display: flex; gap: .55rem; align-items: flex-start; }
+.agit-form-wrap .agit-consent input { margin-top: .25rem; flex: 0 0 auto; }
+.agit-form-wrap .agit-consent label { font-weight: 400; }
+.agit-form-wrap button {
+  font: inherit; font-weight: 600; cursor: pointer;
+  padding: .6rem 1.4rem; border-radius: 6px;
+  color: inherit; background: rgba(128,128,128,.15);
+  border: 1px solid rgba(128,128,128,.55);
+}
+.agit-form-wrap button:hover { background: rgba(128,128,128,.28); }
+.agit-hp { position: absolute; left: -5000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+</style>
+
+<div class="agit-form-wrap">
+<form method="POST" action="/api/contribute" enctype="multipart/form-data">
+
+  <div class="agit-field">
+    <label for="agit-title">Feature headline <span class="agit-hint">(what should we call your story?)</span></label>
+    <input type="text" id="agit-title" name="title" maxlength="200" required>
+  </div>
+
+  <div class="agit-field">
+    <label for="agit-name">Your name</label>
+    <input type="text" id="agit-name" name="name" maxlength="100" required>
+  </div>
+
+  <div class="agit-field">
+    <label for="agit-role">Your role in tech <span class="agit-hint">(optional)</span></label>
+    <input type="text" id="agit-role" name="role" maxlength="150">
+  </div>
+
+  <div class="agit-field">
+    <label for="agit-feature">Your story <span class="agit-hint">(the quiet, brilliant work you never shout about)</span></label>
+    <textarea id="agit-feature" name="feature" maxlength="8000" required></textarea>
+  </div>
+
+  <div class="agit-field">
+    <label for="agit-photo">A photo of you <span class="agit-hint">(optional, JPEG/PNG/WebP, up to 3.5 MB)</span></label>
+    <input type="file" id="agit-photo" name="photo" accept="image/jpeg,image/png,image/webp">
+  </div>
+
+  <!-- Honeypot: hidden off-canvas (not display:none, so bots still fill it). A real person never sees this. -->
+  <div class="agit-hp" aria-hidden="true">
+    <label for="agit-website">Leave this field empty</label>
+    <input type="text" id="agit-website" name="website" tabindex="-1" autocomplete="off">
+  </div>
+
+  <div class="agit-field agit-consent">
+    <input type="checkbox" id="agit-consent" name="consent" required>
+    <label for="agit-consent">I agree that my photo may be published, my story may be edited into a public feature, and my submission is processed by Cloudflare (R2 storage, Turnstile, and email) to make that happen. See the <a href="/legal/privacy/">Privacy Notice</a>.</label>
+  </div>
+
+  <!-- OPERATOR: replace the data-sitekey below with the public Turnstile site key from Phase 2b. It is public, safe to commit. -->
+  <div class="agit-field cf-turnstile" data-sitekey="0x_REPLACE_WITH_TURNSTILE_SITE_KEY"></div>
+
+  <div class="agit-field">
+    <button type="submit">Send my story</button>
+  </div>
+
+</form>
+</div>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 Here's what a feature looks like. I'll go first.
 
