@@ -7,7 +7,7 @@
   weight = 10
 
 [[consulting]]
-  name = '<span class="mark-yellow">★</span> Work with Hoi'
+  name = 'Work with Hoi <span class="mark-yellow">★</span>'
   url = "/consulting/work-with-hoi/"
   weight = 5
 
@@ -38,7 +38,7 @@
   weight = 25
 
 [[consulting]]
-  name = '<span class="mark-green">★</span> Portfolio'
+  name = 'Portfolio <span class="mark-green">★</span>'
   url = "/consulting/portfolio/"
   weight = 30
 
@@ -81,7 +81,7 @@
 # landing page; the per-platform join links (LinkedIn group, Meetup, FB,
 # Instagram) live on that page, not in the sidebar (#43).
 [[groups]]
-  name = '<span class="mark-red">♥</span> Asians &amp; Gingers in Tech'
+  name = 'Asians &amp; Gingers in Tech <span class="mark-red">♥</span>'
   url = "/community/asians-gingers-in-tech/"
   weight = 10
 
