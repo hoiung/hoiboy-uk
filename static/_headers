@@ -13,18 +13,17 @@
 /community/asians-gingers-in-tech/thanks/*
   X-Robots-Tag: noindex, nofollow
 
-# Community submission form (issue #43): full re-declaration of the /* CSP
-# (path blocks REPLACE the header, not merge, so every directive must be
-# repeated or it drops to the browser default) PLUS challenges.cloudflare.com
-# for the Turnstile widget (script + iframe + telemetry). Other /* security
-# headers (HSTS, X-Frame-Options, etc.) merge in by path-specificity.
-/community/asians-gingers-in-tech/*
-  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' https://static.cloudflareinsights.com https://challenges.cloudflare.com; connect-src 'self' https://cloudflareinsights.com https://challenges.cloudflare.com; frame-src https://www.youtube-nocookie.com https://challenges.cloudflare.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
-
+# Turnstile (challenges.cloudflare.com) is allowed site-wide in the /* CSP below,
+# for the widget on the community "Get featured" form. Cloudflare Pages JOINS
+# same-name headers across path rules rather than replacing them, so a per-path
+# CSP block cannot ADD a source the root policy lacks: the two policies are sent
+# as two CSP headers and the browser enforces their intersection, dropping the
+# wider source. The root policy therefore carries challenges.cloudflare.com; it is
+# inert on pages with no cf-turnstile widget.
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), geolocation=()
-  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com; frame-src https://www.youtube-nocookie.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' https://static.cloudflareinsights.com https://challenges.cloudflare.com; connect-src 'self' https://cloudflareinsights.com https://challenges.cloudflare.com; frame-src https://www.youtube-nocookie.com https://challenges.cloudflare.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
