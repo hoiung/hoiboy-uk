@@ -81,17 +81,19 @@ The community "Get featured" form (issue #43 Phase 2) posts to a Cloudflare Page
 |---|---|---|---|
 | `TURNSTILE_SECRET_KEY` | Secret (encrypted) | Settings > Variables and Secrets > Production | Server-side Turnstile `siteverify` |
 | `AGIT_UPLOADS` | R2 bucket binding | Settings > Functions > R2 bucket bindings | Private photo storage (bucket e.g. `agit-submissions`, private) |
-| `AGIT_MAILER` | Send-email binding | Settings > Functions > Email bindings | Cloudflare-native send to `hello@hoiboy.uk` |
+| `AGIT_MAILER` | `send_email` binding | Settings > Bindings > Add > Send email | Cloudflare-native send from `noreply@hoiboy.uk` to `hello@hoiboy.uk` |
 
-The Turnstile **site key** is public and lives in the form HTML (`content/community/asians-gingers-in-tech/index.md`, the `data-sitekey` on the `cf-turnstile` div). It is NOT a secret; commit it. The `send_email` binding can only send to a **verified** Cloudflare Email Routing destination, so confirm `hello@hoiboy.uk` (or its verified forwarding target) qualifies.
+The Turnstile **site key** is public and lives in the form HTML (`content/community/asians-gingers-in-tech/index.md`, the `data-sitekey` on the `cf-turnstile` div). It is NOT a secret; commit it.
+
+**Email: the zero-DNS-chore path.** The Function calls `env.AGIT_MAILER.send({to, from, subject, text, attachments})` (Cloudflare Email Service object builder). Per Cloudflare docs, sends to a **verified destination address** are free on any plan **when only Email Routing is configured**, so you do NOT need to onboard the domain to Email Sending (no `cf-bounce` SPF/DKIM/DMARC records). The only requirements: (a) `hello@hoiboy.uk` is a **verified Email Routing destination address**, and (b) the `from` is on a **routing domain** (`noreply@hoiboy.uk`, since `hoiboy.uk` is the routing domain). Onboarding `hoiboy.uk` to Email **Sending** is only needed to email arbitrary (non-verified) recipients, which this form does not do.
 
 **Provisioning (operator, one-time, dashboard)**:
 
 1. Turnstile: create a widget for `hoiboy.uk`; paste the site key into the form; store the secret key as the `TURNSTILE_SECRET_KEY` Pages secret.
 2. R2: create a **private** bucket (e.g. `agit-submissions`); bind it as `AGIT_UPLOADS`; redeploy so the binding takes effect.
-3. Email: enable Cloudflare native email sending; add the `AGIT_MAILER` send-email binding targeting the verified `hello@hoiboy.uk` destination.
+3. Email: confirm `hello@hoiboy.uk` is a **verified** Email Routing destination address (Email Service > Email Routing > Destination Addresses); then add the `send_email` binding named `AGIT_MAILER` to the Pages project (allowed sender `noreply@hoiboy.uk`, allowed destination `hello@hoiboy.uk`). No Email Sending domain onboarding is required for this verified-destination path. Redeploy so the binding takes effect.
 
-**Retention (R2 lifecycle rule)**: on the `agit-submissions` bucket, add an object-lifecycle rule that **expires objects 90 days after creation** (R2 > bucket > Settings > Object lifecycle rules). This auto-purges unpublished submission photos. Mirrored in the Privacy Notice and the Sub-Processors page.
+**Retention (R2 lifecycle rule): REQUIRED go-live gate.** On the `agit-submissions` bucket, add an object-lifecycle rule that **expires objects 90 days after creation** (R2 > bucket > Settings > Object lifecycle rules). This auto-purges unpublished submission photos and is what backs the live 90-day promise in the Privacy Notice. Set it **before** the form accepts real submissions, since the legal promise is otherwise unbacked (no code path enforces retention; R2 lifecycle is dashboard-only). Mirrored in the Privacy Notice and the Sub-Processors page.
 
 **Observability**: the Function emits a structured `console.log` JSON line at each decision branch (honeypot drop, Turnstile fail, size/type reject, R2 store, email send). View them under the project's Functions logs / real-time logs.
 
