@@ -9,6 +9,14 @@
   Permissions-Policy: microphone=(self), camera=()
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'
 
+# Community submission form (issue #43): full re-declaration of the /* CSP
+# (path blocks REPLACE the header, not merge, so every directive must be
+# repeated or it drops to the browser default) PLUS challenges.cloudflare.com
+# for the Turnstile widget (script + iframe + telemetry). Other /* security
+# headers (HSTS, X-Frame-Options, etc.) merge in by path-specificity.
+/community/asians-gingers-in-tech/*
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' https://static.cloudflareinsights.com https://challenges.cloudflare.com; connect-src 'self' https://cloudflareinsights.com https://challenges.cloudflare.com; frame-src https://www.youtube-nocookie.com https://challenges.cloudflare.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-Frame-Options: DENY
