@@ -9,6 +9,8 @@ order: 0
 description: "Ten AI coding harnesses. One frozen brief. One shot each. The winner ships into a live trading system. Watch this space."
 ---
 
+{{< abandoned-notice >}}
+
 ## The Setup
 
 <!-- iamhoi -->
