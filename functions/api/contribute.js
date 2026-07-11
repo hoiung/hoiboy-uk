@@ -220,7 +220,7 @@ export async function onRequestPost(context) {
     log("email-send", { ok: true, hasPhoto });
   } catch (err) {
     log("email-send", { ok: false, error: String(err), code: err && err.code });
-    return textResponse(502, "We saved your entry but could not email it. Please try again.");
+    return textResponse(502, "Something went wrong sending your story. Please try again.");
   }
 
   // 7. Success -> redirect (303 so the browser re-requests with GET).
