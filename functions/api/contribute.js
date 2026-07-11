@@ -5,7 +5,7 @@
 //   2. Honeypot drop (silent redirect, no side effects).
 //   3. Mandatory Turnstile server-side siteverify (403 on failure).
 //   4. Validate + sanitise the text fields (CRLF / header-injection guard).
-//   5. Size + magic-byte type gate on the optional photo (<= 3.5 MB, jpeg/png/webp).
+//   5. Size + magic-byte type gate on the optional photo (<= 10 MB, jpeg/png/webp).
 //   6. Email a structured entry to the operator inbox (Cloudflare-native send),
 //      photo attached. The email is the operator's primary notification channel,
 //      so it is sent FIRST.
@@ -19,8 +19,8 @@
 // Email uses the Cloudflare Email Service REST API (POST /accounts/{id}/email/
 // sending/send). The Pages dashboard has no send-email binding, so the Function
 // authenticates with an API token (env.CF_EMAIL_TOKEN) instead. Sends to a
-// verified Email Routing destination are free on any plan; the base64 attachment
-// keeps the whole message under the 5 MiB cap.
+// verified Email Routing destination are free on any plan and allow up to a
+// 25 MiB total message, so a 10 MB photo (~13.5 MB base64) fits comfortably.
 
 // --- configuration (non-secret) ---
 // The send can only deliver to a VERIFIED Email Routing destination address.
@@ -33,7 +33,7 @@ const TO_ADDR = "hoiboyuk@gmail.com";
 const FROM_ADDR = "noreply@hoiboy.uk";
 const THANKS_PATH = "/community/asians-gingers-in-tech/thanks/";
 
-const MAX_IMAGE_BYTES = 3.5 * 1024 * 1024; // 3.5 MB — keeps the base64 attachment under the 5 MiB Cloudflare-native email cap
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10 MB raw (~13.5 MB base64), well under the 25 MiB verified-destination email cap
 // Reject the whole request body before parsing if its declared size exceeds the
 // photo cap plus a small allowance for the text fields + multipart overhead.
 const MAX_BODY_BYTES = MAX_IMAGE_BYTES + 256 * 1024;
@@ -69,7 +69,7 @@ function textResponse(status, message) {
 
 // Drain a Blob's stream into a single Uint8Array. We read the photo once and
 // reuse the bytes for the magic-byte sniff, the email attachment, and the R2
-// archive. The whole blob is materialised in memory, bounded by the 3.5 MB size
+// archive. The whole blob is materialised in memory, bounded by the 10 MB size
 // gate above (the 128 MB isolate memory is shared across concurrent requests).
 // We drain via .stream() rather than a one-shot buffering read.
 async function readAllBytes(blob) {
@@ -202,7 +202,7 @@ export async function onRequestPost(context) {
   if (hasPhoto) {
     if (image.size > MAX_IMAGE_BYTES) {
       log("size-type-reject", { reason: "too large", size: image.size });
-      return textResponse(413, "That photo is over the 3.5 MB limit. Please upload a smaller one.");
+      return textResponse(413, "That photo is over the 10 MB limit. Please upload a smaller one.");
     }
     photoBytes = await readAllBytes(image);
     photoType = sniffImageType(photoBytes);

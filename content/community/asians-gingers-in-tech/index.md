@@ -137,7 +137,7 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
   </div>
 
   <div class="agit-field">
-    <label for="agit-photo">A photo of you <span class="agit-hint">(optional, JPEG/PNG/WebP, up to 3.5 MB)</span></label>
+    <label for="agit-photo">A photo of you <span class="agit-hint">(optional, JPEG/PNG/WebP, up to 10 MB)</span></label>
     <input type="file" id="agit-photo" name="photo" accept="image/jpeg,image/png,image/webp">
   </div>
 
