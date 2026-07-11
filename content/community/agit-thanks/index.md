@@ -34,6 +34,6 @@ Have a look around the site and the blog. Since you are into tech, you might lik
 - [Tech & AI](/tech-ai/)
 - [Entrepreneurship](/entrepreneurship/)
 
-And if you want to work with me, here is what I do: [Work with Hoi ⭐](/consulting/work-with-hoi/).
+And if you want to work with me, here is what I do: [Work with Hoi](/consulting/work-with-hoi/) ⭐
 
 Or head back to the [community page](/community/asians-gingers-in-tech/).
