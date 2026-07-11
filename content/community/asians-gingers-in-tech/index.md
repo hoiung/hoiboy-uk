@@ -105,6 +105,18 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
   border: 1px solid rgba(128,128,128,.55);
 }
 .agit-form-wrap button:hover { background: rgba(128,128,128,.28); }
+.agit-form-wrap button.is-sending,
+.agit-form-wrap button[disabled] { cursor: progress; opacity: .75; }
+.agit-form-wrap button.is-sending:hover { background: rgba(128,128,128,.15); }
+.agit-spinner {
+  display: inline-block; width: .85em; height: .85em; margin-right: .5em;
+  vertical-align: -.12em; border: 2px solid currentColor;
+  border-right-color: transparent; border-radius: 50%;
+  animation: agit-spin .7s linear infinite;
+}
+@keyframes agit-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .agit-spinner { animation: none; } }
+.agit-form-wrap .agit-notice { color: #e5766a; font-weight: 600; margin: 0 0 1rem; }
 .agit-hp { position: absolute; left: -5000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
 </style>
 
@@ -157,6 +169,7 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
 </div>
 
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="/js/agit-form.js" defer></script>
 
 Here's what a feature looks like. I'll go first.
 
