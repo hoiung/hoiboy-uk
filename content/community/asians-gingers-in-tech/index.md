@@ -18,7 +18,7 @@ Networking? Friendship? World domination? We'll see.
 
 Come join the weirdest niche community. 🧡🤝
 
-## Our group rules
+## Our community rules
 
 - Be kind.
 - Be respectful.
