@@ -46,6 +46,12 @@ exclude = [
   "^https?://(www\\.)?meetup\\.com(/.*)?$",
   "^https?://(www\\.)?facebook\\.com(/.*)?$",
   "^https?://(www\\.)?instagram\\.com(/.*)?$",
+  # TikTok and X (Twitter) return 403/anti-bot to lychee's user-agent, same
+  # class as the community links above. /community/asians-gingers-in-tech/ (#43).
+  # added: 2026-07-11; expires: 2026-10-09 (90 days)
+  "^https?://(www\\.)?tiktok\\.com(/.*)?$",
+  "^https?://(www\\.)?x\\.com(/.*)?$",
+  "^https?://(www\\.)?twitter\\.com(/.*)?$",
   # Cloudflare dashboard URLs require authentication; anonymous lychee
   # requests get 403. Referenced in cloudflare-api-token-setup.md runbook
   # as documented destinations for operator UI actions (token creation,
