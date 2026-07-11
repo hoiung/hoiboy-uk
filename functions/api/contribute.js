@@ -30,7 +30,7 @@
 const TO_ADDR = "hoiboyuk@gmail.com";
 // Sender on the hoiboy.uk routing domain; the local part is synthetic (Cloudflare
 // allows sending from any address on a routing domain, so nothing to register).
-const FROM_ADDR = "noreply@hoiboy.uk";
+const FROM_ADDR = "agit-noreply@hoiboy.uk";
 const THANKS_PATH = "/community/asians-gingers-in-tech/thanks/";
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10 MB raw (~13.5 MB base64), well under the 25 MiB verified-destination email cap
