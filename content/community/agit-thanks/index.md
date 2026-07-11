@@ -6,6 +6,9 @@ hideDate: true
 # sibling bundle uses a url override to serve at the /thanks/ path the form
 # (functions/api/contribute.js) and the CSP/noindex _headers rules expect.
 url: "/community/asians-gingers-in-tech/thanks/"
+# Sit under the AGIT page in breadcrumbs (its real home), not the bare community
+# section, since Hugo files this sibling bundle directly under /community/.
+breadcrumbParent: "/community/asians-gingers-in-tech"
 ---
 
 Thanks, your story is in.

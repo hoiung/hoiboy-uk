@@ -1,28 +1,44 @@
-{{- /* Breadcrumbs.
-       Posts (under /posts/) walk via the FIRST category tag, not the section.
-       Section pages and term pages walk via .Parent.
+{{- /* Breadcrumbs (site structure, not click history).
+       Posts (with a category) walk via the FIRST category tag, not the section.
+       Everything else walks its section ancestry via .Ancestors.
+       A page may set `breadcrumbParent` (a page path) to sit under a page other
+       than its Hugo section, e.g. the form thanks page under the AGIT page.
        Hidden on home. */ -}}
 {{- if not .IsHome -}}
 <nav class="breadcrumbs" aria-label="Breadcrumbs">
   <a href="/">Home</a>
-  {{- if .IsPage -}}
-    {{- /* For posts, derive crumb from first category param.
-           Look up the section page so the display title (e.g. "Food & Booze")
-           comes from content/<cat>/_index.md, not the slug. */ -}}
-    {{- with index (.Params.categories | default slice) 0 -}}
-      {{- $slug := . -}}
-      {{- $sectionPage := site.GetPage (printf "/%s" $slug) -}}
-      {{- $href := printf "/%s/" ($slug | urlize) -}}
-      {{- $label := $slug | title -}}
-      {{- with $sectionPage -}}
-        {{- $href = .RelPermalink -}}
-        {{- $label = .Title -}}
-      {{- end -}}
-      <span class="sep">&gt;</span><a href="{{ $href }}">{{ $label }}</a>
+  {{- if and .IsPage (index (.Params.categories | default slice) 0) -}}
+    {{- /* Posts: derive the middle crumb from the first category param. Look up
+           the section page so the label comes from content/<cat>/_index.md. */ -}}
+    {{- $slug := index .Params.categories 0 -}}
+    {{- $sectionPage := site.GetPage (printf "/%s" $slug) -}}
+    {{- $href := printf "/%s/" ($slug | urlize) -}}
+    {{- $label := $slug | title -}}
+    {{- with $sectionPage -}}
+      {{- $href = .RelPermalink -}}
+      {{- $label = .Title -}}
     {{- end -}}
+    <span class="sep">&gt;</span><a href="{{ $href }}">{{ $label }}</a>
     <span class="sep">&gt;</span><span>{{ .Title }}</span>
-  {{- else if and .IsNode (not .IsHome) -}}
-    {{- /* Section landing or taxonomy term page. */ -}}
+  {{- else -}}
+    {{- /* Walk the ancestry. An explicit breadcrumbParent override replaces this
+           page's own ancestry with the named parent's ancestry plus that parent. */ -}}
+    {{- $trail := .Ancestors.Reverse -}}
+    {{- $extra := false -}}
+    {{- with .Params.breadcrumbParent -}}
+      {{- with site.GetPage . -}}
+        {{- $trail = .Ancestors.Reverse -}}
+        {{- $extra = . -}}
+      {{- end -}}
+    {{- end -}}
+    {{- range $trail -}}
+      {{- if not .IsHome -}}
+        <span class="sep">&gt;</span><a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      {{- end -}}
+    {{- end -}}
+    {{- with $extra -}}
+      <span class="sep">&gt;</span><a href="{{ .RelPermalink }}">{{ .Title }}</a>
+    {{- end -}}
     <span class="sep">&gt;</span><span>{{ .Title }}</span>
   {{- end -}}
 </nav>
