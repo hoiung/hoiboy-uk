@@ -6,7 +6,7 @@
 //   3. Mandatory Turnstile server-side siteverify (403 on failure).
 //   4. Validate + sanitise the text fields (CRLF / header-injection guard).
 //   5. Size + magic-byte type gate on the optional photo (<= 3.5 MB, jpeg/png/webp).
-//   6. Email a structured entry to hello@hoiboy.uk (Cloudflare-native send),
+//   6. Email a structured entry to the operator inbox (Cloudflare-native send),
 //      photo attached. The email is the operator's primary notification channel,
 //      so it is sent FIRST.
 //   7. Best-effort archive the photo privately in R2 (the email already carries it,
@@ -20,8 +20,14 @@
 // (env.AGIT_MAILER.send({to, from, subject, text, attachments})); the base64
 // attachment content keeps the whole message under the 5 MiB cap.
 
-// --- configuration (non-secret; addresses live on the hoiboy.uk domain) ---
-const TO_ADDR = "hello@hoiboy.uk";
+// --- configuration (non-secret) ---
+// The Cloudflare send-email binding can only deliver to a VERIFIED Email Routing
+// destination address. hello@hoiboy.uk is a routing rule (it forwards here), not a
+// destination address, so the send target is the verified destination directly.
+// This is the same inbox hello@hoiboy.uk forwards to.
+const TO_ADDR = "hoiboyuk@gmail.com";
+// Sender on the hoiboy.uk routing domain; the local part is synthetic (Cloudflare
+// allows sending from any address on a routing domain, so nothing to register).
 const FROM_ADDR = "noreply@hoiboy.uk";
 const FROM_NAME = "AGIT submissions";
 const THANKS_PATH = "/community/asians-gingers-in-tech/thanks/";
@@ -208,7 +214,7 @@ export async function onRequestPost(context) {
     photoBase64 = bytesToBase64(photoBytes);
   }
 
-  // 6. Email the structured entry to hello@hoiboy.uk via the Cloudflare Email
+  // 6. Email the structured entry to the operator inbox via the Cloudflare Email
   //    Service send-email binding (object builder API; base64 attachment). The
   //    email is the operator's primary channel, so it is sent BEFORE the R2
   //    archive: if the email fails there is nothing stored to orphan.
