@@ -37,6 +37,18 @@
       return;
     }
 
+    // Catch an email/confirm mismatch before the slow submit (we can't send the
+    // submitter a confirmation, so a typo here would silently lose the reply).
+    var emailField = form.querySelector('[name="email"]');
+    var confirmField = form.querySelector('[name="email_confirm"]');
+    if (emailField && confirmField &&
+        emailField.value.trim().toLowerCase() !== confirmField.value.trim().toLowerCase()) {
+      e.preventDefault();
+      showNotice("Your two email addresses do not match. Please check them.");
+      confirmField.focus();
+      return;
+    }
+
     // Require the Turnstile token client-side so the user gets an inline nudge
     // instead of a server-side 403 after a long wait.
     var tsField = form.querySelector('[name="cf-turnstile-response"]');

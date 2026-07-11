@@ -62,12 +62,12 @@ When you email `hello@hoiboy.uk`, your email address and message content are use
 
 ### Community submission form
 
-The Asians & Gingers in Tech community page has a "Get featured" form. If you choose to submit it, we collect the feature headline, your name, your tech role, your story, and, if you add one, a photo of you.
+The Asians & Gingers in Tech community page has a "Get featured" form. If you choose to submit it, we collect your name, your email address, your tech role, your superpowers, your story, and, if you add one, a photo of you.
 
 - **Purpose**: to consider your story and, with your consent, publish it as part of a public feature series celebrating quiet, heads-down people in tech.
 - **Lawful basis**: explicit consent (UK GDPR Article 9(2)(a)). The form invites you to self-identify with a community defined partly by ethnicity, and a photo is an image of an identifiable person, so a submission can include special-category data. We only process it because you tick the consent box, and you can withdraw at any time by emailing `hello@hoiboy.uk`.
-- **How it is processed**: the photo is stored privately in Cloudflare R2 (not publicly reachable); the entry is emailed to `hello@hoiboy.uk` via Cloudflare; and spam protection uses Cloudflare Turnstile, which processes your IP address. These are listed on the [Sub-Processors](https://hoiboy.uk/legal/sub-processors/) page.
-- **Retention**: the photo you upload is stored privately in Cloudflare R2 and auto-expires 90 days after upload. The rest of your submission (headline, name, role, story) reaches us as an email to `hello@hoiboy.uk`; we keep that email only as long as we need it to consider and prepare the feature, and you can ask us to delete it at any time by emailing `hello@hoiboy.uk`. A published feature stays up until you ask us to take it down.
+- **How it is processed**: the photo is stored privately in Cloudflare R2 (not publicly reachable); the entry is emailed to us via Cloudflare; and spam protection uses Cloudflare Turnstile, which processes your IP address. These are listed on the [Sub-Processors](https://hoiboy.uk/legal/sub-processors/) page.
+- **Retention**: the photo you upload is stored privately in Cloudflare R2 and auto-expires 90 days after upload. The rest of your submission (name, email, role, superpowers, story) reaches us as an email; we keep that email only as long as we need it to consider and prepare the feature, and you can ask us to delete it at any time by emailing `hello@hoiboy.uk`. A published feature stays up until you ask us to take it down.
 
 ## 5. Your data-subject rights
 

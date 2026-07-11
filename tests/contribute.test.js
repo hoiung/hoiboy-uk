@@ -34,6 +34,9 @@ function bytesToBase64(bytes) {
   return Buffer.from(binary, 'binary').toString('base64'); // btoa() equivalent in Node
 }
 
+// EMAIL_RE: pragmatic email shape check (mirror of functions/api/contribute.js).
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 // sniffImageType(): true image type from magic bytes, ignoring client Content-Type.
 function sniffImageType(bytes) {
   if (!bytes || bytes.length < 12) return null;
@@ -117,4 +120,16 @@ test('sniffImageType rejects too-short and empty inputs', () => {
   assert.equal(sniffImageType(new Uint8Array([0xff, 0xd8, 0xff])), null); // < 12 bytes
   assert.equal(sniffImageType(new Uint8Array(0)), null);
   assert.equal(sniffImageType(null), null);
+});
+
+test('EMAIL_RE accepts plausible addresses', () => {
+  for (const e of ['a@b.co', 'hoi@hoiboy.uk', 'first.last+tag@sub.example.com']) {
+    assert.equal(EMAIL_RE.test(e), true, e);
+  }
+});
+
+test('EMAIL_RE rejects malformed addresses', () => {
+  for (const e of ['', 'plainstring', 'no@domain', 'no-at.example.com', 'spaces in@x.com', 'a@b@c.com', '@nolocal.com']) {
+    assert.equal(EMAIL_RE.test(e), false, e);
+  }
 });

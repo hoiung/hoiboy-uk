@@ -129,6 +129,16 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
   </div>
 
   <div class="agit-field">
+    <label for="agit-email">Your email <span class="agit-hint">(so I can reply, kept private)</span></label>
+    <input type="email" id="agit-email" name="email" maxlength="254" autocomplete="email" required>
+  </div>
+
+  <div class="agit-field">
+    <label for="agit-email-confirm">Confirm your email <span class="agit-hint">(just so a typo doesn't cost you the reply)</span></label>
+    <input type="email" id="agit-email-confirm" name="email_confirm" maxlength="254" autocomplete="email" required>
+  </div>
+
+  <div class="agit-field">
     <label for="agit-role">Your role in tech <span class="agit-hint">(optional)</span></label>
     <input type="text" id="agit-role" name="role" maxlength="150">
   </div>

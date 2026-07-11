@@ -40,7 +40,9 @@ const MAX_BODY_BYTES = MAX_IMAGE_BYTES + 256 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 // field name -> max length (server-side length caps; a valid-token bot can still POST garbage)
-const FIELD_CAPS = { name: 100, role: 150, superpowers: 300, feature: 8000 };
+const FIELD_CAPS = { name: 100, email: 254, email_confirm: 254, role: 150, superpowers: 300, feature: 8000 };
+// Pragmatic email shape check (not full RFC 5322): non-space local@domain.tld.
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function log(event, detail) {
   // Structured observability line (repo AP #12). One per decision branch.
@@ -176,12 +178,22 @@ export async function onRequestPost(context) {
 
   // 4. Text fields: sanitise + length-cap, then presence-check the essentials.
   const name = clean(form.get("name"), FIELD_CAPS.name);
+  const email = clean(form.get("email"), FIELD_CAPS.email);
+  const emailConfirm = clean(form.get("email_confirm"), FIELD_CAPS.email_confirm);
   const role = clean(form.get("role"), FIELD_CAPS.role);
   const superpowers = clean(form.get("superpowers"), FIELD_CAPS.superpowers);
   const feature = clean(form.get("feature"), FIELD_CAPS.feature);
-  if (!name || !feature) {
-    log("validation-reject", { name: !!name, feature: !!feature });
-    return textResponse(400, "Please fill in your name and your story.");
+  if (!name || !email || !feature) {
+    log("validation-reject", { name: !!name, email: !!email, feature: !!feature });
+    return textResponse(400, "Please fill in your name, email, and your story.");
+  }
+  if (!EMAIL_RE.test(email)) {
+    log("validation-reject", { reason: "bad email format" });
+    return textResponse(400, "That email address does not look right. Please check it.");
+  }
+  if (email.toLowerCase() !== emailConfirm.toLowerCase()) {
+    log("validation-reject", { reason: "email mismatch" });
+    return textResponse(400, "The two email addresses do not match. Please check them.");
   }
 
   // Consent must be explicitly ticked (Art 9 special-category: ethnicity + photo).
@@ -226,6 +238,7 @@ export async function onRequestPost(context) {
   const subject = `AGIT story: ${name}`.slice(0, 240);
   const bodyText = [
     `Name: ${name}`,
+    `Email: ${email}`,
     `Tech role: ${role || "(not given)"}`,
     `Superpowers: ${superpowers || "(not given)"}`,
     "",
@@ -235,9 +248,12 @@ export async function onRequestPost(context) {
     hasPhoto ? "(Photo attached.)" : "(No photo submitted.)",
   ].join("\n");
 
+  // reply_to = submitter's email so a Reply in the inbox reaches them (the send
+  // itself must stay from the routing domain; the submitter is never a `from`).
   const message = {
     to: TO_ADDR,
     from: FROM_ADDR,
+    reply_to: email,
     subject,
     text: bodyText,
   };
