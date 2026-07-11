@@ -4,7 +4,7 @@
   "description": "hoiboy.uk Hugo site — JS test deps for the meet-recorder tool only.",
   "private": true,
   "scripts": {
-    "test": "node --test static/js/meet-recorder.test.js"
+    "test": "node --test static/js/meet-recorder.test.js tests/contribute.test.js"
   },
   "devDependencies": {
     "ajv": "^8.12.0",
