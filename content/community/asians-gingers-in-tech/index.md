@@ -38,8 +38,8 @@ Come join the weirdest niche community. 🧡🤝
 - **Facebook page:** [facebook.com/asians.gingers.in.tech](https://www.facebook.com/asians.gingers.in.tech)
 - **Facebook group:** [facebook.com/groups/london.asians.gingers.in.tech](https://www.facebook.com/groups/london.asians.gingers.in.tech)
 - **Instagram:** [@asians_gingers_in_tech](https://www.instagram.com/asians_gingers_in_tech/)
-- **TikTok:** coming soon
-- **X:** coming soon
+- **TikTok:** [@asians_gingers_in_tech](https://www.tiktok.com/@asians_gingers_in_tech)
+- **X:** [@AsiansGingersIT](https://x.com/AsiansGingersIT)
 
 ## Help build this
 
