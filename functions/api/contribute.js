@@ -33,7 +33,7 @@ const MAX_BODY_BYTES = MAX_IMAGE_BYTES + 256 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 // field name -> max length (server-side length caps; a valid-token bot can still POST garbage)
-const FIELD_CAPS = { title: 200, name: 100, role: 150, feature: 8000 };
+const FIELD_CAPS = { title: 200, name: 100, role: 150, superpowers: 300, feature: 8000 };
 
 function log(event, detail) {
   // Structured observability line (repo AP #12). One per decision branch.
@@ -171,6 +171,7 @@ export async function onRequestPost(context) {
   const title = clean(form.get("title"), FIELD_CAPS.title);
   const name = clean(form.get("name"), FIELD_CAPS.name);
   const role = clean(form.get("role"), FIELD_CAPS.role);
+  const superpowers = clean(form.get("superpowers"), FIELD_CAPS.superpowers);
   const feature = clean(form.get("feature"), FIELD_CAPS.feature);
   if (!title || !name || !feature) {
     log("validation-reject", { title: !!title, name: !!name, feature: !!feature });
@@ -216,6 +217,7 @@ export async function onRequestPost(context) {
     `Title: ${title}`,
     `Name: ${name}`,
     `Tech role: ${role || "(not given)"}`,
+    `Superpowers: ${superpowers || "(not given)"}`,
     "",
     "Feature / story:",
     feature,
