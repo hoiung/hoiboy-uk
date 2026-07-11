@@ -16,20 +16,21 @@
 // All secrets/bindings come from context.env (dashboard-configured); there are
 // NO secret literals in this file. See docs/research/09_DEPLOYMENT.md.
 //
-// Email uses the Cloudflare Email Service send-email binding object API
-// (env.AGIT_MAILER.send({to, from, subject, text, attachments})); the base64
-// attachment content keeps the whole message under the 5 MiB cap.
+// Email uses the Cloudflare Email Service REST API (POST /accounts/{id}/email/
+// sending/send). The Pages dashboard has no send-email binding, so the Function
+// authenticates with an API token (env.CF_EMAIL_TOKEN) instead. Sends to a
+// verified Email Routing destination are free on any plan; the base64 attachment
+// keeps the whole message under the 5 MiB cap.
 
 // --- configuration (non-secret) ---
-// The Cloudflare send-email binding can only deliver to a VERIFIED Email Routing
-// destination address. hello@hoiboy.uk is a routing rule (it forwards here), not a
-// destination address, so the send target is the verified destination directly.
-// This is the same inbox hello@hoiboy.uk forwards to.
+// The send can only deliver to a VERIFIED Email Routing destination address.
+// hello@hoiboy.uk is a routing rule (it forwards here), not a destination address,
+// so the send target is the verified destination directly. Same inbox hello@
+// forwards to.
 const TO_ADDR = "hoiboyuk@gmail.com";
 // Sender on the hoiboy.uk routing domain; the local part is synthetic (Cloudflare
 // allows sending from any address on a routing domain, so nothing to register).
 const FROM_ADDR = "noreply@hoiboy.uk";
-const FROM_NAME = "AGIT submissions";
 const THANKS_PATH = "/community/asians-gingers-in-tech/thanks/";
 
 const MAX_IMAGE_BYTES = 3.5 * 1024 * 1024; // 3.5 MB — keeps the base64 attachment under the 5 MiB Cloudflare-native email cap
@@ -215,9 +216,14 @@ export async function onRequestPost(context) {
   }
 
   // 6. Email the structured entry to the operator inbox via the Cloudflare Email
-  //    Service send-email binding (object builder API; base64 attachment). The
-  //    email is the operator's primary channel, so it is sent BEFORE the R2
-  //    archive: if the email fails there is nothing stored to orphan.
+  //    Service REST API (base64 attachment). The email is the operator's primary
+  //    channel, so it is sent BEFORE the R2 archive: if the email fails there is
+  //    nothing stored to orphan.
+  if (!env.CF_ACCOUNT_ID || !env.CF_EMAIL_TOKEN) {
+    log("email-send", { ok: false, error: "missing CF_ACCOUNT_ID / CF_EMAIL_TOKEN binding" });
+    return textResponse(500, "The form is not fully configured yet. Please try again later.");
+  }
+
   const subject = `${title} : ${name}`.slice(0, 240);
   const bodyText = [
     `Title: ${title}`,
@@ -233,7 +239,7 @@ export async function onRequestPost(context) {
 
   const message = {
     to: TO_ADDR,
-    from: { email: FROM_ADDR, name: FROM_NAME },
+    from: FROM_ADDR,
     subject,
     text: bodyText,
   };
@@ -249,10 +255,25 @@ export async function onRequestPost(context) {
   }
 
   try {
-    await env.AGIT_MAILER.send(message);
+    const resp = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${env.CF_ACCOUNT_ID}/email/sending/send`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${env.CF_EMAIL_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(message),
+      },
+    );
+    if (!resp.ok) {
+      const detail = (await resp.text()).slice(0, 500);
+      log("email-send", { ok: false, status: resp.status, detail });
+      return textResponse(502, "Something went wrong sending your story. Please try again.");
+    }
     log("email-send", { ok: true, hasPhoto });
   } catch (err) {
-    log("email-send", { ok: false, error: String(err), code: err && err.code });
+    log("email-send", { ok: false, error: String(err) });
     return textResponse(502, "Something went wrong sending your story. Please try again.");
   }
 
