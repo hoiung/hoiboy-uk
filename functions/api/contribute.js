@@ -54,9 +54,11 @@ function textResponse(status, message) {
   });
 }
 
-// Read a Blob fully via its stream (never buffer the whole Blob in one shot:
-// the 128 MB isolate memory is shared across concurrent requests, and the R2
-// put streams the same Blob independently).
+// Drain a Blob's stream into a single Uint8Array. This does materialise the
+// whole blob in memory, bounded by the 3.5 MB size gate above (the 128 MB
+// isolate memory is shared across concurrent requests). We drain via the
+// stream rather than a one-shot buffering read so the R2 put can stream the
+// same Blob independently.
 async function readAllBytes(blob) {
   const reader = blob.stream().getReader();
   const chunks = [];
