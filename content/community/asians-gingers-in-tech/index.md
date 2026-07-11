@@ -123,7 +123,7 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
   </div>
 
   <div class="agit-field">
-    <label for="agit-superpowers">Your superpowers <span class="agit-hint">(optional, the wiring that makes you good at what you do)</span></label>
+    <label for="agit-superpowers">Your superpowers <span class="agit-hint">(optional, useful or completely useless quirks, your call)</span></label>
     <input type="text" id="agit-superpowers" name="superpowers" maxlength="300">
   </div>
 
@@ -175,7 +175,7 @@ Here's what a feature looks like. I'll go first.
 
 **The flex, nothing to do with tech:** I started dancing at 28, the only bloke in a room full of women. I went and found teachers, practised and practised, explored, and kept a curious mind wide open. The hard knocks humbled me, and that is exactly how I got pretty good. Years later I'd helped build one of the biggest Brazilian Zouk communities around. The learning never really stops, that is the way.
 
-**Tech tip:** don't let the AI lead, you lead it. A good harness (rules, guardrails, review gates) beats a clever prompt every time. If you are still prompting constantly, you are doing it inefficiently. Learn to build a harness, or easier: mine is public, so point your AI at it and ask it to build one into your own setup using mine as a framework. [github.com/hoiung/sst3-ai-harness](https://github.com/hoiung/sst3-ai-harness)
+**Tech tip:** don't let the AI lead, you lead it. A good harness (rules, guardrails, review gates) beats a clever prompt every time. If you are still prompting constantly, you are doing it inefficiently. Learn to build a harness, or easier: mine is public, so point your AI at it and ask it to build one into your own setup using mine as a framework.
 
 **Life tip:** you don't have to become the loud one to get noticed. Do the work, then let someone you trust point at it. That's what this group is for.
 
