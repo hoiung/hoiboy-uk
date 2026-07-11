@@ -48,9 +48,9 @@ Right now the meetups are London only, because that's where I am. It's not meant
 
 If you want to run a real-life event, in London or in your own city, get in touch. I'll help you set it up, or just talk you through building the community where you are.
 
-**Already run a community of your own?** Let's team up. I'm always up for collaborative events and for bringing different groups together in the same room.
-
 And if you simply want to be part of this and help build it, come and say hello. I'm one man, and I can always use the help. If you're willing to put the time in, because building a community is hard work, I'll happily bring you into the team. We do this together, city by city.
+
+**Already run a community of your own?** Let's team up. I'm always up for collaborative events and for bringing different groups together in the same room.
 
 **Sponsorships are always welcome too.** If you or your company want to help back what we're building, get in touch.
 
