@@ -80,6 +80,12 @@ strong, b { font-weight: 550; }
 }
 .sidebar nav a:hover, .sidebar nav a.active { color: var(--accent); }
 
+/* Menu highlight glyphs (star/heart next to featured nav items). Explicit
+   colour so the glyph keeps its hue even when the link is hovered/active. */
+.mark-yellow { color: #f5b301; }
+.mark-green { color: #2ea043; }
+.mark-red { color: #e5322d; }
+
 /* Consulting menu link inherits default nav styling. The label is split into
    two .cta-line spans; on desktop they become block-level (forcing a 2-line
    wrap), on mobile they stay inline so the link renders on a single line.
