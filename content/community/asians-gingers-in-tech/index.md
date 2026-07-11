@@ -87,6 +87,7 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
 .agit-form-wrap label { display: block; font-weight: 600; margin: 0 0 .3rem; }
 .agit-form-wrap .agit-hint { font-weight: 400; opacity: .7; font-size: .9em; }
 .agit-form-wrap input[type="text"],
+.agit-form-wrap input[type="email"],
 .agit-form-wrap input[type="file"],
 .agit-form-wrap textarea {
   width: 100%; max-width: 100%; box-sizing: border-box;
