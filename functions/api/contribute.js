@@ -12,8 +12,10 @@
 //
 // All secrets/bindings come from context.env (dashboard-configured); there are
 // NO secret literals in this file. See docs/research/09_DEPLOYMENT.md.
-
-import { EmailMessage } from "cloudflare:email";
+//
+// Email uses the Cloudflare Email Service send-email binding object API
+// (env.AGIT_MAILER.send({to, from, subject, text, attachments})); the base64
+// attachment content keeps the whole message under the 5 MiB cap.
 
 // --- configuration (non-secret; addresses live on the hoiboy.uk domain) ---
 const TO_ADDR = "hello@hoiboy.uk";
@@ -82,11 +84,6 @@ function bytesToBase64(bytes) {
     binary += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
   }
   return btoa(binary);
-}
-
-// Wrap a base64 string to 76-char lines per RFC 2045.
-function wrap76(str) {
-  return str.replace(/.{1,76}/g, "$&\r\n").trimEnd();
 }
 
 async function verifyTurnstile(secret, response, remoteip) {
@@ -179,7 +176,7 @@ export async function onRequestPost(context) {
         httpMetadata: { contentType: photoType },
         customMetadata: { title, name, submittedAt: new Date().toISOString() },
       });
-      photoBase64 = wrap76(bytesToBase64(await readAllBytes(image)));
+      photoBase64 = bytesToBase64(await readAllBytes(image));
       log("r2-store", { key, size: image.size, ok: true });
     } catch (err) {
       log("r2-store", { ok: false, error: String(err) });
@@ -187,9 +184,10 @@ export async function onRequestPost(context) {
     }
   }
 
-  // 6. Email the structured entry to hello@hoiboy.uk (Cloudflare-native send).
+  // 6. Email the structured entry to hello@hoiboy.uk via the Cloudflare Email
+  //    Service send-email binding (object builder API; base64 attachment).
   const subject = `${title} : ${name}`.slice(0, 240);
-  const bodyLines = [
+  const bodyText = [
     `Title: ${title}`,
     `Name: ${name}`,
     `Tech role: ${role || "(not given)"}`,
@@ -198,37 +196,30 @@ export async function onRequestPost(context) {
     feature,
     "",
     hasPhoto ? "(Photo attached, and archived privately in R2.)" : "(No photo submitted.)",
-  ];
-  const bodyText = bodyLines.join("\r\n");
+  ].join("\n");
 
-  let raw =
-    `From: ${FROM_NAME} <${FROM_ADDR}>\r\n` +
-    `To: ${TO_ADDR}\r\n` +
-    `Subject: ${subject}\r\n` +
-    `MIME-Version: 1.0\r\n`;
+  const message = {
+    to: TO_ADDR,
+    from: { email: FROM_ADDR, name: FROM_NAME },
+    subject,
+    text: bodyText,
+  };
   if (photoBase64) {
-    const boundary = `agit_${crypto.randomUUID()}`;
-    raw +=
-      `Content-Type: multipart/mixed; boundary="${boundary}"\r\n\r\n` +
-      `--${boundary}\r\n` +
-      `Content-Type: text/plain; charset=utf-8\r\n\r\n` +
-      `${bodyText}\r\n\r\n` +
-      `--${boundary}\r\n` +
-      `Content-Type: ${photoType}; name="${photoFilename}"\r\n` +
-      `Content-Transfer-Encoding: base64\r\n` +
-      `Content-Disposition: attachment; filename="${photoFilename}"\r\n\r\n` +
-      `${photoBase64}\r\n` +
-      `--${boundary}--\r\n`;
-  } else {
-    raw += `Content-Type: text/plain; charset=utf-8\r\n\r\n${bodyText}\r\n`;
+    message.attachments = [
+      {
+        content: photoBase64,
+        filename: photoFilename,
+        type: photoType,
+        disposition: "attachment",
+      },
+    ];
   }
 
   try {
-    const message = new EmailMessage(FROM_ADDR, TO_ADDR, raw);
     await env.AGIT_MAILER.send(message);
     log("email-send", { ok: true, hasPhoto });
   } catch (err) {
-    log("email-send", { ok: false, error: String(err) });
+    log("email-send", { ok: false, error: String(err), code: err && err.code });
     return textResponse(502, "We saved your entry but could not email it. Please try again.");
   }
 
