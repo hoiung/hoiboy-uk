@@ -1,10 +1,10 @@
 ---
 title: Sub-processors
 date: 2026-05-09
-lastmod: 2026-05-09
+lastmod: 2026-07-11
 description: HOIBOY AI LTD sub-processor list (AI Managed Harness Services) - vendor names, services, data categories, locations, transfer mechanisms, DPA references.
 hideDate: true
-version: 1.0.0
+version: 1.1.0
 ---
 
 <!-- iamhoi-exempt -->
@@ -39,6 +39,22 @@ When this page updates, affected Clients on active engagements receive an email 
 - A summary of the operational impact (which artefact category is affected; which transfer mechanism applies).
 - The Client's right to object on reasonable grounds within the 30-day window.
 - The pro-rata refund right per SOW §5 if objection cannot be resolved.
+
+## Community submission form (public site feature)
+
+This section is **separate from the consultancy sub-processor list above**. The Asians & Gingers in Tech "Get featured" form is a public site feature, not part of any client engagement, MSA, SOW, or the DPA Annex, so it carries its own disclosure and is not subject to the client change-notification mechanism above. All three services below are **Cloudflare** (already the site's infrastructure provider), so the form adds no new third-party vendor.
+
+<div class="sub-processor-table">
+
+| Service | Role for the form | Data processed | Retention |
+|---|---|---|---|
+| **Cloudflare R2** | Private object storage for submitted photos | The uploaded photo (private bucket, not publicly reachable) | Auto-expires 90 days after upload |
+| **Cloudflare Turnstile** | Bot / spam protection on the form | Visitor IP address + a challenge token (verified server-side) | Transient (verification only) |
+| **Cloudflare email** (Email Routing + native send) | Delivers the submission to `hello@hoiboy.uk` | The submitted form fields + photo, as an email | Per inbox retention |
+
+</div>
+
+Cloudflare's DPA, processing location (US primary, global edge), and UK-to-US transfer mechanism are the same as the Cloudflare row in the consultancy table above.
 
 ## Cross-references
 
