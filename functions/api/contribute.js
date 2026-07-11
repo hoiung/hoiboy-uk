@@ -235,7 +235,7 @@ export async function onRequestPost(context) {
     return textResponse(500, "The form is not fully configured yet. Please try again later.");
   }
 
-  const subject = `AGIT story: ${name}`.slice(0, 240);
+  const subject = (role ? `AGIT story: ${name} (${role})` : `AGIT story: ${name}`).slice(0, 240);
   const bodyText = [
     `Name: ${name}`,
     `Email: ${email}`,
