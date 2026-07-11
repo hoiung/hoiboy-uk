@@ -1,10 +1,10 @@
 ---
 title: Privacy Notice
 date: 2026-05-09
-lastmod: 2026-05-09
+lastmod: 2026-07-11
 description: Privacy Notice for HOIBOY AI LTD covering site personal data and consultancy engagements (including meeting recordings and AI-transcription).
 hideDate: true
-version: 1.0.0
+version: 1.1.0
 ---
 
 <!-- iamhoi-exempt -->
@@ -30,6 +30,7 @@ This notice covers two scopes:
 
 - Visitor analytics: aggregated, anonymised page-view counts via privacy-preserving analytics. No individual tracking, no cookies beyond strictly-necessary, no advertising trackers.
 - Contact-form / email enquiries: when you email `hello@hoiboy.uk`, your email address and message content are processed for the purpose of responding to your enquiry.
+- Community submission form: if you submit the "Get featured" form on the Asians & Gingers in Tech community page, we process the details and optional photo you send, on the basis of your explicit consent (see section 4).
 
 ### Consultancy engagement data (engaged clients only)
 
@@ -58,6 +59,15 @@ We use privacy-preserving analytics that aggregate page-view counts without sett
 ### Contact-form / email enquiries
 
 When you email `hello@hoiboy.uk`, your email address and message content are used to respond to your enquiry. Enquiry threads are kept for 12 months from last reply, then deleted unless you have entered a paid engagement (in which case the engagement scope below applies).
+
+### Community submission form
+
+The Asians & Gingers in Tech community page has a "Get featured" form. If you choose to submit it, we collect the feature headline, your name, your tech role, your story, and, if you add one, a photo of you.
+
+- **Purpose**: to consider your story and, with your consent, publish it as part of a public feature series celebrating quiet, heads-down people in tech.
+- **Lawful basis**: explicit consent (UK GDPR Article 9(2)(a)). The form invites you to self-identify with a community defined partly by ethnicity, and a photo is an image of an identifiable person, so a submission can include special-category data. We only process it because you tick the consent box, and you can withdraw at any time by emailing `hello@hoiboy.uk`.
+- **How it is processed**: the photo is stored privately in Cloudflare R2 (not publicly reachable); the entry is emailed to `hello@hoiboy.uk` via Cloudflare; and spam protection uses Cloudflare Turnstile, which processes your IP address. These are listed on the [Sub-Processors](https://hoiboy.uk/legal/sub-processors/) page.
+- **Retention**: submissions we do not publish are deleted within 90 days, and the stored photo auto-expires from R2 on the same 90-day clock. A published feature stays up until you ask us to take it down.
 
 ## 5. Your data-subject rights
 
