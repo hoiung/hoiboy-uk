@@ -1,14 +1,17 @@
 // Community "Get featured" submission handler (issue #43 Phase 2).
 //
 // Cloudflare Pages Function, route: POST /api/contribute
-//   1. Honeypot drop (silent 200, no side effects).
-//   2. Mandatory Turnstile server-side siteverify (403 on failure).
-//   3. Validate + sanitise the text fields (CRLF / header-injection guard).
-//   4. Size + type gate on the optional photo (<= 3.5 MB, jpeg/png/webp).
-//   5. Store the photo privately in R2 (streamed).
+//   1. Reject an oversized body up front (content-length ceiling) before parsing.
+//   2. Honeypot drop (silent redirect, no side effects).
+//   3. Mandatory Turnstile server-side siteverify (403 on failure).
+//   4. Validate + sanitise the text fields (CRLF / header-injection guard).
+//   5. Size + magic-byte type gate on the optional photo (<= 3.5 MB, jpeg/png/webp).
 //   6. Email a structured entry to hello@hoiboy.uk (Cloudflare-native send),
-//      photo attached.
-//   7. 303 redirect to the /thanks/ page.
+//      photo attached. The email is the operator's primary notification channel,
+//      so it is sent FIRST.
+//   7. Best-effort archive the photo privately in R2 (the email already carries it,
+//      so an R2 failure here neither fails the submission nor orphans a lone photo).
+//   8. 303 redirect to the /thanks/ page.
 //
 // All secrets/bindings come from context.env (dashboard-configured); there are
 // NO secret literals in this file. See docs/research/09_DEPLOYMENT.md.
@@ -24,6 +27,9 @@ const FROM_NAME = "AGIT submissions";
 const THANKS_PATH = "/community/asians-gingers-in-tech/thanks/";
 
 const MAX_IMAGE_BYTES = 3.5 * 1024 * 1024; // 3.5 MB — keeps the base64 attachment under the 5 MiB Cloudflare-native email cap
+// Reject the whole request body before parsing if its declared size exceeds the
+// photo cap plus a small allowance for the text fields + multipart overhead.
+const MAX_BODY_BYTES = MAX_IMAGE_BYTES + 256 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 // field name -> max length (server-side length caps; a valid-token bot can still POST garbage)
@@ -54,11 +60,11 @@ function textResponse(status, message) {
   });
 }
 
-// Drain a Blob's stream into a single Uint8Array. This does materialise the
-// whole blob in memory, bounded by the 3.5 MB size gate above (the 128 MB
-// isolate memory is shared across concurrent requests). We drain via the
-// stream rather than a one-shot buffering read so the R2 put can stream the
-// same Blob independently.
+// Drain a Blob's stream into a single Uint8Array. We read the photo once and
+// reuse the bytes for the magic-byte sniff, the email attachment, and the R2
+// archive. The whole blob is materialised in memory, bounded by the 3.5 MB size
+// gate above (the 128 MB isolate memory is shared across concurrent requests).
+// We drain via .stream() rather than a one-shot buffering read.
 async function readAllBytes(blob) {
   const reader = blob.stream().getReader();
   const chunks = [];
@@ -88,6 +94,27 @@ function bytesToBase64(bytes) {
   return btoa(binary);
 }
 
+// Magic-byte sniff: return the true image type from the leading bytes, ignoring
+// the client-declared Content-Type (which a caller POSTing directly can forge).
+// Returns one of ALLOWED_IMAGE_TYPES, or null if the bytes match no allowed
+// format. Mirrored by tests/contribute.test.js (keep in lock-step).
+function sniffImageType(bytes) {
+  if (!bytes || bytes.length < 12) return null;
+  // JPEG: FF D8 FF
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "image/jpeg";
+  // PNG: 89 50 4E 47 0D 0A 1A 0A
+  if (
+    bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47 &&
+    bytes[4] === 0x0d && bytes[5] === 0x0a && bytes[6] === 0x1a && bytes[7] === 0x0a
+  ) return "image/png";
+  // WebP: "RIFF" .... "WEBP"
+  if (
+    bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
+    bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50
+  ) return "image/webp";
+  return null;
+}
+
 async function verifyTurnstile(secret, response, remoteip) {
   const body = new FormData();
   body.append("secret", secret);
@@ -103,6 +130,13 @@ async function verifyTurnstile(secret, response, remoteip) {
 export async function onRequestPost(context) {
   const { request, env } = context;
 
+  // 1. Cheap up-front guard: reject an oversized body before buffering/parsing it.
+  const declaredLength = Number(request.headers.get("content-length") || 0);
+  if (declaredLength > MAX_BODY_BYTES) {
+    log("size-type-reject", { reason: "body too large", declaredLength });
+    return textResponse(413, "That submission is too large. Please upload a smaller photo.");
+  }
+
   let form;
   try {
     form = await request.formData();
@@ -111,14 +145,14 @@ export async function onRequestPost(context) {
     return textResponse(400, "Could not read the form.");
   }
 
-  // 1. Honeypot: a real user never fills the hidden "website" field.
+  // 2. Honeypot: a real user never fills the hidden "website" field.
   if (form.get("website")) {
     log("honeypot-drop", {});
     // Look successful to the bot; do NOT store or email.
     return Response.redirect(new URL(THANKS_PATH, request.url), 303);
   }
 
-  // 2. Turnstile siteverify (mandatory).
+  // 3. Turnstile siteverify (mandatory).
   const turnstileResponse = form.get("cf-turnstile-response");
   const remoteip = request.headers.get("CF-Connecting-IP") || "";
   let outcome;
@@ -133,7 +167,7 @@ export async function onRequestPost(context) {
     return textResponse(403, "Verification failed. Please try again.");
   }
 
-  // 3. Text fields: sanitise + length-cap, then presence-check the essentials.
+  // 4. Text fields: sanitise + length-cap, then presence-check the essentials.
   const title = clean(form.get("title"), FIELD_CAPS.title);
   const name = clean(form.get("name"), FIELD_CAPS.name);
   const role = clean(form.get("role"), FIELD_CAPS.role);
@@ -149,45 +183,34 @@ export async function onRequestPost(context) {
     return textResponse(400, "Please tick the consent box so we can publish your feature.");
   }
 
-  // 4. Optional photo: size + type gate.
+  // 5. Optional photo: size gate, then read the bytes once and verify the real
+  //    format by magic bytes (never trust the client-declared Content-Type).
   const image = form.get("photo");
   const hasPhoto = image && typeof image === "object" && typeof image.stream === "function" && image.size > 0;
+  let photoBytes = null;
+  let photoBase64 = null;
+  let photoType = null;
+  let photoFilename = null;
   if (hasPhoto) {
     if (image.size > MAX_IMAGE_BYTES) {
       log("size-type-reject", { reason: "too large", size: image.size });
       return textResponse(413, "That photo is over the 3.5 MB limit. Please upload a smaller one.");
     }
-    if (!ALLOWED_IMAGE_TYPES.includes(image.type)) {
-      log("size-type-reject", { reason: "bad type", type: image.type });
+    photoBytes = await readAllBytes(image);
+    photoType = sniffImageType(photoBytes);
+    if (!photoType || !ALLOWED_IMAGE_TYPES.includes(photoType)) {
+      log("size-type-reject", { reason: "bad type", declaredType: image.type });
       return textResponse(415, "Please upload a JPEG, PNG, or WebP image.");
     }
-  }
-
-  // 5. Store the photo privately in R2 (streamed), and read it via the stream
-  //    for the email attachment (see readAllBytes note above).
-  let photoBase64 = null;
-  let photoType = null;
-  let photoFilename = null;
-  if (hasPhoto) {
-    photoType = image.type;
     const ext = photoType === "image/png" ? "png" : photoType === "image/webp" ? "webp" : "jpg";
     photoFilename = `photo.${ext}`;
-    const key = `agit-submissions/${crypto.randomUUID()}-${photoFilename}`;
-    try {
-      await env.AGIT_UPLOADS.put(key, image.stream(), {
-        httpMetadata: { contentType: photoType },
-        customMetadata: { title, name, submittedAt: new Date().toISOString() },
-      });
-      photoBase64 = bytesToBase64(await readAllBytes(image));
-      log("r2-store", { key, size: image.size, ok: true });
-    } catch (err) {
-      log("r2-store", { ok: false, error: String(err) });
-      return textResponse(502, "We could not save your photo. Please try again.");
-    }
+    photoBase64 = bytesToBase64(photoBytes);
   }
 
   // 6. Email the structured entry to hello@hoiboy.uk via the Cloudflare Email
-  //    Service send-email binding (object builder API; base64 attachment).
+  //    Service send-email binding (object builder API; base64 attachment). The
+  //    email is the operator's primary channel, so it is sent BEFORE the R2
+  //    archive: if the email fails there is nothing stored to orphan.
   const subject = `${title} : ${name}`.slice(0, 240);
   const bodyText = [
     `Title: ${title}`,
@@ -197,7 +220,7 @@ export async function onRequestPost(context) {
     "Feature / story:",
     feature,
     "",
-    hasPhoto ? "(Photo attached, and archived privately in R2.)" : "(No photo submitted.)",
+    hasPhoto ? "(Photo attached.)" : "(No photo submitted.)",
   ].join("\n");
 
   const message = {
@@ -225,6 +248,22 @@ export async function onRequestPost(context) {
     return textResponse(502, "Something went wrong sending your story. Please try again.");
   }
 
-  // 7. Success -> redirect (303 so the browser re-requests with GET).
+  // 7. Best-effort archive the photo privately in R2. The email already carries
+  //    the photo, so a failure here is logged but does NOT fail the submission
+  //    (and never leaves a stored photo with no notification reaching us).
+  if (hasPhoto) {
+    const key = `agit-submissions/${crypto.randomUUID()}-${photoFilename}`;
+    try {
+      await env.AGIT_UPLOADS.put(key, photoBytes, {
+        httpMetadata: { contentType: photoType },
+        customMetadata: { title, name, submittedAt: new Date().toISOString() },
+      });
+      log("r2-store", { key, size: image.size, ok: true });
+    } catch (err) {
+      log("r2-store", { ok: false, error: String(err) });
+    }
+  }
+
+  // 8. Success -> redirect (303 so the browser re-requests with GET).
   return Response.redirect(new URL(THANKS_PATH, request.url), 303);
 }
