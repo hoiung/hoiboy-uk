@@ -152,8 +152,7 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
     <label for="agit-consent">I agree that my photo may be published, my story may be edited into a public feature, and my submission is processed by Cloudflare (R2 storage, Turnstile, and email) to make that happen. See the <a href="/legal/privacy/">Privacy Notice</a>.</label>
   </div>
 
-  <!-- OPERATOR: replace the data-sitekey below with the public Turnstile site key from Phase 2b. It is public, safe to commit. -->
-  <div class="agit-field cf-turnstile" data-sitekey="0x_REPLACE_WITH_TURNSTILE_SITE_KEY"></div>
+  <div class="agit-field cf-turnstile" data-sitekey="0x4AAAAAADz-CB1k9o8zx3S8"></div>
 
   <div class="agit-field">
     <button type="submit">Send my story</button>
