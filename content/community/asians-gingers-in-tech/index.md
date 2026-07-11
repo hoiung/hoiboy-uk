@@ -118,6 +118,17 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
 @keyframes agit-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .agit-spinner { animation: none; } }
 .agit-form-wrap .agit-notice { color: #e5766a; font-weight: 600; margin: 0 0 1rem; }
+.agit-form-wrap .agit-drop {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: .3rem; text-align: center; cursor: pointer; font-weight: 400;
+  padding: 1.5rem 1rem; border: 2px dashed rgba(128,128,128,.5); border-radius: 8px;
+  background: rgba(128,128,128,.05);
+}
+.agit-form-wrap .agit-drop:hover,
+.agit-form-wrap .agit-drop.is-dragover { border-color: rgba(128,128,128,.85); background: rgba(128,128,128,.14); }
+.agit-form-wrap .agit-drop-link { text-decoration: underline; }
+.agit-form-wrap .agit-drop-file { font-size: .9em; opacity: .75; }
+.agit-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .agit-hp { position: absolute; left: -5000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
 </style>
 
@@ -156,7 +167,11 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
 
   <div class="agit-field">
     <label for="agit-photo">A photo of you <span class="agit-hint">(optional, JPEG/PNG/WebP, up to 10 MB)</span></label>
-    <input type="file" id="agit-photo" name="photo" accept="image/jpeg,image/png,image/webp">
+    <label class="agit-drop" for="agit-photo">
+      <span class="agit-drop-text">Drag a photo here, or <span class="agit-drop-link">choose a file</span></span>
+      <span class="agit-drop-file" aria-live="polite"></span>
+    </label>
+    <input type="file" id="agit-photo" name="photo" accept="image/jpeg,image/png,image/webp" class="agit-visually-hidden">
   </div>
 
   <!-- Honeypot: hidden off-canvas (not display:none, so bots still fill it). A real person never sees this. -->
@@ -182,7 +197,7 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script src="/js/agit-form.js" defer></script>
 
-Here's what a feature looks like. I'll go first.
+<h2 style="margin-top: 3.25rem;">Here's what a feature looks like. I'll go first.</h2>
 
 <img src="/hoi-mug.jpg" alt="Hoi aka Hoiboy" width="200">
 

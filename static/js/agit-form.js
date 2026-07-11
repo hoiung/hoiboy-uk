@@ -73,4 +73,43 @@
       btn.appendChild(document.createTextNode("Sending your story..."));
     }
   });
+
+  // Drag-and-drop photo drop zone. The <label class="agit-drop"> already opens
+  // the native picker on click/tap (so mobile "choose from Photos" still works);
+  // this adds desktop drag-drop and shows the chosen filename. Progressive: with
+  // no JS the plain file input still submits.
+  var drop = form.querySelector(".agit-drop");
+  var fileInput = form.querySelector('input[type="file"]');
+  var fileName = form.querySelector(".agit-drop-file");
+  if (drop && fileInput) {
+    var showName = function () {
+      if (fileName) {
+        fileName.textContent =
+          fileInput.files && fileInput.files.length ? fileInput.files[0].name : "";
+      }
+    };
+    fileInput.addEventListener("change", showName);
+    ["dragenter", "dragover"].forEach(function (ev) {
+      drop.addEventListener(ev, function (e) {
+        e.preventDefault();
+        drop.classList.add("is-dragover");
+      });
+    });
+    ["dragleave", "dragend", "drop"].forEach(function (ev) {
+      drop.addEventListener(ev, function () {
+        drop.classList.remove("is-dragover");
+      });
+    });
+    drop.addEventListener("drop", function (e) {
+      e.preventDefault();
+      var dropped = e.dataTransfer && e.dataTransfer.files;
+      if (dropped && dropped.length) {
+        // Non-multiple input: keep exactly the first dropped file.
+        var dt = new DataTransfer();
+        dt.items.add(dropped[0]);
+        fileInput.files = dt.files;
+        showName();
+      }
+    });
+  }
 })();
