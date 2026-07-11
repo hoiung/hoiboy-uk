@@ -69,6 +69,32 @@ Custom domain (NOT inside Settings):
 
 Rotation: revoke + recreate the deploy hook in Cloudflare, then update the secret in GitHub Settings > Secrets and variables > Actions.
 
+## Community submission form (Pages Function)
+
+The community "Get featured" form (issue #43 Phase 2) posts to a Cloudflare Pages Function.
+
+**Function**: `functions/api/contribute.js`, route `POST /api/contribute`. A top-level `functions/` directory auto-deploys via the same git-connected Cloudflare Pages build that builds `public/` (no `ci.yml` / `deploy.yml` change needed). This was proven live with a throwaway `functions/ping.js` probe before the real Function was written (Phase 2a).
+
+**Bindings and secrets** (Cloudflare dashboard: `Workers & Pages > hoiboy-uk > Settings`; NO `wrangler.toml`, which would lock out dashboard edits):
+
+| Name | Type | Where | Purpose |
+|---|---|---|---|
+| `TURNSTILE_SECRET_KEY` | Secret (encrypted) | Settings > Variables and Secrets > Production | Server-side Turnstile `siteverify` |
+| `AGIT_UPLOADS` | R2 bucket binding | Settings > Functions > R2 bucket bindings | Private photo storage (bucket e.g. `agit-submissions`, private) |
+| `AGIT_MAILER` | Send-email binding | Settings > Functions > Email bindings | Cloudflare-native send to `hello@hoiboy.uk` |
+
+The Turnstile **site key** is public and lives in the form HTML (`content/community/asians-gingers-in-tech/index.md`, the `data-sitekey` on the `cf-turnstile` div). It is NOT a secret; commit it. The `send_email` binding can only send to a **verified** Cloudflare Email Routing destination, so confirm `hello@hoiboy.uk` (or its verified forwarding target) qualifies.
+
+**Provisioning (operator, one-time, dashboard)**:
+
+1. Turnstile: create a widget for `hoiboy.uk`; paste the site key into the form; store the secret key as the `TURNSTILE_SECRET_KEY` Pages secret.
+2. R2: create a **private** bucket (e.g. `agit-submissions`); bind it as `AGIT_UPLOADS`; redeploy so the binding takes effect.
+3. Email: enable Cloudflare native email sending; add the `AGIT_MAILER` send-email binding targeting the verified `hello@hoiboy.uk` destination.
+
+**Retention (R2 lifecycle rule)**: on the `agit-submissions` bucket, add an object-lifecycle rule that **expires objects 90 days after creation** (R2 > bucket > Settings > Object lifecycle rules). This auto-purges unpublished submission photos. Mirrored in the Privacy Notice and the Sub-Processors page.
+
+**Observability**: the Function emits a structured `console.log` JSON line at each decision branch (honeypot drop, Turnstile fail, size/type reject, R2 store, email send). View them under the project's Functions logs / real-time logs.
+
 ## Hugo version pinning
 
 `.hugo-version` at repo root is the single source of truth.
@@ -126,6 +152,8 @@ cd ~/DevProjects/hoiboy-uk
 HUGO_VERSION=$(cat .hugo-version) hugo --gc --minify -e production
 wrangler pages deploy public --project-name=hoiboy-uk --branch=main
 ```
+
+**Caveat (issue #43)**: `wrangler pages deploy public` uploads ONLY the `public/` output directory. It does NOT ship the top-level `functions/` directory, so a break-glass deploy this way will **not** update (and may drop) the `/api/contribute` submission handler. Functions only ship through the git-connected Cloudflare build. If you must break-glass a Functions change, run `wrangler pages deploy` from the repo root (so it picks up `functions/`) rather than pointing it at `public/`, or restore the git-connected build path first.
 
 ## Theme upgrade procedure (custom theme)
 
