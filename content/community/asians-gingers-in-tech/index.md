@@ -113,7 +113,7 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
   </div>
 
   <div class="agit-field">
-    <label for="agit-name">Your name</label>
+    <label for="agit-name">Your name and nickname or alias <span class="agit-hint">(e.g. Hoi aka Hoiboy)</span></label>
     <input type="text" id="agit-name" name="name" maxlength="100" required>
   </div>
 
@@ -162,9 +162,11 @@ Here's what a feature looks like. I'll go first.
 <!-- iamhoi -->
 **Hoi aka Hoiboy**. Before all the AI stuff, I spent eight years at Canonical, the company behind Ubuntu. My title said Data Centre Engineer the whole time. Flat organisation, and I never needed a new title to prove what I could do.
 
+**Superpowers:** ADHD and OCD for getting shit done properly.
+
 **What I quietly did:** the role outgrew the title almost straight away. Data Centre Engineer on paper, but in practice the infrastructure architect, the procurement lead, the project manager (PMP certified) and the data centre manager, all at once, running the sites largely on my own for years. I designed and rolled out Canonical's cloud data centres across London, Boston and Taipei, mentored the engineers who came after me, coordinated remotely with everyone from contractors to the COO across disciplines and teams scattered all over the world, and negotiated the supplier deals down hard enough to save the business a small fortune. Whatever I was handed, I gave back in better shape than I found it. Nobody threw a party for any of it. The work just spoke for itself, even when the title didn't. That is usually how it goes for the quiet ones.
 
-**The identity bit:** I started out a bottled-up introvert, but I outgrew it. After years of self-development, and a few catalysts like wine and Guinness (a lot of it lol), I'm more of an open book now. When I am not socialising or dancing, I still like spending most of my time alone in my mancave though, working on things I find interesting like trading, tech, AI, and community building. I'm ADHD, OCD and probably dyslexic, which is either a gift or the reason I've rewritten this sentence five times.
+**The identity bit:** I started out a bottled-up introvert, but I outgrew it. After years of self-development, and a few catalysts like wine and Guinness (a lot of it lol), I'm more of an open book now. When I am not socialising or dancing, I still like spending most of my time alone in my mancave though, working on things I find interesting like trading, tech, AI, and community building.
 
 **The flex, nothing to do with tech:** I started dancing at 28, the only bloke in a room full of women. I went and found teachers, practised and practised, explored, and kept a curious mind wide open. The hard knocks humbled me, and that is exactly how I got pretty good. Years later I'd helped build one of the biggest Brazilian Zouk communities around. The learning never really stops, that is the way.
 
