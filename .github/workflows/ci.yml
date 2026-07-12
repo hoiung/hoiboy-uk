@@ -161,6 +161,9 @@ jobs:
       - name: AGIT publish-gate unit tests
         run: python3 -m pytest scripts/test_check_agit_publish_gate.py -q
 
+      - name: AGIT email-approval unit tests
+        run: python3 -m pytest scripts/test_agit_approval.py -q
+
       - name: Frontmatter validator
         run: python3 scripts/validate_frontmatter.py
 
