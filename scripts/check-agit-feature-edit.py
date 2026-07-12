@@ -46,20 +46,27 @@ DEFAULT_RECORD_DIR: Path = Path(".agit-records")
 class RecordIntegrityError(Exception):
     """Raised when a write would overwrite the immutable verbatim legal record."""
 
-# A capitalised token: starts uppercase, allows internal apostrophes and hyphens
-# (O'Brien, Anne-Marie). Curly and straight apostrophes both allowed.
-_CAP_TOKEN_RE = re.compile(r"[A-Z][A-Za-z’'\-]*")
-# A word, for vocabulary + word-count comparisons.
-_WORD_RE = re.compile(r"[A-Za-z][A-Za-z’'\-]*")
+# A letter in any script (Unicode-aware): [^\W\d_] is a word char that is not a
+# digit or underscore, so diacritic names (Nguyễn, Trần, Björk) are captured whole
+# and not truncated at the first non-ASCII letter.
+_LETTER = r"[^\W\d_]"
+# A name-ish token: a letter run allowing internal apostrophes and hyphens
+# (O'Brien, Anne-Marie, Nguyễn). Uppercase-initial is enforced by the caller with
+# str.isupper() because Python's re has no Unicode "uppercase letter" class.
+_TOKEN_RE = re.compile(rf"{_LETTER}(?:{_LETTER}|['’\-])*")
+# A word, for vocabulary + word-count comparisons (same token shape).
+_WORD_RE = _TOKEN_RE
 # A number: digits with optional thousands separators and decimals.
 _NUMBER_RE = re.compile(r"\b\d[\d,]*(?:\.\d+)?\b")
-# Date-like tokens: month names (with optional day/year), numeric dates, years.
+# Date-like tokens: a month name REQUIRES a following day or year (so a bare month
+# word -- the modal "may", the verb "march", the adjective "august" -- is NOT a
+# date), plus numeric dates and bare 4-digit years.
 _MONTHS = (
     r"Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|"
     r"Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?"
 )
 _DATE_RE = re.compile(
-    r"\b(?:%s)\b(?:\s+\d{1,2}(?:st|nd|rd|th)?)?(?:,?\s+\d{4})?"  # month [day] [year]
+    r"\b(?:%s)\b(?:\s+\d{1,2}(?:st|nd|rd|th)?(?!\d)(?:,?\s+\d{4})?|,?\s+\d{4})"  # month + day/year
     r"|\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b"  # 12/06/2019, 12-06-19
     r"|\b(?:19|20)\d{2}\b" % _MONTHS,  # bare 4-digit year
     re.IGNORECASE,
@@ -128,28 +135,46 @@ def word_vocab(text: str) -> set[str]:
     return {m.group(0).lower() for m in _WORD_RE.finditer(text)}
 
 
+def _space_separated(text: str, prev_end: int, next_start: int) -> bool:
+    """True if only whitespace sits between two adjacent tokens (so they group)."""
+    gap = text[prev_end:next_start]
+    return gap != "" and gap.strip() == ""
+
+
 def extract_proper_nouns(text: str, stopwords: frozenset[str]) -> list[str]:
     """Every distinct capitalised name candidate in the text (order-preserving).
 
-    Groups consecutive capitalised tokens into one name ("Hoi Ung", "Data
-    Centre"), drops leading stop-words, and discards sequences that are entirely
-    stop-words. Reused by the Phase 3 named-person clearance checklist, where
-    over-inclusion is safe (a human clears each name; nobody is named on a maybe).
+    Groups consecutive uppercase-initial tokens separated only by whitespace into
+    one name ("Hoi Ung", "Data Centre", "Nguyễn Văn An"), drops leading stop-words,
+    and discards sequences that are entirely stop-words. Unicode-aware, so diacritic
+    names are captured whole. Reused by the Phase 3 named-person clearance checklist,
+    where over-inclusion is safe (a human clears each name; nobody is named on a
+    maybe).
     """
     names: list[str] = []
     seen: set[str] = set()
-    for run in re.finditer(r"[A-Z][A-Za-z’'\-]*(?:\s+[A-Z][A-Za-z’'\-]*)*", text):
-        tokens = run.group(0).split()
-        # Strip leading stop-words (e.g. sentence-initial "The System" -> "System").
-        while tokens and tokens[0] in stopwords:
-            tokens.pop(0)
-        if not tokens:
+    matches = list(_TOKEN_RE.finditer(text))
+    i, n = 0, len(matches)
+    while i < n:
+        if not matches[i].group(0)[:1].isupper():
+            i += 1
             continue
-        name = " ".join(tokens)
-        key = name.lower()
-        if key not in seen:
-            seen.add(key)
-            names.append(name)
+        run = [matches[i].group(0)]
+        j = i + 1
+        while (j < n and matches[j].group(0)[:1].isupper()
+               and _space_separated(text, matches[j - 1].end(), matches[j].start())):
+            run.append(matches[j].group(0))
+            j += 1
+        # Strip leading stop-words (e.g. sentence-initial "The System" -> "System").
+        while run and run[0] in stopwords:
+            run.pop(0)
+        if run:
+            name = " ".join(run)
+            key = name.lower()
+            if key not in seen:
+                seen.add(key)
+                names.append(name)
+        i = j
     return names
 
 
@@ -181,8 +206,10 @@ def check_edit(original: str, edited: str, config: Config) -> CheckResult:
     original_words = word_vocab(original)
     added_names = [
         tok
-        for tok in dict.fromkeys(m.group(0) for m in _CAP_TOKEN_RE.finditer(edited))
-        if tok.lower() not in original_words and tok not in config.proper_noun_stopwords
+        for tok in dict.fromkeys(m.group(0) for m in _TOKEN_RE.finditer(edited))
+        if tok[:1].isupper()
+        and tok.lower() not in original_words
+        and tok not in config.proper_noun_stopwords
     ]
     if added_names:
         flags.append(Flag("added_proper_nouns",
