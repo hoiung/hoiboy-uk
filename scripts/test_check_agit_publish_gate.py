@@ -1,0 +1,176 @@
+#!/usr/bin/env python3
+"""Unit tests for check-agit-publish-gate.py (hoiboy-uk #48 Phase 3).
+
+Covers the hard-gate logic: a fresh record writes a clearance template and
+blocks; a pending / note-less / missing name blocks; permissioned-with-note and
+anonymised clear; unreviewed edit-check flags block; a clean edit-check needs no
+flag review; and (Phase 4 leg) an unapproved approval.json blocks. Plus CLI exit
+codes 0 cleared / 1 blocked / 2 missing record.
+"""
+from __future__ import annotations
+
+import importlib.util
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+SCRIPTS = Path(__file__).resolve().parent
+GATE = SCRIPTS / "check-agit-publish-gate.py"
+
+sys.path.insert(0, str(SCRIPTS))
+_spec = importlib.util.spec_from_file_location("agit_publish_gate", GATE)
+apg = importlib.util.module_from_spec(_spec)
+sys.modules[_spec.name] = apg
+_spec.loader.exec_module(apg)
+
+
+def _record(tmp_path: Path, named_persons, clean, flags=None) -> Path:
+    rec = tmp_path / "sample"
+    rec.mkdir()
+    (rec / "check.json").write_text(json.dumps({
+        "slug": "sample",
+        "clean": clean,
+        "named_persons": named_persons,
+        "flags": flags or [],
+    }), encoding="utf-8")
+    return rec
+
+
+def _clearance(rec: Path, flags_cleared, persons: dict) -> None:
+    (rec / "clearance.json").write_text(json.dumps({
+        "flags_cleared": flags_cleared,
+        "named_persons": persons,
+    }), encoding="utf-8")
+
+
+def _approval(rec: Path, approved: bool) -> None:
+    (rec / "approval.json").write_text(json.dumps({"approved": approved}),
+                                       encoding="utf-8")
+
+
+# --------------------------------------------------------------- function layer
+
+def test_fresh_record_writes_template_and_blocks(tmp_path):
+    rec = _record(tmp_path, ["Sarah", "Wei"], clean=True)
+    result = apg.run_gate(rec)
+    assert result.ok is False
+    assert result.wrote_template is True
+    tmpl = json.loads((rec / "clearance.json").read_text(encoding="utf-8"))
+    assert tmpl["named_persons"]["Sarah"]["status"] == "pending"
+    assert tmpl["named_persons"]["Wei"]["status"] == "pending"
+
+
+def test_all_permissioned_with_notes_clears(tmp_path):
+    rec = _record(tmp_path, ["Sarah"], clean=True)
+    _clearance(rec, flags_cleared=True,
+               persons={"Sarah": {"status": "permissioned", "note": "author has her OK"}})
+    result = apg.run_gate(rec)
+    assert result.ok is True
+
+
+def test_anonymised_clears(tmp_path):
+    rec = _record(tmp_path, ["Sarah"], clean=True)
+    _clearance(rec, flags_cleared=True,
+               persons={"Sarah": {"status": "anonymised", "note": ""}})
+    assert apg.run_gate(rec).ok is True
+
+
+def test_pending_name_blocks(tmp_path):
+    rec = _record(tmp_path, ["Sarah"], clean=True)
+    _clearance(rec, flags_cleared=True,
+               persons={"Sarah": {"status": "pending", "note": ""}})
+    result = apg.run_gate(rec)
+    assert result.ok is False
+    assert any("Sarah" in b for b in result.blockers)
+
+
+def test_permissioned_without_note_blocks(tmp_path):
+    rec = _record(tmp_path, ["Sarah"], clean=True)
+    _clearance(rec, flags_cleared=True,
+               persons={"Sarah": {"status": "permissioned", "note": ""}})
+    result = apg.run_gate(rec)
+    assert result.ok is False
+    assert any("note" in b for b in result.blockers)
+
+
+def test_missing_name_in_clearance_blocks(tmp_path):
+    rec = _record(tmp_path, ["Sarah", "Wei"], clean=True)
+    _clearance(rec, flags_cleared=True,
+               persons={"Sarah": {"status": "anonymised", "note": ""}})  # Wei absent
+    result = apg.run_gate(rec)
+    assert result.ok is False
+    assert any("Wei" in b for b in result.blockers)
+
+
+def test_unreviewed_flags_block(tmp_path):
+    rec = _record(tmp_path, [], clean=False, flags=[{"category": "added_numbers"}])
+    _clearance(rec, flags_cleared=False, persons={})
+    result = apg.run_gate(rec)
+    assert result.ok is False
+    assert any("flags_cleared" in b for b in result.blockers)
+
+
+def test_clean_editcheck_needs_no_flag_review(tmp_path):
+    rec = _record(tmp_path, [], clean=True)
+    _clearance(rec, flags_cleared=False, persons={})  # clean -> flags_cleared irrelevant
+    assert apg.run_gate(rec).ok is True
+
+
+def test_unapproved_approval_blocks(tmp_path):
+    rec = _record(tmp_path, ["Sarah"], clean=True)
+    _clearance(rec, flags_cleared=True,
+               persons={"Sarah": {"status": "anonymised", "note": ""}})
+    _approval(rec, approved=False)
+    result = apg.run_gate(rec)
+    assert result.ok is False
+    assert any("approv" in b.lower() for b in result.blockers)
+
+
+def test_approved_approval_clears(tmp_path):
+    rec = _record(tmp_path, ["Sarah"], clean=True)
+    _clearance(rec, flags_cleared=True,
+               persons={"Sarah": {"status": "anonymised", "note": ""}})
+    _approval(rec, approved=True)
+    assert apg.run_gate(rec).ok is True
+
+
+# -------------------------------------------------------------------- CLI layer
+
+def _run(rec: Path, *extra):
+    return subprocess.run([sys.executable, str(GATE), "--record", str(rec), *extra],
+                          capture_output=True, text=True)
+
+
+def test_cli_exit_1_when_blocked(tmp_path):
+    rec = _record(tmp_path, ["Sarah"], clean=True)  # no clearance yet -> template + block
+    res = _run(rec)
+    assert res.returncode == 1
+    assert "BLOCKED" in res.stdout
+
+
+def test_cli_exit_0_when_cleared(tmp_path):
+    rec = _record(tmp_path, ["Sarah"], clean=True)
+    _clearance(rec, flags_cleared=True,
+               persons={"Sarah": {"status": "permissioned", "note": "have her OK"}})
+    res = _run(rec)
+    assert res.returncode == 0
+    assert "CLEARED" in res.stdout
+
+
+def test_cli_exit_2_on_missing_record(tmp_path):
+    res = _run(tmp_path / "nope")
+    assert res.returncode == 2
+
+
+def test_cli_json_output(tmp_path):
+    rec = _record(tmp_path, ["Sarah"], clean=True)
+    _clearance(rec, flags_cleared=True,
+               persons={"Sarah": {"status": "anonymised", "note": ""}})
+    res = _run(rec, "--json")
+    payload = json.loads(res.stdout)
+    assert payload["ok"] is True
+
+
+if __name__ == "__main__":
+    sys.exit(subprocess.call([sys.executable, "-m", "pytest", __file__, "-q"]))
