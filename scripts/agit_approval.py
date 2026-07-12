@@ -68,6 +68,16 @@ def is_approval_reply(text: str, affirmative: list[str], negation: list[str]) ->
     return any(aff in low for aff in affirmative)
 
 
+def is_decisive_reply(text: str, affirmative: list[str], negation: list[str]) -> bool:
+    """True iff the reply carries an approval OR a refusal signal (not just chatter).
+
+    A thank-you or a clarifying question is NOT decisive; it must not override an
+    earlier approval or refusal on the same thread.
+    """
+    low = text.lower()
+    return any(aff in low for aff in affirmative) or any(neg in low for neg in negation)
+
+
 def compose_approval_email(to_addr: str, from_addr: str, feature_title: str,
                            final_wording: str, slug: str) -> EmailMessage:
     """Build the approval-request email carrying the exact final wording."""
@@ -170,25 +180,43 @@ def poll_for_approval(service, record_dir: Path, *, thread_id: str,
                       member_email: str, config_path: Path = DEFAULT_CONFIG) -> dict | None:
     """Read ONLY the approval thread; if the member replied, record the decision.
 
+    Records the member's LATEST decision: a member may reply more than once on the
+    same thread (hedge or ask a question, then approve once satisfied; or approve,
+    then retract). A later DECISIVE reply (one carrying an approval or refusal
+    signal) supersedes an earlier one, so the recorded verdict is always the
+    member's most recent word -- never a stale first reply. Non-decisive chatter (a
+    thank-you, a clarifying question) never overrides an earlier decision. Fail-safe
+    by construction: with no decisive reply, the verdict is not-approved.
+
     Returns the written approval payload, or None if the member has not replied
     yet. Reads exactly one thread (the one we created), never the mailbox.
     """
     affirmative, negation = load_approval_phrases(config_path)
     thread = service.users().threads().get(userId="me", id=thread_id).execute()
+    decisive: tuple[str, str, str] | None = None  # latest reply that approves/refuses
+    latest: tuple[str, str, str] | None = None     # latest member reply of any kind
     for message in thread.get("messages", []):
         payload = message.get("payload", {})
         headers = {h.get("name", "").lower(): h.get("value", "")
                    for h in payload.get("headers", [])}
         sender = headers.get("from", "")
         if member_email.lower() not in sender.lower():
-            continue  # skip our own outgoing message; only the member's reply counts
+            continue  # skip our own outgoing message; only the member's replies count
         body = extract_plain_text(payload)
-        approved = is_approval_reply(body, affirmative, negation)
-        path = record_approval(record_dir, approved=approved, reply_text=body,
-                               reply_from=sender, message_id=message.get("id", ""),
-                               thread_id=thread_id)
-        return json.loads(path.read_text(encoding="utf-8"))
-    return None
+        latest = (body, sender, message.get("id", ""))
+        if is_decisive_reply(body, affirmative, negation):
+            decisive = latest  # a later decisive reply supersedes an earlier one
+
+    chosen = decisive or latest  # prefer the last decision; else the last reply
+    if chosen is None:
+        return None  # the member has not replied yet
+
+    body, sender, message_id = chosen
+    approved = is_approval_reply(body, affirmative, negation)
+    path = record_approval(record_dir, approved=approved, reply_text=body,
+                           reply_from=sender, message_id=message_id,
+                           thread_id=thread_id)
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def build_gmail_service(client_secret_path: Path, token_path: Path):
