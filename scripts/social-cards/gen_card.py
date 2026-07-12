@@ -17,6 +17,7 @@ Reads:  scripts/social-cards/cards.tsv  (slug <TAB> title <TAB> tagline)
 Deps:   rsvg-convert (librsvg), Pillow.  Re-run after editing cards.tsv.
 """
 import subprocess, sys, html, textwrap, pathlib, base64, io
+from card_common import font_face
 
 ACCENT = "#c0533a"   # terracotta — the only warm colour
 SKY    = "#87ceeb"   # hoiboy.uk signature blue
@@ -44,15 +45,6 @@ LOGO  = REPO / "assets" / "images" / "logo.png"
 VT323_TTF = FONTS / "VT323-Regular.ttf"
 PLEX_R    = FONTS / "IBMPlexMono-Regular.ttf"
 PLEX_B    = FONTS / "IBMPlexMono-Bold.ttf"
-
-
-def _b64(p):
-    return base64.b64encode(pathlib.Path(p).read_bytes()).decode()
-
-
-def font_face(family, ttf, weight):
-    return (f"@font-face{{font-family:'{family}';font-weight:{weight};"
-            f"src:url(data:font/ttf;base64,{_b64(ttf)}) format('truetype');}}")
 
 
 def logo_data_uri():
