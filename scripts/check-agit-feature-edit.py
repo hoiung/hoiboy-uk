@@ -136,6 +136,17 @@ def word_vocab(text: str) -> set[str]:
     return {m.group(0).lower() for m in _WORD_RE.finditer(text)}
 
 
+def _is_name_initial(ch: str) -> bool:
+    """True if a token starting with this letter is a name candidate.
+
+    An uppercase letter (Latin/Cyrillic/Greek names), OR a letter from a CASELESS
+    script -- Chinese/Japanese/Korean, etc. have no upper/lower case, so isupper()
+    is always False for them and a real name in native script would be invisible.
+    A caseless letter has ch.upper() == ch.lower(); a lowercase Latin letter does not.
+    """
+    return bool(ch) and (ch.isupper() or ch.upper() == ch.lower())
+
+
 def _space_separated(text: str, prev_end: int, next_start: int) -> bool:
     """True if only whitespace sits between two adjacent tokens (so they group)."""
     gap = text[prev_end:next_start]
@@ -157,12 +168,12 @@ def extract_proper_nouns(text: str, stopwords: frozenset[str]) -> list[str]:
     matches = list(_TOKEN_RE.finditer(text))
     i, n = 0, len(matches)
     while i < n:
-        if not matches[i].group(0)[:1].isupper():
+        if not _is_name_initial(matches[i].group(0)[:1]):
             i += 1
             continue
         run = [matches[i].group(0)]
         j = i + 1
-        while (j < n and matches[j].group(0)[:1].isupper()
+        while (j < n and _is_name_initial(matches[j].group(0)[:1])
                and _space_separated(text, matches[j - 1].end(), matches[j].start())):
             run.append(matches[j].group(0))
             j += 1
@@ -208,7 +219,7 @@ def check_edit(original: str, edited: str, config: Config) -> CheckResult:
     added_names = [
         tok
         for tok in dict.fromkeys(m.group(0) for m in _TOKEN_RE.finditer(edited))
-        if tok[:1].isupper()
+        if _is_name_initial(tok[:1])
         and tok.lower() not in original_words
         and tok not in config.proper_noun_stopwords
     ]
