@@ -15,7 +15,13 @@
        service pages it stays hidden, og:image only.
        Authors who want an SVG hero must rename it to hero.svg explicitly.
        Returns nil if the bundle has no eligible images. Callers must guard with `with`. */ -}}
-{{- $hero := .Resources.GetMatch "hero.*" -}}
+{{- /* AGIT feature pages (/community/agit-featured/<slug>/) use the branded landscape
+       share-card as the on-page hero; the 4:5 hero.jpg drives the index card + the
+       person's direct-to-social image, not this page. */ -}}
+{{- $isAgitFeature := and (eq .Kind "page") (strings.Contains .RelPermalink "/community/agit-featured/") -}}
+{{- $hero := "" -}}
+{{- if $isAgitFeature }}{{ $hero = .Resources.GetMatch "share-card.*" }}{{ end -}}
+{{- if not $hero }}{{ $hero = .Resources.GetMatch "hero.*" }}{{ end -}}
 {{- $isPortfolioProject := and (eq .Kind "page") (strings.Contains .RelPermalink "/consulting/portfolio/") -}}
 {{- if and (not $hero) $isPortfolioProject }}{{ $hero = .Resources.GetMatch "share-card.*" }}{{ end -}}
 {{- if not $hero }}{{ $hero = .Resources.GetMatch "2e1ax_vintage_entry_*" }}{{ end -}}

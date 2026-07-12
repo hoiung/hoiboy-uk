@@ -15,18 +15,22 @@
   {{- end -}}
   {{- $hero := partial "hero-pick.html" . -}}
   {{- with $hero -}}
-    <img class="post-hero{{ if hasPrefix $.RelPermalink "/community/agit-featured/" }} post-hero--portrait{{ end }}" src="{{ .RelPermalink }}" alt="{{ $.Title }}">
+    <img class="post-hero" src="{{ .RelPermalink }}" alt="{{ $.Title }}">
   {{- end -}}
   {{ .Content }}
   {{- if not (or (.HasShortcode "gallery") (.HasShortcode "zoom-image")) -}}
   {{- $images := .Resources.ByType "image" -}}
   {{- $rest := slice -}}
+  {{- $isAgitFeature := and (eq .Kind "page") (strings.Contains .RelPermalink "/community/agit-featured/") -}}
   {{- range $images -}}
     {{- /* share-card.* is a social-share-only image (head.html og:image); it must
            never appear in the bottom photo-gallery on any page. On portfolio project
-           pages it is the hero (see hero-pick.html), so real screenshots still gallery. */ -}}
+           pages it is the hero (see hero-pick.html), so real screenshots still gallery.
+           On AGIT feature pages hero.* is the 4:5 index/direct-social image, not a page
+           photo, so it is excluded from the gallery too (only the share-card hero shows). */ -}}
     {{- $isShareCard := strings.HasPrefix .Name "share-card." -}}
-    {{- if and (not $isShareCard) (or (not $hero) (ne .RelPermalink $hero.RelPermalink)) -}}
+    {{- $isAgitHero := and $isAgitFeature (strings.HasPrefix .Name "hero.") -}}
+    {{- if and (not $isShareCard) (not $isAgitHero) (or (not $hero) (ne .RelPermalink $hero.RelPermalink)) -}}
       {{- $rest = $rest | append . -}}
     {{- end -}}
   {{- end -}}

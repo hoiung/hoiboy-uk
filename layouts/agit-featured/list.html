@@ -21,7 +21,9 @@
         {{- $role := .Params.role -}}
         {{- $date := .Date -}}
         <a class="card card--portrait" href="{{ .RelPermalink }}">
-          {{- with partial "hero-pick.html" . -}}
+          {{- /* The index card is always the 4:5 portrait hero.jpg, NOT hero-pick
+                 (which returns the landscape share-card as the feature-page hero). */ -}}
+          {{- with .Resources.GetMatch "hero.*" -}}
             <img src="{{ .RelPermalink }}" alt="{{ $title }}" loading="lazy">
           {{- end -}}
           <h3>{{ $title }}</h3>
