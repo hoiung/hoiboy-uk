@@ -64,7 +64,8 @@ def build_clearance_template(named_persons: list[str], flags_clean: bool) -> dic
     }
 
 
-def evaluate_gate(check: dict, clearance: dict, approval: dict | None) -> GateResult:
+def evaluate_gate(check: dict, clearance: dict, approval: dict | None,
+                  require_approval: bool = True) -> GateResult:
     """Evaluate every publish precondition against the recorded decisions."""
     blockers: list[str] = []
     checklist: list[str] = []
@@ -98,22 +99,25 @@ def evaluate_gate(check: dict, clearance: dict, approval: dict | None) -> GateRe
             checklist.append(f"[x] {name}: {status}"
                              + (f" ({note})" if note else ""))
 
-    # 3. Emailed approval (Phase 4). Enforced only once the approval leg is wired:
-    #    an approval.json present but not approved always blocks; its absence is a
-    #    Phase-4 boundary, surfaced (not silently passed).
+    # 3. Emailed approval (Phase 4 hard gate). No approval on file, no publish.
     if approval is not None:
         if not approval.get("approved", False):
-            blockers.append("member emailed approval on file but not approved")
+            blockers.append("member emailed approval on file but NOT approved")
+            checklist.append("[ ] member emailed approval: replied, not approved")
         else:
             checklist.append("[x] member emailed approval on file")
+    elif require_approval:
+        blockers.append(
+            "member emailed approval not on file: send the exact final wording and "
+            "record their approval (agit_approval.py send + poll). No approval, no publish")
+        checklist.append("[ ] member emailed approval: not on file")
     else:
-        checklist.append("[ ] member emailed approval: not on file "
-                         "(Phase 4 email-approval step)")
+        checklist.append("[-] member emailed approval: not required for this record")
 
     return GateResult(ok=not blockers, blockers=blockers, checklist=checklist)
 
 
-def run_gate(record: Path) -> GateResult:
+def run_gate(record: Path, require_approval: bool = True) -> GateResult:
     """Load the record, initialise a clearance template if needed, evaluate."""
     check = load_check(record)
     named_persons = check.get("named_persons", [])
@@ -124,7 +128,7 @@ def run_gate(record: Path) -> GateResult:
         clearance_path.write_text(
             json.dumps(template, indent=2, ensure_ascii=False) + "\n",
             encoding="utf-8")
-        result = evaluate_gate(check, template, None)
+        result = evaluate_gate(check, template, None, require_approval)
         result.wrote_template = True
         result.ok = False  # a freshly-written template is never pre-cleared
         result.blockers.insert(
@@ -136,7 +140,7 @@ def run_gate(record: Path) -> GateResult:
     approval_path = record / APPROVAL_FILE
     approval = (json.loads(approval_path.read_text(encoding="utf-8"))
                 if approval_path.is_file() else None)
-    return evaluate_gate(check, clearance, approval)
+    return evaluate_gate(check, clearance, approval, require_approval)
 
 
 def format_report(record: Path, result: GateResult) -> str:
@@ -159,6 +163,10 @@ def main(argv: list[str] | None = None) -> int:
         description="Hard publish gate for AGIT member features.")
     parser.add_argument("--record", required=True, type=Path,
                         help="Per-submission evidence record dir (from the edit-check).")
+    parser.add_argument("--allow-unapproved", action="store_true",
+                        help="Do NOT require the member's emailed approval (edge cases "
+                             "only, e.g. Hoi's own feature). Off by default: the hard "
+                             "gate requires approval on file.")
     parser.add_argument("--json", action="store_true",
                         help="Emit the gate result as JSON.")
     args = parser.parse_args(argv)
@@ -168,7 +176,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     try:
-        result = run_gate(args.record)
+        result = run_gate(args.record, require_approval=not args.allow_unapproved)
     except (FileNotFoundError, ValueError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
