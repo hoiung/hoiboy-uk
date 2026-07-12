@@ -60,7 +60,11 @@ Create a leaf bundle `content/community/agit-featured/<slug>/`:
   hideDate: true
   ---
   ```
-- **hero.jpg** (or hero.png): save the submitted photo into the bundle as `hero.<ext>`, then `bash scripts/strip-exif.sh content/community/agit-featured/<slug>/hero.<ext>`. `single.html` renders it at the top automatically, so do NOT add an inline `<img>` in the markdown. The index card crops it to 4:5 portrait, so prefer a portrait-friendly frame; a wide landscape shot gets centre-cropped on the card.
+- **Feature images (branded pair)**: do NOT hand-save `hero.<ext>`. The generator produces both images from one source photo:
+  1. Save the submitted photo (EXIF-stripped) to `scripts/social-cards/agit-sources/<slug>.<ext>` (any orientation is fine, the generator handles it): `python3 -c "from PIL import Image,ImageOps; ImageOps.exif_transpose(Image.open('<submitted-photo>')).convert('RGB').save('scripts/social-cards/agit-sources/<slug>.jpg',quality=95)"`
+  2. Add a row to `scripts/social-cards/agit-features.tsv` (tab-separated): `<slug><TAB><Name aka Alias><TAB><Tech role>` (leave the role field empty if "(not given)").
+  3. Run `python3 scripts/social-cards/gen_agit_feature.py <slug>` (needs `rsvg-convert` + Pillow). It writes two images into the bundle: `hero.jpg` (portrait 4:5, AGIT logo watermark, EXIF-stripped: the on-page hero + index card + direct-social image) and `share-card.png` (the branded landscape 1200x630 link-preview: photo inset + name + role + AGIT branding, AGIT logo watermark).
+  `single.html` renders `hero.jpg` at the top automatically and `head.html` uses `share-card.png` as the og:image, so do NOT add an inline `<img>` in the markdown, and do NOT tell the submitter which orientation to send (any photo is fine, the share card insets it). Run the generator with no slug argument to regenerate every feature's pair after a design change.
 
 **Date gotcha:** `hugo -e production` drops future-dated pages (`buildFuture: false`), so the page silently will not appear if `date` is even a few hours ahead of the deploy build clock. Use today's date at a time already passed, or the previous day. The date only orders the index (it is hidden on the page).
 
@@ -68,6 +72,7 @@ Create a leaf bundle `content/community/agit-featured/<slug>/`:
 
 - `python3 scripts/check-ai-writing-tells.py --check-only-new content/community/agit-featured/<slug>/index.md` exits 0.
 - `bash scripts/check_emdash_zero_tolerance.sh` exits 0 (zero em dashes).
+- The bundle has both generated images: `hero.jpg` (1080x1350) and `share-card.png` (1200x630).
 - `hugo --gc --minify -e production` builds clean and the page appears in `public/community/agit-featured/<slug>/`.
 
 ## The three outputs
