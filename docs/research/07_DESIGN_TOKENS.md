@@ -105,3 +105,45 @@ rsvg-convert -w 1200 -h 630 --background-color '#fafafa' diagram.svg -o diagram-
 ```
 
 Rule of thumb: **inline SVG = dual-mode (media query); exported PNG = one mode + an opaque baked background.** For hoiboy.uk, default to the LIGHT export for any shared/social PNG.
+
+## AGIT feature-image tokens (photo cards)
+
+The Asians & Gingers in Tech community features (`content/community/agit-featured/<slug>/`) use a **photo-driven** card system, distinct from the schematic diagram tokens above. Each feature is generated as a branded pair by `scripts/social-cards/gen_agit_feature.py`, which is the deterministic source of truth (re-running it reproduces the exact approved look for any person). This section is the human-readable design record so a future feature, or a design tweak, does not have to be reverse-engineered from the Python constants. Approved reference example: `content/community/agit-featured/hoi-aka-hoiboy-ai-product-engineer/` (the committed `hero.jpg` + `share-card.png` are the frozen "this is how it should look" artifacts).
+
+### Palette
+
+| Role | Hex | Notes |
+|---|---|---|
+| Navy (name / logo border) | `#0c1c2d` | the card title colour |
+| Orange (eyebrow, rule, divider) | `#da611c` | the single accent: eyebrow text, the short rule under the name, the vertical photo/panel divider |
+| Grey (role text) | `#4f5b64` | the role line under the rule |
+| Panel gradient | `#b5dae7` to `#f9ebdf` | vertical powder-blue (top) to cream (bottom), sampled from the AGIT banner art |
+
+### Type
+
+- **Name:** VT323 (pixel/retro), up to **80px**, auto-shrinks to fit the panel (floor 12px) and wraps to at most 2 lines. Same face as the consulting card titles.
+- **Role:** IBM Plex Mono, up to **28px**, same auto-fit behaviour.
+- **Eyebrow** (`ASIANS & GINGERS IN TECH`): IBM Plex Mono Bold, **18px**, letter-spacing stretched to span the panel width.
+
+Both faces are vendored under `scripts/social-cards/fonts/` (OFL) and embedded as base64 `@font-face` so `rsvg-convert` renders them identically anywhere.
+
+### Geometry
+
+| Image | Size | Purpose |
+|---|---|---|
+| `hero.jpg` | **1080x1350** (portrait 4:5) | on-page hero + index card + the person's direct-to-social image |
+| `share-card.png` | **1200x630** (landscape 1.91:1) | OG / Twitter link-preview (photo inset left, gradient panel right) |
+
+Share-card layout: photo panel `748px` wide on the left, `48px` inner inset on the right panel (equal margins), 6px orange divider between them.
+
+### Logo watermark (circular)
+
+The AGIT logo (`assets/images/agit-logo.png`, a downscaled EXIF-clean copy of the Drive master) is masked to a **circle** at render time (drops the white square corners) and placed **bottom-right** on **both** images. Sizes intentionally differ per surface:
+
+| Surface | Logo size | On a 1200-wide canvas |
+|---|---|---|
+| Consulting card (`gen_card.py`) | `64px` | approx 5.3% width (text-only card, smaller signature) |
+| AGIT share-card (`gen_agit_feature.py`) | `92px` | approx 7.7% width (photo card, stronger group brand promo) |
+| AGIT hero (`gen_agit_feature.py`) | `20%` of width (approx 216px) + 3.5% margin | portrait, larger so it reads at social thumbnail size |
+
+To change any of these, edit the generator constants (`NAVY`/`ORANGE`/`GREY`/`GRAD`, `NAME_MAX`/`ROLE_MAX`/`EB_FS`, `LOGO_CARD`/`HERO_LOGO_FRAC`, `CW`/`CH`/`HERO_W`/`HERO_H`) and re-run `python3 scripts/social-cards/gen_agit_feature.py` (no slug) to regenerate every feature's pair, then rebuild the site. Do not redesign without operator sign-off.
