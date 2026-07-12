@@ -249,6 +249,31 @@ def test_sample_clean_declined_blocked(tmp_path):
     assert any("approv" in line.lower() for line in final.stdout.splitlines())
 
 
+def test_sample_conditional_approval_blocked(tmp_path):
+    """A member who approves ON A CONDITION is not unconditional approval -> BLOCKED.
+
+    "I approve, as long as you remove my last name" carries an affirmative word but
+    attaches a condition; the full pipeline must treat it as not approved and
+    hard-block, exactly as a decline would -- never publish wording the member only
+    conditionally approved. The operator applies the change, re-sends, re-approves.
+    """
+    record_dir = tmp_path / "records"
+    slug = "conditional-approval"
+    res = _edit_check(tmp_path, slug, CLEAN_ORIGINAL, CLEAN_EDITED, record_dir)
+    assert res.returncode == 0, res.stdout + res.stderr
+    record = record_dir / slug
+
+    _gate(record)  # writes the clearance template
+    _clear_names_and_flags(record)
+    approval = _deliver_reply(
+        record, "I approve, as long as you remove my last name from the story.")
+    assert approval["approved"] is False  # conditional -> NOT unconditional approval
+
+    final = _gate(record)
+    assert final.returncode == 1  # no approval on file -> hard-blocked
+    assert "BLOCKED" in final.stdout
+
+
 def test_no_approval_at_all_blocks(tmp_path):
     """Absent approval (member never replied) also hard-blocks -- fail-safe."""
     record_dir = tmp_path / "records"
