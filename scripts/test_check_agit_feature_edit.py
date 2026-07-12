@@ -166,6 +166,46 @@ def test_record_stores_original_verbatim(tmp_path):
     assert report["slug"] == "sample-1"
 
 
+def test_rewrite_same_original_is_idempotent(tmp_path):
+    # The normal "fix the edit and re-check" flow: same original, new edit.
+    # original.txt stays byte-for-byte; edited.txt / check.json update.
+    rec = tmp_path / "rec"
+    original_text = "I felt it went well. We shipped it.\n"
+    r1 = aec.check_edit(original_text, "It went well. We shipped it.", aec.load_config())
+    aec.write_record(rec, "s", original_text, "It went well. We shipped it.", r1)
+    r2 = aec.check_edit(original_text, "It went well; we shipped it cleanly.", aec.load_config())
+    aec.write_record(rec, "s", original_text, "It went well; we shipped it cleanly.", r2)
+    assert (rec / "s" / "original.txt").read_text(encoding="utf-8") == original_text
+    assert (rec / "s" / "edited.txt").read_text(encoding="utf-8") == "It went well; we shipped it cleanly."
+
+
+def test_rewrite_different_original_raises_and_preserves_record(tmp_path):
+    # A slug collision / re-typed original must NOT clobber the legal record.
+    rec = tmp_path / "rec"
+    first = "First member's true original story."
+    r1 = aec.check_edit(first, "First edited.", aec.load_config())
+    aec.write_record(rec, "s", first, "First edited.", r1)
+    r2 = aec.check_edit("A different second story.", "Second edited.", aec.load_config())
+    try:
+        aec.write_record(rec, "s", "A different second story.", "Second edited.", r2)
+        assert False, "expected RecordIntegrityError on differing original"
+    except aec.RecordIntegrityError:
+        pass
+    assert (rec / "s" / "original.txt").read_text(encoding="utf-8") == first  # preserved
+
+
+def test_cli_exit_2_on_original_overwrite(tmp_path):
+    rec = tmp_path / "rec"
+    o1 = _write(tmp_path, "o1.txt", "Original one, verbatim.")
+    o2 = _write(tmp_path, "o2.txt", "A wholly different original.")
+    edit = _write(tmp_path, "e.txt", "Edited body.")
+    _run(["--original", str(o1), "--edited", str(edit), "--slug", "x", "--record-dir", str(rec)])
+    res = _run(["--original", str(o2), "--edited", str(edit), "--slug", "x", "--record-dir", str(rec)])
+    assert res.returncode == 2
+    assert "must never be rewritten" in res.stderr
+    assert (rec / "x" / "original.txt").read_text(encoding="utf-8") == "Original one, verbatim."
+
+
 def test_json_output_is_valid(tmp_path):
     orig = _write(tmp_path, "o.txt", "we shipped it")
     edit = _write(tmp_path, "e.txt", "We shipped it with Ade")
