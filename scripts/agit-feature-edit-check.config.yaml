@@ -168,3 +168,18 @@ approval:
     - "should not"
     - "wouldn't"
     - "would not"
+    # Conditional cues. A reply that approves ON A CONDITION ("I approve, as long as
+    # you cut my last name") is NOT an unconditional approval of the exact wording --
+    # the condition is unmet until a fresh edit + fresh approval. Treated as NOT
+    # approved (fail-safe, blocks); the operator reads the reply, applies the change,
+    # re-sends the corrected wording, and gets a clean approval. Without these, an
+    # affirmative-plus-condition reply would wrongly clear as full approval.
+    - "as long as"
+    - "so long as"
+    - "provided that"
+    - "provided you"
+    - "on condition"
+    - "only if"
+    - "once you"
+    - "assuming"
+    - "unless"
