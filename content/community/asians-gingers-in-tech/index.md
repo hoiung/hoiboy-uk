@@ -88,7 +88,7 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
 .agit-form-wrap .agit-hint { font-weight: 400; opacity: .7; font-size: .9em; }
 .agit-form-wrap input[type="text"],
 .agit-form-wrap input[type="email"],
-.agit-form-wrap input[type="file"],
+.agit-form-wrap input[type="file"]:not(.agit-visually-hidden),
 .agit-form-wrap textarea {
   width: 100%; max-width: 100%; box-sizing: border-box;
   padding: .55rem .6rem; font: inherit; color: inherit;
