@@ -130,9 +130,12 @@ through the legal pipeline before it can go live (full rationale:
    current wording (a later re-edit voids it). The approval detector is a
    CONSERVATIVE heuristic: it records `approved: true` only on a clean, unambiguous
    yes and fails safe on anything nuanced. It is a first pass, NOT the last word:
-   open `approval.json`, READ the recorded `reply_text`, and confirm the member
-   actually, unconditionally approved THIS wording before you publish. If the reply
-   is conditional, hedged, or a question, treat it as not approved and follow up.
+   open `approval.json`, READ the recorded `reply_text` AND every entry in
+   `later_replies` (anything the member said after their decision), and confirm the
+   member actually, unconditionally approved THIS wording before you publish. The
+   publish gate prints a `[!]` line if there are later replies. If any reply is
+   conditional, hedged, a question, or asks for a change, treat it as not approved
+   and follow up (re-editing re-binds the wording hash and forces a fresh approval).
    (Live Gmail is an operator-runtime OAuth grant: `docs/gmail-approval-oauth-setup.md`.)
 
 The publish gate is a HARD gate: if it exits non-zero, do NOT publish. No emailed
