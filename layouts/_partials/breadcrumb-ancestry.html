@@ -1,0 +1,15 @@
+{{- /* Recursive breadcrumb ancestry. Returns the ordered ancestor pages for the
+       given page, root-first (Home first). If the page sets `breadcrumbParent`,
+       the chain follows that parent RECURSIVELY (the parent's own breadcrumbParent
+       is honoured), so a page can nest several levels under pages outside its own
+       Hugo section, e.g. an AGIT feature page under AGIT Featured under the AGIT
+       page. Otherwise it falls back to the page's real section ancestry. */ -}}
+{{- $trail := slice -}}
+{{- with .Params.breadcrumbParent -}}
+  {{- with site.GetPage . -}}
+    {{- $trail = (partial "breadcrumb-ancestry.html" .) | append . -}}
+  {{- end -}}
+{{- else -}}
+  {{- $trail = .Ancestors.Reverse -}}
+{{- end -}}
+{{- return $trail -}}

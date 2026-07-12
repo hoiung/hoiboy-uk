@@ -21,23 +21,14 @@
     <span class="sep">&gt;</span><a href="{{ $href }}">{{ $label }}</a>
     <span class="sep">&gt;</span><span>{{ .Title }}</span>
   {{- else -}}
-    {{- /* Walk the ancestry. An explicit breadcrumbParent override replaces this
-           page's own ancestry with the named parent's ancestry plus that parent. */ -}}
-    {{- $trail := .Ancestors.Reverse -}}
-    {{- $extra := false -}}
-    {{- with .Params.breadcrumbParent -}}
-      {{- with site.GetPage . -}}
-        {{- $trail = .Ancestors.Reverse -}}
-        {{- $extra = . -}}
-      {{- end -}}
-    {{- end -}}
+    {{- /* Walk the ancestry. An explicit breadcrumbParent override nests this page
+           under the named parent, resolved recursively (the parent's own
+           breadcrumbParent is honoured) via the breadcrumb-ancestry partial. */ -}}
+    {{- $trail := partial "breadcrumb-ancestry.html" . -}}
     {{- range $trail -}}
       {{- if not .IsHome -}}
         <span class="sep">&gt;</span><a href="{{ .RelPermalink }}">{{ .Title }}</a>
       {{- end -}}
-    {{- end -}}
-    {{- with $extra -}}
-      <span class="sep">&gt;</span><a href="{{ .RelPermalink }}">{{ .Title }}</a>
     {{- end -}}
     <span class="sep">&gt;</span><span>{{ .Title }}</span>
   {{- end -}}
