@@ -72,8 +72,14 @@ Create a leaf bundle `content/community/agit-featured/<slug>/`:
 
 - `python3 scripts/check-ai-writing-tells.py --check-only-new content/community/agit-featured/<slug>/index.md` exits 0.
 - `bash scripts/check_emdash_zero_tolerance.sh` exits 0 (zero em dashes).
+- `python3 scripts/check-exif.py scripts/social-cards/agit-sources/<slug>.<ext>` exits 0 (the source photo carries no camera/GPS EXIF before it enters the public repo).
 - The bundle has both generated images: `hero.jpg` (1080x1350) and `share-card.png` (1200x630).
+- Eyeball both images: the circular AGIT logo watermark is visible bottom-right on each, name and role are fully inside the panel (not clipped or colliding with the logo).
 - `hugo --gc --minify -e production` builds clean and the page appears in `public/community/agit-featured/<slug>/`.
+
+## Design spec (frozen; do not redesign without operator sign-off)
+
+The card look is defined by `scripts/social-cards/gen_agit_feature.py` and documented in `docs/research/07_DESIGN_TOKENS.md` (section "AGIT feature-image tokens"). In short: name in **VT323** up to 80px, role in **IBM Plex Mono** up to 28px, eyebrow 18px; navy `#0c1c2d`, orange `#da611c`, grey `#4f5b64`, panel gradient `#b5dae7` to `#f9ebdf`; circular AGIT logo watermark bottom-right (92px on the share-card, 20% of width on the hero). `hero.jpg` is portrait 4:5 (1080x1350), `share-card.png` is landscape 1200x630. To tweak sizing or fonts, edit those constants and regenerate the pair; never hand-edit the images.
 
 ## The three outputs
 
