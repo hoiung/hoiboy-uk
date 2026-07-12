@@ -113,6 +113,25 @@ def test_unapproved_is_not_read_as_approval():
     assert aa.is_approval_reply("Approved, please publish it.", AFFIRM, NEGATE) is True
 
 
+def test_plain_english_refusals_are_decisive():
+    # Common refusal words a member may use are decisive refusals, so a later refusal
+    # supersedes an earlier approval (fail-safe).
+    for refusal in ("I disapprove of the current wording.",
+                    "I decline this version.",
+                    "Please reject this draft.",
+                    "I want to retract my approval.",
+                    "Please do not go ahead with this."):
+        assert aa.is_approval_reply(refusal, AFFIRM, NEGATE) is False, refusal
+        assert aa.is_decisive_reply(refusal, AFFIRM, NEGATE) is True, refusal
+
+
+def test_negated_negation_fails_safe_not_approved():
+    # "don't hold off, publish it" is a genuine approval but contains the negation
+    # "hold off"; the gate deliberately fails SAFE (blocks), never wrongly publishes.
+    assert aa.is_approval_reply(
+        "Please don't hold off, go ahead and publish it now!", AFFIRM, NEGATE) is False
+
+
 def test_compose_email_carries_exact_wording():
     msg = aa.compose_approval_email("m@example.com", "hoiboyuk@gmail.com",
                                     "Jane the Builder", "The EXACT story body.", "jane")
@@ -237,6 +256,21 @@ def test_poll_approval_then_retraction_blocks(tmp_path):
         _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
         _gmail_message("in1", "m@example.com", "Approved, publish it."),
         _gmail_message("in2", "m@example.com", "Actually hold off, I want one change."),
+    ]}
+    svc = FakeService(thread=thread)
+    result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
+                                  member_email="m@example.com")
+    assert result is not None and result["approved"] is False
+
+
+def test_poll_approval_then_plain_english_refusal_blocks(tmp_path):
+    # Member approves, then later disapproves in plain English (same wording, so the
+    # sha binding does not apply) -> the later refusal must supersede. Fail-safe.
+    thread = {"messages": [
+        _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
+        _gmail_message("in1", "m@example.com", "Approved, publish it."),
+        _gmail_message("in2", "m@example.com",
+                       "Actually, on reflection, I disapprove. Please do not go ahead."),
     ]}
     svc = FakeService(thread=thread)
     result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
