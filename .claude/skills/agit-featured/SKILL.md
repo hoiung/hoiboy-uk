@@ -129,17 +129,28 @@ through the legal pipeline before it can go live (full rationale:
    The gate then requires `approval.json` with `approved: true` bound to the exact
    current wording (a later re-edit voids it). The approval detector is a
    CONSERVATIVE heuristic: it records `approved: true` only on a clean, unambiguous
-   yes and fails safe on anything nuanced. It is a first pass, NOT the last word:
-   open `approval.json`, READ the recorded `reply_text` AND every entry in
-   `later_replies` (anything the member said after their decision), and confirm the
-   member actually, unconditionally approved THIS wording before you publish. The
-   publish gate prints a `[!]` line if there are later replies. If any reply is
-   conditional, hedged, a question, or asks for a change, treat it as not approved
-   and follow up (re-editing re-binds the wording hash and forces a fresh approval).
+   yes and fails safe on anything nuanced -- a refusal word OR a conditional cue
+   ("as long as", "unless", "only if", "provided that", "once you", "assuming")
+   blocks it, so a conditional approval ("I approve, as long as you cut my last
+   name") is treated as NOT approved. It is a first pass, NOT the last word: open
+   `approval.json`, READ the recorded `reply_text` AND every entry in `later_replies`
+   (anything the member said after their decision), and confirm the member actually,
+   unconditionally approved THIS wording before you publish. The publish gate echoes
+   the decisive reply verbatim on an `approval reply (READ before publishing)` line
+   and prints a `[!]` line if there are later replies. If any reply is conditional,
+   hedged, a question, or asks for a change, treat it as not approved and follow up
+   (re-editing re-binds the wording hash and forces a fresh approval).
    (Live Gmail is an operator-runtime OAuth grant: `docs/gmail-approval-oauth-setup.md`.)
 
 The publish gate is a HARD gate: if it exits non-zero, do NOT publish. No emailed
 approval bound to the current wording on file, no publish. Ever.
+
+**`--allow-unapproved` is for Hoi's OWN feature ONLY, never a member's story.** It
+skips the emailed-approval requirement (Hoi does not email himself for approval).
+Passing it prints a loud warning and writes an `approval_bypass.json` audit receipt
+into the record. Never pass it for a member feature: a member's story is not safe to
+publish without their emailed approval of the exact wording. The gate also surfaces
+the bypass in its own output with an `[!] APPROVAL REQUIREMENT BYPASSED` line.
 
 ## Guard floor (must pass before publish)
 
