@@ -158,6 +158,9 @@ jobs:
       - name: AGIT feature edit-check unit tests
         run: python3 -m pytest scripts/test_check_agit_feature_edit.py -q
 
+      - name: AGIT publish-gate unit tests
+        run: python3 -m pytest scripts/test_check_agit_publish_gate.py -q
+
       - name: Frontmatter validator
         run: python3 scripts/validate_frontmatter.py
 
