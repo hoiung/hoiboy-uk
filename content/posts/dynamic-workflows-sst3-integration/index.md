@@ -78,7 +78,7 @@ So I went back and refactored SST3 again. Added proper model control, picked per
 
 I started the next run with the heaviest repo first this time, the live trading system, because I was low on weekly usage and wanted that one done and back in production.
 
-Night and day. The 5-hour window and the weekly limit suddenly behaved how I'd expect. Watching the swarm now, a mix of Haiku, Sonnet and Opus depending on the job, it just feels right. It made no sense to throw Opus at everything. Small hammer for small nails. That is the way.
+Night and day. The 5-hour window and the weekly limit suddenly behaved how I'd expect. Watching the swarm now, a mix of Haiku, Sonnet and Opus depending on the job, it just feels right. It made no sense to throw Opus at everything. Small hammer for small nails. *This is the Way*.
 
 Then a nice surprise. Claude reset my weekly limit. Turns out they'd had a bug somewhere burning more tokens than it should, and the reset happened to land in my favour. Perfect. I spent the rest of the day clearing the remaining repos.
 
