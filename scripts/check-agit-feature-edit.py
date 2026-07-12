@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import argparse
 import difflib
+import hashlib
 import json
 import re
 import sys
@@ -306,6 +307,11 @@ def write_record(record_dir: Path, slug: str, original: str, edited: str,
         "slug": slug,
         "checked_at": datetime.now(timezone.utc).isoformat(),
         "clean": result.clean,
+        # Fingerprint of the exact edited wording. The publish gate binds the
+        # named-person clearance AND the member's emailed approval to this hash, so a
+        # later same-slug re-edit that changes the wording invalidates both (a stale
+        # clearance / an approval for the old wording can never clear a new edit).
+        "edited_sha256": hashlib.sha256(edited.encode("utf-8")).hexdigest(),
         "original_words": result.original_words,
         "edited_words": result.edited_words,
         "length_delta_pct": result.length_delta_pct,
