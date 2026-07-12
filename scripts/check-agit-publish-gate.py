@@ -54,9 +54,16 @@ def load_check(record: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def build_clearance_template(named_persons: list[str], flags_clean: bool) -> dict:
-    """A fresh clearance file: every name pending, flags uncleared if any exist."""
+def build_clearance_template(named_persons: list[str], flags_clean: bool,
+                             edited_sha256: str | None = None) -> dict:
+    """A fresh clearance file: every name pending, flags uncleared if any exist.
+
+    Records the edited-wording fingerprint so the gate can detect a later same-slug
+    re-edit that changed the wording and reject this (now stale) clearance. Keep the
+    edited_sha256 field when filling in the clearance -- it binds it to the wording.
+    """
     return {
+        "edited_sha256": edited_sha256,
         "flags_cleared": bool(flags_clean),  # True only when the edit-check was clean
         "named_persons": {
             name: {"status": "pending", "note": ""} for name in named_persons
@@ -69,6 +76,20 @@ def evaluate_gate(check: dict, clearance: dict, approval: dict | None,
     """Evaluate every publish precondition against the recorded decisions."""
     blockers: list[str] = []
     checklist: list[str] = []
+
+    # Wording fingerprint from the edit-check. Binding is enforced only for real
+    # records (the edit-check always writes edited_sha256); synthetic records without
+    # it are unaffected. This is what makes a same-slug re-edit invalidate a prior
+    # clearance / an approval that was for the earlier wording.
+    expected_sha = check.get("edited_sha256")
+
+    # 0. Wording-binding: a re-edit that changed the wording voids a prior clearance.
+    if expected_sha and clearance.get("edited_sha256") != expected_sha:
+        blockers.append(
+            "clearance is stale: the edited wording changed since it was cleared "
+            "(edited_sha256 mismatch). Re-review the flags and re-clear each named "
+            "person against the CURRENT wording.")
+        checklist.append("[ ] clearance: STALE (edited wording changed since clearance)")
 
     # 1. Edit-check flags reviewed.
     if not check.get("clean", False) and not clearance.get("flags_cleared", False):
@@ -104,6 +125,12 @@ def evaluate_gate(check: dict, clearance: dict, approval: dict | None,
         if not approval.get("approved", False):
             blockers.append("member emailed approval on file but NOT approved")
             checklist.append("[ ] member emailed approval: replied, not approved")
+        elif expected_sha and approval.get("wording_sha256") != expected_sha:
+            blockers.append(
+                "member approved a DIFFERENT wording than the current edit "
+                "(approval wording_sha256 mismatch). Re-send the exact current "
+                "wording and get a fresh approval before publishing.")
+            checklist.append("[ ] member emailed approval: for a different wording (stale)")
         else:
             checklist.append("[x] member emailed approval on file")
     elif require_approval:
@@ -124,7 +151,8 @@ def run_gate(record: Path, require_approval: bool = True) -> GateResult:
     clearance_path = record / CLEARANCE_FILE
 
     if not clearance_path.is_file():
-        template = build_clearance_template(named_persons, check.get("clean", False))
+        template = build_clearance_template(named_persons, check.get("clean", False),
+                                            check.get("edited_sha256"))
         clearance_path.write_text(
             json.dumps(template, indent=2, ensure_ascii=False) + "\n",
             encoding="utf-8")
