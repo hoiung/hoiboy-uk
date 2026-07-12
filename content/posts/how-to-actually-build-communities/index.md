@@ -52,7 +52,7 @@ Brazilian Zouk is one of those modern niche dances that still has not really pic
 
 So yeah, I am pretty proud of this one. It is genuinely one of the hardest things I have ever done. It asks you to become a visionary, to pick up the leadership that nobody actually wants, and sometimes to stand against a wave of older, prefound leadership still running the scene the old way in a world that has long moved on. The constant battle against misinformation. Dangerous techniques being taught as gospel. Trying to make the thing better whilst the thing fights you for changing it.
 
-(I was no guru at this, by the way. I am a doer, so I just went and figured shit out, made every mistake going, and lived to write it down.)
+(I was no guru at this, by the way. I am a doer, so I just went and figured shit out, made every mistake going, and lived to write it down. *This is the Way*.)
 
 ## It started somewhere dark
 
