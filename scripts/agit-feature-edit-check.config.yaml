@@ -51,9 +51,14 @@ banned_punctuation_codepoints:
 # ALSO ignores any token whose lower-case form already appeared anywhere in the
 # original, so this list only needs the genuinely-common capitalised words.
 proper_noun_stopwords:
+  # NOTE: real given names/surnames are deliberately NOT listed here even when they
+  # coincide with an English function word (e.g. "An", "So", "No" are common
+  # Vietnamese/Korean/Chinese names). The named-person gate must OVER-include (a
+  # human clears each) rather than silently drop a real person. A sentence-initial
+  # "So," surfacing as a name is harmless over-flagging; a missed "So"-the-person
+  # is a legal-safety gap. Keep only words that are essentially never personal names.
   - "I"
   - "A"
-  - "An"
   - "The"
   - "This"
   - "That"
@@ -72,7 +77,6 @@ proper_noun_stopwords:
   - "And"
   - "But"
   - "Or"
-  - "So"
   - "If"
   - "When"
   - "While"
