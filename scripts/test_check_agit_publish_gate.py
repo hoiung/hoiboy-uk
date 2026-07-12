@@ -202,6 +202,21 @@ def test_matching_wording_clears(tmp_path):
     assert apg.run_gate(rec).ok is True
 
 
+def test_later_replies_surfaced_in_checklist(tmp_path):
+    # A member follow-up after approval is surfaced prominently for the operator.
+    rec = _sha_record(tmp_path, "HASH")
+    (rec / "clearance.json").write_text(json.dumps(
+        {"edited_sha256": "HASH", "flags_cleared": True, "named_persons": {}}),
+        encoding="utf-8")
+    (rec / "approval.json").write_text(json.dumps(
+        {"approved": True, "wording_sha256": "HASH",
+         "later_replies": ["Oh wait, can we swap the photo?"]}), encoding="utf-8")
+    result = apg.run_gate(rec)
+    assert result.ok is True  # surfaced, not hard-blocked
+    assert any("AFTER the recorded decision" in c for c in result.checklist)
+    assert any("swap the photo" in c for c in result.checklist)
+
+
 # -------------------------------------------------------------------- CLI layer
 
 def _run(rec: Path, *extra):
