@@ -151,7 +151,7 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
   </div>
 
   <div class="agit-field">
-    <label for="agit-role">Your role in tech <span class="agit-hint">(optional)</span></label>
+    <label for="agit-role">Your current role in tech <span class="agit-hint">(optional)</span></label>
     <input type="text" id="agit-role" name="role" maxlength="150">
   </div>
 
@@ -205,6 +205,8 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
 **Hoi aka Hoiboy**. Before all the AI stuff, I spent eight years at Canonical, the company behind Ubuntu. My title said Data Centre Engineer the whole time. Flat organisation, and I never needed a new title to prove what I could do.
 
 **Superpowers:** ADHD and OCD for getting shit done properly.
+
+**Current role:** AI Product Engineer.
 
 **What I quietly did:** the role outgrew the title almost straight away. Data Centre Engineer on paper, but in practice the infrastructure architect, the procurement lead, the project manager (PMP certified) and the data centre manager, all at once, running the sites largely on my own for years. I designed and rolled out Canonical's cloud data centres across London, Boston and Taipei, mentored the engineers who came after me, coordinated remotely with everyone from contractors to the COO across disciplines and teams scattered all over the world, and negotiated the supplier deals down hard enough to save the business a small fortune. Whatever I was handed, I gave back in better shape than I found it. Nobody threw a party for any of it. The work just spoke for itself, even when the title didn't. That is usually how it goes for the quiet ones.
 
