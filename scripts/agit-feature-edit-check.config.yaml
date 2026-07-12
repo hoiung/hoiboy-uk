@@ -119,6 +119,11 @@ approval:
     - "you can publish"
     - "publish it"
   negation_phrases:
+    # Any of these in a reply means NOT approved (negation wins over any affirmative).
+    # Includes plain-English refusals a member may use after an earlier approval, so a
+    # later refusal supersedes it (fail-safe). Deliberately conservative: a convoluted
+    # approval that contains a refusal word (e.g. "don't hold off, publish it") is
+    # blocked, not published -- the operator confirms edge phrasings.
     - "unapproved"
     - "not approved"
     - "not approve"
@@ -127,11 +132,20 @@ approval:
     - "cannot approve"
     - "can't approve"
     - "won't approve"
+    - "disapprove"
+    - "decline"
+    - "refuse"
+    - "reject"
+    - "retract"
     - "not happy"
     - "hold off"
     - "not yet"
     - "don't publish"
     - "do not publish"
+    - "don't go ahead"
+    - "do not go ahead"
+    - "don't proceed"
+    - "do not proceed"
     - "please wait"
     - "some changes"
     - "one change"
