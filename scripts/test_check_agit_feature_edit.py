@@ -200,6 +200,26 @@ def test_cli_exit_2_on_missing_file(tmp_path):
     assert "not found" in res.stderr
 
 
+def test_cli_exit_2_on_non_utf8_input(tmp_path):
+    # A mis-encoded (non-UTF-8) submission is a usage/IO error (exit 2), NOT a flagged
+    # result (exit 1): the check never ran, and a caller branching on the exit code
+    # must be able to tell "the check could not read the file" from "it found flags".
+    bad = tmp_path / "bad.txt"
+    bad.write_bytes(b"\xff\xfe mis-encoded \x80\x81 bytes")
+    good = _write(tmp_path, "e.txt", "A clean edited line.")
+    res = _run(["--original", str(bad), "--edited", str(good), "--no-record"])
+    assert res.returncode == 2
+    assert "could not read input" in res.stderr
+
+
+def test_added_name_deduped_case_insensitively():
+    # A name added in two cases is surfaced once (case-insensitive dedup), not twice --
+    # the same person is cleared once, and the named-person gate is not spammed.
+    r = aec.check_edit("we shipped it", "We shipped it with PRIYA and Priya", CFG)
+    added = next(f for f in r.flags if f.category == "added_proper_nouns").items
+    assert sum(1 for x in added if x.lower() == "priya") == 1
+
+
 def test_record_stores_original_verbatim(tmp_path):
     original_text = "I felt it went well.\nWe shipped it.\n"
     orig = _write(tmp_path, "o.txt", original_text)
