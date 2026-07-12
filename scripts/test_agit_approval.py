@@ -291,6 +291,21 @@ def test_poll_approval_then_plain_english_refusal_blocks(tmp_path):
     assert result is not None and result["approved"] is False
 
 
+def test_poll_records_later_replies_after_decision(tmp_path):
+    # A non-decisive follow-up after an approval must be recorded (never dropped) so
+    # the operator sees it -- it may qualify or withdraw the approval.
+    thread = {"messages": [
+        _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
+        _gmail_message("in1", "m@example.com", "Approved, publish it."),
+        _gmail_message("in2", "m@example.com", "Oh wait, can we swap the photo?"),
+    ]}
+    svc = FakeService(thread=thread)
+    result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
+                                  member_email="m@example.com")
+    assert result is not None and result["approved"] is True
+    assert any("swap the photo" in r for r in result["later_replies"])
+
+
 def test_poll_non_decisive_reply_records_not_approved(tmp_path):
     # A reply that neither approves nor refuses is recorded as not-approved.
     thread = {"messages": [
