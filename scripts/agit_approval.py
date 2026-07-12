@@ -166,11 +166,13 @@ def record_request(record_dir: Path, *, to_addr: str, message_id: str,
 def record_approval(record_dir: Path, *, approved: bool, reply_text: str,
                     reply_from: str, message_id: str, thread_id: str,
                     wording_hash: str | None = None,
+                    later_replies: list[str] | None = None,
                     replied_at: str | None = None) -> Path:
     """Persist the member's approval decision into the record (approval.json).
 
     Carries the wording fingerprint forward from the request so the publish gate can
-    verify the approval was for the exact wording of the current edit.
+    verify the approval was for the exact wording of the current edit. `later_replies`
+    holds any member message sent after the decision, so a follow-up is never lost.
     """
     record_dir.mkdir(parents=True, exist_ok=True)
     payload = {
@@ -180,6 +182,7 @@ def record_approval(record_dir: Path, *, approved: bool, reply_text: str,
         "message_id": message_id,
         "thread_id": thread_id,
         "wording_sha256": wording_hash,
+        "later_replies": later_replies or [],
         "replied_at": replied_at or _now_iso(),
     }
     path = record_dir / APPROVAL_FILE
@@ -233,14 +236,19 @@ def poll_for_approval(service, record_dir: Path, *, thread_id: str,
     thank-you, a clarifying question) never overrides an earlier decision. Fail-safe
     by construction: with no decisive reply, the verdict is not-approved.
 
+    Any member message sent AFTER the decisive reply is recorded verbatim in
+    `later_replies` -- never silently dropped -- because a non-decisive follow-up
+    ("can we swap the photo?") may qualify the decision and the operator must see it
+    (the publish gate surfaces these; SKILL.md step 4 tells the operator to read them).
+
     Returns the written approval payload, or None if the member has not replied
     yet. Reads exactly one thread (the one we created), never the mailbox.
     """
     affirmative, negation = load_approval_phrases(config_path)
     member_addr = (parseaddr(member_email)[1] or member_email).strip().lower()
     thread = service.users().threads().get(userId="me", id=thread_id).execute()
-    decisive: tuple[str, str, str] | None = None  # latest reply that approves/refuses
-    latest: tuple[str, str, str] | None = None     # latest member reply of any kind
+    replies: list[tuple[str, str, str]] = []  # (body, sender, message_id) in order
+    decisive_idx: int | None = None            # index of the latest approve/refuse
     for message in thread.get("messages", []):
         payload = message.get("payload", {})
         headers = {h.get("name", "").lower(): h.get("value", "")
@@ -252,16 +260,18 @@ def poll_for_approval(service, record_dir: Path, *, thread_id: str,
         if parseaddr(sender)[1].strip().lower() != member_addr:
             continue
         body = extract_plain_text(payload)
-        latest = (body, sender, message.get("id", ""))
+        replies.append((body, sender, message.get("id", "")))
         if is_decisive_reply(body, affirmative, negation):
-            decisive = latest  # a later decisive reply supersedes an earlier one
+            decisive_idx = len(replies) - 1  # a later decisive reply supersedes
 
-    chosen = decisive or latest  # prefer the last decision; else the last reply
-    if chosen is None:
+    if not replies:
         return None  # the member has not replied yet
 
-    body, sender, message_id = chosen
+    chosen_idx = decisive_idx if decisive_idx is not None else len(replies) - 1
+    body, sender, message_id = replies[chosen_idx]
     approved = is_approval_reply(body, affirmative, negation)
+    # Everything the member said AFTER the decision -- surfaced, never dropped.
+    later_replies = [r[0] for r in replies[chosen_idx + 1:]]
     request_path = record_dir / REQUEST_FILE
     wording_hash = None
     if request_path.is_file():
@@ -269,6 +279,7 @@ def poll_for_approval(service, record_dir: Path, *, thread_id: str,
             request_path.read_text(encoding="utf-8")).get("wording_sha256")
     path = record_approval(record_dir, approved=approved, reply_text=body,
                            reply_from=sender, message_id=message_id,
+                           later_replies=later_replies,
                            thread_id=thread_id, wording_hash=wording_hash)
     return json.loads(path.read_text(encoding="utf-8"))
 
