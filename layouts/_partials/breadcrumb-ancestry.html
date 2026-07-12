@@ -4,12 +4,12 @@
        is honoured), so a page can nest several levels under pages outside its own
        Hugo section, e.g. an AGIT feature page under AGIT Featured under the AGIT
        page. Otherwise it falls back to the page's real section ancestry. */ -}}
-{{- $trail := slice -}}
+{{- $trail := .Ancestors.Reverse -}}
 {{- with .Params.breadcrumbParent -}}
   {{- with site.GetPage . -}}
     {{- $trail = (partial "breadcrumb-ancestry.html" .) | append . -}}
+  {{- else -}}
+    {{- warnf "breadcrumbParent %q on page %q did not resolve to a page; falling back to natural section ancestry" $.Params.breadcrumbParent $.RelPermalink -}}
   {{- end -}}
-{{- else -}}
-  {{- $trail = .Ancestors.Reverse -}}
 {{- end -}}
 {{- return $trail -}}
