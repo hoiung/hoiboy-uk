@@ -62,10 +62,11 @@ def test_fresh_record_writes_template_and_blocks(tmp_path):
 
 
 def test_all_permissioned_with_notes_clears(tmp_path):
+    # Name/flag logic in isolation (approval leg tested separately below).
     rec = _record(tmp_path, ["Sarah"], clean=True)
     _clearance(rec, flags_cleared=True,
                persons={"Sarah": {"status": "permissioned", "note": "author has her OK"}})
-    result = apg.run_gate(rec)
+    result = apg.run_gate(rec, require_approval=False)
     assert result.ok is True
 
 
@@ -73,7 +74,7 @@ def test_anonymised_clears(tmp_path):
     rec = _record(tmp_path, ["Sarah"], clean=True)
     _clearance(rec, flags_cleared=True,
                persons={"Sarah": {"status": "anonymised", "note": ""}})
-    assert apg.run_gate(rec).ok is True
+    assert apg.run_gate(rec, require_approval=False).ok is True
 
 
 def test_pending_name_blocks(tmp_path):
@@ -114,7 +115,24 @@ def test_unreviewed_flags_block(tmp_path):
 def test_clean_editcheck_needs_no_flag_review(tmp_path):
     rec = _record(tmp_path, [], clean=True)
     _clearance(rec, flags_cleared=False, persons={})  # clean -> flags_cleared irrelevant
-    assert apg.run_gate(rec).ok is True
+    assert apg.run_gate(rec, require_approval=False).ok is True
+
+
+def test_no_approval_blocks_full_gate(tmp_path):
+    # Names cleared and flags clean, but no approval on file -> hard gate blocks.
+    rec = _record(tmp_path, ["Sarah"], clean=True)
+    _clearance(rec, flags_cleared=True,
+               persons={"Sarah": {"status": "anonymised", "note": ""}})
+    result = apg.run_gate(rec)  # require_approval defaults True
+    assert result.ok is False
+    assert any("approval not on file" in b for b in result.blockers)
+
+
+def test_allow_unapproved_bypasses_approval(tmp_path):
+    rec = _record(tmp_path, ["Sarah"], clean=True)
+    _clearance(rec, flags_cleared=True,
+               persons={"Sarah": {"status": "anonymised", "note": ""}})
+    assert apg.run_gate(rec, require_approval=False).ok is True
 
 
 def test_unapproved_approval_blocks(tmp_path):
@@ -153,7 +171,7 @@ def test_cli_exit_0_when_cleared(tmp_path):
     rec = _record(tmp_path, ["Sarah"], clean=True)
     _clearance(rec, flags_cleared=True,
                persons={"Sarah": {"status": "permissioned", "note": "have her OK"}})
-    res = _run(rec)
+    res = _run(rec, "--allow-unapproved")
     assert res.returncode == 0
     assert "CLEARED" in res.stdout
 
@@ -167,7 +185,7 @@ def test_cli_json_output(tmp_path):
     rec = _record(tmp_path, ["Sarah"], clean=True)
     _clearance(rec, flags_cleared=True,
                persons={"Sarah": {"status": "anonymised", "note": ""}})
-    res = _run(rec, "--json")
+    res = _run(rec, "--json", "--allow-unapproved")
     payload = json.loads(res.stdout)
     assert payload["ok"] is True
 
