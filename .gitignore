@@ -38,3 +38,8 @@ __pycache__/
 # Written by scripts/check-agit-feature-edit.py. NEVER commit to the public repo;
 # point --record-dir outside the repo for production use.
 .agit-records/
+
+# AGIT email-approval Gmail OAuth credentials (client secret + cached token).
+# Default home is ~/.agit-secrets/ (outside the repo); this guards a repo-relative
+# path too. NEVER commit credentials. See docs/gmail-approval-oauth-setup.md.
+.agit-secrets/
