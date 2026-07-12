@@ -36,6 +36,7 @@ import sys
 from datetime import datetime, timezone
 from email.message import EmailMessage
 from email.utils import parseaddr
+from functools import lru_cache
 from pathlib import Path
 
 import yaml
@@ -63,6 +64,21 @@ def load_approval_phrases(config_path: Path = DEFAULT_CONFIG) -> tuple[list[str]
     return affirmative, negation
 
 
+@lru_cache(maxsize=None)
+def _compile_phrase(phrase: str) -> re.Pattern[str] | None:
+    """Compile a phrase to a word-boundary-anchored, punctuation-tolerant regex.
+
+    Cached: the affirmative/negation phrase lists are small and fixed, and every
+    reply re-tests each phrase, so compiling once per distinct phrase (instead of
+    on every call) removes ~52 regex compilations per message with no behaviour
+    change. Returns None for an empty phrase (never matches).
+    """
+    words = re.findall(r"\w+", phrase.lower())
+    if not words:
+        return None
+    return re.compile(r"\b" + r"\W+".join(re.escape(w) for w in words) + r"\b")
+
+
 def _phrase_present(low_text: str, phrase: str) -> bool:
     """Whole-word match of a (possibly multi-word) phrase, punctuation-tolerant.
 
@@ -70,11 +86,8 @@ def _phrase_present(low_text: str, phrase: str) -> bool:
     the affirmative "approved" must NOT match "unapproved". Words are joined with
     \\W+ so "yes, approve" and "yes approve" both match.
     """
-    words = re.findall(r"\w+", phrase.lower())
-    if not words:
-        return False
-    pattern = r"\b" + r"\W+".join(re.escape(w) for w in words) + r"\b"
-    return re.search(pattern, low_text) is not None
+    pattern = _compile_phrase(phrase)
+    return pattern is not None and pattern.search(low_text) is not None
 
 
 def is_approval_reply(text: str, affirmative: list[str], negation: list[str]) -> bool:
@@ -316,7 +329,47 @@ def build_gmail_service(client_secret_path: Path, token_path: Path):
     return build("gmail", "v1", credentials=creds)
 
 
-def main(argv: list[str] | None = None) -> int:  # pragma: no cover - runtime CLI
+def _gmail_error_types() -> tuple[type, ...]:
+    """The google Gmail HttpError type if the google libs are installed, else ().
+
+    Lets the CLI treat a live Gmail API error as an exit-2 IO error without making
+    the google import a hard dependency of the pure-logic module (the tests run
+    without google installed).
+    """
+    try:  # pragma: no cover - runtime-only path (google libs absent in tests)
+        from googleapiclient.errors import HttpError
+        return (HttpError,)
+    except ImportError:
+        return ()
+
+
+# An IO/usage failure while sending or polling (unreadable wording file, corrupt
+# config or request record, a live Gmail API/transport error) is an error (exit 2),
+# NEVER "no approval" (exit 1) -- so a genuine outage can never masquerade as the
+# member's silence or refusal.
+_DISPATCH_IO_ERRORS = (OSError, ValueError, json.JSONDecodeError) + _gmail_error_types()
+
+
+def _dispatch(service, args) -> int:  # pragma: no cover - runtime CLI print paths
+    """Run the requested send/poll command; may raise an IO error (caught by main)."""
+    if args.command == "send":
+        wording = args.wording_file.read_text(encoding="utf-8")
+        sent = send_approval_request(service, args.record, to_addr=args.to,
+                                     from_addr=args.from_addr, feature_title=args.title,
+                                     final_wording=wording, slug=args.slug)
+        print(f"sent: message {sent.get('id')} thread {sent.get('threadId')}")
+        return 0
+
+    result = poll_for_approval(service, args.record, thread_id=args.thread_id,
+                               member_email=args.member_email)
+    if result is None:
+        print("no reply from the member yet")
+        return 1
+    print(f"approved={result['approved']} from {result['reply_from']}")
+    return 0 if result["approved"] else 1
+
+
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="AGIT email-approval automation.")
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -342,25 +395,15 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover - runtime CL
 
     try:
         service = build_gmail_service(args.client_secret, args.token)
-    except RuntimeError as exc:
+    except RuntimeError as exc:  # pragma: no cover - runtime-only path
         print(f"error: {exc}", file=sys.stderr)
         return 2
 
-    if args.command == "send":
-        wording = args.wording_file.read_text(encoding="utf-8")
-        sent = send_approval_request(service, args.record, to_addr=args.to,
-                                     from_addr=args.from_addr, feature_title=args.title,
-                                     final_wording=wording, slug=args.slug)
-        print(f"sent: message {sent.get('id')} thread {sent.get('threadId')}")
-        return 0
-
-    result = poll_for_approval(service, args.record, thread_id=args.thread_id,
-                               member_email=args.member_email)
-    if result is None:
-        print("no reply from the member yet")
-        return 1
-    print(f"approved={result['approved']} from {result['reply_from']}")
-    return 0 if result["approved"] else 1
+    try:
+        return _dispatch(service, args)
+    except _DISPATCH_IO_ERRORS as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":
