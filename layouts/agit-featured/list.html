@@ -1,0 +1,36 @@
+{{- /* AGIT Featured section list (#46). Like layouts/portfolio/list.html, the
+       default _default/list.html is cross-cut-filtered for content/posts/ and
+       would emit "No posts yet" here, so this section sets `type: agit-featured`
+       in its _index.md to select this template. Iterates the section's own child
+       feature pages as portrait (4:5) photo cards grouped by year, newest first,
+       mirroring the blog category card wall (post-cards-grouped.html) but with a
+       portrait crop and a role line. */ -}}
+{{- define "main" -}}
+<h1>{{ .Title }}</h1>
+{{- with .Content }}<div>{{ . }}</div>{{- end -}}
+{{- $features := .Pages -}}
+{{- if eq (len $features) 0 -}}
+  <p class="empty-state">Features coming soon.</p>
+{{- else -}}
+  {{- range $features.GroupByDate "2006" -}}
+  <section class="year-group">
+    <h2>{{ .Key }}</h2>
+    <div class="cards">
+      {{- range .Pages -}}
+        {{- $title := .Title -}}
+        {{- $role := .Params.role -}}
+        {{- $date := .Date -}}
+        <a class="card card--portrait" href="{{ .RelPermalink }}">
+          {{- with partial "hero-pick.html" . -}}
+            <img src="{{ .RelPermalink }}" alt="{{ $title }}" loading="lazy">
+          {{- end -}}
+          <h3>{{ $title }}</h3>
+          {{- with $role }}<span class="role">{{ . }}</span>{{ end -}}
+          <span class="date">{{ $date.Format "2 Jan 2006" }}</span>
+        </a>
+      {{- end -}}
+    </div>
+  </section>
+  {{- end -}}
+{{- end -}}
+{{- end -}}

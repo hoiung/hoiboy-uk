@@ -134,7 +134,9 @@ strong, b { font-weight: 550; }
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 1.5rem; margin-top: 1rem; }
 .card { display: block; text-decoration: none; color: var(--fg); }
 .card img { width: 100%; aspect-ratio: 3/2; object-fit: cover; border-radius: 4px; margin-bottom: 0.5rem; }
+.card--portrait img { aspect-ratio: 4/5; }
 .card h3 { font-size: 1rem; font-weight: 550; margin: 0; }
+.card .role { display: block; font-size: 0.85rem; color: var(--fg); }
 .card .date { font-size: 0.8rem; color: var(--fg-muted); }
 
 /* GLightbox photo gallery: masonry columns, click-to-lightbox */
