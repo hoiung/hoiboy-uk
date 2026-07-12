@@ -67,6 +67,21 @@ AGIT banner art. The AGIT logo is vendored at `assets/images/agit-logo.png` (a
 downscaled, EXIF-clean copy of the Drive master; masked to a circle at render
 time). Same VT323 + IBM Plex Mono faces as the consulting cards.
 
+Design tokens (the full frozen spec, with the logo-size reasoning, lives in
+`docs/research/07_DESIGN_TOKENS.md` under "AGIT feature-image tokens"):
+
+| Token | Value |
+|---|---|
+| Navy (name / logo border) | `#0c1c2d` |
+| Orange (eyebrow / rule / divider) | `#da611c` |
+| Grey (role text) | `#4f5b64` |
+| Panel gradient (top to bottom) | `#b5dae7` to `#f9ebdf` |
+| Name font | VT323, up to 80px (auto-shrinks, floor 12px, max 2 lines) |
+| Role font | IBM Plex Mono, up to 28px |
+| Eyebrow font | IBM Plex Mono Bold, 18px, letter-spaced across the panel |
+| Logo watermark | circular, bottom-right: 92px on the share-card, 20% of width on the hero |
+| Share-card layout | 748px photo panel, 48px right-panel inset, 6px orange divider |
+
 Inputs (so the whole set can be regenerated after a design change, like `cards.tsv`):
 
 - `agit-features.tsv` — `slug <TAB> name <TAB> role` (role may be empty).
