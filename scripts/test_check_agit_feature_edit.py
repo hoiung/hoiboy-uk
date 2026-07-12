@@ -135,6 +135,19 @@ def test_diacritic_names_captured_whole():
     assert "Björk" in names           # not truncated to "Bj"
 
 
+def test_caseless_script_names_surfaced():
+    # CJK / Hangul / Kana have no upper/lower case, so an isupper() gate would make a
+    # real name in native script invisible to the named-person clearance gate.
+    sw = CFG.proper_noun_stopwords
+    assert "陳大文" in aec.extract_proper_nouns("My mentor 陳大文 believed in me.", sw)
+    assert "김민준" in aec.extract_proper_nouns("Thanks to 김민준 for the review.", sw)
+    # An added CJK name is flagged AND surfaced for clearance.
+    r = aec.check_edit("I want to thank my mentor for believing in me.",
+                       "I want to thank my mentor 陳大文 for believing in me.", CFG)
+    assert "added_proper_nouns" in _cats(r)
+    assert "陳大文" in r.named_persons
+
+
 def test_bare_month_word_is_not_a_date():
     # The modal "may" / verb "march" must not spuriously flag added_dates.
     r = aec.check_edit("It wasn't handled well.",
