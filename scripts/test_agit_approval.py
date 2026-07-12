@@ -132,6 +132,19 @@ def test_negated_negation_fails_safe_not_approved():
         "Please don't hold off, go ahead and publish it now!", AFFIRM, NEGATE) is False
 
 
+def test_refusal_with_filler_is_not_approval():
+    # A refusal that puts filler between the negation and the verb must NOT read as
+    # approval even though it contains the affirmative substring "approve this" /
+    # "publish it" (the dangerous direction: a genuine refusal wrongly cleared).
+    for refusal in ("I don't think you should approve this yet, let's talk first.",
+                    "I don't feel ready for you to publish it, sorry.",
+                    "I'm not sure I want you to publish it as-is, can we talk first?"):
+        assert aa.is_approval_reply(refusal, AFFIRM, NEGATE) is False, refusal
+    # A clean approval is unaffected.
+    assert aa.is_approval_reply("Approved, please publish it.", AFFIRM, NEGATE) is True
+    assert aa.is_approval_reply("Happy to publish.", AFFIRM, NEGATE) is True
+
+
 def test_compose_email_carries_exact_wording():
     msg = aa.compose_approval_email("m@example.com", "hoiboyuk@gmail.com",
                                     "Jane the Builder", "The EXACT story body.", "jane")
