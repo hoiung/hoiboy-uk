@@ -141,6 +141,18 @@ def evaluate_gate(check: dict, clearance: dict, approval: dict | None,
     else:
         checklist.append("[-] member emailed approval: not required for this record")
 
+    # Surface any member message sent AFTER the recorded decision. A follow-up can
+    # qualify or withdraw an approval ("can we swap the photo?"); the operator (the
+    # human backstop) must see it. Prominent, not a hard block -- a benign "thanks"
+    # should not wedge the gate, and the operator resolves a real concern by editing
+    # (which re-binds the wording hash and forces a fresh approval).
+    later = (approval or {}).get("later_replies") or []
+    if later:
+        checklist.append(
+            f"[!] member sent {len(later)} message(s) AFTER the recorded decision -- "
+            "READ these before publishing (a follow-up may qualify or withdraw it):")
+        checklist.extend(f"      - {str(r).strip()}" for r in later)
+
     return GateResult(ok=not blockers, blockers=blockers, checklist=checklist)
 
 
