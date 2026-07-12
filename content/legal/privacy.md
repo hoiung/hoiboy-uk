@@ -1,10 +1,10 @@
 ---
 title: Privacy Notice
 date: 2026-05-09
-lastmod: 2026-07-11
+lastmod: 2026-07-13
 description: Privacy Notice for HOIBOY AI LTD covering site personal data and consultancy engagements (including meeting recordings and AI-transcription).
 hideDate: true
-version: 1.1.0
+version: 1.2.0
 ---
 
 <!-- iamhoi-exempt -->
@@ -66,8 +66,8 @@ The Asians & Gingers in Tech community page has a "Get featured" form. If you ch
 
 - **Purpose**: to consider your story and, with your consent, publish it as part of a public feature series celebrating quiet, heads-down people in tech.
 - **Lawful basis**: explicit consent (UK GDPR Article 9(2)(a)). The form invites you to self-identify with a community defined partly by ethnicity, and a photo is an image of an identifiable person, so a submission can include special-category data. We only process it because you tick the consent box, and you can withdraw at any time by emailing `hello@hoiboy.uk`.
-- **How it is processed**: the photo is stored privately in Cloudflare R2 (not publicly reachable); the entry is emailed to us via Cloudflare; and spam protection uses Cloudflare Turnstile, which processes your IP address. These are listed on the [Sub-Processors](https://hoiboy.uk/legal/sub-processors/) page.
-- **Retention**: the photo you upload is stored privately in Cloudflare R2 and auto-expires 90 days after upload. The rest of your submission (name, email, role, superpowers, story) reaches us as an email; we keep that email only as long as we need it to consider and prepare the feature, and you can ask us to delete it at any time by emailing `hello@hoiboy.uk`. A published feature stays up until you ask us to take it down.
+- **How it is processed**: the photo is stored privately in Cloudflare R2 (not publicly reachable); the entry is emailed to us via Cloudflare; and spam protection uses Cloudflare Turnstile, which processes your IP address. Because we lightly edit submissions for form (not facts) before publishing, if your story is going to be featured we then email you the exact final wording via Google Gmail (`hoiboyuk@gmail.com`) and read your reply, so nothing is published without your emailed approval of the exact wording. These processors are listed on the [Sub-Processors](https://hoiboy.uk/legal/sub-processors/) page.
+- **Retention**: the photo you upload is stored privately in Cloudflare R2 and auto-expires 90 days after upload. Your submission (name, email, role, superpowers, story) reaches us as an email, which we keep while we consider and prepare the feature. Because we edit and republish submissions, for a feature we take forward we also keep a legal-evidence record: your original submission verbatim, the exact wording we published, and your emailed approval, so that if a published feature is ever challenged we can show what you sent, what we published, and that you approved it. We keep that record for the establishment, exercise or defence of legal claims (UK GDPR Article 17(3)(e)), which means it can survive an ordinary erasure request for as long as that basis applies; anything outside that record you can ask us to delete at any time by emailing `hello@hoiboy.uk`. A published feature stays up until you ask us to take it down.
 
 ## 5. Your data-subject rights
 
@@ -75,7 +75,7 @@ Under UK GDPR, you have the following rights:
 
 - **Article 15 right of access**: request a copy of the personal data we hold about you.
 - **Article 16 right to rectification**: request correction of inaccurate personal data.
-- **Article 17 right to erasure**: request deletion of your personal data. Where HMRC statutory retention applies (time-logs, invoices, VAT records), we sanitise-and-retain rather than fully delete; where it does not (recordings, transcripts, AI-summaries), we cryptographically erase.
+- **Article 17 right to erasure**: request deletion of your personal data. Where HMRC statutory retention applies (time-logs, invoices, VAT records), we sanitise-and-retain rather than fully delete; where it does not (recordings, transcripts, AI-summaries), we cryptographically erase. For a published community feature, the original submission, the published wording, and your approval are kept as a legal-evidence record under Article 17(3)(e) (defence of legal claims) for as long as that basis applies (see section 4).
 - **Article 18 right to restriction**: request that we restrict processing while we resolve a rectification or erasure dispute.
 - **Article 20 right to portability**: where applicable, request a copy of the data in a structured, commonly used, machine-readable format.
 - **Article 21 right to object** (handled standalone, NOT collapsed into erasure): object at any time to the recording-related processing under our Article 6(1)(f) Legitimate Interest basis. We cease processing forward; existing recordings stay under Legitimate Interest unless you also invoke Article 17.
