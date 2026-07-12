@@ -45,3 +45,40 @@ python3 scripts/social-cards/gen_card.py   # needs rsvg-convert (librsvg)
 ```
 
 Edit `cards.tsv` to change a title/tagline, then re-run and rebuild the site.
+
+## AGIT community feature images (`gen_agit_feature.py`)
+
+A sibling generator for the **Asians & Gingers in Tech** community features
+(`content/community/agit-featured/<slug>/`). Unlike the text-only consulting
+cards, each AGIT feature is **photo-driven** and gets a **pair** of images:
+
+- `hero.jpg` — portrait **4:5** (1080×1350) display photo + AGIT logo watermark,
+  EXIF-stripped. The on-page hero, the index-card image, and the person's
+  direct-to-social image.
+- `share-card.png` — branded landscape **1200×630** link-preview: the submitted
+  photo inset on the left, a powder-blue→cream gradient panel on the right with
+  the `ASIANS & GINGERS IN TECH` eyebrow, the person's name (VT323) and role
+  (IBM Plex Mono), and the AGIT logo watermark bottom-right. `head.html` prefers
+  `share-card.*` over the hero for `og:image`, so a portrait submission no longer
+  gets its head/legs sliced off in the link preview.
+
+Brand: AGIT navy `#0c1c2d` + orange `#da611c` on the gradient sampled from the
+AGIT banner art. The AGIT logo is vendored at `assets/images/agit-logo.png` (a
+downscaled, EXIF-clean copy of the Drive master; masked to a circle at render
+time). Same VT323 + IBM Plex Mono faces as the consulting cards.
+
+Inputs (so the whole set can be regenerated after a design change, like `cards.tsv`):
+
+- `agit-features.tsv` — `slug <TAB> name <TAB> role` (role may be empty).
+- `agit-sources/<slug>.<ext>` — the EXIF-clean **source** photo. These live here,
+  outside `content/`, so they are never published and never appear in the page's
+  photo-gallery (`single.html` galleries every bundle image except the hero and
+  `share-card.*`).
+
+```bash
+python3 scripts/social-cards/gen_agit_feature.py           # regenerate every feature
+python3 scripts/social-cards/gen_agit_feature.py <slug>    # regenerate one feature
+```
+
+The `/agit-featured` skill calls this at publish time. Re-run with no slug after a
+design tweak to rebuild every feature's pair, then rebuild the site.
