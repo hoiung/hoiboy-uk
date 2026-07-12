@@ -78,7 +78,15 @@ def _phrase_present(low_text: str, phrase: str) -> bool:
 
 
 def is_approval_reply(text: str, affirmative: list[str], negation: list[str]) -> bool:
-    """True iff the reply carries an affirmative phrase AND no negation phrase."""
+    """True iff the reply carries an affirmative phrase AND no negation phrase.
+
+    Deliberately conservative and fail-safe: negation always wins. A convoluted
+    approval that happens to contain a refusal word ("don't hold off, publish it")
+    is treated as NOT approved and blocked -- never wrongly published. The operator
+    confirms such edge phrasings by hand. This is the safe failure direction for a
+    legal publish gate: we would rather block a genuine approval than publish on a
+    misread one.
+    """
     low = text.lower()
     if any(_phrase_present(low, neg) for neg in negation):
         return False
