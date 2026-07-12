@@ -29,7 +29,9 @@ from __future__ import annotations
 
 import argparse
 import base64
+import hashlib
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from email.message import EmailMessage
@@ -61,12 +63,26 @@ def load_approval_phrases(config_path: Path = DEFAULT_CONFIG) -> tuple[list[str]
     return affirmative, negation
 
 
+def _phrase_present(low_text: str, phrase: str) -> bool:
+    """Whole-word match of a (possibly multi-word) phrase, punctuation-tolerant.
+
+    Word-boundary anchored so a phrase is not matched inside a larger word -- e.g.
+    the affirmative "approved" must NOT match "unapproved". Words are joined with
+    \\W+ so "yes, approve" and "yes approve" both match.
+    """
+    words = re.findall(r"\w+", phrase.lower())
+    if not words:
+        return False
+    pattern = r"\b" + r"\W+".join(re.escape(w) for w in words) + r"\b"
+    return re.search(pattern, low_text) is not None
+
+
 def is_approval_reply(text: str, affirmative: list[str], negation: list[str]) -> bool:
     """True iff the reply carries an affirmative phrase AND no negation phrase."""
     low = text.lower()
-    if any(neg in low for neg in negation):
+    if any(_phrase_present(low, neg) for neg in negation):
         return False
-    return any(aff in low for aff in affirmative)
+    return any(_phrase_present(low, aff) for aff in affirmative)
 
 
 def is_decisive_reply(text: str, affirmative: list[str], negation: list[str]) -> bool:
@@ -76,7 +92,8 @@ def is_decisive_reply(text: str, affirmative: list[str], negation: list[str]) ->
     earlier approval or refusal on the same thread.
     """
     low = text.lower()
-    return any(aff in low for aff in affirmative) or any(neg in low for neg in negation)
+    return (any(_phrase_present(low, aff) for aff in affirmative)
+            or any(_phrase_present(low, neg) for neg in negation))
 
 
 def compose_approval_email(to_addr: str, from_addr: str, feature_title: str,
@@ -110,14 +127,26 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def wording_sha256(text: str) -> str:
+    """Fingerprint of the exact wording sent for approval (binds approval to text)."""
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 def record_request(record_dir: Path, *, to_addr: str, message_id: str,
-                   thread_id: str, sent_at: str | None = None) -> Path:
-    """Persist the sent approval-request metadata into the record."""
+                   thread_id: str, wording_hash: str | None = None,
+                   sent_at: str | None = None) -> Path:
+    """Persist the sent approval-request metadata into the record.
+
+    Stores the fingerprint of the exact wording sent, so poll_for_approval can bind
+    the recorded approval to that wording and the publish gate can reject an approval
+    that was for a different (earlier) edit.
+    """
     record_dir.mkdir(parents=True, exist_ok=True)
     payload = {
         "to": to_addr,
         "message_id": message_id,
         "thread_id": thread_id,
+        "wording_sha256": wording_hash,
         "sent_at": sent_at or _now_iso(),
     }
     path = record_dir / REQUEST_FILE
@@ -128,8 +157,13 @@ def record_request(record_dir: Path, *, to_addr: str, message_id: str,
 
 def record_approval(record_dir: Path, *, approved: bool, reply_text: str,
                     reply_from: str, message_id: str, thread_id: str,
+                    wording_hash: str | None = None,
                     replied_at: str | None = None) -> Path:
-    """Persist the member's approval decision into the record (approval.json)."""
+    """Persist the member's approval decision into the record (approval.json).
+
+    Carries the wording fingerprint forward from the request so the publish gate can
+    verify the approval was for the exact wording of the current edit.
+    """
     record_dir.mkdir(parents=True, exist_ok=True)
     payload = {
         "approved": bool(approved),
@@ -137,6 +171,7 @@ def record_approval(record_dir: Path, *, approved: bool, reply_text: str,
         "reply_text": reply_text,
         "message_id": message_id,
         "thread_id": thread_id,
+        "wording_sha256": wording_hash,
         "replied_at": replied_at or _now_iso(),
     }
     path = record_dir / APPROVAL_FILE
@@ -173,7 +208,8 @@ def send_approval_request(service, record_dir: Path, *, to_addr: str,
     msg = compose_approval_email(to_addr, from_addr, feature_title, final_wording, slug)
     sent = service.users().messages().send(userId="me", body=gmail_raw(msg)).execute()
     record_request(record_dir, to_addr=to_addr,
-                   message_id=sent.get("id", ""), thread_id=sent.get("threadId", ""))
+                   message_id=sent.get("id", ""), thread_id=sent.get("threadId", ""),
+                   wording_hash=wording_sha256(final_wording))
     return sent
 
 
@@ -218,9 +254,14 @@ def poll_for_approval(service, record_dir: Path, *, thread_id: str,
 
     body, sender, message_id = chosen
     approved = is_approval_reply(body, affirmative, negation)
+    request_path = record_dir / REQUEST_FILE
+    wording_hash = None
+    if request_path.is_file():
+        wording_hash = json.loads(
+            request_path.read_text(encoding="utf-8")).get("wording_sha256")
     path = record_approval(record_dir, approved=approved, reply_text=body,
                            reply_from=sender, message_id=message_id,
-                           thread_id=thread_id)
+                           thread_id=thread_id, wording_hash=wording_hash)
     return json.loads(path.read_text(encoding="utf-8"))
 
 
