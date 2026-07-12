@@ -114,6 +114,40 @@ def test_named_persons_surfaced_on_result():
     assert "Wei" in r.named_persons
 
 
+def test_name_colliding_with_english_word_is_surfaced():
+    # "So" and "An" are real given names/surnames -- they must NOT be silently
+    # dropped as stop-words (would bypass the named-person clearance gate).
+    assert "So" in aec.extract_proper_nouns("My colleague So helped me debug.",
+                                            CFG.proper_noun_stopwords)
+    r = aec.check_edit("My friend helped me that year.",
+                       "My friend An helped me that year.", CFG)
+    assert "An" in r.named_persons
+    assert "added_proper_nouns" in _cats(r)  # the added name is flagged too
+
+
+def test_diacritic_names_captured_whole():
+    names = aec.extract_proper_nouns(
+        "Nguyễn Văn An mentored me. Trần Thị Hoa and Björk too.",
+        CFG.proper_noun_stopwords)
+    assert "Nguyễn Văn An" in names   # not truncated to "Nguy"
+    assert "Trần Thị Hoa" in names
+    assert "Björk" in names           # not truncated to "Bj"
+
+
+def test_bare_month_word_is_not_a_date():
+    # The modal "may" / verb "march" must not spuriously flag added_dates.
+    r = aec.check_edit("It wasn't handled well.",
+                       "It may not have been handled well.", CFG)
+    assert "added_dates" not in _cats(r)
+
+
+def test_real_month_year_still_flagged():
+    r = aec.check_edit("I joined the team.", "I joined the team in May 2019.", CFG)
+    assert "added_dates" in _cats(r)
+    dates = next(f for f in r.flags if f.category == "added_dates")
+    assert any("May 2019" in item for item in dates.items)  # captured the full year
+
+
 # --------------------------------------------------------------------- CLI layer
 
 def _write(tmp_path: Path, name: str, body: str) -> Path:
