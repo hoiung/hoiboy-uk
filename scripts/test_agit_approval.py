@@ -191,6 +191,68 @@ def test_poll_returns_none_when_no_member_reply(tmp_path):
                                 member_email="m@example.com") is None
 
 
+# ------------------------------------- multi-reply threads (latest decision wins)
+# A member may reply more than once on the same approval thread. poll_for_approval
+# must record the LATEST decision, never a stale first reply.
+
+def test_poll_hedge_then_approval_records_approval(tmp_path):
+    # The reported bug: a hedge first, the real approval second. Must be approved.
+    thread = {"messages": [
+        _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
+        _gmail_message("in1", "m@example.com", "Hold off for a sec, let me reread this."),
+        _gmail_message("in2", "m@example.com", "OK reread it. Approved, please publish it."),
+    ]}
+    svc = FakeService(thread=thread)
+    result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
+                                  member_email="m@example.com")
+    assert result is not None and result["approved"] is True
+    assert "publish it" in result["reply_text"].lower()  # recorded the real approval
+
+
+def test_poll_approval_then_thankyou_stays_approved(tmp_path):
+    # Non-decisive chatter after an approval must NOT undo the approval.
+    thread = {"messages": [
+        _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
+        _gmail_message("in1", "m@example.com", "Approved, please publish it."),
+        _gmail_message("in2", "m@example.com", "Thanks so much, really appreciate it!"),
+    ]}
+    svc = FakeService(thread=thread)
+    result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
+                                  member_email="m@example.com")
+    assert result is not None and result["approved"] is True
+
+
+def test_poll_approval_then_retraction_blocks(tmp_path):
+    # A later retraction supersedes an earlier approval -- fail-safe.
+    thread = {"messages": [
+        _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
+        _gmail_message("in1", "m@example.com", "Approved, publish it."),
+        _gmail_message("in2", "m@example.com", "Actually hold off, I want one change."),
+    ]}
+    svc = FakeService(thread=thread)
+    result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
+                                  member_email="m@example.com")
+    assert result is not None and result["approved"] is False
+
+
+def test_poll_non_decisive_reply_records_not_approved(tmp_path):
+    # A reply that neither approves nor refuses is recorded as not-approved.
+    thread = {"messages": [
+        _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
+        _gmail_message("in1", "m@example.com", "Give me a day to think about it."),
+    ]}
+    svc = FakeService(thread=thread)
+    result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
+                                  member_email="m@example.com")
+    assert result is not None and result["approved"] is False
+
+
+def test_is_decisive_reply_distinguishes_chatter():
+    assert aa.is_decisive_reply("Approved, publish it", AFFIRM, NEGATE) is True
+    assert aa.is_decisive_reply("Please hold off", AFFIRM, NEGATE) is True
+    assert aa.is_decisive_reply("Thanks, got it!", AFFIRM, NEGATE) is False
+
+
 if __name__ == "__main__":
     import subprocess
     sys.exit(subprocess.call([sys.executable, "-m", "pytest", __file__, "-q"]))
