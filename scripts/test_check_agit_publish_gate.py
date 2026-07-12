@@ -217,6 +217,22 @@ def test_later_replies_surfaced_in_checklist(tmp_path):
     assert any("swap the photo" in c for c in result.checklist)
 
 
+def test_approval_reply_text_surfaced_in_checklist(tmp_path):
+    # The gate echoes the decisive reply verbatim so the operator sees the exact
+    # wording that produced approved:true -- the human backstop for a nuanced reply.
+    rec = _sha_record(tmp_path, "HASH")
+    (rec / "clearance.json").write_text(json.dumps(
+        {"edited_sha256": "HASH", "flags_cleared": True, "named_persons": {}}),
+        encoding="utf-8")
+    (rec / "approval.json").write_text(json.dumps(
+        {"approved": True, "wording_sha256": "HASH",
+         "reply_text": "Approved, please publish it."}), encoding="utf-8")
+    result = apg.run_gate(rec)
+    assert result.ok is True
+    assert any("approval reply" in c.lower() and "publish it" in c.lower()
+               for c in result.checklist)
+
+
 # -------------------------------------------------------------------- CLI layer
 
 def _run(rec: Path, *extra):
@@ -243,6 +259,51 @@ def test_cli_exit_0_when_cleared(tmp_path):
 def test_cli_exit_2_on_missing_record(tmp_path):
     res = _run(tmp_path / "nope")
     assert res.returncode == 2
+
+
+def test_cli_exit_2_on_unwritable_record(tmp_path):
+    # A first-run clearance-template write that fails (PermissionError) is a usage/IO
+    # error (exit 2), NOT a normal BLOCKED result (exit 1) -- an operator or script
+    # relying on the exit code must be able to tell a broken record store apart.
+    import os
+    import pytest
+    if hasattr(os, "geteuid") and os.geteuid() == 0:
+        pytest.skip("root ignores chmod write bits")
+    rec = _record(tmp_path, ["Sarah"], clean=True)  # no clearance -> tries to write template
+    os.chmod(rec, 0o500)  # read + execute, no write
+    try:
+        res = _run(rec)
+        assert res.returncode == 2
+        assert "error" in res.stderr.lower()
+    finally:
+        os.chmod(rec, 0o700)
+
+
+def test_allow_unapproved_writes_bypass_receipt_and_warns(tmp_path):
+    # --allow-unapproved is never silent: it warns on stderr, marks the checklist,
+    # and writes an audit receipt when it actually bypassed the approval requirement.
+    rec = _record(tmp_path, ["Sarah"], clean=True)
+    _clearance(rec, flags_cleared=True,
+               persons={"Sarah": {"status": "anonymised", "note": ""}})
+    res = _run(rec, "--allow-unapproved")
+    assert res.returncode == 0
+    assert "CLEARED" in res.stdout
+    assert "BYPASS" in res.stdout.upper()          # loud checklist marker
+    assert "warning" in res.stderr.lower()          # loud stderr warning
+    assert (rec / "approval_bypass.json").is_file()  # audit receipt
+    receipt = json.loads((rec / "approval_bypass.json").read_text(encoding="utf-8"))
+    assert receipt["approval_bypassed"] is True
+
+
+def test_allow_unapproved_no_receipt_when_approval_present(tmp_path):
+    # If a member approval IS on file, --allow-unapproved changed nothing: no receipt.
+    rec = _record(tmp_path, ["Sarah"], clean=True)
+    _clearance(rec, flags_cleared=True,
+               persons={"Sarah": {"status": "anonymised", "note": ""}})
+    _approval(rec, approved=True)
+    res = _run(rec, "--allow-unapproved")
+    assert res.returncode == 0
+    assert not (rec / "approval_bypass.json").is_file()
 
 
 def test_cli_json_output(tmp_path):
