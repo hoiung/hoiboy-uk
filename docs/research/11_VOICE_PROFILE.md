@@ -112,6 +112,7 @@ When in doubt, cut. Hoi can add a real detail back in seconds. Debugging a fabri
 - **Parenthetical asides everywhere**: "(MANY)", "(I've seen my videos)", "(without bragging too much)", "(hehe)".
 - **Rhetorical question stacks**: 2-3 questions in a row. "?!" combo when frustrated.
 - **Single-word verdict fragments**: "Yum.", "Worth it.", "Too cool.", "Kaput!"
+- **Signature motto**: *This is the Way* (his Mandalorian sign-off). The ONLY correct rendering is exact case (capital T, capital W) and italic: `*This is the Way*`. Every other form is wrong: "this is the way", "that is the way", "This is the way", "this is the Way", or the correct words without italics. It only applies as the motto closing a clause; ordinary usage ("the way it works", "the way I think about it") is left alone.
 
 ## Anti-vocabulary (BANNED, zero Hoi usage, all AI tells)
 

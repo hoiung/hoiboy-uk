@@ -60,6 +60,8 @@ from voice_rules import (
     MARKER_SKIP_CLOSE_HTML,
     MARKER_SKIP_OPEN_HASH,
     MARKER_SKIP_OPEN_HTML,
+    MOTTO_PATTERN,
+    motto_is_correct,
     NEGATION_PATTERN,
     NUMBER_TOKEN_PATTERN,
     NUMERIC_DENSITY_MIN_NUMBERS,
@@ -361,6 +363,13 @@ def _check_lines(
             findings.append(
                 Finding(file, ln, "NEGATION_FRAME", line.strip()[:100])
             )
+        for m in MOTTO_PATTERN.finditer(line):
+            if not motto_is_correct(m.group(1), m.group(2), m.group(3)):
+                findings.append(Finding(
+                    file, ln, "MOTTO_FORMAT",
+                    f'"{m.group(0)}" -> must be *This is the Way* '
+                    f'(exact case, italic): {line.strip()[:80]}'
+                ))
     return findings
 
 

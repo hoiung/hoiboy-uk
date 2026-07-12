@@ -231,6 +231,45 @@ NEGATION_PATTERN: re.Pattern[str] = re.compile(
     re.IGNORECASE,
 )
 
+# ---------------------------------------------------------------------------
+# Signature motto — "This is the Way" (operator-directed, 2026-07-12)
+# ---------------------------------------------------------------------------
+# The operator's signature Mandalorian motto. The ONE correct rendering is the
+# exact-case, italic *This is the Way* (capital T, capital W). Every other form
+# is a violation the guard flags: wrong case ("this is the way", "This is the
+# way", "this is the Way"), the "that" variant ("that is the way"), or the right
+# words without italics ("This is the Way").
+#
+# Fires ONLY in motto position — the phrase closing a clause (followed by
+# sentence/clause punctuation or end-of-line). Ordinary speech never trips it,
+# because it is never the literal 4-word phrase "this/that is the way" AT a
+# clause boundary:
+#   "the way it overrides"        -> "is the way" + a word, not "this/that is the way"
+#   "Here is the way I think"     -> "Here is the way", not "this/that is the way"
+#   "the rubric is the way it is" -> "is the way it is", trailing words
+#   "this is the way to build X"  -> followed by "to ...", not a clause end
+# The explicit this|that prefix + the clause-end lookahead keep the rule from
+# false-positiving on natural language (which would otherwise break commits in
+# the vendored consumer repos: hoiboy-uk / job-hunter / blog-priv).
+MOTTO_CANONICAL: str = "This is the Way"
+# group(1)=leading italic marker, group(2)=the phrase (any case), group(3)=trailing
+# italic marker; the lookahead requires a clause boundary right after the phrase.
+MOTTO_PATTERN: re.Pattern[str] = re.compile(
+    r"(?<![A-Za-z0-9])([*_]?)((?:this|that) is the way)([*_]?)(?![A-Za-z0-9])"
+    r"(?=\s*(?:[.,!?;:)\]]|$))",
+    re.IGNORECASE,
+)
+
+
+def motto_is_correct(open_marker: str, phrase: str, close_marker: str) -> bool:
+    """True iff a MOTTO_PATTERN match is the ONE allowed form: the exact-case
+    phrase 'This is the Way' wrapped in a matching italic marker (*...* or _..._)."""
+    return (
+        phrase == MOTTO_CANONICAL
+        and open_marker in ("*", "_")
+        and open_marker == close_marker
+    )
+
 # Bold-first bullet thresholds. CV documents legitimately use bold-first
 # bullets in Core Competencies sections; non-CV docs should not.
 BOLD_BULLET_THRESHOLD_CV: int = 20
@@ -368,6 +407,7 @@ __all__ = [
     "KEEP_LIST", "BANNED_WORDS", "BANNED_PHRASES",
     "BANNED_WORDS_PATTERN", "BANNED_PHRASES_PATTERN",
     "BOLD_BULLET_PATTERN", "NEGATION_PATTERN", "FRONTMATTER_DATE_PATTERN",
+    "MOTTO_CANONICAL", "MOTTO_PATTERN", "motto_is_correct",
     "BOLD_BULLET_THRESHOLD_CV", "BOLD_BULLET_THRESHOLD_DEFAULT",
     # Structural AI-tell detectors (dotfiles#517 Phase E)
     "HTML_TAG_PATTERN", "URL_PATTERN", "MD_LINK_TARGET_PATTERN", "LIST_LINE_PATTERN",
