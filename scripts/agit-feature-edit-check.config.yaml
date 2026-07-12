@@ -94,3 +94,40 @@ thresholds:
   # Flag when the edited word count differs from the original by more than this
   # percentage (a large cut or expansion is a form-vs-facts risk worth a look).
   length_delta_pct: 40
+
+# Phase 4 email-approval reply detection (scripts/agit_approval.py). A member's
+# reply approves the exact final wording ONLY if it contains an affirmative
+# phrase AND no negation phrase. Fail-safe: anything ambiguous is NOT approval,
+# so no approval means no publish. Matched case-insensitively as substrings.
+approval:
+  affirmative_phrases:
+    - "approved"
+    - "i approve"
+    - "approve it"
+    - "approve this"
+    - "approve to publish"
+    - "yes approve"
+    - "yes, approve"
+    - "yes publish"
+    - "yes, publish"
+    - "happy to publish"
+    - "happy for you to publish"
+    - "go ahead and publish"
+    - "you can publish"
+    - "publish it"
+  negation_phrases:
+    - "not approved"
+    - "not approve"
+    - "don't approve"
+    - "do not approve"
+    - "cannot approve"
+    - "can't approve"
+    - "won't approve"
+    - "not happy"
+    - "hold off"
+    - "not yet"
+    - "don't publish"
+    - "do not publish"
+    - "please wait"
+    - "some changes"
+    - "one change"
