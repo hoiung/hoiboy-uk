@@ -1,0 +1,96 @@
+# Configuration for scripts/check-agit-feature-edit.py (hoiboy-uk #48 Phase 2).
+#
+# ALL word lists and thresholds live here, never hardcoded in the script
+# (Engineering Requirement: No Hardcoded Settings). Edit this file to tune the
+# edit-check without touching code.
+#
+# The check FLAGS candidates for a human editor to clear. It does NOT decide
+# "meaning changed". Bias the lists toward catching tells, not toward silence.
+
+# Hedge phrases. When one of these is present in the ORIGINAL but gone from the
+# EDITED version, a subjective statement may have been sharpened into an
+# assertion of fact (the core defamation-safety tell). Matched case-insensitively
+# on word boundaries; multi-word phrases are matched as a whole.
+hedge_phrases:
+  - "I felt"
+  - "I feel"
+  - "I think"
+  - "I thought"
+  - "I believe"
+  - "I reckon"
+  - "I guess"
+  - "I suppose"
+  - "in my experience"
+  - "in my opinion"
+  - "as far as I know"
+  - "as I remember it"
+  - "to my knowledge"
+  - "allegedly"
+  - "apparently"
+  - "seemingly"
+  - "probably"
+  - "perhaps"
+  - "maybe"
+  - "sort of"
+  - "kind of"
+
+# Punctuation that must NEVER appear in an edited feature. Em-dash removal is the
+# one always-applied transform (CI hard-fails these site-wide), so any still
+# present in the EDITED text is a flag. Stored as ASCII hex codepoints so no
+# literal dash byte lands in this tracked file (the em-dash zero-tolerance guard);
+# the script maps each codepoint to its character at load time.
+banned_punctuation_codepoints:
+  - 0x2014  # em dash
+  - 0x2013  # en dash
+  - 0x2012  # figure dash
+  - 0x2212  # minus sign
+  - 0x2015  # horizontal bar
+
+# Capitalised tokens that are NOT names/places, so a recapitalised sentence
+# start (or a common word) is not mistaken for an added proper noun. The check
+# ALSO ignores any token whose lower-case form already appeared anywhere in the
+# original, so this list only needs the genuinely-common capitalised words.
+proper_noun_stopwords:
+  - "I"
+  - "A"
+  - "An"
+  - "The"
+  - "This"
+  - "That"
+  - "These"
+  - "Those"
+  - "We"
+  - "You"
+  - "They"
+  - "He"
+  - "She"
+  - "It"
+  - "My"
+  - "Our"
+  - "Your"
+  - "Their"
+  - "And"
+  - "But"
+  - "Or"
+  - "So"
+  - "If"
+  - "When"
+  - "While"
+  - "Because"
+  - "After"
+  - "Before"
+  - "Then"
+  - "There"
+  - "Here"
+  - "What"
+  - "Why"
+  - "How"
+  - "Yes"
+  - "No"
+  - "OK"
+
+# Thresholds.
+thresholds:
+  # Flag when the edited word count differs from the original by more than this
+  # percentage (a large cut or expansion is a form-vs-facts risk worth a look).
+  length_delta_pct: 40
