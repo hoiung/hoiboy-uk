@@ -96,17 +96,20 @@ def _clear_names_and_flags(record: Path) -> None:
         encoding="utf-8")
 
 
-def _deliver_reply(record: Path, reply_text: str) -> dict:
-    """Simulate the member replying, then run the REAL approval detection.
+def _deliver_reply(record: Path, *reply_texts: str) -> dict:
+    """Simulate the member replying (once or several times), then run the REAL
+    approval detection.
 
-    The fake Gmail thread carries our outgoing wording plus the member's reply;
-    agit_approval.poll_for_approval reads it and writes the real approval.json the
-    gate consumes. Only the transport is faked (operator-runtime OAuth boundary).
+    The fake Gmail thread carries our outgoing wording plus every member reply, in
+    order; agit_approval.poll_for_approval reads it and writes the real
+    approval.json the gate consumes (recording the member's LATEST decision). Only
+    the transport is faked (operator-runtime OAuth boundary).
     """
-    thread = {"messages": [
-        _gmail_message("out-1", FROM_ADDR, "Here is the exact wording, please reply to approve."),
-        _gmail_message("reply-1", MEMBER_EMAIL, reply_text),
-    ]}
+    messages = [_gmail_message("out-1", FROM_ADDR,
+                               "Here is the exact wording, please reply to approve.")]
+    for i, text in enumerate(reply_texts):
+        messages.append(_gmail_message(f"reply-{i}", MEMBER_EMAIL, text))
+    thread = {"messages": messages}
     svc = FakeService(send_result={"id": "out-1", "threadId": "thread-1"}, thread=thread)
     aa.send_approval_request(svc, record, to_addr=MEMBER_EMAIL, from_addr=FROM_ADDR,
                              feature_title="AGIT feature", final_wording="the exact wording",
@@ -168,6 +171,32 @@ def test_sample_clean_approved_publishes(tmp_path):
 
     # The original is retained verbatim as the legal record.
     assert (record / "original.txt").read_text(encoding="utf-8") == CLEAN_ORIGINAL
+
+
+def test_sample_hedge_then_approved_publishes(tmp_path):
+    """Member hedges first, then approves on the same thread -> still publishes.
+
+    Full-pipeline coverage of the multi-reply approval path: the latest decisive
+    reply wins, so a stale first hedge must not block a feature the member did
+    approve.
+    """
+    record_dir = tmp_path / "records"
+    slug = "hedge-then-approved"
+    res = _edit_check(tmp_path, slug, CLEAN_ORIGINAL, CLEAN_EDITED, record_dir)
+    assert res.returncode == 0, res.stdout + res.stderr
+    record = record_dir / slug
+
+    _gate(record)  # writes the clearance template
+    _clear_names_and_flags(record)
+    approval = _deliver_reply(
+        record,
+        "Hold off for a sec, let me reread this properly.",
+        "OK I've reread it. Approved, please publish it.")
+    assert approval["approved"] is True
+
+    final = _gate(record)
+    assert final.returncode == 0, final.stdout + final.stderr
+    assert "CLEARED" in final.stdout
 
 
 def test_sample_clean_declined_blocked(tmp_path):
