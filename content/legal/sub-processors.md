@@ -1,10 +1,10 @@
 ---
 title: Sub-processors
 date: 2026-05-09
-lastmod: 2026-07-11
+lastmod: 2026-07-13
 description: HOIBOY AI LTD sub-processor list (AI Managed Harness Services) - vendor names, services, data categories, locations, transfer mechanisms, DPA references.
 hideDate: true
-version: 1.1.0
+version: 1.2.0
 ---
 
 <!-- iamhoi-exempt -->
@@ -42,7 +42,7 @@ When this page updates, affected Clients on active engagements receive an email 
 
 ## Community submission form (public site feature)
 
-This section is **separate from the consultancy sub-processor list above**. The Asians & Gingers in Tech "Get featured" form is a public site feature, not part of any client engagement, MSA, SOW, or the DPA Annex, so it carries its own disclosure and is not subject to the client change-notification mechanism above. All three services below are **Cloudflare** (already the site's infrastructure provider), so the form adds no new third-party vendor.
+This section is **separate from the consultancy sub-processor list above**. The Asians & Gingers in Tech "Get featured" form is a public site feature, not part of any client engagement, MSA, SOW, or the DPA Annex, so it carries its own disclosure and is not subject to the client change-notification mechanism above. Intake (photo storage, spam protection, delivery) uses **Cloudflare**, already the site's infrastructure provider. The approval step, where we email the submitter the exact final wording of their feature and read their reply because nothing is published without their emailed approval, uses **Google** (the Gmail API on `hoiboyuk@gmail.com`); Google is a distinct processor of the submitter's data and is listed below.
 
 <div class="sub-processor-table">
 
@@ -51,10 +51,11 @@ This section is **separate from the consultancy sub-processor list above**. The 
 | **Cloudflare R2** | Private object storage for submitted photos | The uploaded photo (private bucket, not publicly reachable) | Auto-expires 90 days after upload |
 | **Cloudflare Turnstile** | Bot / spam protection on the form | Visitor IP address + a challenge token (verified server-side) | Transient (verification only) |
 | **Cloudflare email** (Email Routing + native send) | Delivers the submission to `hello@hoiboy.uk` | The submitted form fields + photo, as an email | Per inbox retention |
+| **Google Gmail** (Google LLC, `hoiboyuk@gmail.com`; Gmail API, least-privilege `gmail.send` + `gmail.readonly` scopes) | Emails the submitter the exact final wording of their feature for approval and reads their reply (the "no publish without your emailed approval" step) | The submitter's email address, the final feature wording (their story), and their approval reply | Kept as part of the feature's legal-evidence record (see the [Privacy Notice](https://hoiboy.uk/legal/privacy/) retention section) |
 
 </div>
 
-Cloudflare's DPA, processing location (US primary, global edge), and UK-to-US transfer mechanism are the same as the Cloudflare row in the consultancy table above.
+Cloudflare's DPA, processing location (US primary, global edge), and UK-to-US transfer mechanism are the same as the Cloudflare row in the consultancy table above. Google's DPA, processing location (US), and UK-to-US transfer mechanism (DPF + UK Extension; SCCs + UK IDTA fallback) are the same as the Google row in the consultancy table above.
 
 ## Cross-references
 
