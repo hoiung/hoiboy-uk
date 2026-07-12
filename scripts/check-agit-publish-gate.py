@@ -29,11 +29,13 @@ import argparse
 import json
 import sys
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 
 CLEARANCE_FILE = "clearance.json"
 CHECK_FILE = "check.json"
 APPROVAL_FILE = "approval.json"
+BYPASS_RECEIPT_FILE = "approval_bypass.json"
 VALID_STATUSES = ("permissioned", "anonymised")
 
 
@@ -133,13 +135,24 @@ def evaluate_gate(check: dict, clearance: dict, approval: dict | None,
             checklist.append("[ ] member emailed approval: for a different wording (stale)")
         else:
             checklist.append("[x] member emailed approval on file")
+            # Surface the exact decisive reply verbatim. The approval detector is a
+            # conservative first-pass heuristic; a nuanced or CONDITIONAL reply ("I
+            # approve, as long as you cut the last line") can carry an affirmative
+            # word, so the operator MUST read the actual wording that produced this
+            # "approved" -- the human backstop, not just the machine verdict.
+            reply = (approval.get("reply_text") or "").strip()
+            if reply:
+                checklist.append(f'      approval reply (READ before publishing): "{reply}"')
     elif require_approval:
         blockers.append(
             "member emailed approval not on file: send the exact final wording and "
             "record their approval (agit_approval.py send + poll). No approval, no publish")
         checklist.append("[ ] member emailed approval: not on file")
     else:
-        checklist.append("[-] member emailed approval: not required for this record")
+        checklist.append(
+            "[!] APPROVAL REQUIREMENT BYPASSED (--allow-unapproved): the member's "
+            "emailed approval was NOT required for this record. Use this ONLY for "
+            "Hoi's own feature -- NEVER for a member's story.")
 
     # Surface any member message sent AFTER the recorded decision. A follow-up can
     # qualify or withdraw an approval ("can we swap the photo?"); the operator (the
@@ -198,15 +211,43 @@ def format_report(record: Path, result: GateResult) -> str:
     return "\n".join(lines)
 
 
+def write_bypass_receipt(record: Path) -> Path | None:
+    """Record that --allow-unapproved was used, for the audit trail.
+
+    Only writes when NO member approval is on file, i.e. the flag actually bypassed
+    the hard gate (if an approval exists the flag had no effect). The receipt is a
+    non-PII marker (edited_sha256 + timestamp), so the bypass is never silent or
+    untraceable. Returns the receipt path, or None if the flag had no effect.
+    """
+    if (record / APPROVAL_FILE).is_file():
+        return None  # an approval exists; --allow-unapproved changed nothing
+    try:
+        check = load_check(record)
+    except (OSError, ValueError):
+        check = {}
+    payload = {
+        "approval_bypassed": True,
+        "edited_sha256": check.get("edited_sha256"),
+        "bypassed_at": datetime.now(timezone.utc).isoformat(),
+        "note": "member emailed approval was NOT required (--allow-unapproved). "
+                "Intended for Hoi's own feature only, never a member's story.",
+    }
+    path = record / BYPASS_RECEIPT_FILE
+    path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+                    encoding="utf-8")
+    return path
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Hard publish gate for AGIT member features.")
     parser.add_argument("--record", required=True, type=Path,
                         help="Per-submission evidence record dir (from the edit-check).")
     parser.add_argument("--allow-unapproved", action="store_true",
-                        help="Do NOT require the member's emailed approval (edge cases "
-                             "only, e.g. Hoi's own feature). Off by default: the hard "
-                             "gate requires approval on file.")
+                        help="Do NOT require the member's emailed approval. Edge cases "
+                             "ONLY, e.g. Hoi's OWN feature -- NEVER a member's story. "
+                             "Off by default: the hard gate requires approval on file. "
+                             "Prints a loud warning and writes an audit receipt when used.")
     parser.add_argument("--json", action="store_true",
                         help="Emit the gate result as JSON.")
     args = parser.parse_args(argv)
@@ -217,9 +258,24 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         result = run_gate(args.record, require_approval=not args.allow_unapproved)
-    except (FileNotFoundError, ValueError, json.JSONDecodeError) as exc:
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        # OSError covers FileNotFoundError AND PermissionError/disk-full from the
+        # first-run clearance-template write -- an IO failure is exit 2, never exit 1
+        # (which the gate uses for a normal BLOCKED result).
         print(f"error: {exc}", file=sys.stderr)
         return 2
+
+    if args.allow_unapproved:
+        print("warning: --allow-unapproved bypasses the member-approval hard gate; "
+              "use ONLY for Hoi's own feature, never a member's story.", file=sys.stderr)
+        try:
+            receipt = write_bypass_receipt(args.record)
+            if receipt is not None:
+                print(f"warning: recorded approval-bypass audit receipt at {receipt}",
+                      file=sys.stderr)
+        except OSError as exc:
+            print(f"warning: could not write approval-bypass audit receipt: {exc}",
+                  file=sys.stderr)
 
     if args.json:
         print(json.dumps({
