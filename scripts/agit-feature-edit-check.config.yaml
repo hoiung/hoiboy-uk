@@ -90,7 +90,6 @@ proper_noun_stopwords:
   - "Why"
   - "How"
   - "Yes"
-  - "No"
   - "OK"
 
 # Thresholds.
@@ -120,6 +119,7 @@ approval:
     - "you can publish"
     - "publish it"
   negation_phrases:
+    - "unapproved"
     - "not approved"
     - "not approve"
     - "don't approve"
