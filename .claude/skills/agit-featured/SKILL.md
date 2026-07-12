@@ -81,13 +81,23 @@ Create a leaf bundle `content/community/agit-featured/<slug>/`:
 
 The card look is defined by `scripts/social-cards/gen_agit_feature.py` and documented in `docs/research/07_DESIGN_TOKENS.md` (section "AGIT feature-image tokens"). In short: name in **VT323** up to 80px, role in **IBM Plex Mono** up to 28px, eyebrow 18px; navy `#0c1c2d`, orange `#da611c`, grey `#4f5b64`, panel gradient `#b5dae7` to `#f9ebdf`; circular AGIT logo watermark bottom-right (92px on the share-card, 20% of width on the hero). `hero.jpg` is portrait 4:5 (1080x1350), `share-card.png` is landscape 1200x630. To tweak sizing or fonts, edit those constants and regenerate the pair; never hand-edit the images.
 
-## The three outputs
+## The outputs
 
-Give Hoi all three:
+Two things ship with each feature:
 
-1. **The feature page** (published as above). The traffic driver.
-2. **A short social version**: a tight, punchy cut of the story in Hoi's voice, short enough to paste directly into a LinkedIn / Instagram / TikTok post body (aim ~100 to 150 words; no links in the body). This is what he posts.
-3. **The canonical link** `https://hoiboy.uk/community/agit-featured/<slug>/`, for Hoi to drop as the **first comment** on the social post and to quote as the source, so the in-body-link penalty (LinkedIn) is avoided while still driving traffic to the site.
+1. **The feature page** (published as above), at `https://hoiboy.uk/community/agit-featured/<slug>/`. The canonical home of the story.
+2. **An instructional `social.md`** in the same bundle (`content/community/agit-featured/<slug>/social.md`) - the paste-ready social copy. It is a Hugo bundle **resource** (a leaf bundle only renders `index.md`), so it does NOT publish as a page: it is the private cheat-sheet for posting. Confirm it never lands in `public/` after a build.
+
+### social.md - the social posts (native-first)
+
+Social platforms downrank posts with an outbound link in the body, and for a community series, shareability beats driving clicks to hoiboy.uk (that traffic comes on its own). So both posts go **native**, with the source link in the **first comment**, not the body.
+
+Write two posts into `social.md`, paste-ready:
+
+1. **Full story + hashtags** - the person posts their full feature story natively: Facebook, or a LinkedIn **Article** (the LinkedIn feed hard-caps at ~3,000 chars / ~500 words, so a full story there is an Article, not a feed post). social.md supplies the hashtag set to append and the `Source:` first comment; it does NOT reproduce the story (the feature page is the single source, so it cannot drift).
+2. **280-char X summary** - a tight cut that fits inside X's 280-char limit **including** its hashtags, plus the `Source:` first comment.
+
+Hashtag core set: `#AsiansInTech #GingersInTech #AGIT`, plus per-person tags (role / domain, e.g. `#DataCentre #Automation`). The feature link (`https://hoiboy.uk/community/agit-featured/<slug>/`) is the `Source:` in the first comment of every post; never in the post body.
 
 ## Deploy
 
