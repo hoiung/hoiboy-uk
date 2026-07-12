@@ -164,6 +164,9 @@ jobs:
       - name: AGIT email-approval unit tests
         run: python3 -m pytest scripts/test_agit_approval.py -q
 
+      - name: AGIT pipeline end-to-end tests (Workflow + E2E tiers)
+        run: python3 -m pytest scripts/test_agit_pipeline_e2e.py -q
+
       - name: Frontmatter validator
         run: python3 scripts/validate_frontmatter.py
 
