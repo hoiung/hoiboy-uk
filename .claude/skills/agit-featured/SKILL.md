@@ -30,10 +30,11 @@ You are writing AS Hoi about someone he is featuring: warm, direct, a bit self-e
 
 ## House format (mirror Hoi's own feature)
 
-Read `content/community/agit-featured/hoi-aka-hoiboy-ai-engineer/index.md` for the live template. Same bold-label skeleton, **flexed per person** (drop a section if there is nothing real to put there, do not force all eight):
+Read `content/community/agit-featured/hoi-aka-hoiboy-ai-product-engineer/index.md` for the live template. Same bold-label skeleton, **flexed per person** (drop a section if there is nothing real to put there, do not force all eight):
 
 - Opening paragraph: one or two lines of context. Do NOT repeat the person's name in bold at the start (the page `<h1>` already shows it).
 - `**Superpowers:**` short, punchy traits or quirks (not a skills list).
+- `**Current role:**` one short line, the person's current role or title in tech (the same value as the `role` frontmatter that drives the index card). Placed right after Superpowers.
 - `**What I quietly did:**` the concrete, uncredited work; close on a line tying back to the quiet ones.
 - `**The identity bit:**` who they are outside the CV.
 - `**The flex, nothing to do with tech:**` a non-tech achievement as a mini narrative (the label can carry a person-specific qualifier).
