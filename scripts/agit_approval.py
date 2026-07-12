@@ -33,6 +33,7 @@ import json
 import sys
 from datetime import datetime, timezone
 from email.message import EmailMessage
+from email.utils import parseaddr
 from pathlib import Path
 
 import yaml
@@ -192,6 +193,7 @@ def poll_for_approval(service, record_dir: Path, *, thread_id: str,
     yet. Reads exactly one thread (the one we created), never the mailbox.
     """
     affirmative, negation = load_approval_phrases(config_path)
+    member_addr = (parseaddr(member_email)[1] or member_email).strip().lower()
     thread = service.users().threads().get(userId="me", id=thread_id).execute()
     decisive: tuple[str, str, str] | None = None  # latest reply that approves/refuses
     latest: tuple[str, str, str] | None = None     # latest member reply of any kind
@@ -200,8 +202,11 @@ def poll_for_approval(service, record_dir: Path, *, thread_id: str,
         headers = {h.get("name", "").lower(): h.get("value", "")
                    for h in payload.get("headers", [])}
         sender = headers.get("from", "")
-        if member_email.lower() not in sender.lower():
-            continue  # skip our own outgoing message; only the member's replies count
+        # Exact address match (not substring): a colleague at s.wei@corp.com must not
+        # be mistaken for the member at wei@corp.com. Only the member's OWN replies
+        # count; our own outgoing message is skipped the same way.
+        if parseaddr(sender)[1].strip().lower() != member_addr:
+            continue
         body = extract_plain_text(payload)
         latest = (body, sender, message.get("id", ""))
         if is_decisive_reply(body, affirmative, negation):
