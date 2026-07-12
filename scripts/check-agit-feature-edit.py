@@ -42,6 +42,10 @@ import yaml
 DEFAULT_CONFIG: Path = Path(__file__).with_name("agit-feature-edit-check.config.yaml")
 DEFAULT_RECORD_DIR: Path = Path(".agit-records")
 
+
+class RecordIntegrityError(Exception):
+    """Raised when a write would overwrite the immutable verbatim legal record."""
+
 # A capitalised token: starts uppercase, allows internal apostrophes and hyphens
 # (O'Brien, Anne-Marie). Curly and straight apostrophes both allowed.
 _CAP_TOKEN_RE = re.compile(r"[A-Z][A-Za-z’'\-]*")
@@ -243,11 +247,27 @@ def write_record(record_dir: Path, slug: str, original: str, edited: str,
 
     Returns the per-submission record directory. The ORIGINAL is stored verbatim
     and byte-for-byte -- it is the legal record and must never be rewritten by a
-    later edit pass.
+    later edit pass. This is ENFORCED, not just documented: re-running for the same
+    slug re-writes edited.txt / diff.txt / check.json (the normal "fix the edit and
+    re-check" flow), but a write that would change an existing original.txt raises
+    RecordIntegrityError (fail-loud) so a slug collision or a re-typed original can
+    never silently destroy a prior member's evidence. An identical re-write is a
+    no-op (idempotent).
     """
     dest = record_dir / slug
     dest.mkdir(parents=True, exist_ok=True)
-    (dest / "original.txt").write_text(original, encoding="utf-8")
+    original_path = dest / "original.txt"
+    if original_path.is_file():
+        existing = original_path.read_text(encoding="utf-8")
+        if existing != original:
+            raise RecordIntegrityError(
+                f"refusing to overwrite the immutable legal record {original_path}: a "
+                f"different original is already on file for slug '{slug}'. The verbatim "
+                "original submission is legal evidence and must never be rewritten -- "
+                "use a distinct --slug for a different submission.")
+        # Identical original on a re-run: leave the byte-for-byte record untouched.
+    else:
+        original_path.write_text(original, encoding="utf-8")
     (dest / "edited.txt").write_text(edited, encoding="utf-8")
     diff = "".join(difflib.unified_diff(
         original.splitlines(keepends=True),
@@ -333,7 +353,7 @@ def main(argv: list[str] | None = None) -> int:
         slug = args.slug or args.edited.stem
         try:
             record_path = write_record(args.record_dir, slug, original, edited, result)
-        except OSError as exc:
+        except (OSError, RecordIntegrityError) as exc:
             print(f"error: could not write record: {exc}", file=sys.stderr)
             return 2
 
