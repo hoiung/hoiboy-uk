@@ -74,7 +74,7 @@ This is the one everybody skips, and it is the one that matters most.
 
 Without a clear goal, without a real intention of what you are adding value to, a community is meaningless. You are just collecting people. So you need a manifesto of some kind. A reason for people to gather. Something you can hold every decision up against and ask, does this move us towards the vision or not?
 
-Mine was simple. Make the dance better. Help people learn properly, from people who can actually teach, with a foundation they can build a whole dancing life on. Every group I made, every post I wrote, every teacher I pointed someone towards, it all had to serve that. If it did not, it did not get built. Write your manifesto first. Everything after this list is just execution.
+Mine was simple. Make the dance safer. Make the dance better. Help people learn properly, from people who can actually teach, with a foundation they can build a whole dancing life on. Every group I made, every post I wrote, every teacher I pointed someone towards, it all had to serve that. If it did not, it did not get built. Write your manifesto first. Everything after this list is just execution.
 
 ## 2. Build it on a shoestring, even if you have to
 
