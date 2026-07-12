@@ -104,6 +104,15 @@ def test_ambiguous_is_not_approval():
     assert aa.is_approval_reply("", AFFIRM, NEGATE) is False
 
 
+def test_unapproved_is_not_read_as_approval():
+    # "unapproved" contains the substring "approved" but must NOT count as approval
+    # (word-boundary matching). It is an explicit refusal (decisive).
+    assert aa.is_approval_reply("Please leave this unapproved for now.", AFFIRM, NEGATE) is False
+    assert aa.is_decisive_reply("Please leave this unapproved.", AFFIRM, NEGATE) is True
+    # A real approval is unaffected.
+    assert aa.is_approval_reply("Approved, please publish it.", AFFIRM, NEGATE) is True
+
+
 def test_compose_email_carries_exact_wording():
     msg = aa.compose_approval_email("m@example.com", "hoiboyuk@gmail.com",
                                     "Jane the Builder", "The EXACT story body.", "jane")
