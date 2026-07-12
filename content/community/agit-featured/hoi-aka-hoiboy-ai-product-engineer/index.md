@@ -2,7 +2,7 @@
 title: "Hoi aka Hoiboy"
 date: 2026-07-11T20:00:00+01:00
 description: "Eight years at Canonical running cloud data centres across London, Boston and Taipei. The quiet infrastructure work that spoke for itself."
-role: "AI Product Engineer"
+role: "AI Product & Automation Engineer"
 breadcrumbParent: "/community/agit-featured"
 hideDate: true
 ---
@@ -12,7 +12,7 @@ Before all the AI stuff, I spent eight years at Canonical, the company behind Ub
 
 **Superpowers:** ADHD and OCD for getting shit done properly.
 
-**Current role:** AI Product Engineer.
+**Current role:** AI Product & Automation Engineer.
 
 **What I quietly did:** the role outgrew the title almost straight away. Data Centre Engineer on paper, but in practice the infrastructure architect, the procurement lead, the project manager (PMP certified) and the data centre manager, all at once, running the sites largely on my own for years. I designed and rolled out Canonical's cloud data centres across London, Boston and Taipei, mentored the engineers who came after me, coordinated remotely with everyone from contractors to the COO across disciplines and teams scattered all over the world, and negotiated the supplier deals down hard enough to save the business a small fortune. Whatever I was handed, I gave back in better shape than I found it. Nobody threw a party for any of it. The work just spoke for itself, even when the title didn't. That is usually how it goes for the quiet ones.
 
