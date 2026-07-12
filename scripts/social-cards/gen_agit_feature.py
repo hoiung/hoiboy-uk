@@ -227,9 +227,14 @@ def build_share_card(photo, name, role, out_png):
   <image href="{logo_uri}" x="{logo_x}" y="{logo_y}" width="{logo_px}" height="{logo_px}"/>
 </svg>'''
     svg_path = out_png.with_suffix(".svg")
-    svg_path.write_text(svg)
-    subprocess.run(["rsvg-convert", "-w", str(CW), "-h", str(CH), str(svg_path), "-o", str(out_png)], check=True)
-    svg_path.unlink()
+    try:
+        svg_path.write_text(svg)
+        subprocess.run(["rsvg-convert", "-w", str(CW), "-h", str(CH), str(svg_path), "-o", str(out_png)], check=True)
+    finally:
+        # Never strand the intermediate .svg inside the tracked content bundle if
+        # rsvg-convert is missing or fails (it would otherwise get swept into a
+        # later git add or picked up as a Hugo page resource).
+        svg_path.unlink(missing_ok=True)
 
 
 def build_hero(photo, out_jpg):
