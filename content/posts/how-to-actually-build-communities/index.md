@@ -186,6 +186,7 @@ From our ChillZouk Holidays festivals in Poland:
 {{< youtube-short id="_ubD3UNlvSs" title="ChillZouk Marathon 2022, 3rd Edition, Best Moments" ratio="wide" >}}
 {{< youtube-short id="xnlEoL7kQy4" title="Highlights of ChillZouk Holidays 2nd Edition, May 2019" ratio="wide" >}}
 {{< youtube-short id="WHP5Nd-y4yk" title="Highlights of ChillZouk Holidays 1st Edition, May 2018" ratio="wide" >}}
+{{< youtube-short id="mTSTrs3urrQ" title="ChillZouk Holidays by Domi & Hoi Team" ratio="wide" >}}
 
 More over on the [ChillZouk Holidays channel](https://www.youtube.com/@chillzoukholidays).
 
