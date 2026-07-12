@@ -115,10 +115,11 @@ def test_named_persons_surfaced_on_result():
 
 
 def test_name_colliding_with_english_word_is_surfaced():
-    # "So" and "An" are real given names/surnames -- they must NOT be silently
+    # "So", "An", "No" are real given names/surnames -- they must NOT be silently
     # dropped as stop-words (would bypass the named-person clearance gate).
-    assert "So" in aec.extract_proper_nouns("My colleague So helped me debug.",
-                                            CFG.proper_noun_stopwords)
+    sw = CFG.proper_noun_stopwords
+    assert "So" in aec.extract_proper_nouns("My colleague So helped me debug.", sw)
+    assert "No" in aec.extract_proper_nouns("No mentored the whole team well.", sw)
     r = aec.check_edit("My friend helped me that year.",
                        "My friend An helped me that year.", CFG)
     assert "An" in r.named_persons
