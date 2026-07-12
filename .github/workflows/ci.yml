@@ -155,6 +155,9 @@ jobs:
       - name: Config-traceability + iamhoi-wrapping unit tests
         run: python3 -m pytest scripts/test_check_config_traceability.py scripts/test_check_iamhoi_wrapping.py -q
 
+      - name: AGIT feature edit-check unit tests
+        run: python3 -m pytest scripts/test_check_agit_feature_edit.py -q
+
       - name: Frontmatter validator
         run: python3 scripts/validate_frontmatter.py
 
