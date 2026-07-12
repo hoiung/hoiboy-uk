@@ -350,6 +350,49 @@ def test_poll_matches_member_with_display_name(tmp_path):
     assert result is not None and result["approved"] is True
 
 
+def test_conditional_approval_is_not_unconditional_approval():
+    # An affirmative reply that attaches a CONDITION ("I approve, as long as you...")
+    # is NOT unconditional approval of the exact wording -- it must fail safe (block).
+    # The operator applies the change, re-sends, and gets a clean approval. Without
+    # the conditional cues this reply would wrongly clear as full approval (the
+    # dangerous direction a plain affirmative-word match misses).
+    for conditional in (
+        "I approve, as long as you remove my last name from the story.",
+        "Approved, provided that you fix the date.",
+        "Yes publish it, but only if you take out the company name.",
+        "Happy to publish once you swap the photo.",
+        "Approve this, assuming you cut the last paragraph.",
+        "You can publish unless my manager objects first.",
+    ):
+        assert aa.is_approval_reply(conditional, AFFIRM, NEGATE) is False, conditional
+        assert aa.is_decisive_reply(conditional, AFFIRM, NEGATE) is True, conditional
+    # A clean, unconditional approval is unaffected.
+    assert aa.is_approval_reply("Approved, please publish it.", AFFIRM, NEGATE) is True
+
+
+def test_main_dispatch_io_error_exits_2(tmp_path, monkeypatch):
+    # A send/poll failure (here a Gmail transport error surfacing as OSError) must
+    # exit 2 (usage/IO error), NEVER exit 1 (which the CLI uses for "no approval
+    # yet") -- so a real outage can never masquerade as the member's silence.
+    class _RaisingService:
+        def users(self):
+            class _Users:
+                def threads(self):
+                    class _Threads:
+                        def get(self, userId=None, id=None):
+                            class _E:
+                                def execute(self):
+                                    raise OSError("simulated Gmail transport failure")
+                            return _E()
+                    return _Threads()
+            return _Users()
+
+    monkeypatch.setattr(aa, "build_gmail_service", lambda *a, **k: _RaisingService())
+    rc = aa.main(["poll", "--record", str(tmp_path), "--thread-id", "t1",
+                  "--member-email", "m@example.com"])
+    assert rc == 2
+
+
 if __name__ == "__main__":
     import subprocess
     sys.exit(subprocess.call([sys.executable, "-m", "pytest", __file__, "-q"]))
