@@ -188,8 +188,6 @@ From our ChillZouk Holidays festivals in Poland:
 {{< youtube-short id="WHP5Nd-y4yk" title="Highlights of ChillZouk Holidays 1st Edition, May 2018" ratio="wide" >}}
 {{< youtube-short id="mTSTrs3urrQ" title="ChillZouk Holidays by Domi & Hoi Team" ratio="wide" >}}
 
-More over on the [ChillZouk Holidays channel](https://www.youtube.com/@chillzoukholidays).
-
 And one from ZoukDanceCamp:
 
 {{< youtube-short id="vketRtiNEq0" title="ZDC April 2022 Resumo" ratio="wide" >}}
