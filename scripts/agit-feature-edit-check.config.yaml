@@ -149,3 +149,22 @@ approval:
     - "please wait"
     - "some changes"
     - "one change"
+    - "hold on"
+    # Generic negation cues. Precision over recall: an approval reply that carries
+    # ANY of these is treated as NOT approved, because a refusal can put filler
+    # between the cue and the verb ("I don't think you should approve this",
+    # "I'm not sure I want you to publish it") which the exact-phrase rules above
+    # miss. A clean approval ("approved", "yes, approve", "happy to publish") has
+    # none of these; anything nuanced enough to contain one gets human confirmation.
+    - "not"
+    - "don't"
+    - "do not"
+    - "never"
+    - "won't"
+    - "will not"
+    - "can't"
+    - "cannot"
+    - "shouldn't"
+    - "should not"
+    - "wouldn't"
+    - "would not"
