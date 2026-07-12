@@ -1,11 +1,11 @@
 ---
 name: agit-featured
-description: Publish an Asians & Gingers in Tech (AGIT) community feature from a submission, written in Hoi's voice, in the house format. Use when Hoi pastes a submission email (name / role / superpowers / story + optional photo) and wants a feature page for hoiboy.uk plus a short social version and the shareable link.
+description: Publish an Asians & Gingers in Tech (AGIT) community feature from a submission, kept in the member's own voice (form-only clarity edits, not Hoi's persona), in the house format. Use when Hoi pastes a submission email (name / role / superpowers / story + optional photo) and wants a feature page for hoiboy.uk plus a short social version and the shareable link.
 ---
 
 # /agit-featured
 
-Turn one AGIT submission into a published feature. The point of the series is to shine a light on the quiet, heads-down people doing brilliant work. Hoi is telling their story for them, so it is written in **his** voice, not a neutral bio.
+Turn one AGIT submission into a published feature. The point of the series is to shine a light on the quiet, heads-down people doing brilliant work. The feature stays in the **member's own voice**: their story, their words, lightly edited for clarity only, never rewritten into Hoi's persona or a neutral corporate bio. (Hoi's own feature is the one exception, since it is Hoi writing about himself.)
 
 Run from the `hoiboy-uk` repo root. Content changes go through the repo's normal branch + deploy flow.
 
@@ -22,11 +22,17 @@ The submission email from the form (`functions/api/contribute.js`). You can rely
 
 If a field is "(not given)", flex around it. Never invent facts the person did not give you. If the story is thin, ask Hoi for more before drafting rather than padding it.
 
-## Voice (mandatory)
+## Voice: the member's own, edited for form only (mandatory)
 
-Before drafting, load the voice: run `/voice blog` (closest register) and RAG `docs/research/11_VOICE_PROFILE.md`, `docs/research/12_AI_WRITING_TELLS.md`, and `../dotfiles/voice/base/VOICE_PROFILE.md`. Plain simple English. Keep any profanity verbatim. Name Claude before ChatGPT if models come up. No em dashes (CI hard fail).
+A member feature is the member's story in the **member's own voice**. You are an editor, not a ghostwriter. Edit for **form only** (grammar, spelling, structure, flow, length) and never for facts, claims, or meaning:
 
-You are writing AS Hoi about someone he is featuring: warm, direct, a bit self-effacing on their behalf, no hype, no corporate "spotlight" tone.
+- **Do**: fix grammar and spelling, tidy structure and flow, trim length, remove em dashes (CI hard fail).
+- **Do NOT**: rewrite into Hoi's voice or any house persona; add facts, names, numbers, or dates the member did not give; sharpen an opinion into an accusation; or drop the member's hedges ("I felt", "I think", "in my experience") that keep a subjective statement subjective.
+- Keep the member's own phrasing and any profanity verbatim. If a clarity edit would change the meaning, do not make it: ask Hoi.
+- **Do NOT wrap a member feature in `<!-- iamhoi -->`.** That marker is Hoi's voice persona; a member feature is not in Hoi's voice, so the voice guard (`check-ai-writing-tells`) correctly skips it.
+- **Escalate, do not decide.** If the story makes an allegation about an identifiable person or company (negative, critical, or reputation-affecting), stop and flag it to Hoi. Name people only where the account is positive and the author has permission (see the legal-safety gate); otherwise use a role or anonymise.
+
+The one exception is **Hoi's own feature** (`hoi-aka-hoiboy-...`): that is Hoi writing about himself, so it IS in Hoi's voice and IS `<!-- iamhoi -->`-wrapped. For that one only, load the voice first: run `/voice blog` (closest register) and RAG `docs/research/11_VOICE_PROFILE.md`, `docs/research/12_AI_WRITING_TELLS.md`, and `../dotfiles/voice/base/VOICE_PROFILE.md`. Plain simple English, name Claude before ChatGPT if models come up. Every other feature stays in the member's voice.
 
 ## House format (mirror Hoi's own feature)
 
@@ -42,7 +48,7 @@ Read `content/community/agit-featured/hoi-aka-hoiboy-ai-product-engineer/index.m
 - `**Life tip:**` one opinionated, practical tip, broader.
 - `**To anyone reading who never puts their hand up:**` direct address to the reader, closing invite in the group's language.
 
-Wrap the whole feature body in `<!-- iamhoi -->` ... `<!-- iamhoiend -->`.
+Wrap the feature body in `<!-- iamhoi -->` ... `<!-- iamhoiend -->` **only for Hoi's own feature** (it is in Hoi's voice). A **member** feature is in the member's own voice, so it is NOT wrapped, and the voice guard skips it (see the Voice section above).
 
 ## Publish the page
 
@@ -68,9 +74,54 @@ Create a leaf bundle `content/community/agit-featured/<slug>/`:
 
 **Date gotcha:** `hugo -e production` drops future-dated pages (`buildFuture: false`), so the page silently will not appear if `date` is even a few hours ahead of the deploy build clock. Use today's date at a time already passed, or the previous day. The date only orders the index (it is hidden on the page).
 
+## Legal-safety gate (member features, must pass before publish)
+
+A member feature names real people and companies, and AGIT edits it before
+publishing, so HOIBOY AI LTD is the publisher, not a neutral host. It goes
+through the legal pipeline before it can go live (full rationale:
+`/legal/agit-story-guidelines/` and issue #48):
+
+1. **Save the member's original story verbatim, then run the edit-check.** Write
+   the raw submitted story and the form-edited version to two text files:
+
+   ```bash
+   python3 scripts/check-agit-feature-edit.py \
+     --original <original.txt> --edited <edited.txt> \
+     --slug <slug> --record-dir <record-dir-OUTSIDE-the-public-repo>
+   ```
+
+   It stores the original verbatim as the legal record and FLAGS anything that
+   looks like an added fact (a name / number / date in the edited version but not
+   the original), a removed hedge, a stray em dash, or a big length change. Read
+   every flag. If a flag is a real added fact, fix the edit (form only) and
+   re-run. It flags candidates; you decide. Records hold PII, so keep
+   `--record-dir` gitignored (`.agit-records/`) or outside the repo entirely.
+
+2. **Clear every named person.** Run the publish gate:
+
+   ```bash
+   python3 scripts/check-agit-publish-gate.py --record <record-dir>/<slug>
+   ```
+
+   The first run writes a `clearance.json` listing every person named in the
+   edited feature. For each name, set `status` to either `permissioned` (with a
+   `note` recording the author's warranty that they have that person's
+   permission) or `anonymised` (and actually change the feature to a role, then
+   re-run the edit-check). Set `flags_cleared: true` once you have reviewed the
+   edit-check flags. The gate exits non-zero until every name is cleared. No name
+   goes live on a maybe.
+
+3. **Diff before done.** Read `diff.txt` in the record (original vs edited) and
+   confirm the edit changed form, not facts, before you publish.
+
+The publish gate is a HARD gate: if it exits non-zero, do NOT publish. (Phase 4
+adds the member's emailed approval of the exact final wording to this same gate:
+no approval on file, no publish.)
+
 ## Guard floor (must pass before publish)
 
-- `python3 scripts/check-ai-writing-tells.py --check-only-new content/community/agit-featured/<slug>/index.md` exits 0.
+- The legal-safety gate above passes: `python3 scripts/check-agit-publish-gate.py --record <record-dir>/<slug>` exits 0 (every named person permissioned-or-anonymised, edit-check flags reviewed).
+- `python3 scripts/check-ai-writing-tells.py --check-only-new content/community/agit-featured/<slug>/index.md` exits 0. (A member feature is not `iamhoi`-wrapped, so this skips it and passes; it only bites on Hoi's own feature.)
 - `bash scripts/check_emdash_zero_tolerance.sh` exits 0 (zero em dashes).
 - `python3 scripts/check-exif.py scripts/social-cards/agit-sources/<slug>.<ext>` exits 0 (the source photo carries no camera/GPS EXIF before it enters the public repo).
 - The bundle has both generated images: `hero.jpg` (1080x1350) and `share-card.png` (1200x630).
