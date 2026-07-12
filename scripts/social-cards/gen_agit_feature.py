@@ -35,7 +35,7 @@ Deps: rsvg-convert (librsvg), Pillow.
 """
 import subprocess, sys, html, base64, io, pathlib
 from PIL import Image, ImageOps, ImageDraw, ImageFont
-from card_common import b64, font_face
+from card_common import font_face
 
 # --- brand tokens (canonical: docs/research/07_DESIGN_TOKENS.md + AGIT marketing) ---
 NAVY   = "#0c1c2d"   # AGIT dark navy (logo border / title)
@@ -50,8 +50,8 @@ CW, CH   = 1200, 630
 PHOTO_W  = 748       # left photo panel width
 PAD      = 48        # right-panel inner inset (equal left/right margins)
 EB_FS    = 18        # eyebrow size (justified across the panel via letter-spacing)
-NAME_MAX, NAME_MIN = 80, 44
-ROLE_MAX, ROLE_MIN = 28, 20
+NAME_MAX = 80        # name font ceiling (shrinks to fit; floor is _fit_lines' default 12)
+ROLE_MAX = 28        # role font ceiling
 LOGO_CARD = 92       # watermark size on the card
 
 # --- hero geometry ---
@@ -94,14 +94,33 @@ def _circle_logo(px):
     return out
 
 def _measure(s, ttf, fs):
-    return ImageFont.truetype(str(ttf), fs).getbbox(s)[2]
+    """Rendered line width: max of the advance (getlength) and the ink extent (getbbox).
+    Neither alone is a safe upper bound for rsvg's render — Plex's advance exceeds its
+    ink, while VT323's pixel glyphs overhang their advance box — so take the larger."""
+    f = ImageFont.truetype(str(ttf), fs)
+    return max(f.getlength(s), f.getbbox(s)[2])
 
-def _advance(s, ttf, fs):
-    return ImageFont.truetype(str(ttf), fs).getlength(s)
+def _hard_break(word, ttf, fs, maxw):
+    """Split a single word too wide for maxw into character chunks that each fit,
+    so a line can never overflow the panel width (unbreakable/hyphen-joined tokens)."""
+    if _measure(word, ttf, fs) <= maxw:
+        return [word]
+    chunks, cur = [], ""
+    for ch in word:
+        if not cur or _measure(cur + ch, ttf, fs) <= maxw:
+            cur += ch
+        else:
+            chunks.append(cur); cur = ch
+    if cur:
+        chunks.append(cur)
+    return chunks
 
 def _wrap(s, ttf, fs, maxw):
-    lines, cur = [], ""
+    words = []
     for w in s.split():
+        words.extend(_hard_break(w, ttf, fs, maxw))
+    lines, cur = [], ""
+    for w in words:
         t = (cur + " " + w).strip()
         if _measure(t, ttf, fs) <= maxw or not cur:
             cur = t
@@ -111,27 +130,35 @@ def _wrap(s, ttf, fs, maxw):
         lines.append(cur)
     return lines
 
-def _fit_lines(s, ttf, maxw, mx, mn, max_lines, floor=12, slack=8):
-    """Largest size that wraps to <= max_lines lines, each within maxw.
+def _limit(maxw, fs):
+    """Usable line width at font size `fs`. rsvg renders VT323/Plex a few px wider than
+    Pillow measures, and the gap grows with size, so reserve a size-proportional margin
+    (empirically ~0.4*fs covers VT323's worst overhang) so a fitted line never overflows."""
+    return maxw - max(6, int(round(fs * 0.4)))
 
-    Search the preferred band [mn, mx] first; if nothing fits (a very long name or
-    a long 2-line title), keep shrinking below mn down to `floor` so the text NEVER
-    overflows the panel width and NEVER exceeds max_lines (which is what keeps the
-    block clear of the bottom-right watermark). Only a pathological single unbreakable
-    token wider than the panel at `floor` hits the last-resort return, which realistic
-    names/roles never reach. `slack` reserves a few px against the small gap between
-    Pillow's measured ink width and rsvg's rendered width at tiny sizes."""
-    limit = maxw - slack
+def _fit_lines(s, ttf, maxw, mx, max_lines, floor=12):
+    """Largest size in [floor, mx] whose wrap is <= max_lines lines, each within the
+    size-adjusted panel width. Because `_wrap` hard-breaks over-long tokens, each line
+    always fits the width; the size search caps the line count, which keeps the block
+    clear of the bottom-right watermark. If even `floor` needs more than max_lines lines
+    (absurdly long text), keep the first max_lines and end with an ellipsis. Realistic
+    names/roles never reach the truncation branch."""
     for fs in range(mx, floor - 1, -1):
-        lines = _wrap(s, ttf, fs, limit)
-        if len(lines) <= max_lines and all(_measure(l, ttf, fs) <= limit for l in lines):
+        lines = _wrap(s, ttf, fs, _limit(maxw, fs))
+        if len(lines) <= max_lines:
             return fs, lines
-    return floor, _wrap(s, ttf, floor, limit)
+    fl = _limit(maxw, floor)
+    lines = _wrap(s, ttf, floor, fl)[:max_lines]
+    last = lines[-1]
+    while last and _measure(last + "...", ttf, floor) > fl:
+        last = last[:-1]
+    lines[-1] = last.rstrip() + "..."
+    return floor, lines
 
 def _eyebrow_spacing(s, fs, target_w):
     """letter-spacing that stretches the eyebrow to span target_w (rsvg honours
     letter-spacing; it ignores SVG textLength/lengthAdjust)."""
-    return max(0.0, (target_w - _advance(s, PLEX_B, fs)) / max(len(s) - 1, 1))
+    return max(0.0, (target_w - _measure(s, PLEX_B, fs)) / max(len(s) - 1, 1))
 
 
 def build_share_card(photo, name, role, out_png):
@@ -147,14 +174,14 @@ def build_share_card(photo, name, role, out_png):
     eb_y = top + EB_FS
     region_top = eb_y + 54
 
-    name_fs, name_lines = _fit_lines(name, VT323, inner, NAME_MAX, NAME_MIN, 2)
+    name_fs, name_lines = _fit_lines(name, VT323, inner, NAME_MAX, 2)
     name_lh = name_fs + 2
     role = (role or "").strip()
     if role.lower() in ("(not given)", "not given"):   # the skill's missing-field sentinel
         role = ""
     have_role = bool(role)
     if have_role:
-        role_fs, role_lines = _fit_lines(role, PLEX_R, inner, ROLE_MAX, ROLE_MIN, 2)
+        role_fs, role_lines = _fit_lines(role, PLEX_R, inner, ROLE_MAX, 2)
         role_lh = role_fs + 8
     else:
         role_fs, role_lines, role_lh = ROLE_MAX, [], ROLE_MAX + 8
