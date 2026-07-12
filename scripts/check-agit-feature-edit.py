@@ -36,6 +36,7 @@ import re
 import sys
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
 
 import yaml
@@ -131,11 +132,6 @@ def load_config(path: Path = DEFAULT_CONFIG) -> Config:
     )
 
 
-def word_vocab(text: str) -> set[str]:
-    """Lower-cased set of every word in the text (for case-insensitive presence)."""
-    return {m.group(0).lower() for m in _WORD_RE.finditer(text)}
-
-
 def _is_name_initial(ch: str) -> bool:
     """True if a token starting with this letter is a name candidate.
 
@@ -190,23 +186,42 @@ def extract_proper_nouns(text: str, stopwords: frozenset[str]) -> list[str]:
     return names
 
 
-def _added_tokens(pattern: re.Pattern[str], original: str, edited: str, normalise=lambda s: s) -> list[str]:
-    """Tokens matching `pattern` present in edited but not original (order-preserving)."""
+def _added_tokens(pattern: re.Pattern[str], original: str, edited: str,
+                  normalise=lambda s: s, keep=lambda tok: True) -> list[str]:
+    """Tokens matching `pattern` present in edited but not original (order-preserving).
+
+    `keep` is an optional per-token predicate (applied to the raw matched token), so
+    a caller can add a filter -- e.g. the added-name check keeps only capitalised,
+    non-stop-word tokens -- while reusing this one scan/dedup/order-preserving loop
+    instead of duplicating it.
+    """
     original_set = {normalise(m.group(0)) for m in pattern.finditer(original)}
     added: list[str] = []
     seen: set[str] = set()
     for m in pattern.finditer(edited):
-        norm = normalise(m.group(0))
-        if norm not in original_set and norm not in seen:
+        tok = m.group(0)
+        norm = normalise(tok)
+        if norm not in original_set and norm not in seen and keep(tok):
             seen.add(norm)
-            added.append(m.group(0).strip())
+            added.append(tok.strip())
     return added
+
+
+@lru_cache(maxsize=None)
+def _compile_hedge(phrase: str) -> re.Pattern[str]:
+    """Compile a hedge phrase to a case-insensitive, whitespace-tolerant regex.
+
+    Cached: the hedge list is small and fixed, and each phrase is counted twice per
+    check (original + edited), so compiling once per distinct phrase (not on every
+    call) removes ~42 regex compilations per check with no behaviour change.
+    """
+    return re.compile(r"\b" + r"\s+".join(re.escape(w) for w in phrase.split()) + r"\b",
+                      re.IGNORECASE)
 
 
 def _count_phrase(phrase: str, text: str) -> int:
     """Case-insensitive, whitespace-tolerant occurrence count of a (multi-word) phrase."""
-    pattern = r"\b" + r"\s+".join(re.escape(w) for w in phrase.split()) + r"\b"
-    return len(re.findall(pattern, text, re.IGNORECASE))
+    return len(_compile_hedge(phrase).findall(text))
 
 
 def check_edit(original: str, edited: str, config: Config) -> CheckResult:
@@ -215,14 +230,10 @@ def check_edit(original: str, edited: str, config: Config) -> CheckResult:
 
     # 1. Added proper nouns (case-insensitive vs the original's whole vocabulary,
     #    so a recapitalised sentence start is not mistaken for an added name).
-    original_words = word_vocab(original)
-    added_names = [
-        tok
-        for tok in dict.fromkeys(m.group(0) for m in _TOKEN_RE.finditer(edited))
-        if _is_name_initial(tok[:1])
-        and tok.lower() not in original_words
-        and tok not in config.proper_noun_stopwords
-    ]
+    added_names = _added_tokens(
+        _TOKEN_RE, original, edited, normalise=str.lower,
+        keep=lambda tok: (_is_name_initial(tok[:1])
+                          and tok not in config.proper_noun_stopwords))
     if added_names:
         flags.append(Flag("added_proper_nouns",
                           "Proper nouns / names in EDITED but not ORIGINAL (added-fact tell).",
@@ -387,8 +398,16 @@ def main(argv: list[str] | None = None) -> int:
             print(f"error: {label} file not found: {path}", file=sys.stderr)
             return 2
 
-    original = args.original.read_text(encoding="utf-8")
-    edited = args.edited.read_text(encoding="utf-8")
+    try:
+        original = args.original.read_text(encoding="utf-8")
+        edited = args.edited.read_text(encoding="utf-8")
+    except (OSError, ValueError) as exc:
+        # A non-UTF-8 or otherwise unreadable input is a usage/IO error (exit 2),
+        # NOT a flagged result (exit 1). UnicodeDecodeError is a ValueError, so a
+        # mis-encoded member submission never crashes at the same exit code the
+        # docstring reserves for "flags need a human look".
+        print(f"error: could not read input: {exc}", file=sys.stderr)
+        return 2
 
     result = check_edit(original, edited, config)
 
@@ -397,7 +416,9 @@ def main(argv: list[str] | None = None) -> int:
         slug = args.slug or args.edited.stem
         try:
             record_path = write_record(args.record_dir, slug, original, edited, result)
-        except (OSError, RecordIntegrityError) as exc:
+        except (OSError, ValueError, RecordIntegrityError) as exc:
+            # OSError (permission/disk), ValueError (a non-UTF-8 existing original.txt
+            # on the immutability re-read), or the integrity guard -- all exit 2.
             print(f"error: could not write record: {exc}", file=sys.stderr)
             return 2
 
