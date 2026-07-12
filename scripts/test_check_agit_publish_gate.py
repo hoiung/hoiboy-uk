@@ -153,6 +153,55 @@ def test_approved_approval_clears(tmp_path):
     assert apg.run_gate(rec).ok is True
 
 
+# -------------------------------------------------- wording-binding (re-edit guard)
+# check.json carries edited_sha256; clearance.json + approval.json are bound to it.
+# A same-slug re-edit that changed the wording must invalidate a stale clearance /
+# an approval that was for the earlier wording.
+
+def _sha_record(tmp_path, edited_sha) -> Path:
+    rec = tmp_path / "s"
+    rec.mkdir()
+    (rec / "check.json").write_text(json.dumps({
+        "slug": "s", "clean": True, "named_persons": [], "flags": [],
+        "edited_sha256": edited_sha,
+    }), encoding="utf-8")
+    return rec
+
+
+def test_stale_clearance_wording_blocks(tmp_path):
+    rec = _sha_record(tmp_path, "NEWHASH")
+    (rec / "clearance.json").write_text(json.dumps(
+        {"edited_sha256": "OLDHASH", "flags_cleared": True, "named_persons": {}}),
+        encoding="utf-8")
+    (rec / "approval.json").write_text(json.dumps(
+        {"approved": True, "wording_sha256": "NEWHASH"}), encoding="utf-8")
+    result = apg.run_gate(rec)
+    assert result.ok is False
+    assert any("stale" in b.lower() for b in result.blockers)
+
+
+def test_stale_approval_wording_blocks(tmp_path):
+    rec = _sha_record(tmp_path, "NEWHASH")
+    (rec / "clearance.json").write_text(json.dumps(
+        {"edited_sha256": "NEWHASH", "flags_cleared": True, "named_persons": {}}),
+        encoding="utf-8")
+    (rec / "approval.json").write_text(json.dumps(
+        {"approved": True, "wording_sha256": "OLDHASH"}), encoding="utf-8")
+    result = apg.run_gate(rec)
+    assert result.ok is False
+    assert any("different wording" in b.lower() for b in result.blockers)
+
+
+def test_matching_wording_clears(tmp_path):
+    rec = _sha_record(tmp_path, "HASH")
+    (rec / "clearance.json").write_text(json.dumps(
+        {"edited_sha256": "HASH", "flags_cleared": True, "named_persons": {}}),
+        encoding="utf-8")
+    (rec / "approval.json").write_text(json.dumps(
+        {"approved": True, "wording_sha256": "HASH"}), encoding="utf-8")
+    assert apg.run_gate(rec).ok is True
+
+
 # -------------------------------------------------------------------- CLI layer
 
 def _run(rec: Path, *extra):
