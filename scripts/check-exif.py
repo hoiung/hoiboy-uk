@@ -138,9 +138,14 @@ def scan_image(path: Path) -> list[str]:
 
 
 def tracked_content_images() -> list[Path]:
-    """All tracked raster images under content/ (the default CI scan set)."""
+    """All tracked raster images that ship in the public repo and must be EXIF-clean:
+    everything under content/, plus the social-card source photos vendored under
+    scripts/social-cards/ (real personal submission/portrait photos used to generate
+    the branded AGIT feature cards; #47). Personal photos living outside content/ are
+    otherwise a CI blind spot -- camera/GPS EXIF would land in public git history
+    uncaught, since CI invokes this scan set argless."""
     out = subprocess.run(
-        ["git", "ls-files", "content"],
+        ["git", "ls-files", "content", "scripts/social-cards"],
         capture_output=True,
         text=True,
         check=True,
