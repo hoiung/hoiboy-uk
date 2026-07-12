@@ -146,6 +146,8 @@ def build_share_card(photo, name, role, out_png):
     name_fs, name_lines = _fit_lines(name, VT323, inner, NAME_MAX, NAME_MIN, 2)
     name_lh = name_fs + 2
     role = (role or "").strip()
+    if role.lower() in ("(not given)", "not given"):   # the skill's missing-field sentinel
+        role = ""
     have_role = bool(role)
     if have_role:
         role_fs, role_lines = _fit_lines(role, PLEX_R, inner, ROLE_MAX, ROLE_MIN, 2)
