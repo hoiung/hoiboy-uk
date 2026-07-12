@@ -33,3 +33,8 @@ __pycache__/
 
 # Code review graph (local AST index, regenerable)
 .code-review-graph/
+
+# AGIT member-submission evidence records (contain PII: names, stories, emails).
+# Written by scripts/check-agit-feature-edit.py. NEVER commit to the public repo;
+# point --record-dir outside the repo for production use.
+.agit-records/
