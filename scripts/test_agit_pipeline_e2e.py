@@ -83,16 +83,19 @@ def _clear_names_and_flags(record: Path) -> None:
     the first as permissioned-with-note and the rest as anonymised so both valid
     statuses are exercised, and marks flags reviewed.
     """
-    persons = _load_check(record)["named_persons"]
+    check = _load_check(record)
     entries: dict[str, dict] = {}
-    for i, name in enumerate(persons):
+    for i, name in enumerate(check["named_persons"]):
         if i == 0:
             entries[name] = {"status": "permissioned",
                              "note": "author warrants they have this person's permission"}
         else:
             entries[name] = {"status": "anonymised", "note": ""}
+    # Preserve the wording fingerprint the gate wrote into the template, so the
+    # clearance stays bound to this exact edit (a human keeps this field).
     (record / "clearance.json").write_text(
-        json.dumps({"flags_cleared": True, "named_persons": entries}, indent=2),
+        json.dumps({"edited_sha256": check.get("edited_sha256"),
+                    "flags_cleared": True, "named_persons": entries}, indent=2),
         encoding="utf-8")
 
 
@@ -111,8 +114,11 @@ def _deliver_reply(record: Path, *reply_texts: str) -> dict:
         messages.append(_gmail_message(f"reply-{i}", MEMBER_EMAIL, text))
     thread = {"messages": messages}
     svc = FakeService(send_result={"id": "out-1", "threadId": "thread-1"}, thread=thread)
+    # Send the EXACT edited wording (what the gate binds the approval to), not a
+    # placeholder -- so approval.json's wording_sha256 == check.json's edited_sha256.
+    wording = (record / "edited.txt").read_text(encoding="utf-8")
     aa.send_approval_request(svc, record, to_addr=MEMBER_EMAIL, from_addr=FROM_ADDR,
-                             feature_title="AGIT feature", final_wording="the exact wording",
+                             feature_title="AGIT feature", final_wording=wording,
                              slug=record.name)
     payload = aa.poll_for_approval(svc, record, thread_id="thread-1",
                                    member_email=MEMBER_EMAIL)
@@ -197,6 +203,30 @@ def test_sample_hedge_then_approved_publishes(tmp_path):
     final = _gate(record)
     assert final.returncode == 0, final.stdout + final.stderr
     assert "CLEARED" in final.stdout
+
+
+def test_reedit_after_approval_is_blocked(tmp_path):
+    """A same-slug re-edit that changed the wording voids a prior approval+clearance.
+
+    Guards the "approval of the EXACT final wording" rule: an operator who tweaks a
+    feature after approval was granted cannot publish the new wording on the old OK.
+    """
+    record_dir = tmp_path / "records"
+    slug = "reedit"
+    _edit_check(tmp_path, slug, CLEAN_ORIGINAL, CLEAN_EDITED, record_dir)
+    record = record_dir / slug
+    _gate(record)
+    _clear_names_and_flags(record)
+    approval = _deliver_reply(record, "Approved, please publish it.")
+    assert approval["approved"] is True
+    assert _gate(record).returncode == 0  # cleared for the approved wording
+
+    # Re-edit the SAME slug with a different wording (adds a fabricated year).
+    _edit_check(tmp_path, slug, CLEAN_ORIGINAL, CLEAN_EDITED + " We shipped in May 2019.",
+                record_dir)
+    blocked = _gate(record)
+    assert blocked.returncode == 1  # stale clearance + approval for the old wording
+    assert "BLOCKED" in blocked.stdout
 
 
 def test_sample_clean_declined_blocked(tmp_path):
