@@ -35,6 +35,7 @@ Deps: rsvg-convert (librsvg), Pillow.
 """
 import subprocess, sys, html, base64, io, pathlib
 from PIL import Image, ImageOps, ImageDraw, ImageFont
+from card_common import b64, font_face
 
 # --- brand tokens (canonical: docs/research/07_DESIGN_TOKENS.md + AGIT marketing) ---
 NAVY   = "#0c1c2d"   # AGIT dark navy (logo border / title)
@@ -70,12 +71,6 @@ VT323  = FONTS / "VT323-Regular.ttf"
 PLEX_R = FONTS / "IBMPlexMono-Regular.ttf"
 PLEX_B = FONTS / "IBMPlexMono-Bold.ttf"
 
-
-def _b64(p): return base64.b64encode(pathlib.Path(p).read_bytes()).decode()
-
-def _font_face(fam, ttf, wt):
-    return (f"@font-face{{font-family:'{fam}';font-weight:{wt};"
-            f"src:url(data:font/ttf;base64,{_b64(ttf)}) format('truetype');}}")
 
 def _im_datauri(im, fmt="PNG"):
     buf = io.BytesIO(); im.save(buf, fmt, quality=90)
@@ -116,13 +111,22 @@ def _wrap(s, ttf, fs, maxw):
         lines.append(cur)
     return lines
 
-def _fit_lines(s, ttf, maxw, mx, mn, max_lines):
-    """Largest size in [mn, mx] whose wrap fits maxw in <= max_lines lines."""
-    for fs in range(mx, mn - 1, -1):
-        lines = _wrap(s, ttf, fs, maxw)
-        if len(lines) <= max_lines and all(_measure(l, ttf, fs) <= maxw for l in lines):
+def _fit_lines(s, ttf, maxw, mx, mn, max_lines, floor=12, slack=8):
+    """Largest size that wraps to <= max_lines lines, each within maxw.
+
+    Search the preferred band [mn, mx] first; if nothing fits (a very long name or
+    a long 2-line title), keep shrinking below mn down to `floor` so the text NEVER
+    overflows the panel width and NEVER exceeds max_lines (which is what keeps the
+    block clear of the bottom-right watermark). Only a pathological single unbreakable
+    token wider than the panel at `floor` hits the last-resort return, which realistic
+    names/roles never reach. `slack` reserves a few px against the small gap between
+    Pillow's measured ink width and rsvg's rendered width at tiny sizes."""
+    limit = maxw - slack
+    for fs in range(mx, floor - 1, -1):
+        lines = _wrap(s, ttf, fs, limit)
+        if len(lines) <= max_lines and all(_measure(l, ttf, fs) <= limit for l in lines):
             return fs, lines
-    return mn, _wrap(s, ttf, mn, maxw)
+    return floor, _wrap(s, ttf, floor, limit)
 
 def _eyebrow_spacing(s, fs, target_w):
     """letter-spacing that stretches the eyebrow to span target_w (rsvg honours
@@ -181,7 +185,7 @@ def build_share_card(photo, name, role, out_png):
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{GRAD[0]}"/><stop offset="1" stop-color="{GRAD[1]}"/></linearGradient>
   </defs>
   <style>
-    {_font_face("VT323", VT323, 400)}{_font_face("IBM Plex Mono", PLEX_R, 400)}{_font_face("IBM Plex Mono", PLEX_B, 700)}
+    {font_face("VT323", VT323, 400)}{font_face("IBM Plex Mono", PLEX_R, 400)}{font_face("IBM Plex Mono", PLEX_B, 700)}
     .eyebrow{{fill:{ORANGE};font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:{EB_FS}px;letter-spacing:{eb_ls:.2f}px;}}
     .name{{fill:{NAVY};font-family:'VT323',monospace;font-size:{name_fs}px;}}
     .role{{fill:{GREY};font-family:'IBM Plex Mono',monospace;font-size:{role_fs}px;}}
