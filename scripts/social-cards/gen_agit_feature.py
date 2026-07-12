@@ -28,9 +28,15 @@ Inputs (so the whole set can be regenerated after a design change, like cards.ts
   scripts/social-cards/agit-features.tsv   slug <TAB> name <TAB> role   (role may be "")
   scripts/social-cards/agit-sources/<slug>.<ext>   the EXIF-clean source photo
 
+There is also a brand-only SECTION card for the /community/agit-featured/ index
+(no person photo): the AGIT logo + section eyebrow/headline/tagline on the same
+blue->cream gradient, written to content/community/agit-featured/share-card.png so
+head.html can resolve it as the section og:image. See build_section_card().
+
 Usage:
-  python3 scripts/social-cards/gen_agit_feature.py            # regenerate every feature
+  python3 scripts/social-cards/gen_agit_feature.py            # regenerate every feature + the section card
   python3 scripts/social-cards/gen_agit_feature.py <slug>     # regenerate one feature
+  python3 scripts/social-cards/gen_agit_feature.py --section  # regenerate just the section index card
 Deps: rsvg-convert (librsvg), Pillow.
 """
 import subprocess, sys, html, base64, io, pathlib
@@ -58,6 +64,20 @@ LOGO_CARD = 92       # watermark size on the card
 HERO_W, HERO_H = 1080, 1350          # portrait 4:5
 HERO_LOGO_FRAC = 0.20                 # watermark width as a fraction of the hero width
 HERO_LOGO_MARGIN_FRAC = 0.035
+
+# --- section (brand-only) card: the /community/agit-featured/ index og:image ---
+# No person photo. The AGIT logo already carries the "ASIANS & GINGERS IN TECH"
+# wordmark, so the text block presents the SECTION, not the group name again.
+SEC_EYEBROW  = "HOIBOY.UK COMMUNITY"
+SEC_HEADLINE = "Featured"
+SEC_TAGLINE  = "The quiet, heads-down people doing brilliant work in tech, and the stories behind them."
+SEC_LOGO     = 430       # big logo on the left (prominent, not a watermark)
+SEC_LOGO_X   = 76
+SEC_TX       = 596       # text-column left edge
+SEC_PAD_R    = 64        # text-column right margin
+SEC_EB_FS    = 18        # eyebrow size (justified across the text column)
+SEC_HEAD_MAX = 120       # headline font ceiling (VT323)
+SEC_TAG_MAX  = 26        # tagline font ceiling (IBM Plex Mono)
 
 REPO   = pathlib.Path(__file__).resolve().parents[2]
 SDIR   = REPO / "scripts" / "social-cards"
@@ -246,6 +266,75 @@ def build_hero(photo, out_jpg):
     base.convert("RGB").save(out_jpg, "JPEG", quality=88)   # re-encode drops any EXIF
 
 
+def build_section_card(out_png, eyebrow=SEC_EYEBROW, headline=SEC_HEADLINE, tagline=SEC_TAGLINE):
+    """Brand-only landscape 1200x630 card for the agit-featured SECTION index (no
+    person photo): full blue->cream gradient, the circular AGIT logo prominent on
+    the left, and the section eyebrow + headline + tagline on the right, in the same
+    AGIT brand system as the feature cards. head.html resolves it as the og:image
+    for /community/agit-featured/. Same brand tokens/fonts/logo/rsvg pipeline as
+    build_share_card, minus the photo panel."""
+    logo_px = SEC_LOGO
+    logo_x  = SEC_LOGO_X
+    logo_y  = (CH - logo_px) // 2
+    tx      = SEC_TX
+    col_w   = CW - tx - SEC_PAD_R
+    div_x   = logo_x + logo_px + 30
+    div_top, div_bot = logo_y + 8, logo_y + logo_px - 8
+
+    eb_ls = _eyebrow_spacing(eyebrow, SEC_EB_FS, col_w)
+    head_fs, head_lines = _fit_lines(headline, VT323, col_w, SEC_HEAD_MAX, 2)
+    head_lh = head_fs + 2
+    tag_fs, tag_lines = _fit_lines(tagline, PLEX_R, col_w, SEC_TAG_MAX, 4)
+    tag_lh = tag_fs + 8
+
+    eb_gap, rule_gt, rule_h, rule_gb = 34, 28, 6, 34
+    stack = (SEC_EB_FS + eb_gap + len(head_lines) * head_lh
+             + rule_gt + rule_h + rule_gb + len(tag_lines) * tag_lh)
+    y = (CH - stack) / 2
+
+    y += SEC_EB_FS
+    eb_y = y
+    y += eb_gap
+    head_ts = ""
+    for l in head_lines:
+        y += head_lh
+        head_ts += f'<text x="{tx}" y="{y:.0f}" class="head">{html.escape(l)}</text>'
+    rule_y = y + rule_gt
+    y = rule_y + rule_h + rule_gb
+    tag_ts = ""
+    for l in tag_lines:
+        y += tag_lh - 8
+        tag_ts += f'<text x="{tx}" y="{y:.0f}" class="tag">{html.escape(l)}</text>'
+        y += 8
+
+    logo_uri = _im_datauri(_circle_logo(logo_px))
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{CW}" height="{CH}" viewBox="0 0 {CW} {CH}">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{GRAD[0]}"/><stop offset="1" stop-color="{GRAD[1]}"/></linearGradient>
+  </defs>
+  <style>
+    {font_face("VT323", VT323, 400)}{font_face("IBM Plex Mono", PLEX_R, 400)}{font_face("IBM Plex Mono", PLEX_B, 700)}
+    .eyebrow{{fill:{ORANGE};font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:{SEC_EB_FS}px;letter-spacing:{eb_ls:.2f}px;}}
+    .head{{fill:{NAVY};font-family:'VT323',monospace;font-size:{head_fs}px;}}
+    .tag{{fill:{GREY};font-family:'IBM Plex Mono',monospace;font-size:{tag_fs}px;}}
+  </style>
+  <rect width="{CW}" height="{CH}" fill="url(#bg)"/>
+  <image href="{logo_uri}" x="{logo_x}" y="{logo_y}" width="{logo_px}" height="{logo_px}"/>
+  <rect x="{div_x}" y="{div_top:.0f}" width="4" height="{div_bot - div_top:.0f}" fill="{ORANGE}"/>
+  <text x="{tx}" y="{eb_y:.0f}" class="eyebrow">{html.escape(eyebrow)}</text>
+  {head_ts}
+  <rect x="{tx + 2}" y="{rule_y:.0f}" width="72" height="{rule_h}" fill="{ORANGE}"/>
+  {tag_ts}
+</svg>'''
+    svg_path = out_png.with_suffix(".svg")
+    try:
+        svg_path.write_text(svg)
+        subprocess.run(["rsvg-convert", "-w", str(CW), "-h", str(CH), str(svg_path), "-o", str(out_png)], check=True)
+    finally:
+        # Never strand the intermediate .svg inside the tracked content bundle.
+        svg_path.unlink(missing_ok=True)
+
+
 def find_source(slug):
     hits = sorted(SOURCES.glob(f"{slug}.*"))
     hits = [h for h in hits if h.suffix.lower() in (".jpg", ".jpeg", ".png", ".webp")]
@@ -279,10 +368,16 @@ def rows():
 
 
 def main():
-    for p in (TSV, LOGO, VT323, PLEX_R, PLEX_B):
+    for p in (LOGO, VT323, PLEX_R, PLEX_B):   # TSV not needed for --section
         if not p.exists():
             sys.exit(f"missing required input: {p}")
     only = sys.argv[1] if len(sys.argv) > 1 else None
+    if only == "--section":                   # regenerate just the section index card
+        build_section_card(OUTDIR / "share-card.png")
+        print("  section: share-card.png")
+        return
+    if not TSV.exists():
+        sys.exit(f"missing {TSV}")
     n = 0
     for slug, name, role in rows():
         if only and slug != only:
@@ -291,6 +386,9 @@ def main():
         n += 1
     if only and n == 0:
         sys.exit(f"slug '{only}' not found in {TSV}")
+    if only is None:                          # full regen also refreshes the section card
+        build_section_card(OUTDIR / "share-card.png")
+        print("  section: share-card.png")
     print(f"generated {n} AGIT feature image pair(s)")
 
 
