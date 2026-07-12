@@ -85,6 +85,11 @@
   url = "/community/asians-gingers-in-tech/"
   weight = 10
 
+[[groups]]
+  name = "AGIT Featured"
+  url = "/community/agit-featured/"
+  weight = 20
+
 [[social]]
   name = "GitHub"
   url = "https://github.com/hoiung"

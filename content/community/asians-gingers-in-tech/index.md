@@ -218,3 +218,5 @@ This is a feature series for the quiet, heads-down people doing brilliant work. 
 
 **To anyone reading who never puts their hand up:** your work is worth more than your comfort with self-promotion. Come say hello, and we'll do the shouting for you.
 <!-- iamhoiend -->
+
+[See everyone we've featured.](/community/agit-featured/)
