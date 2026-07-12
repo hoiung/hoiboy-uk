@@ -253,6 +253,32 @@ def test_is_decisive_reply_distinguishes_chatter():
     assert aa.is_decisive_reply("Thanks, got it!", AFFIRM, NEGATE) is False
 
 
+def test_poll_ignores_superstring_address_bystander(tmp_path):
+    # A colleague at a superstring address (s.wei@corp.com) must NOT be mistaken for
+    # the member (wei@corp.com) -- exact address match, not substring. Here the only
+    # reply is from a bystander whose address contains the member's -> not the member.
+    thread = {"messages": [
+        _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
+        _gmail_message("in1", "Mallory <mjo@example.com>", "Approved, publish it now!"),
+    ]}
+    svc = FakeService(thread=thread)
+    # member is jo@example.com; mjo@example.com is a different person.
+    assert aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
+                                member_email="jo@example.com") is None
+
+
+def test_poll_matches_member_with_display_name(tmp_path):
+    # The member's own reply is still detected when their From carries a display name.
+    thread = {"messages": [
+        _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
+        _gmail_message("in1", "Jo Bloggs <jo@example.com>", "Approved, publish it."),
+    ]}
+    svc = FakeService(thread=thread)
+    result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
+                                  member_email="jo@example.com")
+    assert result is not None and result["approved"] is True
+
+
 if __name__ == "__main__":
     import subprocess
     sys.exit(subprocess.call([sys.executable, "-m", "pytest", __file__, "-q"]))
