@@ -91,36 +91,55 @@ def _phrase_present(low_text: str, phrase: str) -> bool:
     return pattern is not None and pattern.search(low_text) is not None
 
 
-# Quote markers a mail client inserts above the quoted original in a reply. A
-# reply usually carries the whole prior message quoted below the new text -- as
-# `>`-prefixed lines and/or under an "On <date> ... wrote:" attribution line.
-_QUOTED_LINE_RE = re.compile(r"(?m)^\s*>")
-# Attribution line, e.g. "On Mon, 13 Jul 2026 at 15:04, AGIT <x> wrote:". Bounded
-# so a wrapped attribution (long ones fold across lines) is still caught, without
-# swallowing an unrelated later "... wrote:" sentence far down the message.
+# PRIMARY quote marker: the distinctive opening line of OUR approval-request email
+# (compose_approval_email emits it verbatim -- single source of truth). It appears
+# at the top of the quoted original in EVERY reply, regardless of the member's mail
+# client or its UI language, because it is our own content quoted back to us. This
+# is what makes the cut client- and language-independent: it fires even when the
+# client quotes WITHOUT `>` prefixes and WITHOUT a recognisable attribution -- new
+# Outlook / Outlook.com (underscore rule + "From:" header block), localized clients
+# ("-----Urspr..." / "Am ... schrieb:"), or marker-less quoting -- the exact leak
+# classes a `>`/English-marker allowlist misses.
+_APPROVAL_EMAIL_SENTINEL = "Your Asians & Gingers in Tech feature is ready"
+# SECONDARY, client-generic markers (defence in depth; also strip the quoted-block
+# header lines the sentinel leaves above it, e.g. Gmail's "> Hi,"). An
+# "On <date> ... wrote:" attribution, an "-----Original Message-----" separator, or
+# a long underscore rule reliably precede a quoted original, and a member almost
+# never types one. Bounded so a wrapped attribution is still caught without
+# swallowing an unrelated later "... wrote:" sentence.
 _ATTRIBUTION_RE = re.compile(r"(?ms)^\s*On\b.{0,400}?\bwrote:\s*$")
-# Outlook-style "-----Original Message-----" separator.
 _ORIGINAL_MSG_RE = re.compile(r"(?mi)^\s*-{2,}\s*original message\s*-{2,}\s*$")
+_UNDERSCORE_SEP_RE = re.compile(r"(?m)^\s*_{5,}\s*$")
+# NB: deliberately NO bare `>`-line cut. A member may type `>` in their OWN new
+# text (quoting an aside), and cutting at the first `>` would drop their later
+# words -- including a retraction after an earlier approval -> a dangerous false
+# publish. Our own quoted template is caught by the sentinel instead, whether or
+# not it is `>`-prefixed (the sentinel substring survives inside a "> ..." line).
 
 
 def strip_quoted_text(text: str) -> str:
     """Return only the member's NEW text, dropping the quoted original beneath it.
 
-    Cuts at the earliest quote marker (a `>`-quoted line, an "On ... wrote:"
-    attribution, or an "-----Original Message-----" separator). This is the fix
-    for the quoted-text leak: our OWN request template contains the sentence
-    'reply to this email with "approved" to publish it', so if the quoted copy of
-    that line reaches the approval detector, almost any reply looks like an
-    approval. The detector must read ONLY what the member actually typed. The FULL
-    body is still recorded verbatim for the operator, so nothing is lost.
+    This is the fix for the quoted-text leak: our OWN request template contains the
+    sentence 'reply to this email with "approved" to publish it', so if the quoted
+    copy of that line reaches the approval detector, almost any reply looks like an
+    approval. The detector must read ONLY what the member actually typed.
 
-    Fails safe: if a member bottom-posts their reply BELOW the quote (rare), the
-    new text is stripped too and detection sees nothing -> not approved -> blocked,
-    and the operator confirms by hand. Blocking a genuine approval is the safe
-    failure direction for a legal publish gate; publishing on a misread is not.
+    Cuts at the earliest of: our template sentinel (primary, client-independent),
+    an "On ... wrote:" attribution, an "-----Original Message-----" separator, or a
+    long underscore rule (Outlook). The FULL body is still recorded verbatim for the
+    operator, so nothing the member said is lost.
+
+    Fails safe: if a member bottom-posts their reply BELOW the quote (rare), the new
+    text is stripped too and detection sees nothing -> not approved -> blocked, and
+    the operator confirms by hand. Blocking a genuine approval is the safe failure
+    direction for a legal publish gate; publishing on a misread is not.
     """
     cut = len(text)
-    for rx in (_QUOTED_LINE_RE, _ATTRIBUTION_RE, _ORIGINAL_MSG_RE):
+    idx = text.find(_APPROVAL_EMAIL_SENTINEL)
+    if idx != -1:
+        cut = text.rfind("\n", 0, idx) + 1  # cut from the START of the sentinel's line
+    for rx in (_ATTRIBUTION_RE, _ORIGINAL_MSG_RE, _UNDERSCORE_SEP_RE):
         match = rx.search(text)
         if match:
             cut = min(cut, match.start())
@@ -164,7 +183,9 @@ def compose_approval_email(to_addr: str, from_addr: str, feature_title: str,
     msg["X-AGIT-Slug"] = slug
     msg.set_content(
         "Hi,\n\n"
-        "Your Asians & Gingers in Tech feature is ready. This is the EXACT wording "
+        # The sentinel opens the body verbatim so strip_quoted_text can find it in
+        # the quoted copy of ANY reply, regardless of the member's mail client.
+        f"{_APPROVAL_EMAIL_SENTINEL}. This is the EXACT wording "
         "we will publish. Nothing goes live until you reply to approve it.\n\n"
         "Please read it and reply to this email with \"approved\" to publish it, or "
         "tell us what to change and we'll send a new version.\n\n"
@@ -264,16 +285,55 @@ def _decode_part(data: str) -> str:
     return base64.urlsafe_b64decode(data.encode("ascii")).decode("utf-8", "replace")
 
 
-def extract_plain_text(payload: dict) -> str:
-    """Pull the text/plain body out of a Gmail message payload (recursively)."""
-    if payload.get("mimeType") == "text/plain":
+_SCRIPT_STYLE_RE = re.compile(r"(?is)<(script|style)\b.*?</\1>")
+# Tags that end a visible line -- converted to newlines so the quoted original
+# stays on its own lines and strip_quoted_text can find the template sentinel.
+_HTML_BREAK_RE = re.compile(r"(?i)<(?:br\s*/?|/p|/div|/tr|/li|/h[1-6]|/blockquote)\s*>")
+_HTML_TAG_RE = re.compile(r"(?s)<[^>]+>")
+
+
+def _html_to_text(html_body: str) -> str:
+    """Best-effort plain text from an HTML email part (line structure preserved).
+
+    Used only as a fallback when a reply has NO text/plain part. Kept deliberately
+    simple: drop script/style, turn block-closing tags into newlines, strip the
+    rest, and unescape entities -- enough for the approval detector and
+    strip_quoted_text to read what the member typed and to find the quoted
+    template sentinel.
+    """
+    body = _SCRIPT_STYLE_RE.sub("", html_body)
+    body = _HTML_BREAK_RE.sub("\n", body)
+    body = _HTML_TAG_RE.sub("", body)
+    return html.unescape(body)
+
+
+def _extract_by_type(payload: dict, mime: str) -> str:
+    """First body of the given MIME type found in the payload tree, decoded."""
+    if payload.get("mimeType") == mime:
         data = payload.get("body", {}).get("data")
         if data:
             return _decode_part(data)
     for part in payload.get("parts", []) or []:
-        text = extract_plain_text(part)
-        if text:
-            return text
+        found = _extract_by_type(part, mime)
+        if found:
+            return found
+    return ""
+
+
+def extract_plain_text(payload: dict) -> str:
+    """Pull the member's text out of a Gmail payload, preferring text/plain.
+
+    Falls back to text extracted from a text/html part when there is NO text/plain
+    part anywhere in the message. Without the fallback an html-only reply decodes
+    to empty, so a later refusal would be non-decisive and silently fail to
+    supersede an earlier approval -- a dangerous direction on the publish gate.
+    """
+    plain = _extract_by_type(payload, "text/plain")
+    if plain:
+        return plain
+    html_body = _extract_by_type(payload, "text/html")
+    if html_body:
+        return _html_to_text(html_body)
     return ""
 
 
