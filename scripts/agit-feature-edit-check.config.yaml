@@ -134,14 +134,21 @@ approval:
     - "won't approve"
     - "disapprove"
     - "decline"
-    # "declined" is a separate entry: whole-word matching means "decline" above
-    # does NOT match the past tense "declined" (how a member may actually reply).
+    # Whole-word matching means the base verbs above do NOT match their inflected
+    # forms, so each real reply wording a member may use is listed explicitly --
+    # otherwise a later "I'm withdrawing my approval" is not decisive and fails to
+    # supersede an earlier approval (a dangerous direction on a legal publish gate).
     - "declined"
+    - "declining"
     - "cancel"
     - "cancelled"
     - "canceled"
+    - "cancelling"
+    - "canceling"
     - "withdraw"
     - "withdrawn"
+    - "withdrawing"
+    - "withdrawal"
     - "refuse"
     - "reject"
     - "retract"
