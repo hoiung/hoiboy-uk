@@ -205,14 +205,17 @@ approval:
     # you can publish it") is NOT a present, unconditional approval and must block
     # (fail-safe; the operator reads it and re-sends for a clean approval).
     #
-    # These cues are deliberately NARROW so they do not collide with a genuine present
-    # approval that merely mentions narrative/courtesy context ("I checked with my
-    # manager and we're both happy, approved!", "before you ask, yes I approve", "when
-    # I saw it I loved it, approved"). We therefore key on deferral-SPECIFIC phrasing
-    # ("before you publish", "once i've", "when to publish", "let you know when") and
-    # avoid the over-broad bare forms ("before you", "once i", "when i", "checked
-    # with", "let you know"). The unbounded tail of phrasings is backstopped by the
-    # operator reading the verbatim reply before publishing (precision-over-recall).
+    # These cues are deliberately NARROW: only phrasings that a genuine PRESENT
+    # approval essentially never contains. We do NOT try to enumerate every deferral
+    # wording -- natural language is unbounded and each over-broad cue wrongly blocks
+    # a real approval that merely mentions narrative context ("I checked with my
+    # manager, approved!", "before you ask, yes I approve", "once I've read it twice,
+    # approved", "approved -- can we chat about the next one?"). Over-blocking a real
+    # approval defeats the gate's purpose (auto-clearing clean approvals) and there is
+    # no operator override. So we keep only unambiguous deferrals here and rely on the
+    # mandatory operator read of the verbatim reply (SKILL.md) to catch the ambiguous
+    # tail (e.g. "once I've checked with my manager, you can publish it"), rather than
+    # over-block. Precision over recall, with the human read as the recall backstop.
     - "let me think"
     - "think it over"
     - "sleep on it"
@@ -222,8 +225,3 @@ approval:
     - "before you publish"
     - "when to publish"
     - "let you know when"
-    - "once i've"
-    - "once i have"
-    - "can we chat"
-    - "can we talk"
-    - "can we discuss"
