@@ -270,6 +270,42 @@ def motto_is_correct(open_marker: str, phrase: str, close_marker: str) -> bool:
         and open_marker == close_marker
     )
 
+# ---------------------------------------------------------------------------
+# Canonical "zero to one (0-to-1)" phrase (operator-directed, 2026-07-13)
+# ---------------------------------------------------------------------------
+# When Hoi describes taking a product OR a business from nothing to
+# production/launch, the ONE correct rendering is the exact string
+# `zero to one (0-to-1)` — the spelled words "zero to one" immediately
+# followed by "(0-to-1)". Every bare variant is a violation the guard flags:
+# "0-to-1" alone, "zero to one" alone, "0 to 1", or "zero-to-one".
+# WHY: ATS keyword scanners must hit BOTH the spelled AND the digit form in one
+# phrase. The operator repeatedly had it stripped/collapsed by agents and was
+# emphatic ("I will not accept any other way of writing it", "everywhere").
+#
+# SCOPE: this is a CV-MODE-ONLY check (job-hunter recruiter-facing docs). The
+# blog casual voice (hoiboy-uk / blog-priv) legitimately uses the bare forms and
+# has voice-sacred legacy posts, so check-ai-writing-tells.py runs this ONLY in
+# --mode cv (never blog). See scan_file / _check_lines(check_zero_to_one=...).
+#
+# The pattern lists the canonical form FIRST so leftmost-first alternation
+# consumes the whole `zero to one (0-to-1)` as ONE match (never double-flagging
+# the inner "0-to-1"). zero_to_one_is_correct() then accepts only that exact
+# string (case-insensitive, so sentence-start capitalisation is allowed).
+ZERO_TO_ONE_CANONICAL: str = "zero to one (0-to-1)"
+ZERO_TO_ONE_PATTERN: re.Pattern[str] = re.compile(
+    r"zero to one \(0-to-1\)"                    # 1. canonical (longest — MUST be first)
+    r"|zero[\s-]+to[\s-]+one(?:\s*\(0-to-1\))?"  # 2. spelled variants (with/without paren)
+    r"|\b0[\s-]*to[\s-]*1\b",                    # 3. digit variants: 0-to-1, 0 to 1
+    re.IGNORECASE,
+)
+
+
+def zero_to_one_is_correct(matched_text: str) -> bool:
+    """True iff a ZERO_TO_ONE_PATTERN match is the ONE canonical rendering:
+    the spelled words 'zero to one' immediately followed by ' (0-to-1)'.
+    Case-insensitive so a sentence-start 'Zero to one (0-to-1)' also passes."""
+    return matched_text.lower() == ZERO_TO_ONE_CANONICAL
+
 # Bold-first bullet thresholds. CV documents legitimately use bold-first
 # bullets in Core Competencies sections; non-CV docs should not.
 BOLD_BULLET_THRESHOLD_CV: int = 20
