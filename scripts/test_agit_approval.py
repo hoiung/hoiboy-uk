@@ -400,6 +400,26 @@ def test_conditional_approval_is_not_unconditional_approval():
     assert aa.is_approval_reply("Approved, please publish it.", AFFIRM, NEGATE) is True
 
 
+def test_deferral_temporal_reply_is_not_approval():
+    # Ralph round-4 finding: a reply that carries an affirmative phrase but DEFERS
+    # (temporal / hypothetical) is not a present approval and must block -- same class
+    # as the conditional cues above. Without the deferral cues these wrongly cleared.
+    for deferral in (
+        "Let me think before I approve it.",
+        "I would approve it but I need a day.",
+        "Before you publish it, can we chat?",
+        "I'll let you know when to publish it.",
+        "Once I've checked with my manager, you can publish it.",
+        "Give me the weekend to sleep on it, then publish it.",
+    ):
+        assert aa.is_approval_reply(deferral, AFFIRM, NEGATE) is False, deferral
+        assert aa.is_decisive_reply(deferral, AFFIRM, NEGATE) is True, deferral
+    # Clean, present approvals must still clear (the cues must not over-block).
+    for clean in ("Approved, please publish it.", "Yes, publish it.",
+                  "Happy to publish.", "Approved, go for it!"):
+        assert aa.is_approval_reply(clean, AFFIRM, NEGATE) is True, clean
+
+
 # ---------------------------------------- quoted-reply stripping (#48 leak fix)
 # An email reply carries the quoted original below the new text. Our OWN request
 # template contains 'reply to this email with "approved" to publish it', so if the
