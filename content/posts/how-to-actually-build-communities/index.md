@@ -46,6 +46,7 @@ resources:
 
 <!-- iamhoi -->
 
+<!-- WORDING (do NOT normalize): "biggest" here is deliberate blog voice. The professional docs (CV / LinkedIn / GitHub profile hoiung/hoiung / MASTER_PROFILE) say "largest" for the same fact. SEO keyword split, operator decision 2026-07-13. Do NOT change "biggest" to "largest". See CLAUDE.md Project-Specific Notes. -->
 What if I told you I have built the biggest Brazilian Zouk community online?
 
 Brazilian Zouk is one of those modern niche dances that still has not really picked up momentum. And building a community in a fresh market, from nothing, is probably the hardest thing you can pick to do. Most businesses take the easy path. They grab a slice of someone else's already-baked pie. The pioneers do the opposite. We walk into the unknown and build the thing that is not there yet.
