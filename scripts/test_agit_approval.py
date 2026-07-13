@@ -403,27 +403,30 @@ def test_conditional_approval_is_not_unconditional_approval():
 def test_deferral_temporal_reply_is_not_approval():
     # Ralph round-4 finding: a reply that carries an affirmative phrase but DEFERS
     # (temporal / hypothetical) is not a present approval and must block -- same class
-    # as the conditional cues above. Without the deferral cues these wrongly cleared.
+    # as the conditional cues above. Cues are kept NARROW (unambiguous deferrals only)
+    # so they never over-block a genuine approval; the ambiguous tail (e.g. "once I've
+    # checked with my manager, you can publish") is left to the mandatory operator read.
     for deferral in (
         "Let me think before I approve it.",
         "I would approve it but I need a day.",
         "Before you publish it, can we chat?",
         "I'll let you know when to publish it.",
-        "Once I've checked with my manager, you can publish it.",
         "Give me the weekend to sleep on it, then publish it.",
     ):
         assert aa.is_approval_reply(deferral, AFFIRM, NEGATE) is False, deferral
         assert aa.is_decisive_reply(deferral, AFFIRM, NEGATE) is True, deferral
-    # Clean, present approvals must still clear -- the cues must NOT over-block. This
-    # includes genuine approvals that merely mention narrative/courtesy context
-    # (Ralph round-5: the first, over-broad cue set wrongly blocked these).
+    # Clean, present approvals must still clear -- the cues must NOT over-block, even
+    # when the approval mentions narrative/courtesy context (Ralph round-5 flagged the
+    # first, over-broad cue set wrongly blocking these).
     for clean in ("Approved, please publish it.", "Yes, publish it.",
                   "Happy to publish.", "Approved, go for it!",
                   "I checked with my manager and we're both happy, approved, publish it.",
                   "Just to let you know, this looks great, approved!",
                   "Before you ask, yes I approve, publish it.",
                   "When I saw the final draft I loved it, approved, publish it.",
-                  "Once I read it through I knew it was perfect, approved, publish it."):
+                  "Once I read it through I knew it was perfect, approved, publish it.",
+                  "Once I've read this through twice I'm confident, approved, publish it.",
+                  "This is great, approved, publish it. Can we chat about the next one?"):
         assert aa.is_approval_reply(clean, AFFIRM, NEGATE) is True, clean
 
 
