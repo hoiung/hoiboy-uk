@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import base64
 import hashlib
+import html
 import json
 import re
 import sys
@@ -90,6 +91,42 @@ def _phrase_present(low_text: str, phrase: str) -> bool:
     return pattern is not None and pattern.search(low_text) is not None
 
 
+# Quote markers a mail client inserts above the quoted original in a reply. A
+# reply usually carries the whole prior message quoted below the new text -- as
+# `>`-prefixed lines and/or under an "On <date> ... wrote:" attribution line.
+_QUOTED_LINE_RE = re.compile(r"(?m)^\s*>")
+# Attribution line, e.g. "On Mon, 13 Jul 2026 at 15:04, AGIT <x> wrote:". Bounded
+# so a wrapped attribution (long ones fold across lines) is still caught, without
+# swallowing an unrelated later "... wrote:" sentence far down the message.
+_ATTRIBUTION_RE = re.compile(r"(?ms)^\s*On\b.{0,400}?\bwrote:\s*$")
+# Outlook-style "-----Original Message-----" separator.
+_ORIGINAL_MSG_RE = re.compile(r"(?mi)^\s*-{2,}\s*original message\s*-{2,}\s*$")
+
+
+def strip_quoted_text(text: str) -> str:
+    """Return only the member's NEW text, dropping the quoted original beneath it.
+
+    Cuts at the earliest quote marker (a `>`-quoted line, an "On ... wrote:"
+    attribution, or an "-----Original Message-----" separator). This is the fix
+    for the quoted-text leak: our OWN request template contains the sentence
+    'reply to this email with "approved" to publish it', so if the quoted copy of
+    that line reaches the approval detector, almost any reply looks like an
+    approval. The detector must read ONLY what the member actually typed. The FULL
+    body is still recorded verbatim for the operator, so nothing is lost.
+
+    Fails safe: if a member bottom-posts their reply BELOW the quote (rare), the
+    new text is stripped too and detection sees nothing -> not approved -> blocked,
+    and the operator confirms by hand. Blocking a genuine approval is the safe
+    failure direction for a legal publish gate; publishing on a misread is not.
+    """
+    cut = len(text)
+    for rx in (_QUOTED_LINE_RE, _ATTRIBUTION_RE, _ORIGINAL_MSG_RE):
+        match = rx.search(text)
+        if match:
+            cut = min(cut, match.start())
+    return text[:cut].rstrip()
+
+
 def is_approval_reply(text: str, affirmative: list[str], negation: list[str]) -> bool:
     """True iff the reply carries an affirmative phrase AND no negation phrase.
 
@@ -135,6 +172,25 @@ def compose_approval_email(to_addr: str, from_addr: str, feature_title: str,
         f"{final_wording}\n\n"
         "----- End of feature -----\n\n"
         "Thanks,\nAsians & Gingers in Tech\nhello@hoiboy.uk\n"
+    )
+    # HTML alternative: identical wording, but the action word is bold so the
+    # member cannot miss what to type. The plain-text part above is unchanged and
+    # stays the body the approval detector reads; this alternative is display-only
+    # (the member's REPLY is what gets detected, and it is quote-stripped first).
+    safe_wording = html.escape(final_wording)
+    msg.add_alternative(
+        "<html><body style=\"font-family:sans-serif\">"
+        "<p>Hi,</p>"
+        "<p>Your Asians &amp; Gingers in Tech feature is ready. This is the EXACT "
+        "wording we will publish. Nothing goes live until you reply to approve it.</p>"
+        "<p>Please read it and reply to this email with <strong>approved</strong> "
+        "to publish it, or tell us what to change and we'll send a new version.</p>"
+        "<p>----- Your feature, exactly as it will publish -----</p>"
+        f"<pre style=\"white-space:pre-wrap\">{safe_wording}</pre>"
+        "<p>----- End of feature -----</p>"
+        "<p>Thanks,<br>Asians &amp; Gingers in Tech<br>hello@hoiboy.uk</p>"
+        "</body></html>",
+        subtype="html",
     )
     return msg
 
@@ -260,7 +316,7 @@ def poll_for_approval(service, record_dir: Path, *, thread_id: str,
     affirmative, negation = load_approval_phrases(config_path)
     member_addr = (parseaddr(member_email)[1] or member_email).strip().lower()
     thread = service.users().threads().get(userId="me", id=thread_id).execute()
-    replies: list[tuple[str, str, str]] = []  # (body, sender, message_id) in order
+    replies: list[tuple[str, str, str, str]] = []  # (full_body, new_text, sender, msg_id)
     decisive_idx: int | None = None            # index of the latest approve/refuse
     for message in thread.get("messages", []):
         payload = message.get("payload", {})
@@ -273,16 +329,21 @@ def poll_for_approval(service, record_dir: Path, *, thread_id: str,
         if parseaddr(sender)[1].strip().lower() != member_addr:
             continue
         body = extract_plain_text(payload)
-        replies.append((body, sender, message.get("id", "")))
-        if is_decisive_reply(body, affirmative, negation):
+        # Detection reads ONLY the member's new text -- the quoted original (which
+        # echoes our own 'reply with "approved"' template line) must never be
+        # matched. The FULL body is still recorded (reply_text / later_replies) so
+        # the operator sees everything the member wrote.
+        new_text = strip_quoted_text(body)
+        replies.append((body, new_text, sender, message.get("id", "")))
+        if is_decisive_reply(new_text, affirmative, negation):
             decisive_idx = len(replies) - 1  # a later decisive reply supersedes
 
     if not replies:
         return None  # the member has not replied yet
 
     chosen_idx = decisive_idx if decisive_idx is not None else len(replies) - 1
-    body, sender, message_id = replies[chosen_idx]
-    approved = is_approval_reply(body, affirmative, negation)
+    body, new_text, sender, message_id = replies[chosen_idx]
+    approved = is_approval_reply(new_text, affirmative, negation)
     # Everything the member said AFTER the decision -- surfaced, never dropped.
     later_replies = [r[0] for r in replies[chosen_idx + 1:]]
     request_path = record_dir / REQUEST_FILE
