@@ -306,6 +306,38 @@ def zero_to_one_is_correct(matched_text: str) -> bool:
     Case-insensitive so a sentence-start 'Zero to one (0-to-1)' also passes."""
     return matched_text.lower() == ZERO_TO_ONE_CANONICAL
 
+# ---------------------------------------------------------------------------
+# Company clarifier — "Canonical (Ubuntu Linux)" (operator-directed, 2026-07-13)
+# ---------------------------------------------------------------------------
+# Every mention of the EMPLOYER Canonical in recruiter/client-facing copy must
+# read EXACTLY "Canonical (Ubuntu Linux)" — one consistent form. Many readers
+# know Ubuntu/Linux, fewer recognise the company name, and "Linux" is itself an
+# ATS keyword. Both bare "Canonical" (incl. "Ex-Canonical") AND the shorter
+# "Canonical (Ubuntu)" are flagged — the operator chose "(Ubuntu Linux)" for
+# consistency + clarity + keyword reach (2026-07-13), matching the established
+# LinkedIn Experience entries.
+#
+# CASE-SENSITIVE on purpose: only the capitalised proper noun "Canonical" (the
+# company) is checked. The lowercase adjective "canonical" (canonical phrase /
+# canonical source / canonical form) is used heavily across the harness docs and
+# must NEVER be flagged — so no re.IGNORECASE here.
+#
+# SCOPE: CV-MODE only (job-hunter recruiter/client copy), same gate as the
+# zero-to-one rule. Not run in blog mode.
+#
+# The pattern greedily grabs the " (Ubuntu[ Linux])" suffix when present, so a
+# fully-clarified occurrence matches "Canonical (Ubuntu Linux)" (is_correct True)
+# while "Canonical (Ubuntu)" and bare "Canonical" match shorter and fail.
+CANONICAL_UBUNTU_PATTERN: re.Pattern[str] = re.compile(
+    r"Canonical(?: \(Ubuntu(?: Linux)?\))?"
+)
+
+
+def canonical_ubuntu_is_correct(matched_text: str) -> bool:
+    """True iff a CANONICAL_UBUNTU_PATTERN match is the ONE required form
+    'Canonical (Ubuntu Linux)'. Bare 'Canonical' AND 'Canonical (Ubuntu)' fail."""
+    return matched_text == "Canonical (Ubuntu Linux)"
+
 # Bold-first bullet thresholds. CV documents legitimately use bold-first
 # bullets in Core Competencies sections; non-CV docs should not.
 BOLD_BULLET_THRESHOLD_CV: int = 20

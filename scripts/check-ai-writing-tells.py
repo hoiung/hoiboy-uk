@@ -64,6 +64,8 @@ from voice_rules import (
     motto_is_correct,
     ZERO_TO_ONE_PATTERN,
     zero_to_one_is_correct,
+    CANONICAL_UBUNTU_PATTERN,
+    canonical_ubuntu_is_correct,
     NEGATION_PATTERN,
     NUMBER_TOKEN_PATTERN,
     NUMERIC_DENSITY_MIN_NUMBERS,
@@ -336,7 +338,7 @@ def extract_voice_regions(text: str) -> list[tuple[int, str]]:
 # ---------------------------------------------------------------------------
 def _check_lines(
     numbered_lines: list[tuple[int, str]], file: str,
-    check_zero_to_one: bool = False,
+    cv_copy_rules: bool = False,
 ) -> list[Finding]:
     findings: list[Finding] = []
     for ln, line in numbered_lines:
@@ -373,16 +375,27 @@ def _check_lines(
                     f'"{m.group(0)}" -> must be *This is the Way* '
                     f'(exact case, italic): {line.strip()[:80]}'
                 ))
-        # CV-mode only (operator 2026-07-13): the "zero to one" concept must be
-        # written EXACTLY as `zero to one (0-to-1)`. Flag every bare form. Off in
-        # blog mode (casual voice + voice-sacred posts use bare forms freely).
-        if check_zero_to_one:
+        # CV-mode-only copy rules (operator 2026-07-13). Off in blog mode
+        # (casual voice + voice-sacred posts use these bare forms freely).
+        if cv_copy_rules:
+            # (1) the "zero to one" concept must be written EXACTLY as
+            # `zero to one (0-to-1)`. Flag every bare form.
             for m in ZERO_TO_ONE_PATTERN.finditer(line):
                 if not zero_to_one_is_correct(m.group(0)):
                     findings.append(Finding(
                         file, ln, "ZERO_TO_ONE_FORMAT",
                         f'"{m.group(0)}" -> must be the exact phrase '
                         f'"zero to one (0-to-1)": {line.strip()[:80]}'
+                    ))
+            # (2) the employer "Canonical" must read exactly
+            # "Canonical (Ubuntu Linux)". Flag bare "Canonical", "Ex-Canonical"
+            # AND the shorter "Canonical (Ubuntu)".
+            for m in CANONICAL_UBUNTU_PATTERN.finditer(line):
+                if not canonical_ubuntu_is_correct(m.group(0)):
+                    findings.append(Finding(
+                        file, ln, "CANONICAL_UBUNTU",
+                        f'"{m.group(0)}" -> must be "Canonical (Ubuntu Linux)": '
+                        f'{line.strip()[:80]}'
                     ))
     return findings
 
@@ -629,7 +642,7 @@ def scan_file(file_path: Path, repo_root: Path, mode: str) -> list[Finding]:
         if is_whitelisted(file_path, repo_root, whitelist):
             is_cv = file_path.name.startswith("CV_AI_TRANSFORMATION")
             numbered = list(enumerate(text.split("\n"), 1))
-            findings = _check_lines(numbered, file_str, check_zero_to_one=True)
+            findings = _check_lines(numbered, file_str, cv_copy_rules=True)
             findings.extend(_check_bold_bullets(text, file_str, is_cv))
             return findings
         try:
@@ -637,7 +650,7 @@ def scan_file(file_path: Path, repo_root: Path, mode: str) -> list[Finding]:
         except ValueError as e:
             return [Finding(file_str, 0, "MARKER_ERROR", str(e))]
         if regions:
-            return _check_lines(regions, file_str, check_zero_to_one=True)
+            return _check_lines(regions, file_str, cv_copy_rules=True)
         return []
 
     # blog mode: region-first, then legacy whitelist (currently empty).
