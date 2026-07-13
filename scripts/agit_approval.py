@@ -101,6 +101,14 @@ def _phrase_present(low_text: str, phrase: str) -> bool:
 # ("-----Urspr..." / "Am ... schrieb:"), or marker-less quoting -- the exact leak
 # classes a `>`/English-marker allowlist misses.
 _APPROVAL_EMAIL_SENTINEL = "Your Asians & Gingers in Tech feature is ready"
+# Match the sentinel WHITESPACE-FLEXIBLY: join its words with \s+ so the cut still
+# fires when the client mangles the inter-word spacing of the quoted copy -- a
+# non-breaking space (Outlook injects &nbsp;), a tab, a double space, or a hard
+# line-wrap that splits the sentence across lines. A byte-exact substring search
+# would miss all of these and re-open the leak (the quoted 'approved' would
+# survive). \s also matches U+00A0, so nbsp is handled here as well as in
+# _html_to_text. A member would never type this exact branded phrase.
+_SENTINEL_RE = re.compile(r"\s+".join(re.escape(w) for w in _APPROVAL_EMAIL_SENTINEL.split()))
 # SECONDARY, client-generic markers (defence in depth; also strip the quoted-block
 # header lines the sentinel leaves above it, e.g. Gmail's "> Hi,"). An
 # "On <date> ... wrote:" attribution, an "-----Original Message-----" separator, or
@@ -125,10 +133,10 @@ def strip_quoted_text(text: str) -> str:
     copy of that line reaches the approval detector, almost any reply looks like an
     approval. The detector must read ONLY what the member actually typed.
 
-    Cuts at the earliest of: our template sentinel (primary, client-independent),
-    an "On ... wrote:" attribution, an "-----Original Message-----" separator, or a
-    long underscore rule (Outlook). The FULL body is still recorded verbatim for the
-    operator, so nothing the member said is lost.
+    Cuts at the earliest of: our template sentinel (primary, client-independent,
+    whitespace-flexible), an "On ... wrote:" attribution, an "-----Original
+    Message-----" separator, or a long underscore rule (Outlook). The FULL body is
+    still recorded verbatim for the operator, so nothing the member said is lost.
 
     Fails safe: if a member bottom-posts their reply BELOW the quote (rare), the new
     text is stripped too and detection sees nothing -> not approved -> blocked, and
@@ -136,9 +144,9 @@ def strip_quoted_text(text: str) -> str:
     direction for a legal publish gate; publishing on a misread is not.
     """
     cut = len(text)
-    idx = text.find(_APPROVAL_EMAIL_SENTINEL)
-    if idx != -1:
-        cut = text.rfind("\n", 0, idx) + 1  # cut from the START of the sentinel's line
+    sentinel = _SENTINEL_RE.search(text)
+    if sentinel:
+        cut = text.rfind("\n", 0, sentinel.start()) + 1  # from the START of its line
     for rx in (_ATTRIBUTION_RE, _ORIGINAL_MSG_RE, _UNDERSCORE_SEP_RE):
         match = rx.search(text)
         if match:
@@ -202,7 +210,9 @@ def compose_approval_email(to_addr: str, from_addr: str, feature_title: str,
     msg.add_alternative(
         "<html><body style=\"font-family:sans-serif\">"
         "<p>Hi,</p>"
-        "<p>Your Asians &amp; Gingers in Tech feature is ready. This is the EXACT "
+        # Sentinel from the single-source constant so the html part a member may
+        # quote back also carries it verbatim (strip_quoted_text can then cut it).
+        f"<p>{html.escape(_APPROVAL_EMAIL_SENTINEL)}. This is the EXACT "
         "wording we will publish. Nothing goes live until you reply to approve it.</p>"
         "<p>Please read it and reply to this email with <strong>approved</strong> "
         "to publish it, or tell us what to change and we'll send a new version.</p>"
@@ -285,26 +295,33 @@ def _decode_part(data: str) -> str:
     return base64.urlsafe_b64decode(data.encode("ascii")).decode("utf-8", "replace")
 
 
+_HTML_COMMENT_RE = re.compile(r"(?s)<!--.*?-->")
 _SCRIPT_STYLE_RE = re.compile(r"(?is)<(script|style)\b.*?</\1>")
-# Tags that end a visible line -- converted to newlines so the quoted original
-# stays on its own lines and strip_quoted_text can find the template sentinel.
-_HTML_BREAK_RE = re.compile(r"(?i)<(?:br\s*/?|/p|/div|/tr|/li|/h[1-6]|/blockquote)\s*>")
+# Block- and CELL-level tags become newlines so words in separate blocks/cells do
+# not fuse: "<td>please</td><td>cancel</td>" must read as "please\ncancel", not
+# "pleasecancel" (which would hide the refusal from whole-word matching). Matches
+# the opening OR closing form of each. Remaining INLINE tags (<b>, <span>, <a>...)
+# are then removed WITHOUT a space, so whole-word inline formatting like
+# "<b>approved</b>" stays a single word rather than fragmenting.
+_HTML_BREAK_RE = re.compile(
+    r"(?i)<\s*/?\s*(?:br|p|div|tr|td|th|li|h[1-6]|blockquote|table|ul|ol|pre)\b[^>]*>")
 _HTML_TAG_RE = re.compile(r"(?s)<[^>]+>")
 
 
 def _html_to_text(html_body: str) -> str:
     """Best-effort plain text from an HTML email part (line structure preserved).
 
-    Used only as a fallback when a reply has NO text/plain part. Kept deliberately
-    simple: drop script/style, turn block-closing tags into newlines, strip the
-    rest, and unescape entities -- enough for the approval detector and
-    strip_quoted_text to read what the member typed and to find the quoted
-    template sentinel.
+    Used only as a fallback when a reply has NO text/plain part. Drop comments and
+    script/style, turn block/cell tags into newlines, remove remaining inline tags,
+    unescape entities, and normalise non-breaking spaces to ordinary spaces -- so
+    the approval detector and strip_quoted_text read what the member typed and can
+    find the quoted template sentinel even when the client used &nbsp; spacing.
     """
-    body = _SCRIPT_STYLE_RE.sub("", html_body)
+    body = _HTML_COMMENT_RE.sub("", html_body)
+    body = _SCRIPT_STYLE_RE.sub("", body)
     body = _HTML_BREAK_RE.sub("\n", body)
     body = _HTML_TAG_RE.sub("", body)
-    return html.unescape(body)
+    return html.unescape(body).replace("\xa0", " ")
 
 
 def _extract_by_type(payload: dict, mime: str) -> str:
