@@ -426,7 +426,8 @@ def test_deferral_temporal_reply_is_not_approval():
                   "When I saw the final draft I loved it, approved, publish it.",
                   "Once I read it through I knew it was perfect, approved, publish it.",
                   "Once I've read this through twice I'm confident, approved, publish it.",
-                  "This is great, approved, publish it. Can we chat about the next one?"):
+                  "This is great, approved, publish it. Can we chat about the next one?",
+                  "Approved, publish it! I'll let you know when the next story is ready."):
         assert aa.is_approval_reply(clean, AFFIRM, NEGATE) is True, clean
 
 
