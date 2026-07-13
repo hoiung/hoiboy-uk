@@ -407,86 +407,159 @@ def test_conditional_approval_is_not_unconditional_approval():
 # the confirmed CRITICAL leak: real-template replies of "please cancel" / "let me
 # think" / "declined" would otherwise wrongly PUBLISH. strip_quoted_text removes
 # the quote before detection; the FULL body is still recorded for the operator.
+#
+# The quote is stripped by finding our template SENTINEL, so it works for EVERY
+# mail client / UI language -- not just Gmail's `>`/"wrote:" convention. These
+# fixtures reproduce the real client quoting styles that a `>`-only allowlist
+# missed (Ralph #48 findings 1-2): new Outlook (underscore + From: header block,
+# no `>`), a localized client (non-English separator, no `>`), and marker-less
+# quoting. All quote the ACTUAL composed email, so the sentinel is present exactly
+# as it ships.
 
-# The exact leaking line our template quotes back to us, plus the quoted feature.
-_TEMPLATE_QUOTE = (
-    "> Please read it and reply to this email with \"approved\" to publish it, or\n"
-    "> tell us what to change and we'll send a new version.\n"
-    "> ----- Your feature, exactly as it will publish -----\n"
-    "> My story about starting out in tech.\n"
-)
+# The real request email's plain body -- this is what a member's reply quotes back.
+_SENT_PLAIN = aa.compose_approval_email(
+    "m@example.com", "hoiboyuk@gmail.com", "Jane the Builder",
+    "My story about starting out in tech.", "jane"
+).get_body(preferencelist=("plain",)).get_content()
 
 
-def _reply_over_quote(new_text: str) -> str:
-    """A realistic Gmail-style reply: the member's new text, a "wrote:" attribution,
-    then the quoted original (which contains our 'approved' template line)."""
+def _gmail_quote(new_text: str) -> str:
+    """Gmail-style: new text, an "On ... wrote:" attribution, then `>`-prefixed body."""
+    quoted = "".join("> " + ln + "\n" for ln in _SENT_PLAIN.splitlines())
     return (f"{new_text}\n\n"
             "On Mon, 13 Jul 2026 at 15:04, Asians & Gingers in Tech "
-            "<hello@hoiboy.uk> wrote:\n"
-            f"{_TEMPLATE_QUOTE}")
+            "<hello@hoiboy.uk> wrote:\n" + quoted)
 
 
-def test_strip_quoted_text_drops_gmail_attribution_and_quote():
-    stripped = aa.strip_quoted_text(_reply_over_quote("Sounds good, thanks."))
-    assert stripped == "Sounds good, thanks."
-    assert "approved" not in stripped.lower()
+def _outlook_quote(new_text: str) -> str:
+    """New Outlook / OWA: underscore rule + From/Sent/To/Subject block, no `>`/wrote:."""
+    return (f"{new_text}\n\n"
+            "________________________________\n"
+            "From: Asians & Gingers in Tech <hello@hoiboy.uk>\n"
+            "Sent: Monday, July 13, 2026 3:04 PM\n"
+            "To: member@corp.com\n"
+            "Subject: Please approve your AGIT feature: Jane\n\n"
+            + _SENT_PLAIN)
 
 
-def test_strip_quoted_text_drops_bare_quote_lines():
-    text = "no thanks\n> reply with \"approved\" to publish it"
-    assert aa.strip_quoted_text(text) == "no thanks"
+def _localized_quote(new_text: str) -> str:
+    """Localized client: a non-English separator our English markers do NOT match,
+    no `>` -- so ONLY the template sentinel can catch it."""
+    return (f"{new_text}\n\n"
+            "-----Ursprungliche Nachricht-----\n"  # deliberately not "Original Message"
+            + _SENT_PLAIN)
 
 
-def test_strip_quoted_text_drops_outlook_original_message():
+def _markerless_quote(new_text: str) -> str:
+    """Minimal client: the quoted body simply appended, with no markers at all."""
+    return f"{new_text}\n\n" + _SENT_PLAIN
+
+
+_ALL_QUOTE_STYLES = (_gmail_quote, _outlook_quote, _localized_quote, _markerless_quote)
+
+
+def test_compose_email_emits_the_strip_sentinel():
+    # strip_quoted_text keys on this exact sentinel; compose MUST emit it verbatim
+    # (single source of truth), else the client-independent cut silently stops working.
+    assert aa._APPROVAL_EMAIL_SENTINEL in _SENT_PLAIN
+
+
+def test_no_client_quote_style_leaks_a_neutral_reply(tmp_path):
+    # The headline leak, across EVERY client quoting style: a neutral/refusal reply
+    # that quotes our 'approved' template must NOT read as an approval, and the
+    # quoted 'approved' must be gone from the detection input.
+    for style in _ALL_QUOTE_STYLES:
+        for neutral in ("Thanks, let me think about it.", "please cancel", "declined",
+                        "Can you change the second line first?", "nah, not for me"):
+            stripped = aa.strip_quoted_text(style(neutral))
+            ctx = (style.__name__, neutral)
+            assert aa.is_approval_reply(stripped, AFFIRM, NEGATE) is False, ctx
+            assert "approved" not in stripped.lower(), ctx  # quoted template gone
+
+
+def test_every_client_quote_style_keeps_a_genuine_approval(tmp_path):
+    # A genuine approval that ALSO quotes our template still reads as approval, in
+    # every client style.
+    for style in _ALL_QUOTE_STYLES:
+        stripped = aa.strip_quoted_text(style("Approved, please publish it."))
+        assert aa.is_approval_reply(stripped, AFFIRM, NEGATE) is True, style.__name__
+
+
+def test_strip_keeps_plain_reply_unchanged():
+    assert aa.strip_quoted_text("Approved, publish it.") == "Approved, publish it."
+    assert aa.strip_quoted_text("Please cancel, I changed my mind.") == \
+        "Please cancel, I changed my mind."
+
+
+def test_strip_does_not_drop_members_own_quote_line(tmp_path):
+    # Ralph #48 finding 2: a member types their OWN `>` aside then a LATER retraction.
+    # We must NOT cut at the bare `>` (that would drop the retraction and wrongly
+    # approve). No template sentinel here, so nothing is stripped; "cancel" then wins.
+    reply = ("Approved, publish it.\n"
+             "> (an aside I am quoting)\n"
+             "Actually wait, please cancel for now.")
+    stripped = aa.strip_quoted_text(reply)
+    assert "please cancel" in stripped.lower()               # retraction preserved
+    assert aa.is_approval_reply(stripped, AFFIRM, NEGATE) is False  # negation wins -> BLOCK
+
+
+def test_strip_outlook_original_message_english_separator():
     text = ("Please cancel this.\n\n"
             "-----Original Message-----\n"
             "reply to this email with \"approved\" to publish it")
     assert aa.strip_quoted_text(text) == "Please cancel this."
 
 
-def test_strip_quoted_text_keeps_plain_reply_unchanged():
-    assert aa.strip_quoted_text("Approved, publish it.") == "Approved, publish it."
-    assert aa.strip_quoted_text("Please cancel, I changed my mind.") == \
-        "Please cancel, I changed my mind."
-
-
-def test_quoted_template_does_not_leak_neutral_reply_as_approval():
-    # The headline leak: a NEUTRAL/REFUSAL reply that quotes our 'approved' template
-    # must NOT read as an approval once the quote is stripped.
-    for neutral in ("please cancel", "cancel it", "declined", "I have declined this",
-                    "let me think about it", "nah, not for me", "give me a day",
-                    "can you change the second line first?"):
-        stripped = aa.strip_quoted_text(_reply_over_quote(neutral))
-        assert aa.is_approval_reply(stripped, AFFIRM, NEGATE) is False, neutral
-
-
-def test_quoted_original_does_not_hide_genuine_approval():
-    # A genuine approval that ALSO quotes our template still reads as approval.
-    stripped = aa.strip_quoted_text(_reply_over_quote("Approved, please publish it."))
-    assert aa.is_approval_reply(stripped, AFFIRM, NEGATE) is True
-
-
-def test_cancel_declined_withdraw_are_decisive_refusals():
-    # #48 secondary gap: cancel / cancelled / canceled / declined / withdraw(n) were
-    # not recognised as decisive refusals, so a "please cancel" retraction failed to
-    # supersede an earlier approval.
+def test_inflected_refusals_are_decisive():
+    # #48 secondary gap incl. Ralph finding 3: whole-word matching means base verbs do
+    # NOT match their inflected forms, so each real reply wording must be decisive --
+    # else a later "I'm withdrawing my approval" fails to supersede an earlier approval.
     for refusal in ("Please cancel this.", "I've cancelled it.", "Consider it canceled.",
-                    "Declined.", "I have declined.", "I withdraw my approval.",
-                    "Approval withdrawn."):
+                    "I'm cancelling it.", "Declined.", "I have declined.", "I am declining.",
+                    "I withdraw my approval.", "Approval withdrawn.",
+                    "I'm withdrawing my approval, sorry.", "I request withdrawal."):
         assert aa.is_approval_reply(refusal, AFFIRM, NEGATE) is False, refusal
         assert aa.is_decisive_reply(refusal, AFFIRM, NEGATE) is True, refusal
+
+
+# ------------------- html-only reply fallback (Ralph Opus finding 2: supersede)
+
+def _gmail_html_message(msg_id: str, from_addr: str, html_body: str) -> dict:
+    data = base64.urlsafe_b64encode(html_body.encode("utf-8")).decode("ascii")
+    return {"id": msg_id, "payload": {
+        "mimeType": "text/html",
+        "headers": [{"name": "From", "value": from_addr}],
+        "body": {"data": data}}}
+
+
+def test_extract_plain_text_falls_back_to_html_when_no_plain_part():
+    payload = {"mimeType": "text/html", "body": {"data": base64.urlsafe_b64encode(
+        b"<p>Hello</p><div>please cancel this</div>").decode()}}
+    text = aa.extract_plain_text(payload).lower()
+    assert "please cancel this" in text
+
+
+def test_extract_plain_text_prefers_plain_over_html():
+    # With BOTH parts present, the plain part still wins (fallback is html-only).
+    payload = {"mimeType": "multipart/alternative", "parts": [
+        {"mimeType": "text/html", "body": {"data": base64.urlsafe_b64encode(
+            b"<p>ignored html</p>").decode()}},
+        {"mimeType": "text/plain", "body": {"data": base64.urlsafe_b64encode(
+            b"the real plain reply").decode()}},
+    ]}
+    assert aa.extract_plain_text(payload) == "the real plain reply"
 
 
 # ----------------------------------- poll end-to-end over a quoted-template reply
 
 def test_poll_neutral_reply_over_quoted_template_blocks(tmp_path):
-    # END-TO-END of the leak: the member's reply body carries neutral text PLUS the
-    # quoted original (our 'approved' template line). poll must BLOCK, and still
-    # record the FULL body (quote included) so the operator sees everything.
+    # END-TO-END of the leak: the member's reply carries neutral text PLUS the quoted
+    # original. poll must BLOCK, and still record the FULL body (quote included) so
+    # the operator sees everything.
     thread = {"messages": [
         _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
         _gmail_message("in1", "m@example.com",
-                       _reply_over_quote("Thanks, let me think about it.")),
+                       _outlook_quote("Thanks, let me think about it.")),
     ]}
     svc = FakeService(thread=thread)
     result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
@@ -496,23 +569,11 @@ def test_poll_neutral_reply_over_quoted_template_blocks(tmp_path):
     assert "approved" in result["reply_text"].lower()  # full quote preserved for operator
 
 
-def test_poll_cancel_reply_over_quoted_template_blocks(tmp_path):
-    thread = {"messages": [
-        _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
-        _gmail_message("in1", "m@example.com",
-                       _reply_over_quote("Please cancel, I changed my mind.")),
-    ]}
-    svc = FakeService(thread=thread)
-    result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
-                                  member_email="m@example.com")
-    assert result is not None and result["approved"] is False
-
-
 def test_poll_genuine_approval_over_quoted_template_publishes(tmp_path):
     thread = {"messages": [
         _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
         _gmail_message("in1", "m@example.com",
-                       _reply_over_quote("Approved, please publish it.")),
+                       _gmail_quote("Approved, please publish it.")),
     ]}
     svc = FakeService(thread=thread)
     result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
@@ -525,8 +586,38 @@ def test_poll_approval_then_cancel_over_quote_blocks(tmp_path):
     # later cancel is now decisive and supersedes the approval (fail-safe).
     thread = {"messages": [
         _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
-        _gmail_message("in1", "m@example.com", _reply_over_quote("Approved, publish it.")),
-        _gmail_message("in2", "m@example.com", _reply_over_quote("Actually please cancel.")),
+        _gmail_message("in1", "m@example.com", _gmail_quote("Approved, publish it.")),
+        _gmail_message("in2", "m@example.com", _gmail_quote("Actually please cancel.")),
+    ]}
+    svc = FakeService(thread=thread)
+    result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
+                                  member_email="m@example.com")
+    assert result is not None and result["approved"] is False
+
+
+def test_poll_approval_then_withdrawing_over_quote_blocks(tmp_path):
+    # Ralph finding 3 end-to-end: a later "I'm withdrawing my approval" must supersede.
+    thread = {"messages": [
+        _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
+        _gmail_message("in1", "m@example.com", _gmail_quote("Approved, publish it.")),
+        _gmail_message("in2", "m@example.com",
+                       _gmail_quote("Actually, I'm withdrawing my approval, sorry.")),
+    ]}
+    svc = FakeService(thread=thread)
+    result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
+                                  member_email="m@example.com")
+    assert result is not None and result["approved"] is False
+
+
+def test_poll_html_only_cancel_supersedes_earlier_approval(tmp_path):
+    # Ralph Opus finding 2: member approves in plain text, then sends an html-ONLY
+    # cancel (no text/plain part). The html fallback must read it so the later refusal
+    # supersedes -- otherwise the stale approval publishes.
+    thread = {"messages": [
+        _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
+        _gmail_message("in1", "m@example.com", "Approved, publish it."),
+        _gmail_html_message("in2", "m@example.com",
+                            "<div>Actually, <b>please cancel</b> this.</div>"),
     ]}
     svc = FakeService(thread=thread)
     result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
