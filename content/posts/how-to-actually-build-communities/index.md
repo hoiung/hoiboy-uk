@@ -154,7 +154,7 @@ The point buried in that story. People do not follow a brand. They follow a pers
 
 Last one. When someone comes to you for help, funnel them in the right direction.
 
-That often means working with, and recommending, good community builders and good teachers I trust. I always tell people to try every teacher and every school first anyway. You cannot know what mould tastes like without tasting it (have you tasted mould before? Not nice, right, but you will remember to avoid it in future, lol). Only once you have tried as many as possible do you have a real contrast to judge by. And then it is not me telling you what is better. You learn to make your own better decisions and find the answer you were looking for.
+That often means working with, and recommending, good community builders and good teachers I trust. I always tell people to try every teacher and every school first anyway. You cannot know what mould tastes like without tasting it (have you tasted mould before? Not nice, right? LOL, but you will remember to avoid it in future). Only once you have tried as many as possible do you have a real contrast to judge by. And then it is not me telling you what is better. You learn to make your own better decisions and find the answer you were looking for.
 
 The other half of it is helping people navigate a vast, fragmented mess of information, and sending them to a good source instead of a stale one. I do not like reinventing the wheel either. My site listed dance schools all over the world so you could find local classes, but it never listed international events. Other people had already built something good for that, so I just pointed dancers their way.
 
