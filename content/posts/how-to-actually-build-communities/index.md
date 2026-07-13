@@ -92,7 +92,7 @@ The main thing is, do not let money stop you from building a community. It shoul
 
 You have to test, build, observe, and above all, be patient. Sometimes the seeds you sow do not sprout for years.
 
-It is a bit like bamboo. The thing spends three to five years growing roots underground where you cannot see a single result, and then once the foundation is in, it shoots up towards the sky in a matter of months. Community, and learning to dance, is the same. You are growing roots long before anything is visible.
+It is a bit like bamboo. The thing spends its first few years growing roots underground where you cannot see a single result. Three to five years to really get going, longer still for some species, and then it shoots up towards the sky in a matter of months. Community, and learning to dance, is the same. You are growing roots long before anything is visible.
 
 The other half of it is just throwing ideas out there. It is not about releasing perfection, you genuinely do not know what works until you try it and watch what happens. Sometimes it takes a few goes and a few tweaks to see which shit sticks to the wall. And it is almost always the unexpected one that sticks. Why it stuck, you only figure out much later.
 
