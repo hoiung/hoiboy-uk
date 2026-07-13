@@ -203,24 +203,27 @@ approval:
     # approve it", "I would approve it but I need a day", "before you publish, can we
     # chat?", "I'll let you know when to publish", "once I've checked with my manager
     # you can publish it") is NOT a present, unconditional approval and must block
-    # (fail-safe; the operator reads it and re-sends for a clean approval). A clean
-    # approval ("approved", "yes, publish it", "happy to publish") carries none of
-    # these. This is precision-over-recall by design; the unbounded tail of phrasings
-    # is backstopped by the operator reading the verbatim reply before publishing.
+    # (fail-safe; the operator reads it and re-sends for a clean approval).
+    #
+    # These cues are deliberately NARROW so they do not collide with a genuine present
+    # approval that merely mentions narrative/courtesy context ("I checked with my
+    # manager and we're both happy, approved!", "before you ask, yes I approve", "when
+    # I saw it I loved it, approved"). We therefore key on deferral-SPECIFIC phrasing
+    # ("before you publish", "once i've", "when to publish", "let you know when") and
+    # avoid the over-broad bare forms ("before you", "once i", "when i", "checked
+    # with", "let you know"). The unbounded tail of phrasings is backstopped by the
+    # operator reading the verbatim reply before publishing (precision-over-recall).
     - "let me think"
-    - "think about it"
     - "think it over"
     - "sleep on it"
-    - "before you"
-    - "before i"
-    - "would approve"
-    - "would publish"
-    - "let you know"
-    - "get back to you"
     - "need a day"
     - "need more time"
     - "need some time"
-    - "once i"
-    - "when i"
-    - "check with"
-    - "checked with"
+    - "before you publish"
+    - "when to publish"
+    - "let you know when"
+    - "once i've"
+    - "once i have"
+    - "can we chat"
+    - "can we talk"
+    - "can we discuss"
