@@ -101,16 +101,27 @@ def _phrase_present(low_text: str, phrase: str) -> bool:
 # ("-----Urspr..." / "Am ... schrieb:"), or marker-less quoting -- the exact leak
 # classes a `>`/English-marker allowlist misses.
 _APPROVAL_EMAIL_SENTINEL = "Your Asians & Gingers in Tech feature is ready"
-# Match the sentinel WHITESPACE-FLEXIBLY: join its words with \s+ so the cut still
-# fires when the client mangles the inter-word spacing of the quoted copy -- a
-# non-breaking space (Outlook injects &nbsp;), a tab, a double space, or a hard
-# line-wrap that splits the sentence across lines. A byte-exact substring search
-# would miss all of these and re-open the leak (the quoted 'approved' would
-# survive). \s also matches U+00A0, so nbsp is handled here as well as in
-# _html_to_text. A member would never type this exact branded phrase.
-_SENTINEL_RE = re.compile(r"\s+".join(re.escape(w) for w in _APPROVAL_EMAIL_SENTINEL.split()))
+# TWO independent template anchors, both emitted verbatim by compose_approval_email
+# and both sitting ABOVE the first affirmative word in the template. strip cuts at
+# the earliest one found, so a client mangling ONE phrase does not re-open the leak
+# -- both must be defeated for the quoted 'approved' to survive.
+_TEMPLATE_ANCHORS = (
+    _APPROVAL_EMAIL_SENTINEL,
+    "This is the EXACT wording we will publish",
+)
+# Match each anchor WHITESPACE-FLEXIBLY and case-insensitively: join its words with
+# \s+ so the cut still fires when the client mangles the inter-word spacing of the
+# quoted copy -- a non-breaking space (Outlook injects &nbsp;), a tab, a double
+# space, or a hard line-wrap that splits the phrase across lines. A byte-exact
+# substring search would miss all of these and re-open the leak. \s also matches
+# U+00A0, so nbsp is handled here as well as in _html_to_text. A member would never
+# type either exact branded sentence.
+_ANCHOR_RES = tuple(
+    re.compile(r"\s+".join(re.escape(w) for w in anchor.split()), re.IGNORECASE)
+    for anchor in _TEMPLATE_ANCHORS
+)
 # SECONDARY, client-generic markers (defence in depth; also strip the quoted-block
-# header lines the sentinel leaves above it, e.g. Gmail's "> Hi,"). An
+# header lines the anchors leave above them, e.g. Gmail's "> Hi,"). An
 # "On <date> ... wrote:" attribution, an "-----Original Message-----" separator, or
 # a long underscore rule reliably precede a quoted original, and a member almost
 # never types one. Bounded so a wrapped attribution is still caught without
@@ -121,8 +132,8 @@ _UNDERSCORE_SEP_RE = re.compile(r"(?m)^\s*_{5,}\s*$")
 # NB: deliberately NO bare `>`-line cut. A member may type `>` in their OWN new
 # text (quoting an aside), and cutting at the first `>` would drop their later
 # words -- including a retraction after an earlier approval -> a dangerous false
-# publish. Our own quoted template is caught by the sentinel instead, whether or
-# not it is `>`-prefixed (the sentinel substring survives inside a "> ..." line).
+# publish. Our own quoted template is caught by the anchors instead, whether or
+# not it is `>`-prefixed (the anchor survives inside a "> ..." line).
 
 
 def strip_quoted_text(text: str) -> str:
@@ -133,10 +144,10 @@ def strip_quoted_text(text: str) -> str:
     copy of that line reaches the approval detector, almost any reply looks like an
     approval. The detector must read ONLY what the member actually typed.
 
-    Cuts at the earliest of: our template sentinel (primary, client-independent,
-    whitespace-flexible), an "On ... wrote:" attribution, an "-----Original
-    Message-----" separator, or a long underscore rule (Outlook). The FULL body is
-    still recorded verbatim for the operator, so nothing the member said is lost.
+    Cuts at the earliest of: either template anchor (primary, client-independent,
+    whitespace-flexible, case-insensitive), an "On ... wrote:" attribution, an
+    "-----Original Message-----" separator, or a long underscore rule (Outlook). The
+    FULL body is still recorded verbatim for the operator, so nothing is lost.
 
     Fails safe: if a member bottom-posts their reply BELOW the quote (rare), the new
     text is stripped too and detection sees nothing -> not approved -> blocked, and
@@ -144,9 +155,10 @@ def strip_quoted_text(text: str) -> str:
     direction for a legal publish gate; publishing on a misread is not.
     """
     cut = len(text)
-    sentinel = _SENTINEL_RE.search(text)
-    if sentinel:
-        cut = text.rfind("\n", 0, sentinel.start()) + 1  # from the START of its line
+    for rx in _ANCHOR_RES:
+        anchor = rx.search(text)
+        if anchor:
+            cut = min(cut, text.rfind("\n", 0, anchor.start()) + 1)  # START of its line
     for rx in (_ATTRIBUTION_RE, _ORIGINAL_MSG_RE, _UNDERSCORE_SEP_RE):
         match = rx.search(text)
         if match:
@@ -297,14 +309,18 @@ def _decode_part(data: str) -> str:
 
 _HTML_COMMENT_RE = re.compile(r"(?s)<!--.*?-->")
 _SCRIPT_STYLE_RE = re.compile(r"(?is)<(script|style)\b.*?</\1>")
-# Block- and CELL-level tags become newlines so words in separate blocks/cells do
-# not fuse: "<td>please</td><td>cancel</td>" must read as "please\ncancel", not
-# "pleasecancel" (which would hide the refusal from whole-word matching). Matches
-# the opening OR closing form of each. Remaining INLINE tags (<b>, <span>, <a>...)
-# are then removed WITHOUT a space, so whole-word inline formatting like
-# "<b>approved</b>" stays a single word rather than fragmenting.
+# Block-, list- and CELL-level tags become newlines so words in separate blocks
+# do not fuse: "<td>please</td><td>cancel</td>" must read as "please\ncancel", not
+# "pleasecancel" (which would hide the refusal from whole-word matching). A broad
+# set of the standard HTML block/table/list elements is listed (not just a few) so
+# the fusion class is closed generally, not tag-by-tag. Matches the opening OR
+# closing form of each. Remaining INLINE tags (<b>, <span>, <a>...) are then
+# removed WITHOUT a space, so whole-word inline formatting like "<b>approved</b>"
+# stays a single word rather than fragmenting.
 _HTML_BREAK_RE = re.compile(
-    r"(?i)<\s*/?\s*(?:br|p|div|tr|td|th|li|h[1-6]|blockquote|table|ul|ol|pre)\b[^>]*>")
+    r"(?i)<\s*/?\s*(?:br|p|div|tr|td|th|thead|tbody|tfoot|caption|table|li|ul|ol|dl|dt|dd"
+    r"|h[1-6]|blockquote|pre|section|article|aside|header|footer|nav|main|hgroup"
+    r"|address|figure|figcaption|fieldset|details|summary|hr|form|option)\b[^>]*>")
 _HTML_TAG_RE = re.compile(r"(?s)<[^>]+>")
 
 
