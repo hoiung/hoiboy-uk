@@ -605,10 +605,46 @@ def test_html_to_text_does_not_fuse_words_across_table_cells():
     assert aa.is_approval_reply(text, AFFIRM, NEGATE) is False
 
 
+def test_html_to_text_does_not_fuse_words_across_definition_list():
+    # Ralph round-3 finding: <dt>/<dd> (and other block tags) must also break, not
+    # only table cells -- else "<dt>please</dt><dd>cancel</dd>" fuses and hides the
+    # refusal. The break set now covers the standard block/list elements.
+    text = aa._html_to_text("<dl><dt>please</dt><dd>cancel</dd></dl>")
+    assert aa.is_decisive_reply(text, AFFIRM, NEGATE) is True
+    assert aa.is_approval_reply(text, AFFIRM, NEGATE) is False
+
+
 def test_html_to_text_keeps_inline_formatted_word_intact():
     # An inline tag INSIDE a word must not fragment it: "<b>approved</b>" -> "approved".
     text = aa._html_to_text("<p>Great, <b>approved</b>, publish it.</p>")
     assert aa.is_approval_reply(text, AFFIRM, NEGATE) is True
+
+
+def test_second_anchor_cuts_when_first_anchor_is_mangled():
+    # Ralph round-3: the anchor match is all-or-nothing per phrase, so a client that
+    # mangles ONE anchor must not re-open the leak -- the SECOND anchor still cuts.
+    # Here the first anchor (the opening sentinel) is corrupted; the second
+    # ("This is the EXACT wording we will publish") survives and strips the quote.
+    broken = _markerless_quote("Thanks, let me think about it.").replace(
+        "Your Asians & Gingers in Tech feature is ready", "Your XXXX feature is ready")
+    stripped = aa.strip_quoted_text(broken)
+    assert "approved" not in stripped.lower()
+    assert aa.is_approval_reply(stripped, AFFIRM, NEGATE) is False
+
+
+def test_anchor_match_is_case_insensitive():
+    # A client that lower-cases the quoted sentinel must not defeat the cut.
+    reply = _markerless_quote("Thanks, let me think about it.").lower()
+    stripped = aa.strip_quoted_text(reply)
+    assert "approved" not in stripped.lower()
+    assert aa.is_approval_reply(stripped, AFFIRM, NEGATE) is False
+
+
+def test_compose_email_emits_both_strip_anchors():
+    # strip keys on BOTH anchors; compose MUST emit each verbatim (single source of
+    # truth) in the plain part, else the client-independent cut silently degrades.
+    for anchor in aa._TEMPLATE_ANCHORS:
+        assert anchor in _SENT_PLAIN, anchor
 
 
 # ----------------------------------- poll end-to-end over a quoted-template reply
