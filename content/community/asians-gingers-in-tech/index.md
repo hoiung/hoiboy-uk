@@ -44,6 +44,8 @@ Come join the weirdest niche community. 🧡🤝
 ## Help build this
 
 <!-- iamhoi -->
+This isn't my first community. I built the largest Brazilian Zouk community online, ran its live events, and it's still the largest today. Now I'm doing the same here. If you want the story of how, [here's everything I learned](/posts/how-to-actually-build-communities/).
+
 Right now the meetups are London only, because that's where I am. It's not meant to stay that way.
 
 Want to bring this to your own city? Come and say hello. I'm one man, and I can always use the help. If you're willing to put the time in, because building a community is hard work, I'll happily bring you into the team, and you'll run the Real-life meetups where you are (`meetup.com/<your-city>-asians-gingers-in-tech`). We do this together, city by city.
