@@ -134,6 +134,14 @@ approval:
     - "won't approve"
     - "disapprove"
     - "decline"
+    # "declined" is a separate entry: whole-word matching means "decline" above
+    # does NOT match the past tense "declined" (how a member may actually reply).
+    - "declined"
+    - "cancel"
+    - "cancelled"
+    - "canceled"
+    - "withdraw"
+    - "withdrawn"
     - "refuse"
     - "reject"
     - "retract"
