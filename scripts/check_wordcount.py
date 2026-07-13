@@ -32,7 +32,7 @@ from voice_rules import HOIBOY_CUTOFF_DATE
 
 WORDCOUNT_CEILING: int = 3000
 
-# Long-form exemption list. These three are deliberate long-form flagship
+# Long-form exemption list. These are deliberate long-form flagship
 # posts: intentional editorial exemptions from WORDCOUNT_CEILING, not a
 # mechanical bypass. Intentionally NOT a frontmatter opt-out — adding a slug
 # is an editorial decision and requires a code review. The live negative
@@ -44,6 +44,7 @@ GRANDFATHERED_SLUGS: frozenset[str] = frozenset({
     "every-book-ive-read-in-20-years",
     "scaling-without-quality",
     "maturity-grading-from-backtest-data",
+    "how-to-actually-build-communities",  # flagship community manifesto, operator-approved 2026-07-13
 })
 
 _FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
