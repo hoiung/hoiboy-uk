@@ -550,6 +550,67 @@ def test_extract_plain_text_prefers_plain_over_html():
     assert aa.extract_plain_text(payload) == "the real plain reply"
 
 
+# --------------- sentinel spacing robustness (Ralph re-review: whitespace holes)
+# A byte-exact sentinel search missed a quoted template whose inter-word spacing the
+# client had mangled (a non-breaking space, a tab, a double space, or a hard line-
+# wrap), re-opening the leak. The whitespace-flexible sentinel must still cut, and
+# _html_to_text must normalise nbsp and not fuse words across table cells.
+
+def test_strip_sentinel_survives_whitespace_mutations():
+    neutral = "Still reading through it, will get back to you soon."
+    base = _markerless_quote(neutral)          # no secondary marker -> ONLY the
+    approval = _markerless_quote("Approved, publish it.")  # sentinel can cut here
+    def mut(s):  # every spacing mutation a client might apply to the quoted sentinel
+        return {
+            "nbsp": s.replace("Gingers in Tech", "Gingers\u00a0in\u00a0Tech"),
+            "tab": s.replace("feature is ready", "feature\tis\tready"),
+            "double_space": s.replace("Asians & Gingers", "Asians  &  Gingers"),
+            "narrow_wrap": s.replace("Gingers in Tech feature", "Gingers in Tech\nfeature"),
+        }
+    for name, reply in mut(base).items():
+        stripped = aa.strip_quoted_text(reply)
+        assert "approved" not in stripped.lower(), (name, "quoted template leaked")
+        assert aa.is_approval_reply(stripped, AFFIRM, NEGATE) is False, name
+    # A genuine approval over the same mangled quote still publishes.
+    for name, reply in mut(approval).items():
+        stripped = aa.strip_quoted_text(reply)
+        assert aa.is_approval_reply(stripped, AFFIRM, NEGATE) is True, name
+
+
+def test_poll_html_only_nbsp_quoted_template_does_not_leak(tmp_path):
+    # The html-only fallback path (Ralph Opus): &nbsp; spacing in the quoted template
+    # must still be sentinel-cut. html.unescape yields U+00A0; _html_to_text (and the
+    # whitespace-flexible sentinel) handle it. Neutral html-only reply -> BLOCK.
+    sent_html = aa.compose_approval_email(
+        "m@example.com", "hoiboyuk@gmail.com", "Jane", "My story.", "jane"
+    ).get_body(preferencelist=("html",)).get_content()
+    quoted = sent_html.replace("Gingers in Tech", "Gingers&nbsp;in&nbsp;Tech")
+    reply_html = ("<div>Thanks, let me think about it.</div>"
+                  "<blockquote>" + quoted + "</blockquote>")
+    thread = {"messages": [
+        _gmail_message("out1", "hoiboyuk@gmail.com", "here is your feature"),
+        _gmail_html_message("in1", "m@example.com", reply_html),
+    ]}
+    svc = FakeService(thread=thread)
+    result = aa.poll_for_approval(svc, tmp_path, thread_id="thr1",
+                                  member_email="m@example.com")
+    assert result is not None and result["approved"] is False
+
+
+def test_html_to_text_does_not_fuse_words_across_table_cells():
+    # Ralph finding: "<td>please</td><td>cancel</td>" fused to "pleasecancel", hiding
+    # the refusal. Cell boundaries must become breaks so whole-word matching sees it.
+    text = aa._html_to_text("<table><tr><td>please</td><td>cancel</td></tr></table>")
+    assert aa.is_decisive_reply(text, AFFIRM, NEGATE) is True
+    assert aa.is_approval_reply(text, AFFIRM, NEGATE) is False
+
+
+def test_html_to_text_keeps_inline_formatted_word_intact():
+    # An inline tag INSIDE a word must not fragment it: "<b>approved</b>" -> "approved".
+    text = aa._html_to_text("<p>Great, <b>approved</b>, publish it.</p>")
+    assert aa.is_approval_reply(text, AFFIRM, NEGATE) is True
+
+
 # ----------------------------------- poll end-to-end over a quoted-template reply
 
 def test_poll_neutral_reply_over_quoted_template_blocks(tmp_path):
