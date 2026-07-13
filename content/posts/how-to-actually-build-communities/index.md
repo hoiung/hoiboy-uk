@@ -169,7 +169,7 @@ Some of you will look at the numbers and think, a few thousand members, is that 
 
 Brazilian Zouk is small. It is a niche, and that is exactly what makes it so hard. Helping our tiny community find each other is like finding a needle in a haystack. Building a mainstream community is almost certainly much easier. But what the hell, I like a good challenge.
 
-You know it is working when a random dancer at an event dances with you, or just walks up, and goes, "wait, you are Hoi?" And the conversation goes from there. Yes, that is me. They tell you they appreciate the work, and the resources you put out to help them find their way through this chaotic dance world. That is when I get to quietly pat myself on the back and go, "well done Hoi, you did great."
+You know it is working when a random dancer at an event dances with you, or just walks up, and goes, "wait, are you Hoi?" And the conversation goes from there. Yes, that is me. They tell you they appreciate the work, and the resources you put out to help them find their way through this chaotic dance world. That is when I get to quietly pat myself on the back and go, "well done Hoi, you did great."
 
 And here is the part I am proudest of. That community is still running today. Years on, with contributors still policing it and keeping it in order, long after I stopped needing to sit in the middle of it. That is the whole point of building the roots first. Do it properly and the thing outlives you.
 
