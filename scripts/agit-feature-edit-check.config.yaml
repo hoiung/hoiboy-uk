@@ -198,3 +198,29 @@ approval:
     - "once you"
     - "assuming"
     - "unless"
+    # Deferral / temporal / hypothetical cues. Sibling of the conditional cues above:
+    # a reply that carries an affirmative phrase but DEFERS ("let me think before I
+    # approve it", "I would approve it but I need a day", "before you publish, can we
+    # chat?", "I'll let you know when to publish", "once I've checked with my manager
+    # you can publish it") is NOT a present, unconditional approval and must block
+    # (fail-safe; the operator reads it and re-sends for a clean approval). A clean
+    # approval ("approved", "yes, publish it", "happy to publish") carries none of
+    # these. This is precision-over-recall by design; the unbounded tail of phrasings
+    # is backstopped by the operator reading the verbatim reply before publishing.
+    - "let me think"
+    - "think about it"
+    - "think it over"
+    - "sleep on it"
+    - "before you"
+    - "before i"
+    - "would approve"
+    - "would publish"
+    - "let you know"
+    - "get back to you"
+    - "need a day"
+    - "need more time"
+    - "need some time"
+    - "once i"
+    - "when i"
+    - "check with"
+    - "checked with"
