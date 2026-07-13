@@ -55,6 +55,8 @@ So yeah, I am pretty proud of this one. It is genuinely one of the hardest thing
 
 (I was no guru at this, by the way. I am a doer, so I just went and figured shit out, made every mistake going, and lived to write it down. *This is the Way*.)
 
+Truth is, I have been doing this long before the internet made it easy. Back then there was no app to connect anyone, so I was the one organising everything for my mates, the trips, the nights out, the activities, making sure something actually happened. It was the job nobody wanted, so I ended up doing it, because nothing happens unless someone takes action. I have always been both the string that pulls people together and the gel that sticks it all together.
+
 ## It started somewhere dark
 
 I used to blog my adventures and my dance journey purely for fun. Then one month I decided to write a very negative post and actually put my voice out there.
