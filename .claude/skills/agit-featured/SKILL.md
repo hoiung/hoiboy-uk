@@ -120,11 +120,22 @@ through the legal pipeline before it can go live (full rationale:
    ```bash
    python3 scripts/agit_approval.py send --record <record-dir>/<slug> \
      --to <member-email> --title "<feature title>" \
-     --wording-file <edited.txt> --slug <slug>
+     --wording-file <edited.txt> --slug <slug> \
+     --socials-file <their-links.txt>   # OPTIONAL: the member's profile links,
+                                         # one per line, from the submission email
    # after they reply on that thread:
    python3 scripts/agit_approval.py poll --record <record-dir>/<slug> \
      --thread-id <thread-id> --member-email <member-email>
    ```
+
+   `send` emails the member the EXACT wording (from `--wording-file`), asks them to
+   reply "approved", and records the thread id + a hash of the wording so `poll`
+   can bind their reply to THIS wording. If `--socials-file` is given, the email
+   also echoes their handles and states the same "approved" reply confirms we may
+   tag them there when the feature is shared -- so one approval covers the wording
+   AND the tagging, at the exact handles shown, correctable before anything ships.
+   Omit `--socials-file` and the email is unchanged (no tagging line). The handles
+   are captured on the form (optional field) and arrive in the submission email.
 
    The gate then requires `approval.json` with `approved: true` bound to the exact
    current wording (a later re-edit voids it). The approval detector is a
