@@ -54,7 +54,7 @@ Want to bring this to your own city? Come and say hello. I'm one man, and I can 
 
 **Sponsorships are always welcome too.** If you or your company want to help back what we're building, get in touch.
 
-Email me at [hello@hoiboy.uk](mailto:hello@hoiboy.uk).
+Email me at <a href="mailto:hello@hoiboy.uk" target="_blank" rel="noopener noreferrer">hello@hoiboy.uk</a>.
 <!-- iamhoiend -->
 
 ## Why we exist
@@ -87,7 +87,7 @@ Here's the reason it matters. If you keep your head down and just do the work, y
 
 I want to change that, because I see you, and I see you for who you are. You don't have to get loud, and you don't have to fake it till you make it. Just be true to yourself, be you, and let the work speak. This is the community where you get recognised for your effort, and respected for the actual quality of what you do. That is our goal, *This is the Way*...
 
-Before you fill it in, have a quick read of the [Story Guidelines](/legal/agit-story-guidelines/). They cover what to share, how we edit (for clarity, never the facts), and how you get the final say before anything goes public.
+Before you fill it in, have a quick read of the <a href="/legal/agit-story-guidelines/" target="_blank" rel="noopener noreferrer">Story Guidelines</a>. They cover what to share, how we edit (for clarity, never the facts), and how you get the final say before anything goes public.
 
 <style>
 .agit-form-wrap { max-width: 40rem; }
@@ -195,7 +195,7 @@ Before you fill it in, have a quick read of the [Story Guidelines](/legal/agit-s
 
   <div class="agit-field agit-consent">
     <input type="checkbox" id="agit-consent" name="consent" required>
-    <label for="agit-consent">I confirm this is my own true experience and mine to share, that I have permission to name anyone I've named (or I'm happy for them to be anonymised), and that I've read the <a href="/legal/agit-story-guidelines/">Story Guidelines</a>. I agree my photo may be published, my story may be edited for clarity into a public feature, and that I'll approve the exact final wording by email before it goes live. If I've shared any social links above, I'm happy to be tagged or @-mentioned there when my feature is shared. My submission is processed by Cloudflare (R2 storage, Turnstile, and email) to make that happen. See the <a href="/legal/privacy/">Privacy Notice</a>.</label>
+    <label for="agit-consent">I confirm this is my own true experience and mine to share, that I have permission to name anyone I've named (or I'm happy for them to be anonymised), and that I've read the <a href="/legal/agit-story-guidelines/" target="_blank" rel="noopener noreferrer">Story Guidelines</a>. I agree my photo may be published, my story may be edited for clarity into a public feature, and that I'll approve the exact final wording by email before it goes live. If I've shared any social links above, I'm happy to be tagged or @-mentioned there when my feature is shared. My submission is processed by Cloudflare (R2 storage, Turnstile, and email) to make that happen. See the <a href="/legal/privacy/" target="_blank" rel="noopener noreferrer">Privacy Notice</a>.</label>
   </div>
 
   <div class="agit-field cf-turnstile" data-sitekey="0x4AAAAAADz-CB1k9o8zx3S8"></div>
