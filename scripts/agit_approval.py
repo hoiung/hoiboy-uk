@@ -65,6 +65,48 @@ def load_approval_phrases(config_path: Path = DEFAULT_CONFIG) -> tuple[list[str]
     return affirmative, negation
 
 
+# Apostrophe-class characters are stripped from BOTH the reply text and the cue
+# phrases before matching, so a contraction matches its cue no matter HOW the member
+# typed the apostrophe: dropped ("dont"), the standard straight/curly form, MISPLACED
+# by a key ("do'nt"/"ca'nt"), or any look-alike a client/IME emits (curly U+2019,
+# prime U+2032, fullwidth U+FF07 on a CJK keyboard, acute U+00B4, backtick, the
+# LETTER-category modifier apostrophe U+02BC). Without this an apostrophe-variant
+# refusal would carry the affirmative "publish it" past a negation cue stored as
+# "don't publish" -> a dangerous false approval on the legal publish gate. Stripping
+# is used rather than a flexible \W separator because it ALSO handles a misplaced
+# apostrophe and an apostrophe that Unicode classes as a LETTER (U+02BC) -- neither
+# of which a separator-class match can cover. The set is a curated table of the
+# realistic apostrophe variants; the rare obscure tail is backstopped by the operator
+# read of the verbatim reply.
+_APOSTROPHES = dict.fromkeys((
+    0x27,    # ' apostrophe
+    0x2018,  # left single quote
+    0x2019,  # right single quote (the standard curly apostrophe)
+    0x201B,  # single high-reversed-9 quote
+    0x2032,  # prime
+    0x2035,  # reversed prime
+    0x02B9,  # modifier letter prime
+    0x02BB,  # modifier letter turned comma
+    0x02BC,  # modifier letter apostrophe (Unicode LETTER category)
+    0x02BE,  # modifier letter right half ring
+    0x02BF,  # modifier letter left half ring
+    0x0060,  # ` grave accent
+    0x00B4,  # acute accent
+    0xFF07,  # fullwidth apostrophe (CJK IME)
+    0xFF40,  # fullwidth grave accent
+    0xA78B,  # latin capital letter saltillo
+    0xA78C,  # latin small letter saltillo
+    0x275B,  # heavy single turned comma ornament
+    0x275C,  # heavy single comma ornament
+), None)
+
+
+def _normalise(text: str) -> str:
+    """Lower-case and strip apostrophe-class chars, so a contraction's spelling and
+    apostrophe placement never decide a match."""
+    return text.lower().translate(_APOSTROPHES)
+
+
 @lru_cache(maxsize=None)
 def _compile_phrase(phrase: str) -> re.Pattern[str] | None:
     """Compile a phrase to a word-boundary-anchored, punctuation-tolerant regex.
@@ -73,11 +115,20 @@ def _compile_phrase(phrase: str) -> re.Pattern[str] | None:
     reply re-tests each phrase, so compiling once per distinct phrase (instead of
     on every call) removes ~52 regex compilations per message with no behaviour
     change. Returns None for an empty phrase (never matches).
+
+    The phrase is normalised (apostrophes stripped) so a cue like "don't publish"
+    matches every apostrophe spelling of the reply once the caller normalises it the
+    same way. Word-parts are joined with \\W* (zero-or-more) rather than \\W+ so that
+    stripping an apostrophe that a member glued BETWEEN two cue words (e.g.
+    "not'approved" -> "notapproved", "do'not" -> "donot") still matches the multi-word
+    cue -- otherwise deleting that apostrophe would fuse the words and silently defeat
+    the negation. \\W* can never span a WORD char, so it never fuses across a separate
+    intervening word, and the \\b anchors keep "approved" from matching "unapproved".
     """
-    words = re.findall(r"\w+", phrase.lower())
+    words = re.findall(r"\w+", _normalise(phrase))
     if not words:
         return None
-    return re.compile(r"\b" + r"\W+".join(re.escape(w) for w in words) + r"\b")
+    return re.compile(r"\b" + r"\W*".join(re.escape(w) for w in words) + r"\b")
 
 
 def _phrase_present(low_text: str, phrase: str) -> bool:
@@ -176,7 +227,7 @@ def is_approval_reply(text: str, affirmative: list[str], negation: list[str]) ->
     legal publish gate: we would rather block a genuine approval than publish on a
     misread one.
     """
-    low = text.lower()
+    low = _normalise(text)
     if any(_phrase_present(low, neg) for neg in negation):
         return False
     return any(_phrase_present(low, aff) for aff in affirmative)
@@ -188,7 +239,7 @@ def is_decisive_reply(text: str, affirmative: list[str], negation: list[str]) ->
     A thank-you or a clarifying question is NOT decisive; it must not override an
     earlier approval or refusal on the same thread.
     """
-    low = text.lower()
+    low = _normalise(text)
     return (any(_phrase_present(low, aff) for aff in affirmative)
             or any(_phrase_present(low, neg) for neg in negation))
 
