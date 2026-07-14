@@ -54,7 +54,7 @@ Want to bring this to your own city? Come and say hello. I'm one man, and I can 
 
 **Sponsorships are always welcome too.** If you or your company want to help back what we're building, get in touch.
 
-Email me at <a href="mailto:hello@hoiboy.uk" target="_blank" rel="noopener noreferrer">hello@hoiboy.uk</a>.
+Email me at [hello@hoiboy.uk](mailto:hello@hoiboy.uk).
 <!-- iamhoiend -->
 
 ## Why we exist
