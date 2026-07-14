@@ -4,7 +4,7 @@ description: "A home for the quiet, heads-down people in tech who do brilliant w
 hideDate: true
 ---
 
-{{< zoom-image src="/img/agit-banner.jpg" alt="Asians and Gingers in Tech: four friends coding together with world landmarks behind them" title="Asians & Gingers in Tech" >}}
+<img class="post-hero" src="/img/agit-banner.jpg" alt="Asians and Gingers in Tech: four friends coding together with world landmarks behind them">
 
 Hi, my name is Hoi aka Hoiboy!
 
