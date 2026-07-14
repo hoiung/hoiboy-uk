@@ -553,6 +553,44 @@ def test_inflected_refusals_are_decisive():
         assert aa.is_decisive_reply(refusal, AFFIRM, NEGATE) is True, refusal
 
 
+def test_apostrophe_variant_negation_still_blocks():
+    # Found in live testing: a casually-typed refusal that drops the apostrophe
+    # ("dont publish it") carried the affirmative "publish it" past a cue stored as
+    # "don't publish" -> a dangerous false approval. Apostrophes are normalised out
+    # of both text and cue, so the contraction's spelling/placement never decides it.
+    for refusal in ("dont publish it", "do not publish it", "don't publish it",
+                    "cant approve this but publish it", "wont go ahead, publish it",
+                    "wont work, dont publish it", "dont approve", "i dont approve",
+                    "shouldnt publish it", "i wouldnt publish it"):
+        assert aa.is_approval_reply(refusal, AFFIRM, NEGATE) is False, refusal
+    # Every apostrophe look-alike a client/IME might emit, INCLUDING the Unicode
+    # LETTER-category modifier apostrophe U+02BC (which a \W-separator match cannot
+    # skip): curly U+2019, prime U+2032, fullwidth U+FF07 (CJK IME), acute U+00B4,
+    # backtick, U+02BC, straight, and dropped -- "don<x>t publish it" all block.
+    for apos in ("\u2019", "\u2032", "\uff07", "\u00b4", "`", "\u02bc", "'", ""):
+        reply = f"don{apos}t publish it"
+        assert aa.is_approval_reply(reply, AFFIRM, NEGATE) is False, repr(reply)
+    # A MISPLACED apostrophe (one key early -- a common real typo) must also block;
+    # stripping handles placement, unlike a fixed-position separator match.
+    for refusal in ("do'nt publish it", "ca'nt approve, publish it",
+                    "wo'nt go ahead, publish it", "should'nt publish it",
+                    "would'nt publish it"):
+        assert aa.is_approval_reply(refusal, AFFIRM, NEGATE) is False, refusal
+    # An apostrophe GLUED between two words of a multi-word negation cue must still
+    # block: deleting it fuses the words, and the \W* join matches the fused form
+    # (else the negation would silently fail while a trailing affirmative matched).
+    for refusal in ("not'approved, publish it anyway", "do'not publish it",
+                    "hold'off, publish it anyway", "will'not, publish it anyway",
+                    "cannot'approve, publish it"):
+        assert aa.is_approval_reply(refusal, AFFIRM, NEGATE) is False, refusal
+    # Genuine approvals that contain a contraction still clear -- normalising the
+    # apostrophe must not break affirmative matching or over-block.
+    for clean in ("im happy for you to publish", "that's approved, go ahead",
+                  "yeah I\u2019m happy to publish", "approved", "yes, publish it",
+                  "you can publish"):
+        assert aa.is_approval_reply(clean, AFFIRM, NEGATE) is True, clean
+
+
 # ------------------- html-only reply fallback (Ralph Opus finding 2: supersede)
 
 def _gmail_html_message(msg_id: str, from_addr: str, html_body: str) -> dict:
