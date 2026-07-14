@@ -183,6 +183,37 @@ approval:
     - "should not"
     - "wouldn't"
     - "would not"
+    # Negative contractions of the auxiliary/modal verbs. The bare cues above cover
+    # not/don't/never/won't/can't/cannot/shouldn't/wouldn't but NOT have/has/had/is/
+    # was/are/were/did/does/could/must + n't, so a negated approval verb leaked a
+    # false PUBLISH: "I haven't approved this" / "this isn't approved", and -- worse,
+    # because an intervening word slips past any adjacent phrase match -- the passive
+    # "this hasn't been approved" and the adverb-inserted "isn't yet approved" /
+    # "isn't officially approved", where the affirmative "approved" fired unopposed.
+    # Listed BARE (not as "<contraction> approve" phrases) so an intervening "been",
+    # an adverb, or a whole clause cannot carry the refusal past the cue. Same
+    # precision-over-recall, fail-safe posture as the bare cues above: a reply nuanced
+    # enough to carry a negation contraction gets a human confirm (the operator reads
+    # every reply), exactly as "no problem, approved" or "never been better, approved"
+    # already do. Apostrophe-insensitive matching covers the apostrophe-less forms.
+    - "haven't"
+    - "hasn't"
+    - "hadn't"
+    - "isn't"
+    - "wasn't"
+    - "aren't"
+    - "weren't"
+    - "didn't"
+    - "doesn't"
+    - "couldn't"
+    - "ain't"
+    - "mustn't"
+    - "mightn't"
+    - "needn't"
+    - "shan't"
+    - "oughtn't"
+    - "daren't"
+    - "mayn't"
     # Conditional cues. A reply that approves ON A CONDITION ("I approve, as long as
     # you cut my last name") is NOT an unconditional approval of the exact wording --
     # the condition is unmet until a fresh edit + fresh approval. Treated as NOT
