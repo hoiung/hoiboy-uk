@@ -245,8 +245,32 @@ def is_decisive_reply(text: str, affirmative: list[str], negation: list[str]) ->
 
 
 def compose_approval_email(to_addr: str, from_addr: str, feature_title: str,
-                           final_wording: str, slug: str) -> EmailMessage:
-    """Build the approval-request email carrying the exact final wording."""
+                           final_wording: str, slug: str,
+                           socials: str = "") -> EmailMessage:
+    """Build the approval-request email carrying the exact final wording.
+
+    If ``socials`` is given (the member's profile links, one per line), the email
+    echoes them back and states that the same approval reply confirms the tagging
+    too -- so a single "approved" covers both the wording AND being tagged at the
+    exact handles shown, and a wrong handle can be corrected before anything is
+    shared. Blank/omitted socials leaves the email exactly as before. The echoed
+    block sits AFTER the sentinel, so a quoted copy of it in the member's reply is
+    removed by strip_quoted_text along with the rest of the template (its "tag"
+    wording can never leak an approval).
+    """
+    socials = (socials or "").strip()
+    socials_plain = (
+        "When we share your feature, we'll tag you at:\n"
+        f"{socials}\n\n"
+        "Your approval above covers this too. If a handle is wrong, just tell us "
+        "and we'll fix it before anything is shared.\n\n"
+    ) if socials else ""
+    socials_html = (
+        "<p>When we share your feature, we'll tag you at:</p>"
+        f"<pre style=\"white-space:pre-wrap\">{html.escape(socials)}</pre>"
+        "<p>Your approval above covers this too. If a handle is wrong, just tell "
+        "us and we'll fix it before anything is shared.</p>"
+    ) if socials else ""
     msg = EmailMessage()
     msg["To"] = to_addr
     msg["From"] = from_addr
@@ -263,7 +287,8 @@ def compose_approval_email(to_addr: str, from_addr: str, feature_title: str,
         "----- Your feature, exactly as it will publish -----\n\n"
         f"{final_wording}\n\n"
         "----- End of feature -----\n\n"
-        "Thanks,\nAsians & Gingers in Tech\nhello@hoiboy.uk\n"
+        + socials_plain
+        + "Thanks,\nAsians & Gingers in Tech\nhello@hoiboy.uk\n"
     )
     # HTML alternative: identical wording, but the action word is bold so the
     # member cannot miss what to type. The plain-text part above is unchanged and
@@ -282,7 +307,8 @@ def compose_approval_email(to_addr: str, from_addr: str, feature_title: str,
         "<p>----- Your feature, exactly as it will publish -----</p>"
         f"<pre style=\"white-space:pre-wrap\">{safe_wording}</pre>"
         "<p>----- End of feature -----</p>"
-        "<p>Thanks,<br>Asians &amp; Gingers in Tech<br>hello@hoiboy.uk</p>"
+        + socials_html
+        + "<p>Thanks,<br>Asians &amp; Gingers in Tech<br>hello@hoiboy.uk</p>"
         "</body></html>",
         subtype="html",
     )
@@ -427,9 +453,10 @@ def extract_plain_text(payload: dict) -> str:
 
 def send_approval_request(service, record_dir: Path, *, to_addr: str,
                           from_addr: str, feature_title: str, final_wording: str,
-                          slug: str) -> dict:
+                          slug: str, socials: str = "") -> dict:
     """Send the approval email; record the sent message + thread id."""
-    msg = compose_approval_email(to_addr, from_addr, feature_title, final_wording, slug)
+    msg = compose_approval_email(to_addr, from_addr, feature_title, final_wording,
+                                 slug, socials)
     sent = service.users().messages().send(userId="me", body=gmail_raw(msg)).execute()
     record_request(record_dir, to_addr=to_addr,
                    message_id=sent.get("id", ""), thread_id=sent.get("threadId", ""),
@@ -559,9 +586,10 @@ def _dispatch(service, args) -> int:  # pragma: no cover - runtime CLI print pat
     """Run the requested send/poll command; may raise an IO error (caught by main)."""
     if args.command == "send":
         wording = args.wording_file.read_text(encoding="utf-8")
+        socials = args.socials_file.read_text(encoding="utf-8") if args.socials_file else ""
         sent = send_approval_request(service, args.record, to_addr=args.to,
                                      from_addr=args.from_addr, feature_title=args.title,
-                                     final_wording=wording, slug=args.slug)
+                                     final_wording=wording, slug=args.slug, socials=socials)
         print(f"sent: message {sent.get('id')} thread {sent.get('threadId')}")
         return 0
 
@@ -591,6 +619,9 @@ def main(argv: list[str] | None = None) -> int:
     p_send.add_argument("--title", required=True)
     p_send.add_argument("--wording-file", required=True, type=Path)
     p_send.add_argument("--slug", required=True)
+    p_send.add_argument("--socials-file", type=Path, default=None,
+                        help="Optional file of the member's profile links (one per "
+                             "line) to echo back and confirm tagging in the same reply.")
 
     p_poll = sub.add_parser("poll", parents=[common], help="Check for the reply.")
     p_poll.add_argument("--thread-id", required=True)
