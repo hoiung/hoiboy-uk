@@ -24,6 +24,19 @@ function clean(value, max) {
     .slice(0, max);
 }
 
+// cleanLines(): multiline sanitiser for the optional social-links field --
+// preserves newlines (one link per line) but normalises CRLF/CR, strips control
+// chars, drops blank lines, caps line count/per-line/total. Mirror EXACTLY.
+function cleanLines(value, maxLines, maxLineLen, maxTotal) {
+  const lines = String(value == null ? '' : value)
+    .replace(/\r\n?/g, '\n')
+    .split('\n')
+    .map((line) => line.replace(/[\t\f\v\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g, ' ').trim().slice(0, maxLineLen))
+    .filter((line) => line.length > 0)
+    .slice(0, maxLines);
+  return lines.join('\n').slice(0, maxTotal);
+}
+
 // bytesToBase64(): chunked base64 (avoids the fromCharCode.apply stack blow-up).
 function bytesToBase64(bytes) {
   let binary = '';
@@ -132,4 +145,44 @@ test('EMAIL_RE rejects malformed addresses', () => {
   for (const e of ['', 'plainstring', 'no@domain', 'no-at.example.com', 'spaces in@x.com', 'a@b@c.com', '@nolocal.com']) {
     assert.equal(EMAIL_RE.test(e), false, e);
   }
+});
+
+// ----------------------------------------------------------------------
+// cleanLines() -- multiline social-links sanitiser (one link per line)
+// ----------------------------------------------------------------------
+
+test('cleanLines keeps one link per line and normalises CRLF/CR to LF', () => {
+  const out = cleanLines('https://a.com\r\nhttps://b.com\rhttps://c.com', 20, 300, 1000);
+  assert.equal(out, 'https://a.com\nhttps://b.com\nhttps://c.com');
+});
+
+test('cleanLines drops blank lines and trims each line', () => {
+  const out = cleanLines('  https://a.com  \n\n\n   \nhttps://b.com', 20, 300, 1000);
+  assert.equal(out, 'https://a.com\nhttps://b.com');
+});
+
+test('cleanLines strips tab/control chars so nothing structures the MIME body', () => {
+  // A tab or control char cannot smuggle structure in: tab -> space, controls
+  // removed, and the (safe) newline between real links is preserved.
+  const out = cleanLines('https://a.com\tBcc:evil\x00\x07\nhttps://b.com', 20, 300, 1000);
+  assert.equal(out, 'https://a.com Bcc:evil\nhttps://b.com');
+});
+
+test('cleanLines caps the number of lines', () => {
+  const many = Array.from({ length: 25 }, (_, i) => 'https://s' + i + '.com').join('\n');
+  assert.equal(cleanLines(many, 20, 300, 1000).split('\n').length, 20);
+});
+
+test('cleanLines caps per-line and total length', () => {
+  const longLine = 'https://' + 'a'.repeat(500) + '.com';
+  assert.ok(cleanLines(longLine, 20, 300, 1000).length <= 300);
+  const big = Array.from({ length: 20 }, () => 'https://' + 'a'.repeat(290) + '.com').join('\n');
+  assert.ok(cleanLines(big, 20, 300, 1000).length <= 1000);
+});
+
+test('cleanLines coerces null/undefined/blank to an empty string', () => {
+  assert.equal(cleanLines(null, 20, 300, 1000), '');
+  assert.equal(cleanLines(undefined, 20, 300, 1000), '');
+  assert.equal(cleanLines('', 20, 300, 1000), '');
+  assert.equal(cleanLines('   \n  \n', 20, 300, 1000), '');
 });
