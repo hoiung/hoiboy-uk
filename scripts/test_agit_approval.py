@@ -184,6 +184,51 @@ def test_compose_email_html_escapes_wording():
     assert "5 < 10 & <b>hi</b>" in plain
 
 
+def test_compose_email_echoes_socials_and_confirms_tagging():
+    # With the member's profile links supplied, the approval email echoes them
+    # (one per line) in BOTH parts and states the same approval confirms the tag,
+    # so one "approved" covers the wording AND being tagged at the exact handles.
+    socials = "https://linkedin.com/in/x\nhttps://github.com/x"
+    msg = aa.compose_approval_email("m@example.com", "hoiboyuk@gmail.com",
+                                    "Jane", "STORY.", "jane", socials)
+    for part in (msg.get_body(preferencelist=("plain",)).get_content(),
+                 msg.get_body(preferencelist=("html",)).get_content()):
+        assert "tag you at" in part
+        assert "linkedin.com/in/x" in part and "github.com/x" in part
+        assert "covers this too" in part
+    # A handle carrying markup is HTML-escaped in the html part (defence in depth:
+    # the field is server-sanitised, but the email must never render markup).
+    msg2 = aa.compose_approval_email("m@example.com", "hoiboyuk@gmail.com",
+                                     "Jane", "STORY.", "jane", "<b>x</b>")
+    html2 = msg2.get_body(preferencelist=("html",)).get_content()
+    assert "&lt;b&gt;x&lt;/b&gt;" in html2 and "<b>x</b>" not in html2
+
+
+def test_compose_email_omits_tagging_block_when_no_socials():
+    # Blank/omitted socials leaves the email unchanged (backward compat): no tag
+    # block, and the rest of the email intact.
+    for socials_arg in ((), ("",), ("   \n  \n",)):
+        msg = aa.compose_approval_email("m@example.com", "hoiboyuk@gmail.com",
+                                        "Jane", "STORY.", "jane", *socials_arg)
+        plain = msg.get_body(preferencelist=("plain",)).get_content()
+        assert "tag you at" not in plain
+        assert "STORY." in plain
+
+
+def test_quoted_socials_tagging_block_cannot_leak_approval():
+    # A reply that QUOTES the whole sent email -- including the echoed socials/tag
+    # block, which sits AFTER the sentinel -- must strip clean: the block is
+    # removed with the rest of the quoted template, so its wording (which mentions
+    # the approval covering the tag) can never leak a publish on a refusal reply.
+    socials = "https://linkedin.com/in/x\nhttps://github.com/x"
+    msg = aa.compose_approval_email("m@example.com", "hoiboyuk@gmail.com",
+                                    "Jane", "STORY.", "jane", socials)
+    plain = msg.get_body(preferencelist=("plain",)).get_content()
+    quoted = "no thanks, not for me.\n\nOn Mon, Jane wrote:\n> " + plain.replace("\n", "\n> ")
+    stripped = aa.strip_quoted_text(quoted)
+    assert aa.is_approval_reply(stripped, AFFIRM, NEGATE) is False
+
+
 def test_gmail_raw_roundtrip():
     msg = aa.compose_approval_email("m@example.com", "f@example.com", "T", "BODY-XYZ", "s")
     raw = aa.gmail_raw(msg)
