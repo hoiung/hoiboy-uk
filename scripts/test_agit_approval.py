@@ -591,6 +591,56 @@ def test_apostrophe_variant_negation_still_blocks():
         assert aa.is_approval_reply(clean, AFFIRM, NEGATE) is True, clean
 
 
+def test_negative_contraction_refusals_still_block():
+    # Found in live testing + Ralph review: a NEGATED approval verb leaked a false
+    # PUBLISH. The bare cues (not/don't/never/won't/can't/shouldn't/wouldn't) did
+    # NOT cover have/has/had/is/was/are/were/did/does/could/must + n't, so the
+    # affirmative "approve"/"approved" fired unopposed. These contractions are now
+    # bare cues too, so the refusal is caught regardless of what sits between the
+    # contraction and the verb -- adjacent, passive ("hasn't been approved"),
+    # adverb-inserted ("isn't yet approved"), or a whole clause. A phrase-level
+    # "<contraction> approve" cue was tried first but LEAKED the passive/adverb
+    # forms (an intervening "been"/adverb broke the adjacency) -- the dangerous
+    # direction on a legal publish gate, so bare is the fail-safe choice.
+    for refusal in (
+        "I haven't approved this yet", "this isn't approved",
+        "I didn't approve this, publish it", "couldn't approve this one",
+        "it doesn't approve for me", "that hasn't approved", "it wasn't approved",
+        "these aren't approved", "I hadn't approved it", "they weren't approved",
+        # passive + adverb-inserted forms (the Ralph Sonnet leak): an intervening
+        # "been" or adverb no longer carries the refusal past the cue.
+        "This hasn't been approved, I have concerns about paragraph 2.",
+        "it hasn't been approved yet", "this isn't yet approved",
+        "this isn't officially approved", "it wasn't ever approved",
+        # British + casual + archaic modal contractions:
+        "you mustn't approve this yet, publish it later", "this ain't approved",
+        "I shan't approve this, publish it", "I oughtn't approve this",
+        "I daren't approve this yet", "you mayn't approve this",
+        # apostrophe-less casual spelling (the matcher normalises it out):
+        "I havent approved this yet", "this isnt approved", "I didnt approve this",
+        "couldnt approve this one", "hasnt been approved", "wasnt approved",
+    ):
+        assert aa.is_approval_reply(refusal, AFFIRM, NEGATE) is False, refusal
+    # A clean approval carrying NO negation contraction still clears -- the fix does
+    # not touch the common approval path.
+    for clean in (
+        "approved", "yes, publish it", "happy to publish", "looks good, approve it",
+        "love it, approved", "yes please go ahead and publish", "you can publish",
+    ):
+        assert aa.is_approval_reply(clean, AFFIRM, NEGATE) is True, clean
+    # Fail-safe posture (deliberate): a caveat-approval that HAPPENS to carry a
+    # negation contraction is treated as NOT approved and gets a human confirm --
+    # exactly as the existing bare not/don't/never cues already treat "no problem,
+    # approved" / "never been better, approved". Blocking here is the SAFE direction
+    # on a legal publish gate; the operator reads every reply before it publishes.
+    for needs_confirm in (
+        "I couldn't be happier, approve it",
+        "wasn't sure at first, now approved",
+        "the headline isn't bad, approved",
+    ):
+        assert aa.is_approval_reply(needs_confirm, AFFIRM, NEGATE) is False, needs_confirm
+
+
 # ------------------- html-only reply fallback (Ralph Opus finding 2: supersede)
 
 def _gmail_html_message(msg_id: str, from_addr: str, html_body: str) -> dict:
