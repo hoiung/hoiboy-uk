@@ -41,6 +41,11 @@ const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 // field name -> max length (server-side length caps; a valid-token bot can still POST garbage)
 const FIELD_CAPS = { name: 100, email: 254, email_confirm: 254, role: 150, superpowers: 300, feature: 8000 };
+// Optional social-links field: multi-line (one profile link per line), kept as
+// newlines for the notification email so the operator sees one link per line.
+const SOCIALS_MAX_LINES = 20;
+const SOCIALS_MAX_LINE_LEN = 300;
+const SOCIALS_MAX_TOTAL = 1000;
 // Pragmatic email shape check (not full RFC 5322): non-space local@domain.tld.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -60,6 +65,23 @@ function clean(value, max) {
     .replace(/[\r\n\t\f\v\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g, " ")
     .trim()
     .slice(0, max);
+}
+
+// Multiline sanitiser for the optional social-links field. Unlike clean() it
+// PRESERVES newlines (the member pastes one profile link per line), but it
+// normalises CRLF/CR to LF, strips tabs + other control chars, drops blank
+// lines, and caps line count + per-line + total length. The result only ever
+// goes into the email TEXT BODY (never a header), so bare newlines are safe;
+// stripping \r + the other controls stops anything smuggling structure into the
+// MIME body. Mirrored by tests/contribute.test.js (keep in lock-step).
+function cleanLines(value, maxLines, maxLineLen, maxTotal) {
+  const lines = String(value == null ? "" : value)
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .map((line) => line.replace(/[\t\f\v\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g, " ").trim().slice(0, maxLineLen))
+    .filter((line) => line.length > 0)
+    .slice(0, maxLines);
+  return lines.join("\n").slice(0, maxTotal);
 }
 
 function textResponse(status, message) {
@@ -182,6 +204,7 @@ export async function onRequestPost(context) {
   const emailConfirm = clean(form.get("email_confirm"), FIELD_CAPS.email_confirm);
   const role = clean(form.get("role"), FIELD_CAPS.role);
   const superpowers = clean(form.get("superpowers"), FIELD_CAPS.superpowers);
+  const socials = cleanLines(form.get("socials"), SOCIALS_MAX_LINES, SOCIALS_MAX_LINE_LEN, SOCIALS_MAX_TOTAL);
   const feature = clean(form.get("feature"), FIELD_CAPS.feature);
   if (!name || !email || !feature) {
     log("validation-reject", { name: !!name, email: !!email, feature: !!feature });
@@ -241,6 +264,9 @@ export async function onRequestPost(context) {
     `Email: ${email}`,
     `Tech role: ${role || "(not given)"}`,
     `Superpowers: ${superpowers || "(not given)"}`,
+    "",
+    "Socials / where to tag them:",
+    socials || "(not given)",
     "",
     "Feature / story:",
     feature,
