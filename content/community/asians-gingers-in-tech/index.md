@@ -169,6 +169,11 @@ Before you fill it in, have a quick read of the [Story Guidelines](/legal/agit-s
   </div>
 
   <div class="agit-field">
+    <label for="agit-socials">Where can people follow you? <span class="agit-hint">(optional, one link per line, e.g. LinkedIn, GitHub, Instagram, X, or wherever you're active, so we can tag you when we share your feature)</span></label>
+    <textarea id="agit-socials" name="socials" maxlength="1000" rows="4"></textarea>
+  </div>
+
+  <div class="agit-field">
     <label for="agit-feature">Your story <span class="agit-hint">(the quiet, brilliant work you never shout about)</span></label>
     <textarea id="agit-feature" name="feature" maxlength="8000" required></textarea>
   </div>
@@ -190,7 +195,7 @@ Before you fill it in, have a quick read of the [Story Guidelines](/legal/agit-s
 
   <div class="agit-field agit-consent">
     <input type="checkbox" id="agit-consent" name="consent" required>
-    <label for="agit-consent">I confirm this is my own true experience and mine to share, that I have permission to name anyone I've named (or I'm happy for them to be anonymised), and that I've read the <a href="/legal/agit-story-guidelines/">Story Guidelines</a>. I agree my photo may be published, my story may be edited for clarity into a public feature, and that I'll approve the exact final wording by email before it goes live. My submission is processed by Cloudflare (R2 storage, Turnstile, and email) to make that happen. See the <a href="/legal/privacy/">Privacy Notice</a>.</label>
+    <label for="agit-consent">I confirm this is my own true experience and mine to share, that I have permission to name anyone I've named (or I'm happy for them to be anonymised), and that I've read the <a href="/legal/agit-story-guidelines/">Story Guidelines</a>. I agree my photo may be published, my story may be edited for clarity into a public feature, and that I'll approve the exact final wording by email before it goes live. If I've shared any social links above, I'm happy to be tagged or @-mentioned there when my feature is shared. My submission is processed by Cloudflare (R2 storage, Turnstile, and email) to make that happen. See the <a href="/legal/privacy/">Privacy Notice</a>.</label>
   </div>
 
   <div class="agit-field cf-turnstile" data-sitekey="0x4AAAAAADz-CB1k9o8zx3S8"></div>
