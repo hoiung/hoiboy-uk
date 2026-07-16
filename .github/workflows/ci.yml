@@ -200,6 +200,9 @@ jobs:
             exit 1
           fi
 
+      - name: Social-card guard (rendered og:image — template-regression backstop)
+        run: python3 scripts/check_social_cards.py --built public
+
       - name: URL contract assertion
         run: |
           set -e

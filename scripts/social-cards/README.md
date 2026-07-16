@@ -1,17 +1,32 @@
-# Consulting social-share cards
+# Text social-share cards (consulting + legal + site default)
 
-Per-page 1200×630 Open Graph / Twitter share cards for the consulting pages
-**and client case-study (portfolio) pages**, so each page gets a distinct,
-correctly-sized social card instead of falling back to the shared `hoi-mug.jpg`
-default (or, for the harness page, the old 1200×900 card which emitted a
-non-standard aspect ratio in feeds).
+Per-page 1200×630 Open Graph / Twitter share cards for the consulting pages,
+client case-study (portfolio) pages, and the **legal** pages, plus the site-wide
+branded default card — so each page gets a distinct, correctly-sized social card
+instead of falling back to a personal face photo.
 
 ## How it works
 
-`gen_card.py` renders each row of `cards.tsv` (`slug <TAB> title <TAB> tagline`)
-to `content/consulting/<slug>/share-card.png`. `layouts/_partials/head.html`
-picks up `share-card.*` as the page's `og:image` (resized to 1200 wide, aspect
-preserved), so a 1200×630 source emits a correct 1.91:1 card.
+`gen_card.py` renders three card sets, all from one template:
+
+- **consulting** — each row of `cards.tsv` (`slug <TAB> title <TAB> tagline
+  [<TAB> style]`) to `content/consulting/<slug>/share-card.png`.
+- **legal** — each row of `legal-cards.tsv` to `content/legal/<slug>/share-card.png`.
+  `privacy` + `sub-processors` use the `hoiboy` style; `agit-story-guidelines`
+  uses the `agit` style (navy `#0c1c2d` / orange `#da611c`, "ASIANS & GINGERS IN
+  TECH" eyebrow).
+- **default** — `content/default-card.png`, the site-wide `og:image` fallback for
+  the home page + taxonomy/section index pages (replaced the old `hoi-mug.jpg`).
+
+Run `python3 scripts/social-cards/gen_card.py [consulting] [legal] [default]`
+(no args = all three). `layouts/_partials/head.html` picks up a page's own
+`share-card.*` as its `og:image` (resized to 1200 wide, aspect preserved), and
+`default-card.png` as the fallback.
+
+**Guard:** `scripts/check_social_cards.py` (pre-commit + pre-publish + CI, with a
+rendered-HTML backstop) fails the build if a singular indexable page is a flat
+`.md`/`.markdown`/`.html` (cannot hold a card) or would fall back to the default
+card — so a page can never silently ship the generic default.
 
 The `slug` is the page bundle path under `content/consulting/`, so **nested
 slugs work as-is** — a client case study at

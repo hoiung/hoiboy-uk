@@ -168,6 +168,11 @@ hugo_build() {
 }
 run_check "hugo-build" hugo_build
 
+# 6a. Rendered social-card backstop: assert each singular indexable page's RENDERED
+#     og:image is its own card, not the site default. Catches a head.html/hero-pick
+#     template regression the source-only guard (check #3a) cannot see (#52 Stage 5).
+run_check "social-cards-rendered" python3 scripts/check_social_cards.py --built public
+
 # 7. Lychee on rendered HTML — catches broken cross-section links + missing
 #    assets that markdown-only lychee misses (e.g. a `[link](../other-section/)`
 #    that resolves under Hugo's permalink scheme but not under raw-md walk).
