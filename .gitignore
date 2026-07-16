@@ -34,12 +34,9 @@ __pycache__/
 # Code review graph (local AST index, regenerable)
 .code-review-graph/
 
-# AGIT member-submission evidence records (contain PII: names, stories, emails).
-# Written by scripts/check-agit-feature-edit.py. NEVER commit to the public repo;
-# point --record-dir outside the repo for production use.
+# AGIT member-submission PII records + Gmail OAuth credentials are owned by the
+# private agit-ops back-office and live at $HOME-external paths (~/.agit-records,
+# ~/.agit-secrets). This public repo no longer writes them; these guards remain as
+# a belt-and-suspenders so member PII / credentials can never be committed here.
 .agit-records/
-
-# AGIT email-approval Gmail OAuth credentials (client secret + cached token).
-# Default home is ~/.agit-secrets/ (outside the repo); this guards a repo-relative
-# path too. NEVER commit credentials. See docs/gmail-approval-oauth-setup.md.
 .agit-secrets/
