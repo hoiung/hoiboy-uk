@@ -124,6 +124,11 @@ run_check "voice-tells" python3 scripts/check-ai-writing-tells.py --check-only-n
 # 3. Frontmatter validator (walks content/posts/ unconditionally).
 run_check "frontmatter" python3 scripts/validate_frontmatter.py
 
+# 3a. Social-card guard (whole-tree): every singular indexable page must be a
+#     leaf bundle that owns its share-card / hero, else it silently falls back to
+#     the default card in link previews. See scripts/check_social_cards.py (#52).
+run_check "social-cards" python3 scripts/check_social_cards.py
+
 # 3b. Future-date guard. Hugo drops future-dated posts from the production
 #     build (buildFuture off) and Cloudflare builds in UTC, so a post-dated
 #     entry silently vanishes from the live site + all listings. Fail if this

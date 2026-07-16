@@ -105,6 +105,16 @@ repos:
         pass_filenames: false
         files: ^content/.*\.md$
 
+      - id: check-social-cards
+        name: Social-card guard (every singular page owns its og:image card)
+        # Fails if a singular content page is a flat .md (cannot hold a card) or
+        # a leaf bundle has no share-card / raster hero (falls back to the site
+        # default card). Whole-tree scan; fires on any content or _headers change.
+        entry: python3 scripts/check_social_cards.py
+        language: system
+        pass_filenames: false
+        files: ^(content/.*|static/_headers)$
+
       - id: consulting-yaml-no-operator-todo
         name: Block OPERATOR_TODO placeholders in data/consulting.yaml
         # consulting-ops#2 AC 0.3 — defence-in-depth alongside the Hugo

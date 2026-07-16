@@ -155,6 +155,9 @@ jobs:
       - name: Config-traceability + iamhoi-wrapping unit tests
         run: python3 -m pytest scripts/test_check_config_traceability.py scripts/test_check_iamhoi_wrapping.py -q
 
+      - name: Social-card guard unit tests
+        run: python3 -m pytest scripts/test_check_social_cards.py -q
+
       - name: AGIT feature edit-check unit tests
         run: python3 -m pytest scripts/test_check_agit_feature_edit.py -q
 
@@ -175,6 +178,9 @@ jobs:
 
       - name: Validate internal markdown links
         run: python3 scripts/validate_internal_links.py
+
+      - name: Social-card guard (every singular page owns its og:image card)
+        run: python3 scripts/check_social_cards.py
 
       - name: Setup Node (meet-recorder JS tests)
         uses: actions/setup-node@v4
