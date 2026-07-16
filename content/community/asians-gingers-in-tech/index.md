@@ -169,7 +169,7 @@ Before you fill it in, have a quick read of the <a href="/legal/agit-story-guide
   </div>
 
   <div class="agit-field">
-    <label for="agit-socials">Where can people follow you? <span class="agit-hint">(optional, one link per line, e.g. LinkedIn, GitHub, Instagram, X, or wherever you're active, so we can tag you when we share your feature)</span></label>
+    <label for="agit-socials">Where can people follow you? <span class="agit-hint">(optional, one link per line, e.g. LinkedIn, GitHub, Instagram, X, website, or wherever you're active, so we can tag you when we share your feature)</span></label>
     <textarea id="agit-socials" name="socials" maxlength="1000" rows="4"></textarea>
   </div>
 
