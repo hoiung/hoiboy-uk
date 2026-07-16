@@ -51,7 +51,9 @@
        hero-pick stays page-only (it targets post bundles). .Resources.GetMatch is
        safe on any kind: it returns nil when the bundle has no matching resource. */ -}}
 {{- $shareCard := .Resources.GetMatch "share-card.*" -}}
-{{- $defaultCard := site.Home.Resources.GetMatch "hoi-mug.jpg" -}}
+{{- /* Site-wide fallback: the branded default-card.png (home + taxonomy / section
+       index pages). Falls back to hoi-mug.jpg only if the branded card is absent. */ -}}
+{{- $defaultCard := (site.Home.Resources.GetMatch "default-card.png") | default (site.Home.Resources.GetMatch "hoi-mug.jpg") -}}
 {{- $socialImage := $shareCard | default $hero | default $defaultCard -}}
 {{- with $socialImage -}}
   {{- if not (strings.HasSuffix .Name ".svg") -}}
@@ -69,7 +71,7 @@
 {{- if and .IsPage (eq .Section "posts") }}
   {{- $ldHero := partial "hero-pick.html" . -}}
   {{- $ldShareCard := .Resources.GetMatch "share-card.*" -}}
-  {{- $ldSocialImage := $ldShareCard | default $ldHero | default (site.Home.Resources.GetMatch "hoi-mug.jpg") -}}
+  {{- $ldSocialImage := $ldShareCard | default $ldHero | default (site.Home.Resources.GetMatch "default-card.png") | default (site.Home.Resources.GetMatch "hoi-mug.jpg") -}}
   {{- $ldHeroUrl := "" -}}
   {{- with $ldSocialImage }}{{- if not (strings.HasSuffix .Name ".svg") -}}
     {{- $ldHeroUrl = (cond (and $ldShareCard (eq $ldShareCard.RelPermalink .RelPermalink)) (.Resize "1200x jpg q85") (.Fill "1200x630 jpg q85")).Permalink -}}
