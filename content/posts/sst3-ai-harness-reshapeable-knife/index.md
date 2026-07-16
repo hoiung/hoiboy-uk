@@ -52,6 +52,8 @@ Quick name decode, because people keep asking.
 
 Short version: it's a Single-Source-of-Truth methodology framework plus a stack of scripts, templates, and quality gates that turn raw Claude Code (or any LLM) into something you can ACTUALLY work with on real work.
 
+{{< zoom-image src="/consulting/claude-code-harness-architect/harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your experts. A human checkpoint sits outside the rings." title="SST3 is the harness wrapped around the AI" >}}
+
 Do I fully trust it? Absolutely not. And honestly, you should NEVER fully trust AI. That's rule number one. It doesn't matter how good the harness is, how shiny the guardrails are, how many reviews you stack. You always keep a human eye on it.
 
 With [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) around the AI, my working trust level sits at about 80%. Not 100%. Not even 90%. Eighty. I'm a big believer in the 80:20 rule and this is no different. 80% of the output is clean enough to use with light review. The other 20% I still watch carefully, red pen in hand. That 20% is the grey area where the AI tends to fudge things, and over time you learn exactly where it usually tries to.
@@ -118,6 +120,8 @@ It's a cowboy. It's a loose cannon. It's the Wild West with extra confidence. Br
 [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) is the sheriff.
 
 ## How the harness clamps the cowboy
+
+{{< zoom-image src="/posts/why-do-we-need-an-ai-harness/cones.svg" alt="Three panels showing the same probabilistic LLM with more deterministic harness stacked on top. A raw LLM sprays outputs at random with no cone. The general harness that ships with every AI tool gives a wide cone that lands a few on target, with most falling short and several scattering outside. Your own custom harness, bolted on top, tightens the cone onto your bullseye, with only the odd stray outside." title="How the harness clamps the spray onto target" >}}
 
 Plain English, how it actually stops each of those:
 
