@@ -34,3 +34,9 @@ The event ran its full two weeks and it worked, right through an actual hurrican
 
 **To anyone reading who never puts their hand up:** your work is worth more than your comfort with self-promotion. Come say hello, and we'll do the shouting for you.
 <!-- iamhoiend -->
+
+**Follow me**
+
+- LinkedIn: [linkedin.com/in/hoiung](https://www.linkedin.com/in/hoiung)
+- GitHub: [github.com/hoiung](https://github.com/hoiung)
+- Website: [hoiboy.uk](https://hoiboy.uk)
