@@ -91,6 +91,30 @@ def test_svg_only_bundle_flagged(tmp_path):
     assert len(_cats(v, "card-missing")) == 1
 
 
+def test_share_card_svg_not_counted(tmp_path):
+    # head.html emits NO og:image for an SVG share-card, so it is not a real card.
+    content = tmp_path / "content"
+    _bundle(content, "posts/svgcard", card="share-card.svg")
+    v = csc.check(content, _headers(tmp_path, ""))
+    assert len(_cats(v, "card-missing")) == 1
+
+
+def test_slug_override_url_for_headers_match(tmp_path):
+    # bundle dir is posts/oldname but slug: makes it serve at /posts/newname/
+    content = tmp_path / "content"
+    _bundle(content, "posts/oldname", frontmatter="title: T\nslug: newname", card=None)
+    headers = _headers(tmp_path, "/posts/newname/*\n  X-Robots-Tag: noindex\n")
+    assert csc.check(content, headers) == []
+
+
+def test_headers_xrobots_none_excluded(tmp_path):
+    # X-Robots-Tag: none is spec-equivalent to noindex, nofollow.
+    content = tmp_path / "content"
+    _bundle(content, "hidden/page", card=None)
+    headers = _headers(tmp_path, "/hidden/*\n  X-Robots-Tag: none\n")
+    assert csc.check(content, headers) == []
+
+
 def test_top_level_raster_passes(tmp_path):
     content = tmp_path / "content"
     _bundle(content, "posts/photo", card="hero.webp")

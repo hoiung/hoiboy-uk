@@ -62,21 +62,26 @@ def parse_noindex_globs(headers_path: Path) -> list[str]:
             continue
         if raw.startswith("/"):                      # a path-glob line
             current = raw.strip()
-        elif current and re.search(r"X-Robots-Tag:.*\bnoindex\b", raw, re.I):
+        elif current and re.search(r"X-Robots-Tag:.*\b(noindex|none)\b", raw, re.I):
             prefixes.append(current.rstrip("*"))     # /private/* -> /private/
             current = None                           # one match per block is enough
     return prefixes
 
 
 def page_url(index_md: Path, content_root: Path) -> str:
-    """The page URL: frontmatter `url:` override, else derived from the path."""
+    """The page URL: frontmatter `url:` override, else a `slug:` override on the
+    last path segment, else derived from the directory path."""
     fm = read_frontmatter(index_md)
     m = re.search(r'^url:\s*["\']?([^"\'\n]+?)["\']?\s*$', fm, re.M)
     if m:
         url = m.group(1).strip()
         return url if url.endswith("/") else url + "/"
-    rel = index_md.parent.relative_to(content_root).as_posix()
-    return "/" + rel + "/" if rel != "." else "/"
+    parts = list(index_md.parent.relative_to(content_root).parts)
+    sm = re.search(r'^slug:\s*["\']?([^"\'\n]+?)["\']?\s*$', fm, re.M)
+    if sm and parts:                                  # slug rewrites the leaf segment
+        parts[-1] = sm.group(1).strip()
+    rel = "/".join(parts)
+    return "/" + rel + "/" if rel else "/"
 
 
 def is_excluded(index_md: Path, url: str, noindex_prefixes: list[str]) -> bool:
@@ -91,18 +96,22 @@ def is_excluded(index_md: Path, url: str, noindex_prefixes: list[str]) -> bool:
 
 
 def has_own_card(bundle_dir: Path) -> bool:
-    """A bundle owns its card if it has a share-card.* or any non-SVG raster.
+    """A bundle owns its card if it has any non-SVG raster.
+
+    A share-card.png / hero.* / body photo all qualify; an SVG does NOT, even a
+    ``share-card.svg`` - head.html gates og:image emission on
+    ``not (strings.HasSuffix .Name ".svg")``, so an SVG-only share-card yields no
+    og:image at all (worse than the default card). So this asks the same question
+    head.html/hero-pick answer: is there a raster to become the og:image?
 
     Searches recursively: Hugo page-bundle resources include nested files, so a
     post whose photos live in a subfolder (e.g. ``website/*.jpg``) is picked up
-    by hero-pick's ``.Resources.ByType "image"`` and gets its own og:image.
+    by hero-pick's ``.Resources.ByType "image"``.  (Limitation: a raster inside a
+    nested CHILD leaf bundle is credited to the parent here; no such nesting
+    exists in content/ today.)
     """
     for f in bundle_dir.rglob("*"):
-        if not f.is_file():
-            continue
-        if f.name.startswith("share-card."):
-            return True
-        if f.suffix.lower() in RASTER_EXTS:
+        if f.is_file() and f.suffix.lower() in RASTER_EXTS:
             return True
     return False
 
