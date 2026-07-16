@@ -62,7 +62,7 @@ Email me at [hello@hoiboy.uk](mailto:hello@hoiboy.uk).
 <!-- iamhoi -->
 Let me be honest about why I built this, beyond the joke.
 
-I'm East and South-East Asian. I grew up surrounded by ginger mates. And a lot of us shared the same wiring: head down, get the work done, don't make a fuss. We rarely ask for the pay rise. We rarely chase the promotion. We just quietly do good work and let someone louder take the credit.
+I'm East and South-East Asian mix. I grew up surrounded by ginger mates. And a lot of us shared the same wiring: head down, get the work done, don't make a fuss. We rarely ask for the pay rise. We rarely chase the promotion. We just quietly do good work and let someone louder take the credit.
 
 I know how that feels, because I live it. I'm ADHD, OCD, and probably dyslexic. School made me feel stupid for 30 years. A lot of us are wired a bit differently, and that same wiring is often exactly what makes us good at what we do. It's also why we sometimes go quiet and stay out of the spotlight.
 
