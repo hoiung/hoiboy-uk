@@ -1,29 +1,42 @@
 #!/usr/bin/env python3
-"""Generate 1200x630 social-share cards for the consulting pages (retro type).
+"""Generate 1200x630 social-share cards (retro type) for the text-card pages.
 
-Brand colours are the canonical ones from docs/research/07_DESIGN_TOKENS.md
-(terracotta #c0533a accent, sky-blue #87ceeb signature, dark #141414). Type is
-the consulting-ops retro stack: VT323 for the title, IBM Plex Mono for the
-eyebrow / tagline / hoiboy.uk signature. The fonts are vendored under fonts/
-(OFL, licenses alongside) and embedded as base64 @font-face so rsvg-convert
-renders them identically anywhere — no system-font dependency.
+Covers three card sets, all sharing one template:
+  - consulting  -> content/consulting/<slug>/share-card.png   (cards.tsv)
+  - legal       -> content/legal/<slug>/share-card.png        (legal-cards.tsv)
+  - default     -> content/default-card.png                   (site-wide og:image
+                   fallback for the home page + taxonomy / section index pages)
 
-Each card is written to content/consulting/<slug>/share-card.png, which
-layouts/_partials/head.html picks up as the page's og:image (resized to 1200
-wide, aspect preserved — so the 1200x630 source emits a correct 1.91:1 card).
+Brand colours are the canonical ones from docs/research/07_DESIGN_TOKENS.md. Two
+palettes: the HOIBOY house style (terracotta #c0533a accent, dark #141414) and
+the AGIT community style (orange #da611c on navy #0c1c2d) for the AGIT story
+guidelines page. Both use the sky-blue #87ceeb hoiboy.uk signature. Type is the
+retro stack: VT323 for the title, IBM Plex Mono for the eyebrow / tagline /
+signature. The fonts are vendored under fonts/ (OFL, licenses alongside) and
+embedded as base64 @font-face so rsvg-convert renders them identically anywhere.
 
-Usage:  python3 scripts/social-cards/gen_card.py
-Reads:  scripts/social-cards/cards.tsv  (slug <TAB> title <TAB> tagline)
-Deps:   rsvg-convert (librsvg), Pillow.  Re-run after editing cards.tsv.
+layouts/_partials/head.html picks up share-card.png as the page's og:image, and
+default-card.png as the site-wide fallback (both resized to 1200 wide, aspect
+preserved, so the 1200x630 source emits a correct 1.91:1 card).
+
+Usage:  python3 scripts/social-cards/gen_card.py [consulting] [legal] [default]
+        (no args = all three sets)
+Reads:  scripts/social-cards/cards.tsv, legal-cards.tsv (slug <TAB> title <TAB>
+        tagline [<TAB> style]); style is hoiboy (default) or agit.
+Deps:   rsvg-convert (librsvg), Pillow.  Re-run after editing a *.tsv.
 """
 import subprocess, sys, html, textwrap, pathlib, base64, io
 from card_common import font_face
 
-ACCENT = "#c0533a"   # terracotta — the only warm colour
-SKY    = "#87ceeb"   # hoiboy.uk signature blue
-BG     = "#141414"   # dark background
-TITLE  = "#f0f0f0"
-TAG    = "#a6a6a6"
+# --- Palettes (canonical: docs/research/07_DESIGN_TOKENS.md) ------------------
+# Each style is (eyebrow text, palette). The palette keys map onto the template
+# below; the consulting cards use "hoiboy" so their output is unchanged.
+HOIBOY_PAL = {"bg": "#141414", "accent": "#c0533a", "title": "#f0f0f0",
+              "tag": "#a6a6a6", "sig": "#87ceeb"}
+AGIT_PAL   = {"bg": "#0c1c2d", "accent": "#da611c", "title": "#f9ebdf",
+              "tag": "#b5dae7", "sig": "#87ceeb"}
+STYLE_MAP  = {"hoiboy": ("HOIBOY AI LTD", HOIBOY_PAL),
+              "agit":   ("ASIANS & GINGERS IN TECH", AGIT_PAL)}
 
 # Signature (bottom-right): square logo + "hoiboy.uk", inset by an EQUAL margin
 # from the right and bottom edges (symmetric corner placement, identical on every
@@ -37,8 +50,9 @@ LOGO_PX    = 64
 LOGO_GAP   = 16
 SIG_MARGIN = 64         # equal inset from BOTH the right and bottom edges
 
-REPO  = pathlib.Path(__file__).resolve().parents[2]      # repo root
-TSV   = REPO / "scripts" / "social-cards" / "cards.tsv"
+REPO          = pathlib.Path(__file__).resolve().parents[2]      # repo root
+CONSULTING_TSV = REPO / "scripts" / "social-cards" / "cards.tsv"
+LEGAL_TSV      = REPO / "scripts" / "social-cards" / "legal-cards.tsv"
 FONTS = REPO / "scripts" / "social-cards" / "fonts"
 LOGO  = REPO / "assets" / "images" / "logo.png"
 
@@ -67,7 +81,7 @@ def wrap_title(title, max_chars=22):
     return textwrap.wrap(title, width=max_chars) or [title]
 
 
-def make_svg(title, tagline, logo_uri):
+def make_svg(eyebrow, title, tagline, logo_uri, pal):
     lines = wrap_title(title)
     fs = 98 if len(lines) == 1 else 86        # VT323 is condensed: a touch larger than sans
     line_h = fs + 4
@@ -96,44 +110,79 @@ def make_svg(title, tagline, logo_uri):
     {font_face("VT323", VT323_TTF, 400)}
     {font_face("IBM Plex Mono", PLEX_R, 400)}
     {font_face("IBM Plex Mono", PLEX_B, 700)}
-    .title {{ fill: {TITLE}; font-family: 'VT323', monospace; font-size: {fs}px; }}
-    .eyebrow {{ fill: {ACCENT}; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 26px; letter-spacing: 3px; }}
-    .tag {{ fill: {TAG}; font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: {TAG_FS}px; }}
-    .sig {{ fill: {SKY}; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: {SIG_FS}px; }}
+    .title {{ fill: {pal['title']}; font-family: 'VT323', monospace; font-size: {fs}px; }}
+    .eyebrow {{ fill: {pal['accent']}; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 26px; letter-spacing: 3px; }}
+    .tag {{ fill: {pal['tag']}; font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: {TAG_FS}px; }}
+    .sig {{ fill: {pal['sig']}; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: {SIG_FS}px; }}
   </style>
-  <rect width="1200" height="630" fill="{BG}"/>
-  <rect x="0" y="0" width="16" height="630" fill="{ACCENT}"/>
-  <text x="110" y="150" class="eyebrow">HOIBOY AI LTD</text>
+  <rect width="1200" height="630" fill="{pal['bg']}"/>
+  <rect x="0" y="0" width="16" height="630" fill="{pal['accent']}"/>
+  <text x="110" y="150" class="eyebrow">{html.escape(eyebrow)}</text>
   {title_tspans}
-  <rect x="112" y="{rule_y:.0f}" width="90" height="7" fill="{ACCENT}"/>
+  <rect x="112" y="{rule_y:.0f}" width="90" height="7" fill="{pal['accent']}"/>
   <text x="110" y="{tag_y:.0f}" class="tag">{html.escape(tagline)}</text>
   <image href="{logo_uri}" x="{logo_x:.0f}" y="{logo_y:.0f}" width="{LOGO_PX}" height="{LOGO_PX}" clip-path="url(#logoclip)"/>
   <text x="{sig_right:.0f}" y="{sig_y:.0f}" text-anchor="end" class="sig">{SIG_TEXT}</text>
 </svg>'''
 
 
+def render_card(png_path, eyebrow, title, tagline, logo_uri, pal):
+    """Render one card SVG through rsvg-convert to png_path (svg is a temp sibling)."""
+    svg_path = png_path.with_suffix(".svg")
+    svg_path.write_text(make_svg(eyebrow, title, tagline, logo_uri, pal))
+    subprocess.run(["rsvg-convert", "-w", "1200", "-h", "630",
+                    str(svg_path), "-o", str(png_path)], check=True)
+    svg_path.unlink()
+    return png_path
+
+
+def gen_section(section, tsv, logo_uri):
+    """Generate share-card.png for each row of a section TSV (slug/title/tagline[/style])."""
+    if not tsv.exists():
+        sys.exit(f"missing required input: {tsv}")
+    n = 0
+    for raw in tsv.read_text().splitlines():
+        raw = raw.rstrip("\n")
+        if not raw or raw.startswith("#"):
+            continue
+        parts = raw.split("\t")
+        slug, title, tagline = parts[0], parts[1], parts[2]
+        style = parts[3] if len(parts) > 3 and parts[3] else "hoiboy"
+        if style not in STYLE_MAP:
+            sys.exit(f"unknown style '{style}' for {section}/{slug} (expected: {', '.join(STYLE_MAP)})")
+        eyebrow, pal = STYLE_MAP[style]
+        bundle = REPO / "content" / section / slug
+        if not bundle.is_dir():
+            sys.exit(f"page bundle not found: {bundle}")
+        png = render_card(bundle / "share-card.png", eyebrow, title, tagline, logo_uri, pal)
+        print(f"  {section}/{slug} [{style}]: {png.relative_to(REPO)}")
+        n += 1
+    return n
+
+
+def gen_default(logo_uri):
+    """Generate the site-wide default card (home + taxonomy / section index fallback)."""
+    png = render_card(REPO / "content" / "default-card.png",
+                      "PERSONAL BLOG", "hoiboy.uk",
+                      "Food, booze, adventure, dance, tech and AI.",
+                      logo_uri, HOIBOY_PAL)
+    print(f"  default: {png.relative_to(REPO)}")
+    return 1
+
+
 def main():
-    for p in (TSV, LOGO, VT323_TTF, PLEX_R, PLEX_B):
+    targets = sys.argv[1:] or ["consulting", "legal", "default"]
+    for p in (LOGO, VT323_TTF, PLEX_R, PLEX_B):
         if not p.exists():
             sys.exit(f"missing required input: {p}")
     logo_uri = logo_data_uri()
     n = 0
-    for raw in TSV.read_text().splitlines():
-        raw = raw.rstrip("\n")
-        if not raw or raw.startswith("#"):
-            continue
-        slug, title, tagline = raw.split("\t")
-        bundle = REPO / "content" / "consulting" / slug
-        if not bundle.is_dir():
-            sys.exit(f"page bundle not found: {bundle}")
-        svg_path = bundle / "share-card.svg"
-        png_path = bundle / "share-card.png"
-        svg_path.write_text(make_svg(title, tagline, logo_uri))
-        subprocess.run(["rsvg-convert", "-w", "1200", "-h", "630",
-                        str(svg_path), "-o", str(png_path)], check=True)
-        svg_path.unlink()
-        print(f"  {slug}: {png_path.relative_to(REPO)}")
-        n += 1
+    if "consulting" in targets:
+        n += gen_section("consulting", CONSULTING_TSV, logo_uri)
+    if "legal" in targets:
+        n += gen_section("legal", LEGAL_TSV, logo_uri)
+    if "default" in targets:
+        n += gen_default(logo_uri)
     print(f"generated {n} cards")
 
 
