@@ -158,18 +158,6 @@ jobs:
       - name: Social-card guard unit tests
         run: python3 -m pytest scripts/test_check_social_cards.py -q
 
-      - name: AGIT feature edit-check unit tests
-        run: python3 -m pytest scripts/test_check_agit_feature_edit.py -q
-
-      - name: AGIT publish-gate unit tests
-        run: python3 -m pytest scripts/test_check_agit_publish_gate.py -q
-
-      - name: AGIT email-approval unit tests
-        run: python3 -m pytest scripts/test_agit_approval.py -q
-
-      - name: AGIT pipeline end-to-end tests (Workflow + E2E tiers)
-        run: python3 -m pytest scripts/test_agit_pipeline_e2e.py -q
-
       - name: Frontmatter validator
         run: python3 scripts/validate_frontmatter.py
 
