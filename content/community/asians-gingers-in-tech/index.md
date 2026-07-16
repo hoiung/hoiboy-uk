@@ -1,6 +1,6 @@
 ---
 title: "Asians & Gingers in Tech"
-description: "A home for the quiet, heads-down people in tech who do brilliant work and never ask for the credit. East and South-East Asians, Gingers, and everyone who wants to help lift them up. Founded by Hoi."
+description: "A home for the quiet, heads-down people in tech who do brilliant work and never ask for the credit. East/South-East Asians, Gingers, and everyone who wants to help lift them up. Founded by Hoi."
 hideDate: true
 ---
 
@@ -8,11 +8,11 @@ hideDate: true
 
 Hi, my name is Hoi aka Hoiboy!
 
-After 32+ years of extensive research\* I've concluded that East and South-East Asians and Gingers naturally end up becoming friends.
+After 32+ years of extensive research\* I've concluded that East/South-East Asians and Gingers naturally end up becoming friends.
 
 \*Research = my life.
 
-To formalise this groundbreaking discovery, I've created a home dedicated to bringing East and South-East Asians and Gingers together.
+To formalise this groundbreaking discovery, I've created a home dedicated to bringing East/South-East Asians and Gingers together.
 
 Welcome to Asians & Gingers in Tech!
 
@@ -62,7 +62,7 @@ Email me at [hello@hoiboy.uk](mailto:hello@hoiboy.uk).
 <!-- iamhoi -->
 Let me be honest about why I built this, beyond the joke.
 
-I'm East and South-East Asian mix. I grew up surrounded by ginger mates. And a lot of us shared the same wiring: head down, get the work done, don't make a fuss. We rarely ask for the pay rise. We rarely chase the promotion. We just quietly do good work and let someone louder take the credit.
+I'm East/South-East Asian mix. I grew up surrounded by ginger mates. And a lot of us shared the same wiring: head down, get the work done, don't make a fuss. We rarely ask for the pay rise. We rarely chase the promotion. We just quietly do good work and let someone louder take the credit.
 
 I know how that feels, because I live it. I'm ADHD, OCD, and probably dyslexic. School made me feel stupid for 30 years. A lot of us are wired a bit differently, and that same wiring is often exactly what makes us good at what we do. It's also why we sometimes go quiet and stay out of the spotlight.
 
@@ -72,7 +72,7 @@ Because here's the bit nobody says out loud: the quiet ones are holding a lot of
 
 So this is a home. A place for the heads-down, get-shit-done crowd to be themselves, share their story, and finally get a bit of the light they've earned. You don't have to become someone louder to belong here. Just come as you are.
 
-And if you're not East or South-East Asian, or ginger? You're welcome here too, genuinely. In fact, we want you here. Because a lot of us only got the promotion, the pay rise, the moment in the light, because someone who wasn't like us noticed the work and said something out loud. You saw us when we wouldn't put our own hand up. That mattered more than you know. So come and be part of it, and help us shine a light on the people who never ask for it themselves. That support is the whole point.
+And if you're not East/South-East Asian or ginger? You're welcome here too, genuinely. In fact, we want you here. Because a lot of us only got the promotion, the pay rise, the moment in the light, because someone who wasn't like us noticed the work and said something out loud. You saw us when we wouldn't put our own hand up. That mattered more than you know. So come and be part of it, and help us shine a light on the people who never ask for it themselves. That support is the whole point.
 
 That's why Asians & Gingers in Tech exists. The name makes you smile. The reason underneath is real.
 <!-- iamhoiend -->
