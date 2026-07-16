@@ -58,6 +58,8 @@ This is what the industry has quietly converged on. Simon Willison [calls the wh
 
 Put simply, a harness is a hybrid: deterministic scaffolding (the schemas, validators, and tool calls above, which run the same way every time) wrapped around the probabilistic LLM, and you drive the whole thing through the Claude Code CLI rather than a normal chat window.
 
+{{< zoom-image src="/consulting/claude-code-harness-architect/harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your experts. A human checkpoint sits outside the rings." title="A harness is a hybrid: deterministic scaffolding wrapped around the probabilistic model" >}}
+
 ## We accidentally built one
 
 I am an engineer. Just not an ML engineer. Twenty years in IT, data centres and infrastructure. Serial entrepreneur. Reseller. Swing trader. PMP project management certification, once upon a time. All of that taught me how to plan, design, build, and ship anything of high quality execution. Which is pretty much what you need to build a harness. Got burned enough times by the random-answer problem to build the guardrails I needed. Nine months of twelve-to-fifteen-hour days, one harness later. It is public, MIT licensed, and free to use: [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness). You need Claude Code to run it end-to-end, and it is opinionated, but it is real, and it ships. I publish my work for the public so other small operators and domain experts can see what they might build for themselves.
