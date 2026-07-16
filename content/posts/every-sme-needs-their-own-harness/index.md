@@ -37,6 +37,8 @@ Now my read on it. Each of these SKUs (stock keeping units, the label retailers 
 
 And this is not an Anthropic problem. Google shipped Workspace Studio on 19 March 2026 ("puts custom agent creation in the hands of every employee"). OpenAI did the whole arc years ago: Custom GPTs (November 2023), Operator (January 2025), ChatGPT Agent later in 2025, then GPT-5.2-Codex for coding specifically. Every frontier lab is running the same play. They all sell the horizontal product. None of them ships your vertical.
 
+{{< zoom-image src="/posts/why-do-we-need-an-ai-harness/cones.svg" alt="Three panels showing the same probabilistic LLM with more deterministic harness stacked on top. A raw LLM sprays outputs at random with no cone. The general harness that ships with every AI tool gives a wide cone that lands a few on target, with most falling short and several scattering outside. Your own custom harness, bolted on top, tightens the cone onto your bullseye, with only the odd stray outside." title="The off-the-shelf harness aims at a generic target, not yours" >}}
+
 ## The pattern they keep admitting in public
 
 Here is where it gets interesting. The labs know the model is generalising, and they know the value is in specialising it. They keep saying so out loud.
@@ -62,6 +64,8 @@ That is Anthropic, in their own words, confirming what I have been saying for ni
 ## The prescription
 
 A harness is the wrapper around the general model. The prompts that tell it your job. The tools it is allowed to touch. The data it sees. The permissions that stop it doing something stupid. The evaluation loops that catch when it lies. The retry logic. The bits that say no.
+
+{{< zoom-image src="/consulting/claude-code-harness-architect/harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your experts. A human checkpoint sits outside the rings." title="What the harness wraps around the general model" >}}
 
 That wrapper is where your trade's governance lives.
 
