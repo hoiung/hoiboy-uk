@@ -89,6 +89,12 @@ I want to change that, because I see you, and I see you for who you are. You don
 
 Before you fill it in, have a quick read of the <a href="/legal/agit-story-guidelines/" target="_blank" rel="noopener noreferrer">Story Guidelines</a>. They cover what to share, how we edit (for clarity, never the facts), and how you get the final say before anything goes public.
 
+<h2 style="margin-top: 3.25rem;">Here's what a feature looks like. I'll go first.</h2>
+
+[Read my full story.](/community/agit-featured/hoi-aka-hoiboy-ai-product-engineer/)
+
+[See everyone we've featured.](/community/agit-featured/)
+
 <style>
 .agit-form-wrap { max-width: 40rem; }
 .agit-form-wrap .agit-field { margin: 0 0 1.1rem; }
@@ -209,15 +215,3 @@ Before you fill it in, have a quick read of the <a href="/legal/agit-story-guide
 
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script src="/js/agit-form.js" defer></script>
-
-<h2 style="margin-top: 3.25rem;">Here's what a feature looks like. I'll go first.</h2>
-
-<img src="/hoi-mug.jpg" alt="Hoi aka Hoiboy" width="200">
-
-<!-- iamhoi -->
-**Hoi aka Hoiboy.** Eight years at Canonical, the company behind Ubuntu, building cloud data centres across London, Boston and Taipei, mostly on my own. Data Centre Engineer on paper, but in practice the architect, the procurement lead, the project manager and the site manager all at once. The work just spoke for itself, even when the title didn't. That is usually how it goes for the quiet ones.
-<!-- iamhoiend -->
-
-[Read my full story.](/community/agit-featured/hoi-aka-hoiboy-ai-product-engineer/)
-
-[See everyone we've featured.](/community/agit-featured/)
