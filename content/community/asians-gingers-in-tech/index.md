@@ -89,7 +89,7 @@ I want to change that, because I see you, and I see you for who you are. You don
 
 Before you fill it in, have a quick read of the <a href="/legal/agit-story-guidelines/" target="_blank" rel="noopener noreferrer">Story Guidelines</a>. They cover what to share, how we edit (for clarity, never the facts), and how you get the final say before anything goes public.
 
-<h2 style="margin-top: 3.25rem;">Here's what a feature looks like. I'll go first.</h2>
+<h2>Here's what a feature looks like. I'll go first.</h2>
 
 [Read my full story.](/community/agit-featured/hoi-aka-hoiboy-ai-product-engineer/)
 
