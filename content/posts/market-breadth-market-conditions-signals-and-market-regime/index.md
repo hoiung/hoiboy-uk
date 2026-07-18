@@ -1,6 +1,6 @@
 ---
 title: "Market Breadth, Market Condition Signals, and Market Regime"
-date: 2026-07-18T00:30:00+01:00
+date: 2026-07-17T00:30:00+01:00
 categories: ["trading", "tech-ai"]
 tags: ["market-breadth", "t2108", "stockbee", "macd", "price-volume-action", "market-regime", "qqq", "tc2000", "swing-trading", "human-in-the-loop"]
 description: "Six months of studying the QQQ turned into three tools: a breadth gauge, a weekly human check, and an automated gate that blocks my trades when the market turns."
