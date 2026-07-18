@@ -8,15 +8,15 @@ description: "Six months of studying the QQQ turned into three tools: a breadth 
 
 <!-- iamhoi -->
 
-Before I automated anything, I spent a good 6 months just studying the market. No code, no system yet, just me and the charts.
+Before I automated anything, I spent a good 6 months just studying the market. No code, no system yet, just me and the charts. 2,000+ hours, easily. 10 to 12 hours a day, every day, just trying to understand how the overall market moves.
 
 Everything I came up with came out of watching one thing: the QQQ, my market monitor. It turned into three separate angles, and this post walks through all three. If you want the engineering side of how the platform itself got built, [that story is over here](/posts/building-a-production-grade-trading-system-with-claude-code/). This one is about the studying that came first. And when studying each one, I also studied hundreds of stocks alongside it, to understand their movement over time together with the QQQ's, across multiple timeframes. Hence why the study took 6 months and not 6 days!
 
 ## 1) Market Breadth using T2108 % (Daily timeframe)
 
-The original idea came from Stockbee: the T2108, the percentage of stocks trading above their 40-day moving average. Think of it as a headcount. When most stocks are above that line, the market is broadly healthy. When the number falls away, the move is being carried by fewer and fewer names, even while the index itself still looks fine. I still use it today, but on the daily timeframe only.
+The original idea came from Stockbee: the T2108, the percentage of stocks trading above their 40-day moving average. It's not a health monitor. It's really just the market expanding and contracting. What I actually use it for is timing a pullback. When the breadth drops back into certain zones, that's where it keeps turning, and that's my cue to start looking at buying the dip. I still use it today, on the daily timeframe only.
 
-I ran it against years of QQQ price history to see where it actually mattered. On the screenshot below, the T2108 is the blue area up top. The dashed lines are mine, marking the levels where, again and again, it tends to bounce off support or stall at resistance.
+I ran it against years of QQQ price history to see where it actually mattered. On the screenshot below, the T2108 is the blue area up top. The dashed lines are mine, marking the levels where, again and again, it pulls back and bounces.
 
 {{< zoom-image src="t2108-breadth-daily.webp" alt="TC2000 daily chart: the T2108 breadth indicator as a blue area on top with dashed support and resistance levels marked, QQQ daily candles with moving average lines in the middle, and dollar volume at the bottom" title="T2108 % market breadth (blue area) with my marked support and resistance levels, above the QQQ daily" >}}
 
