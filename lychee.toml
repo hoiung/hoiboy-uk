@@ -52,6 +52,11 @@ exclude = [
   "^https?://(www\\.)?tiktok\\.com(/.*)?$",
   "^https?://(www\\.)?x\\.com(/.*)?$",
   "^https?://(www\\.)?twitter\\.com(/.*)?$",
+  # Substack publication pages (asiansgingersintech.substack.com) return 403
+  # Forbidden to lychee's user-agent (anti-bot), same class as the community
+  # links above. /community/asians-gingers-in-tech/. Verified reachable
+  # in-browser (200) 2026-07-18. added: 2026-07-18; expires: 2026-10-16 (90 days)
+  "^https?://([a-z0-9-]+\\.)?substack\\.com(/.*)?$",
   # Cloudflare dashboard URLs require authentication; anonymous lychee
   # requests get 403. Referenced in cloudflare-api-token-setup.md runbook
   # as documented destinations for operator UI actions (token creation,
