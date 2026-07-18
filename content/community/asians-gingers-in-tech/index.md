@@ -40,6 +40,8 @@ Come join the weirdest niche community. 🧡🤝
 - **Instagram:** [@asians_gingers_in_tech](https://www.instagram.com/asians_gingers_in_tech/)
 - **TikTok:** [@asians_gingers_in_tech](https://www.tiktok.com/@asians_gingers_in_tech)
 - **X:** [@AsiansGingersIT](https://x.com/AsiansGingersIT)
+- **Bluesky:** [@asians-gingers-it.bsky.social](https://bsky.app/profile/asians-gingers-it.bsky.social)
+- **Substack:** [@asiansgingersintech](https://asiansgingersintech.substack.com/)
 
 ## Help build this
 
