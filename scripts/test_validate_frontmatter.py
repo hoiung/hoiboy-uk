@@ -156,7 +156,9 @@ def test_scope_consulting_skips_posts(monkeypatch, tmp_path):
 
 def test_default_scope_covers_both_trees(monkeypatch, tmp_path):
     bad_page = '---\ntitle: "Svc"\n---\nbody\n'
-    # Bare invocation (what pre-commit and CI run) must catch a bad project page.
+    # Bare invocation (what the pre-commit hook runs; CI and pre-publish.sh use
+    # the disjoint --scope posts / --scope consulting pair instead) must catch a
+    # bad project page.
     assert _run(monkeypatch, tmp_path, [("good", POST_FM)], [("svc", bad_page)]) == 1
 
 
