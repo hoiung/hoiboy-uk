@@ -551,7 +551,18 @@ def test_bracket_list_with_no_space_before_comment_still_parses_as_a_list():
 # for a Ralph round to notice it.
 
 def _present(v: object) -> bool:
-    """Would Hugo treat this as a value, or fall back to the site default?"""
+    """Did YAML yield a value here, for the purpose of comparing two parsers?
+
+    KNOWN LIMIT of the gate below, and it is structural, not an oversight
+    (Ralph round 23). This function is applied to BOTH sides of the
+    comparison, so it can only catch the parser disagreeing with PyYAML. It
+    can never catch both agreeing while HUGO does something else, which is a
+    layer above YAML. That is exactly how a list-valued `description` slipped
+    through: `[x]` and `[x, y]` are already in the matrix below, both parsers
+    call them present, and Hugo still discards the field and serves the site
+    default. Hugo-semantics cases need their own explicit tests against a real
+    build; see test_list_valued_description_is_rejected.
+    """
     if v is None:
         return False
     if isinstance(v, list):
@@ -590,3 +601,50 @@ def test_presence_matches_real_yaml_across_a_shape_matrix():
         "exists, which is how every description-gate bypass in this issue "
         f"happened:\n" + "\n".join(f"  {r!r}: ours={g!r} yaml={e!r}" for r, g, e in mismatches)
     )
+
+
+def test_list_valued_description_is_rejected(monkeypatch, tmp_path, capsys):
+    # Hugo discards a list-valued description and serves the site default.
+    # Verified on a real build: `description: [alpha, beta]` rendered
+    # content="Personal blog of Hoi. ..." byte-identical to the homepage, while
+    # the gate said "Frontmatter OK (80 posts)", exit 0. Presence was never the
+    # problem here; the TYPE was. Ralph round 23.
+    posts = tmp_path / "posts"
+    listed = POST_FM.replace('description: "A unique summary."', "description: [alpha, beta]")
+    assert "description: [alpha, beta]" in listed, "fixture rewrite did not take effect"
+    _bundle(posts, "listdesc", listed)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 1
+    assert "is a list" in capsys.readouterr().err
+
+
+def test_bare_scalar_categories_is_rejected(monkeypatch, tmp_path, capsys):
+    # `categories: badcategory` (no brackets) parsed to a plain string, so the
+    # allowlist guard never fired and a typo'd category was never checked. Hugo
+    # then hard-fails the build with "range can't iterate over badcategory",
+    # so the real cost was a confusing template error at build time instead of
+    # a clear message here. Ralph round 23.
+    posts = tmp_path / "posts"
+    bare = POST_FM.replace("categories: [tech-ai]", "categories: badcategory")
+    assert "categories: badcategory" in bare, "fixture rewrite did not take effect"
+    _bundle(posts, "barecat", bare)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 1
+    assert "categories must be a list" in capsys.readouterr().err
+
+
+def test_valid_list_shapes_still_pass(monkeypatch, tmp_path):
+    # The false-failure guard for both fixes above: a normal bracketed list and
+    # a block list are the shapes real posts use and must keep passing.
+    posts = tmp_path / "posts"
+    _bundle(posts, "bracket", POST_FM)
+    block = POST_FM.replace("categories: [tech-ai]", "categories:\n  - tech-ai")
+    _bundle(posts, "block", block)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 0
