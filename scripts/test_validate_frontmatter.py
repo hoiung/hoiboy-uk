@@ -207,7 +207,31 @@ def test_flat_markdown_and_html_project_pages_are_not_skipped(monkeypatch, tmp_p
 def test_walk_covers_the_same_formats_as_the_social_card_guard():
     # Kept identical to CONTENT_EXTS in check_social_cards.py. A narrower walk
     # here would silently exempt page shapes that guard already treats as real.
-    assert vf.CONTENT_EXTS == (".md", ".markdown", ".html")
+    # Import the guard and compare, rather than asserting a literal: a literal
+    # cannot detect the drift this test is named for, because widening the
+    # guard alone would leave it green.
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "check_social_cards", Path(__file__).parent / "check_social_cards.py"
+    )
+    guard = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(guard)
+    assert vf.CONTENT_EXTS == guard.CONTENT_EXTS
+
+
+def test_uppercase_extension_is_walked(monkeypatch, tmp_path, capsys):
+    # CONTENT_EXTS is matched against p.suffix.lower(), so a page saved as
+    # .MD must still be gated. Without this test the `.lower()` can be dropped
+    # and the whole suite stays green while an uppercase page silently escapes
+    # the contract. That `.lower()` is also the behaviour .pre-commit-config.yaml
+    # cites to justify its (?i) files regex, so the two must not drift apart.
+    consulting = tmp_path / "content" / "consulting"
+    consulting.mkdir(parents=True)
+    (consulting / "UPPER.MD").write_text('---\ntitle: "T"\n---\nbody\n', encoding="utf-8")
+    monkeypatch.setattr(vf, "CONSULTING", consulting)
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "consulting"]) == 1
+    assert "description" in capsys.readouterr().err
 
 
 def test_posts_section_index_is_still_exempt(monkeypatch, tmp_path):
