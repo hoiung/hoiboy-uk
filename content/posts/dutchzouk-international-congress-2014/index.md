@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, congress, netherlands, dance, travel]
 source_file: "voice-corpus/blogs/14_dutchzouk-international-congress-2014.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "Studio 76 in Etten-Leur with over 100 artists and 1000 dancers. Musicality with Freddy and Andressa, the Mafie Zouker blacklist, and £863.56 all in."
 ---
 With over 100+ Artists (Dance Teachers, DJ's & Performers) and 1000+ Attendees, *DutchZouk!* really was the biggest *Zouk* Congress in Europe! We had *Zoukers* stretching as far as *Australia* and *Canada*.
 
