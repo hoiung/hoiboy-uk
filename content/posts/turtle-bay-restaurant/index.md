@@ -5,6 +5,7 @@ categories: [food-booze]
 tags: [restaurant, caribbean, review, birmingham, food]
 source_file: "voice-corpus/blogs/16_turtle-bay-restaurant.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "Caribbean food on John Bright Street in Birmingham. The £4.95 saltfish pattie, jerk lamb and Blue Mountain goat curry, plus a gripe about canned drinks."
 ---
 ## Turtle Bay Restaurant
 
