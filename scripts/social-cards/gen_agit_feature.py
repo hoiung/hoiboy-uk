@@ -193,7 +193,7 @@ def build_share_card(photo, name, role, out_png, number=None):
 
     eb_ls = _eyebrow_spacing(EYEBROW, EB_FS, inner)
     eb_y = top + EB_FS
-    region_top = eb_y + 54
+    region_top = eb_y + 18   # symmetric with body_bottom (logo_y - 18) so the block centres between the eyebrow bottom and the logo top
 
     name_fs, name_lines = _fit_lines(name, VT323, inner, NAME_MAX, 2)
     name_lh = name_fs + 2
