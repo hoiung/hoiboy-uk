@@ -110,7 +110,7 @@ def check_tree(root: Path, required: set[str], check_categories: bool,
 
     md_files = sorted(
         p for p in root.rglob("*")
-        if p.is_file() and p.suffix in CONTENT_EXTS
+        if p.is_file() and p.suffix.lower() in CONTENT_EXTS
         and (include_section_pages or not p.name.startswith("_index."))
     )
 
