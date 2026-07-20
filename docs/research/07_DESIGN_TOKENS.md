@@ -117,11 +117,13 @@ The Asians & Gingers in Tech community features (`content/community/agit-feature
 | Navy (name / logo border) | `#0c1c2d` | the card title colour |
 | Orange (eyebrow, rule, divider) | `#da611c` | the single accent: eyebrow text, the short rule under the name, the vertical photo/panel divider |
 | Grey (role text) | `#4f5b64` | the role line under the rule |
+| Kicker grey (feature number) | `#98a2ab` | the small light-grey `#N` above the name |
 | Panel gradient | `#b5dae7` to `#f9ebdf` | vertical powder-blue (top) to cream (bottom), sampled from the AGIT banner art |
 
 ### Type
 
-- **Name:** VT323 (pixel/retro), up to **80px**, auto-shrinks to fit the panel (floor 12px) and wraps to at most 2 lines. Same face as the consulting card titles. **The name is auto-prefixed with the feature number** parsed from the slug (`1-hoi-aka-hoiboy-...` renders as `#1 Hoi aka Hoiboy`), so the card mirrors the page title `#N <Name>`; un-numbered slugs render the plain name. The `agit-features.tsv` name column stays the plain name (the number is derived, never stored twice).
+- **Name:** VT323 (pixel/retro), up to **80px**, auto-shrinks to fit the panel (floor 12px) and wraps to at most 2 lines. Same face as the consulting card titles.
+- **Feature-number kicker (`#N`):** a small VT323 `#N` above the name at **2/3 of the fitted name size**, in **light grey `#98a2ab`**, parsed from the slug prefix (`1-hoi-aka-hoiboy-...` renders `#1` above `Hoi aka Hoiboy`). It mirrors the page title `#N <Name>` while keeping the name the dominant element. Un-numbered slugs render no kicker. The `agit-features.tsv` name column stays the plain name (the number is derived from the slug, never stored twice).
 - **Role:** IBM Plex Mono, up to **28px**, same auto-fit behaviour.
 - **Eyebrow** (`ASIANS & GINGERS IN TECH`): IBM Plex Mono Bold, **18px**, letter-spacing stretched to span the panel width.
 

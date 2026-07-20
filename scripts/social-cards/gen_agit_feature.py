@@ -47,6 +47,7 @@ from card_common import font_face
 NAVY   = "#0c1c2d"   # AGIT dark navy (logo border / title)
 ORANGE = "#da611c"   # AGIT orange (eyebrow, rule, divider)
 GREY   = "#4f5b64"   # role text
+NUMGREY = "#98a2ab"  # light grey for the small feature-number kicker (#N above the name)
 GRAD   = ("#b5dae7", "#f9ebdf")   # panel gradient: powder-blue (top) -> cream (bottom)
 
 EYEBROW = "ASIANS & GINGERS IN TECH"
@@ -181,7 +182,7 @@ def _eyebrow_spacing(s, fs, target_w):
     return max(0.0, (target_w - _measure(s, PLEX_B, fs)) / max(len(s) - 1, 1))
 
 
-def build_share_card(photo, name, role, out_png):
+def build_share_card(photo, name, role, out_png, number=None):
     tx = PHOTO_W + PAD
     inner = CW - PHOTO_W - 2 * PAD
     top = 52
@@ -196,6 +197,9 @@ def build_share_card(photo, name, role, out_png):
 
     name_fs, name_lines = _fit_lines(name, VT323, inner, NAME_MAX, 2)
     name_lh = name_fs + 2
+    num = str(number).strip() if number not in (None, "") else ""
+    num_fs = round(name_fs * 2 / 3) if num else 0     # kicker is 2/3 of the fitted name size
+    num_gap = 10 if num else 0                          # gap between the #N kicker and the name
     role = (role or "").strip()
     if role.lower() in ("(not given)", "not given"):   # the skill's missing-field sentinel
         role = ""
@@ -207,10 +211,15 @@ def build_share_card(photo, name, role, out_png):
         role_fs, role_lines, role_lh = ROLE_MAX, [], ROLE_MAX + 8
 
     rule_gt, rule_h, rule_gb = 30, 6, 44
-    stack = len(name_lines) * name_lh + rule_gt + rule_h + (rule_gb + len(role_lines) * role_lh if have_role else 0)
+    stack = (num_fs + num_gap) + len(name_lines) * name_lh + rule_gt + rule_h + (rule_gb + len(role_lines) * role_lh if have_role else 0)
     start = region_top + max(0, ((body_bottom - region_top) - stack) / 2)
 
     y = start
+    num_ts = ""
+    if num:
+        y += num_fs
+        num_ts = f'<text x="{tx}" y="{y:.0f}" class="fnum">#{html.escape(num)}</text>'
+        y += num_gap
     name_ts = ""
     for l in name_lines:
         y += name_lh
@@ -235,12 +244,14 @@ def build_share_card(photo, name, role, out_png):
     {font_face("VT323", VT323, 400)}{font_face("IBM Plex Mono", PLEX_R, 400)}{font_face("IBM Plex Mono", PLEX_B, 700)}
     .eyebrow{{fill:{ORANGE};font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:{EB_FS}px;letter-spacing:{eb_ls:.2f}px;}}
     .name{{fill:{NAVY};font-family:'VT323',monospace;font-size:{name_fs}px;}}
+    .fnum{{fill:{NUMGREY};font-family:'VT323',monospace;font-size:{num_fs}px;}}
     .role{{fill:{GREY};font-family:'IBM Plex Mono',monospace;font-size:{role_fs}px;}}
   </style>
   <rect width="{CW}" height="{CH}" fill="url(#bg)"/>
   <image href="{photo_uri}" x="0" y="0" width="{PHOTO_W}" height="{CH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#ph)"/>
   <rect x="{PHOTO_W}" y="0" width="6" height="{CH}" fill="{ORANGE}"/>
   <text x="{tx}" y="{eb_y}" class="eyebrow">{html.escape(EYEBROW)}</text>
+  {num_ts}
   {name_ts}
   <rect x="{tx + 2}" y="{rule_y:.0f}" width="72" height="{rule_h}" fill="{ORANGE}"/>
   {role_ts}
@@ -343,12 +354,13 @@ def find_source(slug):
     return hits[0]
 
 
-def _numbered_name(slug, name):
-    """Prefix the display name with the feature number parsed from the slug
-    (`1-jane-smith-data-engineer` -> "#1 Jane Smith ..."), so the share card
-    mirrors the page title `#N <Name>`. Un-numbered slugs render name unchanged."""
+def _feature_number(slug):
+    """The feature number parsed from the slug prefix (`1-jane-smith-...` -> "1"),
+    or None for an un-numbered slug. Rendered as a small light-grey `#N` kicker
+    above the name on the share card, so the card mirrors the page title `#N <Name>`
+    while keeping the name the dominant element."""
     m = re.match(r"(\d+)-", slug)
-    return f"#{m.group(1)} {name}" if m else name
+    return m.group(1) if m else None
 
 
 def generate(slug, name, role):
@@ -357,7 +369,7 @@ def generate(slug, name, role):
     if not bundle.is_dir():
         sys.exit(f"feature bundle not found: {bundle}")
     build_hero(photo, bundle / "hero.jpg")
-    build_share_card(photo, _numbered_name(slug, name), role, bundle / "share-card.png")
+    build_share_card(photo, name, role, bundle / "share-card.png", number=_feature_number(slug))
     print(f"  {slug}: hero.jpg + share-card.png")
 
 
