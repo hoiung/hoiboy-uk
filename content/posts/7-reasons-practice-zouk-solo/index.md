@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, practice, solo, methodology, learning]
 source_file: "voice-corpus/blogs/23_7-reasons-practice-zouk-solo.md"
 source_era: "ZoukBase (WordPress)"
+description: "Leading and following are not the only skills that matter. Seven reasons to practise alone: body isolations, suppleness, balance and visualisation."
 ---
 Though leading and following are essential skills, it is often over-emphasised as the only skills you need to develop to be a great social dancer.
 
