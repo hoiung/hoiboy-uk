@@ -14,8 +14,10 @@ third-party deps in CI).
 `description` became REQUIRED on 2026-07-20 (blog-priv#55 Phase 2). Before
 that it sat in OPTIONAL, so 33 posts (32 legacy plus one dated on the
 2026-04-07 cutoff) rendered with the site-default
-meta description, making them near-duplicates that answer engines cannot
-tell apart. Phase 1 backfilled all 33; this gate stops the field regressing.
+meta description, so they shipped as near-duplicates of each other. Phase 1
+backfilled all 33; this gate stops the field regressing. This is SEO hygiene,
+not a GEO lever: nothing supports a claim that unique descriptions increase
+AI citations (see the /blog skill's SEO/GEO authoring rules).
 
 Project pages carry a SEPARATE, smaller required set: they have no
 categories/tags taxonomy, and several legitimately carry no date (the
