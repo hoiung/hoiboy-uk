@@ -170,3 +170,53 @@ def test_unknown_category_still_fails(monkeypatch, tmp_path, capsys):
 
 def test_missing_trees_are_not_an_error(monkeypatch, tmp_path):
     assert _run(monkeypatch, tmp_path, [], []) == 0
+
+
+# --- Walk coverage: a skipped page passes by omission, which is a false PASS ---
+# Regression tests for a Ralph Tier-2 finding: the walk originally matched only
+# `index.md`, so a flat single page under content/consulting/ was never read and
+# the gate reported success without ever checking it.
+
+def _flat(root: Path, name: str, text: str) -> None:
+    root.mkdir(parents=True, exist_ok=True)
+    (root / name).write_text(text, encoding="utf-8")
+
+
+def test_flat_md_project_page_is_not_skipped(monkeypatch, tmp_path, capsys):
+    consulting = tmp_path / "consulting"
+    _flat(consulting, "flat-page.md", '---\ntitle: "Flat"\n---\nbody\n')
+    monkeypatch.setattr(vf, "POSTS", tmp_path / "posts")
+    monkeypatch.setattr(vf, "CONSULTING", consulting)
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "consulting"]) == 1
+    assert "flat-page.md" in capsys.readouterr().err
+
+
+def test_flat_markdown_and_html_project_pages_are_not_skipped(monkeypatch, tmp_path, capsys):
+    consulting = tmp_path / "consulting"
+    _flat(consulting, "a.markdown", '---\ntitle: "A"\n---\nbody\n')
+    _flat(consulting, "b.html", '---\ntitle: "B"\n---\n<p>x</p>\n')
+    monkeypatch.setattr(vf, "POSTS", tmp_path / "posts")
+    monkeypatch.setattr(vf, "CONSULTING", consulting)
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "consulting"]) == 1
+    err = capsys.readouterr().err
+    assert "a.markdown" in err and "b.html" in err
+
+
+def test_walk_covers_the_same_formats_as_the_social_card_guard():
+    # Kept identical to CONTENT_EXTS in check_social_cards.py. A narrower walk
+    # here would silently exempt page shapes that guard already treats as real.
+    assert vf.CONTENT_EXTS == (".md", ".markdown", ".html")
+
+
+def test_posts_section_index_is_still_exempt(monkeypatch, tmp_path):
+    # content/posts/_index.md is Hugo-generated and has no frontmatter contract
+    # to meet; widening the walk must not start failing on it.
+    posts = tmp_path / "posts"
+    _flat(posts, "_index.md", '---\ntitle: "Posts"\n---\nbody\n')
+    _bundle(posts, "good", POST_FM)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 0
