@@ -39,7 +39,11 @@ repos:
         entry: python3 scripts/validate_frontmatter.py
         language: system
         pass_filenames: false
-        files: ^content/(posts|consulting)/.*\.md$
+        # Extensions must stay in step with CONTENT_EXTS in
+        # scripts/validate_frontmatter.py. A narrower pattern here means the hook
+        # never fires for a page shape the validator would have rejected, so the
+        # commit passes while the gate is claimed to cover it.
+        files: ^content/(posts|consulting)/.*\.(md|markdown|html)$
       - id: config-traceability
         name: Config traceability check
         entry: python3 scripts/check_config_traceability.py
