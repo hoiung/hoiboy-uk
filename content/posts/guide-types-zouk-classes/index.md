@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, classes, learning, guide, beginner]
 source_file: "voice-corpus/blogs/24_guide-types-zouk-classes.md"
 source_era: "ZoukBase (WordPress)"
+description: "Four ways to learn Zouk compared: progressive courses, congress workshops, bootcamps and privates, plus where drop-in bar classes actually fit."
 ---
 ## A Guide to Different Types of Zouk Classes - Part 1
 
