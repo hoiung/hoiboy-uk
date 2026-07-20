@@ -5,6 +5,7 @@ categories: [food-booze]
 tags: [wine, food, lifestyle, learning]
 source_file: "voice-corpus/blogs/11_for-the-love-of-wine.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "Starting a wine education with one bottle of Chianti Classico. The Loki dispensers in Birmingham, WSET levels, and an eight week world tour course."
 ---
 
 ## For The Love Of Wine
