@@ -3,10 +3,15 @@
 #
 # Why this exists (blog-priv#55 Phase 10): layouts/robots.txt serves allow-all,
 # but that is only the repo's intent. Cloudflare can override it at the edge, and
-# on 2026-07-20 it was doing exactly that: 5 of 6 citation-class crawlers got 403
-# while 4 of 5 training-class crawlers got 200. The site was giving away training
-# data while blocking the pathway that produces citations. Nothing in the repo can
-# reveal that, which is why the defect sat unnoticed from 2026-05-31 to 2026-07-20.
+# on 2026-07-20 it was doing exactly that: every citation-class crawler probed
+# returned 403. Nothing in the repo can reveal this, which is why the block sat
+# unnoticed from 2026-05-31 to 2026-07-20.
+#
+# Do NOT quote a bot-by-bot tally here. Two probes hours apart on 2026-07-20
+# disagreed, so any fixed count in a comment goes stale and then contradicts the
+# record. The authoritative, dated state lives in
+# docs/research/16_AI_BOT_AND_SEO_POLICY.md; this script measures, it does not
+# remember.
 #
 # This converts the one-time manual dashboard checklist in
 # docs/research/16_AI_BOT_AND_SEO_POLICY.md into a standing gate.
@@ -15,6 +20,15 @@
 # no vendor offers a cite-for-training contract. Only the CITATION class gates the
 # exit code. The TRAINING class is probed and reported for visibility only, because
 # its correct value is an operator policy choice, not a defect.
+#
+# Known limits (stated so a PASS is not read as more than it is):
+#   - Classifies on HTTP status only. A managed challenge or block page served
+#     with a 200 body reads as "ok". A clean exit means "not status-blocked",
+#     not "served real content".
+#   - Probes the homepage only, not /robots.txt or /sitemap.xml, so a path-scoped
+#     rule would go unseen.
+#   - The user-agent list is a snapshot. A vendor renaming or adding a crawler is
+#     invisible until this list is updated.
 #
 # Usage:
 #   bash scripts/check-ai-crawler-access.sh [URL]
