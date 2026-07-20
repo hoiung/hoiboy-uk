@@ -53,6 +53,32 @@ POSTS = ROOT / "content" / "posts"
 CONSULTING = ROOT / "content" / "consulting"
 
 
+def strip_trailing_comment(value: str) -> str:
+    """Drop an unquoted trailing YAML comment from a scalar value.
+
+    In YAML a `#` starts a comment when it follows whitespace, so
+    `description: ~ # TODO` is the null `~`, not the string "~ # TODO".
+    The sentinel test below compares by exact match, so without this a null
+    sentinel with any trailing comment sailed through as a present value while
+    Hugo served the site default (Ralph round 21, blocker; proven end to end on
+    a real build). Five shapes were affected: `null`, `Null`, `NULL`, `~` and a
+    quoted empty string, each with a trailing comment.
+
+    A `#` inside a quoted scalar is literal, so a value that opens with a quote
+    is cut only after its closing quote. That keeps `description: "hello #
+    world"` intact, which is the false-failure this would otherwise introduce.
+    """
+    if value[:1] in ('"', "'"):
+        quote = value[0]
+        close = value.find(quote, 1)
+        if close == -1:
+            return value  # unterminated; leave it alone, not ours to repair
+        head, tail = value[: close + 1], value[close + 1:]
+        return head if re.match(r"^\s+#", tail) or tail.strip() == "" else value
+    cut = re.split(r"(?:^|\s)#", value, maxsplit=1)[0]
+    return cut.strip()
+
+
 def parse_frontmatter(text: str) -> dict[str, object] | None:
     """Minimal YAML frontmatter parser. Handles strings, bracketed lists,
     block lists, folded/literal block scalars, and quoted values with colons
@@ -145,7 +171,7 @@ def parse_frontmatter(text: str) -> dict[str, object] | None:
         m = re.match(r"^([A-Za-z_][\w-]*)\s*:\s*(.*)$", line)
         if m:
             key = m.group(1)
-            value = m.group(2).strip()
+            value = strip_trailing_comment(m.group(2).strip())
             if value.startswith("[") and value.endswith("]"):
                 inner = value[1:-1].strip()
                 items = [s.strip().strip('"').strip("'") for s in inner.split(",") if s.strip()]
@@ -166,10 +192,14 @@ def parse_frontmatter(text: str) -> dict[str, object] | None:
                 # behave identically. Deliberately confined to the UNQUOTED
                 # branch: a quoted `description: "# hashtags"` is a real value
                 # and must keep passing.
-                # Known limit: an unquoted trailing comment (`description: Text
-                # # note`) keeps the comment in the parsed value. Hugo drops it.
-                # That is a cosmetic divergence, not a bypass - the value is
-                # non-empty either way - so it is recorded, not fixed here.
+                # This comment used to claim a trailing comment was "a cosmetic
+                # divergence, not a bypass - the value is non-empty either way".
+                # That was TRUE for `description: Text # note` and FALSE for a
+                # sentinel: `description: ~ # TODO` is null in YAML but was kept
+                # whole here, so it counted as present and the page shipped the
+                # site default. Ralph round 21 blocker. Trailing comments are
+                # now stripped in strip_trailing_comment() above, before this
+                # test runs, so the sentinel list below sees the real value.
                 if value in ("null", "Null", "NULL", "~") or value.startswith("#"):
                     out[key] = ""
                 # A block header is the indicator, then an optional indentation
