@@ -5,6 +5,7 @@ categories: [life]
 tags: [dating, mindset, decisions]
 source_file: "voice-corpus/blogs/01_three-decisions-to-change-your-dating-life.md"
 source_era: "iD8u (Google Docs)"
+description: "Three decisions that reset a dating life, drawn from Eckhart Tolle, two years of daily running, three stones lost, MMA and bouldering."
 ---
 
 ## 3 Decisions To Change Your Dating Life, Forever
