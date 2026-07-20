@@ -12,7 +12,8 @@ validates required fields. Fails loudly. Uses a tiny YAML parser (no
 third-party deps in CI).
 
 `description` became REQUIRED on 2026-07-20 (blog-priv#55 Phase 2). Before
-that it sat in OPTIONAL, so 33 legacy posts rendered with the site-default
+that it sat in OPTIONAL, so 33 posts (32 legacy plus one dated on the
+2026-04-07 cutoff) rendered with the site-default
 meta description, making them near-duplicates that answer engines cannot
 tell apart. Phase 1 backfilled all 33; this gate stops the field regressing.
 
