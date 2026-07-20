@@ -127,3 +127,28 @@ def test_the_two_scopes_together_cover_every_tree_the_validator_knows_about():
         f"of the tree; a new scope means that union is no longer total, and the "
         f"wiring has to be updated alongside it."
     )
+
+    # The choices assertion above tracks what the CLI DECLARES. On its own that
+    # is not enough: a third content root walked under `--scope all` without a
+    # new CLI choice would leave it green while the wired posts+consulting pair
+    # silently stopped covering the tree (Ralph round 16 seeded exactly that and
+    # the test still passed). So assert on the roots main() ACTUALLY walks.
+    walked: list = []
+    original_check_tree = vf.check_tree
+
+    def spy_check_tree(root, *args, **kwargs):
+        walked.append(root)
+        return [], 1  # no failures, non-zero count (the vacuous-walk guard)
+
+    vf.check_tree = spy_check_tree
+    try:
+        vf.main(["--scope", "all"])
+    finally:
+        vf.check_tree = original_check_tree
+
+    assert set(walked) == {vf.POSTS, vf.CONSULTING}, (
+        f"`--scope all` now walks {sorted(str(p) for p in walked)!r}, not just "
+        f"the posts and consulting trees. pre-publish.sh and ci.yml wire exactly "
+        f"'posts' + 'consulting'; any other root is gated by nothing, and every "
+        f"page under it passes by omission rather than by compliance."
+    )
