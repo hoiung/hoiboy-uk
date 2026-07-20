@@ -192,12 +192,21 @@ run_check "social-cards-rendered" python3 scripts/check_social_cards.py --built 
 #    assets that markdown-only lychee misses (e.g. a `[link](../other-section/)`
 #    that resolves under Hugo's permalink scheme but not under raw-md walk).
 rendered_link_check() {
-    local slug rendered
+    local slug rendered fm_slug
     if [ -d "$TARGET" ]; then
         slug=$(basename "$TARGET")
     else
         slug=$(basename "$(dirname "$TARGET")")
     fi
+    # A frontmatter `slug:` overrides the directory name in Hugo's permalink,
+    # so the rendered path is public/posts/<frontmatter-slug>/, NOT the bundle
+    # dir. Without this, every post carrying an override fails the gate: as of
+    # 2026-07-20 that is 2 of 78 (2026-04-07-foundation -> foundation,
+    # ai-jargon-for-noobs -> ai-jargon-for-newbies). Read from the closing ---
+    # onward only, so a `slug:` mentioned in body prose cannot hijack it.
+    fm_slug=$(awk 'NR==1 && /^---/ {f=1; next} f && /^---/ {exit} f' "$POST_FILE" \
+        | sed -n 's/^slug:[[:space:]]*//p' | head -n1 | tr -d '"'"'" | tr -d '[:space:]')
+    [[ -n "$fm_slug" ]] && slug="$fm_slug"
     rendered="public/posts/$slug/index.html"
     if [[ ! -f "$rendered" ]]; then
         printf >&2 'WARN: rendered HTML not at %s — looking for any matching slug\n' "$rendered"
