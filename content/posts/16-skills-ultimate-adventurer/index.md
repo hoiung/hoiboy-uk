@@ -5,6 +5,7 @@ categories: [adventure]
 tags: [adventure, travel, bushcraft, climbing, lifestyle]
 source_file: "voice-corpus/blogs/06_16-skills-ultimate-adventurer.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "Sixteen skills worth building if Indiana Jones was your childhood hero: scuba and apnea freediving, bushcraft, paragliding, sailing, caving and more."
 ---
 
 My childhood heroes were certainly Indiana Jones and Jackie Chan. How many times have you seen their movies and thought I want to do that!
