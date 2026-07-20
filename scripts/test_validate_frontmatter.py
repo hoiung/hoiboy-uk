@@ -377,3 +377,48 @@ def test_a_walk_that_finds_nothing_fails_rather_than_passing(monkeypatch, tmp_pa
     monkeypatch.setattr(vf, "ROOT", tmp_path)
     assert vf.main(["--scope", "posts"]) == 1
     assert "walked 0 files" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("indicator", [">", "|", ">-", "|-", ">+"])
+def test_empty_block_scalar_counts_as_missing(monkeypatch, tmp_path, capsys, indicator):
+    # Sibling of the null-sentinel case: an empty folded/literal block scalar
+    # resolves to "" in real YAML (confirmed against PyYAML) and Hugo serves the
+    # site default, but the parser stored the literal indicator ">" or "|",
+    # which is non-empty, so the page passed. Ralph round 17.
+    posts = tmp_path / "posts"
+    empty_block = POST_FM.replace('description: "A unique summary."',
+                                  f"description: {indicator}")
+    assert f"description: {indicator}" in empty_block, "fixture rewrite did not take effect"
+    _bundle(posts, "emptyblock", empty_block)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 1
+    assert "description" in capsys.readouterr().err
+
+
+def test_block_scalar_with_text_is_a_real_value(monkeypatch, tmp_path):
+    # The other half of the fix, and the reason it reads the continuation lines
+    # rather than just treating a bare ">" as empty: a block scalar that HAS
+    # text is a real description and must pass, or the fix trades a false pass
+    # for a false failure.
+    posts = tmp_path / "posts"
+    filled = POST_FM.replace('description: "A unique summary."',
+                             "description: >\n  A real folded summary\n  over two lines.")
+    _bundle(posts, "filledblock", filled)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 0
+
+
+def test_block_scalar_does_not_swallow_the_next_key():
+    # The block ends at the first dedented line. If it did not, every key after
+    # a block scalar would vanish and its required-key check would fire falsely.
+    fm = parse_frontmatter(
+        '---\ntitle: "x"\ndescription: >\n  Folded text.\ncategories: [tech-ai]\n'
+        'tags: [a]\ndate: 2026-04-07\n---\nbody\n'
+    )
+    assert fm["description"] == "Folded text."
+    assert fm["categories"] == ["tech-ai"]
+    assert fm["tags"] == ["a"]
