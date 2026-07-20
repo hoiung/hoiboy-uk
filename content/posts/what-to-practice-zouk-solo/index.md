@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, practice, solo, technique, methodology]
 source_file: "voice-corpus/blogs/33_what-to-practice-zouk-solo.md"
 source_era: "ZoukBase (WordPress)"
+description: "The Solo Practice Pyramid for Zouk worked from the ground up: footwork and knees, hips and waist, chest and shoulders, then head and neck."
 ---
 Now that you understand the 7 Great Reasons To Practice Zouk Solo, let's look at what you should practice in Zouk solo.
 
