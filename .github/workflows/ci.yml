@@ -260,6 +260,26 @@ jobs:
             docs/**/*.md
             README.md
 
+      # Runs on every push, not just when lychee.toml changes: the failure mode
+      # is the passage of time, so a repo nobody touches is exactly where an
+      # entry goes stale. lychee.toml's header claimed CI enforced this and
+      # nothing did, until an entry sat 13 days past expiry (blog-priv#55
+      # Stage 5). Ordered before the link check so the reason a URL is being
+      # skipped is re-confirmed before it is skipped.
+      - name: Lychee allowlist expiry
+        run: python3 scripts/check_lychee_expiry.py
+
+      - name: Lychee allowlist expiry unit tests
+        run: python3 -m pytest scripts/test_check_lychee_expiry.py -q
+
+      # Exit-contract tests for the crawler probe. Hermetic: they stand up a
+      # local UA-aware HTTP server, so all three exits are produced offline.
+      # The probe's only prior evidence was a live run against the production
+      # edge, which cannot yield a PASS while Cloudflare blocks the citation
+      # class, and cannot yield the inconclusive case at all.
+      - name: AI crawler probe exit-contract tests
+        run: python3 -m pytest scripts/test_check_ai_crawler_access.py -q
+
       - name: Lychee link check
         uses: lycheeverse/lychee-action@v2
         with:
