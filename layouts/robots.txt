@@ -8,10 +8,22 @@
   Known and accepted trade-off: X-Robots-Tag noindex is a SEARCH-INDEX
   directive. It is not the documented opt-out for AI TRAINING crawlers, which
   is robots.txt. So dropping the Disallow also drops the only training-crawler
-  control over /private/. Accepted because the page holds no secrets, is
-  already linked from a public post, and the operator is on record as content
-  with training use. If /private/ ever holds something that must not enter a
-  training corpus, this decision has to be revisited.
+  control over /private/. Accepted because the page holds no secrets and the
+  operator has said he does not mind training use "as long as our sites are
+  cited for it" (doc 16 records that verbatim and classifies it as an
+  aspiration, not a control; the citation condition is currently unmet, since
+  all six citation-class crawlers are blocked at the edge).
+
+  The page is NOT linked from anywhere: the section index is headless, it is
+  absent from the sitemap, and no content file references the path. A public
+  post describes the tool in prose but does not link to it. So a training
+  crawler reaches it only by direct URL, which is a narrower exposure than the
+  robots.txt Disallow was covering. Do not restate this as "already public" or
+  "already linked" without re-running the check: grep content/ for the path,
+  and grep the built HTML for an href to it.
+
+  If /private/ ever holds something that must not enter a training corpus,
+  this decision has to be revisited.
   See docs/research/16_AI_BOT_AND_SEO_POLICY.md and
   https://developers.google.com/search/docs/crawling-indexing/block-indexing
 */ -}}
