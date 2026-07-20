@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, learning, methodology, stages, social-dance]
 source_file: "voice-corpus/blogs/22_5-stages-learning-social-dance-movements.md"
 source_era: "ZoukBase (WordPress)"
+description: "Copying, Techniques, Integration, Body Awareness and Embodiment. The five stages a social dance movement passes through before it is really yours."
 ---
 Anamé & I recently taught our concept, 'The 3 Key Aspects of Social Dance'. During our class, we shared our thoughts about the **(1) Physical Aspects** which talk about how our body & mind learns movement. We're not going to be talking about (2) Emotional Aspects or (3) Social Aspects in this blog.
 
