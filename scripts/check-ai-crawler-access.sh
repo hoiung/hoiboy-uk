@@ -65,6 +65,7 @@ TRAINING_BOTS=(
     "CCBot|CCBot/2.0 (https://commoncrawl.org/faq/)"
     "Google-Extended|Mozilla/5.0 (compatible; Google-Extended/1.0; +http://www.google.com/bot.html)"
     "meta-externalagent|meta-externalagent/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)"
+    "Bytespider|Mozilla/5.0 (Linux; Android 5.0) AppleWebKit/537.36 (KHTML, like Gecko) Mobile Safari/537.36 (compatible; Bytespider; spider-feedback@bytedance.com)"
 )
 
 # Echoes the FINAL HTTP status (redirects followed), or "ERR" when the request
