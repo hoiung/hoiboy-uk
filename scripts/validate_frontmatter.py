@@ -102,7 +102,25 @@ def parse_frontmatter(text: str) -> dict[str, object] | None:
             elif value.startswith("'") and value.endswith("'"):
                 out[key] = value[1:-1]
             else:
-                out[key] = value
+                # YAML null sentinels, and a value that is nothing but a
+                # comment, all mean "no value" to Hugo. Normalising them to ""
+                # here is what makes the blank-counts-as-missing rule below
+                # actually bite. Ralph round 16 proved the gap end to end:
+                # `description: null` passed the gate ("Frontmatter OK (79
+                # posts)", exit 0) while the built page served
+                # site.Params.description verbatim - the exact near-duplicate
+                # this gate exists to prevent. `~` and `# TODO write this`
+                # behave identically. Deliberately confined to the UNQUOTED
+                # branch: a quoted `description: "# hashtags"` is a real value
+                # and must keep passing.
+                # Known limit: an unquoted trailing comment (`description: Text
+                # # note`) keeps the comment in the parsed value. Hugo drops it.
+                # That is a cosmetic divergence, not a bypass - the value is
+                # non-empty either way - so it is recorded, not fixed here.
+                if value in ("null", "Null", "NULL", "~") or value.startswith("#"):
+                    out[key] = ""
+                else:
+                    out[key] = value
             current_key = key
     return out
 
@@ -177,16 +195,36 @@ def main(argv: list[str] | None = None) -> int:
     failures: list[str] = []
     counts: list[str] = []
 
+    # A walk that finds NOTHING is a broken walk, not a clean tree. Both of
+    # these trees are non-empty in any real checkout, so a zero count means the
+    # root was renamed, mistyped, or CONTENT_EXTS stopped matching - and every
+    # page it should have gated then passes by omission. Ralph round 16 proved
+    # this was undefended: pointing POSTS at a nonexistent path printed
+    # "Frontmatter OK (0 posts)" and exited 0, sailing through pre-commit,
+    # pre-publish gates 4/4a, both ci.yml steps and all four wiring tests.
+    # check_tree itself stays tolerant of a missing root (it is used as a
+    # library and a partial checkout is legitimately empty); the "must not be
+    # empty" judgement belongs here, where the specific trees are known.
     if args.scope in ("all", "posts"):
         f, n = check_tree(POSTS, REQUIRED, check_categories=True)
         failures += f
         counts.append(f"{n} posts")
+        if n == 0:
+            failures.append(
+                f"walked 0 files under {POSTS} - the posts tree is never empty, "
+                "so the root or the extension filter is broken (vacuous pass)"
+            )
 
     if args.scope in ("all", "consulting"):
         f, n = check_tree(CONSULTING, CONSULTING_REQUIRED, check_categories=False,
                           include_section_pages=True)
         failures += f
         counts.append(f"{n} project pages")
+        if n == 0:
+            failures.append(
+                f"walked 0 files under {CONSULTING} - the consulting tree is never "
+                "empty, so the root or the extension filter is broken (vacuous pass)"
+            )
 
     if failures:
         print("FRONTMATTER VALIDATION FAILED:", file=sys.stderr)
