@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, community, scene, systems, ecosystem]
 source_file: "voice-corpus/blogs/30_clockworks-of-a-dance-scene.md"
 source_era: "ZoukBase (WordPress)"
+description: "The ten roles that keep a dance scene alive: leaders, teachers, mentors, DJs, performers, bloggers, photographers and organisers, plus ego and pricing."
 ---
 Following on from '[**Poland's Big Bang Zouk Theory**](/posts/poland-big-bang-zouk-theory/)', I am sure there are many ways to grow a healthy dance scene. but here are some of my thoughts and general thinking based on observations who are the main contributors that make a thriving and healthy dance scene.
 
