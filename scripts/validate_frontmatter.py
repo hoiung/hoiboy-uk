@@ -64,17 +64,28 @@ def strip_trailing_comment(value: str) -> str:
     a real build). Five shapes were affected: `null`, `Null`, `NULL`, `~` and a
     quoted empty string, each with a trailing comment.
 
-    A `#` inside a quoted scalar is literal, so a value that opens with a quote
-    is cut only after its closing quote. That keeps `description: "hello #
-    world"` intact, which is the false-failure this would otherwise introduce.
+    A `#` inside a quoted scalar or a flow sequence is literal, so a value that
+    opens with a quote or `[` is cut only after its matching closer. That keeps
+    `description: "hello # world"` intact, which is the false-failure this
+    would otherwise introduce.
+
+    The whitespace rule differs on the two sides of that closer, and getting it
+    wrong is how the first version of this function shipped a bypass (Ralph
+    round 22). After a closing quote or bracket the `#` needs NO preceding
+    space, because the closer is itself a sufficient token boundary: YAML reads
+    `description: ""#TODO` as an empty string, so requiring a space let that
+    shape through as the literal `'""#TODO'`. For a PLAIN scalar the space IS
+    required, and `description: null#TODO` really is the seven-character string
+    `null#TODO` in YAML, not null. So `\\s*` after a closer, `\\s` before a
+    plain-scalar comment. Verified against PyYAML both ways.
     """
-    if value[:1] in ('"', "'"):
-        quote = value[0]
-        close = value.find(quote, 1)
+    closer = {'"': '"', "'": "'", "[": "]"}.get(value[:1])
+    if closer:
+        close = value.find(closer, 1)
         if close == -1:
             return value  # unterminated; leave it alone, not ours to repair
         head, tail = value[: close + 1], value[close + 1:]
-        return head if re.match(r"^\s+#", tail) or tail.strip() == "" else value
+        return head if re.match(r"^\s*#", tail) or tail.strip() == "" else value
     cut = re.split(r"(?:^|\s)#", value, maxsplit=1)[0]
     return cut.strip()
 
