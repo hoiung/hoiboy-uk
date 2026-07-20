@@ -14,11 +14,11 @@
 #                         attributable without reading the whole-tree output.
 #                         `description` is REQUIRED on both trees since
 #                         blog-priv#55 Phase 2.)
-#   4b.Future date       (check_future_date.py — fail if date is future in the
+#   4b.Social cards      (check_social_cards.py, source: every singular indexable
+#                         page owns its og:image card)
+#   4c.Future date       (check_future_date.py — fail if date is future in the
 #                         site timeZone vs now-UTC; Hugo would silently drop a
 #                         future-dated post from the production build)
-#   4c.Social cards      (check_social_cards.py, source: every singular indexable
-#                         page owns its og:image card)
 #   5. Word count        (check_wordcount.py >3000 = fail. POSTS ONLY: this gate
 #                         SKIPs for consulting/legal/skills/private targets, so a
 #                         non-post run reports 13 PASS + 1 SKIP, not 14 PASS.)
