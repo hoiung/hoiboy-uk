@@ -158,8 +158,19 @@ jobs:
       - name: Social-card guard unit tests
         run: python3 -m pytest scripts/test_check_social_cards.py -q
 
-      - name: Frontmatter validator
+      # Posts require title/date/categories/tags/description; project pages
+      # under content/consulting/ require title/description. `description` is
+      # REQUIRED since blog-priv#55 Phase 2: without it a page inherits the
+      # site-default meta description and becomes a near-duplicate that answer
+      # engines cannot tell apart. Bare invocation covers both trees.
+      - name: Frontmatter validator (posts + project pages, incl. description)
         run: python3 scripts/validate_frontmatter.py
+
+      # Project-page scope reported separately so a consulting/portfolio
+      # failure is attributable without reading the whole-tree output. Mirrors
+      # the frontmatter-project-pages gate in scripts/pre-publish.sh.
+      - name: Frontmatter validator (project pages only)
+        run: python3 scripts/validate_frontmatter.py --scope consulting
 
       - name: Config traceability check
         run: python3 scripts/check_config_traceability.py
