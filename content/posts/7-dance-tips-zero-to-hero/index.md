@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, beginner, tips, social-dance, learning, congresses]
 source_file: "voice-corpus/blogs/08_7-dance-tips-zero-to-hero.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "Seven ways to speed up social dance learning without picking up bad habits: dance with everyone, shadow practice, and one new move per social."
 ---
 
 ## 7 Dance Tips from Zero to Hero
