@@ -141,7 +141,7 @@ run_check "frontmatter" python3 scripts/validate_frontmatter.py
 # 3-project. Same validator, project-page scope, reported as its own named gate
 #     so a failure on a consulting/portfolio page is attributable at a glance
 #     instead of being buried in the whole-tree result. Mirrors how the
-#     social-card guard is wired twice (source at 3a, rendered at 7a).
+#     social-card guard is wired twice (source at 3a, rendered at 6a).
 #     `description` is REQUIRED here: without it a project page inherits the
 #     site-default meta description and becomes a near-duplicate that answer
 #     engines cannot tell apart (blog-priv#55 AC 2.3/2.6).
