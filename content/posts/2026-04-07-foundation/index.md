@@ -4,6 +4,7 @@ date: 2026-04-07T12:00:00+01:00
 categories: [tech-ai]
 tags: [foundation, hugo, cloudflare-pages, claude-code]
 slug: foundation
+description: "Twenty-two years of writing across WordPress, Joomla, loose HTML and Google Docs pulled into one Hugo site on Cloudflare Pages, managed by Claude Code."
 ---
 
 <!-- iamhoi -->
