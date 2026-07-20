@@ -187,7 +187,7 @@ Hugo skips drafts in production builds. Public repo + draft frontmatter = safe (
 
 ## 8. Publish checklist
 
-- [ ] Frontmatter has all required fields (title, date, categories, tags)
+- [ ] Frontmatter has all required fields (title, date, categories, tags, description)
 - [ ] Category is one of {food-booze, adventure, dance, tech-ai, life, entrepreneurship, trading}
 - [ ] If part of a series: `series: <name>` + `order: <int>` set; `/series/<name>/` index renders correctly under `hugo server`
 - [ ] First-person Hoi-voice prose wrapped in `<!-- iamhoi --> ... <!-- iamhoiend -->` (pre-commit hook 4 enforces)
@@ -198,6 +198,6 @@ Hugo skips drafts in production builds. Public repo + draft frontmatter = safe (
 - [ ] Local preview: `hugo server`, click around the post
 - [ ] Headings start at `##`, no skipped levels
 - [ ] Internal links resolve, external links live
-- [ ] **Pre-publish gate**: `bash scripts/pre-publish.sh content/posts/<slug>/`. Runs all 9 checks (consulting-yaml, em-dash, voice-tells, frontmatter, word-count, secrets, hugo-build, rendered-link-liveness, consulting-link-liveness) in one go (exit 0 = clean to publish). The rendered-HTML lychee (`rendered-link-liveness`) and `consulting-link-liveness` checks are **manual-only, NOT CI-enforced**: they need a full local `hugo --buildDrafts` build plus live external-URL probing, so they stay in this manual pre-publish step. CI runs the markdown-level lychee (`./**/*.md`) as the automated link tier; nothing elsewhere claims these two rendered checks are CI-enforced.
+- [ ] **Pre-publish gate**: `bash scripts/pre-publish.sh content/posts/<slug>/`. Runs all 14 gates (consulting-yaml, em-dash, voice-tells, frontmatter, frontmatter-project-pages, social-cards, no-future-date, wordcount, secrets, svg-dimensions, hugo-build, social-cards-rendered, rendered-link-liveness, consulting-link-liveness) in one go (exit 0 = clean to publish). The rendered-HTML lychee (`rendered-link-liveness`) and `consulting-link-liveness` checks are **manual-only, NOT CI-enforced**: they need a full local `hugo --buildDrafts` build plus live external-URL probing, so they stay in this manual pre-publish step. CI runs the markdown-level lychee (`./**/*.md`) as the automated link tier; nothing elsewhere claims these two rendered checks are CI-enforced.
 - [ ] Commit with descriptive message
 - [ ] Push, watch CI green, then live in ~90s
