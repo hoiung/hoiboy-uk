@@ -116,9 +116,19 @@ Sitemap: {{ "sitemap.xml" | absURL }}
 
 This blocks the training bots (`GPTBot` and siblings via `Disallow: /`) while every search and live-retrieval bot stays allowed, so citations are unaffected. Because robots.txt is advisory, a hard training block would also need a Cloudflare edge rule to be enforced against non-compliant crawlers.
 
-## What actually moves the needle (out of scope here)
+## In-content factors (out of scope here, and largely retracted)
 
-robots.txt is not the thing to obsess over. The higher-leverage GEO work is in-content and out of scope for this decision: clean, extractable HTML; content written in roughly 120-to-180-word sections under clear headings (which one large 2025 study associated with materially more AI citations); visible author and credential signals; and freshness. A note for completeness: `llms.txt` was considered and deliberately not built, because no major AI vendor honors it as of 2026, so it would be effort with no consumer.
+robots.txt is not the thing to obsess over. This section previously presented the in-content work as the higher-leverage half of the job. A 2026-07-19 evidence review has since withdrawn most of that framing. The section is corrected in place rather than deleted, so the retraction stays auditable.
+
+**Survives.** Clean, extractable HTML. The superseding brief retains it as checklist item 6, but explicitly on general crawlability grounds, that is, as hygiene rather than as a citation lever.
+
+**Retracted.** An earlier revision of this section attributed materially more AI citations to writing in roughly 120-to-180-word sections under clear headings, on the authority of a study that appears nowhere in the Sources list below. That citation claim is withdrawn. Section length may still be a sound writing-craft preference; it is simply not evidence-backed as a GEO lever. Withdrawing the claim is a statement about the evidence, not a finding that the practice fails to help.
+
+**Unsourced.** Visible author and credential signals, and freshness. Both were asserted here with no source, and the superseding brief does not address either one, so both remain unsourced on this record. The brief's silence on a tactic is not a positive finding about it in either direction.
+
+A note for completeness: `llms.txt` was considered and deliberately not built, because no major AI vendor honors it as of 2026, so it would be effort with no consumer.
+
+**Superseding evidence:** `docs/research/2026-07-19-geo-aeo-generative-search-optimisation.md` in the dotfiles repo. Corrected 2026-07-20 under blog-priv#55 Phase 3.
 
 ## Sources
 
