@@ -39,12 +39,25 @@ jobs:
       - name: Summarise
         if: always()
         env:
-          OUTCOME: ${{ steps.probe.outputs.code == '0' && 'success' || 'failure' }}
+          # Three-way, matching the script's tri-state contract. A binary
+          # label would print "failure" for exit 2, contradicting the Verdict
+          # step's deliberate choice not to treat inconclusive as a block.
+          CODE: ${{ steps.probe.outputs.code }}
         run: |
+          case "$CODE" in
+            0) OUTCOME=success ;;
+            1) OUTCOME=blocked ;;
+            2) OUTCOME=inconclusive ;;
+            *) OUTCOME=unknown ;;
+          esac
           {
             printf '## AI crawler access probe\n\n'
-            printf 'Outcome: `%s`\n\n' "$OUTCOME"
-            if [ "$OUTCOME" = "success" ]; then
+            printf 'Outcome: `%s` (exit %s)\n\n' "$OUTCOME" "$CODE"
+            if [ "$OUTCOME" = "inconclusive" ]; then
+              printf 'The probe could not complete: request failure, origin error or an\n'
+              printf 'unrecognised status. This is NOT a confirmed block and the job is\n'
+              printf 'deliberately not failed for it. Re-run to confirm.\n'
+            elif [ "$OUTCOME" = "success" ]; then
               printf 'All citation-class crawlers reachable.\n\n'
               printf 'This means they are NOT blocked. It does not mean the site is cited;\n'
               printf 'no reliable method for measuring AI citation currently exists.\n'
