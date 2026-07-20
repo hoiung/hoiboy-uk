@@ -159,7 +159,7 @@ robots.txt is not the thing to obsess over. This section previously presented th
 
 **Unsourced.** Visible author and credential signals, and freshness. Both were asserted here with no source, and the superseding brief never evaluates either as a citation factor, so both remain unsourced on this record. (The brief does mention freshness once, in its own summary of this retraction. That is a description of the claim being withdrawn here, not independent support for it, and neither signal is enumerated anywhere in the brief's own list of known evidence limits.) The brief's silence on a tactic is not a positive finding about it in either direction.
 
-A note for completeness: `llms.txt` was considered and deliberately not built, because no major AI vendor honors it as of 2026, so it would be effort with no consumer.
+A note for completeness: `llms.txt` was considered and deliberately not built. No vendor has demonstrated a measurable effect, Google has called it purely speculative, and no controlled public test exists, so the expected return does not justify the effort. Note the honest shape of that: it is absence of demonstrated benefit, not proof that nothing consumes it.
 
 **Superseding evidence:** `docs/research/2026-07-19-geo-aeo-generative-search-optimisation.md` in the dotfiles repo. Corrected 2026-07-20 under blog-priv#55 Phase 3.
 
