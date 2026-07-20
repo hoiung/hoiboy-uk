@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, basics, fundamentals, technique, learning]
 source_file: "voice-corpus/blogs/34_what-are-basic-movements-and-why-important.md"
 source_era: "ZoukBase (WordPress)"
+description: "Passo Basico, Viradinha, Lateral, Soltinho, Ondulação and Yo Yo explained, with a driving test analogy for why 2D has to come before 3D."
 ---
 ## What are Zouk basic movements and why are they so important?
 
