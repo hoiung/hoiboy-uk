@@ -279,9 +279,33 @@ def check_tree(root: Path, required: set[str], check_categories: bool,
         if missing:
             failures.append(f"{md.relative_to(ROOT)}: missing {sorted(missing)}")
             continue
+        # Right TYPE, not just non-empty. Presence alone was not enough: Hugo
+        # discards a list-valued `description` and serves the site default, so
+        # `description: [a, b]` passed the check above (a non-empty list) and
+        # still shipped the near-duplicate this gate exists to prevent. Proven
+        # on a real build, Ralph round 23. The differential matrix in the tests
+        # cannot see this class, because it compares the parser against PyYAML
+        # and both agree the list is "present"; the disagreement is with HUGO,
+        # a layer above YAML.
+        for scalar_key in ("description", "title"):
+            if scalar_key in required and isinstance(fm.get(scalar_key), list):
+                failures.append(
+                    f"{md.relative_to(ROOT)}: {scalar_key} is a list; Hugo discards it "
+                    f"and serves the site default. Use a quoted string."
+                )
         if check_categories:
             cats = fm.get("categories")
-            if isinstance(cats, list):
+            # A bare scalar (`categories: life`, no brackets) skipped the
+            # allowlist entirely, because this guard only fired for a list, so
+            # a typo'd category was never checked. Hugo also cannot range over
+            # it and hard-fails the build, so the cost was a confusing
+            # build-time template error instead of a clear gate message here.
+            if cats is not None and not isinstance(cats, list):
+                failures.append(
+                    f"{md.relative_to(ROOT)}: categories must be a list "
+                    f"(got {cats!r}); write it as [a, b] or a block list"
+                )
+            elif isinstance(cats, list):
                 unknown = set(c.lower() for c in cats) - ALLOWED_CATEGORIES
                 if unknown:
                     failures.append(
