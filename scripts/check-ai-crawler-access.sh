@@ -35,9 +35,13 @@
 #   CRAWLER_TARGET_URL=https://example.com bash scripts/check-ai-crawler-access.sh
 #
 # Exit codes (tri-state, mirroring scripts/check_social_cards.py):
-#   0 = every citation-class crawler reachable
-#   1 = at least one citation-class crawler blocked (the defect this gate catches)
-#   2 = operational error (curl missing, DNS/network failure, target unreachable)
+#   0 = every citation-class crawler reachable (HTTP 200)
+#   1 = at least one citation-class crawler blocked (the defect this gate
+#       catches). "Blocked" means a policy denial: 401, 403 or 451.
+#   2 = operational error, or a status this script cannot interpret as either
+#       reachable or denied (curl missing, DNS/network failure, target
+#       unreachable, 5xx, redirects that end somewhere unexpected, and 429,
+#       which is transient rate limiting rather than a policy decision)
 
 set -uo pipefail
 
@@ -89,11 +93,18 @@ probe() {
 # reporting either as "blocked at the edge" would send an operator to the
 # Cloudflare dashboard chasing a cause that is not there. Those withhold the
 # verdict (exit 2) instead of asserting a defect that was never observed.
+# 429 is deliberately NOT in the blocked set. It is transient rate limiting, not
+# a policy denial: it does not guarantee zero citation, and none of the four
+# Cloudflare remediation steps this script prints would address it. Calling it
+# blocked would make the failure message ("an access denial guarantees zero
+# citation") false for that case and send the operator to a dashboard setting
+# that is not the cause. It withholds the verdict instead, like any other code
+# this script does not positively understand.
 classify() {
     case "$1" in
-        200)             printf 'ok' ;;
-        401|403|429|451) printf 'blocked' ;;
-        *)               printf 'error' ;;
+        200)         printf 'ok' ;;
+        401|403|451) printf 'blocked' ;;
+        *)           printf 'error' ;;
     esac
 }
 
