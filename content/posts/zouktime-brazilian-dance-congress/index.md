@@ -6,6 +6,7 @@ tags: [zouk, congress, brazil, dance, zouktime]
 source_file: "voice-corpus/blogs/19_zouktime-brazilian-dance-congress.md"
 source_era: "AdventureAnd.Me (Joomla)"
 note: "Pages 2-5 of the original 5-page post were lost; only the first 939 words remain."
+description: "Four days of Brazilian Zouk in Brno, Czech Republic. Classes with Pavla and Ludek and with Bruno and Eglantine, and a full £470 breakdown of the trip."
 ---
 ## ZoukTime! 5th Brazilian Dance Congress
 
