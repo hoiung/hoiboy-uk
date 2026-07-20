@@ -7,13 +7,18 @@
 #                         placeholder URL is unreplaced. consulting-ops#2 AC 0.2.)
 #   2. Em-dash grep      (any U+2014 = fail)
 #   3. Voice tells       (check-ai-writing-tells.py --check-only-new)
-#   4. Frontmatter       (validate_frontmatter.py, whole-tree: content/posts/
-#                         plus content/consulting/)
-#   4a.Project pages     (validate_frontmatter.py --scope consulting, reported
-#                         as its own named gate so a project-page failure is
-#                         attributable without reading the whole-tree output.
+#   4. Frontmatter       (validate_frontmatter.py --scope posts)
+#   4a.Project pages     (validate_frontmatter.py --scope consulting)
+#                         4 and 4a are DISJOINT on purpose, and their union is
+#                         exactly the whole tree. They used to be nested (4 ran
+#                         the whole tree, 4a re-ran a subset of it), which made
+#                         4a unable to fail independently AND unreachable in
+#                         the one case it existed for: run_check exits on the
+#                         first failure, so a project-page fault failed at gate
+#                         4 and gate 4a never printed. Disjoint scopes give the
+#                         attribution the nested pair only claimed to give.
 #                         `description` is REQUIRED on both trees since
-#                         blog-priv#55 Phase 2.)
+#                         blog-priv#55 Phase 2.
 #   4b.Social cards      (check_social_cards.py, source: every singular indexable
 #                         page owns its og:image card)
 #   4c.Future date       (check_future_date.py — fail if date is future in the
@@ -142,13 +147,16 @@ run_check "em-dash-zero" em_dash_check
 # 3. Voice tells (marker-driven; default skip; exit 0 = clean).
 run_check "voice-tells" python3 scripts/check-ai-writing-tells.py --check-only-new "$TARGET"
 
-# 4. Frontmatter validator (walks content/posts/ AND content/consulting/).
-run_check "frontmatter" python3 scripts/validate_frontmatter.py
+# 4. Frontmatter validator, POSTS scope. Disjoint from 4a below; see the header.
+run_check "frontmatter" python3 scripts/validate_frontmatter.py --scope posts
 
-# 4a. Same validator, project-page scope, reported as its own named gate
-#     so a failure on a consulting/portfolio page is attributable at a glance
-#     instead of being buried in the whole-tree result. Mirrors how the
-#     social-card guard is wired twice (source at 4b, rendered at 7a).
+# 4a. Same validator, project-page scope. Disjoint from gate 4, so a failure
+#     here names the consulting/portfolio tree directly rather than being
+#     buried in a whole-tree result. This pair is NOT the same shape as the
+#     social-card guard at 4b/7a: that one deliberately checks the SAME set
+#     twice at two different layers (source, then rendered), which is real
+#     defence in depth. Two nested checks of the same set at the SAME layer
+#     would be redundancy, not depth, which is what 4/4a used to be.
 #     `description` is REQUIRED here: without it a project page inherits the
 #     site-default meta description and ships as a near-duplicate
 #     (blog-priv#55 AC 2.3/2.6). SEO hygiene, not a GEO lever.
