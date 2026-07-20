@@ -47,6 +47,16 @@ repos:
         # matches on p.suffix.lower(), so without this the validator would walk
         # a file the hook never fires on.
         files: (?i)^content/(posts|consulting)/.*\.(md|markdown|html)$
+      - id: lychee-allowlist-expiry
+        name: Lychee allowlist entries are within their stated expiry
+        entry: python3 scripts/check_lychee_expiry.py
+        language: system
+        pass_filenames: false
+        # Fires only when the allowlist itself is edited: the check reads dates
+        # against today, so a commit touching nothing else would otherwise start
+        # failing on a date rolling over, mid-unrelated-work. ci.yml runs it on
+        # every push, which is where the passage-of-time case gets caught.
+        files: ^lychee\.toml$
       - id: config-traceability
         name: Config traceability check
         entry: python3 scripts/check_config_traceability.py
