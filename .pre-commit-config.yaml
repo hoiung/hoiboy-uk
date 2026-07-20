@@ -43,7 +43,10 @@ repos:
         # scripts/validate_frontmatter.py. A narrower pattern here means the hook
         # never fires for a page shape the validator would have rejected, so the
         # commit passes while the gate is claimed to cover it.
-        files: ^content/(posts|consulting)/.*\.(md|markdown|html)$
+        # (?i) so a .MD / .HTML file fires the hook. validate_frontmatter.py
+        # matches on p.suffix.lower(), so without this the validator would walk
+        # a file the hook never fires on.
+        files: (?i)^content/(posts|consulting)/.*\.(md|markdown|html)$
       - id: config-traceability
         name: Config traceability check
         entry: python3 scripts/check_config_traceability.py
