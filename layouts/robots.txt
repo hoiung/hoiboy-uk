@@ -14,13 +14,30 @@
   aspiration, not a control; the citation condition is currently unmet, since
   all six citation-class crawlers are blocked at the edge).
 
-  The page is NOT linked from anywhere: the section index is headless, it is
-  absent from the sitemap, and no content file references the path. A public
-  post describes the tool in prose but does not link to it. So a training
-  crawler reaches it only by direct URL, which is a narrower exposure than the
-  robots.txt Disallow was covering. Do not restate this as "already public" or
-  "already linked" without re-running the check: grep content/ for the path,
-  and grep the built HTML for an href to it.
+  No page links to /private/: the section index is headless, it is absent from
+  the sitemap, and no content file references the path. A public post describes
+  the tool in prose but does not link to it.
+
+  It WAS however carried by the RSS feed, which linked it and duplicated its
+  full rendered body into public/index.xml, a document advertised from every
+  page via <link rel="alternate"> and matched by no X-Robots-Tag rule. The
+  sitemap exclusion did not cover the feed. Fixed by `build.list: never` on the
+  page itself (Ralph round 15); the feed dropped from 93 items to 92 and the
+  page still renders for direct access.
+
+  This sentence has now been WRONG TWICE in opposite directions: first claiming
+  the page was already linked from a public post (it is not), then claiming it
+  was reachable only by direct URL (the feed carried it). Do not restate it
+  from memory. Re-run this, which greps the WHOLE built site rather than only
+  href= in HTML, and so can actually fail:
+
+      hugo --gc --minify -e production && grep -rl '/private/' public/ \
+        | grep -v '^public/private/'
+
+  An empty result means nothing outside the section itself references it. The
+  earlier instruction here checked only `href="/private` in HTML and `content/`
+  for the path; both returned zero while the feed was carrying the page, so it
+  was a check that could not have caught the thing it was written to catch.
 
   If /private/ ever holds something that must not enter a training corpus,
   this decision has to be revisited.
