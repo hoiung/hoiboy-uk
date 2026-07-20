@@ -4,6 +4,14 @@
   stops the crawler fetching the page, so it never sees the noindex header,
   and a URL discovered elsewhere can still be indexed. noindex is the stronger
   guarantee but only works on a crawlable route.
+
+  Known and accepted trade-off: X-Robots-Tag noindex is a SEARCH-INDEX
+  directive. It is not the documented opt-out for AI TRAINING crawlers, which
+  is robots.txt. So dropping the Disallow also drops the only training-crawler
+  control over /private/. Accepted because the page holds no secrets, is
+  already linked from a public post, and the operator is on record as content
+  with training use. If /private/ ever holds something that must not enter a
+  training corpus, this decision has to be revisited.
   See docs/research/16_AI_BOT_AND_SEO_POLICY.md and
   https://developers.google.com/search/docs/crawling-indexing/block-indexing
 */ -}}
