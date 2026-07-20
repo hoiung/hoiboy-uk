@@ -92,7 +92,9 @@ robots.txt is advisory; Cloudflare is the only layer that hard-enforces at the n
 | TRAINING | meta-externalagent | 403 blocked |
 | TRAINING | Bytespider | 403 blocked |
 
-**All six citation-class crawlers are blocked.** The same URL returns 200 to a plain browser user-agent and to an empty user-agent, so this is user-agent-based blocking at the edge, not an outage. Ruled out rate limiting by re-probing in isolation with 3-second gaps and by repeating runs; the 403s are deterministic. The Google crawler family is the sole exception, with `Google-Extended` and a `Googlebot` control both returning 200, so it is allow-listed as a verified bot.
+**All six citation-class crawlers are blocked.** The same URL returns 200 to a plain browser user-agent and to an empty user-agent, so this is user-agent-based blocking at the edge, not an outage. The Google crawler family is the sole exception, with `Google-Extended` and a `Googlebot` control both returning 200, so it is allow-listed as a verified bot.
+
+Three of those four controls (browser user-agent, empty user-agent, `Googlebot`) are implemented in `scripts/check-ai-crawler-access.sh` and print under a `CONTROLS` heading on every run, so the standing gate reproduces its own evidence rather than citing a measurement nobody can re-run. They are reported only and do not touch the exit code, which the citation class alone gates. The fourth control, ruling out rate limiting by re-probing in isolation with three-second gaps and by repeating runs, was a manual one-off during Phase 10; the 403s were deterministic across those runs. It is not in the script, because a gate that sleeps between every probe is too slow to run weekly.
 
 **This value moved between two probes on the same day.** An earlier probe during Stage 3 of blog-priv#55 recorded OAI-SearchBot at 200 and four of the five training crawlers it covered at 200. The measurement above, taken a few hours later, found six of six citation crawlers blocked and five of six training crawlers blocked. Both readings are kept on purpose: the state is not stable, and no single reading should be treated as the settled value. Any figure here is valid only for its timestamp, which is the argument for the scheduled gate rather than another one-time check.
 
@@ -123,7 +125,7 @@ Record which of the four was the cause. Then re-run `bash scripts/check-ai-crawl
 
 `scripts/check-ai-crawler-access.sh` exits non-zero while any citation-class crawler is blocked. `.github/workflows/ai-crawler-access.yml` runs it weekly and on demand, non-blocking, because an edge setting can regress with no repo change and nothing in the repo would show it.
 
-**Honesty bound.** Unblocking is necessary, not sufficient. A 403 guarantees zero citation from that engine; removing it guarantees nothing in return. No reliable method for measuring AI citation currently exists, so success here is "the crawlers are no longer blocked", never "we are now cited".
+**Honesty bound.** Unblocking is necessary, not sufficient. An access denial guarantees zero citation from that engine; removing it guarantees nothing in return. No reliable method for measuring AI citation currently exists, so success here is "the crawlers are no longer blocked", never "we are now cited".
 
 ## Deferred variant: block training only (NOT built now)
 
