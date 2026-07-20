@@ -32,12 +32,26 @@
   href= in HTML, and so can actually fail:
 
       hugo --gc --minify -e production && grep -rl '/private/' public/ \
-        | grep -v '^public/private/'
+        | grep -v '^public/private/' \
+        | grep -vx 'public/_headers' \
+        | grep -v '^public/js/meet-recorder\..*\.schema\.json$'
 
-  An empty result means nothing outside the section itself references it. The
-  earlier instruction here checked only `href="/private` in HTML and `content/`
-  for the path; both returned zero while the feed was carrying the page, so it
-  was a check that could not have caught the thing it was written to catch.
+  An empty result means nothing outside the section itself references it.
+  Three matches are structural and are excluded above by name, each for a
+  reason that cannot change: `public/_headers` IS the noindex rule, so it must
+  name the path it suppresses, and the two `meet-recorder.*.schema.json` files
+  carry a self-identifying absolute `$id` URL. Both are static passthroughs
+  copied verbatim into every build. Do NOT widen these exclusions; anything
+  else matching is a real finding.
+
+  The two earlier versions of this instruction were both checks that could not
+  have caught what they were written to catch. Round 14's checked only
+  `href="/private` in HTML plus `content/` for the path, and returned zero
+  while the RSS feed was carrying the page. Round 15's dropped the exclusions
+  above, so it returned those three hits on every build and could never reach
+  the clean state it defined, which is just as useless in the other direction.
+  If you edit this command, seed a fake leak first (add the path to any
+  content file, rebuild) and confirm it reports one.
 
   If /private/ ever holds something that must not enter a training corpus,
   this decision has to be revisited.
