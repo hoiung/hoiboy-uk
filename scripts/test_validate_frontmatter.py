@@ -422,3 +422,33 @@ def test_block_scalar_does_not_swallow_the_next_key():
     assert fm["description"] == "Folded text."
     assert fm["categories"] == ["tech-ai"]
     assert fm["tags"] == ["a"]
+
+
+@pytest.mark.parametrize("indicator", ["|2-", ">3+", "|-2", ">+3", ">9"])
+def test_block_header_accepts_digit_and_chomp_in_either_order(monkeypatch, tmp_path, capsys, indicator):
+    # A YAML block header takes an optional indentation digit and an optional
+    # chomping sign in EITHER order. The first regex only allowed
+    # sign-then-digit, so `|2-` fell through and was stored as the literal
+    # "|2-", which is non-empty: an empty block scalar written that way passed
+    # the gate while Hugo served the site default. Ralph round 18.
+    posts = tmp_path / "posts"
+    empty = POST_FM.replace('description: "A unique summary."', f"description: {indicator}")
+    assert f"description: {indicator}" in empty, "fixture rewrite did not take effect"
+    _bundle(posts, "hdr", empty)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 1
+    assert "description" in capsys.readouterr().err
+
+
+def test_orphan_list_item_does_not_overwrite_a_closed_block():
+    # close_block() clears current_key, so a stray dash-list line with no
+    # governing key cannot be misattributed to the block key just closed and
+    # overwrite its resolved string with a list. Ralph round 18; the input is
+    # invalid YAML that PyYAML rejects outright, so this only guards against
+    # the parser silently inventing a different shape than YAML would.
+    fm = parse_frontmatter(
+        '---\ntitle: "x"\ndescription: >\n  Folded text.\n- orphan item\n---\nbody\n'
+    )
+    assert fm["description"] == "Folded text."
