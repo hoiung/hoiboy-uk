@@ -1,10 +1,11 @@
 ---
-title: "Hoi aka Hoiboy"
+title: "#1 Hoi aka Hoiboy"
 date: 2026-07-11T20:00:00+01:00
 description: "Eight years at Canonical running cloud data centres across London, Boston and Taipei. The quiet infrastructure work that spoke for itself."
 role: "AI Product & Automation Engineer"
 breadcrumbParent: "/community/agit-featured"
 hideDate: true
+aliases: ["/community/agit-featured/hoi-aka-hoiboy-ai-product-engineer/"]
 ---
 
 <!-- iamhoi -->

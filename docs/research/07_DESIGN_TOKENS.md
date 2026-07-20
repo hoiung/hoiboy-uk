@@ -108,7 +108,7 @@ Rule of thumb: **inline SVG = dual-mode (media query); exported PNG = one mode +
 
 ## AGIT feature-image tokens (photo cards)
 
-The Asians & Gingers in Tech community features (`content/community/agit-featured/<slug>/`) use a **photo-driven** card system, distinct from the schematic diagram tokens above. Each feature is generated as a branded pair by `scripts/social-cards/gen_agit_feature.py`, which is the deterministic source of truth (re-running it reproduces the exact approved look for any person). This section is the human-readable design record so a future feature, or a design tweak, does not have to be reverse-engineered from the Python constants. Approved reference example: `content/community/agit-featured/hoi-aka-hoiboy-ai-product-engineer/` (the committed `hero.jpg` + `share-card.png` are the frozen "this is how it should look" artifacts).
+The Asians & Gingers in Tech community features (`content/community/agit-featured/<slug>/`) use a **photo-driven** card system, distinct from the schematic diagram tokens above. Each feature is generated as a branded pair by `scripts/social-cards/gen_agit_feature.py`, which is the deterministic source of truth (re-running it reproduces the exact approved look for any person). This section is the human-readable design record so a future feature, or a design tweak, does not have to be reverse-engineered from the Python constants. Approved reference example: `content/community/agit-featured/1-hoi-aka-hoiboy-ai-product-engineer/` (the committed `hero.jpg` + `share-card.png` are the frozen "this is how it should look" artifacts).
 
 ### Palette
 

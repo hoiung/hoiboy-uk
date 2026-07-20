@@ -10,7 +10,7 @@ own). So the Source link goes in the first comment, never in the post body.
 Feature link (the Source, used in the first comment on every post):
 
 ```text
-https://hoiboy.uk/community/agit-featured/hoi-aka-hoiboy-ai-product-engineer/
+https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-product-engineer/
 ```
 
 ## Post 1 - Full story (Facebook post, or LinkedIn Article)
@@ -28,7 +28,7 @@ Hashtags to append:
 First comment:
 
 ```text
-Source: https://hoiboy.uk/community/agit-featured/hoi-aka-hoiboy-ai-product-engineer/
+Source: https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-product-engineer/
 ```
 
 ## Post 2 - X / Twitter (280 characters, hashtags counted inside)
@@ -42,5 +42,5 @@ First feature on Asians & Gingers in Tech, so I went first. 8 years quietly buil
 First comment:
 
 ```text
-Source: https://hoiboy.uk/community/agit-featured/hoi-aka-hoiboy-ai-product-engineer/
+Source: https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-product-engineer/
 ```

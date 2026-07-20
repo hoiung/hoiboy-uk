@@ -93,7 +93,7 @@ Before you fill it in, have a quick read of the <a href="/legal/agit-story-guide
 
 <h2>Here's what a feature looks like. I'll go first.</h2>
 
-[Read my full story.](/community/agit-featured/hoi-aka-hoiboy-ai-product-engineer/)
+[Read my full story.](/community/agit-featured/1-hoi-aka-hoiboy-ai-product-engineer/)
 
 [See everyone we've featured.](/community/agit-featured/)
 
