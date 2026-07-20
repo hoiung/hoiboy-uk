@@ -1,0 +1,58 @@
+# Scheduled, NON-BLOCKING probe of the live edge's AI-crawler policy.
+#
+# Why scheduled and not a pre-commit hook or a CI gate (blog-priv#55 AC 10.3):
+# this check needs network and hits third-party-facing infrastructure, so it
+# cannot run offline and must never block a commit or a deploy. The thing it
+# watches is an EDGE setting, which can regress with no repo change at all.
+# That is exactly how the block went unnoticed from 2026-05-31 to 2026-07-20.
+#
+# Non-blocking means the job reports; it does not gate. A red run here is a
+# signal to open the Cloudflare dashboard, not a reason to stop shipping.
+name: AI crawler access (scheduled, non-blocking)
+
+on:
+  schedule:
+    # 07:15 UTC Mondays. Weekly is enough for a setting that changes rarely and
+    # only by human action, and it keeps third-party request volume negligible.
+    - cron: '15 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Probe live AI-crawler access
+        # continue-on-error keeps this advisory. The step's own exit code is
+        # still surfaced in the log and in the summary below.
+        continue-on-error: true
+        id: probe
+        run: bash scripts/check-ai-crawler-access.sh
+
+      - name: Summarise
+        if: always()
+        env:
+          OUTCOME: ${{ steps.probe.outcome }}
+        run: |
+          {
+            printf '## AI crawler access probe\n\n'
+            printf 'Outcome: `%s`\n\n' "$OUTCOME"
+            if [ "$OUTCOME" = "success" ]; then
+              printf 'All citation-class crawlers reachable.\n\n'
+              printf 'This means they are NOT blocked. It does not mean the site is cited;\n'
+              printf 'no reliable method for measuring AI citation currently exists.\n'
+            else
+              printf 'At least one citation-class crawler is blocked, or the probe could not complete.\n\n'
+              printf 'A 403 guarantees zero citation from that engine. No repo change can fix it.\n'
+              printf 'Check the Cloudflare dashboard for this zone:\n\n'
+              printf '1. "Block AI bots" managed toggle OFF\n'
+              printf '2. AI Crawl Control set to Allow for the citation class\n'
+              printf '3. managed-robots.txt OFF\n'
+              printf '4. Bot Fight Mode off, or skipping verified bots\n\n'
+              printf 'Detail: `docs/research/16_AI_BOT_AND_SEO_POLICY.md`\n'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
