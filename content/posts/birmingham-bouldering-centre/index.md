@@ -5,6 +5,7 @@ categories: [adventure]
 tags: [bouldering, climbing, birmingham, review, sport]
 source_file: "voice-corpus/blogs/10_birmingham-bouldering-centre.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "Climbing under the Water Street arches near Snowhill. How it compares with Boulder Central, the V6 to V8 problems, and what the lighting gets wrong."
 ---
 
 Ever since started climbing about 4 months ago, I haven't stopped. This is a sport that I would like to see more of my friends doing. It is fun, challenging and has a great sense of accomplishment when you complete a route. This kind of activity is very sociable as we can chill and chat with friends while having a good work out.
