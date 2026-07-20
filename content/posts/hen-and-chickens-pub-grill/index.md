@@ -5,6 +5,7 @@ categories: [food-booze]
 tags: [food, pub, restaurant, review, london]
 source_file: "voice-corpus/blogs/12_hen-and-chickens-pub-grill.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "A curry kitchen behind a rough looking pub front on Constitution Hill, Hockley. Fish pakora, lamb curry and garlic naan came to £17 for two people."
 ---
 
 ## Hen & Chickens Pub Grill
