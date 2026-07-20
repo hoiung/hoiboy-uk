@@ -132,34 +132,34 @@ em_dash_check() {
 }
 run_check "em-dash-zero" em_dash_check
 
-# 2. Voice tells (marker-driven; default skip; exit 0 = clean).
+# 3. Voice tells (marker-driven; default skip; exit 0 = clean).
 run_check "voice-tells" python3 scripts/check-ai-writing-tells.py --check-only-new "$TARGET"
 
-# 3. Frontmatter validator (walks content/posts/ AND content/consulting/).
+# 4. Frontmatter validator (walks content/posts/ AND content/consulting/).
 run_check "frontmatter" python3 scripts/validate_frontmatter.py
 
-# 3-project. Same validator, project-page scope, reported as its own named gate
+# 4a. Same validator, project-page scope, reported as its own named gate
 #     so a failure on a consulting/portfolio page is attributable at a glance
 #     instead of being buried in the whole-tree result. Mirrors how the
-#     social-card guard is wired twice (source at 3a, rendered at 6a).
+#     social-card guard is wired twice (source at 4b, rendered at 7a).
 #     `description` is REQUIRED here: without it a project page inherits the
 #     site-default meta description and becomes a near-duplicate that answer
 #     engines cannot tell apart (blog-priv#55 AC 2.3/2.6).
 run_check "frontmatter-project-pages" python3 scripts/validate_frontmatter.py --scope consulting
 
-# 3a. Social-card guard (whole-tree): every singular indexable page must be a
+# 4b. Social-card guard (whole-tree): every singular indexable page must be a
 #     leaf bundle that owns its share-card / hero, else it silently falls back to
 #     the default card in link previews. See scripts/check_social_cards.py (#52).
 run_check "social-cards" python3 scripts/check_social_cards.py
 
-# 3b. Future-date guard. Hugo drops future-dated posts from the production
+# 4c. Future-date guard. Hugo drops future-dated posts from the production
 #     build (buildFuture off) and Cloudflare builds in UTC, so a post-dated
 #     entry silently vanishes from the live site + all listings. Fail if this
 #     post's date (read in the site timeZone from hugo.toml) is still in the
 #     future relative to now (UTC). See docs/AUTHORING.md section 2.
 run_check "no-future-date" python3 scripts/check_future_date.py "$TARGET"
 
-# 4. Word count ceiling (>3000 fails; legacy + grandfathered skipped).
+# 5. Word count ceiling (>3000 fails; legacy + grandfathered skipped).
 #    POSTS ONLY. Consulting / legal / skills / private landing pages are
 #    long-form by design and are NOT gated. This matches the pre-commit hook
 #    (files: ^content/posts/.*/index\.md$) and CI (git ls-files content/posts/*),
@@ -174,14 +174,14 @@ case "$POST_FILE" in
         ;;
 esac
 
-# 5. Private blocklist + secrets (PLATFORM_TOKEN + PRIVATE_PATH + BLOCKLIST).
+# 6. Private blocklist + secrets (PLATFORM_TOKEN + PRIVATE_PATH + BLOCKLIST).
 run_check "secrets" python3 scripts/check-public-repo-secrets.py "$TARGET"
 
-# 5b. SVG dimensions: every page-bundle SVG needs root width/height or it renders
+# 6b. SVG dimensions: every page-bundle SVG needs root width/height or it renders
 #     tiny in the glightbox lightbox (zoom-image shortcode). See check_svg_dimensions.py.
 run_check "svg-dimensions" python3 scripts/check_svg_dimensions.py "$TARGET"
 
-# 6. Hugo build with --buildDrafts so the rendered HTML in public/ matches
+# 7. Hugo build with --buildDrafts so the rendered HTML in public/ matches
 #    what production will serve (excluding the auto-deploy gate). Builds ALL
 #    drafts so cross-links to in-progress posts resolve.
 hugo_build() {
@@ -191,12 +191,12 @@ hugo_build() {
 }
 run_check "hugo-build" hugo_build
 
-# 6a. Rendered social-card backstop: assert each singular indexable page's RENDERED
+# 7a. Rendered social-card backstop: assert each singular indexable page's RENDERED
 #     og:image is its own card, not the site default. Catches a head.html/hero-pick
-#     template regression the source-only guard (check #3a) cannot see (#52 Stage 5).
+#     template regression the source-only guard (check #4b) cannot see (#52 Stage 5).
 run_check "social-cards-rendered" python3 scripts/check_social_cards.py --built public
 
-# 7. Lychee on rendered HTML — catches broken cross-section links + missing
+# 8. Lychee on rendered HTML — catches broken cross-section links + missing
 #    assets that markdown-only lychee misses (e.g. a `[link](../other-section/)`
 #    that resolves under Hugo's permalink scheme but not under raw-md walk).
 rendered_link_check() {
@@ -229,7 +229,7 @@ rendered_link_check() {
 }
 run_check "rendered-link-liveness" rendered_link_check
 
-# 8b. Lychee on rendered consulting pages — when public/consulting/*/index.html
+# 8a. Lychee on rendered consulting pages — when public/consulting/*/index.html
 #     exists post-Hugo-build, every external URL in those rendered pages is
 #     verified live. This is what catches a stale cal.com/OPERATOR_TODO/...
 #     URL slipping through (the OPERATOR_TODO yaml gate at check #1 is the
