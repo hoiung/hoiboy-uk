@@ -132,7 +132,17 @@ def test_the_two_scopes_together_cover_every_tree_the_validator_knows_about():
     # is not enough: a third content root walked under `--scope all` without a
     # new CLI choice would leave it green while the wired posts+consulting pair
     # silently stopped covering the tree (Ralph round 16 seeded exactly that and
-    # the test still passed). So assert on the roots main() ACTUALLY walks.
+    # the test still passed). So assert on the roots main() passes to check_tree.
+    #
+    # KNOWN BOUNDARY (Ralph round 17): this spies on check_tree, so it sees a
+    # root added the way roots are actually added - another check_tree call -
+    # and NOT one walked by an inline loop that bypasses check_tree entirely.
+    # A mutant of that shape passes all four wiring tests. Closing that would
+    # need a filesystem-level spy (rglob/os.walk), which buys little: every
+    # root in this validator goes through check_tree, and an inline-walk root
+    # would be a deliberate rewrite rather than the incremental addition this
+    # guards. The limit is recorded here so a future reader does not read this
+    # test as broader than it is.
     walked: list = []
     original_check_tree = vf.check_tree
 
