@@ -34,7 +34,7 @@ All 7 (`check-modularity`, `no-temp-folder`, `check-unix-timestamps`, `validate-
 | `markdownlint-cli` | Heading hierarchy, link syntax, list consistency | **ADD** (with relaxed config .  `MD013` line length off, `MD033` HTML allowed for any embeds) |
 | `markdown-link-check` | Catch broken markdown link syntax | DEFERRED .  `lychee` in CI covers this better |
 | `cspell` | Spell check | SKIP .  Hoi has 22 years of prose with proper nouns and slang. Too noisy. |
-| Frontmatter validator | Ensure `title`, `date`, `tags` present | WIRED + BLOCKING .  pre-commit hook (`content/posts/*.md`) + CI step (`validate_frontmatter.py`). |
+| Frontmatter validator | Ensure `title`, `date`, `categories`, `tags`, `description` present on posts; `title` + `description` on project pages | WIRED + BLOCKING .  pre-commit hook (`(?i)^content/(posts\|consulting)/.*\.(md\|markdown\|html)$`) + CI step (`validate_frontmatter.py`). Scope and required set both widened by blog-priv#55 Phase 2: `description` became REQUIRED and the walk was extended from posts to `content/consulting/` as well. |
 
 ## From SST3
 
