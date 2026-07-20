@@ -24,7 +24,7 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Record the tri-state exit code without letting it end the job here, so
       # the summary below always runs. The verdict step decides red vs green.
