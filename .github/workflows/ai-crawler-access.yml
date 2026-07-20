@@ -63,7 +63,7 @@ jobs:
               printf 'no reliable method for measuring AI citation currently exists.\n'
             else
               printf 'At least one citation-class crawler is blocked, or the probe could not complete.\n\n'
-              printf 'A 403 guarantees zero citation from that engine. No repo change can fix it.\n'
+              printf 'An access denial guarantees zero citation from that engine. No repo change can fix it.\n'
               printf 'Check the Cloudflare dashboard for this zone:\n\n'
               printf '1. "Block AI bots" managed toggle OFF\n'
               printf '2. AI Crawl Control set to Allow for the citation class\n'
