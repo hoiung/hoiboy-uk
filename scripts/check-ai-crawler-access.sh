@@ -102,7 +102,8 @@ printf 'AI crawler access probe: %s\n\n' "$TARGET"
 # Reachability pre-flight. Without this, a dead network would report every bot as
 # blocked and read as the exact defect we are looking for, which is a false alarm
 # an operator would act on.
-baseline=$(probe "curl-preflight/1.0")
+BROWSER_UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+baseline=$(probe "$BROWSER_UA")
 if [ "$baseline" = "ERR" ]; then
     printf >&2 'ERR: target unreachable with an ordinary user-agent (%s).\n' "$TARGET"
     printf >&2 '     Network or DNS failure, not a crawler-policy result. Not reporting a verdict.\n'
@@ -149,6 +150,21 @@ for entry in "${TRAINING_BOTS[@]}"; do
     code=$(probe "$ua")
     printf '  %-20s %s\n' "$name" "$code"
 done
+
+# Controls. These rule out the two alternative explanations for a wall of 403s:
+# the site being down, and a blanket block that is not user-agent-specific. If
+# the browser and empty user-agents return 200 while the crawler user-agents do
+# not, the blocking is user-agent-based at the edge. Googlebot is the
+# verified-bot control: a 200 here alongside crawler 403s shows the edge is
+# allow-listing some bots and denying others, rather than denying all bots.
+# Reported only. These do NOT touch the exit code, which the CITATION class
+# alone gates. Documented in docs/research/16_AI_BOT_AND_SEO_POLICY.md, and
+# implemented here so the standing gate reproduces its own evidence instead of
+# citing a measurement no one can re-run.
+printf '\nCONTROLS (reported only; rule out outage and blanket blocking)\n'
+printf '  %-20s %s\n' "browser-UA" "$(probe "$BROWSER_UA")"
+printf '  %-20s %s\n' "empty-UA" "$(probe "")"
+printf '  %-20s %s\n' "Googlebot" "$(probe "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")"
 
 printf '\n'
 
