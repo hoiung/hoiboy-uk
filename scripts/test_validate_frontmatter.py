@@ -6,6 +6,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent))
 import validate_frontmatter as vf
 from validate_frontmatter import parse_frontmatter, REQUIRED, CONSULTING_REQUIRED
@@ -107,7 +109,12 @@ def test_post_missing_description_fails(monkeypatch, tmp_path, capsys):
 
 
 def test_post_with_description_passes(monkeypatch, tmp_path):
-    assert _run(monkeypatch, tmp_path, [("good", POST_FM)], []) == 0
+    # Scoped to posts on purpose: this test populates only the posts tree, and
+    # the vacuous-walk guard in main() now fails a scope whose tree yields
+    # nothing. Declaring the scope keeps the test about what it is named after
+    # instead of incidentally depending on the consulting tree.
+    assert _run(monkeypatch, tmp_path, [("good", POST_FM)], [],
+                argv=["--scope", "posts"]) == 0
 
 
 def test_project_page_missing_description_fails(monkeypatch, tmp_path, capsys):
@@ -119,7 +126,8 @@ def test_project_page_missing_description_fails(monkeypatch, tmp_path, capsys):
 
 
 def test_project_page_with_description_passes(monkeypatch, tmp_path):
-    assert _run(monkeypatch, tmp_path, [], [("a-service", PAGE_FM)]) == 0
+    assert _run(monkeypatch, tmp_path, [], [("a-service", PAGE_FM)],
+                argv=["--scope", "consulting"]) == 0
 
 
 def test_nested_portfolio_page_is_walked(monkeypatch, tmp_path, capsys):
@@ -139,7 +147,8 @@ def test_consulting_section_page_is_walked(monkeypatch, tmp_path, capsys):
 
 def test_project_page_not_held_to_post_contract(monkeypatch, tmp_path):
     # No date, no categories, no tags: valid for a project page, invalid for a post.
-    assert _run(monkeypatch, tmp_path, [], [("svc", PAGE_FM)]) == 0
+    assert _run(monkeypatch, tmp_path, [], [("svc", PAGE_FM)],
+                argv=["--scope", "consulting"]) == 0
 
 
 def test_scope_posts_skips_consulting(monkeypatch, tmp_path):
@@ -170,8 +179,24 @@ def test_unknown_category_still_fails(monkeypatch, tmp_path, capsys):
     assert "unknown categories" in capsys.readouterr().err
 
 
-def test_missing_trees_are_not_an_error(monkeypatch, tmp_path):
-    assert _run(monkeypatch, tmp_path, [], []) == 0
+def test_check_tree_still_tolerates_a_missing_root(tmp_path):
+    # check_tree is a library function and keeps its documented tolerance: a
+    # missing root is simply an empty tree, which is how a partial checkout
+    # behaves. The "that is suspicious" judgement lives in main(), where the
+    # specific trees are known to be non-empty. See the test below.
+    failures, count = vf.check_tree(tmp_path / "nope", REQUIRED, check_categories=True)
+    assert (failures, count) == ([], 0)
+
+
+def test_main_rejects_a_tree_that_yields_nothing(monkeypatch, tmp_path, capsys):
+    # This REPLACES an earlier test that asserted empty trees exit 0. That
+    # assertion encoded the defect: Ralph round 16 pointed POSTS at a
+    # nonexistent path and got "Frontmatter OK (0 posts)", exit 0, passing
+    # pre-commit, both pre-publish gates, both ci.yml steps and all four wiring
+    # tests. A walk that finds nothing gates nothing, so every page it should
+    # have checked passes by omission rather than by compliance.
+    assert _run(monkeypatch, tmp_path, [], [], argv=["--scope", "posts"]) == 1
+    assert "walked 0 files" in capsys.readouterr().err
 
 
 # --- Walk coverage: a skipped page passes by omission, which is a false PASS ---
@@ -304,3 +329,51 @@ def test_block_list_categories_that_are_valid_pass(monkeypatch, tmp_path):
     monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
     monkeypatch.setattr(vf, "ROOT", tmp_path)
     assert vf.main(["--scope", "posts"]) == 0
+
+
+@pytest.mark.parametrize("sentinel", ["null", "Null", "NULL", "~", "# TODO write this"])
+def test_yaml_null_sentinels_count_as_missing(monkeypatch, tmp_path, capsys, sentinel):
+    # Siblings of the blank-value case above, and the same failure end to end:
+    # Ralph round 16 seeded `description: null` into a real post and the gate
+    # printed "Frontmatter OK (79 posts)" and exited 0, while the built page
+    # served site.Params.description verbatim. `~` is YAML's other null literal
+    # and a comment-only value is null too. All are "no value" to Hugo.
+    posts = tmp_path / "posts"
+    nulled = POST_FM.replace('description: "A unique summary."', f"description: {sentinel}")
+    assert f"description: {sentinel}" in nulled, "fixture rewrite did not take effect"
+    _bundle(posts, "nulled", nulled)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 1
+    assert "description" in capsys.readouterr().err
+
+
+def test_quoted_value_starting_with_hash_is_still_a_real_value(monkeypatch, tmp_path):
+    # Guard on the null-sentinel fix above: it is confined to UNQUOTED values on
+    # purpose. A quoted description that happens to begin with '#' is a real
+    # description and must keep passing, or the fix trades one false pass for a
+    # false failure.
+    posts = tmp_path / "posts"
+    hashed = POST_FM.replace('description: "A unique summary."',
+                             'description: "# hashtags, and why they died"')
+    assert '"# hashtags' in hashed, "fixture rewrite did not take effect"
+    _bundle(posts, "hashed", hashed)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 0
+
+
+def test_a_walk_that_finds_nothing_fails_rather_than_passing(monkeypatch, tmp_path, capsys):
+    # A renamed root, a typo, or a broken extension filter makes the walk return
+    # zero files, and every page it should have gated then passes by omission.
+    # Round 16 proved this was undefended end to end: pointing POSTS at a
+    # nonexistent path printed "Frontmatter OK (0 posts)" and exited 0, through
+    # pre-commit, both pre-publish gates, both ci.yml steps and all four wiring
+    # tests. The tree is never legitimately empty in a real checkout.
+    monkeypatch.setattr(vf, "POSTS", tmp_path / "no-such-posts-tree")
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "no-such-consulting-tree")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 1
+    assert "walked 0 files" in capsys.readouterr().err
