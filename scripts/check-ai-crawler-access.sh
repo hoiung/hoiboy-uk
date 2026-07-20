@@ -137,14 +137,23 @@ done
 
 printf '\n'
 
-if [ "$errored" -gt 0 ]; then
-    printf >&2 'ERR: %d citation-class probe(s) returned no usable answer.\n' "$errored"
+# A CONFIRMED block outranks noise elsewhere. If any probe returned a genuine
+# access denial, report it, even when another probe separately failed. Checking
+# `errored` first would let one unrelated 5xx suppress the whole verdict and hide
+# a real block from the operator, which is a worse failure than an incomplete run.
+if [ "$blocked" -eq 0 ] && [ "$errored" -gt 0 ]; then
+    printf >&2 'ERR: %d citation-class probe(s) returned no usable answer, and no\n' "$errored"
+    printf >&2 '     confirmed access denial was observed among the rest.\n'
     printf >&2 '     Request failure, origin error or an unrecognised status: NOT an\n'
-    printf >&2 '     observed access denial. Verdict withheld rather than reported as a block.\n'
+    printf >&2 '     observed block. Verdict withheld rather than reported as one.\n'
     exit 2
 fi
 
 if [ "$blocked" -gt 0 ]; then
+    if [ "$errored" -gt 0 ]; then
+        printf >&2 'NOTE: %d further probe(s) returned no usable answer. Coverage is\n' "$errored"
+        printf >&2 '      incomplete, so the true block count may be HIGHER than reported.\n'
+    fi
     printf >&2 'FAIL: %d of %d citation-class crawlers are BLOCKED at the edge (HTTP %s).\n' \
         "$blocked" "${#CITATION_BOTS[@]}" "$blocked_codes"
     printf >&2 'An access denial guarantees zero citation from that engine.\n'
