@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, poland, community, growth, scene]
 source_file: "voice-corpus/blogs/28_poland-big-bang-zouk-theory.md"
 source_era: "ZoukBase (WordPress)"
+description: "How Warsaw grew from almost nothing to 12 teachers between 2011 and 2017, and what the rest of Poland did next. A scene growth case study."
 ---
 I am by no means an expert in growing a Zouk scene, however, one of my biggest all-time inspirations would be the city Warsaw, Poland. From there, it emanated to the rest of Poland with many upcoming and thriving Zouk scenes.
 
