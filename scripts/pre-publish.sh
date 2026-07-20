@@ -17,14 +17,22 @@
 #   4b.Future date       (check_future_date.py — fail if date is future in the
 #                         site timeZone vs now-UTC; Hugo would silently drop a
 #                         future-dated post from the production build)
-#   5. Word count        (check_wordcount.py >3000 = fail)
+#   4c.Social cards      (check_social_cards.py, source: every singular indexable
+#                         page owns its og:image card)
+#   5. Word count        (check_wordcount.py >3000 = fail. POSTS ONLY: this gate
+#                         SKIPs for consulting/legal/skills/private targets, so a
+#                         non-post run reports 13 PASS + 1 SKIP, not 14 PASS.)
 #   6. Private leaks     (check-public-repo-secrets.py)
+#   6b.SVG dimensions    (check_svg_dimensions.py)
 #   7. Hugo build        (hugo --buildDrafts so cross-link resolution + permalinks
 #                         match production exactly; rendered HTML lands in public/)
+#   7a.Social cards      (check_social_cards.py --built public: rendered backstop
+#                         for a head.html/hero-pick template regression)
 #   8. Rendered links    (lychee on rendered HTML NOT raw .md — catches broken
 #                         cross-section links + missing assets that markdown-only
 #                         lychee cannot see; covers public/posts/<slug>/ AND
 #                         public/consulting/<slug>/ per AC 0.4.)
+#   8a.Consulting links  (consulting_link_check: live external-URL liveness)
 #
 # Checks 6+7 added per dotfiles Issue #447 Phase 7 (AP #18 per-shape recipe
 # for the Static-blog shape). Lighthouse-CI deliberately OUT OF SCOPE — no
@@ -248,4 +256,14 @@ consulting_link_check() {
 run_check "consulting-link-liveness" consulting_link_check
 
 print_summary
-printf '[OK] all %d pre-publish checks passed for %s\n' "${#results[@]}" "$TARGET"
+# Report PASS and SKIP separately. Counting the array length folded a skipped
+# gate into "passed", so a consulting target read as "all 14 passed" when the
+# posts-only wordcount gate had in fact been skipped.
+pass_n=$(printf '%s\n' "${results[@]}" | grep -c '^PASS' || true)
+skip_n=$(printf '%s\n' "${results[@]}" | grep -c '^SKIP' || true)
+if [ "$skip_n" -gt 0 ]; then
+    printf '[OK] %d pre-publish gates passed, %d skipped (not applicable) for %s\n' \
+        "$pass_n" "$skip_n" "$TARGET"
+else
+    printf '[OK] all %d pre-publish gates passed for %s\n' "$pass_n" "$TARGET"
+fi
