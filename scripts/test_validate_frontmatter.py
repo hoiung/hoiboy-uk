@@ -534,3 +534,59 @@ def test_bracket_list_with_no_space_before_comment_still_parses_as_a_list():
     )
     assert fm["categories"] == ["foood"]
     assert fm["tags"] == ["a"]
+
+
+# --- Differential gate: this parser vs real YAML -----------------------------
+# Rounds 16 through 22 each found a shape where parse_frontmatter and YAML
+# disagreed about whether `description` had a value, and each fix was a
+# hand-picked case that the next round defeated with a variant: null, then a
+# block scalar, then a block header ordering, then a trailing comment, then a
+# trailing comment with no space. Five rounds, five variants, one class.
+#
+# So stop hand-picking. PyYAML is the oracle and it is already a test-time
+# dependency (requirements-dev.txt), which is why this lives in the tests and
+# not in the validator: production keeps the hand-rolled parser per the
+# operator's patch-and-ship decision, and blog-priv#56 tracks the swap.
+# What this buys is that a NEW divergence fails the suite instead of waiting
+# for a Ralph round to notice it.
+
+def _present(v: object) -> bool:
+    """Would Hugo treat this as a value, or fall back to the site default?"""
+    if v is None:
+        return False
+    if isinstance(v, list):
+        return len(v) > 0
+    return str(v).strip() != ""
+
+
+def test_presence_matches_real_yaml_across_a_shape_matrix():
+    yaml = pytest.importorskip("yaml")
+    import itertools
+
+    values = ['""', "''", '"a"', "'a'", '"a # b"', '"#h"', "[x]", "[x, y]", "[]",
+              "null", "Null", "NULL", "~", "text", "a b", "0", '"0"', "true",
+              ">", "|", ">-", "|-", "|2-", ">3+"]
+    separators = ["", " ", "  "]
+    tails = ["", "#c", "# c", "#", "#TODO write"]
+
+    compared, mismatches = 0, []
+    for value, sep, tail in itertools.product(values, separators, tails):
+        raw = value + sep + tail
+        if not raw.strip():
+            continue
+        line = f"description: {raw}"
+        try:
+            expected = yaml.safe_load(line).get("description")
+        except Exception:
+            continue  # invalid YAML: the real Hugo build rejects it, not our problem
+        compared += 1
+        got = parse_frontmatter(f'---\ntitle: "x"\n{line}\n---\nbody\n').get("description")
+        if _present(got) != _present(expected):
+            mismatches.append((raw, got, expected))
+
+    assert compared > 250, f"matrix collapsed to {compared} cases; it is not exercising anything"
+    assert not mismatches, (
+        "parse_frontmatter disagrees with real YAML about whether a description "
+        "exists, which is how every description-gate bypass in this issue "
+        f"happened:\n" + "\n".join(f"  {r!r}: ours={g!r} yaml={e!r}" for r, g, e in mismatches)
+    )
