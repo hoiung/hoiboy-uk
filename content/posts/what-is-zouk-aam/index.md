@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, dance, guide, brazilian-zouk]
 source_file: "voice-corpus/blogs/17_what-is-zouk.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "An explanation of Brazilian Zouk for anyone who has never seen it. Where it came from, how the main styles differ, and what Zoukasm actually means."
 ---
 I have been asked this question a million times. Not once have I ever gotten bored explaining it to others. In fact, I still get very excited telling others what it is and what makes Zouk so awesome!
 
