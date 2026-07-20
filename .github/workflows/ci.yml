@@ -240,8 +240,15 @@ jobs:
           xmllint --noout public/index.xml
           xmllint --noout public/sitemap.xml
 
+      # test_gate_wiring.py asserts the content roots main() ACTUALLY walks, so a
+      # root silently dropped from the gate fails here. It was delivered by
+      # blog-priv#55 and referenced at line 176 as the thing guarding that
+      # attribution, but it was never added to any pytest invocation: CI runs
+      # pytest through explicit file lists, so a file nobody lists never runs.
+      # A guard that cannot fail guards nothing, which is the exact defect class
+      # this issue spent 24 Ralph rounds on. Caught by the Stage 5 audit.
       - name: Frontmatter parser unit tests
-        run: python3 -m pytest scripts/test_validate_frontmatter.py -q
+        run: python3 -m pytest scripts/test_validate_frontmatter.py tests/test_gate_wiring.py -q
 
       - name: Markdown lint
         uses: DavidAnson/markdownlint-cli2-action@v23
