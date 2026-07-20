@@ -1,7 +1,11 @@
 # Link checker config. ALL link failures are FAIL.
 # Known-flaky external domains go in the exclude list below.
 # Each entry MUST have an "added: YYYY-MM-DD; expires: YYYY-MM-DD (90 days)" comment.
-# CI warns when an entry is past expiry.
+# One comment governs the run of same-class entries beneath it.
+# CI FAILS when an entry is past expiry: scripts/check_lychee_expiry.py, run by
+# pre-commit and by ci.yml. This line previously said "warns" and nothing
+# implemented it at all, so an entry sat 13 days past expiry unnoticed
+# (blog-priv#55 Stage 5). Warning was effectively the old behaviour.
 
 include_verbatim = false
 no_progress = true
@@ -33,7 +37,9 @@ exclude = [
   # hoiboy.uk during CI which races against the same Cloudflare deploy that
   # the commit is about to trigger. Causes intermittent timeouts under load.
   # No value in self-checking; Hugo build + URL contract assertion already
-  # validate the live site shape. added: 2026-04-08; expires: 2026-07-07 (90 days)
+  # validate the live site shape. Re-confirmed 2026-07-20 (blog-priv#55 Stage 5):
+  # the deploy race is structural, not a transient, so the exclusion still holds.
+  # added: 2026-04-08; expires: 2026-10-18 (90 days)
   "^https?://(www\\.)?hoiboy\\.uk(/.*)?$",
   # LinkedIn returns HTTP 999 (anti-bot rate-limit) to lychee's user-agent,
   # which is not a real HTTP status. Sidebar profile link cannot be liveness-
