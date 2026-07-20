@@ -452,3 +452,44 @@ def test_orphan_list_item_does_not_overwrite_a_closed_block():
         '---\ntitle: "x"\ndescription: >\n  Folded text.\n- orphan item\n---\nbody\n'
     )
     assert fm["description"] == "Folded text."
+
+
+@pytest.mark.parametrize("sentinel", ["~ # TODO", "null # TODO", "NULL  # x", "Null # x", '"" # x', "'' # x"])
+def test_null_sentinel_with_trailing_comment_counts_as_missing(monkeypatch, tmp_path, capsys, sentinel):
+    # Ralph round 21 blocker. Sentinels were tested by exact match, so any
+    # trailing YAML comment made `~` parse as the string "~ # TODO" and count as
+    # present, while YAML reads it as null and Hugo serves the site default.
+    # Proven end to end on a real build before the fix. The composition was
+    # never exercised: there were tests for bare sentinels and a test for a
+    # quoted value containing '#', but none for a comment AFTER a value.
+    posts = tmp_path / "posts"
+    seeded = POST_FM.replace('description: "A unique summary."', f"description: {sentinel}")
+    assert f"description: {sentinel}" in seeded, "fixture rewrite did not take effect"
+    _bundle(posts, "sentcomment", seeded)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 1
+    assert "description" in capsys.readouterr().err
+
+
+def test_hash_inside_a_quoted_value_is_not_treated_as_a_comment(monkeypatch, tmp_path):
+    # The false failure the fix above must not introduce: a '#' inside a quoted
+    # scalar is literal in YAML, so the value survives whole and still passes.
+    posts = tmp_path / "posts"
+    quoted = POST_FM.replace('description: "A unique summary."',
+                             'description: "hello # world, a real summary"')
+    _bundle(posts, "quotedhash", quoted)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 0
+    fm = parse_frontmatter(quoted)
+    assert fm["description"] == "hello # world, a real summary"
+
+
+def test_trailing_comment_is_stripped_from_a_real_value():
+    # Presence was never at risk here, but the parser now agrees with YAML on
+    # the VALUE too, which is what the docstring claims.
+    fm = parse_frontmatter('---\ntitle: "x"\ndescription: Real text # note\n---\nbody\n')
+    assert fm["description"] == "Real text"
