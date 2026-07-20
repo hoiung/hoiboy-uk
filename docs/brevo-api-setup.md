@@ -5,7 +5,7 @@ last_verified: 2026-05-08
 related:
   - docs/email-routing-setup.md (the orchestrating runbook - Cloudflare inbound + Brevo outbound)
   - docs/cloudflare-api-token-setup.md (companion, same scoped-credential discipline)
-  - docs/cal-com-setup.md (Path B Worker uses Brevo API to send transactional emails)
+  - docs/cal-eu-setup.md (Path B Worker uses Brevo API to send transactional emails)
 ---
 
 This is the runbook for setting up Brevo (formerly Sendinblue) as the outbound transactional email service for `hoiboy.uk`. **Mostly API-driven.** The only steps that genuinely require the browser are the initial signup, the first API + SMTP key generation (chicken-and-egg - the API to manage keys requires a key), and Gmail "Send mail as" (Gmail has no API for adding send-as identities).
@@ -175,7 +175,7 @@ If you skip domain auth and try to register a sender, Brevo sends a verification
 
 ### Phase G - Push transactional templates
 
-The Hoi-voice templates live as canonical text in `docs/cal-com-setup.md`. Push them as Brevo templates so the Cloudflare Worker can reference them by ID instead of hardcoding bodies.
+The Hoi-voice templates live as canonical text in `docs/cal-eu-setup.md`. Push them as Brevo templates so the Cloudflare Worker can reference them by ID instead of hardcoding bodies.
 
 **Endpoint**: `POST /v3/smtp/templates` (with slash, NOT `/smtpTemplates` camelCase - that path returns 404, we hit this 2026-05-08).
 
@@ -195,7 +195,7 @@ Returns `{"id": <number>}` - capture this; the Worker will reference the templat
 
 **Brevo placeholder syntax**: `{{ params.<key> }}`. The Worker passes `params: {attendee: "...", event_time: "...", ...}` in the send call; Brevo substitutes server-side. Don't double-substitute on the Worker side - pass raw user data, let Brevo handle templating.
 
-For the canonical Hoi-voice template texts (subjects + bodies + which params each one consumes), see `docs/cal-com-setup.md` § "The 5 Hoi-voice email templates".
+For the canonical Hoi-voice template texts (subjects + bodies + which params each one consumes), see `docs/cal-eu-setup.md` § "The 5 Hoi-voice email templates".
 
 ### Phase H - Send a test email (proves end-to-end)
 
@@ -379,7 +379,7 @@ The `bw sync` is non-optional for items created in the same session - without it
 
 **Note on cadence iteration**: template 6 was originally drafted at T-15min ("starting in 15 min" framing), bumped to T-30min, then T-1h, settled at **T-2h** (2026-05-08 design iteration with the host). Template subject + body were PUT-updated each time via `PUT /v3/smtp/templates/6` with `{subject, htmlContent}` in body - confirms Brevo's PUT endpoint accepts partial updates (other fields like `replyTo`, `sender`, `templateName` preserved). Template 6 also gained a `distinct_roles` line in body when the Cal.com event-type added the matching booking field 2026-05-08.
 
-The Worker (Path B in `docs/cal-com-setup.md`) will consume these template IDs.
+The Worker (Path B in `docs/cal-eu-setup.md`) will consume these template IDs.
 
 ## Lessons learned (the things that cost real time)
 
@@ -436,12 +436,12 @@ curl -s -X POST -H "api-key: $BREVO_API_KEY" -H "content-type: application/json"
 - [ ] Phase H: Test send delivered; SPF/DKIM/DMARC PASS confirmed in raw headers
 - [ ] Phase I: Gmail Send-as configured with the Brevo SMTP login (NOT account email); reply-from-same-address default set; round-trip test passed
 - [ ] 90-day rotation reminder set in calendar
-- [ ] Worker (Path B) deployed (separate runbook - `docs/cal-com-setup.md` § Path B)
+- [ ] Worker (Path B) deployed (separate runbook - `docs/cal-eu-setup.md` § Path B)
 
 ## Cross-references
 
 - `docs/email-routing-setup.md` - orchestrating runbook (Cloudflare inbound + Brevo outbound)
 - `docs/cloudflare-api-token-setup.md` - companion runbook, same scoped-credential discipline
-- `docs/cal-com-setup.md` - § "Path B" consumes Brevo API key for Worker-driven transactional sends
+- `docs/cal-eu-setup.md` - § "Path B" consumes Brevo API key for Worker-driven transactional sends
 - Brevo developer hub: https://developers.brevo.com/
 - Brevo API reference index: https://developers.brevo.com/reference

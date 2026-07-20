@@ -26,7 +26,7 @@ The consulting landing pages render external CTAs (Cal.com, optionally Stripe) w
 
 ## Replacement procedure (operator)
 
-1. Configure the live Cal.com event per consulting-ops#2 Phase 1 AC 1.1 (Mon-Fri 11:00-18:00 UK, on-the-hour-and-half slots, 10-min buffer, max 4/day, syncs to `hoiung@gmail.com`). Capture the live event URL.
+1. Configure the live Cal.com event per consulting-ops#2 Phase 1 AC 1.1 (Mon-Fri 12:00-15:00 UK, 30-min slots, 10-min buffer, max 3/day, syncs to `hoiung@gmail.com`). Capture the live event URL.
 2. Edit `data/consulting.yaml` and replace `OPERATOR_TODO_REPLACE_BEFORE_LAUNCH` in the `harness_architect.calcom_booking` field with the live URL. The Stripe field is removed entirely in V2 (no Stripe Payment Link until V2 cash-engine validates).
 3. Run `bash scripts/pre-publish.sh content/consulting/<slug>/` locally. All 9 checks must pass.
 4. Stage and commit. The pre-commit hook re-runs the yaml gate.

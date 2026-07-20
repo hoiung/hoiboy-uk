@@ -57,7 +57,7 @@ automation_services:
 harness_architect:
   # Live booking URL (replaced 2026-05-08 - Cal.com EU instance, event-type id 284432).
   # Pre-Worker (hoiboy-uk#28): bookings fire Cal.com's default emails; post-Worker:
-  # Brevo Hoi-voice templates take over. See docs/cal-com-setup.md for full setup.
+  # Brevo Hoi-voice templates take over. See docs/cal-eu-setup.md for full setup.
   calcom_booking: "https://cal.eu/hoiboyuk/discovery"
 
   # Company structure audit - day-rate basis.

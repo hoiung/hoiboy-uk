@@ -65,7 +65,7 @@ exclude = [
   # Cal.com booking pages (cal.eu is the EU-region host, cal.com the parent
   # service) intermittently return 403 Forbidden to lychee's user-agent
   # (anti-bot), so the booking URL https://cal.eu/hoiboyuk/discovery
-  # (docs/cal-com-setup.md) flakes CI non-deterministically and cascade-skips
+  # (docs/cal-eu-setup.md) flakes CI non-deterministically and cascade-skips
   # Deploy. Known-good anti-bot domain, same class as linkedin/cloudflare
   # above -- NOT a broken link.
   # consulting-ops#2 AC 0.4 interaction (intentional): this also suppresses

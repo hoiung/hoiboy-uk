@@ -170,13 +170,13 @@ Both halves of the stack are live and verified end-to-end.
 ### Pending
 
 - Gmail Send-as: still TBD (Phase I in `docs/brevo-api-setup.md`). UI-only, needs the SMTP login + key from BW.
-- Cloudflare Worker (Path B in `docs/cal-com-setup.md`): not yet built. Will consume the Brevo API key for transactional sends triggered by Cal.com webhooks.
+- Cloudflare Worker (Path B in `docs/cal-eu-setup.md`): not yet built. Will consume the Brevo API key for transactional sends triggered by Cal.com webhooks.
 
 ## Cross-reference
 
 - `docs/cloudflare-api-token-setup.md` - hoiboy.uk token history + DNS API procedure (generic token recipe relocated to `dotfiles/docs/runbooks/cloudflare-control.md`)
 - `docs/brevo-api-setup.md` - Brevo API + SMTP runbook + transactional templates
-- `docs/cal-com-setup.md` - Cal.com booking funnel + Path B Worker plan that consumes this email stack
+- `docs/cal-eu-setup.md` - Cal.com booking funnel + Path B Worker plan that consumes this email stack
 - `consulting-ops/playbook-harness-architect.md` - engagement playbook that consumes `hello@hoiboy.uk` as the canonical contact
 - `consulting-ops/replies.md` - reply templates that direct prospects to email at `hello@hoiboy.uk`
 - `data/consulting.yaml` `harness_architect.calcom_booking` - Cal.com URL replaces empty string post-Phase-1 (separate from email routing)

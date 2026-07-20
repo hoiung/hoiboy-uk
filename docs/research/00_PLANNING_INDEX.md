@@ -20,7 +20,7 @@ This folder maps the journey from "I have 22 years of blogs" to a live, Claude-m
 15. [15_LINKEDIN_PROMOTION.md](15_LINKEDIN_PROMOTION.md) .  LinkedIn promotion strategy for new posts.
 16. [16_AI_BOT_AND_SEO_POLICY.md](16_AI_BOT_AND_SEO_POLICY.md) .  AI bot + SEO crawl-policy decision record: per-class ALLOW verdict, training-vs-citation correction, Cloudflare operator checklist, deferred block-training variant.
 
-**Tooling not in the numbered trail**: the operator-only **meet-recorder** tool (`content/private/tools/meet-recorder/`, consulting-ops#8; noindex + sitemap-excluded) and the **consulting** shortcodes + landing pages (`content/consulting/`, `layouts/_shortcodes/consulting-cta.html`, `data/consulting.yaml`). These post-date the planning trail; see their in-tree sources plus `docs/cal-com-setup.md`.
+**Tooling not in the numbered trail**: the operator-only **meet-recorder** tool (`content/private/tools/meet-recorder/`, consulting-ops#8; noindex + sitemap-excluded) and the **consulting** shortcodes + landing pages (`content/consulting/`, `layouts/_shortcodes/consulting-cta.html`, `data/consulting.yaml`). These post-date the planning trail; see their in-tree sources plus `docs/cal-eu-setup.md`.
 
 (`08_FRONTMATTER_SCHEMA.md` deferred to Phase 1: with one stub post there is no schema yet. Phase 0 contract is captured as a header comment in `scripts/validate_frontmatter.py`.)
 

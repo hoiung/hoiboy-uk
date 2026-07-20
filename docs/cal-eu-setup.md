@@ -83,7 +83,7 @@ Expect HTTP 200 with `id`, `email`, `name`. Note the `id` (becomes `ownerId` in 
 
 A "Working hours" schedule is created automatically on signup, defaulting to Mon-Fri 09:00-17:00 in the timezone you picked at signup. Inspect first; PATCH if you want different hours.
 
-For hoiboy.uk we wanted Mon-Fri **11:00-18:00 Europe/London** (corrected 2026-05-08 - the auto-default 09:00-17:00 was rolled with by accident initially):
+For hoiboy.uk we run Mon-Fri **12:00-15:00 Europe/London** (set 2026-07-20 to reduce open slots; was 11:00-18:00, and the signup auto-default 09:00-17:00 before that):
 
 ```bash
 curl -s -X PATCH -H "Authorization: Bearer $CAL_API_KEY" \
@@ -94,7 +94,7 @@ curl -s -X PATCH -H "Authorization: Bearer $CAL_API_KEY" \
     "isDefault": true,
     "availability": [
       {"days": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
-       "startTime": "11:00", "endTime": "18:00"}
+       "startTime": "12:00", "endTime": "15:00"}
     ]
   }' "https://api.cal.eu/v2/schedules/42584"
 ```
@@ -171,10 +171,10 @@ curl -s -X PATCH -H "Authorization: Bearer ${CAL_API_KEY}" -H "cal-api-version: 
   -d '{"bookingWindow":{"type":"businessDays","value":30,"rolling":true}}' \
   "${CAL_BASE}/event-types/${EVENT_TYPE_ID}"
 
-# Per-day booking cap (4 bookings/day for hoiboy.uk)
+# Per-day booking cap (3 bookings/day for hoiboy.uk)
 curl -s -X PATCH -H "Authorization: Bearer ${CAL_API_KEY}" -H "cal-api-version: 2024-06-14" \
   -H "Content-Type: application/json" \
-  -d '{"bookingLimitsCount":{"day":4}}' \
+  -d '{"bookingLimitsCount":{"day":3}}' \
   "${CAL_BASE}/event-types/${EVENT_TYPE_ID}"
 ```
 
@@ -422,11 +422,21 @@ Google Meet: {MEETING_URL}
 | Username | `hoiboyuk` |
 | Booking URL | https://cal.eu/hoiboyuk/discovery |
 | Event type | id 284432, "20 min discovery call", slug `discovery`, 20 min, 10-min before/after buffers, 12h min notice, 30-day rolling booking window |
-| Daily booking cap | 4 per day (`bookingLimitsCount.day = 4`) |
-| Schedule | id 42584, Mon-Fri **11:00-18:00 Europe/London** (corrected from auto-default 09:00-17:00) |
+| Daily booking cap | 3 per day (`bookingLimitsCount.day = 3`) |
+| Schedule | id 42584, Mon-Fri **12:00-15:00 Europe/London** (updated 2026-07-20 from 11:00-18:00; signup auto-default was 09:00-17:00) |
 | Custom booking fields (4) | `company-name` (req), `ai-tool-today` (opt), `distinct-roles` (req - added 2026-05-08), `hope-to-get` (req textarea) |
 | Default location | Google Meet integration, credentialId 61497 |
 | Live test booking | id 1041405, uid `83GC1L3fhD5mwPKEna9vsa`, 2026-05-11 11:00 BST, Google Meet `https://meet.google.com/rdg-huya-vjr` - used to verify the booking flow + send Cal.com's default email so Hoi could compare against Brevo's Hoi-voice templates |
+
+### Availability update - 2026-07-20
+
+Operator narrowed the live discovery availability to reduce the number of open slots during the day, via the `app.cal.eu` dashboard:
+
+- Schedule window: **Mon-Fri 12:00-15:00 Europe/London** (was 11:00-18:00).
+- Daily booking cap: **3 per day** (was 4).
+- Time-slot interval: 30 min (effective spacing unchanged: 20-min event + 10-min buffer).
+
+The schedule PATCH example (Step 2) and the config table above reflect the new values. The 10-min before/after buffer and 12h minimum notice are unchanged. The lessons below reference the prior 11:00-18:00 / 4-per-day values as the write-time state and are left as historical record.
 
 ### Cadence iteration on operator brief (lessons in real-time)
 
@@ -474,6 +484,6 @@ Two distinct credential tiers with different rotation rules:
 
 ## File-of-record
 
-Primary: this file (`docs/cal-com-setup.md`).
+Primary: this file (`docs/cal-eu-setup.md`).
 Secondary (handover memory): `~/.claude/projects/-home-hoiung-DevProjects/memory/HANDOVER_consulting_ops_2_stage4_part3_2026-05-07.md` § "Cal.com setup (current state - Hoi-blocked)".
 Templates also duplicated in handover memory; if changed, update both.
