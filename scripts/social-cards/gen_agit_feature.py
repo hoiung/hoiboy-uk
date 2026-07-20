@@ -39,7 +39,7 @@ Usage:
   python3 scripts/social-cards/gen_agit_feature.py --section  # regenerate just the section index card
 Deps: rsvg-convert (librsvg), Pillow.
 """
-import subprocess, sys, html, base64, io, pathlib
+import subprocess, sys, html, base64, io, pathlib, re
 from PIL import Image, ImageOps, ImageDraw, ImageFont
 from card_common import font_face
 
@@ -343,13 +343,21 @@ def find_source(slug):
     return hits[0]
 
 
+def _numbered_name(slug, name):
+    """Prefix the display name with the feature number parsed from the slug
+    (`1-jane-smith-data-engineer` -> "#1 Jane Smith ..."), so the share card
+    mirrors the page title `#N <Name>`. Un-numbered slugs render name unchanged."""
+    m = re.match(r"(\d+)-", slug)
+    return f"#{m.group(1)} {name}" if m else name
+
+
 def generate(slug, name, role):
     photo = _load_photo(find_source(slug))
     bundle = OUTDIR / slug
     if not bundle.is_dir():
         sys.exit(f"feature bundle not found: {bundle}")
     build_hero(photo, bundle / "hero.jpg")
-    build_share_card(photo, name, role, bundle / "share-card.png")
+    build_share_card(photo, _numbered_name(slug, name), role, bundle / "share-card.png")
     print(f"  {slug}: hero.jpg + share-card.png")
 
 

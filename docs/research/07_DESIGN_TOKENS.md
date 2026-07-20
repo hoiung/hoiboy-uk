@@ -121,7 +121,7 @@ The Asians & Gingers in Tech community features (`content/community/agit-feature
 
 ### Type
 
-- **Name:** VT323 (pixel/retro), up to **80px**, auto-shrinks to fit the panel (floor 12px) and wraps to at most 2 lines. Same face as the consulting card titles.
+- **Name:** VT323 (pixel/retro), up to **80px**, auto-shrinks to fit the panel (floor 12px) and wraps to at most 2 lines. Same face as the consulting card titles. **The name is auto-prefixed with the feature number** parsed from the slug (`1-hoi-aka-hoiboy-...` renders as `#1 Hoi aka Hoiboy`), so the card mirrors the page title `#N <Name>`; un-numbered slugs render the plain name. The `agit-features.tsv` name column stays the plain name (the number is derived, never stored twice).
 - **Role:** IBM Plex Mono, up to **28px**, same auto-fit behaviour.
 - **Eyebrow** (`ASIANS & GINGERS IN TECH`): IBM Plex Mono Bold, **18px**, letter-spacing stretched to span the panel width.
 
