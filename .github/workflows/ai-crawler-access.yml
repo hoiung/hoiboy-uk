@@ -26,17 +26,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Record the tri-state exit code without letting it end the job here, so
+      # the summary below always runs. The verdict step decides red vs green.
       - name: Probe live AI-crawler access
-        # continue-on-error keeps this advisory. The step's own exit code is
-        # still surfaced in the log and in the summary below.
-        continue-on-error: true
         id: probe
-        run: bash scripts/check-ai-crawler-access.sh
+        run: |
+          set +e
+          bash scripts/check-ai-crawler-access.sh
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+          exit 0
 
       - name: Summarise
         if: always()
         env:
-          OUTCOME: ${{ steps.probe.outcome }}
+          OUTCOME: ${{ steps.probe.outputs.code == '0' && 'success' || 'failure' }}
         run: |
           {
             printf '## AI crawler access probe\n\n'
@@ -56,3 +59,29 @@ jobs:
               printf 'Detail: `docs/research/16_AI_BOT_AND_SEO_POLICY.md`\n'
             fi
           } >> "$GITHUB_STEP_SUMMARY"
+
+      # The verdict. This is the whole point of the job: a confirmed block must
+      # turn the run RED so it notifies. Marking the step advisory would make a
+      # 6-of-6 block report a green tick and reproduce the exact silence this
+      # workflow exists to break (unnoticed 2026-05-31 to 2026-07-20).
+      #
+      # The job is non-blocking BY CONSTRUCTION: schedule + workflow_dispatch
+      # only, no push or pull_request trigger, so it can never gate a commit or
+      # a deploy. Red here means "go look at the dashboard", not "stop shipping".
+      #
+      # Exit 2 is deliberately NOT red: it means the probe could not tell
+      # (network, origin error), and crying wolf on an inconclusive run is how a
+      # standing alert gets ignored.
+      - name: Verdict
+        if: always()
+        env:
+          CODE: ${{ steps.probe.outputs.code }}
+        run: |
+          case "$CODE" in
+            0) printf 'PASS: no citation-class crawler is blocked.\n' ;;
+            1) printf >&2 'FAIL: a citation-class crawler is blocked at the edge.\n'
+               printf >&2 'Operator action required in the Cloudflare dashboard; see the job summary.\n'
+               exit 1 ;;
+            2) printf '::warning::AI crawler probe could not complete (exit 2). Verdict withheld, not a confirmed block.\n' ;;
+            *) printf >&2 'Unexpected probe exit code: %s\n' "$CODE"; exit 1 ;;
+          esac
