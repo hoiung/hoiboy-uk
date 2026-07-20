@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, practice, methodology, technique, learning]
 source_file: "voice-corpus/blogs/31_key-to-effective-zouk-practice.md"
 source_era: "ZoukBase (WordPress)"
+description: "Most people quit practice because it bores them. Using emotional energies from Darwin and a 1 to 5 beat count to make solo practice hold attention."
 ---
 What seems to be stopping people from practicing is "boredom". They've tried practicing but gave up quickly because they got "bored".
 
