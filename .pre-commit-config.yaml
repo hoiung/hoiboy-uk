@@ -31,8 +31,8 @@ repos:
       # title/date/categories/tags/description, project pages require
       # title/description. `description` is REQUIRED since blog-priv#55
       # Phase 2 - without it a page inherits the site-default meta
-      # description and becomes a near-duplicate answer engines cannot
-      # tell apart. The files: regex must cover content/consulting/ too,
+      # description and ships as a near-duplicate. SEO hygiene, not a GEO
+      # lever. The files: regex must cover content/consulting/ too,
       # or the gate never fires on a new project page.
       - id: frontmatter-validator
         name: Validate post and project-page frontmatter (incl. description)
