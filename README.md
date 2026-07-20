@@ -53,6 +53,7 @@ hoiboy-uk/
    ---
    title: "Post title"
    date: 2026-04-07
+   description: "One unique sentence for search and social. Required: the gate rejects a post without one."
    categories: [food]
    tags: [ramen, tokyo]
    slug: post-slug
