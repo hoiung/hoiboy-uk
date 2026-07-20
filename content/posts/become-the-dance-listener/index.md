@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, dance, teaching, workshop, musicality]
 source_file: "voice-corpus/blogs/20_dance-listener-3-dance-approach.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "The 3 Dance Approach for turning an average Zouk dancer into an exceptional one. Dance Whispering, body isolations, and why listening beats leading."
 ---
 **Do you want to know the secret between the average Zouk dancer and an exceptional Zouk dancer?**
 
