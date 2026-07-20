@@ -256,7 +256,7 @@ pre-commit install
 
 See `docs/AUTHORING.md` for the full contract: frontmatter rules, image placement, heading hierarchy, voice rules, link rules, publish checklist. Quick version:
 
-1. `content/posts/<slug>/index.md` with frontmatter: `title`, `date`, `categories: [<one of food-booze, adventure, dance, tech-ai, life, entrepreneurship, trading>]`, `tags: [...]`
+1. `content/posts/<slug>/index.md` with frontmatter: `title`, `date`, `description` (**required** since blog-priv#55: the gate rejects a post without one, at pre-commit and in CI), `categories: [<one of food-booze, adventure, dance, tech-ai, life, entrepreneurship, trading>]`, `tags: [...]`
 2. Images in same folder as `index.md`, referenced by relative path with mandatory alt text
 3. For any new prose (date >= 2026-04-07) written in Hoi's voice: RAG from `docs/research/11_VOICE_PROFILE.md` (in-repo) AND `../dotfiles/voice/base/VOICE_PROFILE.md` (canonical) BEFORE drafting (no generic outputs, ever)
 4. Commit, push. CI runs, then deploy hook fires, then live in ~90 seconds
