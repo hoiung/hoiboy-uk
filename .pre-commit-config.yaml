@@ -27,12 +27,19 @@ repos:
 
   - repo: local
     hooks:
+      # Validates the frontmatter contract on BOTH trees: posts require
+      # title/date/categories/tags/description, project pages require
+      # title/description. `description` is REQUIRED since blog-priv#55
+      # Phase 2 - without it a page inherits the site-default meta
+      # description and becomes a near-duplicate answer engines cannot
+      # tell apart. The files: regex must cover content/consulting/ too,
+      # or the gate never fires on a new project page.
       - id: frontmatter-validator
-        name: Validate post frontmatter
+        name: Validate post and project-page frontmatter (incl. description)
         entry: python3 scripts/validate_frontmatter.py
         language: system
         pass_filenames: false
-        files: ^content/posts/.*\.md$
+        files: ^content/(posts|consulting)/.*\.md$
       - id: config-traceability
         name: Config traceability check
         entry: python3 scripts/check_config_traceability.py
