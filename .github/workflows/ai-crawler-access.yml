@@ -61,6 +61,21 @@ jobs:
               printf 'All citation-class crawlers reachable.\n\n'
               printf 'This means they are NOT blocked. It does not mean the site is cited;\n'
               printf 'no reliable method for measuring AI citation currently exists.\n'
+            elif [ "$OUTCOME" != "blocked" ]; then
+              # The case above can produce `unknown`, and this branch has to
+              # exist for it. The probe script only ever exits 0, 1 or 2, so
+              # anything else means the script did not run to a verdict at all
+              # (renamed path, permission error, killed step: bash returns 126,
+              # 127, 143). Falling through to the blocked text below would
+              # assert a crawler denial nobody observed and send the operator
+              # to the Cloudflare dashboard to fix the wrong system, while the
+              # real fault, a broken invocation, went unread. The Verdict step
+              # already handles this correctly; the summary is the more visible
+              # surface and was contradicting it (Ralph round 20).
+              printf 'The probe did not run to a verdict. Exit %s is outside the\n' "$CODE"
+              printf 'scripts tri-state contract of 0, 1 or 2, so no crawler was\n'
+              printf 'classified. This is NOT a block: check the Probe step log for a\n'
+              printf 'missing script path, a permission error or a killed step.\n'
             else
               printf 'At least one citation-class crawler is blocked.\n\n'
               printf 'An access denial guarantees zero citation from that engine. No repo change can fix it.\n'
