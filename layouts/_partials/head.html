@@ -4,6 +4,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ $title }}</title>
 <meta name="description" content="{{ $desc }}">
+{{- /* `noindex: true` in a page's frontmatter was inert until blog-priv#55
+     Ralph round 15: no layout consumed it, so a page carrying it relied
+     entirely on an X-Robots-Tag rule in static/_headers matching its path.
+     This is the same mechanism Phase 7 chose (noindex, not a robots.txt
+     Disallow), delivered a second way, so it does not reintroduce the
+     two-mechanisms-cancelling problem that phase fixed. */ -}}
+{{- if .Params.noindex }}
+<meta name="robots" content="noindex, nofollow">
+{{- end }}
 <meta name="author" content="{{ site.Params.author }}">
 <link rel="canonical" href="{{ .Permalink }}">
 {{- with .OutputFormats.Get "rss" }}
