@@ -71,23 +71,56 @@ A production build (`hugo --gc --minify -e production`) resolves this to a `publ
 
 Note that robots.txt is advisory (honor-system) only. Some user-triggered fetchers state plainly that robots.txt rules may not apply to them, and at least one crawler has been accused of ignoring directives entirely. The repo file records intent and is honored by the well-behaved search and citation bots; it is not a hard enforcement layer.
 
-## Cloudflare operator checklist (network-level enforcement)
+## Cloudflare edge state (MEASURED 2026-07-20, and it FAILS)
 
-robots.txt is advisory; Cloudflare is the only layer that hard-enforces at the network edge. Because the dashboard state cannot be read from this repo, the owner should confirm these four settings once in the Cloudflare dashboard for the hoiboy.uk zone:
+robots.txt is advisory; Cloudflare is the only layer that hard-enforces at the network edge. This section previously held a four-point checklist for the owner to confirm "once". That checklist was written 2026-05-31 and never performed. It is replaced here with an actual measurement, plus a standing gate so the state cannot go unverified again.
+
+**Result** (blog-priv#55 Phase 10, via `scripts/check-ai-crawler-access.sh`, 2026-07-20):
+
+| Class | Bot | Status |
+|---|---|---|
+| CITATION | OAI-SearchBot | 403 blocked |
+| CITATION | ChatGPT-User | 403 blocked |
+| CITATION | Claude-SearchBot | 403 blocked |
+| CITATION | Claude-User | 403 blocked |
+| CITATION | PerplexityBot | 403 blocked |
+| CITATION | Perplexity-User | 403 blocked |
+| TRAINING | GPTBot | 403 blocked |
+| TRAINING | ClaudeBot | 403 blocked |
+| TRAINING | CCBot | 403 blocked |
+| TRAINING | Google-Extended | 200 ok |
+| TRAINING | meta-externalagent | 403 blocked |
+
+**All six citation-class crawlers are blocked.** The same URL returns 200 to a plain browser user-agent and to an empty user-agent, so this is user-agent-based blocking at the edge, not an outage. Ruled out rate limiting by re-probing in isolation with 3-second gaps and by repeating runs; the 403s are deterministic. The Google crawler family is the sole exception, with `Google-Extended` and a `Googlebot` control both returning 200, so it is allow-listed as a verified bot.
+
+**This value moved between two probes on the same day.** An earlier probe during Stage 3 of blog-priv#55 recorded OAI-SearchBot at 200 and four of five training crawlers at 200. The measurement above, taken a few hours later, found six of six citation crawlers blocked and four of five training crawlers blocked. Both readings are kept on purpose: the state is not stable, and no single reading should be treated as the settled value. Any figure here is valid only for its timestamp, which is the argument for the scheduled gate rather than another one-time check.
+
+**The previous low-risk reasoning was wrong.** This section used to argue that Cloudflare's 2025 "Content Independence Day" AI-block default applied only to newly-onboarded domains, so an established zone was low risk and the check was merely "worth doing". The zone is in fact blocking. Reasoning about a vendor default is not a substitute for measuring the live state.
+
+### Operator ruling: training vs citation (2026-07-20)
+
+The owner's position, verbatim: *"I dont mind training with our site as long as our sites are cited for it."*
+
+**That condition is not expressible as configuration.** Training and citation are separate bot classes (see the crawler-class table earlier in this document, sourced to the OpenAI, Anthropic and Perplexity crawler docs). A training crawl never emits a citation, and no vendor offers a cite-for-training contract. The ruling is therefore recorded as an aspiration, not as a control. It decomposes into two independent settings, and the decision on both is ALLOW.
+
+Note the current state is close to the inverse of that intent: the citation pathway is shut while a training crawler remains allowed.
+
+### Fixing it (dashboard only; no repo change can)
+
+In the Cloudflare dashboard for the hoiboy.uk zone:
 
 1. **Block AI bots**: confirm this managed toggle is OFF (if ON, it blocks AI crawlers at the edge regardless of robots.txt). https://developers.cloudflare.com/bots/additional-configurations/block-ai-bots/
-2. **AI Crawl Control**: confirm the AI crawlers are set to Allow (this feature offers per-crawler Allow or Block on all plans, including Free). https://developers.cloudflare.com/ai-crawl-control/features/manage-ai-crawlers/
-3. **managed-robots.txt**: confirm Cloudflare's managed-robots.txt feature is OFF, so it does not inject its own block rules over the repo-served file.
-4. **Bot Fight Mode**: confirm Bot Fight Mode (or Super Bot Fight Mode) is either off or configured to skip verified bots, so legitimate search and citation crawlers are not challenged.
+2. **AI Crawl Control**: set the AI crawlers to Allow (per-crawler Allow or Block is available on all plans, including Free). https://developers.cloudflare.com/ai-crawl-control/features/manage-ai-crawlers/
+3. **managed-robots.txt**: confirm it is OFF, so it does not inject block rules over the repo-served file.
+4. **Bot Fight Mode**: confirm Bot Fight Mode (or Super Bot Fight Mode) is off or configured to skip verified bots, so legitimate search and citation crawlers are not challenged.
 
-Then verify the served file directly from a terminal:
+Record which of the four was the cause. Then re-run `bash scripts/check-ai-crawler-access.sh`; it exits 0 when every citation-class crawler is reachable.
 
-```
-curl https://hoiboy.uk/robots.txt
-curl -A "GPTBot" https://hoiboy.uk/robots.txt
-```
+### Standing gate
 
-Both should return the allow-all file with the Sitemap line, and the second confirms Cloudflare is not serving a different (blocked) file to an AI user-agent. Note: the "Content Independence Day" AI-block default that Cloudflare announced in 2025 applied only to newly-onboarded domains as a prompted choice at sign-up; pre-existing zones were not auto-flipped, so for an established zone the risk is low, but the one-time check is still worth doing.
+`scripts/check-ai-crawler-access.sh` exits non-zero while any citation-class crawler is blocked. `.github/workflows/ai-crawler-access.yml` runs it weekly and on demand, non-blocking, because an edge setting can regress with no repo change and nothing in the repo would show it.
+
+**Honesty bound.** Unblocking is necessary, not sufficient. A 403 guarantees zero citation from that engine; removing it guarantees nothing in return. No reliable method for measuring AI citation currently exists, so success here is "the crawlers are no longer blocked", never "we are now cited".
 
 ## Deferred variant: block training only (NOT built now)
 
