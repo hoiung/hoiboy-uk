@@ -161,8 +161,8 @@ jobs:
       # Posts require title/date/categories/tags/description; project pages
       # under content/consulting/ require title/description. `description` is
       # REQUIRED since blog-priv#55 Phase 2: without it a page inherits the
-      # site-default meta description and becomes a near-duplicate that answer
-      # engines cannot tell apart. Bare invocation covers both trees.
+      # site-default meta description and ships as a near-duplicate. SEO
+      # hygiene, not a GEO lever. Bare invocation covers both trees.
       - name: Frontmatter validator (posts + project pages, incl. description)
         run: python3 scripts/validate_frontmatter.py
 
