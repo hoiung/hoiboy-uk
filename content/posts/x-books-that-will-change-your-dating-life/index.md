@@ -5,6 +5,7 @@ categories: [life]
 tags: [dating, books, reading-list]
 source_file: "voice-corpus/blogs/02_books-that-will-change-your-dating-life.md"
 source_era: "iD8u (Google Docs)"
+description: "A reading list that starts where The Game left off: Neil Strauss, Marni Kinrys on Get Inside Her, Cialdini on Influence and Carol Dweck on Mindset."
 ---
 
 {{< draft-notice >}}
