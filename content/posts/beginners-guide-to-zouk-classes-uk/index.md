@@ -5,6 +5,7 @@ categories: [dance]
 tags: [dance, zouk, beginners, guide, uk, london]
 source_file: "voice-corpus/blogs/09_beginners-guide-zouk-classes-uk.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "Where to find Zouk classes and socials across the UK, from Tiger Tiger on Haymarket to La Tasca on Deansgate and the Sheffield university group."
 ---
 
 ## A Beginners Guide to Zouk Classes in UK
