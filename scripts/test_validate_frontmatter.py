@@ -648,3 +648,41 @@ def test_valid_list_shapes_still_pass(monkeypatch, tmp_path):
     monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
     monkeypatch.setattr(vf, "ROOT", tmp_path)
     assert vf.main(["--scope", "posts"]) == 0
+
+
+def test_lastmod_earlier_than_date_is_rejected(monkeypatch, tmp_path, capsys):
+    # Phase 8 of this issue added the lastmod convention and gated nothing, so
+    # a lastmod before date shipped silently: gate exit 0, Hugo exit 0, and the
+    # page published JSON-LD dateModified BEFORE datePublished. Ralph round 24.
+    posts = tmp_path / "posts"
+    inverted = POST_FM.replace("date: 2026-04-07", "date: 2026-04-07\nlastmod: 2026-01-01")
+    _bundle(posts, "inverted", inverted)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 1
+    assert "precedes date" in capsys.readouterr().err
+
+
+def test_lastmod_after_date_passes(monkeypatch, tmp_path):
+    # The false-failure guard: a real revision is the whole point of the field.
+    posts = tmp_path / "posts"
+    ok = POST_FM.replace("date: 2026-04-07", "date: 2026-04-07\nlastmod: 2026-07-20")
+    _bundle(posts, "revised", ok)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 0
+
+
+def test_duplicate_categories_are_rejected(monkeypatch, tmp_path, capsys):
+    # The category renders once per entry, so the built page visibly shows it
+    # twice. Ralph round 24; cosmetic but a human notices it on the live page.
+    posts = tmp_path / "posts"
+    dup = POST_FM.replace("categories: [tech-ai]", "categories: [tech-ai, tech-ai]")
+    _bundle(posts, "dup", dup)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 1
+    assert "duplicate categories" in capsys.readouterr().err
