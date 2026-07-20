@@ -162,21 +162,18 @@ jobs:
       # under content/consulting/ require title/description. `description` is
       # REQUIRED since blog-priv#55 Phase 2: without it a page inherits the
       # site-default meta description and ships as a near-duplicate. SEO
-      # hygiene, not a GEO lever. Bare invocation covers both trees.
+      # hygiene, not a GEO lever. This step covers the posts tree only; the
+      # project-page tree is the separate, disjoint step below.
       - name: Frontmatter validator (posts, incl. description)
         run: python3 scripts/validate_frontmatter.py --scope posts
 
-      # Project-page scope reported separately so a consulting/portfolio failure
-      # is attributable without reading the whole-tree output. `if: always()`
-      # matters: without it GHA skips this step whenever the whole-tree step
-      # above failed, which is precisely the run where the attribution is
-      # wanted, leaving the step able to report only when it has nothing to say.
       # Disjoint from the posts step above; the two together cover the whole
-      # tree exactly once. They were previously nested (bare run, then a subset
-      # re-run), which made this step unable to fail independently. `if: always()`
-      # still matters: without it GHA skips this step whenever the posts step
-      # failed, and now that the scopes are disjoint that would genuinely lose
-      # coverage rather than just lose an attribution label.
+      # tree exactly once. They were previously nested (a bare whole-tree run,
+      # then a subset re-run), which made this step unable to fail
+      # independently. `if: always()` is load-bearing: without it GHA skips
+      # this step whenever the posts step failed, and now that the scopes are
+      # disjoint that would drop project-page coverage entirely rather than
+      # just lose an attribution label. Guarded by tests/test_gate_wiring.py.
       - name: Frontmatter validator (project pages, incl. description)
         if: always()
         run: python3 scripts/validate_frontmatter.py --scope consulting
