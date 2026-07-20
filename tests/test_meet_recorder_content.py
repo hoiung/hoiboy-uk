@@ -53,6 +53,15 @@ def test_frontmatter_safety_flags(frontmatter_and_body):
     assert fm.get("noindex") is True, "noindex must be true for operator-only tool"
     assert fm.get("sitemap", {}).get("disable") is True, "sitemap must be disabled"
     assert fm.get("hideDate") is True, "hideDate true (no public timestamp)"
+    # build.list: never is what keeps the rendered body out of public/index.xml.
+    # sitemap.disable does NOT cover the RSS feed, which is advertised from every
+    # page via <link rel="alternate">, so dropping this flag silently restores the
+    # exact /private/ leak blog-priv#55 Ralph round 15 closed. This guard pinned
+    # the other three flags and not this one, so the leak could have returned
+    # green. Caught by the Stage 5 audit.
+    assert fm.get("build", {}).get("list") == "never", (
+        "build.list must be 'never' or the page body re-enters the RSS feed"
+    )
 
 
 def test_verbatim_consent_script_intact(frontmatter_and_body):
