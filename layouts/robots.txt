@@ -5,14 +5,26 @@
   and a URL discovered elsewhere can still be indexed. noindex is the stronger
   guarantee but only works on a crawlable route.
 
-  Known and accepted trade-off: X-Robots-Tag noindex is a SEARCH-INDEX
-  directive. It is not the documented opt-out for AI TRAINING crawlers, which
-  is robots.txt. So dropping the Disallow also drops the only training-crawler
-  control over /private/. Accepted because the page holds no secrets and the
-  operator has said he does not mind training use "as long as our sites are
-  cited for it" (doc 16 records that verbatim and classifies it as an
-  aspiration, not a control; the citation condition is currently unmet, since
-  all six citation-class crawlers are blocked at the edge).
+  What this template emits is NOT what the site serves. Cloudflare managed
+  robots.txt is ON for this zone and PREPENDS its own block ahead of
+  everything below: a Content-Signal line plus a `Disallow: /` group for nine
+  training crawlers, none of which appear in this file. Editing here cannot
+  remove them. Fetch https://hoiboy.uk/robots.txt before reasoning about what
+  any crawler actually sees. cuarchitects.co.uk documents the same prepend.
+
+  Training-crawler control over /private/ (rationale corrected 2026-07-20):
+  this block used to say that dropping the Disallow left no training-crawler
+  control over /private/, accepted because the operator did not mind training
+  use "as long as our sites are cited for it", and because the citation
+  condition was unmet with all six citation-class crawlers blocked at the
+  edge. Every part of that is now stale. The operator reversed the position:
+  training is blocked whether or not a citation follows, because no vendor
+  offers a cite-for-training contract. The citation class is no longer
+  blocked (the probe PASSes 6 of 6). And the prepended `Disallow: /` is
+  site-wide, so /private/ is now covered against those nine crawlers.
+  X-Robots-Tag noindex is still a SEARCH-INDEX directive doing no
+  training-crawler work; what changed is that robots.txt now does it.
+  Standing policy and zone settings: docs/research/16_AI_BOT_AND_SEO_POLICY.md
 
   No page links to /private/: the section index is headless, it is absent from
   the sitemap, and no content file references the path. A public post describes
