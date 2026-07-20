@@ -31,12 +31,14 @@
 #   8. Rendered links    (lychee on rendered HTML NOT raw .md — catches broken
 #                         cross-section links + missing assets that markdown-only
 #                         lychee cannot see. CAVEAT: lychee.toml exclude_path
-#                         contains "public/posts", so for a POST target this gate
-#                         checks zero links and still reports PASS — it is
-#                         vacuous for posts and only really fires for
-#                         public/consulting/<slug>/ per AC 0.4. The exclusion is
-#                         deliberate and predates blog-priv#55; narrowing it is
-#                         its own scoped change, not a comment fix.)
+#                         contains BOTH "public/posts" AND "content/posts", so
+#                         for a POST target this gate checks zero links and
+#                         still reports PASS, and so does the CI markdown-level
+#                         lychee. NEITHER tier checks a post; post links must be
+#                         verified by hand. This gate only really fires for
+#                         public/consulting/<slug>/ per AC 0.4. Both exclusions
+#                         are deliberate and predate blog-priv#55; narrowing
+#                         them is its own scoped change, not a comment fix.)
 #   8a.Consulting links  (consulting_link_check: live external-URL liveness)
 #
 # Checks 6+7 added per dotfiles Issue #447 Phase 7 (AP #18 per-shape recipe
@@ -148,8 +150,8 @@ run_check "frontmatter" python3 scripts/validate_frontmatter.py
 #     instead of being buried in the whole-tree result. Mirrors how the
 #     social-card guard is wired twice (source at 4b, rendered at 7a).
 #     `description` is REQUIRED here: without it a project page inherits the
-#     site-default meta description and becomes a near-duplicate that answer
-#     engines cannot tell apart (blog-priv#55 AC 2.3/2.6).
+#     site-default meta description and ships as a near-duplicate
+#     (blog-priv#55 AC 2.3/2.6). SEO hygiene, not a GEO lever.
 run_check "frontmatter-project-pages" python3 scripts/validate_frontmatter.py --scope consulting
 
 # 4b. Social-card guard (whole-tree): every singular indexable page must be a
