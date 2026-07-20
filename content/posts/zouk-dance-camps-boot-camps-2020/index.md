@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, camps, congresses, learning, travel]
 source_file: "voice-corpus/blogs/36_zouk-dance-camps-boot-camps-2020.md"
 source_era: "ZoukBase (WordPress)"
+description: "A 2020 listing of Brazilian Zouk camps and bootcamps, from Bruno and Raiza in Calgary and Berlin to Anderson and Brenda in Andrychow and ZNY Slovakia."
 ---
 Brazilian Zouk dance camps and boot camps is a **new era** and have become an essential learning tool and an asset contributing to the healthy growth of our beloved Brazilian Zouk community. They offer a controlled environment with a smaller number of students, teacher's attention, progressive learning, learning structure and more; all of which help deliver a more in-depth, higher quality and effective personal dance development.
 
