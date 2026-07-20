@@ -5,6 +5,15 @@ noindex: true
 hideDate: true
 sitemap:
   disable: true
+# Keep the page OUT of every list page and out of the RSS feed, while still
+# rendering it so the operator can reach it by direct URL. Without this, Hugo
+# puts the full rendered body of this page into public/index.xml, which is
+# advertised from every page via <link rel="alternate"> and is matched by no
+# X-Robots-Tag rule in static/_headers. The sitemap exclusion above does not
+# cover the feed. Found in Ralph round 15 of blog-priv#55.
+build:
+  list: never
+  render: always
 ---
 
 <noscript>This tool requires JavaScript and a Chromium browser. Open in Chrome / Edge / Brave.</noscript>
