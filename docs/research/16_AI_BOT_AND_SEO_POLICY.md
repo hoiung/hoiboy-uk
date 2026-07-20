@@ -157,7 +157,7 @@ robots.txt is not the thing to obsess over. This section previously presented th
 
 **Retracted.** An earlier revision of this section attributed materially more AI citations to writing in roughly 120-to-180-word sections under clear headings, on the authority of a study that appears nowhere in the Sources list below. That citation claim is withdrawn. Section length may still be a sound writing-craft preference; it is simply not evidence-backed as a GEO lever. Withdrawing the claim is a statement about the evidence, not a finding that the practice fails to help.
 
-**Unsourced.** Visible author and credential signals, and freshness. Both were asserted here with no source, and the superseding brief does not address either one, so both remain unsourced on this record. The brief's silence on a tactic is not a positive finding about it in either direction.
+**Unsourced.** Visible author and credential signals, and freshness. Both were asserted here with no source, and the superseding brief never evaluates either as a citation factor, so both remain unsourced on this record. (The brief does mention freshness once, in its own summary of this retraction. That is a description of the claim being withdrawn here, not independent support for it, and neither signal appears in the brief's `coverage_gaps` list.) The brief's silence on a tactic is not a positive finding about it in either direction.
 
 A note for completeness: `llms.txt` was considered and deliberately not built, because no major AI vendor honors it as of 2026, so it would be effort with no consumer.
 
