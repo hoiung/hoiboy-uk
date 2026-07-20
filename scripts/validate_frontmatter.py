@@ -65,8 +65,35 @@ def parse_frontmatter(text: str) -> dict[str, object] | None:
     body = text[3:end].strip()
     out: dict[str, object] = {}
     current_key: str | None = None
+    # Open block scalar (`description: >` / `|`), if any. Tracked as state so
+    # the single pass below can fold the indented continuation lines into the
+    # value. Without this a block scalar parsed to the literal indicator ">",
+    # which is non-empty, so an EMPTY one counted as a present description
+    # while Hugo resolved it to "" and served the site default (Ralph round 17).
+    # Treating a bare ">" as empty without also reading the continuation would
+    # just trade that for a false failure on a block scalar that DOES have text.
+    block_key: str | None = None
+    block_lines: list[str] = []
+    block_indent: int | None = None
+
+    def close_block() -> None:
+        nonlocal block_key, block_lines, block_indent
+        if block_key is not None:
+            out[block_key] = " ".join(x for x in block_lines if x).strip()
+        block_key, block_lines, block_indent = None, [], None
+
     for raw in body.splitlines():
         line = raw.rstrip()
+        if block_key is not None:
+            if not line.strip():
+                continue
+            indent = len(raw) - len(raw.lstrip())
+            if block_indent is None and indent > 0:
+                block_indent = indent
+            if block_indent is not None and indent >= block_indent:
+                block_lines.append(line.strip())
+                continue
+            close_block()  # dedented: the block ended, parse this line normally
         if not line or line.startswith("#"):
             continue
         # Block-list item belonging to the key above:
@@ -119,9 +146,17 @@ def parse_frontmatter(text: str) -> dict[str, object] | None:
                 # non-empty either way - so it is recorded, not fixed here.
                 if value in ("null", "Null", "NULL", "~") or value.startswith("#"):
                     out[key] = ""
+                elif re.fullmatch(r"[>|][-+]?\d*", value):
+                    # Block scalar. Provisionally empty; the continuation lines
+                    # collected above replace this when the block closes.
+                    out[key] = ""
+                    block_key, block_lines, block_indent = key, [], None
+                    current_key = key
+                    continue
                 else:
                     out[key] = value
             current_key = key
+    close_block()
     return out
 
 
