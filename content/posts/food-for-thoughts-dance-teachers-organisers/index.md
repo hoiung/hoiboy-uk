@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, teaching, community, organisers, reflection]
 source_file: "voice-corpus/blogs/27_food-for-thoughts-dance-teachers-organisers.md"
 source_era: "ZoukBase (WordPress)"
+description: "Who owns a dance concept once it travels? Patents do not cross borders, royalties are unresolved, and market dilution is the risk nobody prices in."
 ---
 Structured programmes such as Zouk dance camps and boot camps are a **new era** and becoming widely popular and for many positive reasons. It’s amazing seeing our community heading this direction because of artists and organisers who have invested their time, blood, sweat and yes lots of money to help grow our passion for Brazilian Zouk.
 
