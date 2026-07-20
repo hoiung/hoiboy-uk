@@ -312,6 +312,30 @@ def check_tree(root: Path, required: set[str], check_categories: bool,
                         f"{md.relative_to(ROOT)}: unknown categories {sorted(unknown)} "
                         f"(allowed: {sorted(ALLOWED_CATEGORIES)})"
                     )
+                lowered = [c.lower() for c in cats]
+                dupes = sorted({c for c in lowered if lowered.count(c) > 1})
+                if dupes:
+                    failures.append(
+                        f"{md.relative_to(ROOT)}: duplicate categories {dupes}; "
+                        f"the category renders once per entry, so the page shows it twice"
+                    )
+        # `lastmod` earlier than `date` publishes JSON-LD dateModified BEFORE
+        # datePublished, and an `article:modified_time` that predates the post.
+        # Phase 8 of this issue added the lastmod convention but gated nothing,
+        # so the contradiction shipped silently: gate exit 0, Hugo exit 0
+        # (Ralph round 24). That matters here specifically because the whole
+        # issue is about machine-readable trust signals, and a modified-before-
+        # published pair is the kind of incoherence a consumer can check.
+        # String compare is correct for ISO 8601, which is why the convention
+        # requires that format; anything unparseable is left to the Hugo build,
+        # which rejects a non-parsable date loudly.
+        lastmod, date = fm.get("lastmod"), fm.get("date")
+        if isinstance(lastmod, str) and isinstance(date, str) and lastmod and date:
+            if lastmod[:10] < date[:10]:
+                failures.append(
+                    f"{md.relative_to(ROOT)}: lastmod {lastmod[:10]} precedes date "
+                    f"{date[:10]}; that publishes dateModified before datePublished"
+                )
     return failures, len(md_files)
 
 
