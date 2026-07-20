@@ -1,13 +1,19 @@
 #!/bin/bash
 # Pre-publish gate aggregator for hoiboy.uk new blog posts.
 #
-# Runs 11 sequential checks fail-fast on first non-zero exit:
+# Runs 14 sequential gates fail-fast on first non-zero exit:
 #   1. Consulting YAML   (data/consulting.yaml MUST NOT contain OPERATOR_TODO
 #                         substring — global gate, blocks publish whenever a
 #                         placeholder URL is unreplaced. consulting-ops#2 AC 0.2.)
 #   2. Em-dash grep      (any U+2014 = fail)
 #   3. Voice tells       (check-ai-writing-tells.py --check-only-new)
-#   4. Frontmatter       (validate_frontmatter.py — whole-tree)
+#   4. Frontmatter       (validate_frontmatter.py, whole-tree: content/posts/
+#                         plus content/consulting/)
+#   4a.Project pages     (validate_frontmatter.py --scope consulting, reported
+#                         as its own named gate so a project-page failure is
+#                         attributable without reading the whole-tree output.
+#                         `description` is REQUIRED on both trees since
+#                         blog-priv#55 Phase 2.)
 #   4b.Future date       (check_future_date.py — fail if date is future in the
 #                         site timeZone vs now-UTC; Hugo would silently drop a
 #                         future-dated post from the production build)
@@ -121,8 +127,17 @@ run_check "em-dash-zero" em_dash_check
 # 2. Voice tells (marker-driven; default skip; exit 0 = clean).
 run_check "voice-tells" python3 scripts/check-ai-writing-tells.py --check-only-new "$TARGET"
 
-# 3. Frontmatter validator (walks content/posts/ unconditionally).
+# 3. Frontmatter validator (walks content/posts/ AND content/consulting/).
 run_check "frontmatter" python3 scripts/validate_frontmatter.py
+
+# 3-project. Same validator, project-page scope, reported as its own named gate
+#     so a failure on a consulting/portfolio page is attributable at a glance
+#     instead of being buried in the whole-tree result. Mirrors how the
+#     social-card guard is wired twice (source at 3a, rendered at 7a).
+#     `description` is REQUIRED here: without it a project page inherits the
+#     site-default meta description and becomes a near-duplicate that answer
+#     engines cannot tell apart (blog-priv#55 AC 2.3/2.6).
+run_check "frontmatter-project-pages" python3 scripts/validate_frontmatter.py --scope consulting
 
 # 3a. Social-card guard (whole-tree): every singular indexable page must be a
 #     leaf bundle that owns its share-card / hero, else it silently falls back to
