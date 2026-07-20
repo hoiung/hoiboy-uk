@@ -39,6 +39,12 @@ OPTIONAL = {"slug", "draft", "series", "order", "hideDate", "type"}
 # A typo like categories: [foood] would create an orphan term page no
 # sidebar link reaches. Hard fail.
 ALLOWED_CATEGORIES = {"food-booze", "adventure", "dance", "tech-ai", "life", "entrepreneurship", "trading"}
+# Content formats Hugo renders natively. Kept identical to CONTENT_EXTS in
+# scripts/check_social_cards.py: a walk narrower than this silently skips real
+# pages, and a skipped page passes the contract by omission rather than by
+# compliance. Matching only `index.md` would miss a flat `content/consulting/x.md`
+# single page entirely.
+CONTENT_EXTS = (".md", ".markdown", ".html")
 ROOT = Path(__file__).resolve().parent.parent
 POSTS = ROOT / "content" / "posts"
 CONSULTING = ROOT / "content" / "consulting"
@@ -88,19 +94,25 @@ def check_tree(root: Path, required: set[str], check_categories: bool,
     tree is simply empty, which is how a fresh clone or a partial checkout
     behaves.
 
-    `include_section_pages` also walks `_index.md`. Path.rglob("index.md")
-    matches the exact filename only, so section pages are invisible without
-    it. Consulting section pages are real indexable URLs, so they are gated;
-    posts section indexes are Hugo-generated and have no source frontmatter
-    to validate.
+    Walks EVERY natively-rendered content file (CONTENT_EXTS), not just
+    `index.md`. A filename-specific walk skips flat single pages such as
+    `content/consulting/thing.md`, and a skipped page passes by omission
+    rather than by compliance, which is a false PASS.
+
+    `include_section_pages` controls whether `_index.*` branch bundles are
+    validated. Consulting section pages are real indexable URLs, so they are
+    gated; the posts section index is Hugo-generated with no source
+    frontmatter to validate.
     """
     failures: list[str] = []
     if not root.exists():
         return failures, 0
 
-    md_files = sorted(root.rglob("index.md"))
-    if include_section_pages:
-        md_files = sorted(md_files + list(root.rglob("_index.md")))
+    md_files = sorted(
+        p for p in root.rglob("*")
+        if p.is_file() and p.suffix in CONTENT_EXTS
+        and (include_section_pages or not p.name.startswith("_index."))
+    )
 
     for md in md_files:
         text = md.read_text(encoding="utf-8")
