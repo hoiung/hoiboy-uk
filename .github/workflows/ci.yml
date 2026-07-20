@@ -251,7 +251,7 @@ jobs:
         run: python3 -m pytest scripts/test_validate_frontmatter.py tests/test_gate_wiring.py -q
 
       - name: Markdown lint
-        uses: DavidAnson/markdownlint-cli2-action@v23
+        uses: DavidAnson/markdownlint-cli2-action@v24
         with:
           config: .markdownlint.json
           globs: |
