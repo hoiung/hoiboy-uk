@@ -5,6 +5,7 @@ categories: [tech-ai, dance]
 tags: [webapp, postmortem, community, project, lessons]
 source_file: "voice-corpus/blogs/29_reportadancer-doomed-to-fail.md"
 source_era: "ZoukBase (WordPress)"
+description: "A postmortem on ReportaDancer.com and why it was doomed. What Zoukology, DontStaySilent.Dance and a proposed professional association got right instead."
 ---
 A few years ago I created a web tool called ReportaDancer.com. Yes, you've guessed it right what it does!
 
