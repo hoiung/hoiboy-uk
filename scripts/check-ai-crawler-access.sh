@@ -21,12 +21,23 @@
 # exit code. The TRAINING class is probed and reported for visibility only, because
 # its correct value is an operator policy choice, not a defect.
 #
+# The two classes are also governed by DIFFERENT mechanisms, which is why they are
+# reported differently. Citation access is an edge decision, so an HTTP status
+# answers it. Training access is governed by robots.txt, which no HTTP status can
+# reveal: a training crawler that obeys `Disallow: /` still gets 200 on this probe
+# because the probe is not that crawler. Reporting status alone for the TRAINING
+# class was therefore actively misleading, so each training row also reports the
+# directive the served robots.txt gives that user-agent.
+#
 # Known limits (stated so a PASS is not read as more than it is):
 #   - Classifies on HTTP status only. A managed challenge or block page served
 #     with a 200 body reads as "ok". A clean exit means "not status-blocked",
 #     not "served real content".
-#   - Probes the homepage only, not /robots.txt or /sitemap.xml, so a path-scoped
-#     rule would go unseen.
+#   - robots.txt is honour-system. A reported `Disallow: /` is a request, not an
+#     enforcement. Bytespider in particular has been reported ignoring it. Only an
+#     edge rule (WAF / bot management) actually enforces.
+#   - Status-probes the homepage only, not /sitemap.xml, so a path-scoped rule
+#     would go unseen. robots.txt IS fetched, but only to read training directives.
 #   - The user-agent list is a snapshot. A vendor renaming or adding a crawler is
 #     invisible until this list is updated.
 #
@@ -121,6 +132,72 @@ if [ "$baseline" = "ERR" ]; then
     exit 2
 fi
 
+# --- served robots.txt, fetched once for the TRAINING class ------------------
+#
+# Fetched with a browser user-agent, not a crawler one, so a zone that varies
+# robots.txt by user-agent cannot hand us a different file than a human sees.
+ROBOTS_FILE=$(mktemp 2>/dev/null) || ROBOTS_FILE=""
+[ -n "$ROBOTS_FILE" ] && trap 'rm -f "$ROBOTS_FILE"' EXIT
+ROBOTS_STATE="unavailable"
+if [ -n "$ROBOTS_FILE" ]; then
+    robots_code=$(curl -sL -o "$ROBOTS_FILE" -w '%{http_code}' \
+        --max-time "$TIMEOUT" -A "$BROWSER_UA" "${TARGET%/}/robots.txt" 2>/dev/null)
+    [ "$robots_code" = "200" ] && ROBOTS_STATE="ok"
+fi
+
+# Report how the served robots.txt governs one user-agent token.
+#
+# RFC 9309 permits more than one group for the same token, and a crawler merges
+# them. So a token can carry BOTH a `Disallow: /` and an empty `Disallow:`.
+# That is not hypothetical: Cloudflare's managed robots.txt PREPENDS its own
+# groups ahead of the origin's file, and the two can disagree. cuarchitects.co.uk
+# was serving exactly that for GPTBot, ClaudeBot, Google-Extended and CCBot.
+# Permissive parsers resolve the tie toward allow, so the safe reading is that
+# training is permitted. Reported as CONFLICT rather than silently picking a
+# side, because that state is a defect in the policy, not a valid configuration.
+robots_verdict() {
+    [ "$ROBOTS_STATE" = "ok" ] || { printf 'robots.txt unavailable'; return; }
+    awk -v want="$1" '
+        BEGIN { want = tolower(want) }
+        {
+            line = $0
+            sub(/#.*/, "", line)
+            gsub(/\r/, "", line)
+        }
+        # A run of consecutive User-agent lines opens ONE group covering all of
+        # them. Only a non-User-agent directive ends the run, so group membership
+        # must accumulate across the run rather than reset per line.
+        tolower(line) ~ /^[[:space:]]*user-agent[[:space:]]*:/ {
+            if (!in_ua_run) { member = 0 }
+            in_ua_run = 1
+            v = line
+            sub(/^[^:]*:[[:space:]]*/, "", v)
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
+            if (tolower(v) == want) member = 1
+            next
+        }
+        tolower(line) ~ /^[[:space:]]*disallow[[:space:]]*:/ {
+            in_ua_run = 0
+            if (!member) next
+            v = line
+            sub(/^[^:]*:[[:space:]]*/, "", v)
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
+            seen = 1
+            if (v == "/") deny = 1
+            else if (v == "") allow = 1
+            next
+        }
+        # Any other directive (Allow:, Sitemap:, Content-Signal:, blank) closes
+        # the user-agent run without closing the group.
+        { if (line !~ /^[[:space:]]*$/) in_ua_run = 0 }
+        END {
+            if (!seen)          { print "no group (falls under *)"; exit }
+            if (deny && allow)  { print "CONFLICT: allow and Disallow:/ both present"; exit }
+            if (deny)           { print "Disallow: / (training opted out)"; exit }
+            print "allowed (training NOT opted out)"
+        }' "$ROBOTS_FILE"
+}
+
 blocked=0
 errored=0
 blocked_codes=""
@@ -154,13 +231,21 @@ for entry in "${CITATION_BOTS[@]}"; do
     esac
 done
 
-printf '\nTRAINING class (reported only; operator policy, not a defect)\n'
+# Status and directive are BOTH reported because they answer different questions.
+# The status says whether the edge served us; the directive says whether a
+# well-behaved training crawler is permitted to use the content. A 200 next to
+# `Disallow: /` is the normal, correct state for this site's policy.
+printf '\nTRAINING class (reported only; governed by robots.txt, not by HTTP status)\n'
 for entry in "${TRAINING_BOTS[@]}"; do
     name="${entry%%|*}"
     ua="${entry#*|}"
     code=$(probe "$ua")
-    printf '  %-20s %s\n' "$name" "$code"
+    printf '  %-20s %-4s %s\n' "$name" "$code" "$(robots_verdict "$name")"
 done
+if [ "$ROBOTS_STATE" != "ok" ]; then
+    printf '  NOTE: robots.txt could not be fetched, so training directives are unknown.\n'
+    printf '        This does not affect the exit code, which the CITATION class alone gates.\n'
+fi
 
 # Controls. These rule out the two alternative explanations for a wall of 403s:
 # the site being down, and a blanket block that is not user-agent-specific. If
