@@ -493,3 +493,44 @@ def test_trailing_comment_is_stripped_from_a_real_value():
     # the VALUE too, which is what the docstring claims.
     fm = parse_frontmatter('---\ntitle: "x"\ndescription: Real text # note\n---\nbody\n')
     assert fm["description"] == "Real text"
+
+
+@pytest.mark.parametrize("shape", ['""#TODO', "''#TODO", '""#', "''#x"])
+def test_quoted_empty_with_no_space_before_comment_counts_as_missing(monkeypatch, tmp_path, capsys, shape):
+    # Ralph round 22. The first version of strip_trailing_comment required a
+    # space before '#' on BOTH sides of a closing quote, but a closing quote is
+    # itself a sufficient token boundary in YAML: `description: ""#TODO` is an
+    # empty string. Requiring the space let that through as the literal
+    # '""#TODO'. Valid YAML, so Hugo builds fine and the page ships the site
+    # default: no downstream gate catches it.
+    posts = tmp_path / "posts"
+    seeded = POST_FM.replace('description: "A unique summary."', f"description: {shape}")
+    assert f"description: {shape}" in seeded, "fixture rewrite did not take effect"
+    _bundle(posts, "nospace", seeded)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 1
+    assert "description" in capsys.readouterr().err
+
+
+def test_plain_scalar_still_requires_whitespace_before_a_comment():
+    # The other side of that rule, and it must NOT change: for a PLAIN scalar
+    # the space really is required, so `null#TODO` is the seven-character
+    # string "null#TODO" in YAML, not null. Treating it as a comment would
+    # invent a missing description that YAML says is present.
+    fm = parse_frontmatter('---\ntitle: "x"\ndescription: null#TODO\n---\nbody\n')
+    assert fm["description"] == "null#TODO"
+
+
+def test_bracket_list_with_no_space_before_comment_still_parses_as_a_list():
+    # Same root cause as the quoted case, on the flow sequence: `]` closes the
+    # sequence so a following '#' is a comment. Before this, the trailing text
+    # broke the endswith("]") check, the value fell through as a plain string,
+    # and the category allowlist silently skipped the page - the same failure
+    # shape as the round-16 block-list bug.
+    fm = parse_frontmatter(
+        '---\ntitle: "x"\ncategories: [foood]#c\ntags: [a] # note\n---\nbody\n'
+    )
+    assert fm["categories"] == ["foood"]
+    assert fm["tags"] == ["a"]
