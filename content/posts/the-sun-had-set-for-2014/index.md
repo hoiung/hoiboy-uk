@@ -5,6 +5,7 @@ categories: [adventure]
 tags: [reflection, new-year, travel, 2014, 2015]
 source_file: "voice-corpus/blogs/15_sun-set-2014-rises-2015.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "A year in review from Centenary Square, Birmingham. Zoukfest, ZoukTime in Brno, DutchZouk in Breda, Grindelwald, Woodsmoke bushcraft and Budapest."
 ---
 ## The Sun Had Set For 2014. Here Rises The Sun For 2015
 
