@@ -5,6 +5,7 @@ categories: [adventure]
 tags: [travel, switzerland, mountains, scenic, adventure]
 source_file: "voice-corpus/blogs/13_grindelwald-switzerland.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "Canyoning the Chli Schliere, paragliding off First Mountain and cycling Lake Brienzersee. A Swiss itinerary costed line by line at £1,047.83."
 ---
 
 ## Scenic Lovers must Visit Grindelwald, Switzerland
