@@ -18,7 +18,8 @@ This folder maps the journey from "I have 22 years of blogs" to a live, Claude-m
 13. [13_VOICE_GUARD_PLAN.md](13_VOICE_GUARD_PLAN.md) .  Voice-guard hook design: marker-driven opt-in, cutoff-date filter, CI wiring.
 14. [14_BLOG_CRAFT.md](14_BLOG_CRAFT.md) .  Long-form craft guidance + the wordcount-ceiling negative example.
 15. [15_LINKEDIN_PROMOTION.md](15_LINKEDIN_PROMOTION.md) .  LinkedIn promotion strategy for new posts.
-16. [16_AI_BOT_AND_SEO_POLICY.md](16_AI_BOT_AND_SEO_POLICY.md) .  AI bot + SEO crawl-policy decision record: per-class ALLOW verdict, training-vs-citation correction, Cloudflare operator checklist, deferred block-training variant.
+16. [16_AI_BOT_AND_SEO_POLICY.md](16_AI_BOT_AND_SEO_POLICY.md) .  AI bot + SEO crawl-policy decision record for hoiboy.uk: bot taxonomy, the superseded training-vs-citation ruling and its reversal, the measured Cloudflare cause, adopted block-training policy.
+17. [17_AI_CRAWLER_FRAMEWORK.md](17_AI_CRAWLER_FRAMEWORK.md) .  Standing AI-crawler framework for ALL domains: citation allowed / training blocked, the four enforcement layers, new-domain procedure, the Cloudflare-prepend and propagation traps, zone inventory.
 
 **Tooling not in the numbered trail**: the operator-only **meet-recorder** tool (`content/private/tools/meet-recorder/`, consulting-ops#8; noindex + sitemap-excluded) and the **consulting** shortcodes + landing pages (`content/consulting/`, `layouts/_shortcodes/consulting-cta.html`, `data/consulting.yaml`). These post-date the planning trail; see their in-tree sources plus `docs/cal-eu-setup.md`.
 

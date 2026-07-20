@@ -71,7 +71,7 @@ A production build (`hugo --gc --minify -e production`) resolves this to a `publ
 
 Note that robots.txt is advisory (honor-system) only. Some user-triggered fetchers state plainly that robots.txt rules may not apply to them, and at least one crawler has been accused of ignoring directives entirely. The repo file records intent and is honored by the well-behaved search and citation bots; it is not a hard enforcement layer.
 
-## Cloudflare edge state (MEASURED 2026-07-20, and it FAILS)
+## Cloudflare edge state (MEASURED 2026-07-20: FAILED, then FIXED the same day)
 
 robots.txt is advisory; Cloudflare is the only layer that hard-enforces at the network edge. This section previously held a four-point checklist for the owner to confirm "once". That checklist was written 2026-05-31 and never performed. It is replaced here with an actual measurement, plus a standing gate so the state cannot go unverified again.
 
@@ -102,24 +102,42 @@ The two readings cover different bot sets and the counts are NOT directly compar
 
 **The previous low-risk reasoning was wrong.** This section used to argue that Cloudflare's 2025 "Content Independence Day" AI-block default applied only to newly-onboarded domains, so an established zone was low risk and the check was merely "worth doing". The zone is in fact blocking. Reasoning about a vendor default is not a substitute for measuring the live state.
 
-### Operator ruling: training vs citation (2026-07-20)
+### Operator ruling: training vs citation (2026-07-20, SUPERSEDED same day)
 
-The owner's position, verbatim: *"I dont mind training with our site as long as our sites are cited for it."*
+The owner's first position, verbatim: *"I dont mind training with our site as long as our sites are cited for it."*
 
-**That condition is not expressible as configuration.** Training and citation are separate bot classes (see the crawler-class table earlier in this document, sourced to the OpenAI, Anthropic and Perplexity crawler docs). A training crawl never emits a citation, and no vendor offers a cite-for-training contract. The ruling is therefore recorded as an aspiration, not as a control. It decomposes into two independent settings, and the decision on both is ALLOW.
+**That condition is not expressible as configuration.** Training and citation are separate bot classes (see the crawler-class table earlier in this document, sourced to the OpenAI, Anthropic and Perplexity crawler docs). A training crawl never emits a citation, and no vendor offers a cite-for-training contract. The ruling was therefore recorded as an aspiration, not as a control.
 
-Note the current state is close to the inverse of that intent: the citation pathway is shut while a training crawler remains allowed.
+### Operator ruling: SUPERSEDING (2026-07-20)
 
-### Fixing it (dashboard only; no repo change can)
+Told that no vendor offers a cite-for-training contract, the owner reversed the position. Verbatim:
 
-In the Cloudflare dashboard for the hoiboy.uk zone:
+> *"i dont want to give bots free training if i am not cited. i want to block that"*
+>
+> *"all 3 domains and future should always follow this same framework"*
 
-1. **Block AI bots**: confirm this managed toggle is OFF (if ON, it blocks AI crawlers at the edge regardless of robots.txt). https://developers.cloudflare.com/bots/additional-configurations/block-ai-bots/
-2. **AI Crawl Control**: set the AI crawlers to Allow (per-crawler Allow or Block is available on all plans, including Free). https://developers.cloudflare.com/ai-crawl-control/features/manage-ai-crawlers/
-3. **managed-robots.txt**: confirm it is OFF, so it does not inject block rules over the repo-served file.
-4. **Bot Fight Mode**: confirm Bot Fight Mode (or Super Bot Fight Mode) is off or configured to skip verified bots, so legitimate search and citation crawlers are not challenged.
+**This is now the standing framework: citation ALLOWED, training BLOCKED, on hoiboy.uk, cuarchitects.co.uk, speak2lola.com, and every future domain.** It is not a per-site judgement call. The reasoning is that the conditional in the first ruling can never be satisfied, so an unconditional give is the only thing "allow training" can actually mean, and the owner declined it.
 
-Record which of the four was the cause. Then re-run `bash scripts/check-ai-crawler-access.sh`; it exits 0 when every citation-class crawler is reachable.
+The framework is written up once, for reuse, in `docs/research/17_AI_CRAWLER_FRAMEWORK.md`. That document is the thing to read when standing up a new domain; this section records only the decision and the date.
+
+### Fixed 2026-07-20. The cause, as this section asked to be recorded
+
+The four candidates above were checked by READING the zone config through the API before writing anything. **Exactly one was the cause: `ai_bots_protection` was set to `block`.** The other three were already correct: `fight_mode` was `false`, `crawler_protection` was `disabled`, and `is_robots_txt_managed` was `false`. Flipping all four blind would have changed three settings for nothing and left no way to attribute the fix.
+
+`ai_bots_protection` is the coarse legacy switch. It takes the citation class down with the training class, which is exactly what this issue found and why it must not be re-enabled.
+
+Item 3 above is now **inverted on purpose**. Managed robots.txt was turned ON, not confirmed off, because it is the mechanism that expresses the training block: it serves a `Content-Signal: search=yes,ai-train=no,use=reference` line plus `Disallow: /` for nine training crawlers, and leaves the citation class to fall under `User-agent: *`. The original instruction assumed the repo-served file was the only one that mattered. It is not: **Cloudflare PREPENDS the managed block ahead of the origin's file rather than replacing it**, so both records are served and a repo edit cannot remove the managed one.
+
+Verified after the change: `bash scripts/check-ai-crawler-access.sh https://hoiboy.uk/` exits 0, all six citation crawlers reachable, all six training crawlers carrying `Disallow: /`.
+
+### Correction: the granular presets are partly enforced, not unenforced
+
+An earlier note in this workstream recorded that the granular presets (`ai_training` / `ai_search` / `ai_user`) are "accepted by the API but not enforced" before Cloudflare's 2026-09-15 migration. That was over-generalised from probing GPTBot alone. Measured across the full class:
+
+- hoiboy.uk with `ai_training: block` → CCBot **403**, Bytespider **403**, the other four training tokens 200
+- cuarchitects.co.uk with `ai_training: disabled` → all six training tokens **200**
+
+So the preset does real work today, on a subset of crawlers. It is set on all three zones so the 2026-09-15 migration activates the full framework natively without a revisit. Until then robots.txt carries the rest, and robots.txt is honour-system: an edge rule is the only hard enforcement. See `docs/research/17_AI_CRAWLER_FRAMEWORK.md`.
 
 ### Standing gate
 
@@ -127,9 +145,11 @@ Record which of the four was the cause. Then re-run `bash scripts/check-ai-crawl
 
 **Honesty bound.** Unblocking is necessary, not sufficient. An access denial guarantees zero citation from that engine; removing it guarantees nothing in return. No reliable method for measuring AI citation currently exists, so success here is "the crawlers are no longer blocked", never "we are now cited".
 
-## Deferred variant: block training only (NOT built now)
+## Block training only: ADOPTED 2026-07-20 (was "deferred, not built")
 
-If the owner later wants to protect content from model training while keeping every citation path open, the policy below is the "best of both" alternative. It is **deferred and not built now** because there is no current need (the goal is exposure, not protection) and it carries zero citation benefit either way. Trigger to revisit: **if the owner later wants to protect content from model training.**
+This section used to describe blocking training while keeping every citation path open as a "best of both" alternative that was **deferred and not built**, on the reasoning that there was no current need because the goal is exposure rather than protection. The stated trigger to revisit was "if the owner later wants to protect content from model training".
+
+**That trigger fired the same day.** The owner's superseding ruling above is exactly it, so this is no longer a deferred variant: it is the implemented policy on all three zones and the standing default for future ones. The mechanism and the reusable procedure are in `docs/research/17_AI_CRAWLER_FRAMEWORK.md`. The description below is kept because it is still an accurate account of what the policy does and why it costs nothing in citation terms.
 
 The variant `layouts/robots.txt` would keep all search and retrieval bots on an empty `Disallow:` (allowed) and add explicit block blocks for the training class, for example:
 
