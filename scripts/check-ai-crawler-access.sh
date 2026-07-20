@@ -53,16 +53,33 @@ TRAINING_BOTS=(
     "meta-externalagent|meta-externalagent/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)"
 )
 
-# Echoes the HTTP status, or "ERR" when the request could not be made at all.
+# Echoes the FINAL HTTP status (redirects followed), or "ERR" when the request
+# could not be made at all. -L matters: without it a 301/302 reads as a non-200
+# and would be misreported as a block.
 probe() {
     local ua="$1" code
-    code=$(curl -s -o /dev/null -w '%{http_code}' \
+    code=$(curl -sL -o /dev/null -w '%{http_code}' \
         --max-time "$TIMEOUT" -A "$ua" "$TARGET" 2>/dev/null)
     if [ -z "$code" ] || [ "$code" = "000" ]; then
         printf 'ERR'
     else
         printf '%s' "$code"
     fi
+}
+
+# Classify a status into ok | blocked | error.
+#
+# Only the access-denied family counts as BLOCKED. A 5xx is the origin failing,
+# and any other unexpected code is something this script does not understand:
+# reporting either as "blocked at the edge" would send an operator to the
+# Cloudflare dashboard chasing a cause that is not there. Those withhold the
+# verdict (exit 2) instead of asserting a defect that was never observed.
+classify() {
+    case "$1" in
+        200)             printf 'ok' ;;
+        401|403|429|451) printf 'blocked' ;;
+        *)               printf 'error' ;;
+    esac
 }
 
 printf 'AI crawler access probe: %s\n\n' "$TARGET"
@@ -79,21 +96,35 @@ fi
 
 blocked=0
 errored=0
+blocked_codes=""
 
 printf 'CITATION class (gates the exit code)\n'
 for entry in "${CITATION_BOTS[@]}"; do
     name="${entry%%|*}"
     ua="${entry#*|}"
     code=$(probe "$ua")
-    if [ "$code" = "200" ]; then
-        printf '  %-20s %s ok\n' "$name" "$code"
-    elif [ "$code" = "ERR" ]; then
+    if [ "$code" = "ERR" ]; then
         printf '  %-20s %s request failed\n' "$name" "$code"
         errored=$((errored + 1))
-    else
-        printf '  %-20s %s BLOCKED\n' "$name" "$code"
-        blocked=$((blocked + 1))
+        continue
     fi
+    case "$(classify "$code")" in
+        ok)
+            printf '  %-20s %s ok\n' "$name" "$code"
+            ;;
+        blocked)
+            printf '  %-20s %s BLOCKED\n' "$name" "$code"
+            blocked=$((blocked + 1))
+            case "$blocked_codes" in
+                *"$code"*) : ;;
+                *) blocked_codes="${blocked_codes:+$blocked_codes/}$code" ;;
+            esac
+            ;;
+        *)
+            printf '  %-20s %s UNEXPECTED (not an access denial; verdict withheld)\n' "$name" "$code"
+            errored=$((errored + 1))
+            ;;
+    esac
 done
 
 printf '\nTRAINING class (reported only; operator policy, not a defect)\n'
@@ -107,14 +138,16 @@ done
 printf '\n'
 
 if [ "$errored" -gt 0 ]; then
-    printf >&2 'ERR: %d citation-class probe(s) could not complete. Verdict withheld.\n' "$errored"
+    printf >&2 'ERR: %d citation-class probe(s) returned no usable answer.\n' "$errored"
+    printf >&2 '     Request failure, origin error or an unrecognised status: NOT an\n'
+    printf >&2 '     observed access denial. Verdict withheld rather than reported as a block.\n'
     exit 2
 fi
 
 if [ "$blocked" -gt 0 ]; then
-    printf >&2 'FAIL: %d of %d citation-class crawlers are BLOCKED at the edge.\n' \
-        "$blocked" "${#CITATION_BOTS[@]}"
-    printf >&2 'A 403 guarantees zero citation from that engine.\n'
+    printf >&2 'FAIL: %d of %d citation-class crawlers are BLOCKED at the edge (HTTP %s).\n' \
+        "$blocked" "${#CITATION_BOTS[@]}" "$blocked_codes"
+    printf >&2 'An access denial guarantees zero citation from that engine.\n'
     printf >&2 'Fix in the Cloudflare dashboard for this zone (repo changes cannot):\n'
     printf >&2 '  1. "Block AI bots" managed toggle OFF\n'
     printf >&2 '  2. AI Crawl Control set to Allow for the citation class\n'
