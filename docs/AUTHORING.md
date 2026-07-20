@@ -27,7 +27,7 @@ Folder name = canonical slug. Date prefix optional but recommended for sort stab
 | `tags` | yes | list | Lowercase, hyphenated, freeform | `tags: [ramen, tokyo, japan]` |
 | `slug` | no | string | Overrides folder name in URL | `slug: best-ramen` |
 | `draft` | no | bool | `true` skips production build | `draft: true` |
-| `description` | **yes** | string | <=160 chars, used in meta + OG. Must be **unique per page**: without one the page inherits the site-default description and ships as a near-duplicate. Enforced since 2026-07-20 (blog-priv#55) | `description: "Field guide..."` |
+| `description` | **yes** | string | Used in meta + OG. Its **presence** is gated since 2026-07-20 (blog-priv#55); without one the page inherits the site-default description and ships as a near-duplicate. Write it unique per page and aim for <=160 chars, but see the note below: neither is enforced | `description: "Field guide..."` |
 | `lastmod` | no | ISO 8601 | Set **explicitly** when a post is genuinely revised. See the note below | `lastmod: 2026-07-20T10:00:00+01:00` |
 | `series` | no | string | Groups posts under `/series/<name>/`. Use `bakeoff` for bake-off posts. Term page sorts by `order` ascending. | `series: bakeoff` |
 | `order` | no | integer | 0-100. Position within the series (lower = earlier). 0 reserved for the series teaser/index post. | `order: 0` |
@@ -35,6 +35,8 @@ Folder name = canonical slug. Date prefix optional but recommended for sort stab
 **Validator**: `python3 scripts/validate_frontmatter.py` (also runs in CI and pre-commit). Hard fail on missing required fields, unknown categories, or malformed YAML. Remaining optional fields are not enforced for backward compatibility.
 
 The validator walks **both** `content/posts/` and `content/consulting/` (project pages, including `portfolio/<client>/` and section `_index.md`). Project pages carry a smaller required set, `title` + `description` only, because they have no categories/tags taxonomy and several legitimately carry no date. Scope a run with `--scope posts` or `--scope consulting`.
+
+**What the description gate does and does not check.** It checks **presence only**. It does NOT check that a description is unique, and it does NOT check length, so a copy-pasted description or a 300-character one passes every hook. Uniqueness and the <=160 guide are conventions you hold yourself to. Two consequences worth knowing: 19 existing pages already exceed 160 characters (pre-existing, not a build failure), and the walk covers posts and consulting only, so the category landing pages under `content/<category>/_index.md` are outside it and still serve the site-default description by design (see the index/taxonomy carve-out in blog-priv#55).
 
 **`lastmod` (set it by hand, only when the post genuinely changed)**: when you materially revise a published post, add an explicit `lastmod:` timestamp. Hugo exposes it as `.Lastmod` for `article:modified_time` and JSON-LD `dateModified`, so consumers can tell a real revision from an untouched archive post.
 
