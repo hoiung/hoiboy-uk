@@ -5,6 +5,7 @@ categories: [dance]
 tags: [dance, zouk, teaching, congresses, methodology]
 source_file: "voice-corpus/blogs/07_5-common-mistakes-dance-teachers.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "Being a brilliant dancer does not make you a brilliant teacher. Five habits that cost congress classes their value, plus a 16 point checklist."
 ---
 
 With over a hundred students in one room, Dance Teachers are challenged in their teaching skills. Most Dance Teachers are extremely talented at Dancing that made them well known for their art and mastery within this field. But when it balls down to teaching, they can fail drastically!
