@@ -27,11 +27,23 @@ Folder name = canonical slug. Date prefix optional but recommended for sort stab
 | `tags` | yes | list | Lowercase, hyphenated, freeform | `tags: [ramen, tokyo, japan]` |
 | `slug` | no | string | Overrides folder name in URL | `slug: best-ramen` |
 | `draft` | no | bool | `true` skips production build | `draft: true` |
-| `description` | no | string | <=160 chars, used in meta + OG | `description: "Field guide..."` |
+| `description` | **yes** | string | <=160 chars, used in meta + OG. Must be **unique per page**: without one the page inherits the site-default description and ships as a near-duplicate. Enforced since 2026-07-20 (blog-priv#55) | `description: "Field guide..."` |
+| `lastmod` | no | ISO 8601 | Set **explicitly** when a post is genuinely revised. See the note below | `lastmod: 2026-07-20T10:00:00+01:00` |
 | `series` | no | string | Groups posts under `/series/<name>/`. Use `bakeoff` for bake-off posts. Term page sorts by `order` ascending. | `series: bakeoff` |
 | `order` | no | integer | 0-100. Position within the series (lower = earlier). 0 reserved for the series teaser/index post. | `order: 0` |
 
-**Validator**: `python3 scripts/validate_frontmatter.py` (also runs in CI and pre-commit). Hard fail on missing required fields, unknown categories, or malformed YAML. Optional fields are not enforced for backward compatibility.
+**Validator**: `python3 scripts/validate_frontmatter.py` (also runs in CI and pre-commit). Hard fail on missing required fields, unknown categories, or malformed YAML. Remaining optional fields are not enforced for backward compatibility.
+
+The validator walks **both** `content/posts/` and `content/consulting/` (project pages, including `portfolio/<client>/` and section `_index.md`). Project pages carry a smaller required set, `title` + `description` only, because they have no categories/tags taxonomy and several legitimately carry no date. Scope a run with `--scope posts` or `--scope consulting`.
+
+**`lastmod` (set it by hand, only when the post genuinely changed)**: when you materially revise a published post, add an explicit `lastmod:` timestamp. Hugo exposes it as `.Lastmod` for `article:modified_time` and JSON-LD `dateModified`, so consumers can tell a real revision from an untouched archive post.
+
+Two rules govern it:
+
+1. **`enableGitInfo` is REJECTED** (operator decision, 2026-07-20). It derives `lastmod` from commit time, which means a formatting fix, an encoding repair or an image rehost on a voice-sacred legacy post would broadcast that post as freshly updated. Across a 22-year archive that turns routine maintenance into a wave of false revision dates. Set the field by hand or leave it absent.
+2. **Do not set it for cosmetic edits.** A typo fix, a broken-link repair or a frontmatter backfill is not a revision. If the words a reader sees did not meaningfully change, leave `lastmod` alone.
+
+**Honesty note on freshness.** Treat this as record-keeping, not as an optimisation. The freshness lever is **UNVERIFIED**: the 2026-07-19 GEO/AEO evidence brief does not address freshness at all, and the only in-repo text that framed it as a GEO factor was the doc 16 sentence retracted under blog-priv#55 Phase 3. Accurate revision dates are worth having on their own terms. Do not claim the field lifts AI citation or search ranking, because nothing we have supports that.
 
 **`date` and the production build (don't future-date)**: Hugo silently drops **future-dated** posts from the production build (`buildFuture` is off), the same way `draft: true` does (§7). The trap is timezone: the site is configured `timeZone = "Europe/London"` in `hugo.toml`, but Cloudflare builds in **UTC**. A post dated `YYYY-MM-DD` (midnight) published in the small hours of UK time can still be "the future" in UTC. The London `timeZone` setting makes a bare date resolve to UK midnight (e.g. `2026-06-04` = `23:00Z` on the 3rd) so a same-day UK publish builds correctly, but do not date a post **ahead** of the day you actually publish, or Cloudflare will build the site without it (it vanishes from its URL and every category/section listing while a stale copy may still appear to serve). Symptom + fix history: the 3-types-of-tests post, 2026-06-04. Never remove the `timeZone` line from `hugo.toml`.
 
