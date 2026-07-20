@@ -260,8 +260,49 @@ def test_contradictory_groups_report_conflict():
 def test_conflict_is_scoped_to_the_contradicted_token():
     # A conflict on one token must not smear across the others, or the report
     # cannot be used to find which entry to fix.
+    #
+    # Asserts BOTH directions on one fixture on purpose. The negative half alone
+    # is vacuous: delete the whole feature and "CONFLICT" appears nowhere, so it
+    # would still pass. Pairing it with the positive makes the test about
+    # scoping rather than about absence.
     p = _run(lambda ua: 200, robots=CONFLICTING_ROBOTS)
+    assert "CONFLICT" in _training_row(p.stdout, "GPTBot"), p.stdout
     assert "CONFLICT" not in _training_row(p.stdout, "ClaudeBot"), p.stdout
+
+
+def test_real_allow_rule_against_disallow_all_reports_conflict():
+    # RFC 9309 2.2.2 gives an Allow the tie-break over an equivalent Disallow,
+    # so this pair is a genuine contradiction and the more dangerous one: unlike
+    # the empty-Disallow case, a compliant crawler may legitimately read it as
+    # permitted. Before the Allow: branch existed the value was discarded and
+    # this reported as a clean opt-out.
+    robots = "User-agent: GPTBot\nDisallow: /\nAllow: /\n"
+    p = _run(lambda ua: 200, robots=robots)
+    assert "CONFLICT" in _training_row(p.stdout, "GPTBot"), p.stdout
+
+
+def test_allow_rule_order_does_not_change_the_verdict():
+    robots = "User-agent: GPTBot\nAllow: /\nDisallow: /\n"
+    p = _run(lambda ua: 200, robots=robots)
+    assert "CONFLICT" in _training_row(p.stdout, "GPTBot"), p.stdout
+
+
+def test_scoped_disallow_is_not_reported_as_allowed():
+    # `Disallow: /admin` is neither a full opt-out nor an absence of one.
+    # Reporting it as "allowed (training NOT opted out)" asserts no restriction
+    # exists while one is on record.
+    robots = "User-agent: GPTBot\nDisallow: /admin\n"
+    p = _run(lambda ua: 200, robots=robots)
+    row = _training_row(p.stdout, "GPTBot")
+    assert "scoped rules only" in row, p.stdout
+    assert "NOT a full opt-out" in row, p.stdout
+
+
+def test_scoped_disallow_does_not_mask_a_full_opt_out():
+    # A scoped rule alongside Disallow:/ must still report the full opt-out.
+    robots = "User-agent: GPTBot\nDisallow: /admin\nDisallow: /\n"
+    p = _run(lambda ua: 200, robots=robots)
+    assert "training opted out" in _training_row(p.stdout, "GPTBot"), p.stdout
 
 
 def test_absent_group_reports_falling_under_wildcard():

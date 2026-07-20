@@ -185,6 +185,25 @@ robots_verdict() {
             seen = 1
             if (v == "/") deny = 1
             else if (v == "") allow = 1
+            # A scoped rule (Disallow: /admin) is neither a full opt-out nor an
+            # absence of one. Reporting it as "allowed" would assert no
+            # restriction exists when one is on record.
+            else partial = 1
+            next
+        }
+        # An actual Allow: rule, which is NOT the same as an empty Disallow:.
+        # RFC 9309 2.2.2 gives allow the tie-break over an equivalent disallow,
+        # so `Allow: /` against `Disallow: /` is a genuine contradiction. Without
+        # this branch the value was discarded and the pair reported as a clean
+        # opt-out, silently picking the side the function claims it refuses to.
+        tolower(line) ~ /^[[:space:]]*allow[[:space:]]*:/ {
+            in_ua_run = 0
+            if (!member) next
+            v = line
+            sub(/^[^:]*:[[:space:]]*/, "", v)
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
+            seen = 1
+            if (v == "/") allow = 1
             next
         }
         # Any other directive (Allow:, Sitemap:, Content-Signal:, blank) closes
@@ -194,6 +213,7 @@ robots_verdict() {
             if (!seen)          { print "no group (falls under *)"; exit }
             if (deny && allow)  { print "CONFLICT: allow and Disallow:/ both present"; exit }
             if (deny)           { print "Disallow: / (training opted out)"; exit }
+            if (partial)        { print "scoped rules only (NOT a full opt-out)"; exit }
             print "allowed (training NOT opted out)"
         }' "$ROBOTS_FILE"
 }
