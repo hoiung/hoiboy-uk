@@ -5,6 +5,7 @@ categories: [adventure]
 tags: [bushcraft, survival, woodlands, outdoor, course-review, adventure]
 source_file: "voice-corpus/blogs/18_woodsmoke-bushcraft-course.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "A seven day Woodlanders course near Windermere in the Lake District. Bowdrill fire lighting, nettle cordage, pigeon pie, and what fits into a 21kg pack."
 ---
 
 ## Woodsmoke - Woodlanders Bushcraft Course
