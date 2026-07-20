@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, learning, growth, plateaux, habits]
 source_file: "voice-corpus/blogs/32_understanding-dance-growth-plateaux-bad-habits.md"
 source_era: "ZoukBase (WordPress)"
+description: "Why dance progress is not linear, what a forever plateau looks like, and the twice weekly practice rule that separates growth from stagnation."
 ---
 ## Understanding Dance Growth, Plateaux and Bad Habits \- Part 1
 
