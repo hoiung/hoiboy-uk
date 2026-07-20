@@ -69,6 +69,24 @@ def parse_frontmatter(text: str) -> dict[str, object] | None:
         line = raw.rstrip()
         if not line or line.startswith("#"):
             continue
+        # Block-list item belonging to the key above:
+        #     categories:
+        #       - entrepreneurship
+        # Without this the key parses to an empty string, which made the
+        # category allowlist check silently skip the page (the isinstance
+        # list-guard below never fired) and, once blank values counted as
+        # missing, produced a false "missing categories" on a correctly
+        # categorised post. 1 of 78 posts uses this form; a typo'd category
+        # in it would never have been caught.
+        item = re.match(r"^\s*-\s+(.*)$", raw)
+        if item and current_key is not None:
+            value = item.group(1).strip().strip('"').strip("'")
+            existing = out.get(current_key)
+            if isinstance(existing, list):
+                existing.append(value)
+            else:
+                out[current_key] = [value]
+            continue
         # Key: value pattern. Match the FIRST colon that follows an
         # unquoted key (no quotes/brackets in the key portion).
         m = re.match(r"^([A-Za-z_][\w-]*)\s*:\s*(.*)$", line)
@@ -123,7 +141,14 @@ def check_tree(root: Path, required: set[str], check_categories: bool,
         if fm is None:
             failures.append(f"{md.relative_to(ROOT)}: no frontmatter")
             continue
-        missing = required - set(fm.keys())
+        # A key present with a BLANK value is treated as missing. Hugo's
+        # `.Description | default site.Params.description` sees "" as falsy and
+        # serves the site default, so `description:` with nothing after it
+        # produces exactly the near-duplicate this gate exists to prevent while
+        # satisfying a naive key-presence check. Same reasoning for an empty
+        # title or an empty categories list.
+        present = {k for k, v in fm.items() if str(v).strip() and v != []}
+        missing = required - present
         if missing:
             failures.append(f"{md.relative_to(ROOT)}: missing {sorted(missing)}")
             continue
