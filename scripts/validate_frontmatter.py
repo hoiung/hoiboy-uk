@@ -55,8 +55,30 @@ CONSULTING = ROOT / "content" / "consulting"
 
 def parse_frontmatter(text: str) -> dict[str, object] | None:
     """Minimal YAML frontmatter parser. Handles strings, bracketed lists,
-    quoted values with colons inside. Sufficient for blog frontmatter.
-    Anything more exotic should switch to PyYAML."""
+    block lists, folded/literal block scalars, and quoted values with colons
+    inside. Sufficient for blog frontmatter.
+
+    KNOWN DIVERGENCES FROM REAL YAML (Ralph rounds 16-18, all measured against
+    PyYAML and a real Hugo build). These shapes resolve to an empty value in
+    YAML, so Hugo serves the site-default description, but they parse to a
+    non-empty string here and so pass the presence gate:
+
+        description: !!str              (empty explicit type tag)
+        description: *anchor            (alias to an anchored empty string)
+
+    And this one passes here but hard-fails the Hugo build later:
+
+        description: >
+        <TAB>text                       (tab-indented continuation)
+
+    None appear in any current post, and the real Hugo build in pre-publish
+    gate 7 and CI catches the tab case before anything ships. Fixing the class
+    properly means replacing this function with PyYAML, which is a scoped
+    change of its own (operator decision, 2026-07-20: patch-and-ship #55, track
+    the swap separately) rather than another sentinel bolted on here. If you
+    are about to add a fourth special case to the branch below, do the swap
+    instead. Every shape listed above has to keep being caught after it.
+    """
     if not text.startswith("---"):
         return None
     end = text.find("\n---", 3)
@@ -77,9 +99,13 @@ def parse_frontmatter(text: str) -> dict[str, object] | None:
     block_indent: int | None = None
 
     def close_block() -> None:
-        nonlocal block_key, block_lines, block_indent
+        # current_key is cleared too, so a stray dash-list line with no
+        # governing key cannot be misattributed to the block key just closed
+        # and overwrite its resolved string with a list (Ralph round 18).
+        nonlocal block_key, block_lines, block_indent, current_key
         if block_key is not None:
             out[block_key] = " ".join(x for x in block_lines if x).strip()
+            current_key = None
         block_key, block_lines, block_indent = None, [], None
 
     for raw in body.splitlines():
@@ -146,7 +172,14 @@ def parse_frontmatter(text: str) -> dict[str, object] | None:
                 # non-empty either way - so it is recorded, not fixed here.
                 if value in ("null", "Null", "NULL", "~") or value.startswith("#"):
                     out[key] = ""
-                elif re.fullmatch(r"[>|][-+]?\d*", value):
+                # A block header is the indicator, then an optional indentation
+                # digit (1-9) and an optional chomping sign, in EITHER order.
+                # The first version of this regex only allowed sign-then-digit,
+                # so `|2-` fell through and was stored as the literal "|2-",
+                # which is non-empty: an empty block scalar written that way
+                # passed the gate while Hugo served the site default
+                # (Ralph round 18).
+                elif re.fullmatch(r"[>|](?:[1-9][-+]?|[-+]?[1-9]?)", value):
                     # Block scalar. Provisionally empty; the continuation lines
                     # collected above replace this when the block closes.
                     out[key] = ""
