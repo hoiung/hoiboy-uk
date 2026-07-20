@@ -90,10 +90,13 @@ robots.txt is advisory; Cloudflare is the only layer that hard-enforces at the n
 | TRAINING | CCBot | 403 blocked |
 | TRAINING | Google-Extended | 200 ok |
 | TRAINING | meta-externalagent | 403 blocked |
+| TRAINING | Bytespider | 403 blocked |
 
 **All six citation-class crawlers are blocked.** The same URL returns 200 to a plain browser user-agent and to an empty user-agent, so this is user-agent-based blocking at the edge, not an outage. Ruled out rate limiting by re-probing in isolation with 3-second gaps and by repeating runs; the 403s are deterministic. The Google crawler family is the sole exception, with `Google-Extended` and a `Googlebot` control both returning 200, so it is allow-listed as a verified bot.
 
-**This value moved between two probes on the same day.** An earlier probe during Stage 3 of blog-priv#55 recorded OAI-SearchBot at 200 and four of five training crawlers at 200. The measurement above, taken a few hours later, found six of six citation crawlers blocked and four of five training crawlers blocked. Both readings are kept on purpose: the state is not stable, and no single reading should be treated as the settled value. Any figure here is valid only for its timestamp, which is the argument for the scheduled gate rather than another one-time check.
+**This value moved between two probes on the same day.** An earlier probe during Stage 3 of blog-priv#55 recorded OAI-SearchBot at 200 and four of the five training crawlers it covered at 200. The measurement above, taken a few hours later, found six of six citation crawlers blocked and five of six training crawlers blocked. Both readings are kept on purpose: the state is not stable, and no single reading should be treated as the settled value. Any figure here is valid only for its timestamp, which is the argument for the scheduled gate rather than another one-time check.
+
+The two readings cover different bot sets and the counts are NOT directly comparable. The Stage 3 probe covered five training tokens; `Bytespider` was in the class table above but was never probed, so the table under-covered its own taxonomy. That gap was found in Ralph round 10 and closed here: `Bytespider` was added to `TRAINING_BOTS`, probed twice with three-second spacing (403 both times, deterministic), and added to the table. The training class is now six tokens in the taxonomy, six in the script, and six in the measured table.
 
 **The previous low-risk reasoning was wrong.** This section used to argue that Cloudflare's 2025 "Content Independence Day" AI-block default applied only to newly-onboarded domains, so an established zone was low risk and the check was merely "worth doing". The zone is in fact blocking. Reasoning about a vendor default is not a substitute for measuring the live state.
 
