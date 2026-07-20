@@ -171,7 +171,11 @@ jobs:
       # matters: without it GHA skips this step whenever the whole-tree step
       # above failed, which is precisely the run where the attribution is
       # wanted, leaving the step able to report only when it has nothing to say.
-      - name: Frontmatter validator (project pages only)
+      # NOT independent coverage: this scope is a strict subset of the bare run
+      # above, so it can never fail when that passes. Its only job is to name
+      # the failing tree in the step title. Named accordingly so a reader does
+      # not count it as a second gate.
+      - name: Frontmatter validator (attribution re-run, project-page scope)
         if: always()
         run: python3 scripts/validate_frontmatter.py --scope consulting
 
