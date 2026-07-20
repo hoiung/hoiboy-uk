@@ -1,4 +1,13 @@
+{{- /*
+  Allow-all. /private/ is suppressed by X-Robots-Tag: noindex, nofollow in
+  static/_headers, NOT by a Disallow here. The two cannot coexist: a Disallow
+  stops the crawler fetching the page, so it never sees the noindex header,
+  and a URL discovered elsewhere can still be indexed. noindex is the stronger
+  guarantee but only works on a crawlable route.
+  See docs/research/16_AI_BOT_AND_SEO_POLICY.md and
+  https://developers.google.com/search/docs/crawling-indexing/block-indexing
+*/ -}}
 User-agent: *
-Disallow: /private/
+Disallow:
 
 Sitemap: {{ "sitemap.xml" | absURL }}
