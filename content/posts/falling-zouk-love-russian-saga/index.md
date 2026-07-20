@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, russia, travel, congresses, story]
 source_file: "voice-corpus/blogs/26_falling-zouk-love-russian-saga.md"
 source_era: "ZoukBase (WordPress)"
+description: "The Moscow Zouk Non-Stop marathon, where only 15 of 180 dancers were international and lunch ran three hours. Falling for the dance all over again."
 ---
 **Falling in Zouk Love Again - My Russian Saga**
 
