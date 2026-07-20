@@ -246,3 +246,61 @@ def test_posts_section_index_is_still_exempt(monkeypatch, tmp_path):
     monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
     monkeypatch.setattr(vf, "ROOT", tmp_path)
     assert vf.main(["--scope", "posts"]) == 0
+
+
+def test_blank_value_counts_as_missing(monkeypatch, tmp_path, capsys):
+    # `description:` with nothing after it satisfied a naive key-presence check
+    # while Hugo's `.Description | default site.Params.description` treats ""
+    # as falsy and serves the site default. The gate could pass while shipping
+    # exactly the near-duplicate it exists to prevent.
+    posts = tmp_path / "posts"
+    blank = POST_FM.replace('description: "A unique summary."', "description:")
+    assert "description:\n" in blank, "fixture rewrite did not take effect"
+    _bundle(posts, "blank", blank)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 1
+    assert "description" in capsys.readouterr().err
+
+
+def test_block_list_categories_are_parsed_and_checked(monkeypatch, tmp_path, capsys):
+    # YAML block-list form:
+    #     categories:
+    #       - dance
+    # The parser only understood the bracketed form, so a block-list key parsed
+    # to "" and the allowlist check skipped the page entirely (its isinstance
+    # list-guard never fired). A typo'd category in this form shipped silently.
+    # 1 of the 78 real posts uses this form.
+    posts = tmp_path / "posts"
+    fm = (
+        '---\ntitle: "T"\ndate: 2026-01-01\n'
+        "categories:\n  - nonsense-category\n"
+        "tags:\n  - a\n"
+        'description: "D"\n---\nbody\n'
+    )
+    _bundle(posts, "blocklist", fm)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 1
+    assert "unknown categories" in capsys.readouterr().err
+
+
+def test_block_list_categories_that_are_valid_pass(monkeypatch, tmp_path):
+    # The mirror of the test above: block-list parsing must not turn a
+    # correctly categorised post into a false failure, which is what happened
+    # to content/posts/entrepreneurship-in-a-nutshell/ when blank values first
+    # started counting as missing.
+    posts = tmp_path / "posts"
+    fm = (
+        '---\ntitle: "T"\ndate: 2026-01-01\n'
+        "categories:\n  - entrepreneurship\n  - life\n"
+        "tags:\n  - a\n  - b\n"
+        'description: "D"\n---\nbody\n'
+    )
+    _bundle(posts, "blocklist-ok", fm)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    assert vf.main(["--scope", "posts"]) == 0
