@@ -48,8 +48,10 @@ Order matters: they are listed weakest-to-strongest in enforcement terms.
    `User-agent: *`. **Honour-system: a request, not enforcement.** Bytespider in particular has been
    reported ignoring robots.txt.
 3. **Granular presets (`ai_training` / `ai_search` / `ai_user`)**: set `ai_training: block`, leave
-   the other two `disabled`. Partly enforced today (see below) and scheduled to become the native
-   mechanism at Cloudflare's **2026-09-15** migration, at which point this layer does the whole job.
+   the other two `disabled`. Partly enforced today (see below). At Cloudflare's **2026-09-15**
+   migration this becomes the native mechanism, **and also reclassifies Googlebot, Applebot and
+   BingBot as blocked on any zone set to block Training**. Read "MANDATORY REVISIT BEFORE
+   2026-09-15" before relying on this layer.
 4. **WAF custom rule**: the only layer that *hard-enforces* a training block before 2026-09-15.
    Blocks the training user-agents at the edge; leaves the citation user-agents untouched.
    Available on the Free plan.
@@ -58,13 +60,46 @@ Order matters: they are listed weakest-to-strongest in enforcement terms.
 
 Do not record these as inert. Measured 2026-07-20:
 
-- hoiboy.uk with `ai_training: block` → CCBot **403**, Bytespider **403**, other four training
-  tokens 200
-- cuarchitects.co.uk with `ai_training: disabled` → all six training tokens **200**
+The strongest evidence is a before/after on one zone, not a comparison between two. cuarchitects.co.uk
+was measured with `ai_training: disabled` (all six training tokens **200**), then the preset was set
+to `block`, and CCBot and Bytespider flipped to **403** while the other four stayed 200. hoiboy.uk,
+already at `block`, showed the same two at 403 throughout. Both zones now read identically.
+
+The flip is user-agent-signature specific, which rules out generic bot mitigation: the full
+`CCBot/2.0 (https://commoncrawl.org/faq/)` string gets 403, a bare `CCBot` gets 200, and an invented
+crawler with the same shape gets 200.
 
 So the preset does real work now, on a subset of crawlers. An earlier note in this workstream said
-"accepted by the API but not enforced"; that was over-generalised from probing GPTBot alone. Set it
-on every zone regardless, so the September migration activates the full framework with no revisit.
+"accepted by the API but not enforced"; that was over-generalised from probing GPTBot alone.
+
+## MANDATORY REVISIT BEFORE 2026-09-15
+
+**`ai_training: block` will block Googlebot, Applebot and BingBot on 2026-09-15 unless the zone opts
+out first.** This is not a hypothetical. Cloudflare's announcement, verbatim:
+
+> *"Multi-purpose crawlers such as Googlebot, Applebot, and BingBot will be blocked by customers who
+> have selected to block Training (either through the new options to manage AI traffic, or through
+> the legacy Block AI bots service)."*
+
+The new defaults *"apply to new Cloudflare customers, new sites set up by existing customers, and all
+existing free customers"*. **Both live zones are Free plan, so both are in scope.** Opt-out can be
+marked in Security settings *"any time leading up to September 15"*.
+
+An earlier version of this document said to set the preset everywhere so the migration would activate
+"with no revisit". That was unsupported and actively hazardous: followed literally on a portfolio blog
+and a client practice whose whole purpose is being found, it would take out organic search on both.
+
+**The trade-off, stated so it gets decided rather than drifted into.** Keeping `ai_training: block`
+today buys real blocking of CCBot and Bytespider, and Bytespider is the crawler most often reported
+ignoring robots.txt, so it is not nothing. The cost is that the same switch is what Cloudflare reads
+on 2026-09-15 to decide whether Googlebot counts as a training crawler. Search visibility outranks
+training protection for these domains, so **if the migration arrives undecided, opt out**.
+
+`scripts/check_ai_training_deadline.py` fails CI from 2026-09-01 so this cannot be forgotten. It is
+not advice in a document; it is a gate. The line below is that gate's input: flip it to
+`resolved (<date>, <what was done>)` once the call is made and the zones are set accordingly.
+
+ai-training-migration-decision: pending
 
 ## Standing up a new domain
 
@@ -95,13 +130,27 @@ The managed block is served *ahead of* the origin's file, so both records are se
 cannot remove the managed one. Consequences:
 
 - A repo-served `robots.txt` that allows a bot the managed block disallows produces **two
-  contradictory groups for one token**. RFC 9309 merges duplicate groups, and permissive parsers
-  resolve an allow/disallow tie toward **allow**, so the training block silently stops applying.
-- cuarchitects.co.uk was serving exactly this for GPTBot, ClaudeBot, Google-Extended and CCBot: its
-  repo file explicitly allowed them (written before managed robots.txt was on) while the managed
-  block disallowed them.
-- `scripts/check-ai-crawler-access.sh` now detects this and reports `CONFLICT` on the affected rows.
-  Run it against any domain whose repo serves its own robots.txt.
+  contradictory groups for one token**. RFC 9309 §2.2.1: *"If there is more than one group matching
+  the user-agent, the matching groups' rules MUST be combined into one group."*
+- cuarchitects.co.uk serves exactly this for GPTBot, ClaudeBot, Google-Extended and CCBot: its repo
+  file allows them with an empty `Disallow:` (written before managed robots.txt was on) while the
+  managed block disallows them.
+- **The block still applies. This is drift, not a policy failure.** §2.2.2: *"The most specific match
+  found MUST be used. The most specific match is the match that has the most octets."* `Disallow: /`
+  is one octet; the empty pattern is zero, so disallow wins. The allow-beats-disallow tie-break in
+  §2.2.2 needs an actual `Allow:` rule and never fires here. Confirmed empirically against the live
+  file with Python's `urllib.robotparser`: `can_fetch` is `False` for all four tokens and `True` for
+  the citation class.
+- `scripts/check-ai-crawler-access.sh` reports `CONFLICT` on the affected rows. Treat it as **drift
+  worth fixing**, not as an outage: two contradictory records are confusing to read, and the
+  effective stance rests on a specificity rule that a future edit to either file could flip.
+
+**An earlier version of this document claimed the opposite** ("permissive parsers resolve the tie
+toward allow, so the training block silently stops applying"). Wrong on three counts: there is no
+allow/disallow tie, because both records are `disallow`; specificity resolves it before any tie-break;
+and a real parser returns blocked. cuarchitects' own `layouts/robots.txt` already recorded the correct
+reading and this document contradicted it. Kept here because the wrong version was briefly the basis
+for calling the client site's policy defeated, which it never was.
 
 Always fetch the live `https://<domain>/robots.txt` before reasoning about what a crawler sees. The
 repo file is not the served file.
@@ -124,19 +173,25 @@ edge setting can regress with no repo change and nothing in the repo would show 
 
 ## Zone inventory (2026-07-20)
 
-| Domain | Zone ID | State |
-|---|---|---|
-| hoiboy.uk | `8f3025b71cd0661773746a18a3be2495` | citation PASS 6/6, training `Disallow: /` |
-| cuarchitects.co.uk | `f2526587d4edffaeaeb1a0d47f1c2b71` | citation PASS 6/6, **robots.txt CONFLICT on 4 tokens** |
-| speak2lola.com | `ff7099adcd722ed0b39580768678c847` | configured; no DNS, unverifiable until a site exists |
+| Domain | State (2026-07-20) |
+|---|---|
+| hoiboy.uk | citation PASS 6/6, training `Disallow: /` |
+| cuarchitects.co.uk | citation PASS 6/6, **robots.txt CONFLICT on 4 tokens** (drift; effective stance still blocked) |
+| speak2lola.com | configured; no DNS, unverifiable until a site exists |
 
-Account `9bb03980d84fd2fdea6dea8b3ea2e1dd`. Target zones **by ID**; never iterate "all zones".
+**Zone and account IDs are deliberately not recorded here.** This repository is public. The IDs are
+not credentials, but publishing the account's zone inventory is free reconnaissance for no benefit.
+Read them from the Cloudflare dashboard or `GET /zones`. Target zones **by ID** when scripting;
+never iterate "all zones".
 
 Both live zones are **Free plan**: `sbfm_*` fields are Pro+ and will reject. That is a plan limit,
-not a token-scope problem.
+not a token-scope problem. The Free plan is also why the 2026-09-15 default change applies to them.
 
 ## Sources
 
+- Cloudflare blog, "Your site, your rules: new AI traffic options for all customers" (the source for
+  the 2026-09-15 date, the multi-purpose-crawler reclassification and the free-customer scope):
+  https://blog.cloudflare.com/content-independence-day-ai-options/
 - Cloudflare, "Block AI bots": https://developers.cloudflare.com/bots/additional-configurations/block-ai-bots/
 - Cloudflare, "Manage AI crawlers": https://developers.cloudflare.com/ai-crawl-control/features/manage-ai-crawlers/
 - Cloudflare, "Managed robots.txt": https://developers.cloudflare.com/ai-crawl-control/features/managed-robots-txt/
