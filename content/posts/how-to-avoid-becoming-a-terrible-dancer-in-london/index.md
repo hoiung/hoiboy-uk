@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, london, dance-community, methodology, critique, learning]
 source_file: "voice-corpus/blogs/05_avoid-becoming-terrible-zouk-dancer-london-uncensored.md"
 source_era: "AdventureAnd.Me (Joomla)"
+description: "A blunt 23 point guide to the London Zouk scene, the Zouxit prediction, and what the Czech, Dutch and Malaysian qualifying systems do differently."
 ---
 
 {{< reader-warning >}}
