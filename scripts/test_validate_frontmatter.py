@@ -643,6 +643,10 @@ def test_valid_list_shapes_still_pass(monkeypatch, tmp_path):
     posts = tmp_path / "posts"
     _bundle(posts, "bracket", POST_FM)
     block = POST_FM.replace("categories: [tech-ai]", "categories:\n  - tech-ai")
+    # Distinct descriptions: this fixture puts two bundles in one tree, and the
+    # uniqueness check would otherwise fail it for a reason that has nothing to
+    # do with the list shapes under test.
+    block = block.replace('"A unique summary."', '"A second, different summary."')
     _bundle(posts, "block", block)
     monkeypatch.setattr(vf, "POSTS", posts)
     monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
@@ -686,3 +690,50 @@ def test_duplicate_categories_are_rejected(monkeypatch, tmp_path, capsys):
     monkeypatch.setattr(vf, "ROOT", tmp_path)
     assert vf.main(["--scope", "posts"]) == 1
     assert "duplicate categories" in capsys.readouterr().err
+
+
+def test_duplicate_description_across_two_posts_is_rejected(monkeypatch, tmp_path, capsys):
+    # Presence was gated from the start; sameness was not. Copy-pasting a
+    # sibling post's description produced exactly the near-duplicate this gate
+    # exists to prevent, and passed every check. Surfaced by the Stage 5 audit
+    # of blog-priv#55.
+    other = POST_FM.replace('title: "x"', 'title: "y"')
+    rc = _run(monkeypatch, tmp_path, [("a", POST_FM), ("b", other)], [],
+              argv=["--scope", "posts"])
+    assert rc == 1
+    err = capsys.readouterr().err
+    assert "identical to" in err
+    # The message must name BOTH sides, or the author has to go hunting.
+    assert "posts/a/index.md" in err and "posts/b/index.md" in err
+
+
+def test_duplicate_description_across_different_roots_is_rejected(monkeypatch, tmp_path, capsys):
+    # The seen-map is threaded across roots by main() on purpose: a post and a
+    # project page sharing one description are as duplicate as two posts. A
+    # per-root map would miss this entirely.
+    rc = _run(monkeypatch, tmp_path, [("p", POST_FM)], [("a-service", PAGE_FM)])
+    assert rc == 1
+    assert "identical to" in capsys.readouterr().err
+
+
+def test_descriptions_differing_only_by_case_and_spacing_collide(monkeypatch, tmp_path, capsys):
+    # Normalised before comparison: a duplicate reformatted with different
+    # capitalisation or run-together whitespace is still the same text to a
+    # search engine, so matching it byte-for-byte would let the common case of
+    # a hand-retyped copy slip through.
+    # Kept to a single line: a newline inside a quoted scalar is a shape this
+    # hand-rolled parser does not represent, so folding it in here would test
+    # the parser's limits rather than the normalisation under test.
+    twin = POST_FM.replace('"A unique summary."', '"a   UNIQUE   summary."')
+    rc = _run(monkeypatch, tmp_path, [("a", POST_FM), ("b", twin)], [],
+              argv=["--scope", "posts"])
+    assert rc == 1
+    assert "identical to" in capsys.readouterr().err
+
+
+def test_distinct_descriptions_pass(monkeypatch, tmp_path):
+    # The false-failure guard: the check must not fire on genuinely different
+    # text, or every real multi-post tree fails.
+    other = POST_FM.replace('"A unique summary."', '"A different summary entirely."')
+    assert _run(monkeypatch, tmp_path, [("a", POST_FM), ("b", other)], [],
+                argv=["--scope", "posts"]) == 0

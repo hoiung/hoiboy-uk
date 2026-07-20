@@ -235,7 +235,8 @@ def parse_frontmatter(text: str) -> dict[str, object] | None:
 
 
 def check_tree(root: Path, required: set[str], check_categories: bool,
-               include_section_pages: bool = False) -> tuple[list[str], int]:
+               include_section_pages: bool = False,
+               seen_descriptions: dict[str, str] | None = None) -> tuple[list[str], int]:
     """Validate every page bundle under `root` against `required`.
 
     Returns (failures, files_checked). A missing root is not an error - the
@@ -336,6 +337,27 @@ def check_tree(root: Path, required: set[str], check_categories: bool,
                     f"{md.relative_to(ROOT)}: lastmod {lastmod[:10]} precedes date "
                     f"{date[:10]}; that publishes dateModified before datePublished"
                 )
+        # Presence was gated; SAMENESS was not. Two pages with an identical
+        # description are the same near-duplicate this gate exists to prevent -
+        # the site-default fallback is just the most common way to get there,
+        # not the only one. Copy-pasting a sibling post's description passed
+        # every check above. The dict is threaded across roots by main() so a
+        # posts/ page and a consulting/ page cannot collide either, and it
+        # holds the first path seen so the message names both sides.
+        if "description" in required:
+            desc = fm.get("description")
+            if seen_descriptions is not None and isinstance(desc, str):
+                key = " ".join(desc.split()).casefold()
+                if key:
+                    here = str(md.relative_to(ROOT))
+                    first = seen_descriptions.get(key)
+                    if first is not None and first != here:
+                        failures.append(
+                            f"{here}: description is identical to {first}; "
+                            f"two pages sharing one description are near-duplicates"
+                        )
+                    else:
+                        seen_descriptions[key] = here
     return failures, len(md_files)
 
 
@@ -362,8 +384,13 @@ def main(argv: list[str] | None = None) -> int:
     # check_tree itself stays tolerant of a missing root (it is used as a
     # library and a partial checkout is legitimately empty); the "must not be
     # empty" judgement belongs here, where the specific trees are known.
+    # Shared across both roots on purpose: a posts/ page and a consulting/ page
+    # with the same description are as duplicate as two posts.
+    seen_descriptions: dict[str, str] = {}
+
     if args.scope in ("all", "posts"):
-        f, n = check_tree(POSTS, REQUIRED, check_categories=True)
+        f, n = check_tree(POSTS, REQUIRED, check_categories=True,
+                          seen_descriptions=seen_descriptions)
         failures += f
         counts.append(f"{n} posts")
         if n == 0:
@@ -374,7 +401,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.scope in ("all", "consulting"):
         f, n = check_tree(CONSULTING, CONSULTING_REQUIRED, check_categories=False,
-                          include_section_pages=True)
+                          include_section_pages=True,
+                          seen_descriptions=seen_descriptions)
         failures += f
         counts.append(f"{n} project pages")
         if n == 0:
