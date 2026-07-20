@@ -5,6 +5,7 @@ categories: [dance]
 tags: [zouk, london, uk, community, scene]
 source_file: "voice-corpus/blogs/35_will-uk-dance-connexion-change-zouk-london.md"
 source_era: "ZoukBase (WordPress)"
+description: "Pedrinho and Linda launched UK Dance Connexion in September 2017 with free summer tasters. Whether it could finally shift Zouk in London."
 ---
 Many of you may know that I'm not the happiest chap when it comes to dancing Zouk in London.
 
