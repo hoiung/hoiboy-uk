@@ -30,8 +30,13 @@
 #                         for a head.html/hero-pick template regression)
 #   8. Rendered links    (lychee on rendered HTML NOT raw .md — catches broken
 #                         cross-section links + missing assets that markdown-only
-#                         lychee cannot see; covers public/posts/<slug>/ AND
-#                         public/consulting/<slug>/ per AC 0.4.)
+#                         lychee cannot see. CAVEAT: lychee.toml exclude_path
+#                         contains "public/posts", so for a POST target this gate
+#                         checks zero links and still reports PASS — it is
+#                         vacuous for posts and only really fires for
+#                         public/consulting/<slug>/ per AC 0.4. The exclusion is
+#                         deliberate and predates blog-priv#55; narrowing it is
+#                         its own scoped change, not a comment fix.)
 #   8a.Consulting links  (consulting_link_check: live external-URL liveness)
 #
 # Checks 6+7 added per dotfiles Issue #447 Phase 7 (AP #18 per-shape recipe
