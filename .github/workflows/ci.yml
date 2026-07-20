@@ -166,10 +166,13 @@ jobs:
       - name: Frontmatter validator (posts + project pages, incl. description)
         run: python3 scripts/validate_frontmatter.py
 
-      # Project-page scope reported separately so a consulting/portfolio
-      # failure is attributable without reading the whole-tree output. Mirrors
-      # the frontmatter-project-pages gate in scripts/pre-publish.sh.
+      # Project-page scope reported separately so a consulting/portfolio failure
+      # is attributable without reading the whole-tree output. `if: always()`
+      # matters: without it GHA skips this step whenever the whole-tree step
+      # above failed, which is precisely the run where the attribution is
+      # wanted, leaving the step able to report only when it has nothing to say.
       - name: Frontmatter validator (project pages only)
+        if: always()
         run: python3 scripts/validate_frontmatter.py --scope consulting
 
       - name: Config traceability check
