@@ -311,6 +311,33 @@ def test_a_later_groups_rules_do_not_leak_into_an_earlier_token():
     assert "training opted out" in _training_row(p.stdout, "Bytespider"), p.stdout
 
 
+def test_disallow_branch_also_closes_the_user_agent_run():
+    # Sibling of the Allow: case above. Mutating the Disallow: branch's own
+    # `in_ua_run = 0` survived all 32 tests while producing a false CONFLICT:
+    # a LATER group's Allow: leaked back onto this token.
+    robots = "User-agent: GPTBot\nDisallow: /\nUser-agent: Bytespider\nAllow: /\n"
+    p = _run(lambda ua: 200, robots=robots)
+    gpt = _training_row(p.stdout, "GPTBot")
+    assert "CONFLICT" not in gpt, p.stdout
+    assert "training opted out" in gpt, p.stdout
+
+
+def test_a_non_rule_directive_between_groups_closes_the_run():
+    # Cloudflare's managed block really does ship `Content-Signal:` lines, so a
+    # non-rule directive sitting between two tokens' groups is not contrived.
+    # Inverting the catch-all's blank-line exemption survived all 32 tests while
+    # attributing a later group's Disallow:/ to this token.
+    robots = (
+        "User-agent: GPTBot\n"
+        "Content-Signal: search=yes,ai-train=no\n"
+        "User-agent: Bytespider\n"
+        "Disallow: /\n"
+    )
+    p = _run(lambda ua: 200, robots=robots)
+    assert "no group" in _training_row(p.stdout, "GPTBot"), p.stdout
+    assert "training opted out" in _training_row(p.stdout, "Bytespider"), p.stdout
+
+
 def test_scoped_allow_against_disallow_all_is_a_conflict():
     # `Allow: /public` under `Disallow: /` explicitly permits /public by RFC 9309
     # longest-match, with no tie-break needed. Reporting a clean opt-out here

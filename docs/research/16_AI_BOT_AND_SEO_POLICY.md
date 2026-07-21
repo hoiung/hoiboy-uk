@@ -1,7 +1,7 @@
 # 16. AI Bot and SEO Crawl Policy (Decision Record)
 
 **Date:** 2026-05-31
-**Status:** Decided and implemented (`layouts/robots.txt`).
+**Status:** Decided and implemented 2026-05-31; the training-class verdict was **SUPERSEDED on 2026-07-20** (training is now BLOCKED). Standing policy for all domains: `docs/research/17_AI_CRAWLER_FRAMEWORK.md`.
 **Scope:** Should hoiboy.uk allow or block search-engine crawlers and AI bots, and what does that mean for SEO and for being cited in AI chat answers?
 
 This is an infrastructure and SEO decision record, not voice prose. It exists so the crawl-policy decision is durable and reviewable (and, since the repo is portfolio evidence, so the reasoning is visible).
@@ -16,7 +16,9 @@ The owner asked three things:
 
 ## TL;DR recommendation
 
-**Allow every bot class, and advertise the sitemap.** That is what was implemented: `layouts/robots.txt` now serves an allow-all policy (`User-agent: *`, empty `Disallow:`) plus a `Sitemap: https://hoiboy.uk/sitemap.xml` line that the previous bare default was missing.
+**SUPERSEDED 2026-07-20. The standing policy is now: citation ALLOWED, training BLOCKED, on every domain. See `docs/research/17_AI_CRAWLER_FRAMEWORK.md`.** The recommendation below is kept as the original reasoning and is still correct on why blocking training costs no citations; it is wrong only on what the owner then chose to do about it.
+
+~~Allow every bot class, and advertise the sitemap.~~ That was what was implemented at the time: `layouts/robots.txt` now serves an allow-all policy (`User-agent: *`, empty `Disallow:`) plus a `Sitemap: https://hoiboy.uk/sitemap.xml` line that the previous bare default was missing.
 
 The one mental-model correction that resolves the owner's fear: **training crawls do not produce AI-chat citations; only the search and retrieval bot class does.** Blocking the AI-training bots would cost zero citations. The only block that would actually suppress AI-chat citations is blocking the search and retrieval class, which we are deliberately not doing.
 
@@ -38,7 +40,7 @@ Sources for the per-class split: OpenAI (https://developers.openai.com/api/docs/
 |---|---|---|
 | Search crawlers (Googlebot, bingbot) | ALLOW (non-negotiable) | Crawl access is a prerequisite for ranking, and the search index is reused by Google AI Overviews and Microsoft Copilot |
 | AI live-retrieval (OAI-SearchBot, Claude-SearchBot, PerplexityBot, and the user-fetch siblings) | ALLOW (this is the GEO money class) | These produce the cited, clickable links and referral traffic the owner wants |
-| AI training (GPTBot, ClaudeBot, Google-Extended, CCBot, and others) | ALLOW (owner's call, no citation cost either way) | Training feeds model weights, not citations; the goal here is exposure, not content protection, so the simplest stance is allow-all |
+| AI training (GPTBot, ClaudeBot, Google-Extended, CCBot, and others) | **BLOCK** (superseded 2026-07-20; was ALLOW) | Training feeds model weights, not citations, so blocking costs nothing in citation terms. The owner reversed the original ALLOW once it was established that no vendor offers a cite-for-training contract. |
 
 ## Answering the three questions
 
@@ -54,7 +56,7 @@ Yes, and the mechanism is the search and retrieval bot class, not training. When
 
 For hoiboy.uk specifically, yes, blocking the retrieval class would be a real missed opportunity. There is a widely-quoted study showing that sites which block AI bots still get cited (BuzzStream: https://www.buzzstream.com/blog/news-block-ai-bots-citations/), and it is tempting to read that as "blocking is free." It is not. That stat is correlation, not causation: the sites in it are large, already-indexed, high-authority domains whose citations come from pre-block crawls, Common Crawl reuse, and search-result extraction. That mechanism does not transfer to a small, new, low-authority personal blog. For a site like this one, with no existing authority to coast on, allowing the live-retrieval class is materially important to being cited at all. So we allow it.
 
-The flip side: blocking the **training** class would not be a missed citation opportunity, because training does not drive citations. That is purely a content-protection choice with no citation downside, which is why it is offered below as an optional, deferred variant.
+The flip side: blocking the **training** class would not be a missed citation opportunity, because training does not drive citations. That is purely a content-protection choice with no citation downside, which is why it was originally offered below as an optional, deferred variant. That variant was ADOPTED on 2026-07-20 and is now the standing policy.
 
 ## What was implemented
 

@@ -52,9 +52,11 @@ Order matters: they are listed weakest-to-strongest in enforcement terms.
    migration this becomes the native mechanism, **and also reclassifies Googlebot, Applebot and
    BingBot as blocked on any zone set to block Training**. Read "MANDATORY REVISIT BEFORE
    2026-09-15" before relying on this layer.
-4. **WAF custom rule**: the only layer that *hard-enforces* a training block before 2026-09-15.
+4. **WAF custom rule**: the only layer that *hard-enforces* a training block before 2026-09-15, and
+   it reaches **seven of the nine** tokens. `Google-Extended` and `Applebot-Extended` send no
+   user-agent of their own, so no edge rule can match them and robots.txt is their only control.
    Blocks the training user-agents at the edge; leaves the citation user-agents untouched.
-   Available on the Free plan.
+   Available on the Free plan. **Not applied on any zone yet.**
 
 ### The granular presets are PARTLY enforced, not unenforced
 
@@ -131,22 +133,33 @@ Action `block`, phase `http_request_firewall_custom`:
 (http.user_agent contains "GPTBot")
 or (http.user_agent contains "ClaudeBot")
 or (http.user_agent contains "CCBot")
-or (http.user_agent contains "Google-Extended")
 or (http.user_agent contains "meta-externalagent")
 or (http.user_agent contains "Bytespider")
 or (http.user_agent contains "Amazonbot")
-or (http.user_agent contains "Applebot-Extended")
 or (http.user_agent contains "CloudflareBrowserRenderingCrawler")
 ```
 
-**The substring trap, which is easy to get wrong and expensive when you do.** `contains` is a
-substring match, so a carelessly shortened token blocks a crawler you want:
+**Seven clauses, not nine. `Google-Extended` and `Applebot-Extended` are deliberately absent, and a
+WAF rule can never cover them.** Both are robots.txt *control tokens*, not crawlers: they have no
+user-agent string, so `http.user_agent contains` can never match and a rule listing them would look
+correct while enforcing nothing.
 
-- `"Applebot"` would also match **`Applebot-Extended`**'s sibling, plain `Applebot`, which is Apple's
-  search crawler. Always the full `Applebot-Extended`.
-- Never shorten `Google-Extended` toward `Google`; `Googlebot` contains it.
-- `ClaudeBot` is safe as written: the citation tokens are `Claude-SearchBot` and `Claude-User`, and
-  neither contains the substring `ClaudeBot`.
+> Google: *"Google-Extended doesn't have a separate HTTP request user agent string. Crawling is done
+> with existing Google user agent strings; the robots.txt user-agent token is used in a control
+> capacity."*
+>
+> Apple: *"Applebot-Extended does not crawl webpages. Instead, Applebot-Extended is only used to
+> determine how to use the data crawled by the Applebot user agent."*
+
+The only user-agents that WOULD match are `Googlebot` and `Applebot`, which are the search crawlers
+you must never block. **So for Google and Apple, robots.txt is the only available training control,
+full stop.** This is a real limit on the claim that the WAF layer "hard-enforces": it hard-enforces
+seven of nine, and the two it cannot reach are the two whose opt-out is honour-system by design.
+
+**The substring trap for the seven that do work.** Cloudflare's `contains` is a substring match, so a
+carelessly shortened token blocks a crawler you want. `ClaudeBot` is safe as written: the citation
+tokens are `Claude-SearchBot` and `Claude-User`, and neither contains the substring `ClaudeBot`.
+Verified literally, not assumed. Never shorten a token toward a vendor name.
 
 After applying, verify with the probe rather than the dashboard, and confirm the CITATION rows are
 still 200. A rule that takes citation down with training is the original defect in a new place.
@@ -185,10 +198,13 @@ cannot remove the managed one. Consequences:
 - cuarchitects.co.uk serves exactly this for GPTBot, ClaudeBot, Google-Extended and CCBot: its repo
   file allows them with an empty `Disallow:` (written before managed robots.txt was on) while the
   managed block disallows them.
-- **An empty `Disallow:` IS an allow.** It is the traditional allow-everything special case, not a
-  zero-length disallow path. CPython's `urllib.robotparser` says so in its own source: *"an empty
-  value means allow all"*. So this genuinely is an allow-versus-disallow conflict, and this repo's own
-  parser (`scripts/check-ai-crawler-access.sh`) correctly scores it as an allow.
+- **An empty `Disallow:` means allow, in practice, but the RFC and real parsers disagree about why.**
+  Real parsers treat it as the traditional allow-everything special case: CPython's
+  `urllib.robotparser` says so in its own source, *"an empty value means allow all"*, and this repo's
+  parser scores it the same way. **RFC 9309 has no such special case**: its ABNF puts
+  `empty-pattern = *WS` under `("allow" / "disallow")`, so read strictly it is a zero-octet
+  *disallow*. Both readings reach "blocked" here, for different reasons, which is why the outcome is
+  stable but the reasoning must not be stated as if the two agree.
 - **The block still applies on the live file, but for a narrower reason than a specificity argument.**
   Under a strict RFC reading §2.2.2 gives it to `Disallow: /` (*"the most specific match... the match
   that has the most octets"*, one octet against the empty pattern's zero, and the allow-beats-disallow
@@ -248,7 +264,7 @@ edge setting can regress with no repo change and nothing in the repo would show 
 
 | Domain | Citation | Training (robots.txt) | WAF rule |
 |---|---|---|---|
-| hoiboy.uk | PASS 6/6 | `Disallow: /` on all nine | **not applied** |
+| hoiboy.uk | PASS 6/6 | `Disallow: /` on all nine (gate re-checks 6 of them) | **not applied** |
 | cuarchitects.co.uk | PASS 6/6 | **CONFLICT on 4 tokens** (drift; live stance still blocked) | **not applied** |
 | speak2lola.com | no DNS, unverifiable | configured | **not applied** |
 
@@ -260,12 +276,14 @@ Read them from the Cloudflare dashboard or `GET /zones`. Target zones **by ID** 
 never iterate "all zones".
 
 Both live zones are **Free plan**: `sbfm_*` fields are Pro+ and will reject. That is a plan limit,
-not a token-scope problem. The Free plan is also why the 2026-09-15 default change applies to them.
+not a token-scope problem. Plan tier is NOT why the 2026-09-15 change reaches these zones; that
+follows from having selected to block Training. See the retraction above and do not reintroduce
+a Free-plan rationale here.
 
 ## Sources
 
 - Cloudflare blog, "Your site, your rules: new AI traffic options for all customers" (the source for
-  the 2026-09-15 date, the multi-purpose-crawler reclassification and the free-customer scope):
+  the 2026-09-15 date and the multi-purpose-crawler reclassification):
   https://blog.cloudflare.com/content-independence-day-ai-options/
 - Cloudflare, "Block AI bots": https://developers.cloudflare.com/bots/additional-configurations/block-ai-bots/
 - Cloudflare, "Manage AI crawlers": https://developers.cloudflare.com/ai-crawl-control/features/manage-ai-crawlers/

@@ -52,18 +52,42 @@ MARKER = re.compile(
     r"^ai-training-migration-decision:\s*(pending|resolved)\b(.*)$",
     re.MULTILINE,
 )
-FENCE = re.compile(r"^```.*?^```", re.MULTILINE | re.DOTALL)
+FENCE_OPEN = re.compile(r"^[ \t]{0,3}(`{3,}|~{3,})")
 
 
 def _strip_fences(text: str) -> str:
     """Blank out fenced code blocks, preserving line count.
 
     An illustrative `resolved` example inside a fence would otherwise be found
-    first by re.search and satisfy the gate while the real marker still says
-    pending. Line count is preserved so any future line-number reporting stays
-    honest.
+    and satisfy the gate while the real marker still says pending.
+
+    Scanned line by line rather than with one regex, because the regex version
+    was defeated three ways, each verified to produce a false PASS: a delimiter
+    indented by a space (still valid CommonMark), a tilde `~~~` fence, and a
+    fence opened but never closed. The last is the nastiest, since an unclosed
+    fence swallows the rest of the file and a regex requiring a closing delimiter
+    matches nothing at all, leaving the whole block live.
+
+    An unclosed fence therefore runs to end of file, which is what CommonMark
+    says it does. Line count is preserved so any future line-number reporting
+    stays honest.
     """
-    return FENCE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
+    out, fence = [], None
+    for line in text.splitlines():
+        if fence is None:
+            m = FENCE_OPEN.match(line)
+            if m:
+                fence = m.group(1)[0] * 3  # opening marker type
+                out.append("")
+                continue
+            out.append(line)
+        else:
+            out.append("")
+            stripped = line.strip()
+            # A closing fence is the same character, at least as long, alone.
+            if stripped and set(stripped) == {fence[0]} and len(stripped) >= 3:
+                fence = None
+    return "\n".join(out) + ("\n" if text.endswith("\n") else "")
 
 
 def _today() -> date:

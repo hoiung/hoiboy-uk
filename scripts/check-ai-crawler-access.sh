@@ -320,11 +320,18 @@ if [ "$blocked" -gt 0 ]; then
         "$blocked" "${#CITATION_BOTS[@]}" "$blocked_codes"
     printf >&2 'An access denial guarantees zero citation from that engine.\n'
     printf >&2 'Fix in the Cloudflare dashboard for this zone (repo changes cannot):\n'
-    printf >&2 '  1. "Block AI bots" managed toggle OFF\n'
+    printf >&2 '  1. ai_bots_protection / "Block AI bots" set to DISABLED. This is the\n'
+    printf >&2 '     coarse legacy switch and was the measured cause on hoiboy.uk; it takes\n'
+    printf >&2 '     the citation class down together with training.\n'
     printf >&2 '  2. AI Crawl Control set to Allow for the citation class\n'
-    printf >&2 '  3. managed-robots.txt OFF, so it cannot inject rules over the repo-served file\n'
-    printf >&2 '  4. Bot Fight Mode off, or configured to skip verified bots\n'
-    printf >&2 'Detail: docs/research/16_AI_BOT_AND_SEO_POLICY.md\n'
+    printf >&2 '     (ai_search and ai_user DISABLED; ai_training may stay block)\n'
+    printf >&2 '  3. Bot Fight Mode off, or configured to skip verified bots\n'
+    printf >&2 '\n'
+    printf >&2 'Do NOT turn managed robots.txt off to fix this. It cannot cause a 403,\n'
+    printf >&2 'so it is never the cause here, and it is the mechanism that carries the\n'
+    printf >&2 'training block. Disabling it would silently drop the training opt-out\n'
+    printf >&2 'while doing nothing for the citation failure being reported.\n'
+    printf >&2 'Detail: docs/research/17_AI_CRAWLER_FRAMEWORK.md\n'
     exit 1
 fi
 

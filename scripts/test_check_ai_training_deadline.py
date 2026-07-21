@@ -90,6 +90,52 @@ def test_resolved_example_in_a_code_fence_does_not_satisfy_the_gate(tmp_path, mo
     assert _run(tmp_path, body, PAST_TRIGGER, monkeypatch) == 1
 
 
+@pytest.mark.parametrize(
+    "opener,closer,label",
+    [
+        ("```", "```", "plain backtick fence"),
+        (" ```", " ```", "delimiter indented one space (valid CommonMark)"),
+        ("~~~", "~~~", "tilde fence"),
+        ("````", "````", "four-backtick fence"),
+    ],
+)
+def test_fenced_resolved_example_never_satisfies_the_gate(tmp_path, monkeypatch, opener, closer, label):
+    # Each of these defeated the original single-regex fence stripper and
+    # produced a false PASS. The gate's entire job is to be red here.
+    body = (
+        "Record it like this:\n"
+        f"{opener}\n"
+        "ai-training-migration-decision: resolved (2026-09-01, opted out)\n"
+        f"{closer}\n"
+        "ai-training-migration-decision: pending\n"
+    )
+    assert _run(tmp_path, body, PAST_TRIGGER, monkeypatch) == 1, label
+
+
+def test_unclosed_fence_swallows_to_end_of_file(tmp_path, monkeypatch):
+    # The worst of the three bypasses: an unclosed fence made a regex requiring
+    # a closing delimiter match nothing, leaving the example live as the ONLY
+    # marker, so the gate passed. CommonMark says an unclosed fence runs to EOF;
+    # with the whole block blanked there is no marker left, which is an error.
+    body = (
+        "Record it like this:\n"
+        "```\n"
+        "ai-training-migration-decision: resolved (2026-09-01, opted out)\n"
+    )
+    assert _run(tmp_path, body, PAST_TRIGGER, monkeypatch) == 2
+
+
+def test_strip_fences_preserves_line_count(tmp_path):
+    mod = _load(tmp_path / "unused.md")
+    for body in (
+        "a\n```\nb\nc\n```\nd\n",
+        "a\n~~~\nb\n~~~\nd\n",
+        "a\n```\nb\n",
+        "no fences at all\n",
+    ):
+        assert mod._strip_fences(body).count("\n") == body.count("\n"), body
+
+
 def test_duplicate_markers_are_an_error(tmp_path, monkeypatch):
     # First-match-wins would let a stale `resolved` above the live `pending`
     # silently disarm the gate. Ambiguity is an error, not a pass.
