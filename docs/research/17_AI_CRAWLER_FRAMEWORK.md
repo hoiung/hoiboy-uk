@@ -338,6 +338,16 @@ cannot remove the managed one. Consequences:
 - `scripts/check-ai-crawler-access.sh` reports `CONFLICT` on the affected rows. Treat it as **drift
   worth fixing**: not an outage today, but the effective stance depends on parser behaviour that
   varies between implementations and on a serving order the origin does not control.
+- **Nothing will tell you when that drift gets worse, and that is a deliberate gap.** A CONFLICT
+  token is counted out of the opt-out total but never fails the gate, so the count on
+  cuarchitects.co.uk could rise from four to nine and the weekly job would still exit 0 and stay
+  green. The only signal is the count in a PASS line inside a job nobody opens when it is green.
+  Failing on it was considered and rejected: the live outcome is blocked, and a standing red on a
+  client zone the operator cannot unilaterally fix is the alarm-fatigue trap this workflow already
+  avoids by excluding speak2lola.com. But by this document's own standard, that a gate which never
+  asks about a token cannot fail on it, a gate that asks and never fails is only half a gate. **If
+  the CONFLICT count on a zone changes, that is a human noticing, not the gate telling you.** Re-read
+  the count when this document is next reviewed rather than assuming four is still four.
 
 **This paragraph has now been wrong twice, in opposite directions. Do not restate it from memory.**
 
