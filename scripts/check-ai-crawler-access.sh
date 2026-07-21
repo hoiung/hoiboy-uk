@@ -59,8 +59,17 @@
 #   CRAWLER_TARGET_URL=https://example.com bash scripts/check-ai-crawler-access.sh
 #
 # Exit codes (tri-state, mirroring scripts/check_social_cards.py):
-#   0 = every citation-class crawler reachable (HTTP 200) AND every
-#       training-class token carrying a full robots.txt opt-out
+#   0 = every citation-class crawler reachable (HTTP 200), and no training-class
+#       token PROVEN to lack an opt-out. Stated that way on purpose, because two
+#       states exit 0 without every token being proven opted out:
+#         - a CONFLICT token (contradictory records) is reported, excluded from
+#           the opt-out count, and deliberately not failed
+#         - if robots.txt cannot be fetched the training gate is SKIPPED
+#           entirely; no data is neither a pass nor a fail
+#       An earlier version of this table said "AND every training-class token
+#       carrying a full opt-out", which was false in both of those states. The
+#       PASS line itself reports the actual count, so read it rather than
+#       inferring nine-of-nine from a zero exit.
 #   1 = a POLICY FAILURE, which is EITHER of two conditions needing OPPOSITE
 #       fixes, so read the output before acting:
 #         (a) at least one citation-class crawler blocked. "Blocked" means a
