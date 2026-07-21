@@ -19,6 +19,7 @@ import sys
 from pathlib import Path
 
 import pytest
+import yaml
 
 SCRIPT = Path(__file__).resolve().parent / "check_ai_training_deadline.py"
 
@@ -221,13 +222,35 @@ def test_gate_is_wired_into_ci():
     # (`test_check_ai_training_deadline.py` contains the name), so deleting the
     # gate step while keeping the tests would still have passed. Mutation
     # testing caught exactly that.
-    ci = (SCRIPT.parent.parent / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
-    invocations = [
-        line.strip()
-        for line in ci.splitlines()
-        if re.search(r"run:\s*python3\s+scripts/check_ai_training_deadline\.py\s*$", line)
-    ]
-    assert invocations, (
-        "ci.yml has no `run: python3 scripts/check_ai_training_deadline.py` step; "
-        "the gate cannot fire. A unit-test step alone does not run the gate."
+    # Parsed as YAML, NOT grepped as text. A line-regex cannot tell a live step
+    # from a dead one, and two mutations that fully disable the gate in GitHub
+    # Actions both left the regex version green:
+    #   (a) commenting the step out  -> `# run: python3 scripts/...` still matched
+    #   (b) adding `if: false`       -> the run line is untouched, step never runs
+    # Both were verified to pass against the old assertion. Loading the YAML
+    # makes a commented step vanish from the document entirely and exposes the
+    # `if:` key, so neither mutation survives.
+    ci_path = SCRIPT.parent.parent / ".github" / "workflows" / "ci.yml"
+    doc = yaml.safe_load(ci_path.read_text(encoding="utf-8"))
+
+    live = []
+    for job in (doc.get("jobs") or {}).values():
+        for step in (job.get("steps") or []):
+            run = str(step.get("run") or "")
+            if not re.search(
+                r"(^|\s)python3\s+scripts/check_ai_training_deadline\.py(\s|$)", run
+            ):
+                continue
+            # An `if:` that is literally false (or the string "false") disables
+            # the step. Any other condition is a real expression and is treated
+            # as live, since evaluating GitHub's expression language here would
+            # be guesswork.
+            cond = step.get("if", None)
+            if cond is None or str(cond).strip().lower() not in ("false", "${{ false }}"):
+                live.append(step)
+
+    assert live, (
+        "ci.yml has no LIVE step running `python3 scripts/check_ai_training_deadline.py`; "
+        "the gate cannot fire. A commented-out step, an `if: false` step, or a "
+        "unit-test step alone does not run the gate."
     )
