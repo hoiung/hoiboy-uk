@@ -53,6 +53,9 @@ MARKER = re.compile(
     re.MULTILINE,
 )
 FENCE_OPEN = re.compile(r"^[ \t]{0,3}(`{3,}|~{3,})")
+# Closing fence: same bound as the opener (CommonMark 0.31 s4.5 allows up to
+# three leading spaces), the delimiter run, then only trailing whitespace.
+FENCE_CLOSE = re.compile(r"^ {0,3}(`{3,}|~{3,})[ \t]*$")
 
 
 def _strip_fences(text: str) -> str:
@@ -88,14 +91,21 @@ def _strip_fences(text: str) -> str:
             out.append(line)
         else:
             out.append("")
-            stripped = line.strip()
-            # A closing fence is the same character, alone, and at least as long
-            # as the opener.
-            if (
-                stripped
-                and set(stripped) == {fence[0]}
-                and len(stripped) >= len(fence)
-            ):
+            # A closing fence is the same character, alone, at least as long as
+            # the opener, and indented by AT MOST THREE SPACES.
+            #
+            # The indentation bound is not cosmetic. `line.strip()` was used
+            # here, which accepts a closer at any indentation, while the opener
+            # was correctly bounded to `[ \t]{0,3}`. CommonMark 0.31 s4.5 caps
+            # the closing fence at three spaces, so a four-space-indented ```
+            # is CONTENT, not a delimiter. Treating it as a closer flipped
+            # inside/outside parity for the rest of the file and could leave an
+            # illustrative `resolved` example as the only live marker, at which
+            # point the gate printed "decision recorded" and exited 0 with the
+            # real decision still pending. Verified against markdown-it-py's
+            # commonmark preset, which puts both markers inside the code block.
+            m = FENCE_CLOSE.match(line)
+            if m and set(m.group(1)) == {fence[0]} and len(m.group(1)) >= len(fence):
                 fence = None
     return "\n".join(out) + ("\n" if text.endswith("\n") else "")
 
