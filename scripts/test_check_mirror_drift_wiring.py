@@ -95,10 +95,13 @@ def test_every_smu_attribute_the_script_uses_exists_on_the_vendored_module():
     assert not missing, (
         f"check-mirror-drift.py calls {missing} but this repo's vendored "
         f"sst3_mirror_utils.py does not define them. The two files are a "
-        f"matched pair and have drifted apart. Sync the lagging half:\n"
-        f"  python3 ../dotfiles/SST3/scripts/propagate-mirrors.py --apply "
-        f"--repo hoiboy-uk --file SST3/scripts/sst3_mirror_utils.py\n"
-        f"NOTE: that tool writes to the MAIN CLONE, not to a linked worktree."
+        f"matched pair and have drifted apart. Sync the lagging half by running "
+        f"the dotfiles propagate-mirrors.py with:\n"
+        f"  --apply --repo hoiboy-uk --file SST3/scripts/sst3_mirror_utils.py\n"
+        f"Run it from the dotfiles checkout, not with a `../dotfiles` relative "
+        f"path: Stage-4 work happens in a linked worktree whose parent is not "
+        f"DevProjects, so `../dotfiles` does not resolve. NOTE: the tool writes "
+        f"to the MAIN CLONE, not to a linked worktree."
     )
 
 
