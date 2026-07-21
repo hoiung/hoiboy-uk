@@ -26,6 +26,7 @@ import threading
 from pathlib import Path
 
 import pytest
+import yaml
 
 SCRIPT = Path(__file__).resolve().parent / "check-ai-crawler-access.sh"
 
@@ -693,3 +694,33 @@ def test_captured_summary_keeps_the_robots_unavailable_note():
     captured = _workflow_capture(p.stdout)
     assert "robots.txt could not be fetched" in captured, captured
     assert "training gate is skipped" in captured, captured
+
+
+def test_every_outcome_branch_consumes_the_probe_output():
+    # Capture without consumption is a gate wired to nothing. The first version
+    # of this carry-forward reached ONLY the success path: on exit 1 (the
+    # overloaded code whose two causes need opposite fixes) and exit 2 (where
+    # stderr is the only thing separating a DNS blip from a missing curl), the
+    # summary fell back to its own prose and told the reader to go open the raw
+    # step log. Those are precisely the two outcomes that require action, so the
+    # output was withheld exactly when it was needed.
+    #
+    # The three capture tests above could not see this: they assert only that
+    # the capture block cats the file, so deleting every downstream "%s" left
+    # the whole suite green. Same "wired but dead" class this batch already
+    # closed for ci.yml by parsing the YAML instead of grepping it.
+    wf = SCRIPT.parent.parent / ".github" / "workflows" / "ai-crawler-access.yml"
+    doc = yaml.safe_load(wf.read_text(encoding="utf-8"))
+    steps = {s.get("name"): s for s in doc["jobs"]["probe"]["steps"] if s.get("name")}
+
+    for name in ("Summarise", "Verdict"):
+        step = steps[name]
+        assert "PROBE_SUMMARY" in (step.get("env") or {}), f"{name} does not receive it"
+        run = step["run"]
+        # One consumption per outcome the branch can reach: success,
+        # policy-failure, inconclusive, unknown.
+        assert run.count('"$PROBE_SUMMARY"') >= 3, (
+            f"{name} consumes the probe output in only "
+            f"{run.count(chr(34) + '$PROBE_SUMMARY' + chr(34))} place(s); every outcome "
+            "branch must show what the probe actually said"
+        )
