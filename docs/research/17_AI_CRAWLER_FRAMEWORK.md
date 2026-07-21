@@ -45,8 +45,9 @@ Order matters: they are listed weakest-to-strongest in enforcement terms.
 2. **Managed robots.txt (`is_robots_txt_managed: true`)**: the mechanism that *expresses* the
    training block. Serves a `Content-Signal: search=yes,ai-train=no,use=reference` line plus
    `Disallow: /` for nine training crawlers, and leaves the citation class to fall under
-   `User-agent: *`. **Honour-system: a request, not enforcement.** Bytespider in particular has been
-   reported ignoring robots.txt.
+   `User-agent: *`. **Honour-system: a request, not enforcement.** Bytespider has been widely
+   reported ignoring robots.txt, though this repo has not verified that first-hand; treat it as
+   reputation, not measurement.
 3. **Granular presets (`ai_training` / `ai_search` / `ai_user`)**: set `ai_training: block`, leave
    the other two `disabled`. Partly enforced today (see below). At Cloudflare's **2026-09-15**
    migration this becomes the native mechanism, **and also reclassifies Googlebot, Applebot and
@@ -109,8 +110,8 @@ An earlier version of this document said to set the preset everywhere so the mig
 and a client practice whose whole purpose is being found, it would take out organic search on both.
 
 **The trade-off, stated so it gets decided rather than drifted into.** Keeping `ai_training: block`
-today buys real blocking of CCBot and Bytespider, and Bytespider is the crawler most often reported
-ignoring robots.txt, so it is not nothing. The cost is that the same switch is what Cloudflare reads
+today buys real blocking of CCBot and Bytespider, and Bytespider is the training crawler most often
+reported ignoring robots.txt (reputation, not measured here), so it is not nothing. The cost is that the same switch is what Cloudflare reads
 on 2026-09-15 to decide whether Googlebot counts as a training crawler. Search visibility outranks
 training protection for these domains, so **if the migration arrives undecided, opt out**.
 
@@ -148,8 +149,13 @@ correct while enforcing nothing.
 > with existing Google user agent strings; the robots.txt user-agent token is used in a control
 > capacity."*
 >
-> Apple: *"Applebot-Extended does not crawl webpages. Instead, Applebot-Extended is only used to
-> determine how to use the data crawled by the Applebot user agent."*
+> Apple: *"Applebot-Extended does not crawl webpages. Webpages that disallow Applebot-Extended can
+> still be included in search results. Applebot-Extended is only used to determine how to use the
+> data crawled by the Applebot user agent."*
+
+Apple's middle sentence is worth keeping rather than eliding: it confirms that opting out of
+Applebot-Extended costs nothing in search visibility, which is the same shape as the argument for
+this whole policy.
 
 The only user-agents that WOULD match are `Googlebot` and `Applebot`, which are the search crawlers
 you must never block. **So for Google and Apple, robots.txt is the only available training control,
@@ -169,15 +175,18 @@ still 200. A rule that takes citation down with training is the original defect 
 1. Read the zone's current `bot_management` config **before writing anything**.
    `GET /zones/{id}/bot_management`. Partial `PUT`s merge, and a read-back is not proof of
    enforcement.
-2. Set, only where the read shows it is wrong:
+2. Set, only where the read shows it is wrong (**read "MANDATORY REVISIT BEFORE 2026-09-15" first**;
+   `ai_training: block` arms a dated hazard, and the CI gate that catches it lives in THIS repo only,
+   so a domain in another repo inherits no reminder):
    - `ai_bots_protection: disabled`
    - `is_robots_txt_managed: true`
    - `ai_training: block`, `ai_search: disabled`, `ai_user: disabled`
 3. Add the WAF custom rule blocking the training user-agents (see layer 4).
 4. Verify by probe, not by read-back:
    `bash scripts/check-ai-crawler-access.sh https://<domain>/`
-   Exit 0 means every citation crawler is reachable. The TRAINING rows report the robots.txt
-   directive each training crawler is given.
+   Exit 0 means no citation crawler was status-blocked. It does NOT mean they were served real
+   content: the script classifies on HTTP status, so a challenge page returning 200 reads as ok.
+   The TRAINING rows report the robots.txt directive each training crawler is given.
 5. If the origin repo serves its own robots.txt, check it does not contradict the managed block
    (see below).
 

@@ -24,7 +24,9 @@
   site-wide, so /private/ is now covered against those nine crawlers.
   X-Robots-Tag noindex is still a SEARCH-INDEX directive doing no
   training-crawler work; what changed is that robots.txt now does it.
-  Standing policy and zone settings: docs/research/16_AI_BOT_AND_SEO_POLICY.md
+  Standing policy for ALL domains, the nine-token managed block and the
+  Cloudflare prepend: docs/research/17_AI_CRAWLER_FRAMEWORK.md
+  This zone's original decision record: docs/research/16_AI_BOT_AND_SEO_POLICY.md
 
   No page links to /private/: the section index is headless, it is absent from
   the sitemap, and no content file references the path. A public post describes

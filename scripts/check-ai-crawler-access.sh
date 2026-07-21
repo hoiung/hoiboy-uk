@@ -220,8 +220,25 @@ robots_verdict() {
             else if (v != "") partial_allow = 1
             next
         }
-        # Any other directive (Allow:, Sitemap:, Content-Signal:, blank) closes
-        # the user-agent run without closing the group.
+        # Any other NON-BLANK line (Sitemap:, Content-Signal:, prose) closes the
+        # user-agent run without closing the group.
+        #
+        # A BLANK line is deliberately exempt, and that is not an oversight.
+        # RFC 9309: `group = startgroupline *(startgroupline / emptyline)
+        # *(rule / emptyline)`. Empty lines are explicitly permitted BETWEEN
+        # consecutive user-agent lines, so
+        #
+        #     User-agent: GPTBot
+        #     <blank>
+        #     User-agent: ClaudeBot
+        #     Disallow: /
+        #
+        # is ONE group covering both tokens, and both are correctly reported as
+        # opted out. Closing the run on a blank line would split it and silently
+        # drop the rule for every token but the last. A review flagged this
+        # behaviour as a leak; it is the specified behaviour, and the earlier
+        # version of this comment (which listed "blank" among the closers)
+        # contradicted the code. The code was right.
         { if (line !~ /^[[:space:]]*$/) in_ua_run = 0 }
         END {
             if (!seen)                  { print "no group (falls under *)"; exit }

@@ -77,15 +77,25 @@ def _strip_fences(text: str) -> str:
         if fence is None:
             m = FENCE_OPEN.match(line)
             if m:
-                fence = m.group(1)[0] * 3  # opening marker type
+                # Keep the OPENER'S OWN LENGTH, not a hardcoded 3. CommonMark
+                # requires the closing run to be at least as long as the opener,
+                # so a ```` block is NOT closed by an inner ``` run. Hardcoding 3
+                # let that inner run close the fence early and expose everything
+                # after it, including a marker that was supposed to stay hidden.
+                fence = m.group(1)
                 out.append("")
                 continue
             out.append(line)
         else:
             out.append("")
             stripped = line.strip()
-            # A closing fence is the same character, at least as long, alone.
-            if stripped and set(stripped) == {fence[0]} and len(stripped) >= 3:
+            # A closing fence is the same character, alone, and at least as long
+            # as the opener.
+            if (
+                stripped
+                and set(stripped) == {fence[0]}
+                and len(stripped) >= len(fence)
+            ):
                 fence = None
     return "\n".join(out) + ("\n" if text.endswith("\n") else "")
 

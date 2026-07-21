@@ -112,6 +112,47 @@ def test_fenced_resolved_example_never_satisfies_the_gate(tmp_path, monkeypatch,
     assert _run(tmp_path, body, PAST_TRIGGER, monkeypatch) == 1, label
 
 
+def test_shorter_inner_run_does_not_close_a_longer_fence(tmp_path, monkeypatch):
+    # CommonMark: the closing run must be at least as long as the opener. With
+    # the opener length hardcoded to 3, an inner ``` run closed a ```` block
+    # early and exposed the marker after it. The marker here must stay hidden,
+    # so the doc has no live marker at all -> operational error, not a pass.
+    body = (
+        "Example:\n"
+        "````\n"
+        "```\n"
+        "ai-training-migration-decision: resolved (must stay hidden)\n"
+        "```\n"
+        "````\n"
+    )
+    assert _run(tmp_path, body, PAST_TRIGGER, monkeypatch) == 2
+
+
+def test_longer_closer_still_closes_a_shorter_fence(tmp_path, monkeypatch):
+    # The other direction: a closing run LONGER than the opener is valid, so the
+    # pending marker after it is live and the gate must go red.
+    body = (
+        "Example:\n"
+        "```\n"
+        "ai-training-migration-decision: resolved (hidden)\n"
+        "`````\n"
+        "ai-training-migration-decision: pending\n"
+    )
+    assert _run(tmp_path, body, PAST_TRIGGER, monkeypatch) == 1
+
+
+def test_mismatched_fence_type_does_not_close(tmp_path, monkeypatch):
+    # A ~~~ line does not close a ``` fence. Everything after stays hidden.
+    body = (
+        "Example:\n"
+        "```\n"
+        "ai-training-migration-decision: resolved (hidden)\n"
+        "~~~\n"
+        "ai-training-migration-decision: resolved (also hidden)\n"
+    )
+    assert _run(tmp_path, body, PAST_TRIGGER, monkeypatch) == 2
+
+
 def test_unclosed_fence_swallows_to_end_of_file(tmp_path, monkeypatch):
     # The worst of the three bypasses: an unclosed fence made a regex requiring
     # a closing delimiter match nothing, leaving the example live as the ONLY

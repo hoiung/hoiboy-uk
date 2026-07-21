@@ -322,6 +322,22 @@ def test_disallow_branch_also_closes_the_user_agent_run():
     assert "training opted out" in gpt, p.stdout
 
 
+def test_blank_line_between_user_agent_lines_keeps_one_group():
+    # RFC 9309: group = startgroupline *(startgroupline / emptyline)
+    #                   *(rule / emptyline)
+    # Empty lines are permitted BETWEEN consecutive user-agent lines, so both
+    # tokens below share the one Disallow. Closing the run on a blank line would
+    # split them and drop the rule for every token but the last.
+    #
+    # Pinned because a review read this as a rule leak and proposed "fixing" it;
+    # the behaviour is specified, and without this test the mutation that breaks
+    # it passes the whole suite.
+    robots = "User-agent: GPTBot\n\nUser-agent: ClaudeBot\nDisallow: /\n"
+    p = _run(lambda ua: 200, robots=robots)
+    assert "training opted out" in _training_row(p.stdout, "GPTBot"), p.stdout
+    assert "training opted out" in _training_row(p.stdout, "ClaudeBot"), p.stdout
+
+
 def test_a_non_rule_directive_between_groups_closes_the_run():
     # Cloudflare's managed block really does ship `Content-Signal:` lines, so a
     # non-rule directive sitting between two tokens' groups is not contrived.
