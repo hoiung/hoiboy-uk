@@ -32,10 +32,12 @@ import re
 from pathlib import Path
 
 import pytest
+import yaml
 
 SCRIPTS = Path(__file__).resolve().parent
 DRIFT_SCRIPT = SCRIPTS / "check-mirror-drift.py"
 UTILS_MODULE = SCRIPTS / "sst3_mirror_utils.py"
+CI_YML = SCRIPTS.parent / ".github" / "workflows" / "ci.yml"
 
 # `smu.<name>` as written in the script. Attribute access only: this is not
 # trying to parse Python, it is asking which names the script expects to find.
@@ -97,6 +99,41 @@ def test_every_smu_attribute_the_script_uses_exists_on_the_vendored_module():
         f"  python3 ../dotfiles/SST3/scripts/propagate-mirrors.py --apply "
         f"--repo hoiboy-uk --file SST3/scripts/sst3_mirror_utils.py\n"
         f"NOTE: that tool writes to the MAIN CLONE, not to a linked worktree."
+    )
+
+
+def test_this_test_file_is_actually_run_by_ci():
+    """The defect this whole file exists to prevent, one level up.
+
+    A guard that CI never runs is not a guard. Earlier in this issue a
+    gate-wiring test sat in the repo, referenced once in ci.yml inside a
+    comment, and never executed, because CI runs pytest through explicit named
+    file lists rather than a directory sweep. Ralph found it. A wiring test that
+    is itself CI-orphaned would be the same defect twice, so it asserts its own
+    wiring.
+
+    Parsed as YAML, not grepped, for the same reason the deadline gate's wiring
+    test is: a line-regex counts a commented-out step or an `if: false` step as
+    present. Loading the document makes a commented step vanish and exposes the
+    `if:` key.
+    """
+    doc = yaml.safe_load(CI_YML.read_text(encoding="utf-8"))
+    this_file = Path(__file__).name
+
+    live = []
+    for job in (doc.get("jobs") or {}).values():
+        for step in (job.get("steps") or []):
+            run = str(step.get("run") or "")
+            if this_file not in run:
+                continue
+            cond = step.get("if", None)
+            if cond is None or str(cond).strip().lower() not in ("false", "${{ false }}"):
+                live.append(step)
+
+    assert live, (
+        f"ci.yml has no LIVE step running pytest against {this_file}. CI uses "
+        f"explicit file lists, so this guard would never run there. Add a step: "
+        f"`python3 -m pytest scripts/{this_file} -q`."
     )
 
 
