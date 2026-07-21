@@ -297,6 +297,16 @@ jobs:
       - name: AI crawler probe exit-contract tests
         run: python3 -m pytest scripts/test_check_ai_crawler_access.py -q
 
+      # Wiring guard for the vendored drift-check pair (check-mirror-drift.py +
+      # sst3_mirror_utils.py). Listed explicitly because CI runs pytest through
+      # named file lists, not a directory sweep, so a test file nobody lists
+      # never runs. That is the exact hole a gate-wiring test fell through
+      # earlier in this issue, and the half-sync this guard catches is what
+      # Ralph round 9 found, so leaving it CI-orphaned would be the same defect
+      # twice.
+      - name: Vendored drift-check pair wiring tests
+        run: python3 -m pytest scripts/test_check_mirror_drift_wiring.py -q
+
       - name: Lychee link check
         uses: lycheeverse/lychee-action@v2
         with:
