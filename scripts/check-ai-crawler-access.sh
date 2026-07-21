@@ -81,6 +81,22 @@ TRAINING_BOTS=(
     "Google-Extended|Mozilla/5.0 (compatible; Google-Extended/1.0; +http://www.google.com/bot.html)"
     "meta-externalagent|meta-externalagent/1.1 (+https://developers.facebook.com/docs/sharing/webmasters/crawler)"
     "Bytespider|Mozilla/5.0 (Linux; Android 5.0) AppleWebKit/537.36 (KHTML, like Gecko) Mobile Safari/537.36 (compatible; Bytespider; spider-feedback@bytedance.com)"
+    # The three below were MISSING while this list covered six of the nine
+    # tokens the managed block names. That was tolerable while the training
+    # class was reported for information only. It stopped being tolerable the
+    # moment the training class started gating the exit code: a gate that never
+    # asks about a token cannot fail on it, so a regression on any of these
+    # three was structurally invisible to the standing watch that exists to
+    # catch exactly that. Enumerated from the LIVE managed block
+    # (`curl -s https://hoiboy.uk/robots.txt`), not from memory.
+    #
+    # Applebot-Extended is a robots.txt CONTROL TOKEN with no user-agent of its
+    # own, exactly like Google-Extended above, so it is expected to return 200
+    # at the edge while being fully opted out. That is why this gate keys on the
+    # robots.txt directive and never on HTTP status.
+    "Amazonbot|Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15 (Amazonbot/0.1; +https://developer.amazon.com/support/amazonbot)"
+    "Applebot-Extended|Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15 (Applebot-Extended/0.1; +http://www.apple.com/go/applebot)"
+    "CloudflareBrowserRenderingCrawler|CloudflareBrowserRenderingCrawler/1.0"
 )
 
 # Echoes the FINAL HTTP status (redirects followed), or "ERR" when the request
