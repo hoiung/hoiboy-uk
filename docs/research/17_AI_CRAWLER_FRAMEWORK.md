@@ -151,7 +151,8 @@ was quoted into a GitHub comment:
   actually conditions on.
 
 The separate ads-page default (*"For all new domains onboarding to Cloudflare, the categories of
-Training and Agent will be blocked by default on the pages that display ads"*) applies only to newly
+Training and Agent will be blocked by default on the pages that display ads, while Search will remain
+allowed by default"*) applies only to newly
 onboarding domains and does **not** narrow this hazard. Do not let the word "ads" suggest these sites
 are safe because they carry none.
 
@@ -227,9 +228,19 @@ or (http.user_agent contains "CloudflareBrowserRenderingCrawler")
 ```
 
 **Seven clauses, not nine. `Google-Extended` and `Applebot-Extended` are deliberately absent, and a
-WAF rule can never cover them.** Both are robots.txt *control tokens*, not crawlers: they have no
-user-agent string, so `http.user_agent contains` can never match and a rule listing them would look
-correct while enforcing nothing.
+WAF rule can never cover them.** Both are robots.txt *control tokens* rather than crawlers that fetch
+under their own name, so `http.user_agent contains` has nothing to match and a rule listing them
+would look correct while enforcing nothing.
+
+The two are sourced differently and should not be stated with equal confidence. **Google says it
+outright**; the Apple half is our inference from what Apple describes, not an Apple statement:
+
+- Google: *"Google-Extended doesn't have a separate HTTP request user agent string"* - explicit.
+- Apple calls Applebot-Extended *"a secondary user agent"* and says it *"does not crawl webpages"*,
+  which leaves nothing to match at the edge, but Apple never makes Google's explicit no-UA-string
+  claim. **Verified operationally instead**: with the WAF rule live, `Applebot-Extended` is served
+  **200** while every token the rule can match returns 403. That is the measurement the conclusion
+  actually rests on.
 
 > Google: *"Google-Extended doesn't have a separate HTTP request user agent string. Crawling is done
 > with existing Google user agent strings; the robots.txt user-agent token is used in a control
@@ -240,7 +251,7 @@ correct while enforcing nothing.
 > data crawled by the Applebot user agent."*
 
 Apple's middle sentence is worth keeping rather than eliding: it confirms that opting out of
-Applebot-Extended costs nothing in search visibility, which is the same shape as the argument for
+Applebot-Extended does not remove a page from search results, which is the same shape as the argument for
 this whole policy.
 
 The only user-agents that WOULD match are `Googlebot` and `Applebot`, which are the search crawlers
@@ -289,7 +300,8 @@ cannot remove the managed one. Consequences:
 
 - A repo-served `robots.txt` that allows a bot the managed block disallows produces **two
   contradictory groups for one token**. RFC 9309 §2.2.1: *"If there is more than one group matching
-  the user-agent, the matching groups' rules MUST be combined into one group."*
+  the user-agent, the matching groups' rules MUST be combined into one group and parsed according to
+  Section 2.2.2."*
 - cuarchitects.co.uk serves exactly this for GPTBot, ClaudeBot, Google-Extended and CCBot: its repo
   file allows them with an empty `Disallow:` (written before managed robots.txt was on) while the
   managed block disallows them.
@@ -304,7 +316,10 @@ cannot remove the managed one. Consequences:
   Under a strict RFC reading §2.2.2 gives it to `Disallow: /` (*"the most specific match... the match
   that has the most octets"*, one octet against the empty pattern's zero, and the allow-beats-disallow
   tie-break needs *equivalent* rules). But `urllib.robotparser` does not implement §2.2.1 merging or
-  §2.2.2 specificity at all: it is first-matching-group-wins. Measured, same file, order flipped:
+  §2.2.2 specificity at all: it is first-matching-group-wins. **Version-bound, and it will go stale:**
+  measured on CPython **3.12.3**. CPython added RFC 9309 support in `bc285e583286` (2026-05-04), so on
+  3.14.5 and later this ordering behaviour changes. The live outcome stays "blocked"; only the reason
+  does. Re-measure before citing this table on a newer interpreter. Measured, same file, order flipped:
 
   | group order | `can_fetch('/')` for GPTBot |
   |---|---|
@@ -332,8 +347,10 @@ demonstrates ordering rather than specificity.
 
 What is actually true: it is a real conflict, the live outcome is blocked, and that outcome rests on
 a mix of strict-RFC specificity and the fact that Cloudflare prepends. cuarchitects' own
-`layouts/robots.txt` had the right reading before either version of this file did. Kept because the
-first version was briefly the basis
+`layouts/robots.txt` reached the right ANSWER (blocked) before either version of this file did,
+though by the specificity-only route this section warns against: it says *"the records merge and the
+most specific rule wins"*, which is the argument corrected above. Right conclusion, incomplete
+reasoning. Kept because the first version was briefly the basis
 for calling the client site's policy defeated, which it never was.
 
 Always fetch the live `https://<domain>/robots.txt` before reasoning about what a crawler sees. The
@@ -348,7 +365,9 @@ records the value moving between two probes on the same day.
 ## Verification
 
 `scripts/check-ai-crawler-access.sh [URL]` takes any domain, so one script covers the estate.
-Tri-state exit: `0` citation reachable, `1` citation blocked, `2` inconclusive (DNS failure, 5xx,
+Tri-state exit: `0` citation reachable AND every training token opted out, `1` a policy failure of
+EITHER kind (citation blocked, or a training token with no opt-out; they need opposite fixes, so read
+the output), `2` inconclusive (DNS failure, 5xx,
 429). The tri-state matters: speak2lola.com has no DNS and returns 2, where a binary pass/fail would
 have reported "6 of 6 blocked" and sent someone hunting a crawler policy on a domain with no site.
 
@@ -387,7 +406,8 @@ Two caveats that the table cannot carry:
 - **speak2lola.com has no DNS**, so its rule is stored and unverifiable. A stored rule is not a
   verified rule. Re-probe it when the domain resolves.
 
-And the estate is wider than this table. **id8u.com is live, serves an allow-all `robots.txt`, and is
+And the estate is wider than this table. **id8u.com is live, returns HTTP 404 for `robots.txt` (which
+under RFC 9309 means unrestricted crawling, the same effective outcome as allow-all), and is
 not behind Cloudflare**, so it follows none of this. It is out of scope for this issue and named here
 so the inventory does not read as complete when it is not.
 
