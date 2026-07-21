@@ -23,6 +23,26 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
+    # The estate is three zones and the script was built to take any URL
+    # ("takes any domain, so one script covers the estate"). It was nonetheless
+    # invoked with no argument, so it fell through to its hardcoded hoiboy.uk
+    # default and two of the three zones had no standing watch at all. That was
+    # a wiring omission rather than a limitation: cuarchitects.co.uk is
+    # reachable and probeable right now.
+    #
+    # speak2lola.com is deliberately absent: it has no DNS, so it can only ever
+    # return the inconclusive exit 2. Adding it would produce a permanent
+    # warning that trains the reader to ignore this job. Add it when the domain
+    # resolves.
+    #
+    # fail-fast is off so one zone's failure still reports the others; a
+    # per-zone red is the signal, and hiding the rest would waste the run.
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - https://hoiboy.uk/
+          - https://cuarchitects.co.uk/
     steps:
       - uses: actions/checkout@v6
 
@@ -30,9 +50,11 @@ jobs:
       # the summary below always runs. The verdict step decides red vs green.
       - name: Probe live AI-crawler access
         id: probe
+        env:
+          TARGET: ${{ matrix.target }}
         run: |
           set +e
-          bash scripts/check-ai-crawler-access.sh
+          bash scripts/check-ai-crawler-access.sh "$TARGET"
           echo "code=$?" >> "$GITHUB_OUTPUT"
           exit 0
 
@@ -43,25 +65,31 @@ jobs:
           # label would print "failure" for exit 2, contradicting the Verdict
           # step's deliberate choice not to treat inconclusive as a block.
           CODE: ${{ steps.probe.outputs.code }}
+          TARGET: ${{ matrix.target }}
         run: |
           case "$CODE" in
             0) OUTCOME=success ;;
-            1) OUTCOME=blocked ;;
+            1) OUTCOME=policy-failure ;;
             2) OUTCOME=inconclusive ;;
             *) OUTCOME=unknown ;;
           esac
           {
             printf '## AI crawler access probe\n\n'
+            printf 'Target: `%s`\n\n' "$TARGET"
             printf 'Outcome: `%s` (exit %s)\n\n' "$OUTCOME" "$CODE"
             if [ "$OUTCOME" = "inconclusive" ]; then
               printf 'The probe could not complete: request failure, origin error or an\n'
               printf 'unrecognised status. This is NOT a confirmed block and the job is\n'
               printf 'deliberately not failed for it. Re-run to confirm.\n'
             elif [ "$OUTCOME" = "success" ]; then
-              printf 'All citation-class crawlers reachable.\n\n'
-              printf 'This means they are NOT blocked. It does not mean the site is cited;\n'
-              printf 'no reliable method for measuring AI citation currently exists.\n'
-            elif [ "$OUTCOME" != "blocked" ]; then
+              printf 'All citation-class crawlers reachable, and every training-class token\n'
+              printf 'carries a full robots.txt opt-out.\n\n'
+              printf 'Citation reachability means they are NOT blocked. It does not mean the\n'
+              printf 'site is cited; no reliable method for measuring AI citation currently\n'
+              printf 'exists. The training half of this verdict reads robots.txt, which is a\n'
+              printf 'REQUEST rather than enforcement: only the WAF custom rule hard-blocks,\n'
+              printf 'and only for tokens that send a matching user-agent.\n'
+            elif [ "$OUTCOME" != "policy-failure" ]; then
               # The case above can produce `unknown`, and this branch has to
               # exist for it. The probe script only ever exits 0, 1 or 2, so
               # anything else means the script did not run to a verdict at all
@@ -77,8 +105,16 @@ jobs:
               printf 'classified. This is NOT a block: check the Probe step log for a\n'
               printf 'missing script path, a permission error or a killed step.\n'
             else
-              printf 'At least one citation-class crawler is blocked.\n\n'
-              printf 'An access denial guarantees zero citation from that engine. No repo change can fix it.\n'
+              printf 'POLICY FAILURE. Exit 1 now means EITHER of two things, so read the\n'
+              printf 'Probe step log to see which before acting:\n\n'
+              printf '  (a) a citation-class crawler is BLOCKED, or\n'
+              printf '  (b) a training-class token is NOT opted out in robots.txt.\n\n'
+              printf 'They need opposite fixes, and the remediation below addresses (a).\n'
+              printf 'For (b) the training block has regressed: check that managed\n'
+              printf 'robots.txt is still ON for the zone, that the WAF custom rule is still\n'
+              printf 'present in the http_request_firewall_custom phase, and that the origin\n'
+              printf 'robots.txt has not grown a group re-permitting a blocked token.\n\n'
+              printf 'For (a): an access denial guarantees zero citation from that engine. No repo change can fix it.\n'
               printf 'Check the Cloudflare dashboard for this zone:\n\n'
               printf '1. `ai_bots_protection` / "Block AI bots" set to DISABLED. This is the\n'
               printf '   coarse legacy switch and was the measured cause on hoiboy.uk; it takes\n'
@@ -110,11 +146,16 @@ jobs:
         if: always()
         env:
           CODE: ${{ steps.probe.outputs.code }}
+          TARGET: ${{ matrix.target }}
         run: |
           case "$CODE" in
-            0) printf 'PASS: no citation-class crawler is blocked.\n' ;;
-            1) printf >&2 'FAIL: a citation-class crawler is blocked at the edge.\n'
-               printf >&2 'Operator action required in the Cloudflare dashboard; see the job summary.\n'
+            0) printf 'PASS (%s): no citation-class crawler is blocked, and every\n' "$TARGET"
+               printf 'training-class token carries a full robots.txt opt-out.\n' ;;
+            1) printf >&2 'FAIL (%s): the crawler policy has regressed.\n' "$TARGET"
+               printf >&2 'EITHER a citation-class crawler is blocked at the edge, OR a\n'
+               printf >&2 'training-class token is no longer opted out. These need opposite\n'
+               printf >&2 'fixes, so read the Probe step log to see which before acting.\n'
+               printf >&2 'Operator action required; see the job summary.\n'
                exit 1 ;;
             2) printf '::warning::AI crawler probe could not complete (exit 2). Verdict withheld, not a confirmed block.\n' ;;
             *) printf >&2 'Unexpected probe exit code: %s\n' "$CODE"; exit 1 ;;
