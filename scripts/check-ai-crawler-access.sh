@@ -350,7 +350,7 @@ robots_verdict() {
             # No group named this token, so the `*` group governs it (2.2.1).
             wild = verdict(w_seen, w_deny, w_empty_dis, w_allow_rule, w_partial, w_partial_allow)
             if (wild != "") { print "via * group: " wild; exit }
-            print "no group and no * group (nothing governs this token)"
+            print "no rules for this token (no group, no * group, or a group with no rules)"
         }' "$ROBOTS_FILE"
 }
 
