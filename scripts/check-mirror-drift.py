@@ -356,14 +356,21 @@ def _emit_and_exit(
         # naming a file that does not exist (#552 Ralph round 8) — the message is
         # trusted precisely because nobody re-runs it. State the command that does
         # enforce it, so the claim is executable rather than reassuring.
-        enforce_scope = f"--repo {args.repo}" if args.repo else "--all-repos"
+        # Print the command that ACTUALLY enforces. When --repo was passed, scope
+        # to it; otherwise omit the filter entirely — `--strict` with no --repo
+        # checks every mirror (the default). An earlier version printed
+        # `--all-repos` here, a flag this script's argparse does not define, so
+        # following the hint literally exited 2 "unrecognized argument" — the exact
+        # remediation-hint-names-a-thing-that-does-not-exist defect the block above
+        # warns against, committed one line down (#552 Stage 5).
+        enforce_scope = f"--repo {args.repo} " if args.repo else ""
         print(
             f"\n{len(unstaged)} mirrored file(s) drifted but NOT staged "
             f"(out of {checked} checked) — surfaced as warnings, commit "
             f"allowed. Run propagate-{'block' if args.managed_blocks else 'mirrors'}.py --apply to sync. "
             f"NOTE: no push/CI gate re-checks this; to enforce it now run "
             f"`python3 {Path(smu.propagate_tool_path()).parent / 'check-mirror-drift.py'} "
-            f"{enforce_scope} --strict`, which exits non-zero on any drifted or "
+            f"{enforce_scope}--strict`, which exits non-zero on any drifted or "
             f"MISSING mirror file, staged or not.",
             file=sys.stderr,
         )
