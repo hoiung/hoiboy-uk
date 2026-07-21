@@ -640,3 +640,56 @@ def test_pass_line_does_claim_every_when_there_is_no_conflict():
     )
     assert "every training-class token" in pass_line, pass_line
     assert p.returncode == 0, p.stdout + p.stderr
+
+
+# --- the WORKFLOW's capture of the probe output --------------------------------
+#
+# No test referenced .github/workflows/ai-crawler-access.yml at all, which is
+# how two consecutive defects shipped in the step that feeds the GitHub job
+# summary: first a hardcoded claim that contradicted the script's own verdict,
+# then an extraction pattern that truncated one note mid-sentence and silently
+# dropped another. The job summary is the artifact a human reads WITHOUT opening
+# step logs, so a defect there is invisible in exactly the place it matters.
+
+def _workflow_capture(probe_stdout: str) -> str:
+    """Reproduce what the workflow's probe step writes to GITHUB_OUTPUT.
+
+    Kept in step with the `summary<<PROBE_EOF` block in
+    .github/workflows/ai-crawler-access.yml, and asserted against that file
+    below so the two cannot drift apart silently.
+    """
+    return probe_stdout
+
+
+def test_workflow_captures_the_probe_output_whole():
+    # The step must not extract. Anchored greps lost content twice: the CONFLICT
+    # note is multi-line and only its first line starts with "NOTE:", and the
+    # robots.txt-unavailable note is INDENTED so it never matched at all.
+    wf = (SCRIPT.parent.parent / ".github" / "workflows" / "ai-crawler-access.yml")
+    text = wf.read_text(encoding="utf-8")
+    block = text.split("summary<<PROBE_EOF", 1)[1].split("PROBE_EOF", 1)[0]
+    assert "cat /tmp/probe.txt" in block, block
+    assert "grep" not in block, (
+        "the probe capture must not filter: any pattern narrow enough to select "
+        "'the verdict' can silently drop part of it\n" + block
+    )
+
+
+def test_captured_summary_keeps_the_whole_conflict_note():
+    # The live cuarchitects.co.uk state. The dropped tail is the part that tells
+    # the operator a CONFLICT is drift and not an exposure, so losing it turns a
+    # calm note into an alarming fragment.
+    p = _run(lambda ua: 200, robots=CONFLICTING_ROBOTS_ALL_OPTED_OUT)
+    captured = _workflow_capture(p.stdout)
+    assert "NOT counted as opted out above" in captured, captured
+    assert "not an exposure today" in captured, captured
+
+
+def test_captured_summary_keeps_the_robots_unavailable_note():
+    # The worse of the two: this note is indented, so an anchored pattern
+    # dropped it entirely and the summary read as a clean PASS while the whole
+    # training half of the policy had gone unchecked that run.
+    p = _run(lambda ua: 200, robots=None)
+    captured = _workflow_capture(p.stdout)
+    assert "robots.txt could not be fetched" in captured, captured
+    assert "training gate is skipped" in captured, captured
