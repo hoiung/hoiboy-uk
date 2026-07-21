@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
 """Fail CI if the ai_training migration decision is still open near its deadline.
 
-Cloudflare changes what `ai_training: block` MEANS on 2026-09-15: from that date
-multi-purpose crawlers (Googlebot, Applebot, BingBot) are blocked for any zone
-that has selected to block Training, and the new defaults apply to all existing
-free customers. Both live zones are Free plan.
+Cloudflare changes what `ai_training: block` MEANS on 2026-09-15. Verbatim from
+the announcement: "Since the defaults will be enforced by the most restrictive
+applicable rules, multi-purpose crawlers such as Googlebot, Applebot, and BingBot
+will be blocked by customers who have selected to block Training".
+
+These zones HAVE selected to block Training, so they are in scope. That is the
+whole exposure: it follows from a setting this repo's own workstream applied, not
+from any plan tier or default. (An earlier version of this docstring claimed the
+new defaults "apply to all existing free customers" and that Free plan was the
+reason. That sentence is not in Cloudflare's post; it was a fabricated quote and
+is retracted. The separate ads-page default genuinely does apply only to newly
+onboarding domains, and is irrelevant here.)
 
 So a setting that is correct today silently becomes an SEO outage on a fixed
 future date unless somebody decides before then. That is exactly the class of
@@ -29,7 +37,7 @@ from __future__ import annotations
 import os
 import re
 import sys
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -44,12 +52,28 @@ MARKER = re.compile(
     r"^ai-training-migration-decision:\s*(pending|resolved)\b(.*)$",
     re.MULTILINE,
 )
+FENCE = re.compile(r"^```.*?^```", re.MULTILINE | re.DOTALL)
+
+
+def _strip_fences(text: str) -> str:
+    """Blank out fenced code blocks, preserving line count.
+
+    An illustrative `resolved` example inside a fence would otherwise be found
+    first by re.search and satisfy the gate while the real marker still says
+    pending. Line count is preserved so any future line-number reporting stays
+    honest.
+    """
+    return FENCE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
 
 
 def _today() -> date:
     override = os.environ.get("AI_TRAINING_DEADLINE_TODAY")
     if not override:
-        return date.today()
+        # UTC explicitly: CI runs in UTC and the operator is in the UK, so
+        # date.today() would mean different things in the two places for one
+        # hour a day during BST. A date-based gate must not depend on where it
+        # runs. The two-week lead makes the hour immaterial either way.
+        return datetime.now(timezone.utc).date()
     try:
         return date.fromisoformat(override)
     except ValueError:
@@ -65,8 +89,8 @@ def main() -> int:
         print(f"ERR: {DOC} not found; cannot read the decision marker.", file=sys.stderr)
         return 2
 
-    m = MARKER.search(DOC.read_text(encoding="utf-8"))
-    if m is None:
+    matches = MARKER.findall(_strip_fences(DOC.read_text(encoding="utf-8")))
+    if not matches:
         print(
             "ERR: no `ai-training-migration-decision:` marker in "
             f"{DOC.relative_to(ROOT)}.\n"
@@ -76,7 +100,18 @@ def main() -> int:
         )
         return 2
 
-    state, note = m.group(1), m.group(2).strip()
+    # More than one marker is ambiguous, and first-match-wins would let a stale
+    # `resolved` line above the real `pending` one silently disarm the gate.
+    if len(matches) > 1:
+        print(
+            f"ERR: {len(matches)} `ai-training-migration-decision:` markers in "
+            f"{DOC.relative_to(ROOT)}; expected exactly 1.\n"
+            "     Ambiguous input is not a pass. Delete the duplicates.",
+            file=sys.stderr,
+        )
+        return 2
+
+    state, note = matches[0][0], matches[0][1].strip()
     today = _today()
 
     if state == "resolved":

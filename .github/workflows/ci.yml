@@ -158,6 +158,23 @@ jobs:
       - name: Social-card guard unit tests
         run: python3 -m pytest scripts/test_check_social_cards.py -q
 
+      # Cloudflare reclassifies Googlebot/Applebot/BingBot as blocked on
+      # 2026-09-15 for any zone that has selected to block Training. These zones
+      # have. So a setting that is correct today becomes an SEO outage on a
+      # known date unless somebody decides first, and no repo change would show
+      # it. This step goes red from 2026-09-01 while the decision marker in
+      # docs/research/17_AI_CRAWLER_FRAMEWORK.md still reads `pending`.
+      #
+      # It is listed here BY NAME on purpose: the first version of this gate
+      # shipped documented as "not advice in a document; it is a gate" while no
+      # workflow invoked it, which is the same defect the frontmatter comment
+      # below describes. Ralph caught it. A guard nothing runs guards nothing.
+      - name: AI-training migration deadline gate
+        run: python3 scripts/check_ai_training_deadline.py
+
+      - name: AI-training deadline gate unit tests
+        run: python3 -m pytest scripts/test_check_ai_training_deadline.py -q
+
       # Posts require title/date/categories/tags/description; project pages
       # under content/consulting/ require title/description. `description` is
       # REQUIRED since blog-priv#55 Phase 2: without it a page inherits the
