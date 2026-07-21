@@ -365,9 +365,11 @@ records the value moving between two probes on the same day.
 ## Verification
 
 `scripts/check-ai-crawler-access.sh [URL]` takes any domain, so one script covers the estate.
-Tri-state exit: `0` citation reachable AND every training token opted out, `1` a policy failure of
-EITHER kind (citation blocked, or a training token with no opt-out; they need opposite fixes, so read
-the output), `2` inconclusive (DNS failure, 5xx,
+Tri-state exit: `0` citation reachable and no training token PROVEN to lack an opt-out (a CONFLICT
+token is reported and not failed; an unfetchable robots.txt skips the training gate, so read the PASS
+line for the actual count rather than inferring nine-of-nine from a zero exit), `1` a policy failure
+of EITHER kind (citation blocked, or a training token with no opt-out; they need opposite fixes, so
+read the output), `2` inconclusive (DNS failure, 5xx,
 429). The tri-state matters: speak2lola.com has no DNS and returns 2, where a binary pass/fail would
 have reported "6 of 6 blocked" and sent someone hunting a crawler policy on a domain with no site.
 
@@ -406,8 +408,8 @@ Two caveats that the table cannot carry:
 - **speak2lola.com has no DNS**, so its rule is stored and unverifiable. A stored rule is not a
   verified rule. Re-probe it when the domain resolves.
 
-And the estate is wider than this table. **id8u.com is live, returns HTTP 404 for `robots.txt` (which
-under RFC 9309 means unrestricted crawling, the same effective outcome as allow-all), and is
+And the estate is wider than this table. **id8u.com is live, serves an allow-all `robots.txt`
+(HTTP 200, body `User-agent: *` with an empty `Disallow:`, verified 3/3 on 2026-07-21), and is
 not behind Cloudflare**, so it follows none of this. It is out of scope for this issue and named here
 so the inventory does not read as complete when it is not.
 
