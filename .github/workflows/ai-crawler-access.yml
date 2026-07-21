@@ -56,18 +56,29 @@ jobs:
           set +e
           bash scripts/check-ai-crawler-access.sh "$TARGET" 2>&1 | tee /tmp/probe.txt
           echo "code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
-          # Carry the script's OWN verdict line forward instead of letting the
+          # Carry the script's OWN output forward VERBATIM instead of letting the
           # steps below compose a second, independent claim about the same run.
-          # Those steps used to hardcode "every training-class token carries a
-          # full robots.txt opt-out" on any exit 0, which is false whenever a
-          # token is in CONFLICT: the script had already been corrected to say
-          # "5 of 9" for exactly that case, and the workflow went on printing
-          # "every" beside it. cuarchitects.co.uk is in the matrix and is in
-          # that state, so the false line would have reached the job summary
-          # every Monday. One source of truth for the verdict, not two.
+          # They used to hardcode "every training-class token carries a full
+          # robots.txt opt-out" on any exit 0, which is false whenever a token
+          # is in CONFLICT: the script had already been corrected to say "5 of
+          # 9" for that case and the workflow printed "every" beside it.
+          #
+          # Captured WHOLE, deliberately. The first attempt at this extracted
+          # verdict lines with `grep -E '^(PASS|NOTE|FAIL)'` and introduced two
+          # fresh defects, both live on cuarchitects.co.uk which is in the
+          # matrix: the CONFLICT note is four printf calls and only the first
+          # starts with "NOTE:", so the summary was truncated mid-sentence,
+          # dropping the very reassurance that stops an operator over-reacting;
+          # and the robots.txt-unavailable note is printed INDENTED, so it never
+          # matched the anchor at all and vanished, leaving a bare "PASS" with no
+          # hint that the whole training half went unchecked that run.
+          #
+          # Any pattern narrow enough to pick out "the verdict" is a pattern
+          # that can silently drop part of it. The output is ~30 lines; ship all
+          # of it and let the reader see what the script actually said.
           {
             echo "summary<<PROBE_EOF"
-            grep -E '^(PASS|NOTE|FAIL)' /tmp/probe.txt || echo "(no verdict line emitted)"
+            cat /tmp/probe.txt
             echo "PROBE_EOF"
           } >> "$GITHUB_OUTPUT"
           exit 0
