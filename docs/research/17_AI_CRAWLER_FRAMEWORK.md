@@ -373,7 +373,10 @@ read the output), `2` inconclusive (DNS failure, 5xx,
 429). The tri-state matters: speak2lola.com has no DNS and returns 2, where a binary pass/fail would
 have reported "6 of 6 blocked" and sent someone hunting a crawler policy on a domain with no site.
 
-`.github/workflows/ai-crawler-access.yml` runs it weekly against hoiboy.uk, non-blocking, because an
+`.github/workflows/ai-crawler-access.yml` runs it weekly as a matrix over both reachable zones
+(hoiboy.uk and cuarchitects.co.uk; speak2lola.com is excluded while it has no DNS, because it could
+only ever return the inconclusive exit 2 and a permanent warning trains the reader to ignore the
+job). Non-blocking, because an
 edge setting can regress with no repo change and nothing in the repo would show it.
 
 ## Zone inventory (2026-07-20)
