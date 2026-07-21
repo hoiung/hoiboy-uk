@@ -17,9 +17,22 @@
 # docs/research/16_AI_BOT_AND_SEO_POLICY.md into a standing gate.
 #
 # The two classes are NOT interchangeable. Training crawls never emit citations;
-# no vendor offers a cite-for-training contract. Only the CITATION class gates the
-# exit code. The TRAINING class is probed and reported for visibility only, because
-# its correct value is an operator policy choice, not a defect.
+# no vendor offers a cite-for-training contract.
+#
+# BOTH classes gate the exit code. This block used to say the CITATION class
+# alone did, on the grounds that training's "correct value is an operator policy
+# choice, not a defect". That held only while the policy was undecided. It was
+# decided on 2026-07-20 (block training on every domain), so an unprotected
+# training token is now a defect like any other, and a standing watch that
+# cannot fail on it is not a watch.
+#
+# The two gates read different instruments, deliberately:
+#   CITATION -> HTTP STATUS. A 401/403/451 is the denial itself.
+#   TRAINING -> the robots.txt DIRECTIVE, never status. Google-Extended and
+#     Applebot-Extended are control tokens with no user-agent of their own, so
+#     no edge rule can match them and they return 200 while fully opted out.
+#     Gating training on status would fail this site forever for a condition
+#     that is neither fixable nor wrong.
 #
 # The two classes are also governed by DIFFERENT mechanisms, which is why they are
 # reported differently. Citation access is an edge decision, so an HTTP status
@@ -46,9 +59,17 @@
 #   CRAWLER_TARGET_URL=https://example.com bash scripts/check-ai-crawler-access.sh
 #
 # Exit codes (tri-state, mirroring scripts/check_social_cards.py):
-#   0 = every citation-class crawler reachable (HTTP 200)
-#   1 = at least one citation-class crawler blocked (the defect this gate
-#       catches). "Blocked" means a policy denial: 401, 403 or 451.
+#   0 = every citation-class crawler reachable (HTTP 200) AND every
+#       training-class token carrying a full robots.txt opt-out
+#   1 = a POLICY FAILURE, which is EITHER of two conditions needing OPPOSITE
+#       fixes, so read the output before acting:
+#         (a) at least one citation-class crawler blocked. "Blocked" means a
+#             policy denial: 401, 403 or 451.
+#         (b) at least one training-class token with no full opt-out in the
+#             served robots.txt.
+#       A CONFLICT verdict is NOT (b): contradictory records whose resolution
+#       varies by parser are reported, counted out of the opt-out total, and
+#       deliberately not failed, because the measured live outcome is blocked.
 #   2 = operational error, or a status this script cannot interpret as either
 #       reachable or denied (curl missing, DNS/network failure, target
 #       unreachable, 5xx, redirects that end somewhere unexpected, and 429,
@@ -412,8 +433,8 @@ fi
 # not, the blocking is user-agent-based at the edge. Googlebot is the
 # verified-bot control: a 200 here alongside crawler 403s shows the edge is
 # allow-listing some bots and denying others, rather than denying all bots.
-# Reported only. These do NOT touch the exit code, which the CITATION class
-# alone gates. Documented in docs/research/16_AI_BOT_AND_SEO_POLICY.md, and
+# Reported only. These do NOT touch the exit code (which the CITATION and
+# TRAINING classes gate). Documented in docs/research/16_AI_BOT_AND_SEO_POLICY.md, and
 # implemented here so the standing gate reproduces its own evidence instead of
 # citing a measurement no one can re-run.
 printf '\nCONTROLS (reported only; rule out outage and blanket blocking)\n'
@@ -478,15 +499,30 @@ if [ "$ROBOTS_STATE" = "ok" ] && [ "$train_open" -gt 0 ]; then
     exit 1
 fi
 
+# The PASS line must not claim more than the run proved. It used to append
+# "every training-class token carries a full opt-out" whenever robots.txt was
+# merely READABLE, without consulting train_conflict, so on cuarchitects.co.uk
+# it asserted a full opt-out for four tokens the same run had just reported as
+# CONFLICT. That zone is in the weekly matrix, so the false line would have been
+# printed to the job summary every Monday, and the corrective NOTE below does
+# not reach the summary or the Verdict step at all. This is the same defect
+# class as the deleted doc caveat Ralph caught earlier in this batch: an
+# unqualified claim surviving past the point where it stopped being true.
 printf 'PASS: all %d citation-class crawlers reachable' "${#CITATION_BOTS[@]}"
 if [ "$ROBOTS_STATE" = "ok" ]; then
-    printf ', and every training-class token carries a full opt-out'
+    if [ "$train_conflict" -gt 0 ]; then
+        printf ', and %d of %d training-class tokens carry a full opt-out' \
+            "$(( ${#TRAINING_BOTS[@]} - train_conflict ))" "${#TRAINING_BOTS[@]}"
+    else
+        printf ', and every training-class token carries a full opt-out'
+    fi
 fi
 printf '.\n'
 if [ "$train_conflict" -gt 0 ]; then
     printf 'NOTE: %d training token(s) reported CONFLICT (contradictory records whose\n' "$train_conflict"
-    printf '      resolution varies by parser). Not failed, because the measured live\n'
-    printf '      outcome is still blocked, but it is drift worth fixing.\n'
+    printf '      resolution varies by parser). NOT counted as opted out above, and not\n'
+    printf '      failed either: the measured live outcome is still blocked. It is drift\n'
+    printf '      worth fixing, not an exposure today.\n'
 fi
 printf 'Note: citation reachability means they are not blocked. It does NOT mean the\n'
 printf 'site is cited; no reliable method for measuring AI citation currently exists.\n'
