@@ -28,7 +28,22 @@ base_url = "https://hoiboy.uk"
 # the rendered HTML for blog posts; `public/consulting` is INTENTIONALLY NOT
 # excluded so consulting-ops#2 AC 0.4 (Cal.com URL liveness) can fire against
 # the rendered consulting page HTML.
-exclude_path = ["public/posts", "legacy", "node_modules", ".git", "content/posts", "docs/research", "scripts/tests/fixtures"]
+#
+# `docs/research` WAS excluded and is not any more (blog-priv#55 Stage 5).
+# The exclusion silently voided every citation in the research corpus: ci.yml
+# invokes lychee over './**/*.md', which looks like it covers these files, and
+# this line removed them again. It is stronger than a glob filter, too: passing
+# a research file to lychee EXPLICITLY still produced "No files found for this
+# input source", so nothing could check them by any invocation.
+#
+# It was found because a Sources URL in 17_AI_CRAWLER_FRAMEWORK.md had been a
+# stable 404 for the life of the file, in the layer the document names as the
+# only enforcement mechanism actually in effect. Measured before removing the
+# exclusion: 85 links, 73 unique, 3 errors, and all 3 were anti-bot 403s from
+# publishers, now allowlisted below rather than left to fail. Whenever a gate
+# appears to cover a file, prove the file is in scope, not merely that the gate
+# runs.
+exclude_path = ["public/posts", "legacy", "node_modules", ".git", "content/posts", "scripts/tests/fixtures"]
 
 # Domains explicitly excluded from link check (allowlist).
 # Add entries with the comment format above. Empty by default.
@@ -85,6 +100,15 @@ exclude = [
   # uses lychee or this allowlist, so the primary defence is unaffected.
   # added: 2026-05-18; expires: 2026-08-16 (90 days)
   "^https?://(www\\.)?cal\\.(eu|com)(/.*)?$",
+  # Academic publishers and Medium return 403 Forbidden to lychee's user-agent
+  # (anti-bot), same class as linkedin/substack above. These are the three
+  # citations surfaced when docs/research stopped being excluded from the link
+  # check; each was verified reachable in-browser 2026-07-21, so they are
+  # anti-bot false positives, NOT broken links. Cited in 14_BLOG_CRAFT.md.
+  # added: 2026-07-21; expires: 2026-10-19 (90 days)
+  "^https?://dl\\.acm\\.org(/.*)?$",
+  "^https?://(www\\.)?tandfonline\\.com(/.*)?$",
+  "^https?://(www\\.)?medium\\.com(/.*)?$",
   # Root-relative paths (href="/js/...", href="/legal/...", href="/private/...")
   # are Hugo internal paths that get rewritten at render time. Lychee scans
   # raw markdown and has no Hugo context, so it cannot resolve them without
