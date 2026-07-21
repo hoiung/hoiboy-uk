@@ -7,7 +7,34 @@ and the decision record for hoiboy.uk; read this one when standing up or auditin
 
 ## The policy, in one line
 
-**Citation crawlers ALLOWED. Training crawlers BLOCKED. On every domain, without exception.**
+**Citation crawlers ALLOWED. Named training crawlers BLOCKED. On every domain.**
+
+**Read the word "named". This document used to say "Training crawlers BLOCKED... without
+exception", and that was false.** Measured 2026-07-21 against the live `hoiboy.uk/robots.txt` with
+CPython's `urllib.robotparser`: the nine tokens the managed block names return `can_fetch=False`,
+and **sixteen of sixteen other real training and scraping agents returned `can_fetch=True`** -
+`anthropic-ai`, `FacebookBot`, `cohere-ai`, `omgilibot`, `Diffbot`, `AI2Bot`, `Webzio-Extended`,
+`ImagesiftBot`, `PanguBot`, `Timpibot`, `YouBot`, `TikTokSpider`, `img2dataset`, `Kangaroo Bot`,
+`Scrapy`, `python-requests`.
+
+The managed block is an **allowlist of nine named tokens, not a block on the training class**. Any
+agent outside that list is permitted to crawl.
+
+What those sixteen DO get is the `*` group's `Content-Signal: search=yes,ai-train=no,use=reference`,
+served with `Allow: /`. That is a stated licence condition covering every crawler, and the served
+file's own preamble spells out the terms: *"If a Content-Signal = no, you may not collect content for
+the corresponding use."* So the training opt-out IS expressed to them. It is expressed by a signal
+rather than by a `Disallow`, and a signal is neither a robots directive nor enforcement.
+
+The honest three-tier summary, which the rest of this document should be read against:
+
+| Tier | Who | Mechanism | Strength |
+|---|---|---|---|
+| Enforced | 7 of the 9 named, where a WAF rule can match the user-agent | WAF custom rule, `block` | **Hard. A 403 at the edge.** |
+| Asked | `Google-Extended`, `Applebot-Extended` (no user-agent exists to match) | `Disallow: /` in robots.txt | Honour-system |
+| Signalled | Everyone else, including the sixteen above | `Content-Signal: ai-train=no` on the `*` group | Honour-system, and less widely implemented |
+
+Do not collapse those three tiers back into the word "blocked".
 
 Operator ruling, verbatim (2026-07-20):
 
@@ -57,7 +84,8 @@ Order matters: they are listed weakest-to-strongest in enforcement terms.
    it reaches **seven of the nine** tokens. `Google-Extended` and `Applebot-Extended` send no
    user-agent of their own, so no edge rule can match them and robots.txt is their only control.
    Blocks the training user-agents at the edge; leaves the citation user-agents untouched.
-   Available on the Free plan. **Not applied on any zone yet.**
+   Available on the Free plan. **APPLIED on all three zones on 2026-07-21** and verified by probe;
+   rule IDs are in the WAF section below.
 
 ### The granular presets are PARTLY enforced, not unenforced
 
@@ -71,6 +99,16 @@ already at `block`, showed the same two at 403 throughout. Both zones now read i
 The flip is user-agent-signature specific, which rules out generic bot mitigation: the full
 `CCBot/2.0 (https://commoncrawl.org/faq/)` string gets 403, a bare `CCBot` gets 200, and an invented
 crawler with the same shape gets 200.
+
+**That same fact is also an evasion surface, and this paragraph used to present only the flattering
+half of it.** The measurement authenticates the mechanism, yes. It also means the preset's block was
+defeated by deleting one token from a user-agent string, with no other change. A reader finished this
+section more confident in the preset than the evidence warrants.
+
+**The WAF rule closes this specific hole**: `http.user_agent contains "CCBot"` matches the bare token
+too, so since 2026-07-21 a bare `CCBot` returns **403** where it returned 200 the day before.
+Verified live. The general lesson stands though - preset enforcement keys on a signature, so treat
+any preset-only block as defeatable by a crawler that wants to defeat it.
 
 So the preset does real work now, on a subset of crawlers. An earlier note in this workstream said
 "accepted by the API but not enforced"; that was over-generalised from probing GPTBot alone.
@@ -86,8 +124,20 @@ out first.** This is not a hypothetical. Cloudflare's announcement, verbatim:
 > bots service)."*
 
 **These zones have selected to block Training, so they are in scope.** That is the whole exposure,
-and it follows from a setting applied in this workstream. Opt-out can be marked in Security settings
-*"any time leading up to September 15"*.
+and it follows from a setting applied in this workstream.
+
+The opt-out sentence must be quoted WHOLE, because its second half is what makes the opt-out safe
+and an earlier version of this document cut it off exactly there:
+
+> *"if a website owner wants to opt out of these new default configurations, they can easily mark
+> this in their Security settings any time leading up to September 15, **which will confirm that they
+> want no changes on Training crawlers that also crawl for Search purposes**."*
+
+Truncating at "September 15" turned a targeted carve-out into a bare deadline and made the decision
+below look like a straight trade of training protection against search visibility. It is not: opting
+out preserves the multi-purpose crawlers (Googlebot, Applebot, BingBot) specifically. This is the
+same undisclosed-elision defect already corrected once in this file for the Apple quote; do not
+reintroduce it.
 
 Two things this section previously got wrong, corrected rather than deleted because the wrong version
 was quoted into a GitHub comment:
@@ -109,11 +159,23 @@ An earlier version of this document said to set the preset everywhere so the mig
 "with no revisit". That was unsupported and actively hazardous: followed literally on a portfolio blog
 and a client practice whose whole purpose is being found, it would take out organic search on both.
 
-**The trade-off, stated so it gets decided rather than drifted into.** Keeping `ai_training: block`
-today buys real blocking of CCBot and Bytespider, and Bytespider is the training crawler most often
-reported ignoring robots.txt (reputation, not measured here), so it is not nothing. The cost is that the same switch is what Cloudflare reads
-on 2026-09-15 to decide whether Googlebot counts as a training crawler. Search visibility outranks
-training protection for these domains, so **if the migration arrives undecided, opt out**.
+**The trade-off, and why applying the WAF rule changed it.** Keeping `ai_training: block` used to be
+the only thing buying real edge blocking of CCBot and Bytespider, which made opting out a genuine
+sacrifice. **That is no longer true.** Since 2026-07-21 the WAF custom rule blocks those two, and
+five more, on all three zones, independently of the preset.
+
+So the WAF rule and the migration decision are **coupled, and this document previously presented
+them as independent.** The practical consequence:
+
+- **With the WAF rule applied (the current state): opting out costs nothing in enforcement.** The
+  seven hard-blocked tokens stay hard-blocked, because the WAF rule does that work, not the preset.
+- **Without it, opting out would drop edge enforcement to zero** and leave the entire training
+  position resting on robots.txt, which is a request.
+
+Search visibility outranks training protection for these domains, and the opt-out is specifically
+scoped to preserve crawlers that also serve Search. So **the recommendation is to OPT OUT**, and it
+is now a cheap decision rather than a painful one. Verify the WAF rules are still present first: if
+they have been removed, the calculation reverts.
 
 `scripts/check_ai_training_deadline.py` fails CI from 2026-09-01 so this cannot be forgotten. It is
 not advice in a document; it is a gate. The line below is that gate's input: flip it to
@@ -121,12 +183,36 @@ not advice in a document; it is a gate. The line below is that gate's input: fli
 
 ai-training-migration-decision: pending
 
-## The WAF custom rule (NOT YET APPLIED on any zone)
+## The WAF custom rule (APPLIED on all three zones, 2026-07-21)
 
-**Status: blocked, not done.** The API token available to this workstream carries Bot Management
-Write only; `GET /zones/{id}/rulesets/phases/http_request_firewall_custom/entrypoint` returns
-`request is not authorized`. Applying it needs **Zone > Firewall Services > Edit**, or the dashboard.
-Until it exists, the training block is robots.txt only, which is honour-system.
+**Status: done and probe-verified.**
+
+| Zone | Rule ID | Verified |
+|---|---|---|
+| hoiboy.uk | `88eed3b5dce1471e99025336d0a71dac` | 7/7 training UAs 403, citation 6/6 200, probe exit 0 |
+| cuarchitects.co.uk | `de90c6505a1e440ba40870fda4ce2abb` | training 403, citation 6/6 200, probe exit 0 |
+| speak2lola.com | `12c8a4d6bc624dd5ab189eccf7ce3d6f` | stored only; no DNS, so unverifiable by probe |
+
+**The permission. This section named the wrong one and cost a round-trip.** It said
+**Zone > Firewall Services > Edit**. That is wrong: `Firewall Services Write` grants the *legacy*
+Filters and Firewall Rules API, NOT the Rulesets API that WAF custom rules live in. Adding it changed
+nothing, because
+`GET /zones/{id}/rulesets/phases/http_request_firewall_custom/entrypoint` kept returning
+`request is not authorized` while `firewall/rules` and `filters` started returning `OK` - which is
+how the mis-scope was diagnosed. What actually works is **`Account WAF Write`** (used here) or
+**Zone > WAF > Edit**. Treat a documented permission name as an executable instruction: an operator
+will act on it.
+
+**Do not reach for the legacy API just because a token already grants it.** Writes there still
+succeed - a probe filter was created and deleted to confirm - but Cloudflare states the Firewall
+Rules API and Filters API *"are no longer supported since 2025-06-15"*. A rule that stores cleanly
+while never being evaluated at the edge is this document's own failure mode wearing a different hat.
+
+**A token cannot widen or revoke itself**, so this step always needs a human. Measured:
+`GET /user/tokens` returns *"Valid user-level authentication not found"* and
+`GET /accounts/{id}/tokens` returns *"Unauthorized to access requested resource"*. Granting
+`User > API Tokens > Edit` would remove that limit and is root-equivalent - anything holding it can
+mint itself any permission on the account. It was offered during this work and declined.
 
 Action `block`, phase `http_request_firewall_custom`:
 
@@ -271,13 +357,27 @@ edge setting can regress with no repo change and nothing in the repo would show 
 
 ## Zone inventory (2026-07-20)
 
-| Domain | Citation | Training (robots.txt) | WAF rule |
-|---|---|---|---|
-| hoiboy.uk | PASS 6/6 | `Disallow: /` on all nine (gate re-checks 6 of them) | **not applied** |
-| cuarchitects.co.uk | PASS 6/6 | **CONFLICT on 4 tokens** (drift; live stance still blocked) | **not applied** |
-| speak2lola.com | no DNS, unverifiable | configured | **not applied** |
+Zone settings read back from the API on 2026-07-21 (`GET /zones/{id}/bot_management`), so every row
+below is measured rather than asserted. An earlier version of this table claimed "all three zones"
+for `ai_training` while carrying no evidence at all for speak2lola.com; that gap is now closed by
+reading it.
 
-No zone has the WAF rule. Every "training blocked" above means robots.txt only.
+| Domain | `ai_bots_protection` | `is_robots_txt_managed` | `ai_training` | Citation | WAF rule |
+|---|---|---|---|---|---|
+| hoiboy.uk | disabled | true | block | PASS 6/6 | **applied**, probe-verified |
+| cuarchitects.co.uk | disabled | true | block | PASS 6/6 | **applied**, probe-verified |
+| speak2lola.com | disabled | true | block | no DNS, unverifiable | **applied**, stored only |
+
+Two caveats that the table cannot carry:
+
+- **cuarchitects.co.uk still reports CONFLICT on four tokens** (its repo file allows what the managed
+  block disallows). Drift, not an outage: the live file measures as blocked in every parser tried.
+- **speak2lola.com has no DNS**, so its rule is stored and unverifiable. A stored rule is not a
+  verified rule. Re-probe it when the domain resolves.
+
+And the estate is wider than this table. **id8u.com is live, serves an allow-all `robots.txt`, and is
+not behind Cloudflare**, so it follows none of this. It is out of scope for this issue and named here
+so the inventory does not read as complete when it is not.
 
 **Zone and account IDs are deliberately not recorded here.** This repository is public. The IDs are
 not credentials, but publishing the account's zone inventory is free reconnaissance for no benefit.
@@ -296,7 +396,10 @@ a Free-plan rationale here.
   https://blog.cloudflare.com/content-independence-day-ai-options/
 - Cloudflare, "Block AI bots": https://developers.cloudflare.com/bots/additional-configurations/block-ai-bots/
 - Cloudflare, "Manage AI crawlers": https://developers.cloudflare.com/ai-crawl-control/features/manage-ai-crawlers/
-- Cloudflare, "Managed robots.txt": https://developers.cloudflare.com/ai-crawl-control/features/managed-robots-txt/
+- Cloudflare, "Managed robots.txt": https://developers.cloudflare.com/bots/additional-configurations/managed-robots-txt/
+  (the previously cited `ai-crawl-control/features/managed-robots-txt/` path is a stable 404,
+  verified 3/3 attempts with no redirect. It went unnoticed because `lychee.toml` excluded
+  `docs/research` from the CI link check, so no citation in this corpus was ever verified.)
 - Google, "Google crawlers and fetchers" (source for Google-Extended having no user-agent):
   https://developers.google.com/search/docs/crawling-indexing/google-common-crawlers
 - Apple, "About Applebot" (source for Applebot-Extended not crawling):
