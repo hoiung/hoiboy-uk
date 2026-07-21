@@ -281,7 +281,10 @@ still 200. A rule that takes citation down with training is the original defect 
 3. Add the WAF custom rule blocking the training user-agents (see layer 4).
 4. Verify by probe, not by read-back:
    `bash scripts/check-ai-crawler-access.sh https://<domain>/`
-   Exit 0 means no citation crawler was status-blocked. It does NOT mean they were served real
+   Exit 0 means no citation crawler was status-blocked AND no training token was proven to lack
+   an opt-out (a CONFLICT is reported, not failed; an unfetchable robots.txt skips the training
+   half entirely, so read the PASS line rather than inferring from the code). It does NOT mean
+   the citation crawlers were served real
    content: the script classifies on HTTP status, so a challenge page returning 200 reads as ok.
    The TRAINING rows report the robots.txt directive each training crawler is given.
 5. If the origin repo serves its own robots.txt, check it does not contradict the managed block
@@ -317,8 +320,11 @@ cannot remove the managed one. Consequences:
   that has the most octets"*, one octet against the empty pattern's zero, and the allow-beats-disallow
   tie-break needs *equivalent* rules). But `urllib.robotparser` does not implement §2.2.1 merging or
   §2.2.2 specificity at all: it is first-matching-group-wins. **Version-bound, and it will go stale:**
-  measured on CPython **3.12.3**. CPython added RFC 9309 support in `bc285e583286` (2026-05-04), so on
-  3.14.5 and later this ordering behaviour changes. The live outcome stays "blocked"; only the reason
+  measured on CPython **3.12.3**. CPython added RFC 9309 support in `bc285e583286` (2026-05-04) and
+  backported it, so this ordering behaviour changes on newer interpreters. **No version floor is
+  quoted here on purpose:** an earlier draft named a single release, which would read as clearance
+  to trust the table on any interpreter below it, including maintenance branches that already
+  carry the backport. Treat ANY interpreter other than the measured 3.12.3 as unverified. The live outcome stays "blocked"; only the reason
   does. Re-measure before citing this table on a newer interpreter. Measured, same file, order flipped:
 
   | group order | `can_fetch('/')` for GPTBot |
