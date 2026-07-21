@@ -77,13 +77,30 @@ So the preset does real work now, on a subset of crawlers. An earlier note in th
 **`ai_training: block` will block Googlebot, Applebot and BingBot on 2026-09-15 unless the zone opts
 out first.** This is not a hypothetical. Cloudflare's announcement, verbatim:
 
-> *"Multi-purpose crawlers such as Googlebot, Applebot, and BingBot will be blocked by customers who
-> have selected to block Training (either through the new options to manage AI traffic, or through
-> the legacy Block AI bots service)."*
+> *"Since the defaults will be enforced by the most restrictive applicable rules, multi-purpose
+> crawlers such as Googlebot, Applebot, and BingBot will be blocked by customers who have selected to
+> block Training (either through the new options to manage AI traffic, or through the legacy Block AI
+> bots service)."*
 
-The new defaults *"apply to new Cloudflare customers, new sites set up by existing customers, and all
-existing free customers"*. **Both live zones are Free plan, so both are in scope.** Opt-out can be
-marked in Security settings *"any time leading up to September 15"*.
+**These zones have selected to block Training, so they are in scope.** That is the whole exposure,
+and it follows from a setting applied in this workstream. Opt-out can be marked in Security settings
+*"any time leading up to September 15"*.
+
+Two things this section previously got wrong, corrected rather than deleted because the wrong version
+was quoted into a GitHub comment:
+
+- It attributed to Cloudflare the sentence *"apply to new Cloudflare customers, new sites set up by
+  existing customers, and all existing free customers"*, and rested the whole "both zones are in
+  scope" conclusion on it. **That sentence is not in Cloudflare's post.** It came from a
+  search-result summary and was presented as a verbatim quote. Retracted.
+- It therefore gave Free plan as the reason these zones are affected. Wrong reason, right conclusion:
+  they are affected because they have selected to block Training, which is what the announcement
+  actually conditions on.
+
+The separate ads-page default (*"For all new domains onboarding to Cloudflare, the categories of
+Training and Agent will be blocked by default on the pages that display ads"*) applies only to newly
+onboarding domains and does **not** narrow this hazard. Do not let the word "ads" suggest these sites
+are safe because they carry none.
 
 An earlier version of this document said to set the preset everywhere so the migration would activate
 "with no revisit". That was unsupported and actively hazardous: followed literally on a portfolio blog
@@ -135,21 +152,44 @@ cannot remove the managed one. Consequences:
 - cuarchitects.co.uk serves exactly this for GPTBot, ClaudeBot, Google-Extended and CCBot: its repo
   file allows them with an empty `Disallow:` (written before managed robots.txt was on) while the
   managed block disallows them.
-- **The block still applies. This is drift, not a policy failure.** §2.2.2: *"The most specific match
-  found MUST be used. The most specific match is the match that has the most octets."* `Disallow: /`
-  is one octet; the empty pattern is zero, so disallow wins. The allow-beats-disallow tie-break in
-  §2.2.2 needs an actual `Allow:` rule and never fires here. Confirmed empirically against the live
-  file with Python's `urllib.robotparser`: `can_fetch` is `False` for all four tokens and `True` for
-  the citation class.
-- `scripts/check-ai-crawler-access.sh` reports `CONFLICT` on the affected rows. Treat it as **drift
-  worth fixing**, not as an outage: two contradictory records are confusing to read, and the
-  effective stance rests on a specificity rule that a future edit to either file could flip.
+- **An empty `Disallow:` IS an allow.** It is the traditional allow-everything special case, not a
+  zero-length disallow path. CPython's `urllib.robotparser` says so in its own source: *"an empty
+  value means allow all"*. So this genuinely is an allow-versus-disallow conflict, and this repo's own
+  parser (`scripts/check-ai-crawler-access.sh`) correctly scores it as an allow.
+- **The block still applies on the live file, but for a narrower reason than a specificity argument.**
+  Under a strict RFC reading §2.2.2 gives it to `Disallow: /` (*"the most specific match... the match
+  that has the most octets"*, one octet against the empty pattern's zero, and the allow-beats-disallow
+  tie-break needs *equivalent* rules). But `urllib.robotparser` does not implement §2.2.1 merging or
+  §2.2.2 specificity at all: it is first-matching-group-wins. Measured, same file, order flipped:
 
-**An earlier version of this document claimed the opposite** ("permissive parsers resolve the tie
-toward allow, so the training block silently stops applying"). Wrong on three counts: there is no
-allow/disallow tie, because both records are `disallow`; specificity resolves it before any tie-break;
-and a real parser returns blocked. cuarchitects' own `layouts/robots.txt` already recorded the correct
-reading and this document contradicted it. Kept here because the wrong version was briefly the basis
+  | group order | `can_fetch('/')` for GPTBot |
+  |---|---|
+  | Cloudflare block first (the live layout) | `False` |
+  | site block first (reversed) | `True` |
+
+  **So the live outcome is blocked partly because Cloudflare prepends.** Do not restate this as
+  "specificity guarantees it"; a widely-used parser gets there by ordering, and would flip if the
+  ordering did.
+- `scripts/check-ai-crawler-access.sh` reports `CONFLICT` on the affected rows. Treat it as **drift
+  worth fixing**: not an outage today, but the effective stance depends on parser behaviour that
+  varies between implementations and on a serving order the origin does not control.
+
+**This paragraph has now been wrong twice, in opposite directions. Do not restate it from memory.**
+
+Version 1 said "permissive parsers resolve the tie toward allow, so the training block silently stops
+applying" and concluded the client site's policy was defeated. False: the live file measures as
+blocked in every parser tried.
+
+Version 2 over-corrected. It said there was no allow/disallow tie "because both records are
+`disallow`", and cited `urllib.robotparser` as confirmation of a specificity argument. Both halves
+were wrong: an empty `Disallow:` is an allow (CPython says so in its own source, and this repo's awk
+parser already scored it that way, so the document contradicted its own implementation), and urllib
+demonstrates ordering rather than specificity.
+
+What is actually true: it is a real conflict, the live outcome is blocked, and that outcome rests on
+a mix of strict-RFC specificity and the fact that Cloudflare prepends. cuarchitects' own
+`layouts/robots.txt` had the right reading before either version of this file did. Kept because the
+first version was briefly the basis
 for calling the client site's policy defeated, which it never was.
 
 Always fetch the live `https://<domain>/robots.txt` before reasoning about what a crawler sees. The

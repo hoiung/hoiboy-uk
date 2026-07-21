@@ -134,10 +134,11 @@ Verified after the change: `bash scripts/check-ai-crawler-access.sh https://hoib
 
 An earlier note in this workstream recorded that the granular presets (`ai_training` / `ai_search` / `ai_user`) are "accepted by the API but not enforced" before Cloudflare's 2026-09-15 migration. That was over-generalised from probing GPTBot alone. Measured across the full class:
 
-- hoiboy.uk with `ai_training: block` → CCBot **403**, Bytespider **403**, the other four training tokens 200
-- cuarchitects.co.uk with `ai_training: disabled` → all six training tokens **200**
+The evidence is a before/after on one zone, not a comparison between two. cuarchitects.co.uk was measured at `ai_training: disabled` (all six training tokens **200**), then set to `block`, and CCBot and Bytespider flipped to **403** while the other four stayed 200. hoiboy.uk, already at `block`, showed the same two at 403 throughout. Both zones now read identically, so the two-domain contrast this section originally cited no longer exists and should not be restated.
 
-So the preset does real work today, on a subset of crawlers. It is set on all three zones so the 2026-09-15 migration activates the full framework natively without a revisit. Until then robots.txt carries the rest, and robots.txt is honour-system: an edge rule is the only hard enforcement. See `docs/research/17_AI_CRAWLER_FRAMEWORK.md`.
+So the preset does real work today, on a subset of crawlers. Until then robots.txt carries the rest, and robots.txt is honour-system: an edge rule is the only hard enforcement.
+
+**It is NOT set-and-forget.** This paragraph previously said the preset was set on all three zones so the migration would activate "natively without a revisit". That is retracted: on 2026-09-15 the same setting also causes Googlebot, Applebot and BingBot to be blocked, because Cloudflare enforces the defaults by the most restrictive applicable rule and these zones have selected to block Training. A decision is REQUIRED before that date. `scripts/check_ai_training_deadline.py` turns CI red from 2026-09-01 until one is recorded. Full detail, sources and the recommendation: `docs/research/17_AI_CRAWLER_FRAMEWORK.md` "MANDATORY REVISIT BEFORE 2026-09-15".
 
 ### Standing gate
 

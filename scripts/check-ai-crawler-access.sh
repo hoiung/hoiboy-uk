@@ -148,13 +148,20 @@ fi
 # Report how the served robots.txt governs one user-agent token.
 #
 # RFC 9309 permits more than one group for the same token, and a crawler merges
-# them. So a token can carry BOTH a `Disallow: /` and an empty `Disallow:`.
-# That is not hypothetical: Cloudflare's managed robots.txt PREPENDS its own
-# groups ahead of the origin's file, and the two can disagree. cuarchitects.co.uk
-# was serving exactly that for GPTBot, ClaudeBot, Google-Extended and CCBot.
-# Permissive parsers resolve the tie toward allow, so the safe reading is that
-# training is permitted. Reported as CONFLICT rather than silently picking a
-# side, because that state is a defect in the policy, not a valid configuration.
+# them. So a token can carry BOTH a `Disallow: /` and an empty `Disallow:`,
+# and an empty `Disallow:` is an ALLOW (the traditional allow-everything special
+# case, which is why the parser below scores it that way). That is not
+# hypothetical: Cloudflare's managed robots.txt PREPENDS its own groups ahead of
+# the origin's file, and the two can disagree. cuarchitects.co.uk serves exactly
+# that for GPTBot, ClaudeBot, Google-Extended and CCBot.
+#
+# Do NOT infer an outcome from a CONFLICT in either direction. Measured on the
+# live file, every parser tried returns blocked, but they do not agree on why:
+# a strict RFC reading resolves it on §2.2.2 specificity, while urllib is
+# first-matching-group-wins and would return allowed if the origin's group came
+# first. Reported as CONFLICT precisely because the answer depends on the
+# implementation and on serving order, which is a state to fix rather than to
+# reason about. Detail: docs/research/17_AI_CRAWLER_FRAMEWORK.md.
 robots_verdict() {
     [ "$ROBOTS_STATE" = "ok" ] || { printf 'robots.txt unavailable'; return; }
     awk -v want="$1" '
@@ -204,16 +211,24 @@ robots_verdict() {
             gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
             seen = 1
             if (v == "/") allow = 1
+            # A scoped Allow (Allow: /public) against Disallow: / carves paths
+            # back out. Under RFC 9309 longest-match those paths are explicitly
+            # permitted, with no tie-break needed, so this is a MORE certain
+            # permission than the exact `Allow: /` case, not a lesser one.
+            # Discarding it reported a clean opt-out for a file that grants
+            # access.
+            else if (v != "") partial_allow = 1
             next
         }
         # Any other directive (Allow:, Sitemap:, Content-Signal:, blank) closes
         # the user-agent run without closing the group.
         { if (line !~ /^[[:space:]]*$/) in_ua_run = 0 }
         END {
-            if (!seen)          { print "no group (falls under *)"; exit }
-            if (deny && allow)  { print "CONFLICT: allow and Disallow:/ both present"; exit }
-            if (deny)           { print "Disallow: / (training opted out)"; exit }
-            if (partial)        { print "scoped rules only (NOT a full opt-out)"; exit }
+            if (!seen)                  { print "no group (falls under *)"; exit }
+            if (deny && allow)          { print "CONFLICT: allow and Disallow:/ both present"; exit }
+            if (deny && partial_allow)  { print "CONFLICT: Disallow:/ with a scoped Allow carving paths back out"; exit }
+            if (deny)                   { print "Disallow: / (training opted out)"; exit }
+            if (partial || partial_allow) { print "scoped rules only (NOT a full opt-out)"; exit }
             print "allowed (training NOT opted out)"
         }' "$ROBOTS_FILE"
 }

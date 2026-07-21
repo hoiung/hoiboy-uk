@@ -298,6 +298,36 @@ def test_scoped_disallow_is_not_reported_as_allowed():
     assert "NOT a full opt-out" in row, p.stdout
 
 
+def test_a_later_groups_rules_do_not_leak_into_an_earlier_token():
+    # The Allow: branch must close the User-agent run, or `member` survives into
+    # the NEXT bot's group and that bot's Disallow:/ is attributed to this one.
+    # Deleting `in_ua_run = 0` from the Allow: branch passed all 29 tests before
+    # this existed, while producing a false CONFLICT on exactly this shape.
+    robots = "User-agent: GPTBot\nAllow: /\nUser-agent: Bytespider\nDisallow: /\n"
+    p = _run(lambda ua: 200, robots=robots)
+    gpt = _training_row(p.stdout, "GPTBot")
+    assert "CONFLICT" not in gpt, p.stdout
+    assert "NOT opted out" in gpt, p.stdout
+    assert "training opted out" in _training_row(p.stdout, "Bytespider"), p.stdout
+
+
+def test_scoped_allow_against_disallow_all_is_a_conflict():
+    # `Allow: /public` under `Disallow: /` explicitly permits /public by RFC 9309
+    # longest-match, with no tie-break needed. Reporting a clean opt-out here
+    # asserts a total block over a file that grants access to a subtree.
+    robots = "User-agent: GPTBot\nDisallow: /\nAllow: /public\n"
+    p = _run(lambda ua: 200, robots=robots)
+    row = _training_row(p.stdout, "GPTBot")
+    assert "CONFLICT" in row, p.stdout
+    assert "scoped Allow" in row, p.stdout
+
+
+def test_scoped_allow_alone_is_not_a_full_opt_out():
+    robots = "User-agent: GPTBot\nAllow: /public\n"
+    p = _run(lambda ua: 200, robots=robots)
+    assert "scoped rules only" in _training_row(p.stdout, "GPTBot"), p.stdout
+
+
 def test_scoped_disallow_does_not_mask_a_full_opt_out():
     # A scoped rule alongside Disallow:/ must still report the full opt-out.
     robots = "User-agent: GPTBot\nDisallow: /admin\nDisallow: /\n"
