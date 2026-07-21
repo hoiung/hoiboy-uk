@@ -124,11 +124,13 @@ The framework is written up once, for reuse, in `docs/research/17_AI_CRAWLER_FRA
 
 ### Fixed 2026-07-20. The cause, as this section asked to be recorded
 
-The four candidates above were checked by READING the zone config through the API before writing anything. **Exactly one was the cause: `ai_bots_protection` was set to `block`.** The other three were already correct: `fight_mode` was `false`, `crawler_protection` was `disabled`, and `is_robots_txt_managed` was `false`. Flipping all four blind would have changed three settings for nothing and left no way to attribute the fix.
+Four dashboard settings were candidates for the cause: (1) **Block AI bots** (`ai_bots_protection`), (2) **AI Crawl Control** (`crawler_protection`), (3) **managed robots.txt** (`is_robots_txt_managed`), and (4) **Bot Fight Mode** (`fight_mode`). They are enumerated here because the list they used to point at ("the four candidates above") was deleted from this document by commit `0507f58` in the same diff that added this sentence, leaving the referent dangling.
+
+All four were checked by READING the zone config through the API before writing anything. **Exactly one was the cause: `ai_bots_protection` was set to `block`.** The other three were already correct: `fight_mode` was `false`, `crawler_protection` was `disabled`, and `is_robots_txt_managed` was `false`. Flipping all four blind would have changed three settings for nothing and left no way to attribute the fix.
 
 `ai_bots_protection` is the coarse legacy switch. It takes the citation class down with the training class, which is exactly what this issue found and why it must not be re-enabled.
 
-Item 3 above is now **inverted on purpose**. Managed robots.txt was turned ON, not confirmed off, because it is the mechanism that expresses the training block: it serves a `Content-Signal: search=yes,ai-train=no,use=reference` line plus `Disallow: /` for nine training crawlers, and leaves the citation class to fall under `User-agent: *`. The original instruction assumed the repo-served file was the only one that mattered. It is not: **Cloudflare PREPENDS the managed block ahead of the origin's file rather than replacing it**, so both records are served and a repo edit cannot remove the managed one.
+Candidate 3, managed robots.txt, whose original instruction was "confirm it is OFF so it does not inject block rules over the repo-served file", is now **inverted on purpose**. It was turned ON, not confirmed off, because it is the mechanism that expresses the training block: it serves a `Content-Signal: search=yes,ai-train=no,use=reference` line plus `Disallow: /` for nine training crawlers, and leaves the citation class to fall under `User-agent: *`. The original instruction assumed the repo-served file was the only one that mattered. It is not: **Cloudflare PREPENDS the managed block ahead of the origin's file rather than replacing it**, so both records are served and a repo edit cannot remove the managed one.
 
 Verified after the change: `bash scripts/check-ai-crawler-access.sh https://hoiboy.uk/` exits 0, all six citation crawlers reachable, all six training crawlers carrying `Disallow: /`.
 
