@@ -118,6 +118,39 @@ not advice in a document; it is a gate. The line below is that gate's input: fli
 
 ai-training-migration-decision: pending
 
+## The WAF custom rule (NOT YET APPLIED on any zone)
+
+**Status: blocked, not done.** The API token available to this workstream carries Bot Management
+Write only; `GET /zones/{id}/rulesets/phases/http_request_firewall_custom/entrypoint` returns
+`request is not authorized`. Applying it needs **Zone > Firewall Services > Edit**, or the dashboard.
+Until it exists, the training block is robots.txt only, which is honour-system.
+
+Action `block`, phase `http_request_firewall_custom`:
+
+```
+(http.user_agent contains "GPTBot")
+or (http.user_agent contains "ClaudeBot")
+or (http.user_agent contains "CCBot")
+or (http.user_agent contains "Google-Extended")
+or (http.user_agent contains "meta-externalagent")
+or (http.user_agent contains "Bytespider")
+or (http.user_agent contains "Amazonbot")
+or (http.user_agent contains "Applebot-Extended")
+or (http.user_agent contains "CloudflareBrowserRenderingCrawler")
+```
+
+**The substring trap, which is easy to get wrong and expensive when you do.** `contains` is a
+substring match, so a carelessly shortened token blocks a crawler you want:
+
+- `"Applebot"` would also match **`Applebot-Extended`**'s sibling, plain `Applebot`, which is Apple's
+  search crawler. Always the full `Applebot-Extended`.
+- Never shorten `Google-Extended` toward `Google`; `Googlebot` contains it.
+- `ClaudeBot` is safe as written: the citation tokens are `Claude-SearchBot` and `Claude-User`, and
+  neither contains the substring `ClaudeBot`.
+
+After applying, verify with the probe rather than the dashboard, and confirm the CITATION rows are
+still 200. A rule that takes citation down with training is the original defect in a new place.
+
 ## Standing up a new domain
 
 1. Read the zone's current `bot_management` config **before writing anything**.
@@ -213,11 +246,13 @@ edge setting can regress with no repo change and nothing in the repo would show 
 
 ## Zone inventory (2026-07-20)
 
-| Domain | State (2026-07-20) |
-|---|---|
-| hoiboy.uk | citation PASS 6/6, training `Disallow: /` |
-| cuarchitects.co.uk | citation PASS 6/6, **robots.txt CONFLICT on 4 tokens** (drift; effective stance still blocked) |
-| speak2lola.com | configured; no DNS, unverifiable until a site exists |
+| Domain | Citation | Training (robots.txt) | WAF rule |
+|---|---|---|---|
+| hoiboy.uk | PASS 6/6 | `Disallow: /` on all nine | **not applied** |
+| cuarchitects.co.uk | PASS 6/6 | **CONFLICT on 4 tokens** (drift; live stance still blocked) | **not applied** |
+| speak2lola.com | no DNS, unverifiable | configured | **not applied** |
+
+No zone has the WAF rule. Every "training blocked" above means robots.txt only.
 
 **Zone and account IDs are deliberately not recorded here.** This repository is public. The IDs are
 not credentials, but publishing the account's zone inventory is free reconnaissance for no benefit.
