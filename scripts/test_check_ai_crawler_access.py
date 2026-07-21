@@ -299,7 +299,7 @@ def test_conflict_is_scoped_to_the_contradicted_token():
 
 
 def test_real_allow_rule_against_disallow_all_resolves_to_allow():
-    # RFC 9309 2.2.2: "If an allow rule and a disallow rule are equivalent, then
+    # RFC 9309 2.2.2: "If an "allow" rule and a "disallow" rule are equivalent, then
     # the allow rule SHOULD be used." `Allow: /` against `Disallow: /` is
     # therefore DETERMINATE, not a contradiction.
     #
@@ -477,7 +477,21 @@ def test_own_group_beats_the_wildcard_group():
 def test_no_group_and_no_wildcard_is_reported_as_ungoverned():
     robots = "User-agent: SomeOtherBot\nDisallow: /\n"
     p = _run(lambda ua: 200, robots=robots)
-    assert "nothing governs this token" in _training_row(p.stdout, "GPTBot"), p.stdout
+    assert "no rules for this token" in _training_row(p.stdout, "GPTBot"), p.stdout
+
+
+def test_a_matched_group_with_no_rules_is_not_described_as_absent():
+    # RFC 9309's ABNF permits a group with zero rules
+    # (group = startgroupline *(startgroupline / emptyline) *(rule / emptyline)),
+    # and a matched rule-less group still governs the token, resolving to
+    # allowed. The message used to read "nothing governs this token", which
+    # asserted no group EXISTS when one does. The classification bucket was
+    # always right (counted as not opted out); only the stated reason was wrong.
+    robots = "User-agent: SomeOtherBot\nDisallow: /\n\nUser-agent: GPTBot\n"
+    p = _run(lambda ua: 200, robots=robots)
+    row = _training_row(p.stdout, "GPTBot")
+    assert "no rules for this token" in row, p.stdout
+    assert "nothing governs" not in row, row
 
 
 def test_empty_disallow_reports_not_opted_out():
