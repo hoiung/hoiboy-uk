@@ -231,6 +231,14 @@ TRAINING_TOKENS = [
     "CloudflareBrowserRenderingCrawler",
 ]
 
+# All nine opted out, with GPTBot ALSO carrying a contradictory empty Disallow:.
+# Isolates "a conflict exists" from "a token is unprotected", so a test about the
+# PASS wording cannot accidentally pass because the gate failed for another reason.
+CONFLICTING_ROBOTS_ALL_OPTED_OUT = "".join(
+    f"User-agent: {n}\nDisallow: /\n\n" for n in TRAINING_TOKENS
+) + "User-agent: GPTBot\nDisallow:\n"
+
+
 # The shape Cloudflare actually produces: the managed block is PREPENDED, then
 # the origin's own file follows. When the two disagree the file carries two
 # groups for one token. cuarchitects.co.uk served exactly this for GPTBot.
@@ -592,3 +600,36 @@ def test_robots_is_readable_even_when_crawlers_are_blocked():
     p = _run(lambda ua: 403 if ua else 200, robots=robots)
     assert p.returncode == 1, p.stdout + p.stderr
     assert "training opted out" in _training_row(p.stdout, "GPTBot"), p.stdout
+
+
+def test_pass_line_does_not_claim_a_full_opt_out_it_did_not_prove():
+    # The PASS line used to append "every training-class token carries a full
+    # opt-out" whenever robots.txt was merely READABLE, without consulting the
+    # conflict count. On a zone with contradictory records it therefore asserted
+    # a full opt-out for tokens the same run had just reported as CONFLICT, and
+    # that line reaches the GitHub job summary while the corrective NOTE does
+    # not. Ralph Tier 3 caught it against the live cuarchitects.co.uk shape.
+    #
+    # Same defect class as the doc caveat deleted earlier in this batch: an
+    # unqualified claim surviving past the point where it stopped being true.
+    p = _run(lambda ua: 200, robots=CONFLICTING_ROBOTS_ALL_OPTED_OUT)
+    pass_line = next(
+        (ln for ln in p.stdout.splitlines() if ln.startswith("PASS:")), ""
+    )
+    assert pass_line, p.stdout
+    assert "every training-class token" not in pass_line, pass_line
+    assert "of 9 training-class tokens" in pass_line, pass_line
+    assert p.returncode == 0, p.stdout + p.stderr
+
+
+def test_pass_line_does_claim_every_when_there_is_no_conflict():
+    # The mirror: with a clean opt-out on all nine, the unqualified wording is
+    # correct and must not be watered down, or the gate stops distinguishing
+    # a clean zone from a drifting one.
+    robots = "".join(f"User-agent: {n}\nDisallow: /\n\n" for n in TRAINING_TOKENS)
+    p = _run(lambda ua: 200, robots=robots)
+    pass_line = next(
+        (ln for ln in p.stdout.splitlines() if ln.startswith("PASS:")), ""
+    )
+    assert "every training-class token" in pass_line, pass_line
+    assert p.returncode == 0, p.stdout + p.stderr
