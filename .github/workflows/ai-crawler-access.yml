@@ -54,8 +54,22 @@ jobs:
           TARGET: ${{ matrix.target }}
         run: |
           set +e
-          bash scripts/check-ai-crawler-access.sh "$TARGET"
-          echo "code=$?" >> "$GITHUB_OUTPUT"
+          bash scripts/check-ai-crawler-access.sh "$TARGET" 2>&1 | tee /tmp/probe.txt
+          echo "code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+          # Carry the script's OWN verdict line forward instead of letting the
+          # steps below compose a second, independent claim about the same run.
+          # Those steps used to hardcode "every training-class token carries a
+          # full robots.txt opt-out" on any exit 0, which is false whenever a
+          # token is in CONFLICT: the script had already been corrected to say
+          # "5 of 9" for exactly that case, and the workflow went on printing
+          # "every" beside it. cuarchitects.co.uk is in the matrix and is in
+          # that state, so the false line would have reached the job summary
+          # every Monday. One source of truth for the verdict, not two.
+          {
+            echo "summary<<PROBE_EOF"
+            grep -E '^(PASS|NOTE|FAIL)' /tmp/probe.txt || echo "(no verdict line emitted)"
+            echo "PROBE_EOF"
+          } >> "$GITHUB_OUTPUT"
           exit 0
 
       - name: Summarise
@@ -66,6 +80,7 @@ jobs:
           # step's deliberate choice not to treat inconclusive as a block.
           CODE: ${{ steps.probe.outputs.code }}
           TARGET: ${{ matrix.target }}
+          PROBE_SUMMARY: ${{ steps.probe.outputs.summary }}
         run: |
           case "$CODE" in
             0) OUTCOME=success ;;
@@ -82,8 +97,7 @@ jobs:
               printf 'unrecognised status. This is NOT a confirmed block and the job is\n'
               printf 'deliberately not failed for it. Re-run to confirm.\n'
             elif [ "$OUTCOME" = "success" ]; then
-              printf 'All citation-class crawlers reachable, and every training-class token\n'
-              printf 'carries a full robots.txt opt-out.\n\n'
+              printf 'The probe reported:\n\n```\n%s\n```\n\n' "$PROBE_SUMMARY"
               printf 'Citation reachability means they are NOT blocked. It does not mean the\n'
               printf 'site is cited; no reliable method for measuring AI citation currently\n'
               printf 'exists. The training half of this verdict reads robots.txt, which is a\n'
@@ -147,10 +161,10 @@ jobs:
         env:
           CODE: ${{ steps.probe.outputs.code }}
           TARGET: ${{ matrix.target }}
+          PROBE_SUMMARY: ${{ steps.probe.outputs.summary }}
         run: |
           case "$CODE" in
-            0) printf 'PASS (%s): no citation-class crawler is blocked, and every\n' "$TARGET"
-               printf 'training-class token carries a full robots.txt opt-out.\n' ;;
+            0) printf 'PASS (%s). The probe reported:\n%s\n' "$TARGET" "$PROBE_SUMMARY" ;;
             1) printf >&2 'FAIL (%s): the crawler policy has regressed.\n' "$TARGET"
                printf >&2 'EITHER a citation-class crawler is blocked at the edge, OR a\n'
                printf >&2 'training-class token is no longer opted out. These need opposite\n'
