@@ -203,6 +203,22 @@ def test_controls_do_not_gate_the_exit_code():
 # that honours `Disallow: /` still returns 200 to this probe. These pin the
 # directive reporting that replaced it.
 
+# The NINE tokens Cloudflare's managed block names, enumerated from the LIVE
+# file (`curl -s https://hoiboy.uk/robots.txt`), not from memory.
+#
+# This list held SIX for the life of the script, omitting Amazonbot,
+# Applebot-Extended and CloudflareBrowserRenderingCrawler. That was tolerable
+# while the training class was reported for information only. It stopped being
+# tolerable the moment the training class started gating the exit code: a gate
+# that never asks about a token cannot fail on it, so a regression on any of
+# those three was structurally invisible to the standing watch built to catch
+# exactly that. Ralph Tier 2 found it by diffing this list against the live
+# managed block.
+#
+# Two of the nine (Google-Extended, Applebot-Extended) are robots.txt CONTROL
+# TOKENS with no user-agent of their own, so they return 200 at the edge while
+# being fully opted out. That is why the gate keys on the robots.txt directive
+# and never on HTTP status.
 TRAINING_TOKENS = [
     "GPTBot",
     "ClaudeBot",
@@ -210,6 +226,9 @@ TRAINING_TOKENS = [
     "Google-Extended",
     "meta-externalagent",
     "Bytespider",
+    "Amazonbot",
+    "Applebot-Extended",
+    "CloudflareBrowserRenderingCrawler",
 ]
 
 # The shape Cloudflare actually produces: the managed block is PREPENDED, then
@@ -513,8 +532,7 @@ def test_conflict_alone_does_not_gate_the_exit_code():
     # contradictory pair.
     robots = "".join(
         f"User-agent: {name}\nDisallow: /\n\n"
-        for name in ("ClaudeBot", "CCBot", "Google-Extended",
-                     "meta-externalagent", "Bytespider")
+        for name in TRAINING_TOKENS if name != "GPTBot"
     ) + "User-agent: GPTBot\nDisallow: /\n\nUser-agent: GPTBot\nDisallow:\n"
     p = _run(lambda ua: 200, robots=robots)
     assert "CONFLICT" in _training_row(p.stdout, "GPTBot"), p.stdout
@@ -554,8 +572,7 @@ def test_training_gate_does_not_fire_on_a_token_that_sends_no_user_agent():
     # wrong. All six training tokens are opted out here; every one returns 200.
     robots = "".join(
         f"User-agent: {name}\nDisallow: /\n\n"
-        for name in ("GPTBot", "ClaudeBot", "CCBot", "Google-Extended",
-                     "meta-externalagent", "Bytespider")
+        for name in TRAINING_TOKENS
     )
     p = _run(lambda ua: 200, robots=robots)
     assert p.returncode == 0, p.stdout + p.stderr
