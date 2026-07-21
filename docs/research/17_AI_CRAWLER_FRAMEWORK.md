@@ -362,11 +362,23 @@ below is measured rather than asserted. An earlier version of this table claimed
 for `ai_training` while carrying no evidence at all for speak2lola.com; that gap is now closed by
 reading it.
 
-| Domain | `ai_bots_protection` | `is_robots_txt_managed` | `ai_training` | Citation | WAF rule |
-|---|---|---|---|---|---|
-| hoiboy.uk | disabled | true | block | PASS 6/6 | **applied**, probe-verified |
-| cuarchitects.co.uk | disabled | true | block | PASS 6/6 | **applied**, probe-verified |
-| speak2lola.com | disabled | true | block | no DNS, unverifiable | **applied**, stored only |
+| Domain | `ai_bots_protection` | `is_robots_txt_managed` | `ai_training` | Citation | Training probed | WAF rule |
+|---|---|---|---|---|---|---|
+| hoiboy.uk | disabled | true | block | PASS 6/6 | **9 of 9** | **applied**, probe-verified |
+| cuarchitects.co.uk | disabled | true | block | PASS 6/6 | **9 of 9** | **applied**, probe-verified |
+| speak2lola.com | disabled | true | block | no DNS, unverifiable | no DNS | **applied**, stored only |
+
+**The "training probed" column is not decoration, and an earlier version of this table dropped it.**
+The row used to read `Disallow: / on all nine (gate re-checks 6 of them)`, which was an honest
+disclosure that the probe covered six of the nine named tokens. That caveat was deleted in the same
+Stage 5 commit that gave the training class authority to fail CI, replacing a true qualified claim
+with an unqualified one at the exact moment the claim started gating a build. Ralph Tier 2 caught it.
+
+The underlying gap is now closed rather than re-worded: `TRAINING_BOTS` in
+`scripts/check-ai-crawler-access.sh` covers all nine (Amazonbot, Applebot-Extended and
+CloudflareBrowserRenderingCrawler were the three missing), and a test pins the list against the nine
+named here so it cannot silently drift again. A gate that never asks about a token cannot fail on
+it, so probe coverage is part of the claim, not a footnote to it.
 
 Two caveats that the table cannot carry:
 
