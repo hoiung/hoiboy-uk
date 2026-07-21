@@ -132,7 +132,7 @@ All four were checked by READING the zone config through the API before writing 
 
 Candidate 3, managed robots.txt, whose original instruction was "confirm it is OFF so it does not inject block rules over the repo-served file", is now **inverted on purpose**. It was turned ON, not confirmed off, because it is the mechanism that expresses the training block: it serves a `Content-Signal: search=yes,ai-train=no,use=reference` line plus `Disallow: /` for nine training crawlers, and leaves the citation class to fall under `User-agent: *`. The original instruction assumed the repo-served file was the only one that mattered. It is not: **Cloudflare PREPENDS the managed block ahead of the origin's file rather than replacing it**, so both records are served and a repo edit cannot remove the managed one.
 
-Verified after the change: `bash scripts/check-ai-crawler-access.sh https://hoiboy.uk/` exits 0, all six citation crawlers reachable, all six training crawlers carrying `Disallow: /`.
+Verified after the change (2026-07-20): `bash scripts/check-ai-crawler-access.sh https://hoiboy.uk/` exits 0, all six citation crawlers reachable, and the six training crawlers the probe covered at that date all carrying `Disallow: /`. The managed block names NINE tokens; the probe covered six of them until 2026-07-21, when the remaining three (Amazonbot, Applebot-Extended, CloudflareBrowserRenderingCrawler) were added and the coverage was pinned by a test. This sentence is a dated historical record, not the current state: see `17_AI_CRAWLER_FRAMEWORK.md` for the live position.
 
 ### Correction: the granular presets are partly enforced, not unenforced
 
