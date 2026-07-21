@@ -80,11 +80,17 @@ jobs:
               printf 'At least one citation-class crawler is blocked.\n\n'
               printf 'An access denial guarantees zero citation from that engine. No repo change can fix it.\n'
               printf 'Check the Cloudflare dashboard for this zone:\n\n'
-              printf '1. "Block AI bots" managed toggle OFF\n'
+              printf '1. `ai_bots_protection` / "Block AI bots" set to DISABLED. This is the\n'
+              printf '   coarse legacy switch and was the measured cause on hoiboy.uk; it takes\n'
+              printf '   the citation class down together with training.\n'
               printf '2. AI Crawl Control set to Allow for the citation class\n'
-              printf '3. managed-robots.txt OFF\n'
-              printf '4. Bot Fight Mode off, or skipping verified bots\n\n'
-              printf 'Detail: `docs/research/16_AI_BOT_AND_SEO_POLICY.md`\n'
+              printf '   (`ai_search` and `ai_user` DISABLED; `ai_training` may stay block)\n'
+              printf '3. Bot Fight Mode off, or skipping verified bots\n\n'
+              printf 'Do NOT turn managed robots.txt off to fix this. It cannot cause a 403,\n'
+              printf 'so it is never the cause here, and it is the mechanism that carries the\n'
+              printf 'training block. Disabling it would silently drop the training opt-out\n'
+              printf 'while doing nothing for the citation failure being reported.\n\n'
+              printf 'Detail: `docs/research/17_AI_CRAWLER_FRAMEWORK.md`\n'
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 

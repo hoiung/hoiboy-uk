@@ -297,5 +297,9 @@ a Free-plan rationale here.
 - Cloudflare, "Block AI bots": https://developers.cloudflare.com/bots/additional-configurations/block-ai-bots/
 - Cloudflare, "Manage AI crawlers": https://developers.cloudflare.com/ai-crawl-control/features/manage-ai-crawlers/
 - Cloudflare, "Managed robots.txt": https://developers.cloudflare.com/ai-crawl-control/features/managed-robots-txt/
+- Google, "Google crawlers and fetchers" (source for Google-Extended having no user-agent):
+  https://developers.google.com/search/docs/crawling-indexing/google-common-crawlers
+- Apple, "About Applebot" (source for Applebot-Extended not crawling):
+  https://support.apple.com/en-us/119829
 - RFC 9309, Robots Exclusion Protocol: https://www.rfc-editor.org/rfc/rfc9309.html
 - Content Signals Policy: https://contentsignals.org/
