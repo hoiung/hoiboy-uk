@@ -618,7 +618,14 @@ def test_pass_line_does_not_claim_a_full_opt_out_it_did_not_prove():
     )
     assert pass_line, p.stdout
     assert "every training-class token" not in pass_line, pass_line
-    assert "of 9 training-class tokens" in pass_line, pass_line
+    # Assert the ACTUAL NUMERATOR, not merely that some count is printed.
+    # Asserting only the substring "of 9 training-class tokens" let an
+    # off-by-one in the arithmetic survive the entire suite: a mutant printing
+    # "9 of 9" on this one-conflict fixture passed all 45 tests while
+    # overclaiming a CONFLICT token as opted out. The fixture opts out all nine
+    # and adds ONE contradictory record, so exactly one token is CONFLICT and
+    # the honest count is eight.
+    assert "8 of 9 training-class tokens" in pass_line, pass_line
     assert p.returncode == 0, p.stdout + p.stderr
 
 
