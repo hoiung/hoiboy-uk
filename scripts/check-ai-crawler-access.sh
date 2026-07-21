@@ -166,6 +166,30 @@ robots_verdict() {
     [ "$ROBOTS_STATE" = "ok" ] || { printf 'robots.txt unavailable'; return; }
     awk -v want="$1" '
         BEGIN { want = tolower(want) }
+
+        # Render one group_s accumulated flags into a verdict. Used for the
+        # token_s own group and, failing that, for the `*` group.
+        function verdict(seen, deny, empty_dis, allow_rule, partial, partial_allow,   pfx) {
+            if (!seen) return ""
+            # RFC 9309 2.2.2: "If an allow rule and a disallow rule are
+            # equivalent, then the allow rule SHOULD be used." `Allow: /`
+            # against `Disallow: /` is therefore DETERMINATE, not a conflict.
+            # Reporting it as CONFLICT (as this function used to) invented an
+            # ambiguity the spec resolves, and a test locked that error in.
+            if (deny && allow_rule)   return "allowed (Allow:/ beats Disallow:/ per RFC 9309 2.2.2)"
+            # An EMPTY `Disallow:` is a different animal from an `Allow:` rule
+            # and must not share its flag. Real parsers treat it as allow-all
+            # (CPython: "an empty value means allow all"); RFC 9309 has no such
+            # special case and its ABNF puts `empty-pattern = *WS` under
+            # disallow, making it a zero-octet DISALLOW that loses to `/` on
+            # 2.2.2 specificity. The two readings disagree, so this pairing is
+            # a genuine CONFLICT where `Allow: /` above is not.
+            if (deny && empty_dis)    return "CONFLICT: Disallow:/ with an empty Disallow: (parsers disagree)"
+            if (deny && partial_allow) return "CONFLICT: Disallow:/ with a scoped Allow carving paths back out"
+            if (deny)                 return "Disallow: / (training opted out)"
+            if (partial || partial_allow) return "scoped rules only (NOT a full opt-out)"
+            return "allowed (training NOT opted out)"
+        }
         {
             line = $0
             sub(/#.*/, "", line)
@@ -175,27 +199,41 @@ robots_verdict() {
         # them. Only a non-User-agent directive ends the run, so group membership
         # must accumulate across the run rather than reset per line.
         tolower(line) ~ /^[[:space:]]*user-agent[[:space:]]*:/ {
-            if (!in_ua_run) { member = 0 }
+            if (!in_ua_run) { member = 0; wmember = 0 }
             in_ua_run = 1
             v = line
             sub(/^[^:]*:[[:space:]]*/, "", v)
             gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
             if (tolower(v) == want) member = 1
+            # RFC 9309 2.2.1: "If no matching group exists, crawlers MUST obey
+            # the group with a user-agent line with the \"*\" value, if
+            # present." The wildcard group is therefore tracked in parallel, not
+            # ignored. Without this a site-wide `User-agent: * / Disallow: /`
+            # (the most common way to write a blanket opt-out) was reported as
+            # "no group", i.e. as though nothing governed the token at all.
+            if (v == "*") wmember = 1
             next
         }
         tolower(line) ~ /^[[:space:]]*disallow[[:space:]]*:/ {
             in_ua_run = 0
-            if (!member) next
             v = line
             sub(/^[^:]*:[[:space:]]*/, "", v)
             gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
-            seen = 1
-            if (v == "/") deny = 1
-            else if (v == "") allow = 1
             # A scoped rule (Disallow: /admin) is neither a full opt-out nor an
             # absence of one. Reporting it as "allowed" would assert no
             # restriction exists when one is on record.
-            else partial = 1
+            if (member) {
+                seen = 1
+                if (v == "/") deny = 1
+                else if (v == "") empty_dis = 1
+                else partial = 1
+            }
+            if (wmember) {
+                w_seen = 1
+                if (v == "/") w_deny = 1
+                else if (v == "") w_empty_dis = 1
+                else w_partial = 1
+            }
             next
         }
         # An actual Allow: rule, which is NOT the same as an empty Disallow:.
@@ -205,25 +243,45 @@ robots_verdict() {
         # opt-out, silently picking the side the function claims it refuses to.
         tolower(line) ~ /^[[:space:]]*allow[[:space:]]*:/ {
             in_ua_run = 0
-            if (!member) next
             v = line
             sub(/^[^:]*:[[:space:]]*/, "", v)
             gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
-            seen = 1
-            if (v == "/") allow = 1
             # A scoped Allow (Allow: /public) against Disallow: / carves paths
             # back out. Under RFC 9309 longest-match those paths are explicitly
             # permitted, with no tie-break needed, so this is a MORE certain
             # permission than the exact `Allow: /` case, not a lesser one.
             # Discarding it reported a clean opt-out for a file that grants
             # access.
-            else if (v != "") partial_allow = 1
+            if (member) {
+                seen = 1
+                if (v == "/") allow_rule = 1
+                else if (v != "") partial_allow = 1
+            }
+            if (wmember) {
+                w_seen = 1
+                if (v == "/") w_allow_rule = 1
+                else if (v != "") w_partial_allow = 1
+            }
             next
         }
-        # Any other NON-BLANK line (Sitemap:, Content-Signal:, prose) closes the
-        # user-agent run without closing the group.
+        # Any other record (Sitemap:, Content-Signal:, prose) is IGNORED and
+        # must NOT touch group state. RFC 9309 2.2.4: "Parsing of other records
+        # MUST NOT interfere with the parsing of explicitly defined records in
+        # Section 2. For example, a \"Sitemaps\" record MUST NOT terminate a
+        # group." This branch used to close the user-agent run on any non-blank
+        # line, so
         #
-        # A BLANK line is deliberately exempt, and that is not an oversight.
+        #     User-agent: GPTBot
+        #     Sitemap: https://example/sitemap.xml
+        #     User-agent: ClaudeBot
+        #     Disallow: /
+        #
+        # silently dropped GPTBot from the group it belongs to and reported it
+        # as ungoverned. The user-agent run is closed by the first RULE
+        # (allow/disallow), which the two branches above already do; nothing
+        # else may close it.
+        #
+        # A BLANK line is likewise exempt, and that is not an oversight.
         # RFC 9309: `group = startgroupline *(startgroupline / emptyline)
         # *(rule / emptyline)`. Empty lines are explicitly permitted BETWEEN
         # consecutive user-agent lines, so
@@ -239,14 +297,14 @@ robots_verdict() {
         # behaviour as a leak; it is the specified behaviour, and the earlier
         # version of this comment (which listed "blank" among the closers)
         # contradicted the code. The code was right.
-        { if (line !~ /^[[:space:]]*$/) in_ua_run = 0 }
+        { }
         END {
-            if (!seen)                  { print "no group (falls under *)"; exit }
-            if (deny && allow)          { print "CONFLICT: allow and Disallow:/ both present"; exit }
-            if (deny && partial_allow)  { print "CONFLICT: Disallow:/ with a scoped Allow carving paths back out"; exit }
-            if (deny)                   { print "Disallow: / (training opted out)"; exit }
-            if (partial || partial_allow) { print "scoped rules only (NOT a full opt-out)"; exit }
-            print "allowed (training NOT opted out)"
+            own = verdict(seen, deny, empty_dis, allow_rule, partial, partial_allow)
+            if (own != "") { print own; exit }
+            # No group named this token, so the `*` group governs it (2.2.1).
+            wild = verdict(w_seen, w_deny, w_empty_dis, w_allow_rule, w_partial, w_partial_allow)
+            if (wild != "") { print "via * group: " wild; exit }
+            print "no group and no * group (nothing governs this token)"
         }' "$ROBOTS_FILE"
 }
 
@@ -286,17 +344,50 @@ done
 # Status and directive are BOTH reported because they answer different questions.
 # The status says whether the edge served us; the directive says whether a
 # well-behaved training crawler is permitted to use the content. A 200 next to
-# `Disallow: /` is the normal, correct state for this site's policy.
-printf '\nTRAINING class (reported only; governed by robots.txt, not by HTTP status)\n'
+# `Disallow: /` is the normal, correct state for a token no edge rule can match.
+#
+# The TRAINING class NOW GATES THE EXIT CODE, and that is a deliberate change.
+# It previously did not, on the stated grounds that "its correct value is an
+# operator policy choice, not a defect". That rationale held only while the
+# policy was undecided. It was decided on 2026-07-20 ("i dont want to give bots
+# free training if i am not cited. i want to block that"), so a training block
+# that silently collapses is now a defect, and a standing watch that cannot
+# fail on it is not a watch. Stage 5 proved the old behaviour: a robots.txt
+# serving zero training groups still printed PASS and exited 0.
+#
+# The gate keys on the robots.txt DIRECTIVE, never on HTTP status. Status would
+# be the wrong signal: Google-Extended and Applebot-Extended send no user-agent
+# of their own, so no edge rule can ever match them and they correctly return
+# 200 while being fully opted out in robots.txt. Gating on status would fail
+# this site forever for a condition that is not fixable and not wrong.
+printf '\nTRAINING class (directive gates the exit code; HTTP status is reported only)\n'
+train_open=0
+train_open_names=""
+train_conflict=0
 for entry in "${TRAINING_BOTS[@]}"; do
     name="${entry%%|*}"
     ua="${entry#*|}"
     code=$(probe "$ua")
-    printf '  %-20s %-4s %s\n' "$name" "$code" "$(robots_verdict "$name")"
+    directive=$(robots_verdict "$name")
+    printf '  %-20s %-4s %s\n' "$name" "$code" "$directive"
+    case "$directive" in
+        *"training opted out"*)
+            : ;;
+        *CONFLICT*)
+            # Ambiguous rather than open: contradictory records whose resolution
+            # varies by parser. Reported, and deliberately NOT failed, because
+            # the measured live outcome on the affected zone is still blocked.
+            train_conflict=$((train_conflict + 1)) ;;
+        *"robots.txt unavailable"*)
+            : ;;
+        *)
+            train_open=$((train_open + 1))
+            train_open_names="${train_open_names:+$train_open_names, }$name" ;;
+    esac
 done
 if [ "$ROBOTS_STATE" != "ok" ]; then
     printf '  NOTE: robots.txt could not be fetched, so training directives are unknown.\n'
-    printf '        This does not affect the exit code, which the CITATION class alone gates.\n'
+    printf '        The training gate is skipped; it cannot pass or fail on no data.\n'
 fi
 
 # Controls. These rule out the two alternative explanations for a wall of 403s:
@@ -352,7 +443,37 @@ if [ "$blocked" -gt 0 ]; then
     exit 1
 fi
 
-printf 'PASS: all %d citation-class crawlers reachable.\n' "${#CITATION_BOTS[@]}"
-printf 'Note: this means they are not blocked. It does NOT mean the site is cited;\n'
-printf 'no reliable method for measuring AI citation currently exists.\n'
+# The training gate. Runs only when robots.txt was actually readable, so a fetch
+# failure withholds the verdict (exit 2 above already covers an unusable run)
+# rather than manufacturing a pass or a fail from no data.
+if [ "$ROBOTS_STATE" = "ok" ] && [ "$train_open" -gt 0 ]; then
+    printf >&2 'FAIL: %d of %d training-class crawlers are NOT opted out in robots.txt: %s\n' \
+        "$train_open" "${#TRAINING_BOTS[@]}" "$train_open_names"
+    printf >&2 'The standing policy is citation ALLOWED, training BLOCKED. A token with no\n'
+    printf >&2 'full opt-out is free to train on this content.\n'
+    printf >&2 'Check, in this order:\n'
+    printf >&2 '  1. Cloudflare managed robots.txt (is_robots_txt_managed) still TRUE for the\n'
+    printf >&2 '     zone. It is the mechanism that carries the training block.\n'
+    printf >&2 '  2. The WAF custom rule still present in the http_request_firewall_custom\n'
+    printf >&2 '     phase. It hard-enforces seven of the nine tokens at the edge.\n'
+    printf >&2 '  3. The origin robots.txt has not grown a group that re-permits a token the\n'
+    printf >&2 '     managed block disallows.\n'
+    printf >&2 'Detail: docs/research/17_AI_CRAWLER_FRAMEWORK.md\n'
+    exit 1
+fi
+
+printf 'PASS: all %d citation-class crawlers reachable' "${#CITATION_BOTS[@]}"
+if [ "$ROBOTS_STATE" = "ok" ]; then
+    printf ', and every training-class token carries a full opt-out'
+fi
+printf '.\n'
+if [ "$train_conflict" -gt 0 ]; then
+    printf 'NOTE: %d training token(s) reported CONFLICT (contradictory records whose\n' "$train_conflict"
+    printf '      resolution varies by parser). Not failed, because the measured live\n'
+    printf '      outcome is still blocked, but it is drift worth fixing.\n'
+fi
+printf 'Note: citation reachability means they are not blocked. It does NOT mean the\n'
+printf 'site is cited; no reliable method for measuring AI citation currently exists.\n'
+printf 'The training gate reads robots.txt, which is a REQUEST, not enforcement. Only\n'
+printf 'the WAF rule hard-blocks, and only for tokens that send a matching user-agent.\n'
 exit 0
