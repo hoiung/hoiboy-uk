@@ -270,21 +270,32 @@ def test_conflict_is_scoped_to_the_contradicted_token():
     assert "CONFLICT" not in _training_row(p.stdout, "ClaudeBot"), p.stdout
 
 
-def test_real_allow_rule_against_disallow_all_reports_conflict():
-    # RFC 9309 2.2.2 gives an Allow the tie-break over an equivalent Disallow,
-    # so this pair is a genuine contradiction and the more dangerous one: unlike
-    # the empty-Disallow case, a compliant crawler may legitimately read it as
-    # permitted. Before the Allow: branch existed the value was discarded and
-    # this reported as a clean opt-out.
+def test_real_allow_rule_against_disallow_all_resolves_to_allow():
+    # RFC 9309 2.2.2: "If an allow rule and a disallow rule are equivalent, then
+    # the allow rule SHOULD be used." `Allow: /` against `Disallow: /` is
+    # therefore DETERMINATE, not a contradiction.
+    #
+    # This test previously asserted CONFLICT and so locked in the opposite of
+    # the spec, which is why the defect survived six Ralph rounds: the suite was
+    # defending it. The tie-break exists precisely to stop this pair being
+    # ambiguous. Contrast test_conflicting_records_are_reported_as_conflict,
+    # where the allow side is an EMPTY `Disallow:` and implementations really do
+    # disagree.
     robots = "User-agent: GPTBot\nDisallow: /\nAllow: /\n"
     p = _run(lambda ua: 200, robots=robots)
-    assert "CONFLICT" in _training_row(p.stdout, "GPTBot"), p.stdout
+    row = _training_row(p.stdout, "GPTBot")
+    assert "2.2.2" in row, p.stdout
+    assert "CONFLICT" not in row, p.stdout
 
 
 def test_allow_rule_order_does_not_change_the_verdict():
+    # Same pair, reversed. RFC 9309 rule precedence is order-independent, so the
+    # verdict must not depend on which record was written first.
     robots = "User-agent: GPTBot\nAllow: /\nDisallow: /\n"
     p = _run(lambda ua: 200, robots=robots)
-    assert "CONFLICT" in _training_row(p.stdout, "GPTBot"), p.stdout
+    row = _training_row(p.stdout, "GPTBot")
+    assert "2.2.2" in row, p.stdout
+    assert "CONFLICT" not in row, p.stdout
 
 
 def test_scoped_disallow_is_not_reported_as_allowed():
@@ -338,11 +349,16 @@ def test_blank_line_between_user_agent_lines_keeps_one_group():
     assert "training opted out" in _training_row(p.stdout, "ClaudeBot"), p.stdout
 
 
-def test_a_non_rule_directive_between_groups_closes_the_run():
-    # Cloudflare's managed block really does ship `Content-Signal:` lines, so a
-    # non-rule directive sitting between two tokens' groups is not contrived.
-    # Inverting the catch-all's blank-line exemption survived all 32 tests while
-    # attributing a later group's Disallow:/ to this token.
+def test_a_non_rule_directive_does_not_terminate_a_group():
+    # RFC 9309 2.2.4: "Parsing of other records MUST NOT interfere with the
+    # parsing of explicitly defined records in Section 2. For example, a
+    # \"Sitemaps\" record MUST NOT terminate a group."
+    #
+    # Cloudflare's managed block really does ship `Content-Signal:` lines
+    # between groups, so this is the live shape, not a contrived one. This test
+    # previously asserted that the directive DOES close the run, locking in a
+    # MUST NOT violation: GPTBot was dropped from the group it belongs to and
+    # reported as ungoverned while it is in fact disallowed.
     robots = (
         "User-agent: GPTBot\n"
         "Content-Signal: search=yes,ai-train=no\n"
@@ -350,8 +366,22 @@ def test_a_non_rule_directive_between_groups_closes_the_run():
         "Disallow: /\n"
     )
     p = _run(lambda ua: 200, robots=robots)
-    assert "no group" in _training_row(p.stdout, "GPTBot"), p.stdout
+    assert "training opted out" in _training_row(p.stdout, "GPTBot"), p.stdout
     assert "training opted out" in _training_row(p.stdout, "Bytespider"), p.stdout
+
+
+def test_sitemap_record_does_not_terminate_a_group():
+    # The exact example the RFC names, kept separate from Content-Signal so a
+    # regression in either record type fails on its own name.
+    robots = (
+        "User-agent: GPTBot\n"
+        "Sitemap: https://example.test/sitemap.xml\n"
+        "User-agent: CCBot\n"
+        "Disallow: /\n"
+    )
+    p = _run(lambda ua: 200, robots=robots)
+    assert "training opted out" in _training_row(p.stdout, "GPTBot"), p.stdout
+    assert "training opted out" in _training_row(p.stdout, "CCBot"), p.stdout
 
 
 def test_scoped_allow_against_disallow_all_is_a_conflict():
@@ -378,10 +408,48 @@ def test_scoped_disallow_does_not_mask_a_full_opt_out():
     assert "training opted out" in _training_row(p.stdout, "GPTBot"), p.stdout
 
 
-def test_absent_group_reports_falling_under_wildcard():
-    robots = "User-agent: *\nAllow: /\n"
+def test_wildcard_group_governs_a_token_with_no_group_of_its_own():
+    # RFC 9309 2.2.1: "If no matching group exists, crawlers MUST obey the group
+    # with a user-agent line with the \"*\" value, if present."
+    #
+    # The old version of this test used a PERMISSIVE wildcard (`Allow: /`), so
+    # "no group" and the true answer coincided and the assertion passed whether
+    # or not the wildcard was ever evaluated. It was vacuous by fixture choice.
+    # A RESTRICTIVE wildcard is the discriminating case: a site-wide opt-out is
+    # the most common way to write a blanket training block, and reporting it as
+    # "no group" told the operator nothing governed the token.
+    robots = "User-agent: *\nDisallow: /\n"
     p = _run(lambda ua: 200, robots=robots)
-    assert "no group" in _training_row(p.stdout, "GPTBot"), p.stdout
+    row = _training_row(p.stdout, "GPTBot")
+    assert "via * group" in row, p.stdout
+    assert "training opted out" in row, p.stdout
+
+
+def test_wildcard_group_reports_permissive_content_as_not_opted_out():
+    # The mirror of the above: a permissive wildcard must be reported as NOT an
+    # opt-out, rather than silently reading as one.
+    robots = "User-agent: *\nDisallow:\n"
+    p = _run(lambda ua: 200, robots=robots)
+    row = _training_row(p.stdout, "GPTBot")
+    assert "via * group" in row, p.stdout
+    assert "NOT opted out" in row, p.stdout
+
+
+def test_own_group_beats_the_wildcard_group():
+    # A token's own group wins over `*` (2.2.1 falls back to `*` only when no
+    # matching group exists). Without this, a restrictive wildcard could mask a
+    # permissive token-specific group and report a block that is not there.
+    robots = "User-agent: *\nDisallow: /\n\nUser-agent: GPTBot\nDisallow:\n"
+    p = _run(lambda ua: 200, robots=robots)
+    row = _training_row(p.stdout, "GPTBot")
+    assert "via * group" not in row, p.stdout
+    assert "NOT opted out" in row, p.stdout
+
+
+def test_no_group_and_no_wildcard_is_reported_as_ungoverned():
+    robots = "User-agent: SomeOtherBot\nDisallow: /\n"
+    p = _run(lambda ua: 200, robots=robots)
+    assert "nothing governs this token" in _training_row(p.stdout, "GPTBot"), p.stdout
 
 
 def test_empty_disallow_reports_not_opted_out():
@@ -430,13 +498,74 @@ def test_unavailable_robots_is_reported_not_guessed():
     assert "robots.txt could not be fetched" in p.stdout, p.stdout
 
 
-def test_training_directives_do_not_gate_the_exit_code():
-    # Training policy is the operator's choice. Neither a CONFLICT nor an
-    # unrestricted training crawler may turn the gate red, or the gate stops
-    # meaning "citation access is broken".
-    p = _run(lambda ua: 200, robots=CONFLICTING_ROBOTS)
-    assert "CONFLICT" in p.stdout
+def test_conflict_alone_does_not_gate_the_exit_code():
+    # CONFLICT is ambiguous, not open: contradictory records whose resolution
+    # varies by parser, where the measured live outcome is still blocked. It is
+    # reported and deliberately not failed, so the gate does not cry wolf on
+    # drift that is not yet an exposure.
+    #
+    # The fixture isolates that one variable. CONFLICTING_ROBOTS is NOT usable
+    # here: it reproduces the live cuarchitects shape, whose `*` group carries
+    # `Allow: /`, so the five tokens without their own group are genuinely not
+    # opted out and the training gate fires on them for a real reason. Using it
+    # would have tested the wrong thing and hidden which condition turned the
+    # gate red. Here every token is opted out; GPTBot additionally carries the
+    # contradictory pair.
+    robots = "".join(
+        f"User-agent: {name}\nDisallow: /\n\n"
+        for name in ("ClaudeBot", "CCBot", "Google-Extended",
+                     "meta-externalagent", "Bytespider")
+    ) + "User-agent: GPTBot\nDisallow: /\n\nUser-agent: GPTBot\nDisallow:\n"
+    p = _run(lambda ua: 200, robots=robots)
+    assert "CONFLICT" in _training_row(p.stdout, "GPTBot"), p.stdout
     assert p.returncode == 0, p.stdout + p.stderr
+
+
+def test_the_live_cuarchitects_shape_reports_its_unprotected_tokens():
+    # The real drift on cuarchitects.co.uk: a `*` group that allows everything,
+    # one token with contradictory records, and nothing covering the rest. The
+    # gate must name the genuinely-unprotected tokens rather than reporting only
+    # the eye-catching CONFLICT, because the tokens with no opt-out at all are
+    # the larger exposure and the ones a reader would otherwise miss.
+    p = _run(lambda ua: 200, robots=CONFLICTING_ROBOTS)
+    assert "CONFLICT" in _training_row(p.stdout, "GPTBot"), p.stdout
+    assert p.returncode == 1, p.stdout + p.stderr
+    assert "ClaudeBot" in p.stderr, p.stderr
+
+
+def test_training_collapse_turns_the_gate_red():
+    # THE REGRESSION THIS GATE EXISTS FOR. A robots.txt serving zero training
+    # groups is a total collapse of the training block. The old contract gated
+    # the exit code on the CITATION class alone, so this exact input printed
+    # PASS and exited 0, and the weekly workflow stayed green. The standing
+    # watch on the operator's actual ask ("i want to block that") could not
+    # fail, which is not a watch.
+    robots = "User-agent: *\nDisallow:\n"
+    p = _run(lambda ua: 200, robots=robots)
+    assert p.returncode == 1, p.stdout + p.stderr
+    assert "NOT opted out in robots.txt" in p.stderr, p.stderr
+
+
+def test_training_gate_does_not_fire_on_a_token_that_sends_no_user_agent():
+    # Google-Extended and Applebot-Extended are robots.txt CONTROL TOKENS with
+    # no user-agent of their own, so they correctly return 200 at the edge while
+    # being fully opted out. Gating on HTTP status rather than on the directive
+    # would fail this site forever for a condition that is neither fixable nor
+    # wrong. All six training tokens are opted out here; every one returns 200.
+    robots = "".join(
+        f"User-agent: {name}\nDisallow: /\n\n"
+        for name in ("GPTBot", "ClaudeBot", "CCBot", "Google-Extended",
+                     "meta-externalagent", "Bytespider")
+    )
+    p = _run(lambda ua: 200, robots=robots)
+    assert p.returncode == 0, p.stdout + p.stderr
+
+
+def test_training_gate_is_skipped_when_robots_is_unavailable():
+    # No data is not a pass and not a fail. A fetch failure must not manufacture
+    # either verdict for the training class.
+    p = _run(lambda ua: 200, robots=None)
+    assert "training gate is skipped" in p.stdout, p.stdout
 
 
 def test_robots_is_readable_even_when_crawlers_are_blocked():
