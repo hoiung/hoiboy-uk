@@ -106,7 +106,9 @@ jobs:
             if [ "$OUTCOME" = "inconclusive" ]; then
               printf 'The probe could not complete: request failure, origin error or an\n'
               printf 'unrecognised status. This is NOT a confirmed block and the job is\n'
-              printf 'deliberately not failed for it. Re-run to confirm.\n'
+              printf 'deliberately not failed for it. Re-run to confirm.\n\n'
+              printf 'The probe reported:\n\n```\n%s\n```\n' "$PROBE_SUMMARY"
+
             elif [ "$OUTCOME" = "success" ]; then
               printf 'The probe reported:\n\n```\n%s\n```\n\n' "$PROBE_SUMMARY"
               printf 'Citation reachability means they are NOT blocked. It does not mean the\n'
@@ -127,11 +129,15 @@ jobs:
               # surface and was contradicting it (Ralph round 20).
               printf 'The probe did not run to a verdict. Exit %s is outside the\n' "$CODE"
               printf 'scripts tri-state contract of 0, 1 or 2, so no crawler was\n'
-              printf 'classified. This is NOT a block: check the Probe step log for a\n'
-              printf 'missing script path, a permission error or a killed step.\n'
+              printf 'classified. This is NOT a block: look for a missing script path, a\n'
+              printf 'permission error or a killed step in what the probe emitted:\n\n'
+              printf '```\n%s\n```\n' "$PROBE_SUMMARY"
+
             else
-              printf 'POLICY FAILURE. Exit 1 now means EITHER of two things, so read the\n'
-              printf 'Probe step log to see which before acting:\n\n'
+              printf 'POLICY FAILURE. Exit 1 means EITHER of two things, which need\n'
+              printf 'OPPOSITE fixes. The probe output below says which:\n\n'
+              printf '```\n%s\n```\n\n' "$PROBE_SUMMARY"
+
               printf '  (a) a citation-class crawler is BLOCKED, or\n'
               printf '  (b) a training-class token is NOT opted out in robots.txt.\n\n'
               printf 'They need opposite fixes, and the remediation below addresses (a).\n'
@@ -179,9 +185,9 @@ jobs:
             1) printf >&2 'FAIL (%s): the crawler policy has regressed.\n' "$TARGET"
                printf >&2 'EITHER a citation-class crawler is blocked at the edge, OR a\n'
                printf >&2 'training-class token is no longer opted out. These need opposite\n'
-               printf >&2 'fixes, so read the Probe step log to see which before acting.\n'
-               printf >&2 'Operator action required; see the job summary.\n'
+               printf >&2 'fixes; the probe output says which:\n%s\n' "$PROBE_SUMMARY"
                exit 1 ;;
-            2) printf '::warning::AI crawler probe could not complete (exit 2). Verdict withheld, not a confirmed block.\n' ;;
+            2) printf '::warning::AI crawler probe could not complete (exit 2). Verdict withheld, not a confirmed block.\n'
+               printf 'The probe reported:\n%s\n' "$PROBE_SUMMARY" ;;
             *) printf >&2 'Unexpected probe exit code: %s\n' "$CODE"; exit 1 ;;
           esac
