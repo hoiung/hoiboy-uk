@@ -587,6 +587,41 @@ def test_training_collapse_turns_the_gate_red():
     assert "NOT opted out in robots.txt" in p.stderr, p.stderr
 
 
+def test_training_gate_fires_on_exactly_one_open_token():
+    # The n=1 BOUNDARY of the training fire condition. The collapse test above
+    # fails the gate with all nine tokens open; the opted-out test passes it
+    # with all nine closed. Neither pins the edge between them, so the fire
+    # condition `train_open -gt 0` could be silently loosened to `-gt 1` — one
+    # single training token free to train on the content while the gate reports
+    # PASS — and every other training test would stay green. Ralph round 9
+    # Tier 3 found exactly that mutant surviving the whole suite.
+    #
+    # This is the training-side counterpart to the citation gate's
+    # test_any_citation_crawler_denied_exits_one, and it sits on the precise
+    # regression the gate exists to catch: a gate that only fails in bulk does
+    # not protect against a single token slipping the block.
+    #
+    # Fixture: every training token carries a full opt-out except ONE with a
+    # real user-agent (Bytespider), left with an empty Disallow (an explicit
+    # allow). train_open must be exactly 1. Bytespider is chosen deliberately
+    # over Google-Extended / Applebot-Extended, which are control tokens with no
+    # user-agent and are handled by a separate branch.
+    open_ua = "Bytespider"
+    assert open_ua in TRAINING_TOKENS, "fixture agent drifted out of the list"
+    robots = "".join(
+        f"User-agent: {name}\n"
+        + ("Disallow:\n\n" if name == open_ua else "Disallow: /\n\n")
+        for name in TRAINING_TOKENS
+    )
+    p = _run(lambda ua: 200, robots=robots)
+    assert p.returncode == 1, p.stdout + p.stderr
+    # The message must name the single offender and count it as 1, not fold it
+    # into a vague plural. "1 of 9" is what distinguishes the boundary from the
+    # collapse case.
+    assert "1 of 9 training-class crawlers are NOT opted out" in p.stderr, p.stderr
+    assert open_ua in p.stderr, p.stderr
+
+
 def test_training_gate_does_not_fire_on_a_token_that_sends_no_user_agent():
     # Google-Extended and Applebot-Extended are robots.txt CONTROL TOKENS with
     # no user-agent of their own, so they correctly return 200 at the edge while
