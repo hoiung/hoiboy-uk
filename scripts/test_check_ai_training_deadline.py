@@ -254,3 +254,42 @@ def test_gate_is_wired_into_ci():
         "the gate cannot fire. A commented-out step, an `if: false` step, or a "
         "unit-test step alone does not run the gate."
     )
+
+
+def test_four_space_indented_closer_is_content_not_a_delimiter(tmp_path, monkeypatch):
+    # CommonMark 0.31 section 4.5 caps a CLOSING fence at three spaces, the same
+    # bound the opener already had. The stripper used line.strip() for the
+    # closer, accepting any indentation, so a four-space ``` ended the block
+    # early, flipped inside/outside parity for the rest of the file, and could
+    # leave an illustrative `resolved` example as the only live marker. The gate
+    # then printed "decision recorded" and exited 0 with the decision pending.
+    #
+    # This is the reproducer from the fix commit, promoted to a test. Ralph
+    # round 4 observed that widening FENCE_CLOSE's indent bound left all 21
+    # deadline-gate tests green: the fix shipped with nothing pinning it. A fix
+    # without a regression test is one careless edit from being undone.
+    body = (
+        "# doc\n\n"
+        "```\n"
+        "ai-training-migration-decision: pending\n"
+        "    ```\n"                       # 4 spaces: CONTENT, not a closer
+        "ai-training-migration-decision: resolved (illustrative example)\n"
+    )
+    # Both markers sit inside the still-open fence, so ZERO live markers remain.
+    # That is an operational error (exit 2), never a satisfied gate (exit 0).
+    assert _run(tmp_path, body, "2026-07-21", monkeypatch) == 2
+
+
+def test_three_space_indented_closer_does_close_the_fence(tmp_path, monkeypatch):
+    # The other side of the boundary: three spaces is a VALID closer, so the
+    # marker after it is live. Without this, tightening the bound too far (to
+    # zero, say) would satisfy the test above while breaking real documents.
+    body = (
+        "# doc\n\n"
+        "```\n"
+        "ai-training-migration-decision: resolved (inside the fence, ignored)\n"
+        "   ```\n"                        # 3 spaces: a valid closing fence
+        "ai-training-migration-decision: pending\n"
+    )
+    # The live marker is `pending`, and this date is before the trigger.
+    assert _run(tmp_path, body, "2026-07-21", monkeypatch) == 0
