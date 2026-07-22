@@ -892,6 +892,28 @@ def test_dates_are_normalised_to_iso_strings():
     assert fm["lastmod"] == "2026-07-20" and isinstance(fm["lastmod"], str)
 
 
+def test_non_string_date_is_rejected(monkeypatch, tmp_path, capsys):
+    # A non-empty mapping-valued date (`date:` then an indented sub-mapping) is
+    # PRESENT to _has_value, so the missing-check does not catch it - and date
+    # has no other guard. The old parser rejected this shape as "missing"; a
+    # dedicated date-must-be-a-date check keeps the gate catching it instead of
+    # regressing to a confusing Hugo build error. Regression guard (Ralph #56
+    # Tier 2): without the check this shipped exit 0 where the old tool failed.
+    fm = POST_FM.replace("date: 2026-04-07", "date:\n  bogus: 1")
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    assert "date must be a date" in capsys.readouterr().err
+
+
+def test_bare_scalar_tags_is_rejected(monkeypatch, tmp_path, capsys):
+    # `tags: justastring` (no brackets) is a bare scalar, not a list; Hugo
+    # ranges over a string character by character. The old parser stored it as
+    # a string and passed. Covers the non-list, non-dict branch of the tags
+    # guard (Ralph #56 Tier 2 - the dict form has test_mapping_valued_tags).
+    fm = POST_FM.replace("tags: [a]", "tags: justastring")
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    assert "tags must be a list" in capsys.readouterr().err
+
+
 def test_mapping_valued_date_is_caught(monkeypatch, tmp_path, capsys):
     # date and lastmod are the only required-ish fields with NO downstream type
     # guard (Hugo validates the date shape at build). So _has_value's empty-
