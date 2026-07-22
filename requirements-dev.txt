@@ -1,7 +1,10 @@
 # Dev-only dependencies for hook scripts + tests.
 # CI installs via `pip install -r requirements-dev.txt`.
-# Local contributors: `pip install -r requirements-dev.txt` before committing,
-# or let pre-commit's own venv provide pyyaml transitively.
+# Local contributors: `pip install -r requirements-dev.txt` to run the scripts
+# or the tests directly. The two pre-commit hooks that need PyYAML
+# (frontmatter-validator, check-wordcount) declare it via
+# additional_dependencies, so pre-commit provisions it in their managed env
+# even without this file installed.
 pytest
 pyyaml
 piexif
