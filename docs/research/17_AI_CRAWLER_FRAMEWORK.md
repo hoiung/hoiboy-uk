@@ -182,7 +182,7 @@ they have been removed, the calculation reverts.
 not advice in a document; it is a gate. The line below is that gate's input: flip it to
 `resolved (<date>, <what was done>)` once the call is made and the zones are set accordingly.
 
-ai-training-migration-decision: pending
+ai-training-migration-decision: resolved (2026-07-22, opted out on all zones via Cloudflare Configure AI bot policies: mixed-purpose search+training crawlers set to "continue to be allowed" so Googlebot/Applebot/BingBot survive 2026-09-15; legacy Block AI bots scope left off; training enforcement stays on the WAF custom rule; probe PASS hoiboy.uk + cuarchitects.co.uk)
 
 ## The WAF custom rule (APPLIED on all three zones, 2026-07-21)
 
