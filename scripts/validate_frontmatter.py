@@ -7,9 +7,8 @@ Project pages (content/consulting/) required: title, description
 Phase 0 inline schema. 08_FRONTMATTER_SCHEMA.md is deferred to Phase 1
 once real WordPress posts shape the schema.
 
-Walks content/posts/ and content/consulting/, parses YAML frontmatter,
-validates required fields. Fails loudly. Uses a tiny YAML parser (no
-third-party deps in CI).
+Walks content/posts/ and content/consulting/, parses YAML frontmatter with
+PyYAML, validates required fields. Fails loudly.
 
 `description` became REQUIRED on 2026-07-20 (blog-priv#55 Phase 2). Before
 that it sat in OPTIONAL, so 33 posts (32 legacy plus one dated on the
@@ -26,9 +25,19 @@ would hard-fail a compliant tree.
 """
 from __future__ import annotations
 import argparse
+import datetime
 import sys
-import re
 from pathlib import Path
+
+try:
+    import yaml
+except ImportError as exc:  # exercised via a subprocess in the tests
+    raise SystemExit(
+        "validate_frontmatter.py needs PyYAML. Install it with "
+        "`pip install -r requirements-dev.txt` (or `pip install pyyaml`). "
+        "Refusing to fall back to a hand-rolled parser: that reintroduces the "
+        "YAML divergences blog-priv#56 removed."
+    ) from exc
 
 REQUIRED = {"title", "date", "categories", "tags", "description"}
 # Project/service pages under content/consulting/ (including portfolio/<client>/).
@@ -53,185 +62,65 @@ POSTS = ROOT / "content" / "posts"
 CONSULTING = ROOT / "content" / "consulting"
 
 
-def strip_trailing_comment(value: str) -> str:
-    """Drop an unquoted trailing YAML comment from a scalar value.
-
-    In YAML a `#` starts a comment when it follows whitespace, so
-    `description: ~ # TODO` is the null `~`, not the string "~ # TODO".
-    The sentinel test below compares by exact match, so without this a null
-    sentinel with any trailing comment sailed through as a present value while
-    Hugo served the site default (Ralph round 21, blocker; proven end to end on
-    a real build). Five shapes were affected: `null`, `Null`, `NULL`, `~` and a
-    quoted empty string, each with a trailing comment.
-
-    A `#` inside a quoted scalar or a flow sequence is literal, so a value that
-    opens with a quote or `[` is cut only after its matching closer. That keeps
-    `description: "hello # world"` intact, which is the false-failure this
-    would otherwise introduce.
-
-    The whitespace rule differs on the two sides of that closer, and getting it
-    wrong is how the first version of this function shipped a bypass (Ralph
-    round 22). After a closing quote or bracket the `#` needs NO preceding
-    space, because the closer is itself a sufficient token boundary: YAML reads
-    `description: ""#TODO` as an empty string, so requiring a space let that
-    shape through as the literal `'""#TODO'`. For a PLAIN scalar the space IS
-    required, and `description: null#TODO` really is the seven-character string
-    `null#TODO` in YAML, not null. So `\\s*` after a closer, `\\s` before a
-    plain-scalar comment. Verified against PyYAML both ways.
-    """
-    closer = {'"': '"', "'": "'", "[": "]"}.get(value[:1])
-    if closer:
-        close = value.find(closer, 1)
-        if close == -1:
-            return value  # unterminated; leave it alone, not ours to repair
-        head, tail = value[: close + 1], value[close + 1:]
-        return head if re.match(r"^\s*#", tail) or tail.strip() == "" else value
-    cut = re.split(r"(?:^|\s)#", value, maxsplit=1)[0]
-    return cut.strip()
-
-
 def parse_frontmatter(text: str) -> dict[str, object] | None:
-    """Minimal YAML frontmatter parser. Handles strings, bracketed lists,
-    block lists, folded/literal block scalars, and quoted values with colons
-    inside. Sufficient for blog frontmatter.
+    """Parse a page's YAML frontmatter with PyYAML.
 
-    KNOWN DIVERGENCES FROM REAL YAML (Ralph rounds 16-18, all measured against
-    PyYAML and a real Hugo build). These shapes resolve to an empty value in
-    YAML, so Hugo serves the site-default description, but they parse to a
-    non-empty string here and so pass the presence gate:
+    Returns the frontmatter mapping, or None when `text` has no `---...---`
+    fence (a body-only file is legitimately not frontmatter). Raises
+    yaml.YAMLError on a malformed fence and ValueError when the fence parses to
+    something other than a mapping; check_tree turns both into a per-file
+    failure rather than letting a page with unparseable frontmatter through.
 
-        description: !!str              (empty explicit type tag)
-        description: *anchor            (alias to an anchored empty string)
+    This replaced a 145-line hand-rolled parser (blog-priv#56). That parser
+    stored every value as a string, so it could not tell YAML null, an empty
+    block scalar, a mapping or a bool from a real description, and each shape it
+    got wrong shipped a page with the site-default meta description. Nine Ralph
+    rounds on #55 each hand-patched one shape and the next round found its
+    sibling; PyYAML is the single oracle that ends the class. It is already a
+    dependency (requirements-dev.txt, the CI install), and the differential
+    test that hunted these divergences one by one is now vacuous because the
+    parser IS PyYAML.
 
-    And this one passes here but hard-fails the Hugo build later:
-
-        description: >
-        <TAB>text                       (tab-indented continuation)
-
-    None appear in any current post, and the real Hugo build in pre-publish
-    gate 7 and CI catches the tab case before anything ships. Fixing the class
-    properly means replacing this function with PyYAML, which is a scoped
-    change of its own (operator decision, 2026-07-20: patch-and-ship #55, track
-    the swap separately) rather than another sentinel bolted on here. If you
-    are about to add a fourth special case to the branch below, do the swap
-    instead. Every shape listed above has to keep being caught after it.
+    Dates are the one value normalised: YAML types `date: 2026-04-07` as a
+    datetime.date, but the rest of the contract treats date and lastmod as ISO
+    strings (the lastmod<date check, the string compares), so a date/datetime
+    is rendered back to its ISO string here. Nothing else is coerced: a bool,
+    int, list or mapping keeps its real type so check_tree's type checks can
+    reject it instead of storing it as a string that passes.
     """
     if not text.startswith("---"):
         return None
     end = text.find("\n---", 3)
     if end == -1:
         return None
-    body = text[3:end].strip()
-    out: dict[str, object] = {}
-    current_key: str | None = None
-    # Open block scalar (`description: >` / `|`), if any. Tracked as state so
-    # the single pass below can fold the indented continuation lines into the
-    # value. Without this a block scalar parsed to the literal indicator ">",
-    # which is non-empty, so an EMPTY one counted as a present description
-    # while Hugo resolved it to "" and served the site default (Ralph round 17).
-    # Treating a bare ">" as empty without also reading the continuation would
-    # just trade that for a false failure on a block scalar that DOES have text.
-    block_key: str | None = None
-    block_lines: list[str] = []
-    block_indent: int | None = None
+    data = yaml.safe_load(text[3:end])
+    if data is None:
+        return {}
+    if not isinstance(data, dict):
+        raise ValueError(f"frontmatter is not a mapping (parsed as {type(data).__name__})")
+    for key, value in list(data.items()):
+        if isinstance(value, datetime.date):  # datetime.datetime is a subclass too
+            data[key] = value.isoformat()
+    return data
 
-    def close_block() -> None:
-        # current_key is cleared too, so a stray dash-list line with no
-        # governing key cannot be misattributed to the block key just closed
-        # and overwrite its resolved string with a list (Ralph round 18).
-        nonlocal block_key, block_lines, block_indent, current_key
-        if block_key is not None:
-            out[block_key] = " ".join(x for x in block_lines if x).strip()
-            current_key = None
-        block_key, block_lines, block_indent = None, [], None
 
-    for raw in body.splitlines():
-        line = raw.rstrip()
-        if block_key is not None:
-            if not line.strip():
-                continue
-            indent = len(raw) - len(raw.lstrip())
-            if block_indent is None and indent > 0:
-                block_indent = indent
-            if block_indent is not None and indent >= block_indent:
-                block_lines.append(line.strip())
-                continue
-            close_block()  # dedented: the block ended, parse this line normally
-        if not line or line.startswith("#"):
-            continue
-        # Block-list item belonging to the key above:
-        #     categories:
-        #       - entrepreneurship
-        # Without this the key parses to an empty string, which made the
-        # category allowlist check silently skip the page (the isinstance
-        # list-guard below never fired) and, once blank values counted as
-        # missing, produced a false "missing categories" on a correctly
-        # categorised post. 1 of 78 posts uses this form; a typo'd category
-        # in it would never have been caught.
-        item = re.match(r"^\s*-\s+(.*)$", raw)
-        if item and current_key is not None:
-            value = item.group(1).strip().strip('"').strip("'")
-            existing = out.get(current_key)
-            if isinstance(existing, list):
-                existing.append(value)
-            else:
-                out[current_key] = [value]
-            continue
-        # Key: value pattern. Match the FIRST colon that follows an
-        # unquoted key (no quotes/brackets in the key portion).
-        m = re.match(r"^([A-Za-z_][\w-]*)\s*:\s*(.*)$", line)
-        if m:
-            key = m.group(1)
-            value = strip_trailing_comment(m.group(2).strip())
-            if value.startswith("[") and value.endswith("]"):
-                inner = value[1:-1].strip()
-                items = [s.strip().strip('"').strip("'") for s in inner.split(",") if s.strip()]
-                out[key] = items
-            elif value.startswith('"') and value.endswith('"'):
-                out[key] = value[1:-1]
-            elif value.startswith("'") and value.endswith("'"):
-                out[key] = value[1:-1]
-            else:
-                # YAML null sentinels, and a value that is nothing but a
-                # comment, all mean "no value" to Hugo. Normalising them to ""
-                # here is what makes the blank-counts-as-missing rule below
-                # actually bite. Ralph round 16 proved the gap end to end:
-                # `description: null` passed the gate ("Frontmatter OK (79
-                # posts)", exit 0) while the built page served
-                # site.Params.description verbatim - the exact near-duplicate
-                # this gate exists to prevent. `~` and `# TODO write this`
-                # behave identically. Deliberately confined to the UNQUOTED
-                # branch: a quoted `description: "# hashtags"` is a real value
-                # and must keep passing.
-                # This comment used to claim a trailing comment was "a cosmetic
-                # divergence, not a bypass - the value is non-empty either way".
-                # That was TRUE for `description: Text # note` and FALSE for a
-                # sentinel: `description: ~ # TODO` is null in YAML but was kept
-                # whole here, so it counted as present and the page shipped the
-                # site default. Ralph round 21 blocker. Trailing comments are
-                # now stripped in strip_trailing_comment() above, before this
-                # test runs, so the sentinel list below sees the real value.
-                if value in ("null", "Null", "NULL", "~") or value.startswith("#"):
-                    out[key] = ""
-                # A block header is the indicator, then an optional indentation
-                # digit (1-9) and an optional chomping sign, in EITHER order.
-                # The first version of this regex only allowed sign-then-digit,
-                # so `|2-` fell through and was stored as the literal "|2-",
-                # which is non-empty: an empty block scalar written that way
-                # passed the gate while Hugo served the site default
-                # (Ralph round 18).
-                elif re.fullmatch(r"[>|](?:[1-9][-+]?|[-+]?[1-9]?)", value):
-                    # Block scalar. Provisionally empty; the continuation lines
-                    # collected above replace this when the block closes.
-                    out[key] = ""
-                    block_key, block_lines, block_indent = key, [], None
-                    current_key = key
-                    continue
-                else:
-                    out[key] = value
-            current_key = key
-    close_block()
-    return out
+def _has_value(value: object) -> bool:
+    """Did the author supply a real value for this key?
+
+    YAML null (`description:` / `null` / `~`), an empty string, an empty block
+    scalar and an empty list or mapping all mean "no value" to Hugo, which then
+    serves the site default - the near-duplicate this gate exists to prevent.
+    A bool/int/float IS a value here (even though it is the wrong TYPE for a
+    description); the scalar-type check in check_tree rejects that with a
+    clearer message than "missing" would give.
+    """
+    if value is None:
+        return False
+    if isinstance(value, str):
+        return value.strip() != ""
+    if isinstance(value, (list, dict)):
+        return len(value) > 0
+    return True
 
 
 def check_tree(root: Path, required: set[str], check_categories: bool,
@@ -265,7 +154,17 @@ def check_tree(root: Path, required: set[str], check_categories: bool,
 
     for md in md_files:
         text = md.read_text(encoding="utf-8")
-        fm = parse_frontmatter(text)
+        try:
+            fm = parse_frontmatter(text)
+        except (yaml.YAMLError, ValueError) as exc:
+            # Malformed YAML (a tab-indented block continuation is the shape #56
+            # cared about) or a fence that is not a mapping. The hand-rolled
+            # parser silently coerced these; PyYAML surfaces them, and a page
+            # whose frontmatter does not parse must fail the gate, not sail
+            # through. Kept to the first line so the message stays readable.
+            reason = str(exc).splitlines()[0] if str(exc) else exc.__class__.__name__
+            failures.append(f"{md.relative_to(ROOT)}: invalid frontmatter YAML: {reason}")
+            continue
         if fm is None:
             failures.append(f"{md.relative_to(ROOT)}: no frontmatter")
             continue
@@ -274,8 +173,8 @@ def check_tree(root: Path, required: set[str], check_categories: bool,
         # serves the site default, so `description:` with nothing after it
         # produces exactly the near-duplicate this gate exists to prevent while
         # satisfying a naive key-presence check. Same reasoning for an empty
-        # title or an empty categories list.
-        present = {k for k, v in fm.items() if str(v).strip() and v != []}
+        # title, an empty list or a YAML null (see _has_value).
+        present = {k for k, v in fm.items() if _has_value(v)}
         missing = required - present
         if missing:
             failures.append(f"{md.relative_to(ROOT)}: missing {sorted(missing)}")
@@ -289,10 +188,34 @@ def check_tree(root: Path, required: set[str], check_categories: bool,
         # and both agree the list is "present"; the disagreement is with HUGO,
         # a layer above YAML.
         for scalar_key in ("description", "title"):
-            if scalar_key in required and isinstance(fm.get(scalar_key), list):
+            if scalar_key not in required:
+                continue
+            value = fm.get(scalar_key)
+            if value is None or isinstance(value, str):
+                continue
+            if isinstance(value, list):
+                detail = "is a list; Hugo discards it and serves the site default"
+            elif isinstance(value, dict):
+                detail = "is a mapping; Hugo discards it and serves the site default"
+            else:
+                # A bool/int/float: PyYAML types `description: true` as True and
+                # `12345` as an int, and Hugo renders the literal "true" / "12345"
+                # as the meta value. The old string-storing parser could not see
+                # this (blog-priv#56, comment on the mapping/bool/int shapes).
+                detail = (f"is a {type(value).__name__}; Hugo renders it literally, "
+                          f"not as a real value")
+            failures.append(
+                f"{md.relative_to(ROOT)}: {scalar_key} {detail}. Use a quoted string."
+            )
+        # tags must be a list. A mapping-valued `tags: {a: b}` stored as a
+        # string under the old parser and passed; Hugo then ranges the map and
+        # emits article:tag for the map's VALUE, not its key (blog-priv#56).
+        if "tags" in required:
+            tags = fm.get("tags")
+            if tags is not None and not isinstance(tags, list):
                 failures.append(
-                    f"{md.relative_to(ROOT)}: {scalar_key} is a list; Hugo discards it "
-                    f"and serves the site default. Use a quoted string."
+                    f"{md.relative_to(ROOT)}: tags must be a list "
+                    f"(got {type(tags).__name__}); write it as [a, b] or a block list"
                 )
         if check_categories:
             cats = fm.get("categories")
@@ -307,13 +230,16 @@ def check_tree(root: Path, required: set[str], check_categories: bool,
                     f"(got {cats!r}); write it as [a, b] or a block list"
                 )
             elif isinstance(cats, list):
-                unknown = set(c.lower() for c in cats) - ALLOWED_CATEGORIES
+                # str() so a non-string list item (`categories: [123]` -> int
+                # under PyYAML) is compared, not crashed on. A numeric category
+                # is not on the allowlist, so it is reported as unknown.
+                unknown = set(str(c).lower() for c in cats) - ALLOWED_CATEGORIES
                 if unknown:
                     failures.append(
                         f"{md.relative_to(ROOT)}: unknown categories {sorted(unknown)} "
                         f"(allowed: {sorted(ALLOWED_CATEGORIES)})"
                     )
-                lowered = [c.lower() for c in cats]
+                lowered = [str(c).lower() for c in cats]
                 dupes = sorted({c for c in lowered if lowered.count(c) > 1})
                 if dupes:
                     failures.append(
