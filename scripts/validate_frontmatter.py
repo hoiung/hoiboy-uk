@@ -246,6 +246,23 @@ def check_tree(root: Path, required: set[str], check_categories: bool,
                         f"{md.relative_to(ROOT)}: duplicate categories {dupes}; "
                         f"the category renders once per entry, so the page shows it twice"
                     )
+        # date and lastmod must be scalar dates. PyYAML renders a valid date to
+        # an ISO string (parse_frontmatter coerces datetime.date), so a
+        # non-string here is a mapping/list/bool - a malformed date. The old
+        # hand-rolled parser rejected `date:` followed by an indented mapping as
+        # "missing" because it could not represent the shape; keep catching it,
+        # now with a clear message, rather than passing it to a confusing Hugo
+        # build error - the same class the categories/tags guards above fix
+        # (blog-priv#56). An empty `date: {}` is already caught by the
+        # missing-check above (it is not present); this catches the non-empty
+        # non-string shapes that ARE present.
+        for date_key in ("date", "lastmod"):
+            value = fm.get(date_key)
+            if value is not None and not isinstance(value, str):
+                failures.append(
+                    f"{md.relative_to(ROOT)}: {date_key} must be a date "
+                    f"(got {type(value).__name__}); write it as an ISO date like 2026-04-07"
+                )
         # `lastmod` earlier than `date` publishes JSON-LD dateModified BEFORE
         # datePublished, and an `article:modified_time` that predates the post.
         # Phase 8 of this issue added the lastmod convention but gated nothing,
