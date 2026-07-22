@@ -57,5 +57,5 @@ Quick honesty note (because I'd want to know): the link below is my referral lin
 
 Job hunting will probably always be a bit of a pain. But this took a real chunk of that pain out, and it did it without making me learn yet another cluttered dashboard. I'll take that.
 
-[Click here](https://jackandjill.ai/refer/senh_ung), good luck and happy job hunting!!!
+[Give Jack & Jill a go](https://jackandjill.ai/refer/senh_ung) <&#45;&#45; Click here, good luck and happy job hunting!!!
 <!-- iamhoiend -->
