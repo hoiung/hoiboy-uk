@@ -3,10 +3,12 @@
 Run: python3 -m pytest scripts/test_validate_frontmatter.py -q
 """
 from __future__ import annotations
+import subprocess
 import sys
 from pathlib import Path
 
 import pytest
+import yaml
 
 sys.path.insert(0, str(Path(__file__).parent))
 import validate_frontmatter as vf
@@ -94,7 +96,9 @@ def test_draft_flag_optional():
     text = ('---\ntitle: "x"\ndate: 2026-04-07\ncategories: [tech]\ntags: [a]\n'
             'description: "d"\ndraft: true\n---\n')
     fm = parse_frontmatter(text)
-    assert fm["draft"] == "true"
+    # PyYAML types a bare `true` as a bool, not the string "true" that the old
+    # hand-rolled parser stored (blog-priv#56).
+    assert fm["draft"] is True
     missing = REQUIRED - set(fm.keys())
     assert not missing
 
@@ -419,7 +423,9 @@ def test_block_scalar_does_not_swallow_the_next_key():
         '---\ntitle: "x"\ndescription: >\n  Folded text.\ncategories: [tech-ai]\n'
         'tags: [a]\ndate: 2026-04-07\n---\nbody\n'
     )
-    assert fm["description"] == "Folded text."
+    # A folded block scalar keeps a trailing newline in real YAML; strip it for
+    # the comparison, the point of the test is that the next key survives.
+    assert fm["description"].strip() == "Folded text."
     assert fm["categories"] == ["tech-ai"]
     assert fm["tags"] == ["a"]
 
@@ -442,16 +448,16 @@ def test_block_header_accepts_digit_and_chomp_in_either_order(monkeypatch, tmp_p
     assert "description" in capsys.readouterr().err
 
 
-def test_orphan_list_item_does_not_overwrite_a_closed_block():
-    # close_block() clears current_key, so a stray dash-list line with no
-    # governing key cannot be misattributed to the block key just closed and
-    # overwrite its resolved string with a list. Ralph round 18; the input is
-    # invalid YAML that PyYAML rejects outright, so this only guards against
-    # the parser silently inventing a different shape than YAML would.
-    fm = parse_frontmatter(
-        '---\ntitle: "x"\ndescription: >\n  Folded text.\n- orphan item\n---\nbody\n'
-    )
-    assert fm["description"] == "Folded text."
+def test_orphan_list_item_is_surfaced_as_invalid_yaml():
+    # A stray dash-list line with no governing key after a block scalar is
+    # invalid YAML. The hand-rolled parser silently invented a shape for it
+    # (it kept the block's resolved string, Ralph round 18); PyYAML rejects it
+    # outright, and parse_frontmatter now lets that surface so check_tree fails
+    # the page rather than guessing at a shape YAML never had (blog-priv#56).
+    with pytest.raises(yaml.YAMLError):
+        parse_frontmatter(
+            '---\ntitle: "x"\ndescription: >\n  Folded text.\n- orphan item\n---\nbody\n'
+        )
 
 
 @pytest.mark.parametrize("sentinel", ["~ # TODO", "null # TODO", "NULL  # x", "Null # x", '"" # x', "'' # x"])
@@ -737,3 +743,129 @@ def test_distinct_descriptions_pass(monkeypatch, tmp_path):
     other = POST_FM.replace('"A unique summary."', '"A different summary entirely."')
     assert _run(monkeypatch, tmp_path, [("a", POST_FM), ("b", other)], [],
                 argv=["--scope", "posts"]) == 0
+
+
+# --- blog-priv#56: the shapes the hand-rolled parser could not represent ------
+# The parser stored every value as a string, so a YAML null, an empty explicit
+# type tag, an alias to an empty node, a mapping, a bool and an int all became
+# non-empty strings that passed the presence gate while Hugo shipped garbage or
+# the site default. Rounds 16-24 on #55 hand-patched shape after shape and each
+# next round found a sibling; the swap to PyYAML resolves the whole class at
+# once. One regression test per surviving shape, proven the way the earlier
+# ones were: run the gate on a seeded tree and assert it fails.
+
+def _run_one_post(monkeypatch, tmp_path, fm):
+    posts = tmp_path / "posts"
+    _bundle(posts, "seeded", fm)
+    monkeypatch.setattr(vf, "POSTS", posts)
+    monkeypatch.setattr(vf, "CONSULTING", tmp_path / "consulting")
+    monkeypatch.setattr(vf, "ROOT", tmp_path)
+    return vf.main(["--scope", "posts"])
+
+
+def test_explicit_str_tag_empty_counts_as_missing(monkeypatch, tmp_path, capsys):
+    # `description: !!str` is an empty explicit-type tag: "" in YAML, so Hugo
+    # serves the site default. The old parser stored the literal "!!str" and
+    # passed. Body table, row 6 (unfixed in #55).
+    fm = POST_FM.replace('description: "A unique summary."', "description: !!str")
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    err = capsys.readouterr().err
+    assert "missing" in err and "description" in err
+
+
+def test_anchor_to_an_empty_node_counts_as_missing(monkeypatch, tmp_path, capsys):
+    # `description: *a` aliasing an empty anchor resolves to null in YAML, so
+    # Hugo serves the site default. The old parser stored the literal "*a" and
+    # passed. Body table, row 7 (unfixed in #55).
+    fm = POST_FM.replace('description: "A unique summary."', "anchored: &a\ndescription: *a")
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    err = capsys.readouterr().err
+    assert "missing" in err and "description" in err
+
+
+def test_tab_indented_block_continuation_is_rejected(monkeypatch, tmp_path, capsys):
+    # `description: >` then a TAB-indented line is invalid YAML (tabs cannot
+    # start indentation). The old parser folded it and passed, then Hugo
+    # hard-failed the build. PyYAML rejects it here, at the gate, with a clear
+    # message. Body table, row 8 (unfixed in #55).
+    fm = POST_FM.replace('description: "A unique summary."', "description: >\n\ttext")
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    assert "invalid frontmatter YAML" in capsys.readouterr().err
+
+
+def test_mapping_valued_title_is_rejected(monkeypatch, tmp_path, capsys):
+    # `title: {en: "..."}` renders an empty <title>/<h1>/og:title in Hugo. The
+    # worst of the four shapes in the #56 issue comment: it blanks the page's
+    # heading, not just a meta field. The old parser stored the literal string.
+    fm = POST_FM.replace('title: "x"', 'title: {en: "hi"}')
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    assert "title is a mapping" in capsys.readouterr().err
+
+
+def test_mapping_valued_description_is_rejected(monkeypatch, tmp_path, capsys):
+    # `description: {en: "..."}` -> Hugo discards it and serves the site default
+    # (the near-duplicate the gate exists to prevent). #56 issue comment.
+    fm = POST_FM.replace('description: "A unique summary."', 'description: {en: "hi"}')
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    assert "description is a mapping" in capsys.readouterr().err
+
+
+def test_bool_valued_description_is_rejected(monkeypatch, tmp_path, capsys):
+    # `description: true` renders the literal content="true" in Hugo. The old
+    # parser stored "true" and passed the presence gate. #56 issue comment.
+    fm = POST_FM.replace('description: "A unique summary."', "description: true")
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    assert "description is a bool" in capsys.readouterr().err
+
+
+def test_int_valued_description_is_rejected(monkeypatch, tmp_path, capsys):
+    # `description: 12345` renders the literal content="12345" in Hugo. #56
+    # issue comment.
+    fm = POST_FM.replace('description: "A unique summary."', "description: 12345")
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    assert "description is a int" in capsys.readouterr().err
+
+
+def test_mapping_valued_tags_is_rejected(monkeypatch, tmp_path, capsys):
+    # `tags: {a: b}` -> Hugo ranges the map and emits article:tag for the map's
+    # VALUE, not its key. The old parser stored the literal string and passed
+    # (tags had no type check at all). #56 issue comment.
+    fm = POST_FM.replace("tags: [a]", "tags: {a: b}")
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    assert "tags must be a list" in capsys.readouterr().err
+
+
+def test_dates_are_normalised_to_iso_strings():
+    # PyYAML types `date:` / `lastmod:` as datetime.date objects; the rest of
+    # the contract (the lastmod<date check, the string compares) treats them as
+    # ISO strings, so parse_frontmatter renders them back. Dropping that
+    # coercion silently skips the lastmod<date check, so this guards it, and
+    # test_lastmod_earlier_than_date_is_rejected is the end-to-end half.
+    fm = parse_frontmatter(
+        '---\ntitle: "x"\ndate: 2026-04-07\nlastmod: 2026-07-20\n'
+        'categories: [tech-ai]\ntags: [a]\ndescription: "d"\n---\nbody\n'
+    )
+    assert fm["date"] == "2026-04-07" and isinstance(fm["date"], str)
+    assert fm["lastmod"] == "2026-07-20" and isinstance(fm["lastmod"], str)
+
+
+def test_missing_pyyaml_fails_loud():
+    # The whole point of #56: with PyYAML unavailable the gate fails loudly, it
+    # does NOT silently degrade to a hand-rolled fallback that reintroduces the
+    # divergences. Run in a subprocess that blocks the yaml import so the module
+    # cannot even load; assert it exits non-zero with a PyYAML message.
+    code = (
+        "import builtins\n"
+        "_real = builtins.__import__\n"
+        "def _blocked(name, *a, **k):\n"
+        "    if name == 'yaml' or name.startswith('yaml.'):\n"
+        "        raise ImportError('blocked for the test')\n"
+        "    return _real(name, *a, **k)\n"
+        "builtins.__import__ = _blocked\n"
+        "import sys\n"
+        f"sys.path.insert(0, {str(Path(__file__).parent)!r})\n"
+        "import validate_frontmatter\n"
+    )
+    result = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
+    assert result.returncode != 0, "importing without PyYAML should fail, not succeed"
+    assert "PyYAML" in result.stderr, result.stderr
