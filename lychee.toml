@@ -109,6 +109,13 @@ exclude = [
   "^https?://dl\\.acm\\.org(/.*)?$",
   "^https?://(www\\.)?tandfonline\\.com(/.*)?$",
   "^https?://(www\\.)?medium\\.com(/.*)?$",
+  # noahkagan.com (a cited source in 14_BLOG_CRAFT.md) consistently times out
+  # from GitHub runners (rate-limited/throttled anti-bot), yet returns HTTP 200
+  # in <1s from a browser -- verified 2026-07-22. Same from-CI false-positive
+  # class as the medium/acm/tandfonline entries above; it flaked CI 3x in one
+  # session and cascade-skips Deploy. NOT a broken link.
+  # added: 2026-07-22; expires: 2026-10-20 (90 days)
+  "^https?://(www\\.)?noahkagan\\.com(/.*)?$",
   # Root-relative paths (href="/js/...", href="/legal/...", href="/private/...")
   # are Hugo internal paths that get rewritten at render time. Lychee scans
   # raw markdown and has no Hugo context, so it cannot resolve them without
