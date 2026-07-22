@@ -583,7 +583,7 @@ def test_has_value_matches_real_yaml_across_a_shape_matrix():
     yaml = pytest.importorskip("yaml")
     import itertools
 
-    values = ['""', "''", '"a"', "'a'", '"a # b"', '"#h"', "[x]", "[x, y]", "[]",
+    values = ['""', "''", '"a"', "'a'", '"a # b"', '"#h"', '"   "', "[x]", "[x, y]", "[]",
               "null", "Null", "NULL", "~", "text", "a b", "0", '"0"', "true",
               ">", "|", ">-", "|-", "|2-", ">3+"]
     separators = ["", " ", "  "]
@@ -841,6 +841,18 @@ def test_mapping_valued_tags_is_rejected(monkeypatch, tmp_path, capsys):
     fm = POST_FM.replace("tags: [a]", "tags: {a: b}")
     assert _run_one_post(monkeypatch, tmp_path, fm) == 1
     assert "tags must be a list" in capsys.readouterr().err
+
+
+def test_whitespace_only_description_counts_as_missing(monkeypatch, tmp_path, capsys):
+    # `description: "   "` is a non-empty string, so the scalar-type check (which
+    # exempts every str) waves it through; _has_value's .strip() is the ONLY
+    # thing that rejects it. Hugo would render content="   ", a meaningless meta
+    # description - the same near-duplicate class the gate exists to prevent.
+    # Guards the .strip() in _has_value against a regression (Ralph #56 Tier 2).
+    fm = POST_FM.replace('description: "A unique summary."', 'description: "   "')
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    err = capsys.readouterr().err
+    assert "missing" in err and "description" in err
 
 
 def test_dates_are_normalised_to_iso_strings():
