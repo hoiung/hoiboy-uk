@@ -239,6 +239,9 @@ cd -
 hugo server
 # http://localhost:1313
 
+# Python dev dependencies (PyYAML for the frontmatter validator + pre-publish gates)
+pip install -r requirements-dev.txt
+
 # Pre-commit hooks
 pip install pre-commit
 pre-commit install
