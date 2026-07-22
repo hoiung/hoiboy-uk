@@ -6,6 +6,15 @@ description: "So many sites, the same form ten times over. I tried an AI job hun
 categories: [tech-ai]
 tags: [ai, job-hunting, career, ux]
 slug: ai-job-hunting-jack-and-jill
+resources:
+  - src: "shots/profile.png"
+    title: "Profile: what Jack & Jill knows about you"
+  - src: "shots/tracked-jobs.png"
+    title: "Tracked jobs: saved, applied, in process, offer"
+  - src: "shots/documents.png"
+    title: "Documents: your CVs and notes in one place"
+  - src: "shots/coaching.png"
+    title: "Coaching: guided help when you want it"
 ---
 
 <!-- iamhoi -->
@@ -32,6 +41,10 @@ I'm not going to pretend it was instant. It took me about an hour to set up and 
 Here's where I put my other hat on.
 
 The layout is dead simple. Left side is your menu. The middle is the chat, front and centre, where all the actual work happens. And the right side is the part that changes depending on what you click in the menu. That's it. Three panels, and you always know where you are.
+
+Here's that same three-panel shape across a few of the screens. Click any to zoom in.
+
+{{< gallery folder="shots" >}}
 
 I really really appreciated that, because it's clearly a choice. Someone sat down and decided NOT to cram everything in.
 
