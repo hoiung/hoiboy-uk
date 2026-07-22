@@ -37,7 +37,13 @@ repos:
       - id: frontmatter-validator
         name: Validate post and project-page frontmatter (incl. description)
         entry: python3 scripts/validate_frontmatter.py
-        language: system
+        # language: python (not system) so pre-commit provisions a managed venv
+        # with PyYAML. blog-priv#56 replaced the hand-rolled parser with
+        # yaml.safe_load; under `language: system` a machine whose ambient
+        # python3 lacked PyYAML would get a broken gate. The managed env pins
+        # the dependency so the gate cannot silently break per-machine.
+        language: python
+        additional_dependencies: [pyyaml]
         pass_filenames: false
         # Extensions must stay in step with CONTENT_EXTS in
         # scripts/validate_frontmatter.py. A narrower pattern here means the hook
@@ -100,7 +106,13 @@ repos:
       - id: check-wordcount
         name: Word-count ceiling (>3000 fails, skip legacy)
         entry: python3 scripts/check_wordcount.py
-        language: system
+        # Same PyYAML pin as frontmatter-validator (blog-priv#56): this script
+        # also imports yaml, so under `language: system` it shared the same
+        # broken-on-a-clean-machine risk. voice_rules (its only local import) is
+        # stdlib-only and resolves via scripts/ on sys.path, so the managed venv
+        # needs nothing but pyyaml.
+        language: python
+        additional_dependencies: [pyyaml]
         pass_filenames: true
         files: ^content/posts/.*/index\.md$
         always_run: false
