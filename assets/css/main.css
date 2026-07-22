@@ -56,27 +56,30 @@ strong, b { font-weight: 550; }
   align-self: start;
   max-height: calc(100vh - 4rem);
   overflow-y: auto;
-  font-size: 0.95rem;
+  /* Sized so the full menu fits in-viewport on a 1366x768 laptop without an
+     internal scrollbar; overflow-y stays as a graceful fallback on shorter screens. */
+  font-size: 0.9rem;
 }
 .sidebar h1 { font-size: 1.1rem; font-weight: 550; margin-bottom: 1rem; }
 .sidebar h1 a.brand { color: var(--fg); text-decoration: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-.sidebar h1 a.brand img { height: 60px; width: auto; max-width: 100%; }
-.sidebar nav { margin-top: 1.25rem; }
+.sidebar h1 a.brand img { height: 40px; width: auto; max-width: 100%; }
+.sidebar nav { margin-top: 0.7rem; }
 .sidebar nav h2 {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--fg-muted);
-  margin: 1.25rem 0 0.4rem;
+  margin: 0.7rem 0 0.25rem;
   font-weight: 550;
 }
 .sidebar nav ul { list-style: none; }
-.sidebar nav li { margin: 0.2rem 0; }
+.sidebar nav li { margin: 0.05rem 0; }
 .sidebar nav a {
   color: var(--fg);
   text-decoration: none;
   display: block;
-  padding: 0.15rem 0;
+  line-height: 1.3;
+  padding: 0.06rem 0;
 }
 .sidebar nav a:hover, .sidebar nav a.active { color: var(--accent); }
 
