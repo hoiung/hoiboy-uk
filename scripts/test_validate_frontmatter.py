@@ -904,6 +904,15 @@ def test_non_string_date_is_rejected(monkeypatch, tmp_path, capsys):
     assert "date must be a date" in capsys.readouterr().err
 
 
+def test_non_string_lastmod_is_rejected(monkeypatch, tmp_path, capsys):
+    # The lastmod arm of the `for date_key in ("date", "lastmod")` type check:
+    # a mapping-valued lastmod is malformed the same way a mapping date is, and
+    # the date test alone does not exercise the lastmod arm (Ralph #56 Tier 2).
+    fm = POST_FM.replace("date: 2026-04-07", "date: 2026-04-07\nlastmod:\n  x: 1")
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    assert "lastmod must be a date" in capsys.readouterr().err
+
+
 def test_bare_scalar_tags_is_rejected(monkeypatch, tmp_path, capsys):
     # `tags: justastring` (no brackets) is a bare scalar, not a list; Hugo
     # ranges over a string character by character. The old parser stored it as
