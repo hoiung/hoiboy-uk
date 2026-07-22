@@ -542,41 +542,44 @@ def test_bracket_list_with_no_space_before_comment_still_parses_as_a_list():
     assert fm["tags"] == ["a"]
 
 
-# --- Differential gate: this parser vs real YAML -----------------------------
-# Rounds 16 through 22 each found a shape where parse_frontmatter and YAML
-# disagreed about whether `description` had a value, and each fix was a
-# hand-picked case that the next round defeated with a variant: null, then a
-# block scalar, then a block header ordering, then a trailing comment, then a
-# trailing comment with no space. Five rounds, five variants, one class.
+# --- Presence oracle: check_tree's _has_value vs real YAML --------------------
+# Rounds 16 through 22 on blog-priv#55 each found a shape where the OLD
+# hand-rolled parser and YAML disagreed about whether `description` had a value,
+# and each fix was a hand-picked case the next round defeated with a variant:
+# null, then a block scalar, then a block header ordering, then a trailing
+# comment, then a trailing comment with no space. Five rounds, five variants,
+# one class.
 #
-# So stop hand-picking. PyYAML is the oracle and it is already a test-time
-# dependency (requirements-dev.txt), which is why this lives in the tests and
-# not in the validator: production keeps the hand-rolled parser per the
-# operator's patch-and-ship decision, and blog-priv#56 tracks the swap.
-# What this buys is that a NEW divergence fails the suite instead of waiting
-# for a Ralph round to notice it.
+# blog-priv#56 ended the class by making parse_frontmatter itself yaml.safe_load,
+# so a parser-vs-YAML differential is now tautological (both sides ARE yaml).
+# What still CAN diverge is check_tree's presence decision - _has_value(), which
+# decides whether a parsed value counts as present for the required-field gate.
+# This matrix drives production's _has_value across ~292 real YAML shapes and
+# asserts it agrees with an INDEPENDENT presence oracle (_present below). Break
+# _has_value - drop the None check, forget the empty-collection case - and a
+# shape reddens here instead of waiting for a Ralph round or a shipped
+# near-duplicate.
 
 def _present(v: object) -> bool:
-    """Did YAML yield a value here, for the purpose of comparing two parsers?
+    """Independent presence oracle: did YAML yield a real value here?
 
-    KNOWN LIMIT of the gate below, and it is structural, not an oversight
-    (Ralph round 23). This function is applied to BOTH sides of the
-    comparison, so it can only catch the parser disagreeing with PyYAML. It
-    can never catch both agreeing while HUGO does something else, which is a
-    layer above YAML. That is exactly how a list-valued `description` slipped
-    through: `[x]` and `[x, y]` are already in the matrix below, both parsers
-    call them present, and Hugo still discards the field and serves the site
-    default. Hugo-semantics cases need their own explicit tests against a real
-    build; see test_list_valued_description_is_rejected.
+    Deliberately a SECOND implementation of the rule in production's
+    _has_value, so the matrix below is a genuine differential between the two,
+    not a tautology. KNOWN LIMIT (Ralph round 23, still true): presence is a
+    YAML-layer question, so neither this nor _has_value can catch both agreeing
+    while HUGO does something else - a list-valued or mapping-valued
+    `description` is "present" to YAML yet discarded by Hugo. Those Hugo-
+    semantics cases have their own explicit tests (test_list_valued_description
+    _is_rejected and the blog-priv#56 mapping/bool/int shape tests).
     """
     if v is None:
         return False
-    if isinstance(v, list):
+    if isinstance(v, (list, dict)):
         return len(v) > 0
     return str(v).strip() != ""
 
 
-def test_presence_matches_real_yaml_across_a_shape_matrix():
+def test_has_value_matches_real_yaml_across_a_shape_matrix():
     yaml = pytest.importorskip("yaml")
     import itertools
 
@@ -598,14 +601,19 @@ def test_presence_matches_real_yaml_across_a_shape_matrix():
             continue  # invalid YAML: the real Hugo build rejects it, not our problem
         compared += 1
         got = parse_frontmatter(f'---\ntitle: "x"\n{line}\n---\nbody\n').get("description")
-        if _present(got) != _present(expected):
+        # got == expected here (both parse through yaml.safe_load); the test is
+        # on production's _has_value against the independent oracle, not on parse.
+        if vf._has_value(got) != _present(expected):
             mismatches.append((raw, got, expected))
 
     assert compared > 250, f"matrix collapsed to {compared} cases; it is not exercising anything"
     assert not mismatches, (
-        "parse_frontmatter disagrees with real YAML about whether a description "
-        "exists, which is how every description-gate bypass in this issue "
-        f"happened:\n" + "\n".join(f"  {r!r}: ours={g!r} yaml={e!r}" for r, g, e in mismatches)
+        "check_tree's _has_value disagrees with the independent YAML presence "
+        "oracle, which is how every description-gate bypass in blog-priv#55 "
+        "happened:\n" + "\n".join(
+            f"  {r!r}: has_value={vf._has_value(g)!r} oracle={_present(e)!r}"
+            for r, g, e in mismatches
+        )
     )
 
 
