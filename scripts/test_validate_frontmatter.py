@@ -892,6 +892,39 @@ def test_dates_are_normalised_to_iso_strings():
     assert fm["lastmod"] == "2026-07-20" and isinstance(fm["lastmod"], str)
 
 
+def test_mapping_valued_date_is_caught(monkeypatch, tmp_path, capsys):
+    # date and lastmod are the only required-ish fields with NO downstream type
+    # guard (Hugo validates the date shape at build). So _has_value's empty-
+    # mapping handling is the ONLY thing that stops an empty `date: {}` counting
+    # as present at the gate. Guards the dict branch of _has_value (Ralph #56
+    # Tier 2): unlike description/title/tags, a mapping-valued date has no type
+    # check to catch it if presence is decided wrongly.
+    fm = POST_FM.replace("date: 2026-04-07", "date: {}")
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    err = capsys.readouterr().err
+    assert "missing" in err and "date" in err
+
+
+def test_datetime_valued_date_is_coerced_and_ordered(monkeypatch, tmp_path, capsys):
+    # PyYAML types `date: 2026-04-07 10:00:00` as a datetime.datetime (a
+    # datetime.date subclass). The coercion must render it to an ISO string so
+    # the lastmod<date check - a string compare guarded by isinstance(str) -
+    # still fires. The code comment calls the datetime-with-time shape out as
+    # deliberate; this exercises it end to end (Ralph #56 Tier 2).
+    fm = POST_FM.replace("date: 2026-04-07",
+                         "date: 2026-04-07 10:00:00\nlastmod: 2026-01-01")
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    assert "precedes date" in capsys.readouterr().err
+
+
+def test_empty_frontmatter_fence_fails(monkeypatch, tmp_path, capsys):
+    # An empty fence (`---\n---`) parses to None; parse_frontmatter returns {}
+    # so every required field reads as missing and the page fails, rather than
+    # returning None and being reported as having no frontmatter at all.
+    assert _run_one_post(monkeypatch, tmp_path, "---\n---\nbody\n") == 1
+    assert "missing" in capsys.readouterr().err
+
+
 def test_missing_pyyaml_fails_loud():
     # The whole point of #56: with PyYAML unavailable the gate fails loudly, it
     # does NOT silently degrade to a hand-rolled fallback that reintroduces the
