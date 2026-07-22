@@ -801,6 +801,17 @@ def test_tab_indented_block_continuation_is_rejected(monkeypatch, tmp_path, caps
     assert "invalid frontmatter YAML" in capsys.readouterr().err
 
 
+def test_non_mapping_frontmatter_is_rejected(monkeypatch, tmp_path, capsys):
+    # A fence that parses to a scalar or list, not a mapping (e.g. a stranded
+    # body with no keys), would crash check_tree's `fm.items()` if it reached
+    # it. parse_frontmatter raises ValueError, check_tree catches it, and the
+    # page fails with a clear message. Guards that ValueError branch (Ralph #56
+    # Tier 2, same class as the numeric-category and whitespace guards).
+    fm = "---\njust a stranded line, no keys\n---\nbody\n"
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    assert "invalid frontmatter YAML" in capsys.readouterr().err
+
+
 def test_mapping_valued_title_is_rejected(monkeypatch, tmp_path, capsys):
     # `title: {en: "..."}` renders an empty <title>/<h1>/og:title in Hugo. The
     # worst of the four shapes in the #56 issue comment: it blanks the page's
@@ -841,6 +852,18 @@ def test_mapping_valued_tags_is_rejected(monkeypatch, tmp_path, capsys):
     fm = POST_FM.replace("tags: [a]", "tags: {a: b}")
     assert _run_one_post(monkeypatch, tmp_path, fm) == 1
     assert "tags must be a list" in capsys.readouterr().err
+
+
+def test_numeric_category_items_are_reported_not_crashed(monkeypatch, tmp_path, capsys):
+    # PyYAML types `categories: [123]` (a typo/misuse) as a list with an int
+    # item; the old string-storing parser always yielded strings. The allowlist
+    # and duplicate comparisons str() each item so a non-string is reported as
+    # an unknown category rather than crashing the gate with AttributeError.
+    # [123, 123] exercises BOTH the unknown-category and duplicate str() wraps.
+    # Guards them against a revert (Ralph #56 Tier 2).
+    fm = POST_FM.replace("categories: [tech-ai]", "categories: [123, 123]")
+    assert _run_one_post(monkeypatch, tmp_path, fm) == 1
+    assert "unknown categories" in capsys.readouterr().err
 
 
 def test_whitespace_only_description_counts_as_missing(monkeypatch, tmp_path, capsys):
