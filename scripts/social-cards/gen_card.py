@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Generate 1200x630 social-share cards (retro type) for the text-card pages.
 
-Covers three card sets, all sharing one template:
+Covers four card sets, all sharing one template:
   - consulting  -> content/hire-hoi/ai-consultancy/<slug>/share-card.png   (cards.tsv)
   - legal       -> content/legal/<slug>/share-card.png        (legal-cards.tsv)
+  - hire-hoi    -> content/hire-hoi/<slug>/share-card.png      (hire-hoi-cards.tsv;
+                   the top-level Hire Hoi leaf pages, e.g. permanent-roles)
   - default     -> content/default-card.png                   (site-wide og:image
                    fallback for the home page + taxonomy / section index pages)
 
@@ -19,9 +21,9 @@ layouts/_partials/head.html picks up share-card.png as the page's og:image, and
 default-card.png as the site-wide fallback (both resized to 1200 wide, aspect
 preserved, so the 1200x630 source emits a correct 1.91:1 card).
 
-Usage:  python3 scripts/social-cards/gen_card.py [consulting] [legal] [default]
-        (no args = all three sets)
-Reads:  scripts/social-cards/cards.tsv, legal-cards.tsv (slug <TAB> title <TAB>
+Usage:  python3 scripts/social-cards/gen_card.py [consulting] [legal] [hire-hoi] [default]
+        (no args = all four sets)
+Reads:  scripts/social-cards/cards.tsv, legal-cards.tsv, hire-hoi-cards.tsv (slug <TAB> title <TAB>
         tagline [<TAB> style]); style is hoiboy (default) or agit.
 Deps:   rsvg-convert (librsvg), Pillow.  Re-run after editing a *.tsv.
 """
@@ -53,6 +55,7 @@ SIG_MARGIN = 64         # equal inset from BOTH the right and bottom edges
 REPO          = pathlib.Path(__file__).resolve().parents[2]      # repo root
 CONSULTING_TSV = REPO / "scripts" / "social-cards" / "cards.tsv"
 LEGAL_TSV      = REPO / "scripts" / "social-cards" / "legal-cards.tsv"
+HIRE_HOI_TSV   = REPO / "scripts" / "social-cards" / "hire-hoi-cards.tsv"
 FONTS = REPO / "scripts" / "social-cards" / "fonts"
 LOGO  = REPO / "assets" / "images" / "logo.png"
 
@@ -171,7 +174,7 @@ def gen_default(logo_uri):
 
 
 def main():
-    targets = sys.argv[1:] or ["consulting", "legal", "default"]
+    targets = sys.argv[1:] or ["consulting", "legal", "hire-hoi", "default"]
     for p in (LOGO, VT323_TTF, PLEX_R, PLEX_B):
         if not p.exists():
             sys.exit(f"missing required input: {p}")
@@ -181,6 +184,8 @@ def main():
         n += gen_section("hire-hoi/ai-consultancy", CONSULTING_TSV, logo_uri)
     if "legal" in targets:
         n += gen_section("legal", LEGAL_TSV, logo_uri)
+    if "hire-hoi" in targets:
+        n += gen_section("hire-hoi", HIRE_HOI_TSV, logo_uri)
     if "default" in targets:
         n += gen_default(logo_uri)
     print(f"generated {n} cards")
