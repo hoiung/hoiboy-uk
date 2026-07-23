@@ -1,6 +1,6 @@
 # V2 cash-engine offer architecture (consulting-ops#2 Phase 2).
 # Single source of truth for consulting-page external URLs + V2 pricing ladder.
-# Referenced from content/consulting/*/index.md as hardcoded literal values
+# Referenced from content/hire-hoi/ai-consultancy/*/index.md as hardcoded literal values
 # (verified via `grep -F '<value>'` per AC 2.5 verification rule); template-variable
 # reads `{{ .Site.Data.consulting.<key> }}` reserved for future migration.
 #
@@ -8,33 +8,33 @@
 # Numeric *_gbp keys are present per AC 2.1 spec; some are programmatic-check-only
 # (AC 2.5 carve-out: "OK if unread but document as such").
 #
-# Canonical detailed Pricing-Matrix + Billing reader (hoiboy-uk#40): content/consulting/pricing-billing/index.md
+# Canonical detailed Pricing-Matrix + Billing reader (hoiboy-uk#40): content/hire-hoi/ai-consultancy/pricing-billing/index.md
 #
-#  - business.legal_name                                              -> content/consulting/<slug>/index.md (legal footer)
-#  - business.companies_house                                         -> content/consulting/<slug>/index.md (legal footer)
-#  - business.vat_number                                              -> content/consulting/<slug>/index.md (legal footer; null until HMRC issuance)
+#  - business.legal_name                                              -> content/hire-hoi/ai-consultancy/<slug>/index.md (legal footer)
+#  - business.companies_house                                         -> content/hire-hoi/ai-consultancy/<slug>/index.md (legal footer)
+#  - business.vat_number                                              -> content/hire-hoi/ai-consultancy/<slug>/index.md (legal footer; null until HMRC issuance)
 #  - harness_architect.calcom_booking                                 -> layouts/_shortcodes/consulting-cta.html (CTA href)
 #  - harness_architect.company_audit.day_rate_gbp                    -> AC 2.5 carve-out: optional programmatic check; currently unread
-#  - harness_architect.company_audit.day_rate_display                -> content/consulting/<slug>/index.md + pricing-billing (audit bullet/row, literal "1,500 per day")
-#  - harness_architect.company_audit.typical_days.tier_5_to_10       -> content/consulting/<slug>/index.md + pricing-billing (day-band guidance, "1 day")
-#  - harness_architect.company_audit.typical_days.tier_10_to_50      -> content/consulting/<slug>/index.md + pricing-billing (day-band guidance, "2-3 days" / "2 to 3 days")
-#  - harness_architect.company_audit.typical_days.tier_50_plus       -> content/consulting/<slug>/index.md + pricing-billing (50+ scoped and quoted at discovery; published band retired per OD-17)
-#  - harness_architect.per_harness_audit.price_gbp_default           -> content/consulting/<slug>/index.md (per-harness audit bullet, literal £750)
-#  - harness_architect.per_harness_audit.price_display_default       -> content/consulting/<slug>/index.md (per-harness audit bullet, literal "750")
-#  - harness_architect.foundation_setup.base_price_gbp               -> content/consulting/<slug>/index.md (foundation bullet, literal £3,000)
-#  - harness_architect.foundation_setup.base_days                    -> content/consulting/<slug>/index.md (foundation bullet, literal "2 days")
-#  - harness_architect.foundation_setup.additional_day_rate_gbp      -> content/consulting/<slug>/index.md (foundation bullet, literal £1,500/extra)
-#  - harness_architect.foundation_setup.max_days                     -> content/consulting/<slug>/index.md (foundation bullet, literal "4 days max")
-#  - harness_architect.tier_1_first_month_support.included           -> content/consulting/<slug>/index.md (Tier 1 bullet) + consulting-ops/templates/sow-harness-architect.md §[Refund]
+#  - harness_architect.company_audit.day_rate_display                -> content/hire-hoi/ai-consultancy/<slug>/index.md + pricing-billing (audit bullet/row, literal "1,500 per day")
+#  - harness_architect.company_audit.typical_days.tier_5_to_10       -> content/hire-hoi/ai-consultancy/<slug>/index.md + pricing-billing (day-band guidance, "1 day")
+#  - harness_architect.company_audit.typical_days.tier_10_to_50      -> content/hire-hoi/ai-consultancy/<slug>/index.md + pricing-billing (day-band guidance, "2-3 days" / "2 to 3 days")
+#  - harness_architect.company_audit.typical_days.tier_50_plus       -> content/hire-hoi/ai-consultancy/<slug>/index.md + pricing-billing (50+ scoped and quoted at discovery; published band retired per OD-17)
+#  - harness_architect.per_harness_audit.price_gbp_default           -> content/hire-hoi/ai-consultancy/<slug>/index.md (per-harness audit bullet, literal £750)
+#  - harness_architect.per_harness_audit.price_display_default       -> content/hire-hoi/ai-consultancy/<slug>/index.md (per-harness audit bullet, literal "750")
+#  - harness_architect.foundation_setup.base_price_gbp               -> content/hire-hoi/ai-consultancy/<slug>/index.md (foundation bullet, literal £3,000)
+#  - harness_architect.foundation_setup.base_days                    -> content/hire-hoi/ai-consultancy/<slug>/index.md (foundation bullet, literal "2 days")
+#  - harness_architect.foundation_setup.additional_day_rate_gbp      -> content/hire-hoi/ai-consultancy/<slug>/index.md (foundation bullet, literal £1,500/extra)
+#  - harness_architect.foundation_setup.max_days                     -> content/hire-hoi/ai-consultancy/<slug>/index.md (foundation bullet, literal "4 days max")
+#  - harness_architect.tier_1_first_month_support.included           -> content/hire-hoi/ai-consultancy/<slug>/index.md (Tier 1 bullet) + consulting-ops/templates/sow-harness-architect.md §[Refund]
 #  - harness_architect.tier_1_first_month_support.forfeit_on_refund  -> consulting-ops/templates/sow-harness-architect.md §[Refund] (Tier 1 forfeit clause)
-#  - harness_architect.tier_1_first_month_support.hours_per_harness  -> content/consulting/<slug>/index.md (Tier 1 bullet, literal "8 hours") + consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 1]
-#  - harness_architect.tier_1_first_month_support.scope_text         -> content/consulting/<slug>/index.md (Tier 1 bullet)
-#  - harness_architect.tier_2_hourly_pack.pack_price_gbp             -> content/consulting/<slug>/index.md (Tier 2 bullet, literal £1,500) + consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 2]
-#  - harness_architect.tier_2_hourly_pack.pack_hours                 -> content/consulting/<slug>/index.md (Tier 2 bullet, literal "10 hours") + consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 2]
+#  - harness_architect.tier_1_first_month_support.hours_per_harness  -> content/hire-hoi/ai-consultancy/<slug>/index.md (Tier 1 bullet, literal "8 hours") + consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 1]
+#  - harness_architect.tier_1_first_month_support.scope_text         -> content/hire-hoi/ai-consultancy/<slug>/index.md (Tier 1 bullet)
+#  - harness_architect.tier_2_hourly_pack.pack_price_gbp             -> content/hire-hoi/ai-consultancy/<slug>/index.md (Tier 2 bullet, literal £1,500) + consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 2]
+#  - harness_architect.tier_2_hourly_pack.pack_hours                 -> content/hire-hoi/ai-consultancy/<slug>/index.md (Tier 2 bullet, literal "10 hours") + consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 2]
 #  - harness_architect.tier_2_hourly_pack.rate_per_hour_gbp          -> consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 2] hourly rate
 #  - harness_architect.tier_2_hourly_pack.open_scope                 -> consulting-ops/templates/sow-harness-architect.md §[Scope - Tier 2] open-scope flag
-#  - harness_architect.monthly_maintenance_package.per_harness_mtm_gbp     -> content/consulting/<slug>/index.md (Tier 3 bullet, literal £200/mo) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package]
-#  - harness_architect.monthly_maintenance_package.per_harness_annual_gbp  -> content/consulting/<slug>/index.md (Tier 3 bullet, literal £170/mo annual) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package]
+#  - harness_architect.monthly_maintenance_package.per_harness_mtm_gbp     -> content/hire-hoi/ai-consultancy/<slug>/index.md (Tier 3 bullet, literal £200/mo) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package]
+#  - harness_architect.monthly_maintenance_package.per_harness_annual_gbp  -> content/hire-hoi/ai-consultancy/<slug>/index.md (Tier 3 bullet, literal £170/mo annual) + consulting-ops/templates/sow-harness-architect.md §[Scope - Monthly Maintenance Package]
 #  - harness_architect.monthly_maintenance_package.overage_rate_gbp        -> consulting-ops/templates/sow-harness-architect.md §[Scope] overage clause (AC 4.7, literal £150/h)
 #  - harness_architect.monthly_maintenance_package.monthly_hours_cap       -> consulting-ops/templates/sow-harness-architect.md §[Scope] cap clause (AC 4.7, literal "2.5 hours per harness per month")
 #  - harness_architect.monthly_maintenance_package.rollover                -> consulting-ops/templates/sow-harness-architect.md §[Scope] no-rollover clause (AC 4.7)
@@ -50,7 +50,7 @@ business:
 # Business Automation Services offer (consulting-ops#19). Same discovery call as the harness
 # offer (one Cal.com event triages both), so calcom_booking reuses the live URL.
 # Read by: layouts/_shortcodes/consulting-cta.html (CTA href, via offer="automation_services")
-#          -> content/consulting/automation-services/index.md.
+#          -> content/hire-hoi/ai-consultancy/automation-services/index.md.
 automation_services:
   calcom_booking: "https://cal.eu/hoiboyuk/discovery"
 
