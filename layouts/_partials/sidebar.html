@@ -12,10 +12,10 @@
       {{- end -}}
     </ul>
     {{- with site.Menus.consulting -}}
-    <h2>Consulting</h2>
+    <h2>Hire Hoi</h2>
     <ul class="consulting-menu">
       {{- range . -}}
-        <li><a href="{{ .URL }}" class="cta-link{{ if eq $.RelPermalink .URL }} active{{ end }}">{{ .Name | safeHTML }}</a></li>
+        <li><a href="{{ .URL }}" class="cta-link{{ if hasPrefix $.RelPermalink .URL }} active{{ end }}">{{ .Name | safeHTML }}</a></li>
       {{- end -}}
     </ul>
     {{- end -}}
