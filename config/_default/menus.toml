@@ -7,39 +7,18 @@
   weight = 10
 
 [[consulting]]
-  name = 'Work with Hoi <span class="mark-yellow">★</span>'
-  url = "/consulting/work-with-hoi/"
-  weight = 5
-
-[[consulting]]
-  # Two .cta-line spans force 2-line wrap on desktop sidebar via CSS
-  # display:block at min-width:769px; on mobile they stay inline and the
-  # literal space between them is the word separator. Span approach avoids
-  # the <br>+whitespace minifier trap (tdewolff strips whitespace adjacent
-  # to <br> in production builds). Single-quoted TOML literal string
-  # avoids escaping the inner double quotes.
-  name = '<span class="cta-line">AI Managed</span> <span class="cta-line">Harness Services</span>'
-  url = "/consulting/claude-code-harness-architect/"
+  name = 'AI Consultancy <span class="mark-yellow">★</span>'
+  url = "/hire-hoi/ai-consultancy/"
   weight = 10
 
 [[consulting]]
-  name = '<span class="cta-line">Business Automation</span> <span class="cta-line">Services</span>'
-  url = "/consulting/automation-services/"
+  name = "ICT Consultancy"
+  url = "/hire-hoi/ict-consultancy/"
   weight = 20
 
 [[consulting]]
-  name = "AI Adoption Training"
-  url = "/consulting/ai-adoption-training/"
-  weight = 22
-
-[[consulting]]
-  name = "Pricing & Billing"
-  url = "/consulting/pricing-billing/"
-  weight = 25
-
-[[consulting]]
-  name = 'Portfolio <span class="mark-green">★</span>'
-  url = "/consulting/portfolio/"
+  name = 'Permanent Roles <span class="mark-green">★</span>'
+  url = "/hire-hoi/permanent-roles/"
   weight = 30
 
 [[categories]]

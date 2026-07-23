@@ -83,14 +83,6 @@ strong, b { font-weight: 550; }
 .mark-green { color: #2ea043; }
 .mark-red { color: #e5322d; }
 
-/* Consulting menu link inherits default nav styling. The label is split into
-   two .cta-line spans; on desktop they become block-level (forcing a 2-line
-   wrap), on mobile they stay inline so the link renders on a single line.
-   Desktop block toggle lives in the min-width:769px media query below. */
-@media (min-width: 769px) {
-  .consulting-menu .cta-line { display: block; }
-}
-
 .main { min-width: 0; max-width: 42rem; }
 .breadcrumbs {
   font-size: 0.85rem;
