@@ -1,5 +1,6 @@
-# Sidebar nav. Flat, constant size. Locked in docs/research/06_TAXONOMY.md.
-# Order matters: top section, consulting, categories, social.
+# Sidebar nav. Flat, constant size. Only the category nav is specified in
+# docs/research/06_TAXONOMY.md; the Hire Hoi, community, and social sections are not.
+# Order matters: top (Home), Hire Hoi, categories, community, social.
 
 [[main]]
   name = "Home"

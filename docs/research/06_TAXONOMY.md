@@ -67,6 +67,8 @@ Sidebar shows category names only. Clicking a category goes to its landing page 
 
 **Why flat and not a tree**: at hundreds of posts the tree sidebar gets visually unwieldy and ships a huge DOM on every page. Putting the post list in the main content area scales forever, loads faster, is mobile-friendly.
 
+**Update (2026-07-23, blog-priv#59):** the sidebar has since grown beyond the category nav this doc specifies. It now also carries a **Hire Hoi** section (AI Consultancy, ICT Consultancy, Permanent Roles) above the categories, plus a Join Community section and social links. Those sections are defined in `config/_default/menus.toml`, not here; this doc remains authoritative for the category nav only.
+
 ## Category landing pages (main content area)
 
 When you click "Food", the main content area shows posts grouped by year (newest first):
