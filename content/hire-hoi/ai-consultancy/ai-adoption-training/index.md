@@ -34,7 +34,7 @@ Why am I qualified for this, you may ask? Hm, good question. Probably because I 
 
 ## Pricing summary
 
-Same engine as everything I sell: a free discovery call, then a paid programme design, then delivery quoted off that design. The design is the scoping work. It produces your delivery plan and one number, before delivery starts, whether that lands as a single day with your team or a programme over several weeks. No public rate card here, because the programme is built around your people, not off a shelf. Full pricing and billing terms across all three services are on the [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/consulting/work-with-hoi" >}}).
+Same engine as everything I sell: a free discovery call, then a paid programme design, then delivery quoted off that design. The design is the scoping work. It produces your delivery plan and one number, before delivery starts, whether that lands as a single day with your team or a programme over several weeks. No public rate card here, because the programme is built around your people, not off a shelf. Full pricing and billing terms across all three services are on the [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}).
 
 {{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}} {{< smallprint >}}<-- (Please <strong>click</strong> if you are a fun-yet-serious decision maker or their trusted second, who has no time for bullshit and needs to get things done.){{< /smallprint >}}
 

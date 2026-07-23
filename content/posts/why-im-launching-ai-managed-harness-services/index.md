@@ -89,7 +89,7 @@ The whole point is to bring AI adoption up to where its real capability lives. R
 
 So that is what I am launching.
 
-It is called **AI Managed Harness Services** and you can [read the whole offer here](/consulting/claude-code-harness-architect/). The full breakdown is on the page, but the shape is: a free 20-minute discovery call to see if there is a fit, then an audit-first ladder (your company structure, your foundation, then one harness at a time per trade or workflow), then an ongoing Monthly Maintenance Package once the harnesses are in production. Sequential. Audit-led. No 50-page strategy deck. Real builds, owned by you.
+It is called **AI Managed Harness Services** and you can [read the whole offer here](/hire-hoi/ai-consultancy/claude-code-harness-architect/). The full breakdown is on the page, but the shape is: a free 20-minute discovery call to see if there is a fit, then an audit-first ladder (your company structure, your foundation, then one harness at a time per trade or workflow), then an ongoing Monthly Maintenance Package once the harnesses are in production. Sequential. Audit-led. No 50-page strategy deck. Real builds, owned by you.
 
 UK-based. International clients welcome (travel at cost, no markup, I'm not in this to profit on expenses).
 
@@ -103,7 +103,7 @@ I am opening up a discount for the first three clients to come through the door.
 
 I have spent months building the playbook for AI Managed Harness Services. The shape of it works. But until I have run real clients through it end to end, I will not know exactly where some of the friction points are. The first three engagements are how I find that friction and tune it out. You get a real harness build at a discounted rate. I get to fine-tune the workflow before the playbook hardens into its final shape. Mutual benefit. Honest trade.
 
-If that sounds like you, the discovery-call link is on the [AI Managed Harness Services page](/consulting/claude-code-harness-architect/). 20 minutes, free, no pitch deck.
+If that sounds like you, the discovery-call link is on the [AI Managed Harness Services page](/hire-hoi/ai-consultancy/claude-code-harness-architect/). 20 minutes, free, no pitch deck.
 
 What are you waiting for? Go go go!
 

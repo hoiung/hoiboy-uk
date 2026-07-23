@@ -21,7 +21,7 @@ This service exists because I asked around to understand what the market wants a
 
 Same delivery engine as my AI Managed Harness work. The difference is the shape: sometimes a simpler interface, sometimes fully automating routine work away so people rarely touch it, always with documented manuals and a clean handover so you own it and can drop it when you are done.
 
-For automation engagements the pricing is two steps. Requirements first, at £1,500 per day + VAT (1-3 days by scope, sized on the discovery call), then a day-scoped drawdown budget instead of a fixed per-phase price: I map your goals to build time, deliberately leaving headroom so the work does not stop mid-build, and I draw down from that budget as we go (full terms on the [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}) page).
+For automation engagements the pricing is two steps. Requirements first, at £1,500 per day + VAT (1-3 days by scope, sized on the discovery call), then a day-scoped drawdown budget instead of a fixed per-phase price: I map your goals to build time, deliberately leaving headroom so the work does not stop mid-build, and I draw down from that budget as we go (full terms on the [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}) page).
 
 ## How it works
 
@@ -31,7 +31,7 @@ I deliver automation as a short sequence of phases. Each phase closes before the
 2. **Requirements.** I sit with the relevant people and map the by-hand workflow end to end: what gets automated, what stays human-in-the-loop and always attended (the judgment calls stay with your people), the data in and out, and the success criteria. This phase produces the day-scoped drawdown budget.
 3. **Build.** I build the automation against the requirements, one workflow at a time, with governance and guardrails baked in, and draw down from the budget as increments are completed and signed off. The routine toil ends up running unattended, so your team rarely has to touch it.
 4. **Deployment.** I roll the automation out to the agreed users, write the documented manuals (baked in, so the team can ask it "how do I use you for X?"), and run a short handover so your team can operate it without me. You own the result.
-5. **Support (optional, always offered).** Once a job is signed off as complete, ongoing support is always on the table, on whichever terms suit you (full options on the [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}) page). Like all hardware and software, shit breaks and needs fixing, sometimes for a clear reason and sometimes for none at all. The support door stays open for as long as you want it, and you can stop the moment you no longer need it.
+5. **Support (optional, always offered).** Once a job is signed off as complete, ongoing support is always on the table, on whichever terms suit you (full options on the [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}) page). Like all hardware and software, shit breaks and needs fixing, sometimes for a clear reason and sometimes for none at all. The support door stays open for as long as you want it, and you can stop the moment you no longer need it.
 
 ## What you need to get started
 
@@ -47,7 +47,7 @@ Built for owner-operator teams of roughly 10 to 50 people who feel understaffed 
 
 ## Pricing summary
 
-Requirements is £1,500 per day + VAT (1-3 days by scope), billed upfront, and the build then runs as a day-scoped drawdown budget rather than a fixed-fee phase ladder. Full pricing and billing terms are on the [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/consulting/work-with-hoi" >}}).
+Requirements is £1,500 per day + VAT (1-3 days by scope), billed upfront, and the build then runs as a day-scoped drawdown budget rather than a fixed-fee phase ladder. Full pricing and billing terms are on the [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}).
 
 <!-- iamhoiend -->
 

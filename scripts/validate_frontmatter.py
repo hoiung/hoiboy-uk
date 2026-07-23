@@ -59,7 +59,7 @@ ALLOWED_CATEGORIES = {"food-booze", "adventure", "dance", "tech-ai", "life", "en
 CONTENT_EXTS = (".md", ".markdown", ".html")
 ROOT = Path(__file__).resolve().parent.parent
 POSTS = ROOT / "content" / "posts"
-CONSULTING = ROOT / "content" / "consulting"
+CONSULTING = ROOT / "content" / "hire-hoi"
 
 
 def parse_frontmatter(text: str) -> dict[str, object] | None:

@@ -58,7 +58,7 @@ This is what the industry has quietly converged on. Simon Willison [calls the wh
 
 Put simply, a harness is a hybrid: deterministic scaffolding (the schemas, validators, and tool calls above, which run the same way every time) wrapped around the probabilistic LLM, and you drive the whole thing through the Claude Code CLI rather than a normal chat window.
 
-{{< zoom-image src="/consulting/claude-code-harness-architect/harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your experts. A human checkpoint sits outside the rings." title="A harness is a hybrid: deterministic scaffolding wrapped around the probabilistic model" >}}
+{{< zoom-image src="/hire-hoi/ai-consultancy/claude-code-harness-architect/harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your experts. A human checkpoint sits outside the rings." title="A harness is a hybrid: deterministic scaffolding wrapped around the probabilistic model" >}}
 
 ## We accidentally built one
 

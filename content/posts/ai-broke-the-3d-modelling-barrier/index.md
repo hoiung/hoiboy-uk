@@ -28,7 +28,7 @@ Then a client changed the question for me.
 
 They run an architecture and design studio, and they asked something a lot of people are asking right now: could AI automate their 3D design work? They spend real money and time getting each space visualised, and they wondered if a machine could take some of that on.
 
-Instead of guessing, I built them a demo. Three days. (The full story of that job, including why I ended up advising them not to take it further, is over on my [Singer & Steel case study](/consulting/portfolio/singerandsteel/) if you want the deeper read.) For this post, park the client outcome. The bit that stuck with ME was what happened while I was building the thing.
+Instead of guessing, I built them a demo. Three days. (The full story of that job, including why I ended up advising them not to take it further, is over on my [Singer & Steel case study](/hire-hoi/ai-consultancy/portfolio/singerandsteel/) if you want the deeper read.) For this post, park the client outcome. The bit that stuck with ME was what happened while I was building the thing.
 
 I set up both SketchUp and Blender and drove them with AI, comparing how each one performed, how fiddly each was to set up, and how well each one could be automated. I wired the rendering up with my own Claude Code harness ([SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness)) and let it handle the corners of Blender I have bounced off for two decades.
 
@@ -72,7 +72,7 @@ I have written before about how [learning AI itself is hard](/posts/learning-ai-
 
 Here is what has actually changed for me. For twenty years, 3D modelling sat in the "one day, maybe, if I ever have a spare year" pile. A tool I respected from a distance and never committed to. That pile looks different now. The stuff that used to need a year of runway before you got anything useful out, you can start on this week.
 
-I am not telling anyone to go and fire their 3D artist. The expert who has done the reps still runs rings around a beginner with an AI, and for real professional work that gap matters (that was half the point of the [Singer & Steel job](/consulting/portfolio/singerandsteel/)). But the door that was bolted shut for most people is open now. A free tool, an old laptop, and an AI that has already read the manual so you do not have to start there.
+I am not telling anyone to go and fire their 3D artist. The expert who has done the reps still runs rings around a beginner with an AI, and for real professional work that gap matters (that was half the point of the [Singer & Steel job](/hire-hoi/ai-consultancy/portfolio/singerandsteel/)). But the door that was bolted shut for most people is open now. A free tool, an old laptop, and an AI that has already read the manual so you do not have to start there.
 
 Twenty years I bounced off these things. Turns out I just needed a different way in.
 

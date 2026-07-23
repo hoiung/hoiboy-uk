@@ -8,7 +8,7 @@ hideDate: true
 <!-- iamhoi-claims
 Every personal "I built / I shipped / I run / I designed" claim on this page is listed here with a verifiable URL. Stage 5 audit greps this block, tallies it against page claims, and flags anything unmatched.
 
-(No URL-backed personal product claims remain on this page: the "Why me" credibility section, and the SST3 / Ralph Review Trio / ebay-seller-tool / trading-platform claims it carried, relocated to the Work with Hoi front-door page (content/consulting/work-with-hoi/index.md) per issue #40. The claims-tally block moved with them.)
+(No URL-backed personal product claims remain on this page: the "Why me" credibility section, and the SST3 / Ralph Review Trio / ebay-seller-tool / trading-platform claims it carried, relocated to the Work with Hoi front-door page (content/hire-hoi/ai-consultancy/work-with-hoi/index.md) per issue #40. The claims-tally block moved with them.)
 -->
 
 <!-- iamhoi -->
@@ -169,7 +169,7 @@ Per-harness builds and rollouts typically land between £12K and £30K + VAT dep
 
 <!-- iamhoi -->
 
-The numbers above (the audit day rate, foundation, the per-harness build band, the Monthly Maintenance Package) are the harness positioning prices. Full pricing and billing terms, across all three services, are on the [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/consulting/work-with-hoi" >}}).
+The numbers above (the audit day rate, foundation, the per-harness build band, the Monthly Maintenance Package) are the harness positioning prices. Full pricing and billing terms, across all three services, are on the [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}).
 
 <!-- iamhoiend -->
 

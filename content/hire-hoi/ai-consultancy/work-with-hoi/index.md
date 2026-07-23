@@ -31,11 +31,11 @@ In a sense, I am basically a pencil sharpener. My value is helping your team bec
 
 Three ways I can help, depending on what you need:
 
-- **[AI Managed Harness Services]({{< ref "/consulting/claude-code-harness-architect" >}})**: a custom AI harness that automates your routine work, built audit-first and kept running.
-- **[Business Automation Services]({{< ref "/consulting/automation-services" >}})**: done-for-you automation, for when you would rather I build it than learn it.
-- **[AI Adoption Training]({{< ref "/consulting/ai-adoption-training" >}})**: done-with-you training, so your team learns to use AI properly on their real work.
+- **[AI Managed Harness Services]({{< ref "/hire-hoi/ai-consultancy/claude-code-harness-architect" >}})**: a custom AI harness that automates your routine work, built audit-first and kept running.
+- **[Business Automation Services]({{< ref "/hire-hoi/ai-consultancy/automation-services" >}})**: done-for-you automation, for when you would rather I build it than learn it.
+- **[AI Adoption Training]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-training" >}})**: done-with-you training, so your team learns to use AI properly on their real work.
 
-All three run on the same engine (free discovery call, paid scoping step, delivery priced off the scoping), and the numbers for every step live in one place: [Pricing & Billing]({{< ref "/consulting/pricing-billing" >}}).
+All three run on the same engine (free discovery call, paid scoping step, delivery priced off the scoping), and the numbers for every step live in one place: [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}).
 
 A lot of AI gets built the wrong way round: the solution gets built first (code is cheap now, anyone can vibe-code an app), then someone tries to fit your problem into it. I work the other way. I start from your customer's experience and what your business needs right now and in the near future, then work backwards to a solution that fits YOUR problem. AI can build almost anything these days; the real value is gluing the pieces together in the right order for you. That is exactly why the paid scoping step exists: I spend that time understanding your business before anything gets built.
 
@@ -125,7 +125,7 @@ That is what I am building for you. Not a pretty thing. A working thing.
 
 <!-- iamhoi -->
 
-I built my own multi-agent harness and run it on every repo I own (linked on the blog post about it). Solo workflow, three-tier review loop, subagent swarm pattern, governance hooks. I dogfood it daily. Below are just a few samples from the full list. You can also check out [my portfolio]({{< ref "/consulting/portfolio" >}}) to see what I am doing or have done for other clients.
+I built my own multi-agent harness and run it on every repo I own (linked on the blog post about it). Solo workflow, three-tier review loop, subagent swarm pattern, governance hooks. I dogfood it daily. Below are just a few samples from the full list. You can also check out [my portfolio]({{< ref "/hire-hoi/ai-consultancy/portfolio" >}}) to see what I am doing or have done for other clients.
 
 [Ralph Review Trio](https://hoiboy.uk/posts/shipping-ralph-review-trio/), one of the skills from that harness, ships as a public Claude Code plugin. It has caught real bugs in its own shipping and in the private codebases it reviews.
 

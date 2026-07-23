@@ -65,7 +65,7 @@ That is Anthropic, in their own words, confirming what I have been saying for ni
 
 A harness is the wrapper around the general model. The prompts that tell it your job. The tools it is allowed to touch. The data it sees. The permissions that stop it doing something stupid. The evaluation loops that catch when it lies. The retry logic. The bits that say no.
 
-{{< zoom-image src="/consulting/claude-code-harness-architect/harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your experts. A human checkpoint sits outside the rings." title="What the harness wraps around the general model" >}}
+{{< zoom-image src="/hire-hoi/ai-consultancy/claude-code-harness-architect/harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your experts. A human checkpoint sits outside the rings." title="What the harness wraps around the general model" >}}
 
 That wrapper is where your trade's governance lives.
 

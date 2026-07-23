@@ -52,7 +52,7 @@ Quick name decode, because people keep asking.
 
 Short version: it's a Single-Source-of-Truth methodology framework plus a stack of scripts, templates, and quality gates that turn raw Claude Code (or any LLM) into something you can ACTUALLY work with on real work.
 
-{{< zoom-image src="/consulting/claude-code-harness-architect/harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your experts. A human checkpoint sits outside the rings." title="SST3 is the harness wrapped around the AI" >}}
+{{< zoom-image src="/hire-hoi/ai-consultancy/claude-code-harness-architect/harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your experts. A human checkpoint sits outside the rings." title="SST3 is the harness wrapped around the AI" >}}
 
 Do I fully trust it? Absolutely not. And honestly, you should NEVER fully trust AI. That's rule number one. It doesn't matter how good the harness is, how shiny the guardrails are, how many reviews you stack. You always keep a human eye on it.
 
