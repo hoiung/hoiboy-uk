@@ -3,7 +3,7 @@ title: "Hire Hoi"
 description: "Three ways to work with Hoi: AI consultancy for owner-operator teams, ICT consultancy, and permanent AI Product Engineer roles. Pick the track that fits."
 ---
 
-Three ways to hire me. Pick the track that fits, or use the menu.
+Three tracks. Pick the one that fits, or use the menu.
 
 ## AI Consultancy
 
@@ -19,6 +19,6 @@ Wider ICT consultancy for teams that need more than AI. More detail coming soon.
 
 ## Permanent Roles
 
-Open to the right permanent role, on the right terms. What I am looking for, plus my CV to view or download.
+Open to the right permanent role, on the right terms. The details, plus a CV to view or download.
 
 [See Permanent Roles](/hire-hoi/permanent-roles/)

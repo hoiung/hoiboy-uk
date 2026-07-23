@@ -32,7 +32,7 @@ repos:
       # title/description. `description` is REQUIRED since blog-priv#55
       # Phase 2 - without it a page inherits the site-default meta
       # description and ships as a near-duplicate. SEO hygiene, not a GEO
-      # lever. The files: regex must cover content/consulting/ too,
+      # lever. The files: regex must cover content/hire-hoi/ too,
       # or the gate never fires on a new project page.
       - id: frontmatter-validator
         name: Validate post and project-page frontmatter (incl. description)
@@ -52,7 +52,7 @@ repos:
         # (?i) so a .MD / .HTML file fires the hook. validate_frontmatter.py
         # matches on p.suffix.lower(), so without this the validator would walk
         # a file the hook never fires on.
-        files: (?i)^content/(posts|consulting)/.*\.(md|markdown|html)$
+        files: (?i)^content/(posts|hire-hoi)/.*\.(md|markdown|html)$
       - id: lychee-allowlist-expiry
         name: Lychee allowlist entries are within their stated expiry
         entry: python3 scripts/check_lychee_expiry.py
@@ -80,7 +80,7 @@ repos:
         entry: python3 scripts/check-iamhoi-wrapping.py --check-only-new
         language: system
         pass_filenames: true
-        files: ^content/posts/.*\.md$
+        files: ^content/(posts|hire-hoi)/.*\.md$
       - id: check-emdash-zero-tolerance
         name: Em-dash zero-tolerance guard (CI parity; blocks docs/ em dashes locally)
         # CI parity for the ci.yml "Em-dash voice guard (zero tolerance)" step via the
