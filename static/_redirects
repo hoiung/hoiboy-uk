@@ -1,0 +1,7 @@
+# blog-priv#59: Consulting -> Hire Hoi URL migration. The old /consulting/* tree
+# now lives at /hire-hoi/ai-consultancy/*. Explicit 301 (permanent) so search
+# engines and externally cached share-cards follow the move.
+# The bare /consulting (no trailing slash) needs its own rule: the wildcard below
+# does not match a slash-less path, and there is no custom 404 to catch it.
+/consulting /hire-hoi/ai-consultancy/ 301
+/consulting/* /hire-hoi/ai-consultancy/:splat 301
