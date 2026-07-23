@@ -205,7 +205,7 @@ def test_main_rejects_a_tree_that_yields_nothing(monkeypatch, tmp_path, capsys):
 
 # --- Walk coverage: a skipped page passes by omission, which is a false PASS ---
 # Regression tests for a Ralph Tier-2 finding: the walk originally matched only
-# `index.md`, so a flat single page under content/consulting/ was never read and
+# `index.md`, so a flat single page under content/hire-hoi/ was never read and
 # the gate reported success without ever checking it.
 
 def _flat(root: Path, name: str, text: str) -> None:

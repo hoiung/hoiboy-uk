@@ -2,12 +2,12 @@
 """Frontmatter contract for hoiboy.uk posts and project pages.
 
 Posts (content/posts/)            required: title, date, categories, tags, description
-Project pages (content/consulting/) required: title, description
+Project pages (content/hire-hoi/) required: title, description
 
 Phase 0 inline schema. 08_FRONTMATTER_SCHEMA.md is deferred to Phase 1
 once real WordPress posts shape the schema.
 
-Walks content/posts/ and content/consulting/, parses YAML frontmatter with
+Walks content/posts/ and content/hire-hoi/, parses YAML frontmatter with
 PyYAML, validates required fields. Fails loudly.
 
 `description` became REQUIRED on 2026-07-20 (blog-priv#55 Phase 2). Before
@@ -40,7 +40,7 @@ except ImportError as exc:  # exercised via a subprocess in the tests
     ) from exc
 
 REQUIRED = {"title", "date", "categories", "tags", "description"}
-# Project/service pages under content/consulting/ (including portfolio/<client>/).
+# Project/service pages under content/hire-hoi/ (including portfolio/<client>/).
 # Intentionally NOT the post contract - see module docstring.
 CONSULTING_REQUIRED = {"title", "description"}
 # Optional fields (informational schema, not enforced for backward compat).
@@ -54,7 +54,7 @@ ALLOWED_CATEGORIES = {"food-booze", "adventure", "dance", "tech-ai", "life", "en
 # Content formats Hugo renders natively. Kept identical to CONTENT_EXTS in
 # scripts/check_social_cards.py: a walk narrower than this silently skips real
 # pages, and a skipped page passes the contract by omission rather than by
-# compliance. Matching only `index.md` would miss a flat `content/consulting/x.md`
+# compliance. Matching only `index.md` would miss a flat `content/hire-hoi/x.md`
 # single page entirely.
 CONTENT_EXTS = (".md", ".markdown", ".html")
 ROOT = Path(__file__).resolve().parent.parent
@@ -134,7 +134,7 @@ def check_tree(root: Path, required: set[str], check_categories: bool,
 
     Walks EVERY natively-rendered content file (CONTENT_EXTS), not just
     `index.md`. A filename-specific walk skips flat single pages such as
-    `content/consulting/thing.md`, and a skipped page passes by omission
+    `content/hire-hoi/thing.md`, and a skipped page passes by omission
     rather than by compliance, which is a false PASS.
 
     `include_section_pages` controls whether `_index.*` branch bundles are

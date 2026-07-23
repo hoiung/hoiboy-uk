@@ -10,7 +10,7 @@ instead of falling back to a personal face photo.
 `gen_card.py` renders three card sets, all from one template:
 
 - **consulting** — each row of `cards.tsv` (`slug <TAB> title <TAB> tagline
-  [<TAB> style]`) to `content/consulting/<slug>/share-card.png`.
+  [<TAB> style]`) to `content/hire-hoi/ai-consultancy/<slug>/share-card.png`.
 - **legal** — each row of `legal-cards.tsv` to `content/legal/<slug>/share-card.png`.
   `privacy` + `sub-processors` use the `hoiboy` style; `agit-story-guidelines`
   uses the `agit` style (navy `#0c1c2d` / orange `#da611c`, "ASIANS & GINGERS IN
@@ -28,9 +28,9 @@ rendered-HTML backstop) fails the build if a singular indexable page is a flat
 `.md`/`.markdown`/`.html` (cannot hold a card) or would fall back to the default
 card — so a page can never silently ship the generic default.
 
-The `slug` is the page bundle path under `content/consulting/`, so **nested
+The `slug` is the page bundle path under `content/hire-hoi/ai-consultancy/`, so **nested
 slugs work as-is** — a client case study at
-`content/consulting/portfolio/cu-architects/` is just the row
+`content/hire-hoi/ai-consultancy/portfolio/cu-architects/` is just the row
 `portfolio/cu-architects <TAB> CU Architects <TAB> <tagline>`. Client
 case-study cards use the **same template** (HOIBOY AI LTD eyebrow, page title,
 tagline, `hoiboy.uk` signature) — no client logo, for visual consistency with
@@ -48,8 +48,8 @@ render identically anywhere. No photos — title + tagline + logo wordmark.
 
 `share-card.*` is a **social-share-only** image. Its visible placement depends on the page type — this is enforced in `layouts/_partials/hero-pick.html` + `layouts/_default/single.html`:
 
-- **Service pages** (`/consulting/work-with-hoi`, `/automation-services`, `/ai-adoption-training`, `/claude-code-harness-architect`, `/pricing-billing`, and the portfolio index): the card is **hidden** (the page's `og:image` only). It must NOT appear as a hero or in the bottom photo-gallery.
-- **Individual portfolio project pages** (`/consulting/portfolio/<client>/`): the card is the **hero** image at the top of the page (unless the bundle has an explicit `hero.*`). Real project **screenshots** in the same bundle still render as the gallery below.
+- **Service pages** (`/hire-hoi/ai-consultancy/work-with-hoi`, `/automation-services`, `/ai-adoption-training`, `/claude-code-harness-architect`, `/pricing-billing`, and the portfolio index): the card is **hidden** (the page's `og:image` only). It must NOT appear as a hero or in the bottom photo-gallery.
+- **Individual portfolio project pages** (`/hire-hoi/ai-consultancy/portfolio/<client>/`): the card is the **hero** image at the top of the page (unless the bundle has an explicit `hero.*`). Real project **screenshots** in the same bundle still render as the gallery below.
 
 So: drop `share-card.png` into any bundle for the og:image; on a portfolio project page it doubles as the hero, everywhere else it stays out of the visible page.
 

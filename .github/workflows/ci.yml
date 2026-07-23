@@ -176,7 +176,7 @@ jobs:
         run: python3 -m pytest scripts/test_check_ai_training_deadline.py -q
 
       # Posts require title/date/categories/tags/description; project pages
-      # under content/consulting/ require title/description. `description` is
+      # under content/hire-hoi/ require title/description. `description` is
       # REQUIRED since blog-priv#55 Phase 2: without it a page inherits the
       # site-default meta description and ships as a near-duplicate. SEO
       # hygiene, not a GEO lever. This step covers the posts tree only; the

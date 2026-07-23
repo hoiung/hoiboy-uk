@@ -34,7 +34,7 @@ Folder name = canonical slug. Date prefix optional but recommended for sort stab
 
 **Validator**: `python3 scripts/validate_frontmatter.py` (also runs in CI and pre-commit). Hard fail on missing required fields or unknown categories. Remaining optional fields are not enforced for backward compatibility. Since blog-priv#56 the parser is PyYAML (`yaml.safe_load`), so the gate validates YAML for real: malformed frontmatter fails here with an `invalid frontmatter YAML` message instead of sailing through to hard-fail the Hugo build later (the Hugo production build remains a downstream backstop for non-YAML problems). The shapes the old hand-rolled parser let through are now handled correctly: a tab-indented block continuation is rejected at the gate, and the exotic empty forms (`description: !!str`, an alias to an anchored empty string, an empty folded or literal block) read as absent, so a page with no real description fails the presence check here rather than silently serving the site default. `check_tree` also type-checks each field (title and description must be a string, tags and categories a list, date and lastmod a date), so a mapping- or bool-valued required field fails loudly. PyYAML is a hard dependency now, with no hand-rolled fallback: install it via `requirements-dev.txt` (see Development Setup in `CLAUDE.md`), or the validator exits with a clear error.
 
-The validator walks **both** `content/posts/` and `content/consulting/` (project pages, including `portfolio/<client>/` and section `_index.md`). Project pages carry a smaller required set, `title` + `description` only, because they have no categories/tags taxonomy and several legitimately carry no date. Scope a run with `--scope posts` or `--scope consulting`.
+The validator walks **both** `content/posts/` and `content/hire-hoi/` (project pages, including `portfolio/<client>/` and section `_index.md`). Project pages carry a smaller required set, `title` + `description` only, because they have no categories/tags taxonomy and several legitimately carry no date. Scope a run with `--scope posts` or `--scope consulting`.
 
 **What the description gate does and does not check.** It checks **presence only**. It does NOT check that a description is unique, and it does NOT check length, so a copy-pasted description or a 300-character one passes every hook. Uniqueness and the length guide are conventions you hold yourself to. Two consequences worth knowing. First, **17 pages inside the gate's scope already exceed 160 characters** (9 posts + 8 consulting), plus 2 more outside it, so 19 across `content/` as a whole. All pre-existing, none a build failure. Second, the walk covers posts and consulting only, so everything else under `content/` is outside it. That is wider than just the 7 category landing pages: `content/community/`, `content/legal/` and `content/skills/` are outside it too. The category landings serve the site-default description by design (see the index/taxonomy carve-out in blog-priv#55). The rest are a different case and are not uniformly compliant: `content/legal/` (4 of 4) and `content/skills/` (1 of 1) carry their own descriptions, but `content/community/_index.md` does not and currently renders the site default. `content/_index.md` and `content/private/` are also outside the gate. Nothing enforces any of this, so a new page added outside `posts/` and `consulting/` can ship a duplicate description and no hook will complain. Write the description yourself and do not expect to be caught.
 
@@ -67,7 +67,7 @@ Two rules govern it:
 The harness family shares two house diagrams instead of re-drawing the same idea in every post:
 
 - `cones.svg` shows what a harness DOES. Home post: `/posts/why-do-we-need-an-ai-harness/`.
-- `harness-layers.svg` shows what a harness IS. Home post: `/consulting/claude-code-harness-architect/`.
+- `harness-layers.svg` shows what a harness IS. Home post: `/hire-hoi/ai-consultancy/claude-code-harness-architect/`.
 
 To reuse one in another post, reference its home-post URL (mechanic (b)) instead of copying the file into the new page bundle:
 
@@ -83,7 +83,7 @@ To reuse one in another post, reference its home-post URL (mechanic (b)) instead
 
 ```text
 grep -rlE 'src="/posts/why-do-we-need-an-ai-harness/cones\.svg"' content/
-grep -rlE 'src="/consulting/claude-code-harness-architect/harness-layers\.svg"' content/
+grep -rlE 'src="/hire-hoi/ai-consultancy/claude-code-harness-architect/harness-layers\.svg"' content/
 ```
 
 ## 4. Heading hierarchy

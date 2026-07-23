@@ -61,7 +61,7 @@ _ALLOW_SINGLE = frozenset(
 )
 
 # Two-segment allow-list prefixes (paths that take a slug after the first
-# segment). /consulting/<slug>/ is a content page bundle; /tags|series/<slug>/
+# segment). /hire-hoi/ai-consultancy/<slug>/ is a content page bundle; /tags|series/<slug>/
 # is a taxonomy term page; /<section>/index.xml is the per-section RSS feed
 # Hugo emits for each _index.md.
 _ALLOW_TWO_PREFIX = frozenset(["hire-hoi", "tags", "series", "legal", "community"])
@@ -163,7 +163,7 @@ def _classify(target: str, repo_root: Path) -> tuple[bool, str]:
             return True, ""
         return False, (
             f"unknown single-segment path '{target}' "
-            f"(not a section / consulting / skills / tags / series / index.xml / sitemap.xml)"
+            f"(not a section / hire-hoi / skills / tags / series / index.xml / sitemap.xml)"
         )
     # /posts/<slug>/ — verify the page bundle exists.
     if first == "posts":
@@ -186,7 +186,7 @@ def _classify(target: str, repo_root: Path) -> tuple[bool, str]:
             f"section landings list posts, they don't host them. "
             f"Did you mean /posts/{slug}/?"
         )
-    # /consulting/<slug>/ — sub-page of consulting.
+    # /hire-hoi/ai-consultancy/<slug>/ — sub-page of the hire-hoi section.
     if first in _ALLOW_TWO_PREFIX:
         return True, ""
     return False, f"unknown internal path '{target}'"
