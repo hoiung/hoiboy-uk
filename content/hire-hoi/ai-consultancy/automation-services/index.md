@@ -43,7 +43,7 @@ You do not have to work that out yourself. Figuring out what is needed, then rev
 
 Built for owner-operator teams of roughly 10 to 50 people who feel understaffed and want output without hiring. Book a free 20-minute discovery call and tell me what eats your team's hours. I will tell you fast what is worth automating, what cannot be automated yet, and what should not be automated even if it technically could.
 
-{{< consulting-cta type="calcom" offer="automation_services" label="Book a 20-min discovery call" >}} {{< smallprint >}}<-- (Please <strong>click</strong> if you are a fun-yet-serious decision maker or their trusted second, who has no time for bullshit and needs to get things done.){{< /smallprint >}}
+{{< consulting-cta type="calcom" offer="automation_services" label="Book a 20-min discovery call" >}} {{< smallprint >}}<-- (Please <strong>click</strong> if you are a fun-yet-serious decision maker or their trusted second, who needs to get things done RIGHT.){{< /smallprint >}}
 
 ## Pricing summary
 
