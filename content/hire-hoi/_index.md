@@ -13,7 +13,7 @@ AI Managed Harness Services, Business Automation Services, and AI Adoption Train
 
 ## ICT Consultancy
 
-Wider ICT consultancy for teams that need more than AI. More detail coming soon.
+Over ten years designing and building data centres, labs, offices, and commercial intelligent buildings, plus project management, procurement, and logistics.
 
 [See ICT Consultancy](/hire-hoi/ict-consultancy/)
 
