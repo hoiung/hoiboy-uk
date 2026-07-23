@@ -56,7 +56,7 @@
   {{- $hero = partial "hero-pick.html" . -}}
 {{- end -}}
 {{- /* share-card.* is resolved on every page kind (page / section / home) so a
-       section page like /consulting/portfolio/ uses its own card, not the default.
+       section page like /hire-hoi/ai-consultancy/portfolio/ uses its own card, not the default.
        hero-pick stays page-only (it targets post bundles). .Resources.GetMatch is
        safe on any kind: it returns nil when the bundle has no matching resource. */ -}}
 {{- $shareCard := .Resources.GetMatch "share-card.*" -}}

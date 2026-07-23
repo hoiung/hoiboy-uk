@@ -2,7 +2,7 @@
        Priority order:
          1. hero.* (explicit author override)
          2. share-card.*: ONLY on an individual portfolio project page
-            (/consulting/portfolio/<client>/): the social card IS the hero there.
+            (/hire-hoi/ai-consultancy/portfolio/<client>/): the social card IS the hero there.
             Real screenshots in the same bundle still render as the gallery below.
          3. 2e1ax_vintage_entry_* (AdventureAnd.Me Joomla "main entry" prefix)
          4. *main* (general convention)
@@ -22,7 +22,7 @@
 {{- $hero := "" -}}
 {{- if $isAgitFeature }}{{ $hero = .Resources.GetMatch "share-card.*" }}{{ end -}}
 {{- if not $hero }}{{ $hero = .Resources.GetMatch "hero.*" }}{{ end -}}
-{{- $isPortfolioProject := and (eq .Kind "page") (strings.Contains .RelPermalink "/consulting/portfolio/") -}}
+{{- $isPortfolioProject := and (eq .Kind "page") (strings.Contains .RelPermalink "/hire-hoi/ai-consultancy/portfolio/") -}}
 {{- if and (not $hero) $isPortfolioProject }}{{ $hero = .Resources.GetMatch "share-card.*" }}{{ end -}}
 {{- if not $hero }}{{ $hero = .Resources.GetMatch "2e1ax_vintage_entry_*" }}{{ end -}}
 {{- if not $hero }}{{ $hero = .Resources.GetMatch "*main*" }}{{ end -}}
