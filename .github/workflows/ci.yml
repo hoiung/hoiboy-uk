@@ -205,7 +205,7 @@ jobs:
         run: python3 scripts/check_social_cards.py
 
       - name: Setup Node (meet-recorder JS tests)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '20'
 
