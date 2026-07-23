@@ -295,7 +295,7 @@ See you {EVENT_DATE}.
 
 Hoi
 hello@hoiboy.uk
-hoiboy.uk/consulting/claude-code-harness-architect/
+hoiboy.uk/hire-hoi/ai-consultancy/claude-code-harness-architect/
 
 HOIBOY AI LTD (Companies House 17211412)
 ```
