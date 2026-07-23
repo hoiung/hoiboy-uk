@@ -20,11 +20,11 @@ There are two kinds of permanent role I am looking for:
 
 <!-- iamhoi -->
 
-I am a founder at heart, most drawn to very hands-on, founding-startup work: scoping the product, building it, and owning it end to end. With agentic coding I move fast, an MVP in days rather than weeks.
+I am a founder at heart, most drawn to very hands-on, founding-startup work: scoping the product, building it, and owning it end to end. With agentic coding I move fast, an MVP in days rather than weeks, then iterate from there.
 
 As an entrepreneur, I know the importance of testing the water, which is what MVPs and working prototypes are for: getting something in front of real users and seeing how it goes. Either stop the ones there is no real want or market for, or refine and scale the ones users actually want. Perfection is not the goal.
 
-What I want is to actually build, with the room to run at it. It does not have to be a team; I am just as happy solo, working directly with the interested stakeholders. I have shipped several real production systems this way over the last year, and the CV below has the detail.
+What I want is to actually build, with the room to run at it. It does not have to be a team; I can be solo, working directly with the interested stakeholders. I have shipped several real production systems this way over the last year, and the CV below has the detail.
 
 <!-- iamhoiend -->
 
@@ -34,7 +34,7 @@ What I want is to actually build, with the room to run at it. It does not have t
 
 The other role I want is helping people actually use AI. Most teams buy the tools and then copy and paste back and forth into a chat window, and stop there. I have spent a year working out what makes it stick: a real process around it, not a novelty. I built my own harness for it, and I run different workflows depending on what I am working on. Closing the gap between "we bought Claude" and "our people use it every day" is the work I have been doing, for myself and now for clients, and teaching people so they own it after I leave is the part I like most.
 
-Training and guiding people is not new to me, and it did not start with AI. In my ICT and infrastructure architecture career, most of it at Canonical (Ubuntu Linux), I sat with every kind of stakeholder and engineer, from the CFO down, guiding and training them and translating the technical into something they could actually use. I did the same running the dance school and the largest Brazilian Zouk community online that I built, where I designed the programme around how people actually retain and improve, and trained and led the people in it. It comes down to the same combination every time: coaching, mentorship and technical training.
+Training and guiding people is not new to me, and it did not start with AI. In my ICT and infrastructure architecture career, most of it at Canonical (Ubuntu Linux), I sat with every kind of stakeholder and engineer, from the CFO down, guiding and training them and translating the technical into something they could actually use. I did the same as Programme Director of the dance school and the largest Brazilian Zouk community online that I built, where I designed the programme around how people actually retain and improve, and trained and led the people in it. It comes down to the same combination every time: coaching, mentorship and technical training.
 
 <!-- iamhoiend -->
 
