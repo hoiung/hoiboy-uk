@@ -22,13 +22,13 @@ The consulting landing pages render external CTAs (Cal.com, optionally Stripe) w
 
 ### Gate 4: Lychee rendered-HTML link check
 
-`scripts/pre-publish.sh` check `consulting-link-liveness` runs `lychee` against `public/consulting/**/index.html` post-Hugo-build. A `cal.com/OPERATOR_TODO_REPLACE_BEFORE_LAUNCH/20min-discovery` URL would 404 and fail this gate. The `lychee.toml` `exclude_path` was tightened from `public` to `public/posts` so consulting paths are reachable.
+`scripts/pre-publish.sh` check `consulting-link-liveness` runs `lychee` against `public/hire-hoi/ai-consultancy/**/index.html` post-Hugo-build. A `cal.com/OPERATOR_TODO_REPLACE_BEFORE_LAUNCH/20min-discovery` URL would 404 and fail this gate. The `lychee.toml` `exclude_path` was tightened from `public` to `public/posts` so consulting paths are reachable.
 
 ## Replacement procedure (operator)
 
 1. Configure the live Cal.com event per consulting-ops#2 Phase 1 AC 1.1 (Mon-Fri 12:00-15:00 UK, 30-min slots, 10-min buffer, max 3/day, syncs to `hoiung@gmail.com`). Capture the live event URL.
 2. Edit `data/consulting.yaml` and replace `OPERATOR_TODO_REPLACE_BEFORE_LAUNCH` in the `harness_architect.calcom_booking` field with the live URL. The Stripe field is removed entirely in V2 (no Stripe Payment Link until V2 cash-engine validates).
-3. Run `bash scripts/pre-publish.sh content/consulting/<slug>/` locally. Exit 0 is the gate. A consulting target reports **13 passed, 1 skipped**: the
+3. Run `bash scripts/pre-publish.sh content/hire-hoi/ai-consultancy/<slug>/` locally. Exit 0 is the gate. A consulting target reports **13 passed, 1 skipped**: the
 `wordcount` gate is posts-only and skips by design for consulting pages.
 4. Stage and commit. The pre-commit hook re-runs the yaml gate.
 5. Push. CI re-runs the gates. Cloudflare deploy hook fires only on green.
