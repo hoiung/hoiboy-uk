@@ -41,7 +41,7 @@
 #                         still reports PASS, and so does the CI markdown-level
 #                         lychee. NEITHER tier checks a post; post links must be
 #                         verified by hand. This gate only really fires for
-#                         public/consulting/<slug>/ per AC 0.4. Both exclusions
+#                         public/hire-hoi/ai-consultancy/<slug>/ per AC 0.4. Both exclusions
 #                         are deliberate and predate blog-priv#55; narrowing
 #                         them is its own scoped change, not a comment fix.)
 #   8a.Consulting links  (consulting_link_check: live external-URL liveness)
@@ -244,19 +244,19 @@ rendered_link_check() {
 }
 run_check "rendered-link-liveness" rendered_link_check
 
-# 8a. Lychee on rendered consulting pages — when public/consulting/*/index.html
+# 8a. Lychee on rendered consulting pages — when public/hire-hoi/ai-consultancy/*/index.html
 #     exists post-Hugo-build, every external URL in those rendered pages is
 #     verified live. This is what catches a stale cal.com/OPERATOR_TODO/...
 #     URL slipping through (the OPERATOR_TODO yaml gate at check #1 is the
 #     primary defence; this is defence-in-depth at the rendered-HTML layer).
 #     consulting-ops#2 AC 0.4.
 consulting_link_check() {
-    if [ ! -d "public/consulting" ]; then
-        printf '  no public/consulting/ directory in build output; skipping consulting-link-liveness\n'
+    if [ ! -d "public/hire-hoi/ai-consultancy" ]; then
+        printf '  no public/hire-hoi/ai-consultancy/ directory in build output; skipping consulting-link-liveness\n'
         return 0
     fi
     local rendered
-    rendered=$(find public/consulting -path '*/index.html' -type f 2>/dev/null)
+    rendered=$(find public/hire-hoi/ai-consultancy -path '*/index.html' -type f 2>/dev/null)
     if [ -z "$rendered" ]; then
         printf '  no rendered consulting pages found; skipping\n'
         return 0

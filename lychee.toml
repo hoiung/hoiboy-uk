@@ -25,7 +25,7 @@ base_url = "https://hoiboy.uk"
 
 # File path globs to skip (lychee scans args from CLI, this filters them).
 # `public/posts` is excluded because per-post pre-publish.sh already validates
-# the rendered HTML for blog posts; `public/consulting` is INTENTIONALLY NOT
+# the rendered HTML for blog posts; `public/hire-hoi/ai-consultancy` is INTENTIONALLY NOT
 # excluded so consulting-ops#2 AC 0.4 (Cal.com URL liveness) can fire against
 # the rendered consulting page HTML.
 #
@@ -91,7 +91,7 @@ exclude = [
   # above -- NOT a broken link.
   # consulting-ops#2 AC 0.4 interaction (intentional): this also suppresses
   # the SECONDARY lychee liveness check in pre-publish.sh:167
-  # consulting_link_check for cal.* URLs in rendered public/consulting HTML.
+  # consulting_link_check for cal.* URLs in rendered public/hire-hoi/ai-consultancy HTML.
   # That secondary check is anti-bot-403-unreliable for cal.* by nature
   # (same flake this entry fixes), so it was never a dependable guarantee.
   # The BINDING guard against a stale cal.com/OPERATOR_TODO URL is the
