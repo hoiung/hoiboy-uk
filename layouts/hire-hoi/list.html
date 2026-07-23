@@ -1,13 +1,9 @@
-{{- /* Hire Hoi section landing (blog-priv#59).
-       The default _default/list.html is cross-cut-filtered for content/posts/
-       by category and would emit "No posts yet" for these non-category
-       sections (the Hire Hoi front door, AI Consultancy, ICT Consultancy).
-       Their tracks and offerings live in the _index.md body, so this template
-       just renders the section content, no post list, no empty state. Matched
-       by Type=hire-hoi for every section under content/hire-hoi/ that does not
-       set its own `type` (the Portfolio section sets `type: portfolio` and
-       keeps layouts/portfolio/list.html). */ -}}
+{{- /* Hire Hoi section landing (blog-priv#59). The Hire Hoi front door, AI
+       Consultancy, and ICT Consultancy are non-category sections whose content
+       lives in the _index.md body, so they render via section-body.html instead
+       of _default/list.html (the category-post lander, which would emit "No
+       posts yet"). Matched by Type=hire-hoi; the Portfolio section sets
+       type: portfolio and keeps layouts/portfolio/list.html. */ -}}
 {{- define "main" -}}
-<h1>{{ .Title }}</h1>
-{{- with .Content }}<div>{{ . }}</div>{{- end -}}
+{{- partial "section-body.html" . -}}
 {{- end -}}

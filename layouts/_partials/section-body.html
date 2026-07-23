@@ -1,0 +1,8 @@
+{{- /* Section landing that renders its own _index.md body (title + content) with
+       NO category post-list and NO "No posts yet" empty state. For section types
+       whose landing content lives in the _index.md body, rather than being a
+       cross-cut list of content/posts/ by category (that is the job of
+       layouts/_default/list.html, the category-landing template). Consumed by
+       layouts/hire-hoi/list.html and layouts/legal/list.html. */ -}}
+<h1>{{ .Title }}</h1>
+{{- with .Content }}<div>{{ . }}</div>{{- end -}}

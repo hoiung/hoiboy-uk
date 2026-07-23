@@ -1,0 +1,8 @@
+{{- /* Legal section landing (blog-priv#59 follow-up). The /legal/ index is a
+       non-category section whose content lives in the _index.md body (an intro +
+       links to the Privacy Notice and Sub-Processors pages), so it renders via
+       section-body.html instead of _default/list.html (the category-post lander,
+       which emitted "No posts yet"). Matched by Type=legal. */ -}}
+{{- define "main" -}}
+{{- partial "section-body.html" . -}}
+{{- end -}}
