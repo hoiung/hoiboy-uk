@@ -2,7 +2,7 @@
 """Generate 1200x630 social-share cards (retro type) for the text-card pages.
 
 Covers three card sets, all sharing one template:
-  - consulting  -> content/consulting/<slug>/share-card.png   (cards.tsv)
+  - consulting  -> content/hire-hoi/ai-consultancy/<slug>/share-card.png   (cards.tsv)
   - legal       -> content/legal/<slug>/share-card.png        (legal-cards.tsv)
   - default     -> content/default-card.png                   (site-wide og:image
                    fallback for the home page + taxonomy / section index pages)
@@ -178,7 +178,7 @@ def main():
     logo_uri = logo_data_uri()
     n = 0
     if "consulting" in targets:
-        n += gen_section("consulting", CONSULTING_TSV, logo_uri)
+        n += gen_section("hire-hoi/ai-consultancy", CONSULTING_TSV, logo_uri)
     if "legal" in targets:
         n += gen_section("legal", LEGAL_TSV, logo_uri)
     if "default" in targets:
