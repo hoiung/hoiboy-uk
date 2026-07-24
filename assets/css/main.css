@@ -1,8 +1,9 @@
 /* hoiboy.uk minimal custom theme.
    Greyscale base + ONE warm accent. System serif body font for long-form readability.
-   2-column grid: sidebar (left) + main (right, max-w-4xl).
-   Sidebar scrolls with the page: the menu is taller than a laptop viewport,
-   so pinning it would force an internal scrollbar or hide the lower items. */
+   2-column grid: sidebar (left, sticky) + main (right, max-w-4xl).
+   Sidebar is pinned again: after the Hire-Hoi menu restructure (fewer items) it
+   fits a laptop viewport, so overflow-y stays only as a graceful fallback on
+   shorter screens. */
 
 :root {
   --accent: {{ site.Params.accentColor | default "#c0533a" }};
@@ -52,7 +53,11 @@ strong, b { font-weight: 550; }
 }
 
 .sidebar {
+  position: sticky;
+  top: 2rem;
   align-self: start;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
   font-size: 0.95rem;
 }
 .sidebar h1 { font-size: 1.1rem; font-weight: 550; margin-bottom: 1rem; }
@@ -74,6 +79,7 @@ strong, b { font-weight: 550; }
   text-decoration: none;
   display: block;
   padding: 0.15rem 0;
+  font-size: 0.92rem; /* 14.72px, menu items only (brand + logo unchanged) */
 }
 .sidebar nav a:hover, .sidebar nav a.active { color: var(--accent); }
 
