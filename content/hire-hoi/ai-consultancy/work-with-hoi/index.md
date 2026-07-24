@@ -110,7 +110,7 @@ Fair question. Because I could spin up a fancy "AI consultancy" website in a few
 
 So that is what I am offering, on my actual blog where you can read who I am, what I am, what I am not, what I think about, what I build, what I cock up, what I learn. Reading me here is easier than reading a pitch deck someone else wrote for me.
 
-As a bonus you get my bubbly, fun, no-nonsensical (maybe a sprinkle of sarcasm) personality. We will figure out on a 20-minute discovery call whether working together is going to be a wonderful and pleasurable experience for both of us, well before any money or SOW (Statement of Work; the legal contract that locks the scope, deliverables, fees, and terms of a phase) lands on the table.
+As a bonus you get my bubbly, fun, no-nonsense (maybe a sprinkle of sarcasm) personality. We will figure out on a 20-minute discovery call whether working together is going to be a wonderful and pleasurable experience for both of us, well before any money or SOW (Statement of Work; the legal contract that locks the scope, deliverables, fees, and terms of a phase) lands on the table.
 
 No slide deck, no sales pitch on that call. I am more interested in listening to your problems and helping you solve them.
 
