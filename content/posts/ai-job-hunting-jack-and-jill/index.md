@@ -3,7 +3,7 @@ title: "Job Hunting Is Such a Pain. So I Let an AI Do the Boring Bit."
 date: 2026-07-22T14:00:00+01:00
 draft: false
 description: "So many sites, the same form ten times over. I tried an AI job hunter that works like a chat and remembers what I hate. Here is what it got right, and what it didn't."
-categories: [tech-ai]
+categories: [tech-ai, life]
 tags: [ai, job-hunting, career, ux]
 slug: ai-job-hunting-jack-and-jill
 resources:
