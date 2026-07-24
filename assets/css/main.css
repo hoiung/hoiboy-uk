@@ -72,7 +72,7 @@ strong, b { font-weight: 550; }
   margin: 1.25rem 0 0.4rem;
   font-weight: 550;
 }
-.sidebar nav ul { list-style: none; padding-left: 0.75rem; } /* tiny indent nests items under their section header */
+.sidebar nav ul { list-style: none; padding-left: 0.5rem; } /* tiny indent nests items under their section header */
 .sidebar nav li { margin: 0.2rem 0; }
 .sidebar nav a {
   color: var(--fg);
