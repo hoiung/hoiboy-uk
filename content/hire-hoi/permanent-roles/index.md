@@ -20,13 +20,11 @@ There are two kinds of permanent role I am looking for:
 
 <!-- iamhoi -->
 
-I am a founder at heart with an engineer's mind, most drawn to very hands-on, founding-startup work: scoping the product, building it, and owning it end to end. With agentic coding I move fast, an MVP in days rather than weeks, then iterate from there. Shipping fast does not mean sloppy. A demo, prototype or MVP still has to work, and it has to be quality controlled. That is what my own custom harness is for: a specialised framework I built and use for this.
-
-AI makes it easy to generate something that looks finished. What I care about is whether it holds up underneath: the logic, the data, the workflow, the wiring, and the design intent driving all of it.
+I am a founder at heart with an engineer's mind, most drawn to very hands-on, founding-startup work: scoping the product, building it, and owning it end to end. With agentic coding I move fast, a prototype or MVP in days rather than weeks, then iterate from there. Shipping fast does not mean sloppy. A demo, prototype or MVP still has to work, and it has to be quality controlled. AI makes it easy to generate something that looks finished; what I care about is whether it holds up underneath: the logic, the workflow, the wiring, the design intent. That is what my own custom harness is for: a specialised framework I built and use for this.
 
 As an entrepreneur, I know the importance of testing the water, which is what MVPs and working prototypes are for: getting something in front of real users and seeing how it goes. Either stop the ones there is no real want or market for, or refine and scale the ones users actually want. Perfection is not the goal.
 
-A prototype is also a way to drive a conversation. Sometimes I know going in that it is not the answer, but it is still a good starting point when a stakeholder or client is not sure what they want. Something they can hold and play with makes a big difference: people get to what they want by first seeing what they don't. So the first thing I get clear on is the purpose, and the angle we are building for.
+A prototype is also a way to drive and guide a conversation. Sometimes I know going in that it is not the answer, but it is still a good starting point when a stakeholder or client is not sure what they want. Having something they can hold and play with makes a big difference: people can also learn what they want by learning what they don't want. So the first thing I get clear on is the purpose, and the angle we are building for.
 
 What I want is to actually architect and build, with the room to run at it. It does not have to be a team; I can be solo, working directly with the interested stakeholders. I have shipped several real production systems this way over the last year, and the CV below has the detail.
 
