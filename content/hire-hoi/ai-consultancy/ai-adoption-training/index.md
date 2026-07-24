@@ -30,7 +30,7 @@ Teams who want to actually own the capability rather than outsource it. Owner-op
 
 ## Why me
 
-Why am I qualified for this, you may ask? Hm, good question. Probably because I led and ran one of the most successful international Brazilian Zouk dance schools in Europe, and possibly the world, for over seven years, offering structured dance programmes. My business partner and I built it from the ground up, and pre-Covid we had a planning team of up to 15 people. Between us, we changed the lives of hundreds of dancers. Our reputation and reach went far enough that dancers would flock to us from all over the world, as far as Australia and Hawaii. So I know a little more than the average person about coaching, mentoring, and building educational programmes. Just a little. ;)
+Why am I qualified for this, you may ask? Hm, good question. Probably because I led and ran one of the most successful international Brazilian Zouk dance schools in Europe, and possibly the world, for over seven years, offering structured dance programmes. My business partner and I built it from the ground up, and pre-Covid we had a planning team of up to 15 people. Between us, we changed the lives of hundreds of dancers. Our reputation and reach went far enough that dancers would flock to us from all over the world, as far as Australia and Hawaii. So I know a little more than the average person about coaching, mentoring, and building educational programmes. Just a little.
 
 ## Pricing summary
 
