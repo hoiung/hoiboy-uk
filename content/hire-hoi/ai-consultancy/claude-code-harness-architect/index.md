@@ -169,7 +169,7 @@ Per-harness builds and rollouts typically land between £12K and £30K + VAT dep
 
 <!-- iamhoi -->
 
-The numbers above (the audit day rate, foundation, the per-harness build band, the Monthly Maintenance Package) are the harness positioning prices. Full pricing and billing terms, across all three services, are on the [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}).
+The numbers above (the audit day rate, foundation, the per-harness build band, the Monthly Maintenance Package) are the harness positioning prices. Full pricing and billing terms, across all four services, are on the [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}).
 
 <!-- iamhoiend -->
 
