@@ -7,6 +7,8 @@ build:
 
 <!-- iamhoi -->
 
+{{< brand-intro >}}
+
 I am open to the right permanent role, on the right terms. I am picky about where I put my energy, and I would rather find the right team than the nearest job. I work best on full autonomy, handed a real problem and given room to run. I am at my worst where everything has to be defined before I can move.
 
 There are two kinds of permanent role I am looking for:
