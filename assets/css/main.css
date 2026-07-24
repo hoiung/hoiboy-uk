@@ -110,6 +110,13 @@ strong, b { font-weight: 550; }
 .main pre { background: var(--rule); padding: 1rem; border-radius: 4px; overflow-x: auto; margin-bottom: 1rem; font-size: 0.85rem; }
 .main pre code { background: none; padding: 0; }
 .main blockquote { border-left: 3px solid var(--rule); padding-left: 1rem; color: var(--fg-muted); margin: 1rem 0; }
+
+/* Brand-intro: the repeated personal-brand opener on the Hire Hoi track pages
+   (rendered by the brand-intro shortcode). A prominent lead statement, not a
+   muted quote: accent left bar, full-colour italic, signature motto lifted. */
+.main .brand-intro { font-style: italic; font-size: 1.1rem; line-height: 1.55; color: var(--fg); border-left: 3px solid var(--accent); padding-left: 1.1rem; margin: 1.75rem 0 2rem 0; }
+.main .brand-intro p { margin: 0; }
+.main .brand-intro-motto { font-style: normal; font-weight: 600; color: var(--accent); }
 .main img { max-width: 100%; height: auto; border-radius: 4px; margin: 1rem 0; }
 .main hr { border: none; border-top: 1px solid var(--rule); margin: 2rem 0; }
 
