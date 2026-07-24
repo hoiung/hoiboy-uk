@@ -1,32 +1,51 @@
-# Text social-share cards (consulting + legal + site default)
+# Text + photo social-share cards (consulting, legal, hire-hoi, landings, home, default)
 
-Per-page 1200×630 Open Graph / Twitter share cards for the consulting pages,
-client case-study (portfolio) pages, and the **legal** pages, plus the site-wide
-branded default card — so each page gets a distinct, correctly-sized social card
-instead of falling back to a personal face photo.
+Per-page 1200x630 Open Graph / Twitter share cards for the consulting pages,
+client case-study (portfolio) pages, the **legal** pages, the top-level Hire Hoi
+pages, every indexable **section-landing** (`_index.md`) page, and a **home**
+photo composite, plus the site-wide branded default card - so each page gets a
+distinct, correctly-sized social card instead of falling back to a generic image.
 
 ## How it works
 
-`gen_card.py` renders three card sets, all from one template:
+`gen_card.py` renders six card sets, all from one brand system:
 
-- **consulting** — each row of `cards.tsv` (`slug <TAB> title <TAB> tagline
+- **consulting** - each row of `cards.tsv` (`slug <TAB> title <TAB> tagline
   [<TAB> style]`) to `content/hire-hoi/ai-consultancy/<slug>/share-card.png`.
-- **legal** — each row of `legal-cards.tsv` to `content/legal/<slug>/share-card.png`.
+- **legal** - each row of `legal-cards.tsv` to `content/legal/<slug>/share-card.png`.
   `privacy` + `sub-processors` use the `hoiboy` style; `agit-story-guidelines`
   uses the `agit` style (navy `#0c1c2d` / orange `#da611c`, "ASIANS & GINGERS IN
   TECH" eyebrow).
-- **default** — `content/default-card.png`, the site-wide `og:image` fallback for
-  the home page + taxonomy/section index pages (replaced the old `hoi-mug.jpg`).
+- **hire-hoi** - each row of `hire-hoi-cards.tsv` to `content/hire-hoi/<slug>/share-card.png`,
+  the top-level Hire Hoi leaf pages (e.g. `permanent-roles`). Same TSV shape as
+  `cards.tsv`.
+- **landings** - each content-relative landing path in `landing-cards.tsv` to that
+  section-landing's own bundle (`content/<path>/share-card.png`), **including
+  section roots** (`hire-hoi/`, `hire-hoi/ai-consultancy/`, `legal/`) and the blog
+  category / `skills` / `community` sections. The card **title + tagline are read
+  from that landing's own `_index.md` frontmatter** (title required; `description`
+  becomes the tagline, shrunk to fit in full; **title-only** when there is no
+  `description`). No taglines are stored in the TSV, so there is one source of
+  truth and nothing to keep in sync. (blog-priv#61)
+- **home** - `content/share-card.png`, a **photo composite** of `content/hoi-mug.jpg`
+  (Hoi + the giant mug) filled to 1200x630 with a bottom scrim + the `PERSONAL BLOG`
+  eyebrow, `hoiboy.uk` wordmark, and the site strapline. (blog-priv#61)
+- **default** - `content/default-card.png`, the `og:image` fallback for
+  **taxonomy / term pages only** (`/tags/`, `/categories/*` - generated, no content
+  bundle, so they cannot hold a co-located card). Replaced the old `hoi-mug.jpg`.
 
-Run `python3 scripts/social-cards/gen_card.py [consulting] [legal] [default]`
-(no args = all three). `layouts/_partials/head.html` picks up a page's own
-`share-card.*` as its `og:image` (resized to 1200 wide, aspect preserved), and
-`default-card.png` as the fallback.
+Run `python3 scripts/social-cards/gen_card.py [consulting] [legal] [hire-hoi]
+[landings] [home] [default]` (no args = all six). `layouts/_partials/head.html`
+picks up a page's own `share-card.*` as its `og:image` (resized to 1200 wide,
+aspect preserved), and `default-card.png` as the taxonomy fallback.
 
 **Guard:** `scripts/check_social_cards.py` (pre-commit + pre-publish + CI, with a
-rendered-HTML backstop) fails the build if a singular indexable page is a flat
-`.md`/`.markdown`/`.html` (cannot hold a card) or would fall back to the default
-card — so a page can never silently ship the generic default.
+rendered-HTML backstop) fails the build on: a singular indexable page that is a
+flat `.md`/`.markdown`/`.html` (Check A), a singular page that would fall back to
+the default card (Check B), or an indexable `_index.md` landing (section or home)
+missing its own `share-card.*` (Check C - no hero fallback, since `head.html`'s
+hero-pick is `.IsPage`-only). So no indexable page can silently ship the generic
+default.
 
 The `slug` is the page bundle path under `content/hire-hoi/ai-consultancy/`, so **nested
 slugs work as-is** — a client case study at
