@@ -54,6 +54,13 @@ business:
 automation_services:
   calcom_booking: "https://cal.eu/hoiboyuk/discovery"
 
+# AI Product Demo/MVP/Prototype Builder offer (blog-priv#60). Same discovery call as the
+# harness + automation offers (one Cal.com event triages all), so calcom_booking reuses the live URL.
+# Read by: layouts/_shortcodes/consulting-cta.html (CTA href, via offer="ai_product_builder")
+#          -> content/hire-hoi/ai-consultancy/ai-product-builder/index.md.
+ai_product_builder:
+  calcom_booking: "https://cal.eu/hoiboyuk/discovery"
+
 harness_architect:
   # Live booking URL (replaced 2026-05-08 - Cal.com EU instance, event-type id 284432).
   # Pre-Worker (hoiboy-uk#28): bookings fire Cal.com's default emails; post-Worker:
