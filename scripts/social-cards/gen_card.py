@@ -212,15 +212,25 @@ def read_landing_meta(index_md):
 def fit_tagline(tagline, usable_px=980, max_fs=TAG_FS, min_fs=15, max_lines=4):
     """Largest IBM Plex Mono size in [min_fs, max_fs] whose word-wrap of `tagline` fits
     within max_lines lines of usable_px. Plex Mono is monospace (advance ~0.6*fs) so a
-    character-count wrap is an exact width fit. Returns (fs, [lines]). Shrinks to show
-    the FULL description (no ellipsis truncation) so operator copy is never mangled."""
+    character-count wrap is an exact width fit. Returns (fs, [lines]) with AT MOST
+    max_lines lines. Shrinks to show the FULL description for realistic copy (no
+    truncation - all current landing descriptions fit); only text so long it would not
+    fit even at min_fs in max_lines is truncated with an ellipsis, so the tagline block
+    can never overflow the card or collide with the bottom-right signature."""
     for fs in range(max_fs, min_fs - 1, -1):
         cpl = max(8, int(usable_px / (fs * 0.6)))
         lines = textwrap.wrap(tagline, width=cpl)
         if len(lines) <= max_lines:
             return fs, lines
     cpl = max(8, int(usable_px / (min_fs * 0.6)))
-    return min_fs, textwrap.wrap(tagline, width=cpl)
+    lines = textwrap.wrap(tagline, width=cpl)
+    if len(lines) > max_lines:                       # pathologically long: bound + ellipsis
+        lines = lines[:max_lines]
+        last = lines[-1]
+        if len(last) + 3 > cpl:
+            last = last[:max(0, cpl - 3)].rstrip()
+        lines[-1] = last + "..."
+    return min_fs, lines
 
 
 def make_landing_svg(title, tagline, logo_uri, pal=HOIBOY_PAL, eyebrow=LANDING_EYEBROW):
