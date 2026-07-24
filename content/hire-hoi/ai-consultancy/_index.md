@@ -5,6 +5,8 @@ description: "AI consulting for owner-operator-led teams: AI Managed Harness Ser
 
 <!-- iamhoi -->
 
+{{< brand-intro >}}
+
 I help owner-operator CEOs at small businesses (5 to 50 employees) get their AI tooling working as a system, not as a scattered collection of half-finished experiments. There are four ways to work with me, plus a portfolio of what that looks like in practice. New here, or not sure which one fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}), the front door.
 
 UK-based; international clients welcome (travel and accommodation at cost when scope needs me on-site, no markup).
