@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Unit tests for check_social_cards.py (hoiboy-uk #52).
+"""Unit tests for check_social_cards.py (hoiboy-uk #52, blog-priv#61).
 
-Covers both failure classes, every exclusion path, the content-format spread
-(.md/.markdown/.html), nested child bundles, SVG share-cards, the rendered-HTML
-backstop, and CLI exit codes.
+Covers all three failure classes (A bundle-form, B singular-card, C section/home
+landing card), every exclusion path, the content-format spread (.md/.markdown/
+.html), nested child bundles, SVG share-cards, the section/home hero-does-not-count
+rule, the rendered-HTML backstop, and CLI exit codes.
 """
 from __future__ import annotations
 
@@ -42,6 +43,19 @@ def _flat(root: Path, rel: str, ext: str = ".md", frontmatter: str = "title: X")
     return p
 
 
+def _landing(root: Path, rel: str, frontmatter: str = "title: X",
+             card: str | None = "share-card.png", ext: str = ".md"):
+    """A section/home landing: an _index.<ext> (rel="" is the home bundle = root itself)
+    with an optional root card. Check C class (blog-priv#61)."""
+    d = root / rel if rel else root
+    d.mkdir(parents=True, exist_ok=True)
+    (d / ("_index" + ext)).write_text(f"---\n{frontmatter}\n---\nbody\n", encoding="utf-8")
+    if card:
+        cp = d / card
+        cp.write_bytes(PNG) if cp.suffix.lower() != ".svg" else cp.write_text("<svg/>")
+    return d
+
+
 def _headers(root: Path, body: str) -> Path:
     p = root / "_headers"
     p.write_text(body, encoding="utf-8")
@@ -57,7 +71,7 @@ def _cats(violations, tag):
 def test_clean_tree_passes(tmp_path):
     content = tmp_path / "content"
     _bundle(content, "posts/a")
-    (content / "posts" / "_index.md").write_text("---\ntitle: Posts\n---\n")
+    _landing(content, "posts")          # a section landing owns its own card too (Check C)
     assert csc.check(content, _headers(tmp_path, "")) == []
 
 
@@ -269,6 +283,84 @@ def test_built_excluded_page_not_checked(tmp_path):
     _bundle(content, "private/tool", frontmatter="title: T\nnoindex: true", card=None)
     public = tmp_path / "public"
     _render(public, "/private/tool/", "https://x/hoi-mug_hu_1.jpg")
+    assert csc.check_built(content, _headers(tmp_path, ""), public) == []
+
+
+# ---- Check C: section + home landing card presence (blog-priv#61) -------------
+
+def test_landing_with_card_passes(tmp_path):
+    content = tmp_path / "content"
+    _landing(content, "food-booze")
+    assert csc.check(content, _headers(tmp_path, "")) == []
+
+
+def test_landing_missing_card_flagged(tmp_path):
+    content = tmp_path / "content"
+    _landing(content, "food-booze", card=None)
+    v = csc.check(content, _headers(tmp_path, ""))
+    assert len(_cats(v, "landing-card-missing")) == 1 and "food-booze/_index.md" in v[0]
+
+
+def test_landing_svg_card_flagged(tmp_path):
+    content = tmp_path / "content"
+    _landing(content, "legal", card="share-card.svg")
+    assert len(_cats(csc.check(content, _headers(tmp_path, "")), "landing-card-svg")) == 1
+
+
+def test_landing_hero_does_not_satisfy(tmp_path):
+    # head.html hero-pick is .IsPage-only: a section hero is NOT the og:image, so a
+    # landing with only a hero (no share-card) still falls back to the default card.
+    content = tmp_path / "content"
+    _landing(content, "adventure", card="hero.jpg")
+    assert len(_cats(csc.check(content, _headers(tmp_path, "")), "landing-card-missing")) == 1
+
+
+def test_home_landing_missing_card_flagged(tmp_path):
+    # the home bundle is content/ itself (content/_index.md), served at "/".
+    content = tmp_path / "content"
+    _landing(content, "", card=None)
+    v = csc.check(content, _headers(tmp_path, ""))
+    assert len(_cats(v, "landing-card-missing")) == 1 and "_index.md (/)" in v[0]
+
+
+def test_home_landing_with_card_passes(tmp_path):
+    content = tmp_path / "content"
+    _landing(content, "", card="share-card.png")
+    assert csc.check(content, _headers(tmp_path, "")) == []
+
+
+def test_landing_noindex_excluded(tmp_path):
+    content = tmp_path / "content"
+    _landing(content, "private", frontmatter="title: P\nnoindex: true", card=None)
+    assert csc.check(content, _headers(tmp_path, "")) == []
+
+
+def test_landing_render_never_excluded(tmp_path):
+    content = tmp_path / "content"
+    _landing(content, "private", frontmatter="title: P\nbuild:\n  render: never", card=None)
+    assert csc.check(content, _headers(tmp_path, "")) == []
+
+
+def test_landing_headers_noindex_excluded(tmp_path):
+    content = tmp_path / "content"
+    _landing(content, "hidden-section", card=None)
+    headers = _headers(tmp_path, "/hidden-section/*\n  X-Robots-Tag: noindex\n")
+    assert csc.check(content, headers) == []
+
+
+def test_built_landing_default_flagged(tmp_path):
+    content = tmp_path / "content"
+    _landing(content, "skills", card="share-card.png")   # source is fine...
+    public = tmp_path / "public"
+    _render(public, "/skills/", "https://x/default-card_hu_1.jpg")   # ...but render defaulted
+    assert len(_cats(csc.check_built(content, _headers(tmp_path, ""), public), "rendered-default")) == 1
+
+
+def test_built_home_landing_own_card_passes(tmp_path):
+    content = tmp_path / "content"
+    _landing(content, "", card="share-card.png")
+    public = tmp_path / "public"
+    _render(public, "/", "https://x/share-card_hu_1.jpg")
     assert csc.check_built(content, _headers(tmp_path, ""), public) == []
 
 
