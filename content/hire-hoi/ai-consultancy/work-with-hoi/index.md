@@ -1,6 +1,6 @@
 ---
 title: "Work with Hoi"
-description: "The front door to working with me. Who I am, who this is for, what I do not do, and the three ways I can help: AI Managed Harness Services, Business Automation Services, and AI Adoption Training. Straight talk, no sales-page fluff. UK-based, international clients welcome."
+description: "The front door to working with me. Who I am, who this is for, what I do not do, and the four ways I can help: AI Managed Harness Services, Business Automation Services, AI Adoption Training, and the AI Product Demo/MVP/Prototype Builder. Straight talk, no sales-page fluff. UK-based, international clients welcome."
 hideDate: true
 ---
 
@@ -27,15 +27,16 @@ This page is also a deterrent for the kind of client I really do not want to wor
 
 Hi, I am Hoi. Late introduction, now that I have gotten some of my bits above out of the way. I have loved taking technology apart since I was about 7, and I never really stopped. I have spent roughly 20 years building my own businesses as a serial entrepreneur (design and print, import and export, hospitality, a dance school, and a handful of smaller ventures), running concurrently with about 12 years of a corporate career, including 8 years at Canonical (the company behind Ubuntu), where I spent my days translating infrastructure realities for non-engineering people. So I have sat at both ends of the table: the owner signing the cheques and the person delivering the work. Now I am back to my own gig, at my own pace, doing the part I love most, which is being on the ground helping you get real value out of AI.
 
-In a sense, I am basically a pencil sharpener. My value is helping your team become sharper at what they do. So the three services I offer are just a different grain of the same sharpening service for your team. Blunt tools give blunt results, sharp tools give sharp results. Simple.
+In a sense, I am basically a pencil sharpener. My value is helping your team become sharper at what they do. So the four services I offer are just a different grain of the same sharpening service for your team. Blunt tools give blunt results, sharp tools give sharp results. Simple.
 
-Three ways I can help, depending on what you need:
+Four ways I can help, depending on what you need:
 
 - **[AI Managed Harness Services]({{< ref "/hire-hoi/ai-consultancy/claude-code-harness-architect" >}})**: a custom AI harness that automates your routine work, built audit-first and kept running.
 - **[Business Automation Services]({{< ref "/hire-hoi/ai-consultancy/automation-services" >}})**: done-for-you automation, for when you would rather I build it than learn it.
 - **[AI Adoption Training]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-training" >}})**: done-with-you training, so your team learns to use AI properly on their real work.
+- **[AI Product Demo/MVP/Prototype Builder]({{< ref "/hire-hoi/ai-consultancy/ai-product-builder" >}})**: contract me to build your demo, MVP, or prototype, so you can test an idea without a permanent hire.
 
-All three run on the same engine (free discovery call, paid scoping step, delivery priced off the scoping), and the numbers for every step live in one place: [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}).
+All four run on the same engine (free discovery call, paid scoping step, delivery priced off the scoping), and the numbers for every step live in one place: [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}).
 
 A lot of AI gets built the wrong way round: the solution gets built first (code is cheap now, anyone can vibe-code an app), then someone tries to fit your problem into it. I work the other way. I start from your customer's experience and what your business needs right now and in the near future, then work backwards to a solution that fits YOUR problem. AI can build almost anything these days; the real value is gluing the pieces together in the right order for you. That is exactly why the paid scoping step exists: I spend that time understanding your business before anything gets built.
 
@@ -52,7 +53,7 @@ Owner-operators, founders, and team leads who can feel there is real value in AI
 Two routes through the door, depending on how hands-on you want to be:
 
 - **If you want to learn AI and own the capability:** a custom AI harness for your workflows, or AI Adoption Training for your team. You and your people stay in the driver's seat.
-- **If you would rather it was just handled for you:** Business Automation, where I build it, hand it off with the manuals, and you drop it the day you no longer need it.
+- **If you would rather it was just handled for you:** Business Automation, or an AI Product build where I build your demo, MVP, or prototype, hand it off, and you drop it the day you no longer need it.
 
 Not sure which fits? That is exactly what the discovery call is for. You make AI-spend decisions yourself and you do not need to convince a board.
 
