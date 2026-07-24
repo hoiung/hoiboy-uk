@@ -5,6 +5,8 @@ description: "ICT design and consultancy: over ten years designing and building 
 
 <!-- iamhoi -->
 
+{{< brand-intro >}}
+
 I have over ten years as an ICT designer and consultant, designing and implementing data centres, labs, offices, shopping malls, hotels, and many other kinds of commercial intelligent buildings and construction projects.
 
 This is one of my specialisms, alongside project management (PMI PMP certified, 2023), procurement and negotiation, and logistics planning to keep projects on deadline or cut the delays down. I plan to offer it here.
