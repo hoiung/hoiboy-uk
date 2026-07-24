@@ -57,6 +57,7 @@ SIG_FS     = 30         # signature font-size
 TAG_FS     = 26         # tagline font-size (IBM Plex Mono is wide; 26 keeps the
                         # longest strapline on one line within the card width)
 TAG_LINE_GAP = 10       # extra px per landing-card tagline line (line height = fs + this)
+TAG_MIN_FS   = 15       # smallest tagline font-size before truncating
 SIG_CLEAR_Y  = 486      # landing-card tagline block must stay ABOVE this y so it never
                         # collides with the bottom-right signature (logo top ~= 502)
 LOGO_PX    = 64
@@ -226,7 +227,7 @@ def _tag_max_lines(avail_px, fs):
     return max(1, min(TAG_MAX_LINES, int(avail_px // line_h) + 1))
 
 
-def fit_tagline(tagline, usable_px=980, avail_px=128, max_fs=TAG_FS, min_fs=15):
+def fit_tagline(tagline, usable_px=980, avail_px=128, max_fs=TAG_FS, min_fs=TAG_MIN_FS):
     """Largest IBM Plex Mono size in [min_fs, max_fs] whose word-wrap of `tagline` fits
     BOTH usable_px wide AND avail_px tall (so the block can never run into the space below
     it - the bottom-right signature - regardless of how far a wrapped title pushed it
@@ -269,11 +270,14 @@ def make_landing_svg(title, tagline, logo_uri, pal=HOIBOY_PAL, eyebrow=LANDING_E
 
     tag_fs = TAG_FS
     tag_markup = ""
-    if tagline:
-        tag_top = rule_y + 58                         # first tagline baseline
-        # Fit within the space between the rule and the signature, so a wrapped (2-line)
-        # title shrinks the tagline instead of overlapping the bottom-right mark.
-        tag_fs, tag_lines = fit_tagline(tagline, avail_px=SIG_CLEAR_Y - tag_top)
+    tag_top = rule_y + 58                             # first tagline baseline
+    avail_px = SIG_CLEAR_Y - tag_top                  # room between the rule and the signature
+    # Render the tagline only if at least one line fits above the signature. A title that
+    # wraps to 2 lines shrinks the tagline; a title long enough to wrap to 3+ lines leaves
+    # no room, so the tagline is dropped (title-only) rather than overlapping the mark.
+    # Landing titles are short section labels, so this only guards pathological future copy.
+    if tagline and avail_px >= TAG_MIN_FS + TAG_LINE_GAP:
+        tag_fs, tag_lines = fit_tagline(tagline, avail_px=avail_px)
         tag_lh = tag_fs + TAG_LINE_GAP
         ty = tag_top
         for l in tag_lines:

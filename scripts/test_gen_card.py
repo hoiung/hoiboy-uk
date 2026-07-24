@@ -98,12 +98,31 @@ def test_title_tagline_svg_has_tagline_text():
     assert 'class="tag">' in svg
 
 
-def test_two_line_title_tagline_stays_clear_of_signature():
-    # A long title that wraps to 2 lines + a long tagline must NOT push tagline text into
-    # the bottom-right signature zone (logo top ~= SIG_CLEAR_Y). Sonnet's finding.
-    assert len(gc.wrap_title("AI Product Engineering Consultancy Roles")) == 2   # 2-line title
-    svg = gc.make_landing_svg("AI Product Engineering Consultancy Roles",
-                              AI_CONSULTANCY_DESC, "data:image/png;base64,AAAA")
-    tag_ys = [float(y) for y in re.findall(r'y="([\d.]+)" class="tag"', svg)]
-    assert tag_ys, "expected tagline text elements"
-    assert max(tag_ys) <= gc.SIG_CLEAR_Y   # every tagline baseline stays above the signature
+def _tag_baselines(svg):
+    return [float(y) for y in re.findall(r'y="([\d.]+)" class="tag"', svg)]
+
+
+def test_tagline_never_overlaps_signature_for_any_title_length():
+    # No matter how far a wrapped title pushes the rule down, a tagline is never placed
+    # below the signature-clearance line: it shrinks (2-line title) or is dropped entirely
+    # (3+-line title -> title-only). Closes the tagline-vs-signature class (Ralph Sonnet).
+    titles = {
+        "Legal": 1,                                                 # 1 line (real)
+        "AI Product Engineering Consultancy Roles": 2,              # 2 lines
+        "Owner Operator Led AI Adoption Strategy And Automation Roadmap": 3,  # 3 lines
+        "Owner Operator Led AI Adoption Strategy Automation Roadmap And Delivery Playbook": 4,  # 4 lines
+    }
+    for title, want_lines in titles.items():
+        assert len(gc.wrap_title(title)) == want_lines, title
+        svg = gc.make_landing_svg(title, AI_CONSULTANCY_DESC, "data:image/png;base64,AAAA")
+        ys = _tag_baselines(svg)
+        assert all(y <= gc.SIG_CLEAR_Y for y in ys), f"{title}: tagline y {ys} past SIG_CLEAR_Y"
+
+
+def test_long_title_drops_tagline_rather_than_overlap():
+    # A 3-line title leaves no vertical room, so the card is title-only (no tagline text).
+    title = "Owner Operator Led AI Adoption Strategy And Automation Roadmap"
+    assert len(gc.wrap_title(title)) >= 3
+    svg = gc.make_landing_svg(title, AI_CONSULTANCY_DESC, "data:image/png;base64,AAAA")
+    assert 'class="tag">' not in svg              # tagline dropped
+    assert ">Automation Roadmap<" in svg          # title still rendered in full
