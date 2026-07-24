@@ -34,7 +34,7 @@ Here is the thing: the site is clean, simple, and it works. That is the point. T
 
 **Speed and SEO are measured, not hoped for.** On every change the site is scored against hard budgets: largest paint under 2.5 seconds, page weight under 1.5MB, accessibility and SEO both above 95 out of 100. Miss the budget and the build fails. That is the difference between a site that feels fast and one that just looks finished.
 
-**Why I do it this way.** Anyone can get an AI to spit out a website in an afternoon. It looks fine and is quietly slop underneath: broken structured data, bloated pages, missing alt text, the same five giveaway phrases in every paragraph, a client's address sitting in a photo's metadata. I build the guardrails and the workflow first, so adding real work later is simple and quick, and the system catches any mess before it reaches Chan's clients. That is what managed and automated means here. Not a website I made once, but a system that keeps making and maintaining it properly, with me accountable for the result.
+**Why I do it this way.** Anyone can get an AI to produce a website in an afternoon. It looks fine and is quietly slop underneath: broken structured data, bloated pages, missing alt text, the same five giveaway phrases in every paragraph, a client's address sitting in a photo's metadata. I build the guardrails and the workflow first, so adding real work later is simple and quick, and the system catches any mess before it reaches Chan's clients. That is what managed and automated means here. Not a website I made once, but a system that keeps making and maintaining it properly, with me accountable for the result.
 
 ## The outcome
 
