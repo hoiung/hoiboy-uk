@@ -8,9 +8,9 @@ hideDate: true
 
 One pricing and billing page for all three services. The detailed numbers live here so each service page can stay about the work, not the invoice. Every service runs on the same engine: a free discovery call, then a paid scoping step, then delivery priced off that scoping. We do not know the size of a job until we understand it, and the discovery call plus the scoping step is exactly where that happens. Each table below states the price of every step, so you always see the number before the work it buys.
 
-One more thing: a special 30% discount for friends and family, and for anyone they refer my way. If that is you, just let me know when you contact me, and tell me who referred you (it makes it easier to know who's singing my praises, haha).
+One more thing: a special 30% discount for friends and family, and for anyone they refer my way. If that is you, just let me know when you contact me, and tell me who referred you (it makes it easier to know who to thank).
 
-Why can I offer this? Because there are no marketing and sales overheads with friends and family: the people who supported me, know my personality, and understand the value I offer and deliver. A referral from them saves me the same sales-pitch cost of doing business. That saving gets passed straight on. No brainer.
+Why can I offer this? Because there are no marketing and sales overheads with friends and family: the people who supported me, know my personality, and understand the value I offer and deliver. A referral from them saves me the same sales-pitch cost of doing business. That saving gets passed straight on.
 
 <!-- iamhoiend -->
 
@@ -108,7 +108,7 @@ You pay upfront for the audit and foundation on a **harness** engagement, for th
 
 No big-bang final bills. No vague "we'll figure it out." If you have already paid me, it is because something tangible got delivered and you signed off on it.
 
-If you feel you need to haggle my prices, then you probably can't afford me anyways and should stop here and walk away.
+My rates are my rates; I do not negotiate on price. If the budget is not there right now, that is completely fine, and the door stays open when it is.
 
 <!-- iamhoiend -->
 
