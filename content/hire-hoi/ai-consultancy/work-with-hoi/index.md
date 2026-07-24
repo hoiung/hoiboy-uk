@@ -1,6 +1,6 @@
 ---
 title: "Work with Hoi"
-description: "The front door to working with me. Who I am, who this is for, what I do not do, and the three ways I can help: AI Managed Harness Services, Business Automation Services, and AI Adoption Training. No bullshit sales page. UK-based, international clients welcome."
+description: "The front door to working with me. Who I am, who this is for, what I do not do, and the three ways I can help: AI Managed Harness Services, Business Automation Services, and AI Adoption Training. Straight talk, no sales-page fluff. UK-based, international clients welcome."
 hideDate: true
 ---
 
@@ -15,7 +15,7 @@ I designed, run, and babysit daily a live automated pullback swing trading platf
 
 <!-- iamhoi -->
 
-Welcome to the no bullshit sales page. This is a place to work out whether we can actually work together: where I add value to your business by automating the work that drains your team, training your people to use AI properly, or building AI harnesses for them. Most salespeople are bullshit artists who oversell and under-deliver, because they are never the ones who have to deliver what they sold. I will not tarnish them all over a few bad eggs, though: I have met a few genuinely good salespeople and am still friends with them, and it is a cut-throat, live-or-die kind of role, so I get it. I have sat in every role in a business, including sales. So I will avoid selling you bullshit, and I only offer what I can deliver as a Lead AI Engineer.
+Welcome to the no-nonsense sales page. This is a place to work out whether we can actually work together: where I add value to your business by automating the work that drains your team, training your people to use AI properly, or building AI harnesses for them. Most salespeople oversell and under-deliver, because they are never the ones who have to deliver what they sold. I will not tarnish them all over a few bad eggs, though: I have met a few genuinely good salespeople and am still friends with them, and it is a cut-throat, live-or-die kind of role, so I get it. I have sat in every role in a business, including sales. So I will not oversell you, and I only offer what I can deliver as a Lead AI Engineer.
 
 I like to stay grounded in reality: what is possible, what is not, what is going to be genuinely hard, and what is just fluff and AI hype, because most people genuinely do not know the difference. Most problems can be solved if you throw enough money at them, but not every problem can be solved with money either. So I will be real with you, even when that causes a little friction, because I always want what is genuinely best for my clients. A client almost always thinks they want one thing, when sometimes what they actually need is slightly different. Some clients, though, know exactly what they want and need, and that makes my job easier. I am a seeker of truth, so I like to get my hands dirty and dig in together to sanity-check everything.
 
@@ -39,7 +39,7 @@ All three run on the same engine (free discovery call, paid scoping step, delive
 
 A lot of AI gets built the wrong way round: the solution gets built first (code is cheap now, anyone can vibe-code an app), then someone tries to fit your problem into it. I work the other way. I start from your customer's experience and what your business needs right now and in the near future, then work backwards to a solution that fits YOUR problem. AI can build almost anything these days; the real value is gluing the pieces together in the right order for you. That is exactly why the paid scoping step exists: I spend that time understanding your business before anything gets built.
 
-My role is to add value to your business. That is what you hire me for. Once we get started, I am here to listen more than I talk, to investigate, and to ground the truth. Only then can I propose what you need versus what you want, along with a plan of action. Then I execute it as agreed, with your consent and full support, and I keep the plan flexible for the unknowns that only show up once you are actually doing the work. I do not do rigid plans; they are not real. By the way, I have been a programme manager and a PMI PMP certified project manager, accountable for too many programmes and projects to count, so yeah, I know a little about this.
+My role is to add value to your business. That is what you hire me for. Once we get started, I am here to listen more than I talk, to investigate, and to ground the truth. Only then can I propose what you need versus what you want, along with a plan of action. Then I execute it as agreed, with your consent and full support, and I keep the plan flexible for the unknowns that only show up once you are actually doing the work. I do not do rigid plans; they are not real. By the way, I have been a programme manager and a PMI PMP certified project manager, accountable for too many programmes and projects to count. I know a little about this.
 
 <!-- iamhoiend -->
 
@@ -83,11 +83,11 @@ So: I work best with people who are down-to-earth, empathetic, real, connected, 
 
 People I have worked with label me as the "No Problems, Only Solutions" guy, and I happily live up to that. I am dead serious about the work itself (quality output, delivered on time, no shortcuts on what matters). I am NOT serious about the rest of it. There will be a sprinkle of sarcasm. I will tell you when something is genuinely funny. I will admit when I have cocked something up.
 
-Staying calm, light-hearted, leaning into humour and sarcasm has always been my way of processing high stress and survival instinct (especially during fire-fighting situations). So if that is a problem for you or your stakeholders, then yeah, it will not work for us.
+Staying calm, light-hearted, leaning into humour and sarcasm has always been my way of processing high stress and survival instinct (especially during fire-fighting situations). So if that is a problem for you or your stakeholders, it will not work for us.
 
-We both have to choose to work with each other and the right working environment for both of us to do our best work. Otherwise it is not going forward. If reading my genuine voice and persona on this page lands for you, we will probably have a great time and not just get shit done (anyone can do that), but get shit done **PROPERLY**. If it makes you cringe, I am almost certainly not the consultant for you (and that is also completely fine, I am not for everyone). If that is you, no hard feelings; we are probably not the right consultant-and-client match, and the discovery call will not change that.
+We both have to choose to work with each other and the right working environment for both of us to do our best work. Otherwise it is not going forward. If reading my genuine voice and persona on this page lands for you, we will probably have a great time and not just get things done (anyone can do that), but get things done **PROPERLY**. If it makes you cringe, I am almost certainly not the consultant for you (and that is also completely fine, I am not for everyone). If that is you, no hard feelings; we are probably not the right consultant-and-client match, and the discovery call will not change that.
 
-I'm a firm believer that starting any relationship with the highest honesty and integrity, and continuing on that basis, is the right way. It'll keep us all sane :)
+I'm a firm believer that starting any relationship with the highest honesty and integrity, and continuing on that basis, is the right way. It'll keep us all sane.
 
 If you are still with me, keep going. The rest of this page and the other pages are not selling. It is information to set and manage your expectations: what we will do, why, how, and when.
 
@@ -109,13 +109,13 @@ Fair question. Because I could spin up a fancy "AI consultancy" website in a few
 
 So that is what I am offering, on my actual blog where you can read who I am, what I am, what I am not, what I think about, what I build, what I cock up, what I learn. Reading me here is easier than reading a pitch deck someone else wrote for me.
 
-As a bonus you get my bubbly, fun, no-bullshit (maybe a sprinkle of sarcasm) personality. We will figure out on a 20-minute discovery call whether working together is going to be a wonderful and pleasurable experience for both of us, well before any money or SOW (Statement of Work; the legal contract that locks the scope, deliverables, fees, and terms of a phase) lands on the table.
+As a bonus you get my bubbly, fun, no-nonsensical (maybe a sprinkle of sarcasm) personality. We will figure out on a 20-minute discovery call whether working together is going to be a wonderful and pleasurable experience for both of us, well before any money or SOW (Statement of Work; the legal contract that locks the scope, deliverables, fees, and terms of a phase) lands on the table.
 
 No slide deck, no sales pitch on that call. I am more interested in listening to your problems and helping you solve them.
 
 And while we are on this. The bigger problem with AI right now is people spending too much time making things LOOK nice that do not actually WORK. The pretty UI on top of the broken bit. The demo that landed on camera after take 17 (and the previous 16 takes you never saw). The "I built a full platform in 1 day with AI" that looks super fancy on a Youtube video (you've seen the genre).
 
-I am not running that play. It's like trying to wrap shit in gold foil, but end of the day, if it smells like shit and tastes like shit, it is still shit no matter how you present it. That's basically what AI slop is and I'm sure you know all about it and trying to solve it since you're on my page reading this. I would rather spend my hours building the thing that works (the actual audit, mapping workflows and repetitive workloads, building it into automation, training, and support work) because right now, this is what matters. Yes, I will automate the bits of my own marketing where automation makes genuine sense, and yes this page will keep getting a little nicer over time. But the value is not in covering up problems. The value is focussing on something that works reliably, now AND in 12 months, with the minimum maintenance burden possible. That is the actual problem to solve.
+I am not running that play. Dressing up weak output in a nice wrapper does not make it good; if it does not work, it does not work, no matter how you present it. That is basically what AI slop is, and I am sure you know it well since you are on my page trying to solve it. I would rather spend my hours building the thing that works (the actual audit, mapping workflows and repetitive workloads, building it into automation, training, and support work) because right now, this is what matters. Yes, I will automate the bits of my own marketing where automation makes genuine sense, and yes this page will keep getting a little nicer over time. But the value is not in covering up problems. The value is focussing on something that works reliably, now AND in 12 months, with the minimum maintenance burden possible. That is the actual problem to solve.
 
 That is what I am building for you. Not a pretty thing. A working thing.
 
