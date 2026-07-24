@@ -26,6 +26,8 @@ AI makes it easy to generate something that looks finished. What I care about is
 
 As an entrepreneur, I know the importance of testing the water, which is what MVPs and working prototypes are for: getting something in front of real users and seeing how it goes. Either stop the ones there is no real want or market for, or refine and scale the ones users actually want. Perfection is not the goal.
 
+A prototype is also a way to drive a conversation. Sometimes I know going in that it is not the answer, but it is still a good starting point when a stakeholder or client is not sure what they want. Something they can hold and play with makes a big difference: people get to what they want by first seeing what they don't. So the first thing I get clear on is the purpose, and the angle we are building for.
+
 What I want is to actually architect and build, with the room to run at it. It does not have to be a team; I can be solo, working directly with the interested stakeholders. I have shipped several real production systems this way over the last year, and the CV below has the detail.
 
 <!-- iamhoiend -->
