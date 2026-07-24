@@ -1,0 +1,31 @@
+# Section-landing (_index.md) social cards (blog-priv#61).
+# One content-relative bundle path per line. The card TITLE and TAGLINE are read from
+# that landing's own _index.md frontmatter (title required; description -> tagline,
+# shrunk to fit; no description -> title-only card). No taglines are stored here, so
+# there is one source of truth (the page's frontmatter) and nothing to keep in sync.
+#
+# The home page (content/_index.md) is NOT listed here - it is a photo composite built
+# by gen_home() from content/hoi-mug.jpg. Already carded by their own generators and
+# excluded: hire-hoi/ai-consultancy/portfolio (cards.tsv) and community/agit-featured
+# (gen_agit_feature.py). noindex landings (content/private) are excluded too.
+#
+# Guard: scripts/check_social_cards.py enumerates every indexable _index.md landing and
+# fails the build if one lacks a share-card, so a new landing added here-but-not-carded
+# (or carded-but-not-here) is caught.
+
+# --- title + tagline (frontmatter description exists) ---
+hire-hoi
+hire-hoi/ai-consultancy
+hire-hoi/ict-consultancy
+legal
+skills
+
+# --- title-only (no frontmatter description) ---
+food-booze
+adventure
+dance
+tech-ai
+life
+entrepreneurship
+trading
+community
