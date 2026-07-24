@@ -20,11 +20,13 @@ There are two kinds of permanent role I am looking for:
 
 <!-- iamhoi -->
 
-I am a founder at heart, most drawn to very hands-on, founding-startup work: scoping the product, building it, and owning it end to end. With agentic coding I move fast, an MVP in days rather than weeks, then iterate from there. Shipping fast does not mean sloppy. A demo, prototype or MVP still has to work, and it has to be quality controlled. That is what my own custom harness is for: a specialised framework I built and use for this.
+I am a founder at heart with an engineer's mind, most drawn to very hands-on, founding-startup work: scoping the product, building it, and owning it end to end. With agentic coding I move fast, an MVP in days rather than weeks, then iterate from there. Shipping fast does not mean sloppy. A demo, prototype or MVP still has to work, and it has to be quality controlled. That is what my own custom harness is for: a specialised framework I built and use for this.
+
+AI makes it easy to generate something that looks finished. What I care about is whether it holds up underneath: the logic, the data, the workflow, the wiring, and the design intent driving all of it.
 
 As an entrepreneur, I know the importance of testing the water, which is what MVPs and working prototypes are for: getting something in front of real users and seeing how it goes. Either stop the ones there is no real want or market for, or refine and scale the ones users actually want. Perfection is not the goal.
 
-What I want is to actually build, with the room to run at it. It does not have to be a team; I can be solo, working directly with the interested stakeholders. I have shipped several real production systems this way over the last year, and the CV below has the detail.
+What I want is to actually architect and build, with the room to run at it. It does not have to be a team; I can be solo, working directly with the interested stakeholders. I have shipped several real production systems this way over the last year, and the CV below has the detail.
 
 <!-- iamhoiend -->
 
