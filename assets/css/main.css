@@ -72,7 +72,7 @@ strong, b { font-weight: 550; }
   margin: 1.25rem 0 0.4rem;
   font-weight: 550;
 }
-.sidebar nav ul { list-style: none; padding-left: 0.5rem; } /* tiny indent nests items under their section header */
+.sidebar nav ul { list-style: none; padding-left: 0.25rem; } /* subtle indent nests items under their section header (desktop; mobile burger override in the max-width:768px block) */
 .sidebar nav li { margin: 0.2rem 0; }
 .sidebar nav a {
   color: var(--fg);
@@ -245,6 +245,7 @@ footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule);
   .sidebar { position: relative; max-height: none; border-bottom: 1px solid var(--rule); padding-bottom: 1rem; margin-bottom: 1rem; }
   .sidebar nav { display: none; }
   .menu-toggle-input:checked ~ nav { display: block; }
+  .sidebar nav ul { padding-left: 0.75rem; } /* larger indent in the burger menu (bigger type, more room) */
   .main { max-width: 100%; }
 
   .menu-toggle-btn {
