@@ -7,7 +7,7 @@ Three tracks. Pick the one that fits, or use the menu.
 
 ## AI Consultancy
 
-AI Managed Harness Services, Business Automation Services, and AI Adoption Training for owner-operator-led teams, plus a portfolio of client work.
+AI Managed Harness Services, Business Automation Services, AI Adoption Training, and AI Product Demo/MVP/Prototype Builder for owner-operator-led teams, plus a portfolio of client work.
 
 [See AI Consultancy](/hire-hoi/ai-consultancy/)
 
