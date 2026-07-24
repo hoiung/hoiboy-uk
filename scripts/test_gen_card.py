@@ -5,6 +5,7 @@ frontmatter reader, and the title-only vs title+tagline render path."""
 from __future__ import annotations
 
 import importlib.util
+import re
 import sys
 from pathlib import Path
 
@@ -38,28 +39,32 @@ def test_real_long_description_fits_in_full():
     # non-space content: textwrap may break at an existing hyphen (deliverable-anchored)
     # or a space, but must never add/drop a character.
     fs, lines = gc.fit_tagline(AI_CONSULTANCY_DESC)
-    assert len(lines) <= 4
+    assert len(lines) <= gc._tag_max_lines(128, fs)     # fits the default vertical budget
     assert not lines[-1].endswith("...")
     assert "".join(lines).replace(" ", "") == AI_CONSULTANCY_DESC.replace(" ", "")
 
 
-def test_pathological_text_bounded_to_max_lines_with_ellipsis():
-    # Text too long to fit even at min_fs in 4 lines must be truncated, not overflow.
+def test_pathological_text_bounded_and_ellipsised():
+    # Text too long to fit even at min_fs must be truncated to the vertical budget, not
+    # overflow. At the default 128px budget the smallest font (15) fits 5 lines.
     fs, lines = gc.fit_tagline("word " * 400)
     assert fs == 15
-    assert len(lines) == 4
+    assert len(lines) == gc._tag_max_lines(128, 15)
     assert lines[-1].endswith("...")
 
 
-def test_never_exceeds_max_lines_for_any_length():
+def test_never_exceeds_vertical_budget_for_any_length():
     for n in (5, 30, 80, 160, 400, 1000):
-        _, lines = gc.fit_tagline("word " * n)
-        assert len(lines) <= 4, f"{n} words -> {len(lines)} lines"
+        fs, lines = gc.fit_tagline("word " * n)
+        assert len(lines) <= gc._tag_max_lines(128, fs), f"{n} words -> {len(lines)} lines @ {fs}px"
 
 
-def test_custom_max_lines_respected():
-    _, lines = gc.fit_tagline("word " * 400, max_lines=2)
-    assert len(lines) == 2 and lines[-1].endswith("...")
+def test_small_vertical_budget_bounds_lines():
+    # A cramped budget (e.g. a 2-line title left little room) shrinks the tagline instead
+    # of overflowing: only what fits, truncated with an ellipsis.
+    fs, lines = gc.fit_tagline("word " * 400, avail_px=60)
+    assert len(lines) <= gc._tag_max_lines(60, fs)
+    assert lines[-1].endswith("...")
 
 
 # ---- read_landing_meta --------------------------------------------------------
@@ -91,3 +96,14 @@ def test_title_tagline_svg_has_tagline_text():
     assert ">Legal<" in svg
     assert "Privacy notice and sub-processors." in svg
     assert 'class="tag">' in svg
+
+
+def test_two_line_title_tagline_stays_clear_of_signature():
+    # A long title that wraps to 2 lines + a long tagline must NOT push tagline text into
+    # the bottom-right signature zone (logo top ~= SIG_CLEAR_Y). Sonnet's finding.
+    assert len(gc.wrap_title("AI Product Engineering Consultancy Roles")) == 2   # 2-line title
+    svg = gc.make_landing_svg("AI Product Engineering Consultancy Roles",
+                              AI_CONSULTANCY_DESC, "data:image/png;base64,AAAA")
+    tag_ys = [float(y) for y in re.findall(r'y="([\d.]+)" class="tag"', svg)]
+    assert tag_ys, "expected tagline text elements"
+    assert max(tag_ys) <= gc.SIG_CLEAR_Y   # every tagline baseline stays above the signature

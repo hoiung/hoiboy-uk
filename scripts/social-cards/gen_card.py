@@ -56,6 +56,9 @@ SIG_TEXT   = "hoiboy.uk"
 SIG_FS     = 30         # signature font-size
 TAG_FS     = 26         # tagline font-size (IBM Plex Mono is wide; 26 keeps the
                         # longest strapline on one line within the card width)
+TAG_LINE_GAP = 10       # extra px per landing-card tagline line (line height = fs + this)
+SIG_CLEAR_Y  = 486      # landing-card tagline block must stay ABOVE this y so it never
+                        # collides with the bottom-right signature (logo top ~= 502)
 LOGO_PX    = 64
 LOGO_GAP   = 16
 SIG_MARGIN = 64         # equal inset from BOTH the right and bottom edges
@@ -209,22 +212,38 @@ def read_landing_meta(index_md):
     return title, field("description")
 
 
-def fit_tagline(tagline, usable_px=980, max_fs=TAG_FS, min_fs=15, max_lines=4):
+TAG_MAX_LINES = 4       # design cap on landing-card tagline lines (a card, not an essay)
+
+
+def _tag_max_lines(avail_px, fs):
+    """How many tagline lines of font-size `fs` fit in `avail_px` of vertical space,
+    capped at the design maximum. n baselines span (n-1) line heights, so n fits when
+    (n-1)*(fs+TAG_LINE_GAP) <= avail_px, i.e. n <= avail_px//line_h + 1. At least 1.
+    For a 1-line title (avail_px ~128) this is TAG_MAX_LINES at every fs in [15,26], so
+    the card output matches the original fixed-4 fitter; a 2-line title shrinks avail_px
+    and this returns fewer, keeping the block clear of the signature."""
+    line_h = fs + TAG_LINE_GAP
+    return max(1, min(TAG_MAX_LINES, int(avail_px // line_h) + 1))
+
+
+def fit_tagline(tagline, usable_px=980, avail_px=128, max_fs=TAG_FS, min_fs=15):
     """Largest IBM Plex Mono size in [min_fs, max_fs] whose word-wrap of `tagline` fits
-    within max_lines lines of usable_px. Plex Mono is monospace (advance ~0.6*fs) so a
-    character-count wrap is an exact width fit. Returns (fs, [lines]) with AT MOST
-    max_lines lines. Shrinks to show the FULL description for realistic copy (no
-    truncation - all current landing descriptions fit); only text so long it would not
-    fit even at min_fs in max_lines is truncated with an ellipsis, so the tagline block
-    can never overflow the card or collide with the bottom-right signature."""
+    BOTH usable_px wide AND avail_px tall (so the block can never run into the space below
+    it - the bottom-right signature - regardless of how far a wrapped title pushed it
+    down). Plex Mono is monospace (advance ~0.6*fs) so a character-count wrap is an exact
+    width fit; the vertical fit is line-count * (fs + TAG_LINE_GAP). Returns (fs, [lines]).
+    Shows the FULL description for realistic copy (no truncation - every current landing
+    fits); text too long to fit even at min_fs is truncated with an ellipsis so the block
+    stays within its box."""
     for fs in range(max_fs, min_fs - 1, -1):
         cpl = max(8, int(usable_px / (fs * 0.6)))
         lines = textwrap.wrap(tagline, width=cpl)
-        if len(lines) <= max_lines:
+        if len(lines) <= _tag_max_lines(avail_px, fs):
             return fs, lines
     cpl = max(8, int(usable_px / (min_fs * 0.6)))
+    max_lines = _tag_max_lines(avail_px, min_fs)
     lines = textwrap.wrap(tagline, width=cpl)
-    if len(lines) > max_lines:                       # pathologically long: bound + ellipsis
+    if len(lines) > max_lines:                       # too long even at min_fs: bound + ellipsis
         lines = lines[:max_lines]
         last = lines[-1]
         if len(last) + 3 > cpl:
@@ -251,9 +270,12 @@ def make_landing_svg(title, tagline, logo_uri, pal=HOIBOY_PAL, eyebrow=LANDING_E
     tag_fs = TAG_FS
     tag_markup = ""
     if tagline:
-        tag_fs, tag_lines = fit_tagline(tagline)
-        tag_lh = tag_fs + 10
-        ty = rule_y + 58
+        tag_top = rule_y + 58                         # first tagline baseline
+        # Fit within the space between the rule and the signature, so a wrapped (2-line)
+        # title shrinks the tagline instead of overlapping the bottom-right mark.
+        tag_fs, tag_lines = fit_tagline(tagline, avail_px=SIG_CLEAR_Y - tag_top)
+        tag_lh = tag_fs + TAG_LINE_GAP
+        ty = tag_top
         for l in tag_lines:
             tag_markup += f'<text x="110" y="{ty:.0f}" class="tag">{html.escape(l)}</text>'
             ty += tag_lh
