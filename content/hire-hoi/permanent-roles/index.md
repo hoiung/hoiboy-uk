@@ -20,7 +20,7 @@ There are two kinds of permanent role I am looking for:
 
 <!-- iamhoi -->
 
-I am a founder at heart, most drawn to very hands-on, founding-startup work: scoping the product, building it, and owning it end to end. With agentic coding I move fast, an MVP in days rather than weeks, then iterate from there.
+I am a founder at heart, most drawn to very hands-on, founding-startup work: scoping the product, building it, and owning it end to end. With agentic coding I move fast, an MVP in days rather than weeks, then iterate from there. Shipping fast does not mean sloppy. A demo, prototype or MVP still has to work, and it has to be quality controlled. That is what my own custom harness is for: a specialised framework I built and use for this.
 
 As an entrepreneur, I know the importance of testing the water, which is what MVPs and working prototypes are for: getting something in front of real users and seeing how it goes. Either stop the ones there is no real want or market for, or refine and scale the ones users actually want. Perfection is not the goal.
 
