@@ -1,11 +1,11 @@
 ---
 title: "AI Consultancy"
-description: "AI consulting for owner-operator-led teams: AI Managed Harness Services, Business Automation Services, and AI Adoption Training, plus a portfolio of client work. Audit-first builds, deliverable-anchored automation, done-with-you training, ongoing Monthly Maintenance Package."
+description: "AI consulting for owner-operator-led teams: AI Managed Harness Services, Business Automation Services, AI Adoption Training, and the AI Product Demo/MVP/Prototype Builder, plus a portfolio of client work. Audit-first builds, deliverable-anchored automation, done-with-you training, ongoing Monthly Maintenance Package."
 ---
 
 <!-- iamhoi -->
 
-I help owner-operator CEOs at small businesses (5 to 50 employees) get their AI tooling working as a system, not as a scattered collection of half-finished experiments. There are three ways to work with me, plus a portfolio of what that looks like in practice. New here, or not sure which one fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}), the front door.
+I help owner-operator CEOs at small businesses (5 to 50 employees) get their AI tooling working as a system, not as a scattered collection of half-finished experiments. There are four ways to work with me, plus a portfolio of what that looks like in practice. New here, or not sure which one fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}), the front door.
 
 UK-based; international clients welcome (travel and accommodation at cost when scope needs me on-site, no markup).
 
@@ -27,9 +27,15 @@ Want your team to own the capability rather than outsource it? Done-with-you tra
 
 [Read the full offer]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-training" >}})
 
+## AI Product Demo/MVP/Prototype Builder
+
+Got an idea you want built and tested? Contract me to build your demo, MVP, or prototype instead of hiring a full-time AI Product Engineer, so you can test an idea without a permanent salary. Day-rate pricing at £1,000 + VAT, billed by the half day, with a half-day brief to agree scope first, and a clean handover so you own what I build.
+
+[Read the full offer]({{< ref "/hire-hoi/ai-consultancy/ai-product-builder" >}})
+
 ## Pricing & Billing
 
-Full pricing and billing terms across all three services, in one place.
+Full pricing and billing terms across all four services, in one place.
 
 [See pricing and billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}})
 
