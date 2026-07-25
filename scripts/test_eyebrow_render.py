@@ -7,7 +7,7 @@ actually SAYS, per named page. The other Phase-3 checks are absence-of-old-strin
 presence-of-import and width; none of them would notice a card that rendered the
 wrong trail.
 
-Four assertions:
+Five assertions:
 
   AC 3.4b  Exact eyebrow text for each page the operator named, resolved the way the
            generators resolve it: through the page's own trail.json sidecar.
@@ -18,6 +18,10 @@ Four assertions:
   AC 3.3   The 6 top-level cards (Hire Hoi, Legal, Skills, Community, the Blogs hub,
            Home) render with NO eyebrow text node at all.
   AC 3.6   The site-wide default card carries no eyebrow either.
+  Guards   Both of eyebrow_for()'s fail-loud paths actually fire. These are the
+           branches that stop a card silently falling back to a hardcoded brand
+           string, which is the whole drift this mechanism exists to remove — so an
+           untested guard is an untested version of the issue's central promise.
 
 AC 3.3/3.6 are asserted on the markup the SVG builders RETURN, not on a file: the
 generators unlink the intermediate .svg immediately after rsvg-convert
@@ -164,6 +168,49 @@ def check_default_card(failures: list[str]) -> None:
                         "the empty-eyebrow assertion above would pass vacuously")
 
 
+def check_guards(trails: dict, failures: list[str]) -> None:
+    """Both fail-loud paths in eyebrow_for() actually fire.
+
+    eyebrow_for() has two guards, and neither is reachable from a generator's normal
+    entry point — which is exactly why they need a test rather than a manual poke. A
+    guard nobody exercises is an untested branch, and these two are what stop a card
+    silently falling back to a hardcoded brand string.
+
+      1. trails is None   - gen_card.py:main skips load_trails() when the only target
+                            is `default` (that card has no eyebrow, and skipping lets
+                            `gen_card.py default` run against a never-built tree). No
+                            eyebrow-bearing set is reachable on that path, so None
+                            arriving here means a set was generated with no index.
+      2. sidecar missing  - the page has not rendered yet. There is deliberately NO
+                            default eyebrow, so this must exit rather than emit "".
+
+    Distinguishing the two matters: an empty-string return from either would be
+    indistinguishable from a legitimately eyebrow-free top-level card (AC 3.3), so a
+    silent failure here would ship a blank eyebrow on a page that should carry a trail.
+    """
+    for label, arg in (("trails=None", None), ("missing sidecar", {})):
+        try:
+            got = card_common.eyebrow_for(arg, "tech-ai")
+        except SystemExit:
+            continue                       # correct: fail loud
+        failures.append(f"AC 3.2: eyebrow_for({label}) returned {got!r} instead of "
+                        f"exiting. A silent '' here is indistinguishable from a "
+                        f"legitimately eyebrow-free top-level card.")
+    # Inverse, so the two assertions above cannot pass on a function that exits
+    # unconditionally: a page that DOES have a sidecar still resolves normally. The
+    # SystemExit is caught rather than allowed to propagate, so that mutant reports a
+    # named failure like every other check instead of crashing out of main() with a
+    # bare exit status and no diagnosis.
+    if "tech-ai" in trails:
+        try:
+            resolved = card_common.eyebrow_for(trails, "tech-ai")
+        except SystemExit:
+            resolved = ""
+        if not resolved:
+            failures.append("AC 3.2: eyebrow_for() no longer resolves a real bundle — the "
+                            "guard assertions above would pass vacuously")
+
+
 def check_agit(trails: dict, failures: list[str]) -> None:
     """AC 3.4b — the AGIT feature card carries its own rendered breadcrumb trail."""
     bundle = "community/agit-featured"
@@ -219,6 +266,7 @@ def main(argv: list[str] | None = None) -> int:
     check_join_key(built, trails, failures)
     check_no_eyebrow(trails, failures)
     check_default_card(failures)
+    check_guards(trails, failures)
     check_agit(trails, failures)
 
     if failures:
@@ -228,8 +276,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     print(f"OK: {named} named eyebrows exact, {len(NO_EYEBROW_BUNDLES)} top-level cards "
-          f"eyebrow-free, default card eyebrow-free, join survives a permalink change "
-          f"({len(trails)} sidecars)")
+          f"eyebrow-free, default card eyebrow-free, both fail-loud guards fire, join "
+          f"survives a permalink change ({len(trails)} sidecars)")
     return 0
 
 
