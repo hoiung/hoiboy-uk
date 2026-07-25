@@ -162,3 +162,36 @@ def test_the_two_scopes_together_cover_every_tree_the_validator_knows_about():
         f"'posts' + 'consulting'; any other root is gated by nothing, and every "
         f"page under it passes by omission rather than by compliance."
     )
+
+
+def test_every_test_file_is_listed_in_ci():
+    """No test file can exist without CI running it (blog-priv#62, Ralph Tier 3).
+
+    CI invokes pytest through EXPLICIT FILE LISTS -- there is no `testpaths` config
+    and no directory-wide collection -- so a test file nobody lists never runs. It
+    still passes locally, which is worse than having no test at all: the local suite
+    count reports coverage that CI does not enforce.
+
+    This repo has now been bitten by that twice. `tests/test_gate_wiring.py` itself
+    shipped unlisted in blog-priv#55 (see the comment above the frontmatter step in
+    ci.yml), and blog-priv#62 found `scripts/test_gen_card.py` unlisted while that
+    same issue was rewriting its subject under test. Both were caught by an audit
+    rather than by the suite, because no assertion existed to catch them.
+
+    A guard that cannot fail guards nothing. This is the assertion that makes the
+    class self-policing: add a test file, and CI fails until something runs it.
+    """
+    listed = set(re.findall(r"(?:scripts|tests)/test_[a-z0-9_]+\.py",
+                            CI.read_text(encoding="utf-8")))
+    on_disk = {
+        f"{d}/{p.name}"
+        for d in ("scripts", "tests")
+        for p in sorted((ROOT / d).glob("test_*.py"))
+    }
+    unlisted = sorted(on_disk - listed)
+    assert not unlisted, (
+        f"{len(unlisted)} test file(s) exist but appear in no ci.yml pytest "
+        f"invocation, so CI never runs them: {unlisted}. Add each to a pytest step "
+        f"(built-tree tests belong after the Hugo build step, source-only tests "
+        f"before it)."
+    )
