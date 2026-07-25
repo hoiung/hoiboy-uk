@@ -250,6 +250,16 @@ jobs:
       - name: Trail sidecar + breadcrumb level tests (built tree)
         run: python3 -m pytest scripts/test_trail_manifest.py scripts/test_breadcrumb_levels.py -q
 
+      # The card-eyebrow half of the same contract. test_eyebrow_render asserts the
+      # exact eyebrow TEXT per named page (the operator's one explicit ask, which
+      # every other Phase-3 check leaves unfalsifiable) and that the generators join
+      # on the content path, so a permalink change cannot silently break the lookup.
+      # test_eyebrow_width asserts each eyebrow fits its own card geometry with
+      # nothing clipped. test_card_build_order pins the two-pass build and executes
+      # the fail-loud path rather than reading it.
+      - name: Card eyebrow + build-order tests (built tree)
+        run: python3 -m pytest scripts/test_eyebrow_render.py scripts/test_eyebrow_width.py scripts/test_card_build_order.py -q
+
       - name: URL contract assertion
         run: |
           set -e
