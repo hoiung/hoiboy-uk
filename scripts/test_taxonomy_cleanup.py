@@ -60,12 +60,23 @@ def check_sitemap(built: Path, failures: list[str]) -> None:
     if cats:
         failures.append(f"AC 6.2: {len(cats)} /categories/ URL(s) still in the sitemap: "
                         f"{cats[:3]}")
+    # A FLOOR, not an equality. The property AC 6.4 protects is that switching the
+    # `category` taxonomy off did not take `tags` or `series` down with it - i.e. that
+    # none DISAPPEARED. An exact `!=` also reddens CI the first time a new post carries
+    # a tag nobody has used before, which on a blog that publishes regularly is a
+    # near-term certainty and has nothing to do with Phase 6. That turns a correct
+    # publish into a build failure and teaches the next author to edit the number until
+    # the suite goes quiet - which is how a real regression eventually gets waved
+    # through. A floor catches every loss and stays silent on legitimate growth.
+    # (Ralph round 6 Tier 3.)
     for label, prefix, expect in (("tags", "/tags/", EXPECT_TAGS),
                                   ("series", "/series/", EXPECT_SERIES)):
         n = len([p for p in paths if p.startswith(prefix)])
-        if n != expect:
-            failures.append(f"AC 6.4: {n} {label} URLs in the sitemap, expected {expect} "
-                            f"(the same count as before Phase 6; {label} is out of scope)")
+        if n < expect:
+            failures.append(f"AC 6.4: {n} {label} URLs in the sitemap, down from the "
+                            f"{expect} measured before Phase 6. {label.title()} is out of "
+                            f"scope for this change, so a DROP means the taxonomy was "
+                            f"collateral damage. Growth is fine and is not checked.")
 
 
 def check_frontmatter_key(failures: list[str]) -> None:
@@ -113,8 +124,8 @@ def main(argv: list[str] | None = None) -> int:
 
     n = len(sorted(POSTS.glob("*/index.md")))
     print(f"OK: the `categories` taxonomy is off (0 /categories/ URLs), tags and series "
-          f"hold at {EXPECT_TAGS}/{EXPECT_SERIES}, and all {n} posts keep their "
-          f"`categories:` front-matter key")
+          f"have not dropped below their pre-Phase-6 {EXPECT_TAGS}/{EXPECT_SERIES}, and "
+          f"all {n} posts keep their `categories:` front-matter key")
     return 0
 
 
