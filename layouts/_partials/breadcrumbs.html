@@ -1,36 +1,12 @@
-{{- /* Breadcrumbs (site structure, not click history).
-       Posts (with a category) walk via the FIRST category tag, not the section.
-       Everything else walks its section ancestry via .Ancestors.
-       A page may set `breadcrumbParent` (a page path) to sit under a page other
-       than its Hugo section, e.g. the form thanks page under the AGIT page.
-       Hidden on home. */ -}}
+{{- /* Rendered breadcrumb nav. Every crumb comes from the breadcrumb-trail
+       partial; this template computes none of its own, so the nav and the
+       per-page trail.json sidecar can never disagree. Hidden on home. */ -}}
 {{- if not .IsHome -}}
 <nav class="breadcrumbs" aria-label="Breadcrumbs">
   <a href="/">Home</a>
-  {{- if and .IsPage (index (.Params.categories | default slice) 0) -}}
-    {{- /* Posts: derive the middle crumb from the first category param. Look up
-           the section page so the label comes from content/<cat>/_index.md. */ -}}
-    {{- $slug := index .Params.categories 0 -}}
-    {{- $sectionPage := site.GetPage (printf "/%s" $slug) -}}
-    {{- $href := printf "/%s/" ($slug | urlize) -}}
-    {{- $label := $slug | title -}}
-    {{- with $sectionPage -}}
-      {{- $href = .RelPermalink -}}
-      {{- $label = .Title -}}
-    {{- end -}}
-    <span class="sep">&gt;</span><a href="{{ $href }}">{{ $label }}</a>
-    <span class="sep">&gt;</span><span>{{ .Title }}</span>
-  {{- else -}}
-    {{- /* Walk the ancestry. An explicit breadcrumbParent override nests this page
-           under the named parent, resolved recursively (the parent's own
-           breadcrumbParent is honoured) via the breadcrumb-ancestry partial. */ -}}
-    {{- $trail := partial "breadcrumb-ancestry.html" . -}}
-    {{- range $trail -}}
-      {{- if not .IsHome -}}
-        <span class="sep">&gt;</span><a href="{{ .RelPermalink }}">{{ .Title }}</a>
-      {{- end -}}
-    {{- end -}}
-    <span class="sep">&gt;</span><span>{{ .Title }}</span>
+  {{- range partial "breadcrumb-trail.html" . -}}
+    <span class="sep">&gt;</span><a href="{{ .href }}">{{ .title }}</a>
   {{- end -}}
+  <span class="sep">&gt;</span><span>{{ .Title }}</span>
 </nav>
 {{- end -}}
