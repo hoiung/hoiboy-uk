@@ -271,86 +271,94 @@ def check_lychee_exclude(failures: list[str]) -> None:
                         "over the voice-sacred legacy corpus")
 
 
-# Words that mark a `public/posts` mention as a HISTORICAL note rather than a
-# current-tense claim. Deliberately a small, boring set: the point is that the
-# sentence visibly places the path in the past, not that it is cleverly phrased.
-_HISTORICAL_MARKERS = ("before", "moved", "was ", "were ", "retired", "predate", "used to")
-
 _RETIRED_BUILT_PATH = "public/posts"
-# Sentence boundaries, for scoping a marker to the clause that actually carries the
-# mention. `;` counts: a semicolon joins two independent clauses, and the second one
-# can make a claim the first does not license.
-_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.;])\s+")
+
+# Every tracked line outside this file that may mention the retired built path, pinned
+# as (path, exact stripped text). A mention not listed here FAILS, whatever it says.
+#
+# THIS IS A PIN, NOT A HEURISTIC, AND THAT IS THE POINT. Three consecutive Ralph rounds
+# broke the heuristic versions of this check, each time with ordinary English rather
+# than an adversarial string:
+#
+#   round 6  no check at all - AC 5.16's second clause was never delivered
+#   round 7  marker anywhere on the LINE exempted it:
+#            "The sidebar layout was redesigned before. public/posts still hosts ..."
+#   round 8  marker anywhere in the CLAUSE exempted it, where "clause" split only on
+#            . and ; - so a comma or a coordinating conjunction defeated it:
+#            "public/posts was the old build directory but public/posts still serves
+#             the rendered blog today."
+#            and the bare substring "moved" matched inside "unmoved" / "removed":
+#            "public/posts is the unmoved directory that still serves the blog."
+#
+# Each fix was a narrower guess at what "framed as history" reads like, and each was
+# beaten by a sentence one punctuation mark away from the last counterexample. Deciding
+# authorial INTENT from prose is not a thing a grep can do, and every further refinement
+# is another round of the same game. So it stops being a judgement: the allowed lines
+# are enumerated, and anything else is a failure a human re-reads.
+#
+# Adding a legitimate new historical mention means adding it here. That friction IS the
+# control - it forces the one re-read that would have caught the original AC 5.16 miss.
+# Matching the `_EXPECTED_LABELLED_LINES` pinned-exemption idiom already used above.
+_ALLOWED_RETIRED_MENTIONS = {
+    ("docs/AUTHORING.md",
+     "**Neither link tier checks a post.** `lychee.toml` `exclude_path` contains "
+     "**both** `public/blogs` and `content/posts`, so for a post target the rendered "
+     "tier and the CI markdown tier each report `0 Total` and pass without checking "
+     "anything. (`public/blogs` is the BUILT path; blog-priv#62 moved the rendered "
+     "output there from `public/posts`. `content/posts` is the source path and did not "
+     "move.) Measured: a post returns 0 links on both tiers, a consulting page returns "
+     "37 on the rendered tier. The exclusions are deliberate and predate blog-priv#55, "
+     "so **the links in a new post must be checked by hand** before you publish. Do not "
+     "read a green pre-publish run as evidence that a post's links resolve. The same "
+     "caveat is restated in the `CAVEAT:` paragraph of the gate-8 entry in "
+     "`scripts/pre-publish.sh`'s header block (same substance, different wording, so "
+     "check both when either changes)."),
+    ("docs/consulting-launch-checklist.md",
+     "`scripts/pre-publish.sh` check `consulting-link-liveness` runs `lychee` against "
+     "`public/hire-hoi/ai-consultancy/**/index.html` post-Hugo-build. A "
+     "`cal.com/OPERATOR_TODO_REPLACE_BEFORE_LAUNCH/20min-discovery` URL would 404 and "
+     "fail this gate. The `lychee.toml` `exclude_path` was tightened from `public` to "
+     "the blog's built output alone so consulting paths are reachable. That entry is "
+     "now `public/blogs` (blog-priv#62 moved the rendered blog there; it read "
+     "`public/posts` before)."),
+}
 
 
-def _mention_is_historical(body: str) -> bool:
-    """True when EVERY `public/posts` mention on this line sits in a clause that frames
-    it as history.
-
-    Scoped to the CLAUSE, not the line. The line-scoped version of this shipped in
-    ca33d0f and Ralph round 7 Tier 2 broke it with ordinary prose:
-
-        The sidebar layout was redesigned before. public/posts still hosts the
-        canonical built blog output today.
-
-    An unrelated historical clause ("was redesigned before") exempted a separate,
-    current-tense, false claim in the next sentence. That is not an adversarial input -
-    it is how people write - and it defeated the guard's only job.
-
-    A same-line "must also name public/blogs" rule was considered and rejected: it
-    passes `exclude_path contains public/posts and public/blogs`, which names both
-    paths as current and is exactly the stale claim being hunted. Clause-scoping
-    catches that one too, because the clause carries no marker.
-    """
-    for clause in _SENTENCE_SPLIT_RE.split(body):
-        if _RETIRED_BUILT_PATH not in clause:
-            continue
-        if not any(m in clause.lower() for m in _HISTORICAL_MARKERS):
-            return False
-    return True
-
-
-# (line, expected_historical, why). The guard below has now shipped two defects - a
-# line-scoped marker (round 7 Tier 2) on top of the missing sweep it was written for -
-# so its decision function gets fixtures rather than trust. Both polarities are pinned:
-# a guard that only proves it ACCEPTS the current tree cannot show it still REJECTS.
-_MARKER_CASES = (
+# Every sentence that defeated a HEURISTIC version of this guard, kept as fixtures. The
+# pin cannot be fooled by phrasing - membership is exact-text equality - so these can
+# only start passing if someone reintroduces prose-sniffing or widens the allowlist to
+# something generic. That is the regression worth catching: this is what stops a fourth
+# heuristic quietly growing back. Each is a real Ralph counterexample, not an invented one.
+_REJECTED_MENTION_CASES = (
     ("The sidebar layout was redesigned before. public/posts still hosts the canonical "
      "built blog output today.",
-     False,
-     "Ralph round 7 Tier 2's reproduction: an unrelated historical clause must not "
-     "exempt a current-tense claim in the next sentence"),
+     "round 7: unrelated historical clause, separate current-tense claim"),
+    ("public/posts was the old build directory but public/posts still serves the "
+     "rendered blog today.",
+     "round 8: clauses joined by a conjunction, never split on . or ;"),
+    ("public/posts is the unmoved directory that still serves the rendered blog output.",
+     "round 8: bare substring 'moved' matching inside 'unmoved'"),
     ("exclude_path contains public/posts and public/blogs.",
-     False,
-     "names both paths as CURRENT - the same-line 'must also name public/blogs' rule "
-     "would have passed this, which is why it was rejected"),
-    ("`exclude_path` contains **both** `public/blogs` and `content/posts` ... "
-     "blog-priv#62 moved the rendered output there from `public/posts`.",
-     True,
-     "docs/AUTHORING.md:211 - the real line, framed as history"),
-    ("That entry is now `public/blogs` (blog-priv#62 moved the rendered blog there; "
-     "it read `public/posts` before).",
-     True,
-     "docs/consulting-launch-checklist.md:25 - the real line, marker after a semicolon"),
+     "names both paths as current - defeats a 'must also name public/blogs' rule"),
     ("public/posts is where the rendered blog lives.",
-     False,
      "the plainest possible stale claim"),
 )
 
 
-def check_marker_logic(failures: list[str]) -> None:
-    """The stale-claim guard's decision function, asserted against fixtures.
+def check_pin_rejects_known_escapes(failures: list[str]) -> None:
+    """Every sentence that beat a previous version of this guard must still be rejected.
 
-    Without this, `check_no_stale_lychee_claims` is only ever exercised against a tree
-    that currently carries zero violations - so every regression in it reads as a pass.
-    That is precisely how its first version shipped broken.
+    Membership is exact-text equality, so the only way one of these passes is if the
+    allowlist grew to include it - which is what a slide back toward prose-sniffing
+    would look like.
     """
-    for body, expected, why in _MARKER_CASES:
-        got = _mention_is_historical(body)
-        if got is not expected:
+    allowed_bodies = {body for _, body in _ALLOWED_RETIRED_MENTIONS}
+    for body, why in _REJECTED_MENTION_CASES:
+        if body.strip() in allowed_bodies:
             failures.append(
-                f"AC 5.16: _mention_is_historical returned {got}, expected {expected}, "
-                f"for {body!r}. Case: {why}."
+                f"AC 5.16: a known escape is now in _ALLOWED_RETIRED_MENTIONS: {body!r} "
+                f"({why}). The pin must never list a sentence stating the retired path "
+                f"as current."
             )
 
 
@@ -370,12 +378,12 @@ def check_no_stale_lychee_claims(failures: list[str]) -> None:
     scripts/social-cards/README.md were the first two). A gate that reads only the
     thing that changed cannot see it. So this one reads everything that mentions it.
 
-    The rule is per-CLAUSE, not a file allowlist: a mention may stay as long as the
-    clause carrying it visibly frames it as history (see `_mention_is_historical`).
-    That keeps the AP #28 reversal record - saying what the value USED to be is how a
-    future reader learns the move happened - while a bare current-tense claim fails. A
-    file allowlist would have let a newly-added stale sentence into an already-listed
-    file without a word of complaint.
+    The rule is an EXACT-TEXT PIN (`_ALLOWED_RETIRED_MENTIONS`), not a prose heuristic.
+    Three rounds of trying to read authorial intent out of a sentence each got beaten by
+    ordinary English; the reasoning is recorded at the pin. A mention survives only by
+    being enumerated, which keeps the AP #28 reversal record - saying what the value USED
+    to be is how a future reader learns the move happened - while making a newly-added
+    stale sentence fail regardless of how it is phrased.
     """
     import subprocess
     try:
@@ -396,13 +404,15 @@ def check_no_stale_lychee_claims(failures: list[str]) -> None:
         lineno, _, body = rest.partition(":")
         if path.startswith("public/") or Path(path).name == self_name:
             continue                             # the build tree, and this guard itself
-        if _mention_is_historical(body):
-            continue                             # framed as history - allowed
+        if (path, body.strip()) in _ALLOWED_RETIRED_MENTIONS:
+            continue                             # pinned, already re-read by a human
         failures.append(
-            f"AC 5.16: {path}:{lineno} states `public/posts` as current. The rendered "
-            f"blog moved to public/blogs, so this reads as a fact and is false. Either "
-            f"correct it, or reword it so the line says the path is historical "
-            f"(one of: {', '.join(m.strip() for m in _HISTORICAL_MARKERS)})."
+            f"AC 5.16: {path}:{lineno} mentions the retired built path `public/posts` "
+            f"and is not pinned. The rendered blog moved to public/blogs, so a "
+            f"current-tense claim here is false. Either correct the line, or - if it is "
+            f"genuinely a historical note - add it verbatim to "
+            f"_ALLOWED_RETIRED_MENTIONS in {Path(__file__).name}. Adding the pin is the "
+            f"re-read this guard exists to force; do not widen it to a pattern."
         )
 
 
@@ -422,7 +432,7 @@ def main(argv: list[str] | None = None) -> int:
     check_permalink_token(failures)
     check_authoring_doc(failures)
     check_lychee_exclude(failures)
-    check_marker_logic(failures)
+    check_pin_rejects_known_escapes(failures)
     check_no_stale_lychee_claims(failures)
     if not built.is_dir():
         failures.append(f"AC 5.2: built site not found at {built} (run `hugo` first)")
