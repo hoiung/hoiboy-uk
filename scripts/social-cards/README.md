@@ -31,8 +31,12 @@ distinct, correctly-sized social card instead of falling back to a generic image
   (Hoi + the giant mug) filled to 1200x630 with a bottom scrim + the `PERSONAL BLOG`
   eyebrow, `hoiboy.uk` wordmark, and the site strapline. (blog-priv#61)
 - **default** - `content/default-card.png`, the `og:image` fallback for
-  **taxonomy / term pages only** (`/tags/`, `/categories/*` - generated, no content
+  **taxonomy / term pages only** (`/tags/` and `/tags/<tag>/` - generated, no content
   bundle, so they cannot hold a co-located card). Replaced the old `hoi-mug.jpg`.
+  This used to say `/tags/`, `/categories/*`. blog-priv#62 switched the `categories`
+  taxonomy off, so `/categories/*` no longer generates at all - it survives only as a
+  301 into `/blogs/*`, and the landings it duplicated own their own cards. `tags` is
+  now the only taxonomy this fallback serves.
 
 Run `python3 scripts/social-cards/gen_card.py [consulting] [legal] [hire-hoi]
 [landings] [home] [default]` (no args = all six). `layouts/_partials/head.html`
