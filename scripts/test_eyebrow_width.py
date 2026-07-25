@@ -35,6 +35,7 @@ Exit 0 = every eyebrow fits. Exit 1 = a named page overflows.
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -120,8 +121,31 @@ def check_fail_loud_floor(failures: list[str]) -> None:
         )
 
 
+CARD_W = 1200                 # card geometry, from the SVG viewBox gen_card emits
+CARD_H = 630
+_X_RE = re.compile(r'<text x="(-?\d+(?:\.\d+)?)" y="(-?\d+(?:\.\d+)?)" class="eyebrow"')
+
+
 def check_gen_card_pages(trails: dict, failures: list[str]) -> int:
-    """Every gen_card-carded page's eyebrow fits 980px at its fitted size."""
+    """Every gen_card-carded page's eyebrow lands INSIDE the 1200x630 card.
+
+    Measured off the markup `eyebrow_svg` actually emits, not off `fit_eyebrow`'s
+    return value. That distinction is the whole point of this function.
+
+    The previous version called `fit_eyebrow(eyebrow)` and then re-derived
+    `len(eyebrow) * (fs * 0.6 + EB_TRACK) > EB_USABLE`. That is character-for-character
+    the negation of `fit_eyebrow`'s own success condition (gen_card.py:146), which only
+    returns a size when the expression is `<= usable_px`. So the predicate was
+    UNREACHABLE: it could not fail for any input, and its contribution to the OK line
+    ("N gen_card eyebrows fit 980px") asserted nothing at all. Ralph round 6 Tier 3
+    found it.
+
+    Checking the emitted `x`/`y` closes the gap that made the vacuity matter. The card
+    eyebrow is the operator's #1 ask in blog-priv#62, and nothing anywhere pinned WHERE
+    it renders - so moving it off the card, or widening `usable_px` at the call site
+    past the card's own width, passed the entire suite. Width alone was never the
+    property worth asserting; staying on the card is.
+    """
     checked = 0
     for bundle in sorted(gen_card_bundles()):
         if bundle not in trails:
@@ -129,12 +153,26 @@ def check_gen_card_pages(trails: dict, failures: list[str]) -> int:
         eyebrow = card_common.eyebrow_for(trails, bundle)
         if not eyebrow:
             continue                      # no eyebrow line at all
-        fs = gen_card.fit_eyebrow(eyebrow)
-        width = len(eyebrow) * (fs * 0.6 + gen_card.EB_TRACK)
-        if width > gen_card.EB_USABLE:
+        fs, markup = gen_card.eyebrow_svg(eyebrow)
+        m = _X_RE.search(markup)
+        if not m:
             failures.append(
-                f"AC 3.4: {bundle or '<home>'} eyebrow {eyebrow!r} is {width:.0f}px at {fs}px, "
-                f"over the {gen_card.EB_USABLE}px card width"
+                f"AC 3.4: {bundle or '<home>'} has eyebrow {eyebrow!r} but eyebrow_svg "
+                f"emitted no positioned <text class=\"eyebrow\"> node: {markup!r}"
+            )
+            continue
+        x, y = float(m.group(1)), float(m.group(2))
+        width = len(eyebrow) * (fs * 0.6 + gen_card.EB_TRACK)
+        if x < 0 or y < 0 or y > CARD_H:
+            failures.append(
+                f"AC 3.4: {bundle or '<home>'} eyebrow is drawn at x={x:g},y={y:g}, "
+                f"outside the {CARD_W}x{CARD_H} card"
+            )
+        if x + width > CARD_W:
+            failures.append(
+                f"AC 3.4: {bundle or '<home>'} eyebrow {eyebrow!r} is {width:.0f}px at "
+                f"{fs}px and starts at x={x:g}, so it runs to {x + width:.0f}px and off "
+                f"the {CARD_W}px card"
             )
         checked += 1
     return checked
