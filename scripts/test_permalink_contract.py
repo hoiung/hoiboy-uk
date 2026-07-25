@@ -45,6 +45,17 @@ RETIRED_SEGMENTS = ("posts", *CATEGORIES, "categories")
 
 _LOC_RE = re.compile(r"<loc>\s*([^<\s]+)\s*</loc>")
 
+# An exact phrase from the two docs/AUTHORING.md lines that legitimately SHOW a retired
+# shape because they teach authors not to use it. Deliberately not the bare word
+# "retired" -- see check_authoring_doc's docstring for the mutants that escaped that.
+_RETIRED_LABEL_RE = re.compile(
+    r"do not author these|still resolve for visitors through the 301s", re.I)
+_EXPECTED_LABELLED_LINES = 2
+
+# A rendered link or asset ref whose FIRST path segment is retired.
+_RETIRED_REF_RE = re.compile(
+    r'(?:href|src)="/(' + "|".join(RETIRED_SEGMENTS) + r')/')
+
 
 def read_baseline() -> list[str]:
     """The retired PAGE URLs (feeds and taxonomy URLs are the coverage test's job)."""
@@ -116,6 +127,47 @@ def check_sitemap_clean(live: set[str], failures: list[str]) -> None:
             )
 
 
+def check_no_retired_links(built: Path, failures: list[str]) -> None:
+    """No RENDERED page links to a retired URL (blog-priv#62, Ralph Tier 3 round 2).
+
+    Every other check in this file asserts what the build SERVES. This one asserts what
+    the build LINKS TO, and nothing else covered it: `validate_internal_links.py` walks
+    `content/**/*.md` only and never sees rendered output; `lychee.toml` puts
+    `public/blogs` in `exclude_path`; and the CI URL-contract block asserts that retired
+    paths are not BUILT, never that nothing points at one.
+
+    That gap shipped a real defect. `layouts/_default/single.html` hand-built its
+    category chip as `/{{ $c | urlize }}/`, which was correct until the landings moved
+    under /blogs/. The file has zero diff lines on this branch -- it was simply left
+    behind -- and the result was 113 retired hrefs across all 79 post pages, each page
+    self-inconsistent because its own breadcrumb and sidebar already pointed at the live
+    path. Every one still "worked", via a 301, which is exactly why no gate noticed.
+
+    A redirect is a safety net for INBOUND links from places we do not control. An
+    in-repo link taking a redirect hop is a defect, and it is the rule this repo already
+    states in `validate_internal_links.py` and `docs/AUTHORING.md`.
+    """
+    pages = sorted(built.rglob("*.html"))
+    if not pages:
+        failures.append(f"AC 5.2: no rendered HTML under {built} to check for retired links")
+        return
+    offenders: dict[str, list[str]] = {}
+    for page in pages:
+        hits = set(_RETIRED_REF_RE.findall(page.read_text(encoding="utf-8", errors="replace")))
+        for seg in hits:
+            offenders.setdefault(seg, []).append(str(page.relative_to(built)))
+    if offenders:
+        detail = "; ".join(
+            f"/{seg}/ on {len(paths)} page(s) e.g. {sorted(paths)[0]}"
+            for seg, paths in sorted(offenders.items())
+        )
+        failures.append(
+            f"AC 5.2: the rendered site links to retired URLs that only survive via a "
+            f"301 -- {detail}. An in-repo link must point at the live path; resolve the "
+            f"target page and use its .RelPermalink rather than hand-building the URL."
+        )
+
+
 def check_permalink_token(failures: list[str]) -> None:
     """AC 5.1 - the token itself. `:slug` builds clean and silently rewrites 51 of
     82 post URLs to title-derived strings, so asserting on the built output alone
@@ -143,7 +195,15 @@ def check_authoring_doc(failures: list[str]) -> None:
     "do not author these" row. Both are correct content that a bare substring count
     cannot tell apart from a stale URL. So the check is narrowed to what the AC was
     a proxy for: a `/posts/...` that appears as a SERVED URL, in link or src or
-    inline-code position, on a line that does not label it retired.
+    inline-code position, on a line that does not explicitly LABEL it retired.
+
+    "Explicitly label" is an exact-phrase match plus a pinned count, not the bare word
+    "retired". Ralph Tier 3 (round 2) mutation-proved that a bare-substring skip lets a
+    genuinely stale URL escape whenever it merely shares a line with that word -- e.g.
+    a live link inside a sentence about "the retired scheme", or one sitting next to a
+    filename like RETIRED_NOTES.md. Both mutants escaped a `"retired" in line.lower()`
+    skip while an identical link on an ordinary line was caught. Pinning the count
+    means a NEW exempt line cannot appear without failing this test first.
     """
     doc = ROOT / "docs" / "AUTHORING.md"
     if not doc.is_file():
@@ -153,16 +213,25 @@ def check_authoring_doc(failures: list[str]) -> None:
     if "/blogs/<slug>/" not in text:
         failures.append("AC 5.12: docs/AUTHORING.md never states the live "
                         "/blogs/<slug>/ contract")
-    stale = []
+    stale, labelled = [], 0
     for n, line in enumerate(text.splitlines(), 1):
-        if "retired" in line.lower():
-            continue                       # a deliberate "do not author this" mention
         body = line.replace("content/posts/", "")
-        if re.search(r'(\]\(|src="|href="|`)/posts/', body):
-            stale.append(f"{n}: {line.strip()[:90]}")
+        if not re.search(r'(\]\(|src="|href="|`)/posts/', body):
+            continue
+        if _RETIRED_LABEL_RE.search(line):
+            labelled += 1                  # a deliberate "do not author this" mention
+            continue
+        stale.append(f"{n}: {line.strip()[:90]}")
     if stale:
         failures.append(f"AC 5.12: docs/AUTHORING.md still teaches the retired "
                         f"/posts/ served URL on {len(stale)} line(s): {stale[:3]}")
+    if labelled != _EXPECTED_LABELLED_LINES:
+        failures.append(
+            f"AC 5.12: docs/AUTHORING.md has {labelled} line(s) exempted as "
+            f"explicitly-labelled retired shapes, expected {_EXPECTED_LABELLED_LINES}. "
+            f"Re-read them: an exemption added without thought is how a stale served "
+            f"URL gets taught to every future author."
+        )
 
 
 def check_lychee_exclude(failures: list[str]) -> None:
@@ -225,6 +294,7 @@ def main(argv: list[str] | None = None) -> int:
         live = sitemap_paths(built)
         check_mapping(retired, live, failures)
         check_sitemap_clean(live, failures)
+        check_no_retired_links(built, failures)
 
     if failures:
         print(f"FAIL: {len(failures)} permalink-contract violation(s):", file=sys.stderr)
@@ -233,8 +303,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     print("OK: 87 retired URLs map 1:1 onto live /blogs/ URLs under two disjoint "
-          "rules (80 replacement + 7 insertion), zero unmapped, and no retired "
-          "first segment survives in the sitemap")
+          "rules (80 replacement + 7 insertion), zero unmapped, no retired first "
+          "segment survives in the sitemap, and no rendered page links to one")
     return 0
 
 
