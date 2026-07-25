@@ -155,8 +155,15 @@ jobs:
       - name: Config-traceability + iamhoi-wrapping unit tests
         run: python3 -m pytest scripts/test_check_config_traceability.py scripts/test_check_iamhoi_wrapping.py -q
 
+      # test_gen_card and test_check_svg_dimensions are source-only (no built tree)
+      # and were in NO pytest invocation until blog-priv#62 -- the same "a file nobody
+      # lists never runs" class documented below at the frontmatter step. blog-priv#62
+      # rewrote gen_card.py's eyebrow path, so their SUT changed while their coverage
+      # was inert. tests/test_gate_wiring.py now asserts no test file can go unlisted.
       - name: Social-card guard unit tests
-        run: python3 -m pytest scripts/test_check_social_cards.py -q
+        run: |
+          python3 -m pytest scripts/test_check_social_cards.py \
+            scripts/test_gen_card.py scripts/test_check_svg_dimensions.py -q
 
       # Cloudflare reclassifies Googlebot/Applebot/BingBot as blocked on
       # 2026-09-15 for any zone that has selected to block Training. These zones
