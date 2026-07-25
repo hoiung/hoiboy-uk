@@ -74,9 +74,15 @@ Multiple SPF records on the same name break SPF validation entirely (permerror),
 
 hoiboy.uk keeps its merged include because that is what its flow required and it works. Do not strip it.
 
-**Sender registration is required even with domain auth.** Brevo's `POST /v3/senders` registers `hello@hoiboy.uk` as an active sender. Without this step, sends fail with `Sender is invalid / inactive`. See brevo-api-setup.md § Phase F.
+**Sender registration: needed for the API path, NOT for SMTP relay on an authenticated domain.** Brevo's `POST /v3/senders` registers `hello@hoiboy.uk` as an active sender, and the API send path fails with `Sender is invalid / inactive` without it (hit for real 2026-05-08). See brevo-api-setup.md § Phase F.
+
+For **Gmail send-as over SMTP relay this step is not required**: authenticating the domain auto-verifies every address on it, so a From address that has no sender entry still sends. Confirmed on `cuarchitects.co.uk` 2026-07-25 - four round-trip test sends succeeded while `chan@cuarchitects.co.uk` was absent from the Senders list entirely. Do not treat a missing sender entry as a fault, and do not go adding one to fix a send failure; if SMTP sends are failing, the cause is the SMTP login or the domain authentication, not the sender list.
+
+Adding the domain sender anyway is still worth doing for tidiness, because it lets you remove the freemail sender below and clears the compliance warning. It verifies instantly with no emailed code once the domain is authenticated.
 
 **Delete the freemail sender Brevo auto-creates at signup.** Brevo registers your account email as a sender, so a Gmail-based signup leaves a `<you>@gmail.com` sender in the list. It shows `DKIM: Default` and `DMARC: Freemail domain is not recommended`, and it is flagged as non-compliant with the Google / Yahoo / Microsoft bulk-sender requirements - correctly, because you do not own `gmail.com` and so it can never be DKIM-signed or DMARC-aligned. Nothing in this stack needs it: Gmail send-as composes go out as the domain address. Removed from the hoiboy.uk account on 2026-07-25; the domain sender `Hoi <hello@hoiboy.uk>` was already healthy (`DKIM: hoiboy.uk`, `DMARC is configured`) and is untouched. If a deletion ever breaks something, the symptom is the same `Sender is invalid / inactive` on send.
+
+**Order matters when the freemail sender is the only one.** On a fresh account it is also flagged `Default`, and removing the last default sender is not something to attempt blind. Add the domain sender FIRST (it verifies instantly, no emailed code, because the domain is authenticated), make it default, and only then delete the freemail one. Done in that order on `cuarchitects.co.uk` 2026-07-25, ending at one healthy domain sender and no compliance warning on either account.
 
 ### Step 2: Brevo SMTP credentials
 
