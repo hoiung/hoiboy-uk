@@ -65,6 +65,41 @@ def check_alias_order(rules: list[Rule], failures: list[str]) -> None:
         )
 
 
+def check_no_static_shadowed(rules: list[Rule], failures: list[str]) -> None:
+    """No STATIC rule sits below a wildcard that would swallow it.
+
+    `check_alias_order` above pins the one instance of this we already know about, by
+    name. This is the general form: the ai-jargon alias is not special, it is simply
+    the case that bit first. Any future exact-path rule added below a matching wildcard
+    is silently dead on arrival, because Cloudflare applies the TOP-MOST match rather
+    than the most specific one -- the file's own header documents this, and a rule that
+    never fires produces no error anywhere, just a visitor sent to the wrong page.
+
+    Cloudflare's docs also advise "static redirects should appear before dynamic
+    redirects". This file deliberately does NOT sort that way: it groups each path's
+    bare and wildcard rule together under one comment explaining that path's move,
+    which is what makes the file readable and its intent auditable. Sorting statics to
+    the top would split every pair from its rationale. Asserting the property that
+    actually matters -- no static shadowed by an EARLIER wildcard -- gets the safety
+    without the cost, and this check is what makes that trade defensible rather than
+    merely convenient. (Ralph Tier 3 round 2 measured both orderings against a 212-URL
+    corpus: zero resolution differences, so this is a latent-hazard guard, not a fix.)
+    """
+    dynamic = [r for r in rules if "*" in r.source]
+    for static in (r for r in rules if "*" not in r.source):
+        for wild in dynamic:
+            if wild.index >= static.index:
+                continue
+            prefix = wild.source[:-1]          # "/posts/*" -> "/posts/"
+            if static.source.startswith(prefix.rstrip("/") + "/") or static.source == prefix.rstrip("/"):
+                failures.append(
+                    f"AC 5.4: static rule {static.source} (line {static.line_no}) sits "
+                    f"BELOW the wildcard {wild.source} (line {wild.line_no}) that also "
+                    f"matches it. The top-most rule wins, so {static.source} never "
+                    f"fires and its visitors land on the wildcard's target instead."
+                )
+
+
 def check_all_permanent(rules: list[Rule], failures: list[str]) -> None:
     """AC 5.15a - 301 everywhere, including rules that omitted the status entirely
     (Cloudflare defaults an absent status to 302, so an omission is a defect)."""
@@ -107,6 +142,7 @@ def main() -> int:
         return 1
 
     check_alias_order(rules, failures)
+    check_no_static_shadowed(rules, failures)
     check_all_permanent(rules, failures)
     check_no_chains(rules, failures)
 
@@ -116,8 +152,8 @@ def main() -> int:
             print(f"  - {f}", file=sys.stderr)
         return 1
 
-    print(f"OK: {len(rules)} redirect rules, all 301, no chains, and the ai-jargon "
-          f"alias sits above the /posts/* wildcard that would otherwise swallow it")
+    print(f"OK: {len(rules)} redirect rules, all 301, no chains, and no static rule "
+          f"sits below a wildcard that would swallow it (incl. the ai-jargon alias)")
     return 0
 
 
