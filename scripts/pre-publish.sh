@@ -39,7 +39,7 @@
 #   8. Rendered links    (lychee on rendered HTML NOT raw .md — catches broken
 #                         cross-section links + missing assets that markdown-only
 #                         lychee cannot see. CAVEAT: lychee.toml exclude_path
-#                         contains BOTH "public/posts" AND "content/posts", so
+#                         contains BOTH "public/blogs" AND "content/posts", so
 #                         for a POST target this gate checks zero links and
 #                         still reports PASS, and so does the CI markdown-level
 #                         lychee. NEITHER tier checks a post; post links must be
