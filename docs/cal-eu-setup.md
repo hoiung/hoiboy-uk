@@ -488,7 +488,8 @@ Google Meet: {MEETING_URL}
 | Schedule | id 42584, Mon-Fri **12:00-15:00 Europe/London** (updated 2026-07-20 from 11:00-18:00; signup auto-default was 09:00-17:00) |
 | Custom booking fields (4) | `company-name` (req), `ai-tool-today` (opt), `distinct-roles` (req - added 2026-05-08), `hope-to-get` (req textarea) |
 | Default location | Google Meet integration, credentialId 61497 |
-| Cancellation reason | **Mandatory for BOTH host and attendee** (operator change 2026-07-25; was host-only). An attendee cancelling silently tells you nothing, and on a discovery funnel the reason is the signal. Applied identically on the cuarchitects account. NOT verifiable through the v2 API: `2024-06-14` is the only version `/v2/event-types/{id}` accepts, and it exposes `disableCancelling` and `allowReschedulingCancelledBookings` but no cancellation-reason field. UI only. |
+| Cancellation reason | Mandatory for host AND attendee (2026-07-25; default is host-only). Same on cuarchitects. UI only, not exposed by the v2 API (`2024-06-14` is the only version `/v2/event-types/{id}` accepts, and it carries `disableCancelling` and `allowReschedulingCancelledBookings` but no cancellation-reason field) |
+| Organizer email | `hello@hoiboy.uk`, added as a secondary email and selected as organizer on the event type (2026-07-25, per Step 5.5). Profile primary stays `hoiboyuk@gmail.com`. Operator-attested: not verifiable through the v2 API, see Step 5.5 |
 | Live test booking | id 1041405, uid `83GC1L3fhD5mwPKEna9vsa`, 2026-05-11 11:00 BST, Google Meet `https://meet.google.com/rdg-huya-vjr` - used to verify the booking flow + send Cal.com's default email so Hoi could compare against Brevo's Hoi-voice templates |
 
 ### Availability update - 2026-07-20
