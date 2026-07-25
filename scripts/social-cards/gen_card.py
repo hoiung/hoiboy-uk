@@ -23,6 +23,19 @@ retro stack: VT323 for the title, IBM Plex Mono for the eyebrow / tagline /
 signature. The fonts are vendored under fonts/ (OFL, licenses alongside) and
 embedded as base64 @font-face so rsvg-convert renders them identically anywhere.
 
+The EYEBROW (the card's top line) is the page's parent trail, uppercased and joined
+with " > " - HIRE HOI > AI CONSULTANCY, BLOGS > TECH & AI - read from the per-page
+trail.json sidecar Hugo emits (blog-priv#62). It used to be a brand string hardcoded
+per card set, which said nothing the logo did not already say and drifted from the
+on-page breadcrumb. Both now derive from layouts/_partials/breadcrumb-trail.html, so
+they cannot disagree. A page whose parent trail is empty - home, and the top-level
+landings - renders no eyebrow line at all.
+
+Because the eyebrow comes from a RENDERED page, the site must be built before the
+cards are generated, and rebuilt afterwards so the new PNGs reach public/. That
+two-pass order is what scripts/gen-social-cards.sh exists to pin; run that rather
+than this script directly.
+
 layouts/_partials/head.html picks up share-card.png as the page's og:image, and
 default-card.png as the site-wide fallback (both resized to 1200 wide, aspect
 preserved, so the 1200x630 source emits a correct 1.91:1 card).
@@ -33,20 +46,21 @@ Reads:  scripts/social-cards/cards.tsv, legal-cards.tsv, hire-hoi-cards.tsv (slu
         tagline [<TAB> style]); style is hoiboy (default) or agit.
         scripts/social-cards/landing-cards.tsv (one content-relative landing path per line;
         title + tagline come from that landing's _index.md frontmatter).
+        public/<url>/trail.json for every page above (HOIBOY_PUBLIC_DIR overrides public/).
 Deps:   rsvg-convert (librsvg), Pillow.  Re-run after editing a *.tsv.
 """
-import subprocess, sys, html, textwrap, pathlib, base64, io, re
-from card_common import font_face
+import subprocess, sys, os, html, textwrap, pathlib, base64, io, re
+from card_common import font_face, load_trails, bundle_key, eyebrow_for
 
 # --- Palettes (canonical: docs/research/07_DESIGN_TOKENS.md) ------------------
-# Each style is (eyebrow text, palette). The palette keys map onto the template
-# below; the consulting cards use "hoiboy" so their output is unchanged.
+# A style selects a PALETTE only. The eyebrow is deliberately not part of it: it is
+# the page's own parent trail read from its trail.json sidecar (blog-priv#62), so
+# two pages sharing a style still get different eyebrows.
 HOIBOY_PAL = {"bg": "#141414", "accent": "#c0533a", "title": "#f0f0f0",
               "tag": "#a6a6a6", "sig": "#87ceeb"}
 AGIT_PAL   = {"bg": "#0c1c2d", "accent": "#da611c", "title": "#f9ebdf",
               "tag": "#b5dae7", "sig": "#87ceeb"}
-STYLE_MAP  = {"hoiboy": ("HOIBOY AI LTD", HOIBOY_PAL),
-              "agit":   ("ASIANS & GINGERS IN TECH", AGIT_PAL)}
+STYLE_MAP  = {"hoiboy": HOIBOY_PAL, "agit": AGIT_PAL}
 
 # Signature (bottom-right): square logo + "hoiboy.uk", inset by an EQUAL margin
 # from the right and bottom edges (symmetric corner placement, identical on every
@@ -54,6 +68,10 @@ STYLE_MAP  = {"hoiboy": ("HOIBOY AI LTD", HOIBOY_PAL),
 # SST3/scripts/sst3_brand.py; logo provenance = assets/images/logo.png.
 SIG_TEXT   = "hoiboy.uk"
 SIG_FS     = 30         # signature font-size
+EB_FS      = 26         # eyebrow font-size CEILING (shrinks to fit a deep trail)
+EB_MIN_FS  = 16         # smallest eyebrow font-size before failing loud
+EB_TRACK   = 3          # eyebrow letter-spacing (px); part of the per-char advance
+EB_USABLE  = 980        # 1200px card minus the x=110 inset, mirrored on the right
 TAG_FS     = 26         # tagline font-size (IBM Plex Mono is wide; 26 keeps the
                         # longest strapline on one line within the card width)
 TAG_LINE_GAP = 10       # extra px per landing-card tagline line (line height = fs + this)
@@ -65,6 +83,10 @@ LOGO_GAP   = 16
 SIG_MARGIN = 64         # equal inset from BOTH the right and bottom edges
 
 REPO          = pathlib.Path(__file__).resolve().parents[2]      # repo root
+CONTENT        = REPO / "content"
+# Where Hugo wrote the per-page trail.json sidecars. Overridable so the tests can
+# point at a sandbox build instead of the working tree's public/.
+PUBLIC         = pathlib.Path(os.environ.get("HOIBOY_PUBLIC_DIR") or (REPO / "public"))
 CONSULTING_TSV = REPO / "scripts" / "social-cards" / "cards.tsv"
 LEGAL_TSV      = REPO / "scripts" / "social-cards" / "legal-cards.tsv"
 HIRE_HOI_TSV   = REPO / "scripts" / "social-cards" / "hire-hoi-cards.tsv"
@@ -74,12 +96,12 @@ HOME_CARD      = REPO / "content" / "share-card.png"    # home og:image (home bu
 FONTS = REPO / "scripts" / "social-cards" / "fonts"
 LOGO  = REPO / "assets" / "images" / "logo.png"
 
-# Landing text cards use the house palette; the eyebrow is the site brand (distinct
-# from the "HOIBOY AI LTD" company eyebrow on the consulting service cards).
-LANDING_EYEBROW = "HOIBOY.UK"
-# Home photo card: brand lockup over the mug photo. The strapline is the site's own
-# description (config/_default/params.toml) - existing copy, not invented.
-HOME_EYEBROW  = "PERSONAL BLOG"
+# Landing text cards use the house palette. Their eyebrow is the page's parent trail
+# like every other card's, so a TOP-LEVEL landing (Hire Hoi, Legal, Skills, Community,
+# the Blogs hub) has an empty trail and renders with no eyebrow line at all.
+# Home photo card: brand lockup over the mug photo. Its trail is empty by construction,
+# so it carries no eyebrow either. The strapline is the site's own description
+# (config/_default/params.toml) - existing copy, not invented.
 HOME_WORDMARK = "hoiboy.uk"
 HOME_TAGLINE  = "Food, booze, adventure, dance, tech and AI."
 
@@ -108,6 +130,35 @@ def wrap_title(title, max_chars=22):
     return textwrap.wrap(title, width=max_chars) or [title]
 
 
+def fit_eyebrow(eyebrow, usable_px=EB_USABLE, max_fs=EB_FS, min_fs=EB_MIN_FS, tracking=EB_TRACK):
+    """Largest font-size in [min_fs, max_fs] at which `eyebrow` fits on ONE line inside
+    usable_px. IBM Plex Mono is monospace (advance 0.6em) and the card adds a fixed
+    letter-spacing, so a run of n characters is exactly n*(fs*0.6 + tracking) wide - a
+    character count IS an exact width fit here, no font metrics needed.
+
+    At the 26px ceiling that is 52 characters. The longest trail on the site today is
+    'HIRE HOI > AI CONSULTANCY > PORTFOLIO' at 37, so nothing shrinks yet; a deeper
+    future trail shrinks instead of overflowing, and one that will not fit even at
+    min_fs (75 characters) fails loud rather than running off the edge of the card.
+    """
+    for fs in range(max_fs, min_fs - 1, -1):
+        if len(eyebrow) * (fs * 0.6 + tracking) <= usable_px:
+            return fs
+    sys.exit(f"eyebrow does not fit the card: {eyebrow!r} is {len(eyebrow)} characters, which "
+             f"overruns {usable_px}px even at {min_fs}px. Shorten the page's trail.")
+
+
+def eyebrow_svg(eyebrow, y=150):
+    """(font-size, markup) for the eyebrow line. An empty eyebrow - a top-level landing
+    or home, whose parent trail is empty - emits NO text node at all, rather than an
+    empty one, so the card carries no stray element. The returned font-size still feeds
+    the .eyebrow CSS rule so the class is always defined."""
+    if not eyebrow:
+        return EB_FS, ""
+    fs = fit_eyebrow(eyebrow)
+    return fs, f'<text x="110" y="{y}" class="eyebrow">{html.escape(eyebrow)}</text>'
+
+
 def make_svg(eyebrow, title, tagline, logo_uri, pal):
     lines = wrap_title(title)
     fs = 98 if len(lines) == 1 else 86        # VT323 is condensed: a touch larger than sans
@@ -119,6 +170,7 @@ def make_svg(eyebrow, title, tagline, logo_uri, pal):
     )
     rule_y = start_y + (len(lines) - 1) * line_h + 40
     tag_y = start_y + (len(lines) - 1) * line_h + 112
+    eb_fs, eb_markup = eyebrow_svg(eyebrow)
 
     # Signature group: equal SIG_MARGIN inset from right + bottom edges.
     tw = text_width(SIG_TEXT, SIG_FS)
@@ -138,13 +190,13 @@ def make_svg(eyebrow, title, tagline, logo_uri, pal):
     {font_face("IBM Plex Mono", PLEX_R, 400)}
     {font_face("IBM Plex Mono", PLEX_B, 700)}
     .title {{ fill: {pal['title']}; font-family: 'VT323', monospace; font-size: {fs}px; }}
-    .eyebrow {{ fill: {pal['accent']}; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 26px; letter-spacing: 3px; }}
+    .eyebrow {{ fill: {pal['accent']}; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: {eb_fs}px; letter-spacing: {EB_TRACK}px; }}
     .tag {{ fill: {pal['tag']}; font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: {TAG_FS}px; }}
     .sig {{ fill: {pal['sig']}; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: {SIG_FS}px; }}
   </style>
   <rect width="1200" height="630" fill="{pal['bg']}"/>
   <rect x="0" y="0" width="16" height="630" fill="{pal['accent']}"/>
-  <text x="110" y="150" class="eyebrow">{html.escape(eyebrow)}</text>
+  {eb_markup}
   {title_tspans}
   <rect x="112" y="{rule_y:.0f}" width="90" height="7" fill="{pal['accent']}"/>
   <text x="110" y="{tag_y:.0f}" class="tag">{html.escape(tagline)}</text>
@@ -253,11 +305,13 @@ def fit_tagline(tagline, usable_px=980, avail_px=128, max_fs=TAG_FS, min_fs=TAG_
     return min_fs, lines
 
 
-def make_landing_svg(title, tagline, logo_uri, pal=HOIBOY_PAL, eyebrow=LANDING_EYEBROW):
+def make_landing_svg(title, tagline, logo_uri, pal=HOIBOY_PAL, eyebrow=""):
     """Text card for a section-landing _index.md page. Same brand grammar as the
     consulting make_svg (accent bar, eyebrow, VT323 title, accent rule, hoiboy.uk
     signature); the tagline is the page's frontmatter description, shrunk to fit in
-    full when present, or omitted (title-only) when the landing has no description."""
+    full when present, or omitted (title-only) when the landing has no description.
+    The eyebrow defaults to empty because the top-level landings are the cards that
+    carry none; a nested landing is passed its parent trail by gen_landings()."""
     lines = wrap_title(title)
     fs = 98 if len(lines) == 1 else 86
     line_h = fs + 4
@@ -285,6 +339,7 @@ def make_landing_svg(title, tagline, logo_uri, pal=HOIBOY_PAL, eyebrow=LANDING_E
             ty += tag_lh
 
     clip, sig_markup = _signature_svg(logo_uri, text=True)
+    eb_fs, eb_markup = eyebrow_svg(eyebrow)
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
     {clip}
@@ -294,13 +349,13 @@ def make_landing_svg(title, tagline, logo_uri, pal=HOIBOY_PAL, eyebrow=LANDING_E
     {font_face("IBM Plex Mono", PLEX_R, 400)}
     {font_face("IBM Plex Mono", PLEX_B, 700)}
     .title {{ fill: {pal['title']}; font-family: 'VT323', monospace; font-size: {fs}px; }}
-    .eyebrow {{ fill: {pal['accent']}; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 26px; letter-spacing: 3px; }}
+    .eyebrow {{ fill: {pal['accent']}; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: {eb_fs}px; letter-spacing: {EB_TRACK}px; }}
     .tag {{ fill: {pal['tag']}; font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: {tag_fs}px; }}
     .sig {{ fill: {pal['sig']}; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: {SIG_FS}px; }}
   </style>
   <rect width="1200" height="630" fill="{pal['bg']}"/>
   <rect x="0" y="0" width="16" height="630" fill="{pal['accent']}"/>
-  <text x="110" y="150" class="eyebrow">{html.escape(eyebrow)}</text>
+  {eb_markup}
   {title_tspans}
   <rect x="112" y="{rule_y:.0f}" width="90" height="7" fill="{pal['accent']}"/>
   {tag_markup}
@@ -318,12 +373,15 @@ def _mug_data_uri():
     return "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()
 
 
-def make_home_svg(photo_uri, logo_uri, pal=HOIBOY_PAL):
+def make_home_svg(photo_uri, logo_uri, pal=HOIBOY_PAL, eyebrow=""):
     """The home og:image: the mug photo full-bleed, a bottom scrim for text legibility,
-    and the brand lockup (eyebrow + big hoiboy.uk wordmark + site strapline) bottom-left,
-    with the logo mark bottom-right. Operator: the home card should 'integrate with me
-    and the mug image'."""
+    and the brand lockup (big hoiboy.uk wordmark + site strapline) bottom-left, with the
+    logo mark bottom-right. Operator: the home card should 'integrate with me and the
+    mug image'. Home is the root of the trail, so its parent trail is empty by
+    construction and the eyebrow line is omitted; the parameter exists so the eyebrow
+    rule is uniform across all three builders rather than special-cased here."""
     clip, sig_markup = _signature_svg(logo_uri, text=False)
+    eb_fs, eb_markup = eyebrow_svg(eyebrow, y=498)
     wm_fs = 82
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
@@ -337,7 +395,7 @@ def make_home_svg(photo_uri, logo_uri, pal=HOIBOY_PAL):
     {font_face("VT323", VT323_TTF, 400)}
     {font_face("IBM Plex Mono", PLEX_R, 400)}
     {font_face("IBM Plex Mono", PLEX_B, 700)}
-    .eyebrow {{ fill: {pal['accent']}; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 24px; letter-spacing: 3px; }}
+    .eyebrow {{ fill: {pal['accent']}; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: {eb_fs}px; letter-spacing: {EB_TRACK}px; }}
     .wordmark {{ fill: {pal['title']}; font-family: 'VT323', monospace; font-size: {wm_fs}px; }}
     .tag {{ fill: {pal['tag']}; font-family: 'IBM Plex Mono', monospace; font-weight: 400; font-size: 24px; }}
     .sig {{ fill: {pal['sig']}; font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: {SIG_FS}px; }}
@@ -345,14 +403,14 @@ def make_home_svg(photo_uri, logo_uri, pal=HOIBOY_PAL):
   <image href="{photo_uri}" x="0" y="0" width="1200" height="630" preserveAspectRatio="xMidYMid slice"/>
   <rect width="1200" height="630" fill="url(#scrim)"/>
   <rect x="0" y="0" width="16" height="630" fill="{pal['accent']}"/>
-  <text x="110" y="498" class="eyebrow">{html.escape(HOME_EYEBROW)}</text>
+  {eb_markup}
   <text x="108" y="564" class="wordmark">{html.escape(HOME_WORDMARK)}</text>
   <text x="110" y="600" class="tag">{html.escape(HOME_TAGLINE)}</text>
   {sig_markup}
 </svg>'''
 
 
-def gen_landings(tsv, logo_uri):
+def gen_landings(tsv, logo_uri, trails):
     """Generate share-card.png for each section-landing path in landing-cards.tsv. Each
     row is a bundle path under content/ whose _index.md supplies the title + (optional)
     tagline. Writes into that landing's own bundle so head.html resolves it as og:image."""
@@ -369,27 +427,29 @@ def gen_landings(tsv, logo_uri):
         if not index_md.exists():
             sys.exit(f"landing _index.md not found: {index_md}")
         title, tagline = read_landing_meta(index_md)
+        eyebrow = eyebrow_for(trails, bundle_key(bundle, CONTENT))
         png = bundle / "share-card.png"
         svg_path = png.with_suffix(".svg")
         try:
-            svg_path.write_text(make_landing_svg(title, tagline, logo_uri))
+            svg_path.write_text(make_landing_svg(title, tagline, logo_uri, eyebrow=eyebrow))
             subprocess.run(["rsvg-convert", "-w", "1200", "-h", "630",
                             str(svg_path), "-o", str(png)], check=True)
         finally:
             svg_path.unlink(missing_ok=True)
         kind = "title+tagline" if tagline else "title-only"
-        print(f"  landing/{path} [{kind}]: {png.relative_to(REPO)}")
+        print(f"  landing/{path} [{kind}] eyebrow={eyebrow or '(none)'}: {png.relative_to(REPO)}")
         n += 1
     return n
 
 
-def gen_home(logo_uri):
+def gen_home(logo_uri, trails):
     """Generate the home page's photo-composite share card from the mug photo."""
     if not HOME_MUG.exists():
         sys.exit(f"missing required input: {HOME_MUG}")
+    eyebrow = eyebrow_for(trails, bundle_key(CONTENT, CONTENT))
     svg_path = HOME_CARD.with_suffix(".svg")
     try:
-        svg_path.write_text(make_home_svg(_mug_data_uri(), logo_uri))
+        svg_path.write_text(make_home_svg(_mug_data_uri(), logo_uri, eyebrow=eyebrow))
         subprocess.run(["rsvg-convert", "-w", "1200", "-h", "630",
                         str(svg_path), "-o", str(HOME_CARD)], check=True)
     finally:
@@ -398,7 +458,7 @@ def gen_home(logo_uri):
     return 1
 
 
-def gen_section(section, tsv, logo_uri):
+def gen_section(section, tsv, logo_uri, trails):
     """Generate share-card.png for each row of a section TSV (slug/title/tagline[/style])."""
     if not tsv.exists():
         sys.exit(f"missing required input: {tsv}")
@@ -412,20 +472,24 @@ def gen_section(section, tsv, logo_uri):
         style = parts[3] if len(parts) > 3 and parts[3] else "hoiboy"
         if style not in STYLE_MAP:
             sys.exit(f"unknown style '{style}' for {section}/{slug} (expected: {', '.join(STYLE_MAP)})")
-        eyebrow, pal = STYLE_MAP[style]
+        pal = STYLE_MAP[style]
         bundle = REPO / "content" / section / slug
         if not bundle.is_dir():
             sys.exit(f"page bundle not found: {bundle}")
+        eyebrow = eyebrow_for(trails, bundle_key(bundle, CONTENT))
         png = render_card(bundle / "share-card.png", eyebrow, title, tagline, logo_uri, pal)
-        print(f"  {section}/{slug} [{style}]: {png.relative_to(REPO)}")
+        print(f"  {section}/{slug} [{style}] eyebrow={eyebrow or '(none)'}: {png.relative_to(REPO)}")
         n += 1
     return n
 
 
 def gen_default(logo_uri):
-    """Generate the site-wide default card (home + taxonomy / section index fallback)."""
+    """Generate the site-wide default card: the og:image fallback for taxonomy / term
+    pages, which have no content bundle. It stands for no single page, so it has no
+    parent trail and therefore no eyebrow - the same rule every other card follows,
+    not a special case."""
     png = render_card(REPO / "content" / "default-card.png",
-                      "PERSONAL BLOG", "hoiboy.uk",
+                      "", "hoiboy.uk",
                       "Food, booze, adventure, dance, tech and AI.",
                       logo_uri, HOIBOY_PAL)
     print(f"  default: {png.relative_to(REPO)}")
@@ -438,17 +502,21 @@ def main():
         if not p.exists():
             sys.exit(f"missing required input: {p}")
     logo_uri = logo_data_uri()
+    # Every set except `default` derives its eyebrow from a rendered page, so the trail
+    # index is loaded only when one of those is in play - `gen_card.py default` still
+    # works on a tree that has never been built.
+    trails = load_trails(PUBLIC) if [t for t in targets if t != "default"] else None
     n = 0
     if "consulting" in targets:
-        n += gen_section("hire-hoi/ai-consultancy", CONSULTING_TSV, logo_uri)
+        n += gen_section("hire-hoi/ai-consultancy", CONSULTING_TSV, logo_uri, trails)
     if "legal" in targets:
-        n += gen_section("legal", LEGAL_TSV, logo_uri)
+        n += gen_section("legal", LEGAL_TSV, logo_uri, trails)
     if "hire-hoi" in targets:
-        n += gen_section("hire-hoi", HIRE_HOI_TSV, logo_uri)
+        n += gen_section("hire-hoi", HIRE_HOI_TSV, logo_uri, trails)
     if "landings" in targets:
-        n += gen_landings(LANDING_TSV, logo_uri)
+        n += gen_landings(LANDING_TSV, logo_uri, trails)
     if "home" in targets:
-        n += gen_home(logo_uri)
+        n += gen_home(logo_uri, trails)
     if "default" in targets:
         n += gen_default(logo_uri)
     print(f"generated {n} cards")
