@@ -271,6 +271,63 @@ def check_lychee_exclude(failures: list[str]) -> None:
                         "over the voice-sacred legacy corpus")
 
 
+# Words that mark a `public/posts` mention as a HISTORICAL note rather than a
+# current-tense claim. Deliberately a small, boring set: the point is that the
+# sentence visibly places the path in the past, not that it is cleverly phrased.
+_HISTORICAL_MARKERS = ("before", "moved", "was ", "were ", "retired", "predate", "used to")
+
+
+def check_no_stale_lychee_claims(failures: list[str]) -> None:
+    """AC 5.16 second half - the `/posts/` sweep WIDENED past scripts/ and .github/.
+
+    `check_lychee_exclude` above reads lychee.toml and nothing else, so it proves the
+    CONFIG is right while every file that DESCRIBES that config can still be wrong.
+    That is exactly what happened: commit 081508f flipped exclude_path to public/blogs
+    and left three tracked files telling the reader it contains `public/posts` -
+    docs/AUTHORING.md, docs/consulting-launch-checklist.md and this repo's own
+    scripts/pre-publish.sh header. All three were false on a tree where the AC was
+    ticked, and two of them had a DIFFERENT occurrence updated by the same diff.
+
+    This is the third instance in blog-priv#62 of one class: a file with zero diff
+    lines is invalidated by a change elsewhere (layouts/_default/single.html and
+    scripts/social-cards/README.md were the first two). A gate that reads only the
+    thing that changed cannot see it. So this one reads everything that mentions it.
+
+    The rule is per-LINE, not a file allowlist: a mention may stay as long as the same
+    line visibly frames it as history. That keeps the AP #28 reversal record - saying
+    what the value USED to be is how a future reader learns the move happened - while
+    a bare current-tense claim fails. A file allowlist would have let a newly-added
+    stale sentence into an already-listed file without a word of complaint.
+    """
+    import subprocess
+    try:
+        out = subprocess.run(["git", "grep", "-n", "public/posts", "--", "."],
+                             cwd=ROOT, capture_output=True, text=True, check=False)
+    except OSError as exc:                       # git missing - fail loud, never skip
+        failures.append(f"AC 5.16: could not run `git grep` to sweep for stale "
+                        f"`public/posts` claims: {exc}")
+        return
+    if out.returncode not in (0, 1):             # 1 = no matches, which is fine
+        failures.append(f"AC 5.16: `git grep` failed (rc={out.returncode}): "
+                        f"{out.stderr.strip()}")
+        return
+
+    self_name = Path(__file__).name
+    for hit in out.stdout.splitlines():
+        path, _, rest = hit.partition(":")
+        lineno, _, body = rest.partition(":")
+        if path.startswith("public/") or Path(path).name == self_name:
+            continue                             # the build tree, and this guard itself
+        if any(m in body.lower() for m in _HISTORICAL_MARKERS):
+            continue                             # framed as history - allowed
+        failures.append(
+            f"AC 5.16: {path}:{lineno} states `public/posts` as current. The rendered "
+            f"blog moved to public/blogs, so this reads as a fact and is false. Either "
+            f"correct it, or reword it so the line says the path is historical "
+            f"(one of: {', '.join(m.strip() for m in _HISTORICAL_MARKERS)})."
+        )
+
+
 def main(argv: list[str] | None = None) -> int:
     """`argv=None` reads sys.argv, which under pytest is the pytest command line
     (file paths + flags), so argparse exits 2 before a single assertion runs. CI
@@ -287,6 +344,7 @@ def main(argv: list[str] | None = None) -> int:
     check_permalink_token(failures)
     check_authoring_doc(failures)
     check_lychee_exclude(failures)
+    check_no_stale_lychee_claims(failures)
     if not built.is_dir():
         failures.append(f"AC 5.2: built site not found at {built} (run `hugo` first)")
     else:
