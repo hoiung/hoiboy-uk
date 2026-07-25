@@ -24,7 +24,7 @@ Diverges from Diehl's tags-only model because Hoi's content spans **distinct top
 ---
 title: "Best ramen in Shimokitazawa"
 date: 2019-08-12
-categories: [food]
+categories: [food-booze]
 tags: [ramen, tokyo, japan]
 slug: best-ramen-shimokitazawa
 ---
@@ -35,7 +35,14 @@ slug: best-ramen-shimokitazawa
 - **One primary category per post** by default .  keeps nav clean
 - Cross-over posts can have multiple categories (`[adventure, dance]` for a dance trip to Cuba), used sparingly
 - **Tags are unlimited** and freeform
-- Category names are lowercase, single word
+- Category names are lowercase and **must be one of the 7 section slugs exactly**:
+  `food-booze`, `adventure`, `dance`, `tech-ai`, `life`, `entrepreneurship`, `trading`.
+  Not all are single words, and this is not cosmetic: blog-priv#62 made an unknown
+  category a HARD BUILD FAILURE (`errorf` in `layouts/_partials/breadcrumb-trail.html`
+  and `layouts/_default/single.html`), because a category with no `_index.md` landing
+  used to emit a silently dead link. The old "single word" wording is what produced the
+  `[food]` example above, which builds on `origin/main` and breaks the build here.
+  `docs/AUTHORING.md` is the canonical list.
 
 ## Hugo wiring
 
