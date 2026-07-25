@@ -9,10 +9,16 @@ content/community/agit-featured/<slug>/:
                     and what the featured person posts straight to socials.
   2. share-card.png branded landscape 1200x630 link-preview card: the submitted
                     photo inset on the left, a blue->cream gradient panel on the
-                    right with the AGIT eyebrow + the person's name + role, and the
-                    AGIT logo watermark bottom-right. head.html prefers share-card.*
-                    over the hero for og:image, so a portrait submission no longer
-                    gets its head/legs sliced off in the link preview.
+                    right with the page's trail eyebrow + the person's name + role,
+                    and the AGIT logo watermark bottom-right. head.html prefers
+                    share-card.* over the hero for og:image, so a portrait submission
+                    no longer gets its head/legs sliced off in the link preview.
+
+The EYEBROW is the page's parent trail, uppercased and joined with " > ", read from
+the per-page trail.json sidecar Hugo emits (blog-priv#62) - the same rule that renders
+the on-page breadcrumb, so the two cannot drift. It replaced a pair of hardcoded brand
+strings. The site must therefore be BUILT before this script runs; use
+scripts/gen-social-cards.sh, which pins that order.
 
 Why a separate script from gen_card.py: the consulting cards are text-only (no
 photo) and TSV/tagline-driven; AGIT features are photo-driven and need a portrait
@@ -29,9 +35,9 @@ Inputs (so the whole set can be regenerated after a design change, like cards.ts
   scripts/social-cards/agit-sources/<slug>.<ext>   the EXIF-clean source photo
 
 There is also a brand-only SECTION card for the /community/agit-featured/ index
-(no person photo): the AGIT logo + section eyebrow/headline/tagline on the same
-blue->cream gradient, written to content/community/agit-featured/share-card.png so
-head.html can resolve it as the section og:image. See build_section_card().
+(no person photo): the AGIT logo + the section's own trail eyebrow/headline/tagline
+on the same blue->cream gradient, written to content/community/agit-featured/share-card.png
+so head.html can resolve it as the section og:image. See build_section_card().
 
 Usage:
   python3 scripts/social-cards/gen_agit_feature.py            # regenerate every feature + the section card
@@ -39,9 +45,9 @@ Usage:
   python3 scripts/social-cards/gen_agit_feature.py --section  # regenerate just the section index card
 Deps: rsvg-convert (librsvg), Pillow.
 """
-import subprocess, sys, html, base64, io, pathlib, re
+import subprocess, sys, os, html, base64, io, pathlib, re
 from PIL import Image, ImageOps, ImageDraw, ImageFont
-from card_common import font_face
+from card_common import font_face, load_trails, bundle_key, eyebrow_for
 
 # --- brand tokens (canonical: docs/research/07_DESIGN_TOKENS.md + AGIT marketing) ---
 NAVY   = "#0c1c2d"   # AGIT dark navy (logo border / title)
@@ -50,13 +56,13 @@ GREY   = "#4f5b64"   # role text
 NUMGREY = "#98a2ab"  # light grey for the small feature-number kicker (#N above the name)
 GRAD   = ("#b5dae7", "#f9ebdf")   # panel gradient: powder-blue (top) -> cream (bottom)
 
-EYEBROW = "ASIANS & GINGERS IN TECH"
-
 # --- share-card geometry ---
 CW, CH   = 1200, 630
 PHOTO_W  = 748       # left photo panel width
 PAD      = 48        # right-panel inner inset (equal left/right margins)
-EB_FS    = 18        # eyebrow size (justified across the panel via letter-spacing)
+EB_FS    = 18        # eyebrow size CEILING (justified across the panel via letter-spacing)
+EB_LINES = 2         # a deep trail wraps rather than shrinking to an illegible size
+EB_FLOOR = 12        # smallest eyebrow size _fit_lines may drop to
 NAME_MAX = 80        # name font ceiling (shrinks to fit; floor is _fit_lines' default 12)
 ROLE_MAX = 28        # role font ceiling
 LOGO_CARD = 92       # watermark size on the card
@@ -67,9 +73,9 @@ HERO_LOGO_FRAC = 0.20                 # watermark width as a fraction of the her
 HERO_LOGO_MARGIN_FRAC = 0.035
 
 # --- section (brand-only) card: the /community/agit-featured/ index og:image ---
-# No person photo. The AGIT logo already carries the "ASIANS & GINGERS IN TECH"
-# wordmark, so the text block presents the SECTION, not the group name again.
-SEC_EYEBROW  = "HOIBOY.UK COMMUNITY"
+# No person photo. The eyebrow is the page's parent trail like every other card's
+# (blog-priv#62); the headline and tagline present the SECTION, and the AGIT logo
+# already carries the group wordmark, so neither repeats it.
 SEC_HEADLINE = "Featured"
 SEC_TAGLINE  = "The quiet, heads-down people doing brilliant work in tech, and the stories behind them."
 SEC_LOGO     = 430       # big logo on the left (prominent, not a watermark)
@@ -81,6 +87,10 @@ SEC_HEAD_MAX = 120       # headline font ceiling (VT323)
 SEC_TAG_MAX  = 26        # tagline font ceiling (IBM Plex Mono)
 
 REPO   = pathlib.Path(__file__).resolve().parents[2]
+CONTENT = REPO / "content"
+# Where Hugo wrote the per-page trail.json sidecars that supply the eyebrow.
+# Overridable so the tests can point at a sandbox build instead of the working tree's.
+PUBLIC = pathlib.Path(os.environ.get("HOIBOY_PUBLIC_DIR") or (REPO / "public"))
 SDIR   = REPO / "scripts" / "social-cards"
 FONTS  = SDIR / "fonts"
 TSV    = SDIR / "agit-features.tsv"
@@ -182,7 +192,35 @@ def _eyebrow_spacing(s, fs, target_w):
     return max(0.0, (target_w - _measure(s, PLEX_B, fs)) / max(len(s) - 1, 1))
 
 
-def build_share_card(photo, name, role, out_png, number=None):
+def _fit_eyebrow(eyebrow, maxw, max_fs):
+    """(font-size, letter-spacing, lines) for a trail eyebrow in a `maxw`-wide column.
+
+    The trail can be deep - JOIN COMMUNITY > ASIANS & GINGERS IN TECH > AGIT FEATURED is
+    57 characters against the feature card's 356px panel - so it WRAPS to EB_LINES rather
+    than shrinking to fit one line, which at that width would land near 10px and be
+    unreadable. Tracking is derived from the widest line so every line shares one value;
+    with a single line that is exactly the previous justify-across-the-panel behaviour.
+
+    An empty eyebrow (a page with no parent trail) returns no lines, and the caller emits
+    no eyebrow text node."""
+    if not eyebrow:
+        return max_fs, 0.0, []
+    fs, lines = _fit_lines(eyebrow, PLEX_B, maxw, max_fs, EB_LINES, floor=EB_FLOOR)
+    widest = max(lines, key=lambda l: _measure(l, PLEX_B, fs))
+    return fs, _eyebrow_spacing(widest, fs, maxw), lines
+
+
+def _eyebrow_tspans(lines, tx, first_y, line_h):
+    """Eyebrow text nodes, one per wrapped line, and the LAST baseline used (so the
+    caller can stack the block below it)."""
+    out, y = "", first_y
+    for i, line in enumerate(lines):
+        y = first_y + i * line_h
+        out += f'<text x="{tx}" y="{y:.0f}" class="eyebrow">{html.escape(line)}</text>'
+    return out, y
+
+
+def build_share_card(photo, name, role, out_png, eyebrow, number=None):
     tx = PHOTO_W + PAD
     inner = CW - PHOTO_W - 2 * PAD
     top = 52
@@ -191,9 +229,12 @@ def build_share_card(photo, name, role, out_png, number=None):
     logo_y = CH - 42 - logo_px
     body_bottom = logo_y - 18                    # keep text clear of the watermark
 
-    eb_ls = _eyebrow_spacing(EYEBROW, EB_FS, inner)
-    eb_y = top + EB_FS
-    region_top = eb_y + 18   # symmetric with body_bottom (logo_y - 18) so the block centres between the eyebrow bottom and the logo top
+    eb_fs, eb_ls, eb_lines = _fit_eyebrow(eyebrow, inner, EB_FS)
+    eb_y = top + eb_fs
+    eb_ts, eb_last_y = _eyebrow_tspans(eb_lines, tx, eb_y, eb_fs + 6)
+    if not eb_lines:
+        eb_last_y = eb_y
+    region_top = eb_last_y + 18   # symmetric with body_bottom (logo_y - 18) so the block centres between the eyebrow bottom and the logo top
 
     name_fs, name_lines = _fit_lines(name, VT323, inner, NAME_MAX, 2)
     name_lh = name_fs + 2
@@ -242,7 +283,7 @@ def build_share_card(photo, name, role, out_png, number=None):
   </defs>
   <style>
     {font_face("VT323", VT323, 400)}{font_face("IBM Plex Mono", PLEX_R, 400)}{font_face("IBM Plex Mono", PLEX_B, 700)}
-    .eyebrow{{fill:{ORANGE};font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:{EB_FS}px;letter-spacing:{eb_ls:.2f}px;}}
+    .eyebrow{{fill:{ORANGE};font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:{eb_fs}px;letter-spacing:{eb_ls:.2f}px;}}
     .name{{fill:{NAVY};font-family:'VT323',monospace;font-size:{name_fs}px;}}
     .fnum{{fill:{NUMGREY};font-family:'VT323',monospace;font-size:{num_fs}px;}}
     .role{{fill:{GREY};font-family:'IBM Plex Mono',monospace;font-size:{role_fs}px;}}
@@ -250,7 +291,7 @@ def build_share_card(photo, name, role, out_png, number=None):
   <rect width="{CW}" height="{CH}" fill="url(#bg)"/>
   <image href="{photo_uri}" x="0" y="0" width="{PHOTO_W}" height="{CH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#ph)"/>
   <rect x="{PHOTO_W}" y="0" width="6" height="{CH}" fill="{ORANGE}"/>
-  <text x="{tx}" y="{eb_y}" class="eyebrow">{html.escape(EYEBROW)}</text>
+  {eb_ts}
   {num_ts}
   {name_ts}
   <rect x="{tx + 2}" y="{rule_y:.0f}" width="72" height="{rule_h}" fill="{ORANGE}"/>
@@ -277,7 +318,7 @@ def build_hero(photo, out_jpg):
     base.convert("RGB").save(out_jpg, "JPEG", quality=88)   # re-encode drops any EXIF
 
 
-def build_section_card(out_png, eyebrow=SEC_EYEBROW, headline=SEC_HEADLINE, tagline=SEC_TAGLINE):
+def build_section_card(out_png, eyebrow, headline=SEC_HEADLINE, tagline=SEC_TAGLINE):
     """Brand-only landscape 1200x630 card for the agit-featured SECTION index (no
     person photo): full blue->cream gradient, the circular AGIT logo prominent on
     the left, and the section eyebrow + headline + tagline on the right, in the same
@@ -292,20 +333,26 @@ def build_section_card(out_png, eyebrow=SEC_EYEBROW, headline=SEC_HEADLINE, tagl
     div_x   = logo_x + logo_px + 30
     div_top, div_bot = logo_y + 8, logo_y + logo_px - 8
 
-    eb_ls = _eyebrow_spacing(eyebrow, SEC_EB_FS, col_w)
+    eb_fs, eb_ls, eb_lines = _fit_eyebrow(eyebrow, col_w, SEC_EB_FS)
+    eb_lh = eb_fs + 6
     head_fs, head_lines = _fit_lines(headline, VT323, col_w, SEC_HEAD_MAX, 2)
     head_lh = head_fs + 2
     tag_fs, tag_lines = _fit_lines(tagline, PLEX_R, col_w, SEC_TAG_MAX, 4)
     tag_lh = tag_fs + 8
 
     eb_gap, rule_gt, rule_h, rule_gb = 34, 28, 6, 34
-    stack = (SEC_EB_FS + eb_gap + len(head_lines) * head_lh
+    # An empty eyebrow contributes no height and no gap, so the rest of the block stays
+    # vertically centred instead of sitting low against a reserved-but-unused band.
+    eb_block = (eb_fs + (len(eb_lines) - 1) * eb_lh + eb_gap) if eb_lines else 0
+    stack = (eb_block + len(head_lines) * head_lh
              + rule_gt + rule_h + rule_gb + len(tag_lines) * tag_lh)
     y = (CH - stack) / 2
 
-    y += SEC_EB_FS
-    eb_y = y
-    y += eb_gap
+    eb_ts = ""
+    if eb_lines:
+        y += eb_fs
+        eb_ts, y = _eyebrow_tspans(eb_lines, tx, y, eb_lh)
+        y += eb_gap
     head_ts = ""
     for l in head_lines:
         y += head_lh
@@ -325,14 +372,14 @@ def build_section_card(out_png, eyebrow=SEC_EYEBROW, headline=SEC_HEADLINE, tagl
   </defs>
   <style>
     {font_face("VT323", VT323, 400)}{font_face("IBM Plex Mono", PLEX_R, 400)}{font_face("IBM Plex Mono", PLEX_B, 700)}
-    .eyebrow{{fill:{ORANGE};font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:{SEC_EB_FS}px;letter-spacing:{eb_ls:.2f}px;}}
+    .eyebrow{{fill:{ORANGE};font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:{eb_fs}px;letter-spacing:{eb_ls:.2f}px;}}
     .head{{fill:{NAVY};font-family:'VT323',monospace;font-size:{head_fs}px;}}
     .tag{{fill:{GREY};font-family:'IBM Plex Mono',monospace;font-size:{tag_fs}px;}}
   </style>
   <rect width="{CW}" height="{CH}" fill="url(#bg)"/>
   <image href="{logo_uri}" x="{logo_x}" y="{logo_y}" width="{logo_px}" height="{logo_px}"/>
   <rect x="{div_x}" y="{div_top:.0f}" width="4" height="{div_bot - div_top:.0f}" fill="{ORANGE}"/>
-  <text x="{tx}" y="{eb_y:.0f}" class="eyebrow">{html.escape(eyebrow)}</text>
+  {eb_ts}
   {head_ts}
   <rect x="{tx + 2}" y="{rule_y:.0f}" width="72" height="{rule_h}" fill="{ORANGE}"/>
   {tag_ts}
@@ -363,14 +410,16 @@ def _feature_number(slug):
     return m.group(1) if m else None
 
 
-def generate(slug, name, role):
+def generate(slug, name, role, trails):
     photo = _load_photo(find_source(slug))
     bundle = OUTDIR / slug
     if not bundle.is_dir():
         sys.exit(f"feature bundle not found: {bundle}")
+    eyebrow = eyebrow_for(trails, bundle_key(bundle, CONTENT))
     build_hero(photo, bundle / "hero.jpg")
-    build_share_card(photo, name, role, bundle / "share-card.png", number=_feature_number(slug))
-    print(f"  {slug}: hero.jpg + share-card.png")
+    build_share_card(photo, name, role, bundle / "share-card.png", eyebrow,
+                     number=_feature_number(slug))
+    print(f"  {slug} eyebrow={eyebrow or '(none)'}: hero.jpg + share-card.png")
 
 
 def rows():
@@ -392,9 +441,11 @@ def main():
         if not p.exists():
             sys.exit(f"missing required input: {p}")
     only = sys.argv[1] if len(sys.argv) > 1 else None
+    trails = load_trails(PUBLIC)
+    section_eyebrow = eyebrow_for(trails, bundle_key(OUTDIR, CONTENT))
     if only == "--section":                   # regenerate just the section index card
-        build_section_card(OUTDIR / "share-card.png")
-        print("  section: share-card.png")
+        build_section_card(OUTDIR / "share-card.png", section_eyebrow)
+        print(f"  section eyebrow={section_eyebrow or '(none)'}: share-card.png")
         return
     if not TSV.exists():
         sys.exit(f"missing {TSV}")
@@ -402,13 +453,13 @@ def main():
     for slug, name, role in rows():
         if only and slug != only:
             continue
-        generate(slug, name, role)
+        generate(slug, name, role, trails)
         n += 1
     if only and n == 0:
         sys.exit(f"slug '{only}' not found in {TSV}")
     if only is None:                          # full regen also refreshes the section card
-        build_section_card(OUTDIR / "share-card.png")
-        print("  section: share-card.png")
+        build_section_card(OUTDIR / "share-card.png", section_eyebrow)
+        print(f"  section eyebrow={section_eyebrow or '(none)'}: share-card.png")
     print(f"generated {n} AGIT feature image pair(s)")
 
 
