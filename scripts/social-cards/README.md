@@ -14,8 +14,8 @@ distinct, correctly-sized social card instead of falling back to a generic image
   [<TAB> style]`) to `content/hire-hoi/ai-consultancy/<slug>/share-card.png`.
 - **legal** - each row of `legal-cards.tsv` to `content/legal/<slug>/share-card.png`.
   `privacy` + `sub-processors` use the `hoiboy` style; `agit-story-guidelines`
-  uses the `agit` style (navy `#0c1c2d` / orange `#da611c`, "ASIANS & GINGERS IN
-  TECH" eyebrow).
+  uses the `agit` style (navy `#0c1c2d` / orange `#da611c`). Its eyebrow is `LEGAL`,
+  not a brand string: blog-priv#62 made every eyebrow the page's own parent trail.
 - **hire-hoi** - each row of `hire-hoi-cards.tsv` to `content/hire-hoi/<slug>/share-card.png`,
   the top-level Hire Hoi leaf pages (e.g. `permanent-roles`). Same TSV shape as
   `cards.tsv`.
@@ -28,8 +28,11 @@ distinct, correctly-sized social card instead of falling back to a generic image
   `description`). No taglines are stored in the TSV, so there is one source of
   truth and nothing to keep in sync. (blog-priv#61)
 - **home** - `content/share-card.png`, a **photo composite** of `content/hoi-mug.jpg`
-  (Hoi + the giant mug) filled to 1200x630 with a bottom scrim + the `PERSONAL BLOG`
-  eyebrow, `hoiboy.uk` wordmark, and the site strapline. (blog-priv#61)
+  (Hoi + the giant mug) filled to 1200x630 with a bottom scrim, the `hoiboy.uk`
+  wordmark, and the site strapline. (blog-priv#61) It carries **no eyebrow at all**:
+  the home page has no parent, so blog-priv#62's trail-derived eyebrow is empty and
+  `eyebrow_svg` emits no text node rather than an empty one. It used to read
+  `PERSONAL BLOG`.
 - **default** - `content/default-card.png`, the `og:image` fallback for
   **taxonomy / term pages only** (`/tags/` and `/tags/<tag>/` - generated, no content
   bundle, so they cannot hold a co-located card). Replaced the old `hoi-mug.jpg`.
@@ -55,7 +58,9 @@ The `slug` is the page bundle path under `content/hire-hoi/ai-consultancy/`, so 
 slugs work as-is** — a client case study at
 `content/hire-hoi/ai-consultancy/portfolio/cu-architects/` is just the row
 `portfolio/cu-architects <TAB> CU Architects <TAB> <tagline>`. Client
-case-study cards use the **same template** (HOIBOY AI LTD eyebrow, page title,
+case-study cards use the **same template** (parent-trail eyebrow, which for these is
+`HIRE HOI > AI CONSULTANCY > PORTFOLIO` since blog-priv#62 replaced the old
+`HOIBOY AI LTD` brand string, page title,
 tagline, `hoiboy.uk` signature) — no client logo, for visual consistency with
 the service cards. To add a card for a new portfolio/client page, add one row
 and re-run; nothing else changes.
@@ -95,7 +100,9 @@ cards, each AGIT feature is **photo-driven** and gets a **pair** of images:
   direct-to-social image.
 - `share-card.png` — branded landscape **1200×630** link-preview: the submitted
   photo inset on the left, a powder-blue→cream gradient panel on the right with
-  the `ASIANS & GINGERS IN TECH` eyebrow, the person's name (VT323) and role
+  the parent-trail eyebrow (`JOIN COMMUNITY > ASIANS & GINGERS IN TECH > AGIT
+  FEATURED` since blog-priv#62; it was the bare `ASIANS & GINGERS IN TECH` before),
+  the person's name (VT323) and role
   (IBM Plex Mono), and the AGIT logo watermark bottom-right. `head.html` prefers
   `share-card.*` over the hero for `og:image`, so a portrait submission no longer
   gets its head/legs sliced off in the link preview.
