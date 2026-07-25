@@ -34,6 +34,7 @@ Come join the weirdest niche community. 🧡🤝
 ## Join and follow us
 
 - **Real-life meetups (London):** [meetup.com/london-asians-gingers-in-tech](https://www.meetup.com/london-asians-gingers-in-tech)
+- **LinkedIn page:** [linkedin.com/company/asians-gingers-in-tech](https://www.linkedin.com/company/asians-gingers-in-tech)
 - **LinkedIn group:** [linkedin.com/groups/26310001](https://www.linkedin.com/groups/26310001/)
 - **Facebook page:** [facebook.com/asians.gingers.in.tech](https://www.facebook.com/asians.gingers.in.tech)
 - **Facebook group:** [facebook.com/groups/london.asians.gingers.in.tech](https://www.facebook.com/groups/london.asians.gingers.in.tech)
