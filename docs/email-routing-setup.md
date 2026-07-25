@@ -144,7 +144,38 @@ Once both halves are wired:
 2. Confirm inbound: `hoiboyuk@gmail.com` receives within 30 seconds.
 3. Reply from Gmail. The From: field should auto-populate to `hello@hoiboy.uk` per Step 4.
 4. Confirm outbound: the external recipient sees the reply From: `hello@hoiboy.uk`, NOT `hoiboyuk@gmail.com`.
-5. Spam-check: send a test to `https://www.mail-tester.com` (free tool); aim for 9/10 or higher. SPF + DKIM + DMARC alignment determines deliverability. Common failure: SPF has both `include:_spf.mx.cloudflare.net` and `include:spf.brevo.com` correctly merged into a single TXT record (NOT two separate SPF records).
+5. Spam-check: send a test to `https://www.mail-tester.com` (free tool). Write a couple of real paragraphs - a bare "test" with a signature attached scores badly for reasons that have nothing to do with your setup (see below).
+
+**Read the authentication section, not the headline score.** What proves the stack is working is:
+
+```
+DKIM_VALID      Message has at least one valid DKIM signature
+DKIM_VALID_AU   ...and it comes from the author's domain   <-- the one that matters
+SPF_PASS        sender matches SPF record
+                "You're properly authenticated"
+```
+
+`DKIM_VALID_AU` is author-domain alignment, which is what DMARC actually requires. On a new-flow domain with no SPF include (see Step 1 § 3) this is carrying DMARC unaided, so confirm it rather than assuming it.
+
+**Expect roughly 8.6/10, not 9+, and do not chase the difference.** Measured on BOTH `hoiboy.uk` and `cuarchitects.co.uk` on 2026-07-25: identical score, identical deductions, both authenticating perfectly. The gap is two content rules:
+
+- `-1.048 HTML_IMAGE_ONLY_16` - the test message is mostly signature, so the image-to-text ratio trips a rule aimed at image-only spam. A real email with body prose does not trigger it.
+- `-0.5` for two images with no `alt` attribute.
+
+⚠️ **Those two images are Brevo open-tracking pixels, and you cannot remove them.** They are injected at send time and look like this:
+
+```html
+<img width="1" height="1" src="https://<hash>.r.af.d.sendibt2.com/tr/op/...">
+<img style="display:none"  src="https://<hash>.r.af.d.sendibt2.com/tr/op/...">
+```
+
+`sendibt2.com` is Brevo and `/tr/op/` is open tracking. **Brevo has no way to disable tracking on SMTP transactional** - campaigns can turn off URL tracking, SMTP cannot, and it is a long-standing known limitation on their own community forum. The only lever is "Anonymous email tracking" (Settings > Automations > Transactional emails > Tracking), which still injects the pixel and merely unlinks the data from contacts, so it recovers none of the score. It is also gated behind an Automations onboarding wizard.
+
+Do NOT act on mail-tester's advice to "add an empty alt attribute" - the tags are not in your signature and you cannot edit them. Do not go hunting through the signature for images that are not there. The correct response is to ignore the deduction.
+
+Accepted as a known limitation 2026-07-25. 8.6 is comfortably not-spam. The only clean fix is leaving Brevo (Cloudflare Email Sending has no marketing-tracking baggage, but needs the Workers Paid plan at ~$5/mo, which is the recurring cost this whole stack exists to avoid). Revisit only if deliverability actually degrades. Be aware the pixel means recipients are tracked on open, which is unremarkable for campaigns but is worth knowing for one-to-one client correspondence.
+
+**SPF failure mode**, if the auth section is not clean: on an old-flow domain the SPF record must contain both `include:_spf.mx.cloudflare.net` and `include:spf.brevo.com` merged into a SINGLE TXT record, never two separate ones. On a new-flow domain there is no Brevo include at all and adding one by hand is not the fix.
 
 ## Verify DNS health (no token needed)
 
