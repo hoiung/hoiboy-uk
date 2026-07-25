@@ -184,6 +184,66 @@ curl -s -X PATCH -H "Authorization: Bearer ${CAL_API_KEY}" -H "cal-api-version: 
 
 **Effect of the daily cap**: once the cap is reached on a given day, the public booking page hides ALL remaining slots for that day. Cal.com applies the limit at the slots-API level, so it's enforced consistently between the public booking page AND any direct API booking attempts. Looks "fully booked" to the prospect; no manual intervention required.
 
+#### Step 5.5 - Stop the personal Gmail appearing as the organizer (UI only)
+
+By default the booking confirmation shows the **signup Google account** as the
+Host, e.g. `hoiboyuk@gmail.com` or `cuarchitects@gmail.com`. Every attendee sees
+it. On a client-facing funnel that undoes the point of having a domain address at
+all, and it is easy to miss because the website CTA can be perfectly correct
+while the booking flow still leaks the Gmail. It was only caught here by reading
+a real test booking's confirmation (2026-07-25).
+
+> ⚠️ **Do NOT fix this by changing the profile's primary email.** Accounts created
+> via "Sign up with Google" break when the primary email changes: the dashboard
+> errors "Something went wrong" across every section, a "Verify your email
+> address" banner appears, and Resend returns TRPC Unauthorized. There is a
+> long-standing open request to let Google-created accounts add an email login
+> precisely because this locks people out. See calcom/cal.com#10155, #2527,
+> #14082. On a live client booking system this is not a risk worth taking.
+
+Do it per event type instead:
+
+1. Settings, then add the domain address as a **secondary email** ("Add an email
+   address to replace your primary or to use as an alternative email on your
+   meeting types"). Add it as an alternative. Do NOT pick the replace-primary
+   option. Verify it; the verification mail arrives through Cloudflare Email
+   Routing into the same inbox.
+2. Open the event type, "Add to calendar" section.
+3. **Untick** "Use 'Add to calendar' email as the organizer", then select the
+   domain address as the organizer.
+
+Unticking is the counter-intuitive part. Ticked, the organizer is forced to equal
+the destination-calendar address, and that dropdown only lists **connected
+calendars**. A forwarding alias like `chan@cuarchitects.co.uk` has no calendar of
+its own, so it can never appear there and the toggle just re-selects the Gmail.
+Unticking frees the organizer field to take the verified secondary email.
+
+**None of this is reachable from the v2 API.** `useDestinationCalendarEmail` and
+`hideOrganizerEmail` are readable on the event type, but the organizer address
+set this way is not exposed at all, and `/v2/me` has no `secondaryEmails` field.
+UI only.
+
+**Result: it works.** Verified on cuarchitects 2026-07-25 with a real booking made
+from an incognito window. The confirmation showed `Host: chan@cuarchitects.co.uk`
+where the previous booking an hour earlier had shown `cuarchitects@gmail.com`, and
+the operator re-tested and confirmed the client-facing surfaces.
+
+> ⚠️ **The API will contradict this. That is expected, not a failure.** After the
+> change, `GET /v2/bookings` still reported `host: ['cuarchitects@gmail.com']` for
+> the new booking, and the event type still read `useDestinationCalendarEmail:
+> false` and `destinationCalendar: null`. The organizer address set this way is
+> simply not modelled in those fields, which is consistent with the open bug
+> calcom/cal.com#20455 ("Destination Calendar Email Address is not applied
+> everywhere").
+>
+> Practical consequence: **do not audit this setting through the API and conclude
+> it was never applied.** The API is not authoritative here. The authoritative
+> check is a real test booking, reading the confirmation and the calendar invite.
+>
+> Fallback if a future Cal release regresses this: `hideOrganizerEmail: true` on
+> the event type IS API-settable. Attendees then see no host email, which beats
+> one that is wrong on half the surfaces it appears.
+
 #### Step 6 - Patch the consulting page
 
 The page consumes `data/consulting.yaml` via the `consulting-cta` shortcode at `layouts/_shortcodes/consulting-cta.html`, which auto-flips between `mailto:hello@hoiboy.uk` fallback and the live booking URL based on the presence of `calcom_booking`.
@@ -428,6 +488,8 @@ Google Meet: {MEETING_URL}
 8. **Custom booking fields append, not replace.** The defaults (`name`, `email`, `location`, `notes`, `guests`, `rescheduleReason`, `title`) come back in the response automatically; do not include them in your create payload or you will create duplicates.
 9. **OAuth-driven onboarding skips email verification.** "Sign up with Google" pre-verifies the email, so no confirmation email arrives. Not a bug - Google's verification is trusted.
 10. **API key value is shown ONCE.** The Cal.com generate-key modal shows the value once and a "this is the only time you will see this" warning. Always copy into a scratch buffer FIRST, close modal SECOND, verify the key appears in the keys-list page THIRD. If the keys list does not show it, the key was never persisted; regenerate.
+12. **The booking flow leaks the signup Gmail as the Host, and a correct website tells you nothing about it.** cuarchitects shipped a contact page whose every address was `chan@cuarchitects.co.uk`, verified on the live edge, while the booking confirmation was still showing `cuarchitects@gmail.com` to every attendee. The website check passed and the leak sat one layer behind it. Only a real test booking surfaced it. Fix is Step 5.5 above, per event type, and NOT by changing the profile's primary email, which breaks Google-created logins. **Add a test booking to the definition of done for any booking-funnel work; a green site check is not sufficient evidence.**
+13. **The v2 API is not authoritative for organizer email.** After Step 5.5, `GET /v2/bookings` keeps reporting the old account address as `host`, and `useDestinationCalendarEmail` / `destinationCalendar` stay `false` / `null`. The setting is real and client-visible but simply unmodelled in those fields (calcom/cal.com#20455). Auditing it programmatically produces a confident false negative. Verify with a booking.
 
 ## Execution evidence - 2026-05-08
 
@@ -465,6 +527,9 @@ Drafted full A+B+C+D+E. Considered "Light" cadence (drop C). Re-enabled C as ins
 ## Reproduction checklist (for the next client / instance)
 
 - [ ] Phase A complete (signup + Google OAuth + Meet + API key generated and confirmed in keys list)
+- [ ] Domain address added as a **secondary** email (NOT as the replacement primary) and verified
+- [ ] Event type organizer set to the domain address per Step 5.5 (untick "Use 'Add to calendar' email as the organizer" first), so the booking does not expose the signup Gmail
+- [ ] Test booking read end to end: Host line shows the domain address, both custom booking questions render, cancellation mail arrives, then cancel the booking
 - [ ] Region identified (URL bar check: `cal.com` or `cal.eu`)
 - [ ] `CAL_API_KEY` and `CAL_BASE` exported in shell
 - [ ] `GET /v2/me` returns 200 with expected email + name
