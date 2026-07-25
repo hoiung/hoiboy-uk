@@ -47,7 +47,7 @@ Deps: rsvg-convert (librsvg), Pillow.
 """
 import subprocess, sys, os, html, base64, io, pathlib, re
 from PIL import Image, ImageOps, ImageDraw, ImageFont
-from card_common import font_face, load_trails, bundle_key, eyebrow_for
+from card_common import TrailIndex, font_face, load_trails, bundle_key, eyebrow_for
 
 # --- brand tokens (canonical: docs/research/07_DESIGN_TOKENS.md + AGIT marketing) ---
 NAVY   = "#0c1c2d"   # AGIT dark navy (logo border / title)
@@ -410,7 +410,7 @@ def _feature_number(slug):
     return m.group(1) if m else None
 
 
-def generate(slug, name, role, trails):
+def generate(slug: str, name: str, role: str, trails: TrailIndex | None) -> None:
     photo = _load_photo(find_source(slug))
     bundle = OUTDIR / slug
     if not bundle.is_dir():
