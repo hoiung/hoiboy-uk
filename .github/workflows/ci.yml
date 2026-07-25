@@ -237,6 +237,19 @@ jobs:
       - name: Social-card guard (rendered og:image — template-regression backstop)
         run: python3 scripts/check_social_cards.py --built public
 
+      # Both read the BUILT tree, so they sit after the Hugo build, not with the
+      # source-only unit tests above. Listed by name because CI runs pytest
+      # through explicit file lists: a test file nobody lists never runs, which
+      # is how tests/test_gate_wiring.py sat dead until a Stage 5 audit found it.
+      #
+      # test_trail_manifest asserts every carded page owns a trail.json and that
+      # each one equals its page's own rendered breadcrumb, which is what keeps
+      # the card eyebrows and the on-page breadcrumb derived from one rule.
+      # test_breadcrumb_levels asserts the Blogs crumb is on every post and
+      # category landing and on NO other page, scoped to the breadcrumb nav.
+      - name: Trail sidecar + breadcrumb level tests (built tree)
+        run: python3 -m pytest scripts/test_trail_manifest.py scripts/test_breadcrumb_levels.py -q
+
       - name: URL contract assertion
         run: |
           set -e
