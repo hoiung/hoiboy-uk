@@ -1,0 +1,209 @@
+#!/usr/bin/env python3
+"""Every retired URL maps 1:1 onto a live one (blog-priv#62 AC 5.2, AC 5.15c).
+
+39 files across four other repos link to the pre-move URLs, including a submitted
+funding application and material already sent to recruiters. None of them can be
+retroactively edited, so "every old URL still resolves" is the load-bearing
+property of this change, not housekeeping. This test is what proves it, against
+the checked-in baseline of URLs that actually existed before the move.
+
+The mapping is TWO rules, not one prefix swap:
+
+  A. /posts/X/     -> /blogs/X/        prefix REPLACEMENT   (80 URLs)
+  B. /<category>/  -> /blogs/<category>/  prefix INSERTION   (7 URLs)
+
+Coding to "just swap the prefix" lands 80 of 87 and leaves the 7 category
+landings dead, which is why both rules are asserted separately, along with their
+disjointness (no URL may be claimed by both) and totality (no URL unmapped).
+
+AC 5.15c is asserted here too: the regenerated sitemap must contain no retired
+first-segment. The pattern is anchored to the FIRST path segment on purpose. An
+unanchored `<loc>[^<]*/(posts|tech-ai|...)/` matches the CORRECT new
+/blogs/<category>/ canonicals and the deliberately-untouched /tags/<category>/
+term pages, so it returns >=11 on a perfectly correct tree and can never reach 0.
+
+Usage:  python3 scripts/test_permalink_contract.py [--built public]
+Exit 0 = the contract holds. Exit 1 = a named failure.
+"""
+
+from __future__ import annotations
+
+import argparse
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+BASELINE = ROOT / "scripts" / "tests" / "fixtures" / "blogs_ia" / "retired_urls.txt"
+
+CATEGORIES = (
+    "tech-ai", "entrepreneurship", "trading", "food-booze", "adventure", "dance", "life",
+)
+# First path segments that must no longer appear in the sitemap. `posts` and the 7
+# categories moved; `categories` was switched off in Phase 6.
+RETIRED_SEGMENTS = ("posts", *CATEGORIES, "categories")
+
+_LOC_RE = re.compile(r"<loc>\s*([^<\s]+)\s*</loc>")
+
+
+def read_baseline() -> list[str]:
+    """The retired PAGE URLs (feeds and taxonomy URLs are the coverage test's job)."""
+    if not BASELINE.exists():
+        sys.exit(f"AC 5.2: baseline not found at {BASELINE}; without it this test "
+                 f"would compare the new sitemap against itself and pass vacuously")
+    urls = [ln.strip() for ln in BASELINE.read_text(encoding="utf-8").splitlines()]
+    return [u for u in urls if u.startswith("/") and not u.endswith(".xml")
+            and not u.startswith("/categories/")]
+
+
+def sitemap_paths(built: Path) -> set[str]:
+    sitemap = built / "sitemap.xml"
+    if not sitemap.is_file():
+        sys.exit(f"AC 5.2: no sitemap at {sitemap} (run `hugo` first)")
+    paths = set()
+    for loc in _LOC_RE.findall(sitemap.read_text(encoding="utf-8")):
+        paths.add(re.sub(r"^https?://[^/]+", "", loc))
+    return paths
+
+
+def check_mapping(retired: list[str], live: set[str], failures: list[str]) -> None:
+    rule_a = [u for u in retired if u.startswith("/posts/")]
+    rule_b = [u for u in retired if u in {f"/{c}/" for c in CATEGORIES}]
+    unclaimed = [u for u in retired if u not in rule_a and u not in rule_b]
+
+    if unclaimed:
+        failures.append(f"AC 5.2: {len(unclaimed)} retired URL(s) match neither rule: "
+                        f"{unclaimed[:5]}")
+    both = set(rule_a) & set(rule_b)
+    if both:
+        failures.append(f"AC 5.2: rules A and B are not disjoint, {sorted(both)[:5]} "
+                        f"claimed by both, so the mapping is ambiguous")
+
+    for label, group, fn in (
+        ("A", rule_a, lambda u: u.replace("/posts/", "/blogs/", 1)),
+        ("B", rule_b, lambda u: "/blogs" + u),
+    ):
+        dead = [(u, fn(u)) for u in group if fn(u) not in live]
+        if dead:
+            failures.append(
+                f"AC 5.2: rule {label} maps {len(dead)} of {len(group)} retired URL(s) "
+                f"to a target the new sitemap does NOT serve: {dead[:5]}"
+            )
+
+    mapped = {fn(u) for group, fn in (
+        (rule_a, lambda u: u.replace("/posts/", "/blogs/", 1)),
+        (rule_b, lambda u: "/blogs" + u),
+    ) for u in group}
+    blogs_live = {u for u in live if u == "/blogs/" or u.startswith("/blogs/")}
+    if len(retired) != len(mapped):
+        failures.append(f"AC 5.2: {len(retired)} retired URLs collapsed onto "
+                        f"{len(mapped)} targets, so the mapping is not 1:1")
+    extra = blogs_live - mapped
+    if extra:
+        failures.append(f"AC 5.2: the new tree serves {len(extra)} /blogs/ URL(s) that "
+                        f"no retired URL maps onto: {sorted(extra)[:5]}. Either a page "
+                        f"was added or the baseline is stale.")
+
+
+def check_sitemap_clean(live: set[str], failures: list[str]) -> None:
+    """AC 5.15c - no retired FIRST segment survives in the sitemap."""
+    for seg in RETIRED_SEGMENTS:
+        hits = sorted(u for u in live if u.split("/")[1:2] == [seg])
+        if hits:
+            failures.append(
+                f"AC 5.15c: sitemap still carries {len(hits)} canonical(s) under the "
+                f"retired first segment /{seg}/: {hits[:3]}"
+            )
+
+
+def check_permalink_token(failures: list[str]) -> None:
+    """AC 5.1 - the token itself. `:slug` builds clean and silently rewrites 51 of
+    82 post URLs to title-derived strings, so asserting on the built output alone
+    would not catch a regression that swapped the token back."""
+    cfg = (ROOT / "config" / "_default" / "hugo.toml").read_text(encoding="utf-8")
+    if 'posts = "/blogs/:slugorcontentbasename/"' not in cfg:
+        failures.append('AC 5.1: hugo.toml has no [permalinks.page] posts = '
+                        '"/blogs/:slugorcontentbasename/"')
+    if 'posts = "/blogs/:slug/"' in cfg:
+        failures.append('AC 5.1: hugo.toml uses the :slug token, which resolves 51 of '
+                        '82 post URLs to a title-derived string instead of the '
+                        'published slug')
+
+
+def check_authoring_doc(failures: list[str]) -> None:
+    """AC 5.12 - docs/AUTHORING.md teaches the LIVE served-URL contract.
+
+    It is the in-tree canonical that validate_internal_links.py's own error hint and
+    the /blog skill both point authors at, so a stale contract here has every future
+    post authored against the retired scheme.
+
+    The AC's own verify (`grep -c '/posts/' docs/AUTHORING.md` returns 0) cannot be
+    satisfied and should not be: `content/posts/` is a CONTENT path and content
+    directories did not move, and the doc deliberately shows the retired shapes in a
+    "do not author these" row. Both are correct content that a bare substring count
+    cannot tell apart from a stale URL. So the check is narrowed to what the AC was
+    a proxy for: a `/posts/...` that appears as a SERVED URL, in link or src or
+    inline-code position, on a line that does not label it retired.
+    """
+    doc = ROOT / "docs" / "AUTHORING.md"
+    if not doc.is_file():
+        failures.append("AC 5.12: docs/AUTHORING.md does not exist")
+        return
+    text = doc.read_text(encoding="utf-8")
+    if "/blogs/<slug>/" not in text:
+        failures.append("AC 5.12: docs/AUTHORING.md never states the live "
+                        "/blogs/<slug>/ contract")
+    stale = []
+    for n, line in enumerate(text.splitlines(), 1):
+        if "retired" in line.lower():
+            continue                       # a deliberate "do not author this" mention
+        body = line.replace("content/posts/", "")
+        if re.search(r'(\]\(|src="|href="|`)/posts/', body):
+            stale.append(f"{n}: {line.strip()[:90]}")
+    if stale:
+        failures.append(f"AC 5.12: docs/AUTHORING.md still teaches the retired "
+                        f"/posts/ served URL on {len(stale)} line(s): {stale[:3]}")
+
+
+def main(argv: list[str] | None = None) -> int:
+    """`argv=None` reads sys.argv, which under pytest is the pytest command line
+    (file paths + flags), so argparse exits 2 before a single assertion runs. CI
+    invokes these through pytest, so the entry point below passes an explicit []
+    and this signature is what makes that possible."""
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--built", default="public", help="built site root (default: public)")
+    args = ap.parse_args(argv)
+    built = Path(args.built)
+    if not built.is_absolute():
+        built = ROOT / built
+
+    failures: list[str] = []
+    check_permalink_token(failures)
+    check_authoring_doc(failures)
+    if not built.is_dir():
+        failures.append(f"AC 5.2: built site not found at {built} (run `hugo` first)")
+    else:
+        retired = read_baseline()
+        live = sitemap_paths(built)
+        check_mapping(retired, live, failures)
+        check_sitemap_clean(live, failures)
+
+    if failures:
+        print(f"FAIL: {len(failures)} permalink-contract violation(s):", file=sys.stderr)
+        for f in failures:
+            print(f"  - {f}", file=sys.stderr)
+        return 1
+
+    print("OK: 87 retired URLs map 1:1 onto live /blogs/ URLs under two disjoint "
+          "rules (80 replacement + 7 insertion), zero unmapped, and no retired "
+          "first segment survives in the sitemap")
+    return 0
+
+
+def test_permalink_contract() -> None:
+    """pytest entry point (CI runs pytest through explicit file lists)."""
+    assert main([]) == 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

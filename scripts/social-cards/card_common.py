@@ -32,8 +32,15 @@ def font_face(family, ttf, weight):
 # layouts/_partials/breadcrumb-trail.html feeds BOTH the rendered <nav> and the
 # trail.json sidecar, so the card and the breadcrumb cannot drift apart.
 
-def load_trails(public):
+def load_trails(public, required=True):
     """Index every per-page trail.json sidecar by the CONTENT BUNDLE it describes.
+
+    `required=True` (the generators' policy) makes a sidecar-free tree a hard exit:
+    no trails means no eyebrow can be derived, and a card that silently falls back
+    to a brand string is the drift this mechanism exists to remove.
+    `required=False` (scripts/check_social_cards.py) returns {} instead, because
+    that guard only uses the index to resolve served URLs and has a documented
+    fallback plus a --strict mode that reports every page it could not resolve.
 
     Hugo writes one sidecar per rendered page at public/<url>/trail.json (see
     config/_default/hugo.toml [outputFormats.trails] + [outputs]). Each carries that
@@ -72,7 +79,7 @@ def load_trails(public):
             sys.exit(f"two different trail sidecars claim content bundle '{key}': "
                      f"{trails[key]} vs {data} (second from {sidecar})")
         trails[key] = data
-    if not trails:
+    if not trails and required:
         sys.exit(f"no trail.json sidecar under {public} carries a content path - the trails "
                  f"output format is not building (config/_default/hugo.toml [outputs]).")
     return trails

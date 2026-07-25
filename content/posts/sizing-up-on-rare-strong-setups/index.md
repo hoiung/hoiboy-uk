@@ -22,13 +22,13 @@ resources:
 
 <!-- iamhoi -->
 
-The last post ended on an open question. I wanted to size my risk to the market. Press harder when the whole thing was strong, pull back when it was getting stretched. So I graded the whole market to find that signal. It was noise. (Binned. You can read the wreckage in [the market-grading post](/posts/grading-the-whole-market-was-noise/).)
+The last post ended on an open question. I wanted to size my risk to the market. Press harder when the whole thing was strong, pull back when it was getting stretched. So I graded the whole market to find that signal. It was noise. (Binned. You can read the wreckage in [the market-grading post](/blogs/grading-the-whole-market-was-noise/).)
 
 But the question never went away. When do I press, and when do I ease off?
 
 So I dropped down a level.
 
-The market's mood was noise. The individual setup wasn't. Back in [the grading post](/posts/maturity-grading-from-backtest-data/) I built a grade for each stock's setup, A to E, off 938,680 backtested trades. The rare strong shapes held up on the held-out data (trades I kept aside to test on, never to build on). Above the cliff, which is just a gap in the numbers where the good setups have both higher reward and a lower stop-out rate. Top of the ranking. Those ones have real edge.
+The market's mood was noise. The individual setup wasn't. Back in [the grading post](/blogs/maturity-grading-from-backtest-data/) I built a grade for each stock's setup, A to E, off 938,680 backtested trades. The rare strong shapes held up on the held-out data (trades I kept aside to test on, never to build on). Above the cliff, which is just a gap in the numbers where the good setups have both higher reward and a lower stop-out rate. Top of the ranking. Those ones have real edge.
 
 So instead of sizing to the market, size to the setup.
 

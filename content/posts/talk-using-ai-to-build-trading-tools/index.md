@@ -13,7 +13,7 @@ On Saturday the 13th of June 2026, I gave a talk to the London Investments and T
 
 It turned out fruitful. I originally created this talk to be only about 30 minutes long, and left 30 minutes for Q&A. It went on for 2+ hours, with many questions, discussions and debates. For me that was very positive feedback, because so many people were interested and very engaged. Which is why they managed to hang around for that long lol.
 
-There was one topic that slipped my mind, because my slide deck went back and forth quite a few times. That one was [Why Does AI Hallucination Keep Happening?](/posts/why-ai-hallucination-keeps-happening/) It's fine though. I followed up with the group, and I have also finished my more comprehensive blog on the topic, which you can read by clicking the link above.
+There was one topic that slipped my mind, because my slide deck went back and forth quite a few times. That one was [Why Does AI Hallucination Keep Happening?](/blogs/why-ai-hallucination-keeps-happening/) It's fine though. I followed up with the group, and I have also finished my more comprehensive blog on the topic, which you can read by clicking the link above.
 
 I built this presentation with entry level AI users in mind. People who are less technical in IT, but who are still subject matter experts or domain experts in their own right. It is also useful for anyone starting out in their professional life and still learning. Basically, it covers the ground for people who have probably only used AI as far as the web chat prompts. Really, this is about the pathway to AI adoption, the proper way.
 

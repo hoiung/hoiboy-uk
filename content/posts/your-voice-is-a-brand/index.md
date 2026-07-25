@@ -155,7 +155,7 @@ Add it all up and it maps onto the 5-10% thumbprint pass mentioned earlier. Harn
 
 ## The "watch this space" post
 
-A week ago I closed the [reshapeable-knife post](/posts/sst3-ai-harness-reshapeable-knife/) with "watch this space. More posts coming on... the voice guard for writing." This is the one. Next up is the Ralph Review system.
+A week ago I closed the [reshapeable-knife post](/blogs/sst3-ai-harness-reshapeable-knife/) with "watch this space. More posts coming on... the voice guard for writing." This is the one. Next up is the Ralph Review system.
 
 If this sounds like a framework you could build for yourself, you probably have more raw material than you think. Mine came from archives I had stopped opening years ago.
 

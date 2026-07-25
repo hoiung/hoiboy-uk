@@ -4,8 +4,8 @@ date: 2026-05-01
 draft: true
 ---
 
-The bug class — section landings list posts, they don't host them:
+The bug class, category landings list posts, they don't host them:
 
-[broken dance link](/dance/how-to-avoid-becoming-a-terrible-dancer-in-london/) is wrong.
+[broken dance link](/blogs/dance/how-to-avoid-becoming-a-terrible-dancer-in-london/) is wrong.
 
-Should be `/posts/<slug>/` instead.
+Should be `/blogs/<slug>/` instead.

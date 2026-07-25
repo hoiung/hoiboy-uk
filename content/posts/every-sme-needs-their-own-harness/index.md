@@ -37,7 +37,7 @@ Now my read on it. Each of these SKUs (stock keeping units, the label retailers 
 
 And this is not an Anthropic problem. Google shipped Workspace Studio on 19 March 2026 ("puts custom agent creation in the hands of every employee"). OpenAI did the whole arc years ago: Custom GPTs (November 2023), Operator (January 2025), ChatGPT Agent later in 2025, then GPT-5.2-Codex for coding specifically. Every frontier lab is running the same play. They all sell the horizontal product. None of them ships your vertical.
 
-{{< zoom-image src="/posts/why-do-we-need-an-ai-harness/cones.svg" alt="Three panels showing the same probabilistic LLM with more deterministic harness stacked on top. A raw LLM sprays outputs at random with no cone. The general harness that ships with every AI tool gives a wide cone that lands a few on target, with most falling short and several scattering outside. Your own custom harness, bolted on top, tightens the cone onto your bullseye, with only the odd stray outside." title="The off-the-shelf harness aims at a generic target, not yours" >}}
+{{< zoom-image src="/blogs/why-do-we-need-an-ai-harness/cones.svg" alt="Three panels showing the same probabilistic LLM with more deterministic harness stacked on top. A raw LLM sprays outputs at random with no cone. The general harness that ships with every AI tool gives a wide cone that lands a few on target, with most falling short and several scattering outside. Your own custom harness, bolted on top, tightens the cone onto your bullseye, with only the odd stray outside." title="The off-the-shelf harness aims at a generic target, not yours" >}}
 
 ## The pattern they keep admitting in public
 
@@ -81,7 +81,7 @@ This is not theoretical. Vertical-SaaS vendors have been building domain-specifi
 
 I built mine nine months ago. Not for a business plan. For a problem. My automated trading system kept breaking every time AI touched it. Files renamed in ways that snapped my imports. Refactors that silently changed the rounding logic. Dependencies updated on a Saturday morning because a model thought it was helping. So I wrote a wrapper to stop the AI doing anything I had not signed off. Then another wrapper. Then checks on the wrappers. Then tests on the checks. The thing became [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) and I kept shipping.
 
-It is public, it is reshapeable, and the full write-up of what it does and how it was built is [here](/posts/sst3-ai-harness-reshapeable-knife/). What matters for this post is the shape, not the code. The harness sits on top of the model, not baked into it. If Anthropic ships a better Claude tomorrow, great. The harness governs my trading workflow regardless. The shape would port to other LLMs in principle, but I run Claude Code exclusively. It is the best on the market, and keeping the harness tuned to each new Claude Code release is already enough work without also tracking every other lab's roadmap. If you are building your own harness (or borrow/steal mine to customise), pick one LLM and work with it. Do not thin your hours trying to fine-tune across every lab in the market.
+It is public, it is reshapeable, and the full write-up of what it does and how it was built is [here](/blogs/sst3-ai-harness-reshapeable-knife/). What matters for this post is the shape, not the code. The harness sits on top of the model, not baked into it. If Anthropic ships a better Claude tomorrow, great. The harness governs my trading workflow regardless. The shape would port to other LLMs in principle, but I run Claude Code exclusively. It is the best on the market, and keeping the harness tuned to each new Claude Code release is already enough work without also tracking every other lab's roadmap. If you are building your own harness (or borrow/steal mine to customise), pick one LLM and work with it. Do not thin your hours trying to fine-tune across every lab in the market.
 
 Since then, I have reshaped the same harness for other verticals. My CV and LinkedIn work (governance around voice, fact-checking). This blog (the harness governs every post, which is why it sounds like me, not like a generic AI tech take). Our eBay side business (listing rules, photography standards, description anti-patterns, plus end-to-end automation from photograph to finished listing). None of these needed me to rewrite the underlying wrapper. New rules, new documents, new workflows. The approach held.
 
@@ -111,6 +111,6 @@ A better model in 2027 makes your harness better. A better lab SKU in 2027 also 
 
 Build the harness. Or have one built for you. It is yours either way.
 
-(If you want the wider picture around this, three AI eras in three years and where I think the fourth one is heading, the companion post is [Prompts, Agents, Harnesses. The Fourth Is Where It Gets Good.](/posts/prompts-agents-harnesses-whats-next/).)
+(If you want the wider picture around this, three AI eras in three years and where I think the fourth one is heading, the companion post is [Prompts, Agents, Harnesses. The Fourth Is Where It Gets Good.](/blogs/prompts-agents-harnesses-whats-next/).)
 
 <!-- iamhoiend -->

@@ -14,6 +14,11 @@
 # (or carded-but-not-here) is caught.
 
 # --- title + tagline (frontmatter description exists) ---
+# `posts` is the /blogs/ hub: Hugo requires a section index at
+# content/<section>/_index.md, so the content path stays `posts` while the page
+# is served at /blogs/ (blog-priv#62 AC 4.1/4.4). This file is keyed by CONTENT
+# path, which is why the permalink move needed no change here.
+posts
 hire-hoi
 hire-hoi/ai-consultancy
 hire-hoi/ict-consultancy

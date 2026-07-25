@@ -10,7 +10,13 @@
 {{- $pages := where site.RegularPages "Section" "posts" -}}
 {{- $matched := where $pages "Params.categories" "intersect" (slice $section) -}}
 {{- if eq (len $matched) 0 -}}
-  <p class="empty-state">No posts yet.</p>
+  {{- /* A landing that matches no post but carries hand-written body content IS
+         its own listing, so the empty state would contradict the page above it.
+         That is the /blogs/ hub (content/posts/_index.md, blog-priv#62 AC 4.1):
+         section `posts`, which no post declares as a CATEGORY, so $matched is
+         empty by construction while the page lists the 7 categories in prose.
+         A landing with neither posts nor content still gets the empty state. */ -}}
+  {{- if not .Content -}}<p class="empty-state">No posts yet.</p>{{- end -}}
 {{- else if $textFirst -}}
   {{- partial "post-list-grouped.html" $matched -}}
 {{- else -}}

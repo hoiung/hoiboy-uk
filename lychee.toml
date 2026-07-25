@@ -43,7 +43,14 @@ base_url = "https://hoiboy.uk"
 # publishers, now allowlisted below rather than left to fail. Whenever a gate
 # appears to cover a file, prove the file is in scope, not merely that the gate
 # runs.
-exclude_path = ["public/posts", "legacy", "node_modules", ".git", "content/posts", "scripts/tests/fixtures"]
+# `public/blogs` (NOT `public/posts`): blog-priv#62 moved the RENDERED output to
+# /blogs/. The `content/posts` entry on the same line is a CONTENT path and does
+# NOT move - content directories stayed exactly where they were, only the served
+# URL changed. Getting these two confused silently flips what the
+# rendered-link-liveness gate covers, because scripts/pre-publish.sh passes the
+# rendered path to lychee explicitly and exclude_path voids even an explicit
+# invocation (see the header note above).
+exclude_path = ["public/blogs", "legacy", "node_modules", ".git", "content/posts", "scripts/tests/fixtures"]
 
 # Domains explicitly excluded from link check (allowlist).
 # Add entries with the comment format above. Empty by default.

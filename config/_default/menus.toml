@@ -1,6 +1,13 @@
 # Sidebar nav. Flat, constant size. Only the category nav is specified in
 # docs/research/06_TAXONOMY.md; the Hire Hoi, community, and social sections are not.
 # Order matters: top (Home), Hire Hoi, categories, community, social.
+#
+# The `categories` menu renders under the sidebar heading "Blogs" (not
+# "Categories" - layouts/_partials/sidebar.html) and its 7 entries are the
+# authoritative category set: layouts and tests read it rather than hardcoding
+# the slugs. Their URLs carry the /blogs/ prefix set in hugo.toml
+# [permalinks.section] (blog-priv#62); the old root-level URLs are 301'd in
+# static/_redirects.
 
 [[main]]
   name = "Home"
@@ -24,37 +31,37 @@
 
 [[categories]]
   name = "Tech & AI"
-  url = "/tech-ai/"
+  url = "/blogs/tech-ai/"
   weight = 10
 
 [[categories]]
   name = "Entrepreneurship"
-  url = "/entrepreneurship/"
+  url = "/blogs/entrepreneurship/"
   weight = 20
 
 [[categories]]
   name = "Trading"
-  url = "/trading/"
+  url = "/blogs/trading/"
   weight = 25
 
 [[categories]]
   name = "Food & Booze"
-  url = "/food-booze/"
+  url = "/blogs/food-booze/"
   weight = 30
 
 [[categories]]
   name = "Adventure"
-  url = "/adventure/"
+  url = "/blogs/adventure/"
   weight = 40
 
 [[categories]]
   name = "Dance"
-  url = "/dance/"
+  url = "/blogs/dance/"
   weight = 50
 
 [[categories]]
   name = "Life"
-  url = "/life/"
+  url = "/blogs/life/"
   weight = 60
 
 # Community section (sidebar heading: "Join Community"). Links to the community

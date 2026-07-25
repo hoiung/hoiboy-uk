@@ -1,3 +1,18 @@
+# Cloudflare Pages redirects. Two things about this file decide whether a rule
+# actually fires, and both are counter-intuitive:
+#
+#  1. ORDER, NOT SPECIFICITY. "If there are multiple redirects for the same
+#     source path, the top-most redirect is applied." A general wildcard placed
+#     above a specific rule therefore SWALLOWS it. That is why the ai-jargon
+#     alias below sits above /posts/*, not below it.
+#  2. A SLASH-LESS PATH IS ITS OWN SOURCE. /x/* does not match /x, and this site
+#     has no custom 404 to catch the difference, so every moved path gets a bare
+#     rule as well as a wildcard.
+#
+# Every rule is 301 (permanent): 302 tells search engines the move is temporary
+# and the old URL keeps the ranking. No rule's target is another rule's source
+# (no redirect chains) - asserted by scripts/test_redirects_order.py.
+
 # blog-priv#59: Consulting -> Hire Hoi URL migration. The old /consulting/* tree
 # now lives at /hire-hoi/ai-consultancy/*. Explicit 301 (permanent) so search
 # engines and externally cached share-cards follow the move.
@@ -5,3 +20,49 @@
 # does not match a slash-less path, and there is no custom 404 to catch it.
 /consulting /hire-hoi/ai-consultancy/ 301
 /consulting/* /hire-hoi/ai-consultancy/:splat 301
+
+# blog-priv#62: "Blogs" became a real level in the information architecture, so
+# the 79 posts and the 7 category landings moved under /blogs/. 87 retired URLs,
+# each mapping 1:1 (scripts/test_redirects_coverage.py asserts every one of them
+# resolves to a URL the new sitemap actually serves).
+#
+# These 39 files across four other repos link to the retired URLs - including a
+# submitted funding application and material already sent to recruiters - and
+# cannot be retroactively edited. The rules below are the only thing keeping
+# those links alive.
+
+# The one post whose published path is not its slug: content/posts/ai-jargon-for-noobs/
+# sets `slug: ai-jargon-for-newbies`, so the /posts/* wildcard would send it to a
+# dead /blogs/ai-jargon-for-noobs/. It MUST stay above that wildcard (see 1 above).
+/posts/ai-jargon-for-noobs /blogs/ai-jargon-for-newbies/ 301
+/posts/ai-jargon-for-noobs/ /blogs/ai-jargon-for-newbies/ 301
+
+# Posts. The wildcard also carries the section feed (/posts/index.xml ->
+# /blogs/index.xml), since :splat is the whole remainder of the path.
+/posts /blogs/ 301
+/posts/* /blogs/:splat 301
+
+# The 7 category landings. Each wildcard also carries that category's RSS feed
+# (/tech-ai/index.xml -> /blogs/tech-ai/index.xml). Category order matches
+# config/_default/menus.toml.
+/tech-ai /blogs/tech-ai/ 301
+/tech-ai/* /blogs/tech-ai/:splat 301
+/entrepreneurship /blogs/entrepreneurship/ 301
+/entrepreneurship/* /blogs/entrepreneurship/:splat 301
+/trading /blogs/trading/ 301
+/trading/* /blogs/trading/:splat 301
+/food-booze /blogs/food-booze/ 301
+/food-booze/* /blogs/food-booze/:splat 301
+/adventure /blogs/adventure/ 301
+/adventure/* /blogs/adventure/:splat 301
+/dance /blogs/dance/ 301
+/dance/* /blogs/dance/:splat 301
+/life /blogs/life/ 301
+/life/* /blogs/life/:splat 301
+
+# The `categories` taxonomy is switched off (blog-priv#62 Phase 6, hugo.toml
+# [taxonomies]). Its 8 URLs listed exactly the same posts as the landings above,
+# so each term maps onto its landing and the index maps onto the hub. `tags` and
+# `series` are deliberately untouched (A11) and have no rules here.
+/categories /blogs/ 301
+/categories/* /blogs/:splat 301

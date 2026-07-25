@@ -18,12 +18,26 @@
 #   scripts/ not in scope  : source code, not voice prose; voice rules apply only
 #                            inside <!-- iamhoi --> markers (SST3 marker-driven model)
 #
+# ...with ONE carve-out from the content/posts exclusion: content/posts/_index.md.
+# It is the /blogs/ hub landing (blog-priv#62 AC 4.1), not a legacy post. Hugo
+# requires a section index to live at content/<section>/_index.md, so this page
+# is stuck inside the legacy-exempt directory by the framework rather than by
+# anything about its prose: it is new, post-cutoff, operator-approved copy that
+# every category page links up to. Measured before adding it (2026-07-25): an em
+# dash injected into that file passed this guard AND check_emdash_newposts.py
+# (date-gated, and a section landing carries no date) AND the marker-driven
+# check-ai-writing-tells.py, so nothing in the repo covered it. Naming the file
+# explicitly beats loosening --exclude-dir, which would drag in all 79 legacy
+# posts. grep applies --exclude-dir only while recursing, so an explicitly named
+# file inside an excluded directory is still read (asserted by the guard's own
+# mutation test in scripts/test_emdash_hub_coverage.py).
+#
 # Em dashes are the single loudest AI-writing signature (VOICE_PROFILE.md §1).
 # Fix a hit with a comma, colon, parentheses, ellipsis, or two sentences.
 set -euo pipefail
 
 EMDASH=$'—'
-SCAN_PATHS=(content layouts assets config docs README.md)
+SCAN_PATHS=(content layouts assets config docs README.md content/posts/_index.md)
 
 # -I skips binary files: the em-dash byte sequence (E2 80 94) can occur by chance
 # inside compressed image data (e.g. a committed JPEG render), which is never voice

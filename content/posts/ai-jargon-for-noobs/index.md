@@ -25,13 +25,13 @@ You don't need most of this to use AI well. But someone always asks, so here's t
 
 **1. Tokens.** The little chunks of text the AI reads and writes, and bills you by. A word, a bit of a word, a comma, all tokens. Everything it does is really just chewing tokens, one after another. I watch these like a hawk. It's the meter running.
 
-**2. Next-token prediction.** The actual trick under the bonnet. The AI does not "think" out a sentence, it guesses the next token, then the next, then the next, rolling a weighted dice every time. That's it. That one fact explains most of AI's weirdness (I wrote a whole post on it: [Deterministic vs Probabilistic](/posts/deterministic-vs-probabilistic/)).
+**2. Next-token prediction.** The actual trick under the bonnet. The AI does not "think" out a sentence, it guesses the next token, then the next, then the next, rolling a weighted dice every time. That's it. That one fact explains most of AI's weirdness (I wrote a whole post on it: [Deterministic vs Probabilistic](/blogs/deterministic-vs-probabilistic/)).
 
 {{< zoom-image src="dice-temperature.svg" alt="A diagram of next-token prediction as a weighted dice. The phrase 'the cat sat on the' points to a list of candidate next words with probability bars: 'mat' 61 percent, 'sofa' 18 percent, 'floor' 9 percent, 'roof' 2 percent. A temperature dial sits beside it, low temperature sharpening the odds toward the top choice, high temperature flattening them so longer-shot words get picked." title="Every word is a weighted dice roll. Temperature is the knob." >}}
 
 **3. Temperature.** A knob for how wild those dice rolls get. Turn it low and it plays safe, turn it high and it gets creative (and risky). Some assume temperature 0 makes it predictable. It doesn't. The odds get sharper, the dice are still dice. I don't touch this one. The tools I use hide it anyway.
 
-**4. Context window.** The AI's short-term memory for one chat, measured in tokens. It used to be tiny, now it goes up to a million. Here's the bit people skip: stuffing it full makes the AI dumber, not smarter. I compact mine well before it's full, around the point things start to drift. Overfill it and you invite [hallucinations](/posts/why-ai-hallucination-keeps-happening/).
+**4. Context window.** The AI's short-term memory for one chat, measured in tokens. It used to be tiny, now it goes up to a million. Here's the bit people skip: stuffing it full makes the AI dumber, not smarter. I compact mine well before it's full, around the point things start to drift. Overfill it and you invite [hallucinations](/blogs/why-ai-hallucination-keeps-happening/).
 
 {{< zoom-image src="tokens-context.svg" alt="A diagram of the context window as a container. Text on the left is chopped into token chunks that flow into a tall window labelled 'context window, up to 1 million tokens'. The window has a fill bar that shades smoothly from a green healthy zone at the bottom, through an 'accuracy drifts more often as it fills' middle, up to a red 'overfilled, hallucination risk' zone near the top, with a marker around the middle showing where Hoi tries to compact, well before full." title="Tokens fill the context window. Full is not better." >}}
 
@@ -45,7 +45,7 @@ You don't need most of this to use AI well. But someone always asks, so here's t
 
 This is where the real skill lives, and where I spend most of my time.
 
-**8. Prompting.** The instructions you give it. The early days of working with AI were all about magic words. Useful, but it's the beginner rung (more on that ladder here: [Prompts, Agents, Harnesses](/posts/prompts-agents-harnesses-whats-next/)).
+**8. Prompting.** The instructions you give it. The early days of working with AI were all about magic words. Useful, but it's the beginner rung (more on that ladder here: [Prompts, Agents, Harnesses](/blogs/prompts-agents-harnesses-whats-next/)).
 
 **9. Context engineering.** Prompting, grown up. It's deciding what the AI sees, and in what order, so it reads the right things first and stays on task. Same skill, posher name. This is most of what my harness actually does, and I live in it.
 
@@ -59,11 +59,11 @@ This is where the real skill lives, and where I spend most of my time.
 
 **13. Vector databases.** Where you store all those number-ified texts so you can search them by meaning, fast. Honestly? Never used one in anger. The fancy retrieval stack and me have not properly met yet.
 
-**14. Semantic search.** Searching by meaning instead of exact words. I actually went the other way. I once tried a clever code-graph thing for this, it crashed on me constantly, so I ripped it out and went back to plain keyword search. Well, kinda: I built a wrapper, a plain script that searches across both the code and the docs, fast and cheap on tokens. Simple, reliable, mine. The full story: [No Graphs, Back to Basics](/posts/no-graphs-back-to-basics/). (Vectors are still on the someday list.)
+**14. Semantic search.** Searching by meaning instead of exact words. I actually went the other way. I once tried a clever code-graph thing for this, it crashed on me constantly, so I ripped it out and went back to plain keyword search. Well, kinda: I built a wrapper, a plain script that searches across both the code and the docs, fast and cheap on tokens. Simple, reliable, mine. The full story: [No Graphs, Back to Basics](/blogs/no-graphs-back-to-basics/). (Vectors are still on the someday list.)
 
 **15. Grounding.** Tying the answer to something real, a document, a tool, an actual fact, so the AI can't just freestyle. My rule is blunt: the source decides, not the model. This is the antidote to the next one.
 
-**16. Hallucination.** The AI confidently making stuff up, in the same calm voice it uses for true things. It isn't lying, it's just rolling dice and landing on plausible nonsense. The number one thing I design against (I had a proper rant about why it keeps happening: [Why AI Hallucination Keeps Happening](/posts/why-ai-hallucination-keeps-happening/)).
+**16. Hallucination.** The AI confidently making stuff up, in the same calm voice it uses for true things. It isn't lying, it's just rolling dice and landing on plausible nonsense. The number one thing I design against (I had a proper rant about why it keeps happening: [Why AI Hallucination Keeps Happening](/blogs/why-ai-hallucination-keeps-happening/)).
 
 ## Making it actually DO things
 
@@ -95,13 +95,13 @@ This is the heavy end, retraining the actual brain. I don't go here. I govern at
 
 The unglamorous half that decides whether any of this is safe to ship.
 
-**24. Evals.** Tests that check the AI behaves, instead of judging it by vibes. Mine run on [three tiers](/posts/3-types-of-tests-for-production-systems/), and for a laugh I even built a bake-off that pits ten different setups against the exact same job to see which one wins (the review side of it: [Shipping the Ralph Review Trio](/posts/shipping-ralph-review-trio/)).
+**24. Evals.** Tests that check the AI behaves, instead of judging it by vibes. Mine run on [three tiers](/blogs/3-types-of-tests-for-production-systems/), and for a laugh I even built a bake-off that pits ten different setups against the exact same job to see which one wins (the review side of it: [Shipping the Ralph Review Trio](/blogs/shipping-ralph-review-trio/)).
 
 **25. Guardrails.** The rules the AI is not allowed to break. Schemas that refuse junk, validators that catch it lying about its own work, hard stops. This is the heart of a [harness](https://github.com/hoiung/sst3-ai-harness), and it's most of why mine exists.
 
-**26. Observability.** Logs and audit trails so you can actually see what the AI did, step by step, after the fact. I bake this in while I build, not after the first thing blows up (I learned that one the hard way: [Observability and Logging](/posts/observability-and-logging-for-production-systems/)).
+**26. Observability.** Logs and audit trails so you can actually see what the AI did, step by step, after the fact. I bake this in while I build, not after the first thing blows up (I learned that one the hard way: [Observability and Logging](/blogs/observability-and-logging-for-production-systems/)).
 
-**+ Harness.** Finally, the big one everyone's throwing around. It's most of the above, prompting, context engineering, tool calls, guardrails, evals, observability, bolted into one repeatable workflow that wraps the AI so it stops wandering off. The model is the engine. The harness is the rest of the car. I built my own, and honestly it's the whole reason any of this holds together ([the long version](/posts/why-do-we-need-an-ai-harness/)).
+**+ Harness.** Finally, the big one everyone's throwing around. It's most of the above, prompting, context engineering, tool calls, guardrails, evals, observability, bolted into one repeatable workflow that wraps the AI so it stops wandering off. The model is the engine. The harness is the rest of the car. I built my own, and honestly it's the whole reason any of this holds together ([the long version](/blogs/why-do-we-need-an-ai-harness/)).
 
 ## So, the honest tally
 

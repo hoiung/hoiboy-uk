@@ -5,19 +5,21 @@ draft: true
 ---
 
 Inline link to a real post:
-[same dancers](/posts/same-dancers-on-the-sidelines/) is the home of the post.
+[same dancers](/blogs/same-dancers-on-the-sidelines/) is the home of the post.
 
 Trailing-slash agnostic — both forms resolve to the same bundle:
-[no slash](/posts/same-dancers-on-the-sidelines).
+[no slash](/blogs/same-dancers-on-the-sidelines).
 
-Section landings (single segment) are valid:
-[dance section](/dance/) lists posts.
+The /blogs/ hub and the 7 category landings are valid:
+[blogs hub](/blogs/) is the hub.
+
+[dance section](/blogs/dance/) lists posts.
 
 Tags taxonomy term page:
 [zouk tag](/tags/zouk/).
 
-Per-section RSS feed:
-[dance rss](/dance/index.xml).
+Per-category RSS feed:
+[dance rss](/blogs/dance/index.xml).
 
 Anchor-only link, skipped:
 [jump to closing](#closing-thoughts).
@@ -26,12 +28,12 @@ External skipped:
 [github](https://github.com/hoiung) is fine.
 
 Self-reference normalised then validated:
-[absolute self](https://hoiboy.uk/posts/same-dancers-on-the-sidelines/).
+[absolute self](https://hoiboy.uk/blogs/same-dancers-on-the-sidelines/).
 
 Reference-style link:
 [ref-style usage][same].
 
-[same]: /posts/same-dancers-on-the-sidelines/
+[same]: /blogs/same-dancers-on-the-sidelines/
 
 Image is NOT a link, image existence is a different bug class:
 ![alt text](/dance/should-be-skipped-because-image.png).
@@ -57,3 +59,7 @@ Inline code — interior never scanned: `[inline](/dance/never-checked/)`.
 HTML comment — interior never scanned:
 
 <!-- [commented bad](/dance/never-checked/) -->
+
+A post whose frontmatter `slug:` overrides its bundle directory name resolves on
+the SERVED slug, which is what the site actually publishes:
+[slug override](/blogs/foundation/) and [alias slug](/blogs/ai-jargon-for-newbies/).

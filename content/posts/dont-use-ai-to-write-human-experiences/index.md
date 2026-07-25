@@ -10,7 +10,7 @@ description: "I built a voice persona so AI could write my blogs. After 2-3 arti
 
 So here is a slightly funny one.
 
-A while back I built myself a voice persona. Basically a profile of how I write, my tone, my quirks, my bad habits, the lot. I even built a whole framework around it and [wrote about that here](/posts/your-voice-is-a-brand/). And I got a bit excited. Whoa, cool. Maybe now I can get AI to write my blogs for me. My articles. Even my marketing. All in my own voice and personality. Sounded brilliant at the time.
+A while back I built myself a voice persona. Basically a profile of how I write, my tone, my quirks, my bad habits, the lot. I even built a whole framework around it and [wrote about that here](/blogs/your-voice-is-a-brand/). And I got a bit excited. Whoa, cool. Maybe now I can get AI to write my blogs for me. My articles. Even my marketing. All in my own voice and personality. Sounded brilliant at the time.
 
 After two or three articles, nope. Not going to work.
 

@@ -48,7 +48,7 @@ The Anthropic-native floor is **Claude Agent SDK**. As close to the model as you
 
 The late entrant is **Agno**. Python-first, performance-focused, showed up after the lineup was already drafted, made the cut anyway.
 
-And the home-grown one is **[SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness)** (Single Source of Truth v3). My own. Built from first principles before I knew LangChain or CrewAI existed, on top of twenty years of project management and engineering scar tissue. Currently runs both my production trading platform AND this very blog you are reading. Two production systems on the same harness/framework, two completely different domains... so the "domain-agnostic" claim is real, not theoretical. (I have written more about how SST3 reshapes itself per task in an [earlier SST3 deep dive](/posts/sst3-ai-harness-reshapeable-knife/), if you want it.)
+And the home-grown one is **[SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness)** (Single Source of Truth v3). My own. Built from first principles before I knew LangChain or CrewAI existed, on top of twenty years of project management and engineering scar tissue. Currently runs both my production trading platform AND this very blog you are reading. Two production systems on the same harness/framework, two completely different domains... so the "domain-agnostic" claim is real, not theoretical. (I have written more about how SST3 reshapes itself per task in an [earlier SST3 deep dive](/blogs/sst3-ai-harness-reshapeable-knife/), if you want it.)
 
 Two of these have a special role in the scoring.
 

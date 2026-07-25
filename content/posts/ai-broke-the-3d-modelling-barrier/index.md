@@ -66,7 +66,7 @@ You still need to know what you are doing. You need an engineer's head, you need
 
 On my first proper go, the renders came out a mess. Constant conflicts, objects overlapping each other, weird shit all over the image. I had to set some ground rules and build collision detection into the Blender harness myself before it behaved. That is the work now. Not clicking the buttons, but knowing which rules the thing needs so it stops making a mess.
 
-I have written before about how [learning AI itself is hard](/posts/learning-ai-is-hard/), three years in and still only scratching the surface. This is the same coin, other side. The tools get easier to get into, but getting genuinely good still takes what it always took: doing the reps, back to basics, walking before you run. AI gets you on the road. It is not the destination.
+I have written before about how [learning AI itself is hard](/blogs/learning-ai-is-hard/), three years in and still only scratching the surface. This is the same coin, other side. The tools get easier to get into, but getting genuinely good still takes what it always took: doing the reps, back to basics, walking before you run. AI gets you on the road. It is not the destination.
 
 ## The door is open now
 

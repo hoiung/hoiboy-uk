@@ -41,7 +41,7 @@ Which is Era 3.
 
 ## Era 3. Harness Engineering. February to April 2026
 
-Three pillar posts, eight weeks. [OpenAI named the discipline on 11 February 2026](https://openai.com/index/harness-engineering/). [Anthropic followed on 24 March 2026](https://www.anthropic.com/engineering/harness-design-long-running-apps) (Prithvi Rajasekaran's *Harness design for long-running application development*). Martin Fowler [published Birgitta Böckeler's *Harness engineering for coding agent users* on 2 April 2026](https://martinfowler.com/articles/harness-engineering.html). Harrison Chase at LangChain added [*Your harness, your memory*](https://www.langchain.com/blog/your-harness-your-memory) on 11 April 2026. Around the same window, Anthropic renamed the Claude Code SDK to the general-purpose Claude Agent SDK (the deeper story on that is in the companion post, [Every Domain Expert Needs Their Own AI Harness](/posts/every-sme-needs-their-own-harness/)).
+Three pillar posts, eight weeks. [OpenAI named the discipline on 11 February 2026](https://openai.com/index/harness-engineering/). [Anthropic followed on 24 March 2026](https://www.anthropic.com/engineering/harness-design-long-running-apps) (Prithvi Rajasekaran's *Harness design for long-running application development*). Martin Fowler [published Birgitta Böckeler's *Harness engineering for coding agent users* on 2 April 2026](https://martinfowler.com/articles/harness-engineering.html). Harrison Chase at LangChain added [*Your harness, your memory*](https://www.langchain.com/blog/your-harness-your-memory) on 11 April 2026. Around the same window, Anthropic renamed the Claude Code SDK to the general-purpose Claude Agent SDK (the deeper story on that is in the companion post, [Every Domain Expert Needs Their Own AI Harness](/blogs/every-sme-needs-their-own-harness/)).
 
 The formula doing the rounds now: **Agent = Model + Harness**. The harness is the wrapper. The prompts, the tools the agent can touch, the data it sees, the permissions, the evaluation loops, the retry logic, the bits that say no.
 
@@ -51,7 +51,7 @@ Honest footnote. The word is not new. EleutherAI shipped `lm-evaluation-harness`
 
 Not everyone buys the framing. Noam Brown at OpenAI said on Latent Space (5 March 2026) that *"those scaffolds will also just be replaced by the reasoning models and models in general becoming more capable."* METR and Scale AI's SWE-Atlas research, same thread, found harness choice produces "noise within margin of error" across models. That is a real counter-claim. If they are right, harnesses are a temporary patch. If they are wrong, every SaaS vendor building AI features is sleepwalking.
 
-I wrote the deep dive on what a harness actually is and how I built one already. [It is here](/posts/sst3-ai-harness-reshapeable-knife/). This post is the wider picture around it.
+I wrote the deep dive on what a harness actually is and how I built one already. [It is here](/blogs/sst3-ai-harness-reshapeable-knife/). This post is the wider picture around it.
 
 ## Sidebar. I was barking up the right tree
 

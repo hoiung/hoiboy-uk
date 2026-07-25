@@ -232,7 +232,7 @@ rendered_link_check() {
         slug=$(basename "$(dirname "$TARGET")")
     fi
     # A frontmatter `slug:` overrides the directory name in Hugo's permalink,
-    # so the rendered path is public/posts/<frontmatter-slug>/, NOT the bundle
+    # so the rendered path is public/blogs/<frontmatter-slug>/, NOT the bundle
     # dir. Without this, every post carrying an override fails the gate: as of
     # 2026-07-20 that is 2 of 78 (2026-04-07-foundation -> foundation,
     # ai-jargon-for-noobs -> ai-jargon-for-newbies). Read from the closing ---
@@ -240,7 +240,8 @@ rendered_link_check() {
     fm_slug=$(awk 'NR==1 && /^---/ {f=1; next} f && /^---/ {exit} f' "$POST_FILE" \
         | sed -n 's/^slug:[[:space:]]*//p' | head -n1 | tr -d '"'"'" | tr -d '[:space:]')
     [[ -n "$fm_slug" ]] && slug="$fm_slug"
-    rendered="public/posts/$slug/index.html"
+    # /blogs/<slug>/ since blog-priv#62 ([permalinks.page] posts in hugo.toml).
+    rendered="public/blogs/$slug/index.html"
     if [[ ! -f "$rendered" ]]; then
         printf >&2 'WARN: rendered HTML not at %s — looking for any matching slug\n' "$rendered"
         rendered=$(find public -path "*/$slug/index.html" -type f 2>/dev/null | head -n1)

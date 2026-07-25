@@ -31,8 +31,8 @@ Come be part of it. This is where everything happens between features.
 
 Have a look around the site and the blog. Since you are into tech, you might like:
 
-- [Tech & AI](/tech-ai/)
-- [Entrepreneurship](/entrepreneurship/)
+- [Tech & AI](/blogs/tech-ai/)
+- [Entrepreneurship](/blogs/entrepreneurship/)
 
 And if you want to work with me, here is what I do: [Work with Hoi](/hire-hoi/ai-consultancy/work-with-hoi/) ⭐
 
