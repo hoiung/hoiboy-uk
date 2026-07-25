@@ -1,0 +1,71 @@
+{{- /* SINGLE SOURCE of a page's parent trail. Returns the ordered crumbs as a
+       slice of {href, title} dicts, root-first, EXCLUDING Home and EXCLUDING the
+       page's own title.
+
+       Two surfaces express "where does this page live": the rendered nav
+       (breadcrumbs.html) and the per-page trail.json sidecar (trail-data.html,
+       which the social-card eyebrows read). Both call this and neither computes
+       a crumb of its own, so they cannot drift apart.
+
+       Site structure, not click history. Every page walks its ancestry, which
+       honours an explicit `breadcrumbParent` recursively. Two blog surfaces sit
+       one level deeper than ancestry alone reports:
+         - a category landing is a top-level Hugo section, so the Blogs hub is
+           inserted above it;
+         - a post gains its first category as its deepest crumb (ancestry
+           already supplies the Blogs hub, since posts live under content/posts).
+
+       Note on the category crumb: it is APPENDED to the ancestry rather than
+       replacing it. Today that is behaviour-identical, because every page
+       declaring `categories:` lives under content/posts/ (verified: 79 of 79,
+       0 elsewhere). If a page outside content/posts/ ever declares a category,
+       it will read as Home > its own section > that category, which is its
+       real position in the site. */ -}}
+{{- $page := . -}}
+{{- $crumbs := slice -}}
+
+{{- /* Is this one of the blog category landings? The `categories` menu in
+       config/_default/menus.toml is the single enumeration of that set, so
+       there is no second list to keep in step. Trailing slashes are normalised
+       because a menu URL and a RelPermalink are written by different hands. */ -}}
+{{- $isCategoryLanding := false -}}
+{{- if .IsSection -}}
+  {{- $self := strings.TrimSuffix "/" $page.RelPermalink -}}
+  {{- range (index site.Menus "categories") -}}
+    {{- if eq (strings.TrimSuffix "/" .URL) $self -}}
+      {{- $isCategoryLanding = true -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if $isCategoryLanding -}}
+  {{- $hub := site.GetPage "/posts" -}}
+  {{- if $hub -}}
+    {{- $crumbs = $crumbs | append (dict "href" $hub.RelPermalink "title" $hub.Title) -}}
+  {{- else -}}
+    {{- errorf "breadcrumb-trail: category landing %q has no Blogs hub section at /posts to sit under" $page.RelPermalink -}}
+  {{- end -}}
+{{- end -}}
+
+{{- range partial "breadcrumb-ancestry.html" $page -}}
+  {{- if not .IsHome -}}
+    {{- $crumbs = $crumbs | append (dict "href" .RelPermalink "title" .Title) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* The label and href of a post's category crumb come from that category's
+       own landing page, so the crumb, the sidebar menu and the landing heading
+       all read the same words. A declared category with no landing page is a
+       content error: fail the build rather than paper over it with a guessed
+       root-level URL, which would silently emit a dead link. */ -}}
+{{- if and .IsPage (index (.Params.categories | default slice) 0) -}}
+  {{- $slug := index $page.Params.categories 0 -}}
+  {{- $section := site.GetPage (printf "/%s" $slug) -}}
+  {{- if $section -}}
+    {{- $crumbs = $crumbs | append (dict "href" $section.RelPermalink "title" $section.Title) -}}
+  {{- else -}}
+    {{- errorf "breadcrumb-trail: %q declares category %q but content/%s/_index.md does not exist" $page.RelPermalink $slug $slug -}}
+  {{- end -}}
+{{- end -}}
+
+{{- return $crumbs -}}
