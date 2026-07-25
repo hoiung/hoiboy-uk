@@ -1,0 +1,24 @@
+{{- /* Data for a page's trail.json sidecar. Returns the map the trails output
+       format serialises, so single.trails.json and list.trails.json share one
+       shape and one derivation.
+
+       `path` is the CONTENT path and is the join key the social-card generators
+       use. It must NOT be `url`: Phase 5 of blog-priv#62 rewrites every URL,
+       and both generators are keyed by content path (they write into
+       content/<section>/<slug>/ page bundles), so a URL-keyed join would break
+       silently at the permalink change. `url` is carried for readers that want
+       the served location, never as the join key.
+
+       `.File` is nil on auto-generated section pages (a section with child
+       bundles but no _index.md), so it is guarded; those pages are not carded
+       and an empty path is the honest answer for them. */ -}}
+{{- $crumbs := partial "breadcrumb-trail.html" . -}}
+{{- $titles := slice -}}
+{{- range $crumbs -}}
+  {{- $titles = $titles | append .title -}}
+{{- end -}}
+{{- $path := "" -}}
+{{- with .File -}}
+  {{- $path = .Path -}}
+{{- end -}}
+{{- return (dict "path" $path "title" .Title "trail" $titles "url" .RelPermalink) -}}
