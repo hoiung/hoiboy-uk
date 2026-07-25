@@ -2,7 +2,9 @@
 
 Operator runbook for the free DIY email stack on `hoiboy.uk`. Goal: receive at `hello@hoiboy.uk` (forwarded to `hoiboyuk@gmail.com`) and reply back AS `hello@hoiboy.uk` from inside Gmail. Zero ongoing subscription cost. No enterprise email account.
 
-**Status as of 2026-05-08** (re-verified via DNS 2026-06-01: MX + merged SPF + DKIM + DMARC all live): live and verified end-to-end. SPF + DKIM + DMARC all PASS in real-world delivery. See § "Verify DNS health (no token needed)" for the token-free re-check and § "Execution evidence" at the bottom.
+**Status as of 2026-05-08** (re-verified via DNS 2026-06-01 and again 2026-07-25: MX + merged SPF + DKIM + DMARC all live): live and verified end-to-end. SPF + DKIM + DMARC all PASS in real-world delivery. See § "Verify DNS health (no token needed)" for the token-free re-check and § "Execution evidence" at the bottom.
+
+> **This runbook now covers two Brevo flows.** hoiboy.uk was built on the older 4-record flow; `cuarchitects.co.uk` was onboarded on 2026-07-25 on Brevo's newer flow, which adds a branded subdomain and issues **no SPF include**. Following this page verbatim for a new domain will send you looking for records Brevo no longer gives you. Read Step 1 § 3 before touching DNS on a new domain, and treat the wizard's own record list as the source of truth over anything written here.
 
 This runbook is the **orchestrating overview**. The lower-level mechanics - Cloudflare API tokens, Brevo API setup, transactional templates - live in dedicated runbooks (cross-referenced inline). When automating this for paid clients, this is the entry point; consumers read the per-system runbooks for the specifics.
 
@@ -39,23 +41,42 @@ Summary:
 
 1. Sign up at https://www.brevo.com (free, no card).
 2. In Brevo dashboard -> Senders, Domains & Dedicated IPs -> Domains -> Add `hoiboy.uk` -> Authenticate the domain yourself.
-3. Brevo gives 4 DNS records to add (Brevo migrated to **CNAME-based DKIM** - better than the older TXT-based DKIM because Brevo can rotate signing keys without forcing DNS edits):
+3. Brevo issues the DNS records. **There are now two different flows - read what the wizard actually gives you, do not assume this list.** Brevo is gradually rolling out a new domain-setup experience, so which one you get depends on the account and when the domain was onboarded.
+
+    **Old flow (what hoiboy.uk was set up with, 2026-05-08): 4 records.** Brevo had already migrated to **CNAME-based DKIM** by this point, which is better than the older TXT-based DKIM because Brevo can rotate signing keys without forcing DNS edits.
     - `@` TXT - `brevo-code:<32-hex>` (account-specific verification)
     - `brevo1._domainkey` CNAME -> `b1.<zone>.dkim.brevo.com` (DKIM 1)
     - `brevo2._domainkey` CNAME -> `b2.<zone>.dkim.brevo.com` (DKIM 2)
     - `_dmarc` TXT -> `v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com` (Brevo aggregates DMARC reports for you)
-4. Add all 4 records in Cloudflare DNS. **Proxy must be OFF for the CNAMEs** (orange cloud breaks DKIM). Use the API path documented in `docs/cloudflare-api-token-setup.md` for reproducibility.
+
+    **Current flow (what cuarchitects.co.uk got, 2026-07-25): 7 records.** Same four as above, plus a **branded subdomain** - a prefix such as `em` that replaces Brevo's own domain in tracking links and, more importantly, carries the return path:
+    - `em` CNAME -> `em-<zone>.brand.brevosend.com`
+    - `img.em` CNAME -> `em-<zone>.img.brand.brevosend.com`
+    - `r.em` CNAME -> `em-<zone>.r.brand.brevosend.com`
+
+    Pick a prefix that is free in the zone and unambiguous. `em` is better than `mail` when Cloudflare Email Routing is already on the apex, because `mail.<zone>` reads like a mail server and will mislead whoever reads the DNS later.
+
+    **The branded subdomain is not retrofittable on demand.** hoiboy.uk was checked on 2026-07-25 and the option is not exposed for it at all; the flow only appears where the new setup experience has rolled out. Do not go hunting for it on an old-flow domain. It only changes how tracking links look, so an old-flow domain that sends fine loses nothing by not having it.
+4. Add the records in Cloudflare DNS. **Proxy must be OFF for every CNAME** (orange cloud breaks DKIM, and breaks the branded-subdomain CNAMEs too). Use the API path documented in `docs/cloudflare-api-token-setup.md` for reproducibility.
+
+   Choose **Manual** when the wizard offers Automatic / Manual / Delegate. Automatic asks for standing write access to the whole DNS zone, and it is the option most likely to add a second SPF record rather than merging into the existing one (see below). Four to seven records is not worth a permanent third-party grant on the zone.
 5. Trigger Brevo's verification - either UI button "Authenticate this email domain" OR API: `PUT /v3/senders/domains/hoiboy.uk/authenticate` (see brevo-api-setup.md § Phase B).
 
-**SPF: edit existing record, do NOT add second.** Cloudflare Email Routing's SPF (`v=spf1 include:_spf.mx.cloudflare.net ~all`) needs Brevo's include appended:
+**SPF: only the old flow needs it, and then you EDIT the existing record, never add a second.** Cloudflare Email Routing writes its own SPF (`v=spf1 include:_spf.mx.cloudflare.net ~all`). Under the old flow Brevo's include gets appended to that same record:
 
 ```
 v=spf1 include:_spf.mx.cloudflare.net include:spf.brevo.com ~all
 ```
 
-Multiple SPF records on the same name break SPF validation entirely.
+Multiple SPF records on the same name break SPF validation entirely (permerror), and SPF fails outright rather than degrading, so this is a silent-breakage trap.
+
+**The current flow does not ask for an SPF include at all.** cuarchitects.co.uk was authenticated on 2026-07-25 and Brevo issued no SPF record: the return path moves onto the branded subdomain, and DMARC passes on **DKIM alignment** instead (Brevo signs with `d=<your zone>`, which aligns with the From domain). Do not add `include:spf.brevo.com` by hand to a new-flow domain just because this runbook used to say so. Confirm alignment from real message headers rather than from the record list.
+
+hoiboy.uk keeps its merged include because that is what its flow required and it works. Do not strip it.
 
 **Sender registration is required even with domain auth.** Brevo's `POST /v3/senders` registers `hello@hoiboy.uk` as an active sender. Without this step, sends fail with `Sender is invalid / inactive`. See brevo-api-setup.md § Phase F.
+
+**Delete the freemail sender Brevo auto-creates at signup.** Brevo registers your account email as a sender, so a Gmail-based signup leaves a `<you>@gmail.com` sender in the list. It shows `DKIM: Default` and `DMARC: Freemail domain is not recommended`, and it is flagged as non-compliant with the Google / Yahoo / Microsoft bulk-sender requirements - correctly, because you do not own `gmail.com` and so it can never be DKIM-signed or DMARC-aligned. Nothing in this stack needs it: Gmail send-as composes go out as the domain address. Removed from the hoiboy.uk account on 2026-07-25; the domain sender `Hoi <hello@hoiboy.uk>` was already healthy (`DKIM: hoiboy.uk`, `DMARC is configured`) and is untouched. If a deletion ever breaks something, the symptom is the same `Sender is invalid / inactive` on send.
 
 ### Step 2: Brevo SMTP credentials
 
@@ -64,6 +85,12 @@ Multiple SPF records on the same name break SPF validation entirely.
 3. Port: 587
 4. **Login**: NOT your Brevo account email - Brevo issues a separate SMTP-relay address shown on this page, format `aaaXXXXXX@smtp-brevo.com` (e.g. `aaa99a001@smtp-brevo.com`). Using the account email here returns `5.7.8 Authentication failed`. (Originally this runbook said "your Brevo account email" - that was wrong, corrected 2026-05-08 after a real auth failure during execution.)
 5. SMTP key: click **Generate a new SMTP key**, pick **Standard variant** (64-char body, 90 chars total), copy the `xsmtpsib-...` value. Save in BW immediately - Brevo only shows it once.
+
+**Expiry: set NO EXPIRY** (operator decision 2026-07-25). The key is domain-scoped, rate-limited to the free-tier daily cap, held in BW and revocable in one click, so a leak is bounded and fixable. An expiry, by contrast, takes down a live business channel silently. Rotation dates that nobody honours are theatre; an unattended expiry is an outage.
+
+⚠️ **No-expiry does not remove all expiry risk.** Brevo's own dialog states that SMTP keys **also expire after 90 days of inactivity, regardless of the set expiry date**. On a low-volume domain that is the more likely of the two failure modes, and it lands at the worst time: a quiet period kills the key, then the first enquiry in months arrives and the reply will not send. There is no notification. The symptom is an authentication error on send; the fix is to generate a new key and update it in Gmail and BW.
+
+**Do not activate "block unauthorized IP addresses" for SMTP keys.** That feature assumes mail leaves from a few fixed IPs. With Gmail "Send mail as", the SMTP connection to Brevo is made by Google's outbound infrastructure, which is a large shifting pool you cannot enumerate. Activating it rejects every send.
 
 Both the SMTP login and SMTP key are stored in BW item `brevo-hoiboy-uk-smtp` (login in username field, key in password field). See `docs/brevo-api-setup.md` § Phase D for the full BW pattern.
 
@@ -129,7 +156,7 @@ Clean MX + a single merged SPF + resolving DKIM CNAMEs + a DMARC record = inboun
 
 ## Ongoing maintenance
 
-- Brevo SMTP key rotates only if compromised; otherwise indefinite.
+- Brevo SMTP key rotates only if compromised; otherwise indefinite (set to no-expiry, 2026-07-25). The one thing that can still kill it unattended is Brevo's **90-day inactivity** expiry, which applies regardless of the expiry setting - see Step 2.
 - DNS records are static; Cloudflare auto-renews any verifications it owns.
 - No subscription, no card, no auto-renewal trap.
 - DMARC report aggregation: Brevo emails weekly DMARC reports to `hoiboyuk@gmail.com` per the `rua=` setting; review monthly for delivery health.
