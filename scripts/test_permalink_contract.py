@@ -276,6 +276,83 @@ def check_lychee_exclude(failures: list[str]) -> None:
 # sentence visibly places the path in the past, not that it is cleverly phrased.
 _HISTORICAL_MARKERS = ("before", "moved", "was ", "were ", "retired", "predate", "used to")
 
+_RETIRED_BUILT_PATH = "public/posts"
+# Sentence boundaries, for scoping a marker to the clause that actually carries the
+# mention. `;` counts: a semicolon joins two independent clauses, and the second one
+# can make a claim the first does not license.
+_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.;])\s+")
+
+
+def _mention_is_historical(body: str) -> bool:
+    """True when EVERY `public/posts` mention on this line sits in a clause that frames
+    it as history.
+
+    Scoped to the CLAUSE, not the line. The line-scoped version of this shipped in
+    ca33d0f and Ralph round 7 Tier 2 broke it with ordinary prose:
+
+        The sidebar layout was redesigned before. public/posts still hosts the
+        canonical built blog output today.
+
+    An unrelated historical clause ("was redesigned before") exempted a separate,
+    current-tense, false claim in the next sentence. That is not an adversarial input -
+    it is how people write - and it defeated the guard's only job.
+
+    A same-line "must also name public/blogs" rule was considered and rejected: it
+    passes `exclude_path contains public/posts and public/blogs`, which names both
+    paths as current and is exactly the stale claim being hunted. Clause-scoping
+    catches that one too, because the clause carries no marker.
+    """
+    for clause in _SENTENCE_SPLIT_RE.split(body):
+        if _RETIRED_BUILT_PATH not in clause:
+            continue
+        if not any(m in clause.lower() for m in _HISTORICAL_MARKERS):
+            return False
+    return True
+
+
+# (line, expected_historical, why). The guard below has now shipped two defects - a
+# line-scoped marker (round 7 Tier 2) on top of the missing sweep it was written for -
+# so its decision function gets fixtures rather than trust. Both polarities are pinned:
+# a guard that only proves it ACCEPTS the current tree cannot show it still REJECTS.
+_MARKER_CASES = (
+    ("The sidebar layout was redesigned before. public/posts still hosts the canonical "
+     "built blog output today.",
+     False,
+     "Ralph round 7 Tier 2's reproduction: an unrelated historical clause must not "
+     "exempt a current-tense claim in the next sentence"),
+    ("exclude_path contains public/posts and public/blogs.",
+     False,
+     "names both paths as CURRENT - the same-line 'must also name public/blogs' rule "
+     "would have passed this, which is why it was rejected"),
+    ("`exclude_path` contains **both** `public/blogs` and `content/posts` ... "
+     "blog-priv#62 moved the rendered output there from `public/posts`.",
+     True,
+     "docs/AUTHORING.md:211 - the real line, framed as history"),
+    ("That entry is now `public/blogs` (blog-priv#62 moved the rendered blog there; "
+     "it read `public/posts` before).",
+     True,
+     "docs/consulting-launch-checklist.md:25 - the real line, marker after a semicolon"),
+    ("public/posts is where the rendered blog lives.",
+     False,
+     "the plainest possible stale claim"),
+)
+
+
+def check_marker_logic(failures: list[str]) -> None:
+    """The stale-claim guard's decision function, asserted against fixtures.
+
+    Without this, `check_no_stale_lychee_claims` is only ever exercised against a tree
+    that currently carries zero violations - so every regression in it reads as a pass.
+    That is precisely how its first version shipped broken.
+    """
+    for body, expected, why in _MARKER_CASES:
+        got = _mention_is_historical(body)
+        if got is not expected:
+            failures.append(
+                f"AC 5.16: _mention_is_historical returned {got}, expected {expected}, "
+                f"for {body!r}. Case: {why}."
+            )
+
 
 def check_no_stale_lychee_claims(failures: list[str]) -> None:
     """AC 5.16 second half - the `/posts/` sweep WIDENED past scripts/ and .github/.
@@ -293,11 +370,12 @@ def check_no_stale_lychee_claims(failures: list[str]) -> None:
     scripts/social-cards/README.md were the first two). A gate that reads only the
     thing that changed cannot see it. So this one reads everything that mentions it.
 
-    The rule is per-LINE, not a file allowlist: a mention may stay as long as the same
-    line visibly frames it as history. That keeps the AP #28 reversal record - saying
-    what the value USED to be is how a future reader learns the move happened - while
-    a bare current-tense claim fails. A file allowlist would have let a newly-added
-    stale sentence into an already-listed file without a word of complaint.
+    The rule is per-CLAUSE, not a file allowlist: a mention may stay as long as the
+    clause carrying it visibly frames it as history (see `_mention_is_historical`).
+    That keeps the AP #28 reversal record - saying what the value USED to be is how a
+    future reader learns the move happened - while a bare current-tense claim fails. A
+    file allowlist would have let a newly-added stale sentence into an already-listed
+    file without a word of complaint.
     """
     import subprocess
     try:
@@ -318,7 +396,7 @@ def check_no_stale_lychee_claims(failures: list[str]) -> None:
         lineno, _, body = rest.partition(":")
         if path.startswith("public/") or Path(path).name == self_name:
             continue                             # the build tree, and this guard itself
-        if any(m in body.lower() for m in _HISTORICAL_MARKERS):
+        if _mention_is_historical(body):
             continue                             # framed as history - allowed
         failures.append(
             f"AC 5.16: {path}:{lineno} states `public/posts` as current. The rendered "
@@ -344,6 +422,7 @@ def main(argv: list[str] | None = None) -> int:
     check_permalink_token(failures)
     check_authoring_doc(failures)
     check_lychee_exclude(failures)
+    check_marker_logic(failures)
     check_no_stale_lychee_claims(failures)
     if not built.is_dir():
         failures.append(f"AC 5.2: built site not found at {built} (run `hugo` first)")
