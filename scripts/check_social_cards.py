@@ -288,9 +288,17 @@ def check(content_root: Path, headers_path: Path) -> list[str]:
     return violations
 
 
-def check_built(content_root: Path, headers_path: Path, public: Path) -> list[str]:
+def check_built(content_root: Path, headers_path: Path, public: Path,
+                strict: bool = False) -> list[str]:
     """Ground-truth backstop: assert each singular indexable page's RENDERED og:image
-    is not the site default. Catches head.html/hero-pick template regressions."""
+    is not the site default. Catches head.html/hero-pick template regressions.
+
+    `strict` turns a page whose rendered HTML cannot be found into a FAILURE instead
+    of a skip. The lenient default exists for alias/permalink edges the source check
+    owns, but it also means a wrong url-derivation silently skips every page it
+    mis-resolves while this guard still reports OK — so any pipeline that depends on
+    this check actually covering the site (scripts/gen-social-cards.sh) passes
+    --strict. See blog-priv#62 AC 5.8."""
     violations: list[str] = []
     noindex_globs = parse_noindex_globs(headers_path)
     og_re = re.compile(r'<meta property="og:image" content="([^"]+)"')
@@ -301,6 +309,12 @@ def check_built(content_root: Path, headers_path: Path, public: Path) -> list[st
             continue
         rendered = public / url.strip("/") / "index.html"
         if not rendered.exists():
+            if strict:
+                violations.append(
+                    f"[rendered-missing] {url}: no rendered page at {rendered}, so its "
+                    f"og:image was never checked (page_url() derived a URL the build does "
+                    f"not serve, or the page did not render)."
+                )
             continue                                  # alias/permalink edge — source check owns it
         html = rendered.read_text(encoding="utf-8", errors="replace")
         m = og_re.search(html)
@@ -320,7 +334,13 @@ def main() -> int:
     ap.add_argument("--headers", default="static/_headers", help="path to static/_headers")
     ap.add_argument("--built", metavar="PUBLIC_DIR",
                     help="also verify rendered og:image in this Hugo build output dir")
+    ap.add_argument("--strict", action="store_true",
+                    help="with --built: a page whose rendered HTML is not found is a "
+                         "FAILURE, not a silent skip")
     args = ap.parse_args()
+
+    if args.strict and not args.built:
+        ap.error("--strict only applies with --built")
 
     content_root = Path(args.content)
     if not content_root.is_dir():
@@ -335,7 +355,7 @@ def main() -> int:
             if not public.is_dir():
                 print(f"error: --built dir not found: {public}", file=sys.stderr)
                 return 2
-            violations += check_built(content_root, headers_path, public)
+            violations += check_built(content_root, headers_path, public, strict=args.strict)
     except OSError as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
@@ -346,7 +366,7 @@ def main() -> int:
             print("  " + v, file=sys.stderr)
         print(f"\n{len(violations)} violation(s).", file=sys.stderr)
         return 1
-    scope = "source + rendered" if args.built else "source"
+    scope = ("source + rendered (strict)" if args.strict else "source + rendered") if args.built else "source"
     print(f"Social-card guard: OK ({scope}; every indexable page - singular + section/home landing - owns its card).")
     return 0
 
