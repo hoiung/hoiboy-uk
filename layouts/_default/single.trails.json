@@ -1,0 +1,1 @@
+{{- partial "trail-data.html" . | jsonify (dict "indent" "  ") -}}
