@@ -7,11 +7,17 @@ dependency, and both derive their eyebrow line from the same per-page trail
 sidecar Hugo emits. Everything else differs (text-only consulting cards vs
 photo-driven AGIT feature cards), so only these pieces live here.
 """
+from __future__ import annotations
+
 import base64
 import json
 import pathlib
 import posixpath
 import sys
+
+# The trail index: content-bundle key -> that page's trail.json record
+# ({"path", "title", "trail", "url"}, asserted by scripts/test_trail_manifest.py).
+TrailIndex = dict[str, dict]
 
 
 def b64(path):
@@ -32,7 +38,7 @@ def font_face(family, ttf, weight):
 # layouts/_partials/breadcrumb-trail.html feeds BOTH the rendered <nav> and the
 # trail.json sidecar, so the card and the breadcrumb cannot drift apart.
 
-def load_trails(public, required=True):
+def load_trails(public: pathlib.Path | str, required: bool = True) -> TrailIndex:
     """Index every per-page trail.json sidecar by the CONTENT BUNDLE it describes.
 
     `required=True` (the generators' policy) makes a sidecar-free tree a hard exit:
@@ -61,11 +67,11 @@ def load_trails(public, required=True):
     carded, so it is skipped rather than collapsed onto a shared "" key where it
     would collide with home.
     """
-    public = pathlib.Path(public)
+    public = pathlib.Path(public)   # accepts str; every caller passes a Path
     if not public.is_dir():
         sys.exit(f"trail sidecars not found: {public} is not a directory. Build the site "
                  f"first - scripts/gen-social-cards.sh runs hugo before the generators.")
-    trails = {}
+    trails: TrailIndex = {}
     for sidecar in sorted(public.rglob("trail.json")):
         try:
             data = json.loads(sidecar.read_text(encoding="utf-8"))
@@ -85,13 +91,13 @@ def load_trails(public, required=True):
     return trails
 
 
-def bundle_key(bundle_dir, content_root):
+def bundle_key(bundle_dir: pathlib.Path | str, content_root: pathlib.Path | str) -> str:
     """The load_trails() key for a content page-bundle directory ("" for home)."""
     rel = pathlib.Path(bundle_dir).resolve().relative_to(pathlib.Path(content_root).resolve())
     return "" if str(rel) == "." else rel.as_posix()
 
 
-def eyebrow_for(trails, key):
+def eyebrow_for(trails: TrailIndex | None, key: str) -> str:
     """The card eyebrow for a content bundle: that page's parent trail, uppercased and
     joined with ' > '. Returns "" when the page has no parent - a top-level landing or
     home - and those cards then carry no eyebrow line at all.
@@ -99,7 +105,18 @@ def eyebrow_for(trails, key):
     Fails loud and names the bundle when it has no sidecar. There is deliberately no
     default: a card silently falling back to a hardcoded brand string is the exact
     drift this mechanism exists to remove.
+
+    `trails` is Optional because gen_card.py:main skips load_trails() when the only
+    target is `default` (that card has no eyebrow, and skipping lets `gen_card.py
+    default` run against a tree that has never been built). No eyebrow-bearing set is
+    reachable on that path, so None arriving here means a card set was generated
+    without a trail index. This is the single choke point every generator funnels
+    through, so the guard lives here rather than being repeated in each gen_* caller.
     """
+    if trails is None:
+        sys.exit(f"eyebrow requested for content bundle '{key or '(home)'}' but no trail "
+                 f"index was loaded. Only the `default` card is eyebrow-free, so this "
+                 f"means an eyebrow-bearing set was generated without load_trails().")
     entry = trails.get(key)
     if entry is None:
         sys.exit(f"no trail.json for content bundle '{key or '(home)'}', so its card eyebrow "
