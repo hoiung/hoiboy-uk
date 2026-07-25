@@ -205,16 +205,31 @@ You have two real options.
 
 Manual paste of templates A-E + operator-side reminder into Cal.com → Workflows → New, one workflow per trigger type. Free tier supports email actions. **Footer of every email shows "Powered by Cal.com" branding** which is the main downside.
 
+> ⚠️ **NOT IMPLEMENTED. Corrected 2026-07-25.** The Status column below says
+> "Active" for five templates. That was the *intended cadence* decided on
+> 2026-05-08, never an executed state, and it misread as live for two months.
+>
+> Neither path was ever finished. Path B is provably absent: no `workers/`
+> directory, no wrangler config, no webhook code anywhere in this repo, and
+> `/v2/webhooks` is empty. Path A's own line in the Reproduction Checklist below
+> is unticked. The six templates exist in Brevo (IDs 1-6) but nothing fires them.
+>
+> **hoiboy.uk therefore runs Cal's built-in default emails**, confirmed by the
+> operator on 2026-07-25 ("we just had the default cancel and reschedule email
+> flow then"). Cal sends confirmation, cancellation and reschedule mail natively
+> with no configuration, from Cal's own address with Cal branding. Read the
+> Status column below as "planned", not "shipped".
+
 Trigger mapping per template:
 
-| Template | Cal.com trigger | Action | Status (post 2026-05-08 cadence decision) |
+| Template | Cal.com trigger | Action | Status (PLANNED 2026-05-08, never wired) |
 |---|---|---|---|
-| A - Booking confirmation | New booking | Send email to attendee | ✅ Active |
-| B - 24h reminder | 24 hours before event starts | Send email to attendee | ✅ Active |
+| A - Booking confirmation | New booking | Send email to attendee | 📋 Planned |
+| B - 24h reminder | 24 hours before event starts | Send email to attendee | 📋 Planned |
 | C - 1h reminder | 1 hour before event starts | Send email to attendee | 💤 **Dormant** (template pushed to Brevo, Worker doesn't fire). Cal.com's hardcoded 1h email + 1h notification reminder (Lessons #11) covers the same window for any attendee whose calendar app honors embedded iCal reminders (Google Calendar always does; Outlook / Apple Calendar mostly do). Re-enable in Worker cron if real-world bookings show Outlook/Apple attendees missing reminders. |
-| D - Reschedule confirmation | Event rescheduled | Send email to attendee | ✅ Active |
-| E - Cancellation acknowledgement | Event cancelled | Send email to attendee | ✅ Active |
-| Operator reminder | 2 hours before event starts | Send email to host (Hoi) | ✅ Active - T-2h gives proper context-switch + prep time for the host without prepping too early. Was originally drafted at T-15min, then T-30min, settled at T-2h (2026-05-08 design iteration) |
+| D - Reschedule confirmation | Event rescheduled | Send email to attendee | 📋 Planned. Cal's own reschedule email fires today instead. |
+| E - Cancellation acknowledgement | Event cancelled | Send email to attendee | 📋 Planned. Cal's own cancellation email fires today instead. |
+| Operator reminder | 2 hours before event starts | Send email to host (Hoi) | 📋 Planned - T-2h gives proper context-switch + prep time for the host without prepping too early. Was originally drafted at T-15min, then T-30min, settled at T-2h (2026-05-08 design iteration) |
 
 The 5 templates verbatim are in the next section.
 
@@ -426,6 +441,7 @@ Google Meet: {MEETING_URL}
 | Schedule | id 42584, Mon-Fri **12:00-15:00 Europe/London** (updated 2026-07-20 from 11:00-18:00; signup auto-default was 09:00-17:00) |
 | Custom booking fields (4) | `company-name` (req), `ai-tool-today` (opt), `distinct-roles` (req - added 2026-05-08), `hope-to-get` (req textarea) |
 | Default location | Google Meet integration, credentialId 61497 |
+| Cancellation reason | **Mandatory for BOTH host and attendee** (operator change 2026-07-25; was host-only). An attendee cancelling silently tells you nothing, and on a discovery funnel the reason is the signal. Applied identically on the cuarchitects account. NOT verifiable through the v2 API: `2024-06-14` is the only version `/v2/event-types/{id}` accepts, and it exposes `disableCancelling` and `allowReschedulingCancelledBookings` but no cancellation-reason field. UI only. |
 | Live test booking | id 1041405, uid `83GC1L3fhD5mwPKEna9vsa`, 2026-05-11 11:00 BST, Google Meet `https://meet.google.com/rdg-huya-vjr` - used to verify the booking flow + send Cal.com's default email so Hoi could compare against Brevo's Hoi-voice templates |
 
 ### Availability update - 2026-07-20
