@@ -165,6 +165,43 @@ def check_authoring_doc(failures: list[str]) -> None:
                         f"/posts/ served URL on {len(stale)} line(s): {stale[:3]}")
 
 
+def check_lychee_exclude(failures: list[str]) -> None:
+    """AC 5.16 - lychee.toml excludes the BUILT path that moved, not the CONTENT
+    path that did not.
+
+    `exclude_path` is stronger than a glob filter: lychee.toml's own header records
+    that it voids even an EXPLICIT invocation, and scripts/pre-publish.sh passes the
+    rendered path explicitly. So a stale entry here silently flips what the
+    rendered-link-liveness gate covers, with nothing asserting it either way.
+
+    Scoped to the exclude_path LINE. The AC's whole-file counts (public/blogs 1,
+    content/posts 1) cannot hold in a file whose convention is to explain every
+    exclusion in prose above it: any comment naming a path inflates them. The
+    `public/posts` half IS asserted file-wide, because there the count is 0 and a
+    mention anywhere would be stale documentation.
+    """
+    lychee = ROOT / "lychee.toml"
+    if not lychee.is_file():
+        failures.append("AC 5.16: lychee.toml does not exist")
+        return
+    text = lychee.read_text(encoding="utf-8")
+    if "public/posts" in text:
+        failures.append("AC 5.16: lychee.toml still mentions the retired built path "
+                        "`public/posts` (the rendered output moved to public/blogs)")
+    line = next((ln for ln in text.splitlines() if ln.startswith("exclude_path")), None)
+    if line is None:
+        failures.append("AC 5.16: lychee.toml has no exclude_path line")
+        return
+    if "public/blogs" not in line:
+        failures.append("AC 5.16: exclude_path does not exclude the built output at "
+                        "public/blogs, so pre-publish.sh's rendered-link check changes "
+                        "scope silently")
+    if "content/posts" not in line:
+        failures.append("AC 5.16: exclude_path lost `content/posts`. Content directories "
+                        "did NOT move; dropping it re-enables raw-markdown link checking "
+                        "over the voice-sacred legacy corpus")
+
+
 def main(argv: list[str] | None = None) -> int:
     """`argv=None` reads sys.argv, which under pytest is the pytest command line
     (file paths + flags), so argparse exits 2 before a single assertion runs. CI
@@ -180,6 +217,7 @@ def main(argv: list[str] | None = None) -> int:
     failures: list[str] = []
     check_permalink_token(failures)
     check_authoring_doc(failures)
+    check_lychee_exclude(failures)
     if not built.is_dir():
         failures.append(f"AC 5.2: built site not found at {built} (run `hugo` first)")
     else:

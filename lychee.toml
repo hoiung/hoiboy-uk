@@ -24,7 +24,7 @@ accept = [200, 201, 202, 203, 204, 301, 302, 307, 308]
 base_url = "https://hoiboy.uk"
 
 # File path globs to skip (lychee scans args from CLI, this filters them).
-# `public/posts` is excluded because per-post pre-publish.sh already validates
+# `public/blogs` is excluded because per-post pre-publish.sh already validates
 # the rendered HTML for blog posts; `public/hire-hoi/ai-consultancy` is INTENTIONALLY NOT
 # excluded so consulting-ops#2 AC 0.4 (Cal.com URL liveness) can fire against
 # the rendered consulting page HTML.
@@ -43,10 +43,10 @@ base_url = "https://hoiboy.uk"
 # publishers, now allowlisted below rather than left to fail. Whenever a gate
 # appears to cover a file, prove the file is in scope, not merely that the gate
 # runs.
-# `public/blogs` (NOT `public/posts`): blog-priv#62 moved the RENDERED output to
-# /blogs/. The `content/posts` entry on the same line is a CONTENT path and does
-# NOT move - content directories stayed exactly where they were, only the served
-# URL changed. Getting these two confused silently flips what the
+# The two `posts`-shaped entries below are NOT the same kind of path and only one
+# of them moved in blog-priv#62. `public/blogs` is BUILT OUTPUT, which the URL
+# change relocated. `content/posts` is a CONTENT directory, which did not move and
+# must not be touched. Confusing them silently flips what the
 # rendered-link-liveness gate covers, because scripts/pre-publish.sh passes the
 # rendered path to lychee explicitly and exclude_path voids even an explicit
 # invocation (see the header note above).
