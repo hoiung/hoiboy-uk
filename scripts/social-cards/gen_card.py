@@ -72,6 +72,18 @@ EB_FS      = 26         # eyebrow font-size CEILING (shrinks to fit a deep trail
 EB_MIN_FS  = 16         # smallest eyebrow font-size before failing loud
 EB_TRACK   = 3          # eyebrow letter-spacing (px); part of the per-char advance
 EB_USABLE  = 980        # 1200px card minus the x=110 inset, mirrored on the right
+TITLE_USABLE    = EB_USABLE   # the title starts at the same x=110 inset, so same budget
+TITLE_FS_1L     = 98    # leaf-card title font-size on one line
+TITLE_FS_2L     = 86    # ... and on two (VT323 is condensed, so larger than sans would be)
+TITLE_MAX_LINES = 2     # make_svg's geometry defines ONE and TWO line cases only: at three
+                        # lines tag_y runs past SIG_CLEAR_Y and the tagline collides with the
+                        # signature. make_landing_svg solves the same collision by dropping
+                        # the tagline; a leaf card carries real copy there, so it shrinks the
+                        # title to fit instead of discarding the line.
+TITLE_ADV       = 0.40  # VT323 advance in em, MEASURED (20 'M' at fs=86 = 688px = 34.40px
+                        # each = 0.400*fs). Monospace, so a character count IS an exact
+                        # width fit, same reasoning as fit_eyebrow.
+TITLE_MIN_FS    = 60    # smallest leaf-card title size before failing loud
 TAG_FS     = 26         # tagline font-size (IBM Plex Mono is wide; 26 keeps the
                         # longest strapline on one line within the card width)
 TAG_LINE_GAP = 10       # extra px per landing-card tagline line (line height = fs + this)
@@ -130,6 +142,32 @@ def wrap_title(title, max_chars=22):
     return textwrap.wrap(title, width=max_chars) or [title]
 
 
+def fit_title(title):
+    """(font-size, lines) for a LEAF card title, capped at TITLE_MAX_LINES.
+
+    The default 22-char wrap is conservative rather than geometric: at TITLE_FS_2L the
+    card actually affords 28 characters (980px / (86*0.40)). A title long enough to need
+    a third line under the 22-char wrap can therefore still fit two lines once the wrap
+    uses the width the card really has, so try that before shrinking anything.
+
+    Only then shrink. Below TITLE_MIN_FS, fail loud rather than render a card whose
+    tagline sits on top of the signature - the failure this exists to prevent is silent,
+    because a 3-line title still renders, it just renders broken.
+
+    Titles that already fit in <=2 lines at width 22 return byte-identical output to
+    before this function existed, which is what keeps every other card unchanged.
+    """
+    lines = wrap_title(title)
+    if len(lines) <= TITLE_MAX_LINES:
+        return (TITLE_FS_1L if len(lines) == 1 else TITLE_FS_2L), lines
+    for fs in range(TITLE_FS_2L, TITLE_MIN_FS - 1, -1):
+        wrapped = wrap_title(title, max_chars=int(TITLE_USABLE // (fs * TITLE_ADV)))
+        if len(wrapped) <= TITLE_MAX_LINES:
+            return fs, wrapped
+    sys.exit(f"title does not fit the card: {title!r} still needs more than "
+             f"{TITLE_MAX_LINES} lines at {TITLE_MIN_FS}px. Shorten the page title.")
+
+
 def fit_eyebrow(eyebrow, usable_px=EB_USABLE, max_fs=EB_FS, min_fs=EB_MIN_FS, tracking=EB_TRACK):
     """Largest font-size in [min_fs, max_fs] at which `eyebrow` fits on ONE line inside
     usable_px. IBM Plex Mono is monospace (advance 0.6em) and the card adds a fixed
@@ -161,8 +199,7 @@ def eyebrow_svg(eyebrow, y=150):
 
 
 def make_svg(eyebrow, title, tagline, logo_uri, pal):
-    lines = wrap_title(title)
-    fs = 98 if len(lines) == 1 else 86        # VT323 is condensed: a touch larger than sans
+    fs, lines = fit_title(title)
     line_h = fs + 4
     start_y = 300 - (len(lines) - 1) * line_h / 2
     title_tspans = "".join(
