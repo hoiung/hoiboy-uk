@@ -18,10 +18,29 @@ disableHugoGeneratorInject = true
 [build]
   noJSConfigInAssets = true
 
-# Output formats: HTML + RSS + sitemap (Hugo defaults), no JSON.
+# Per-page trail sidecar (blog-priv#62). Every rendered page emits
+# public/<url>/trail.json carrying its content path, title, parent trail and
+# served URL; the social-card generators read it so a card eyebrow and the
+# on-page breadcrumb derive from one rule instead of two hand-kept copies.
+#
+# A per-page OUTPUT FORMAT is emitted per rendered page, not per page-collection
+# member, which is why it is used here in place of a single site-wide manifest:
+# content/hire-hoi/permanent-roles/index.md sets `build.list: never`, so it
+# belongs to no Hugo page collection (absent from the sitemap and from any
+# collection-driven manifest) yet it renders and it IS carded.
+[outputFormats.trails]
+  mediaType = "application/json"
+  baseName = "trail"
+  isPlainText = true
+
+# Output formats: HTML + RSS + sitemap (Hugo defaults) + the trails sidecar.
+# `page` is listed explicitly because its default is HTML-only. Taxonomy and
+# term pages emit no trail: they are generated, hold no content bundle, and are
+# never carded.
 [outputs]
-  home = ["HTML", "RSS"]
-  section = ["HTML", "RSS"]
+  home = ["HTML", "RSS", "trails"]
+  page = ["HTML", "trails"]
+  section = ["HTML", "RSS", "trails"]
   taxonomy = ["HTML"]
   term = ["HTML"]
 
