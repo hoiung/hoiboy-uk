@@ -1,7 +1,7 @@
 #!/bin/bash
 # Pre-publish gate aggregator for hoiboy.uk new blog posts.
 #
-# Runs 14 sequential gates fail-fast on first non-zero exit:
+# Runs 15 sequential gates fail-fast on first non-zero exit:
 #   1. Consulting YAML   (data/consulting.yaml MUST NOT contain OPERATOR_TODO
 #                         substring — global gate, blocks publish whenever a
 #                         placeholder URL is unreplaced. consulting-ops#2 AC 0.2.)
@@ -26,9 +26,12 @@
 #                         future-dated post from the production build)
 #   5. Word count        (check_wordcount.py >3000 = fail. POSTS ONLY: this gate
 #                         SKIPs for consulting/legal/skills/private targets, so a
-#                         non-post run reports 13 PASS + 1 SKIP, not 14 PASS.)
+#                         non-post run reports 14 PASS + 1 SKIP, not 15 PASS.)
 #   6. Private leaks     (check-public-repo-secrets.py)
 #   6b.SVG dimensions    (check_svg_dimensions.py)
+#   6c.Social cards      (gen-social-cards.sh — the AC 3.0 two-pass card build:
+#                         build, regenerate every card from its page's trail,
+#                         rebuild, then check_social_cards.py --strict)
 #   7. Hugo build        (hugo --buildDrafts so cross-link resolution + permalinks
 #                         match production exactly; rendered HTML lands in public/)
 #   7a.Social cards      (check_social_cards.py --built public: rendered backstop
@@ -195,6 +198,13 @@ run_check "secrets" python3 scripts/check-public-repo-secrets.py "$TARGET"
 # 6b. SVG dimensions: every page-bundle SVG needs root width/height or it renders
 #     tiny in the glightbox lightbox (zoom-image shortcode). See check_svg_dimensions.py.
 run_check "svg-dimensions" python3 scripts/check_svg_dimensions.py "$TARGET"
+
+# 6c. Regenerate every social card from the page trails (blog-priv#62 AC 3.0). A
+#     card's eyebrow is its page's parent trail, so a breadcrumb, section title or
+#     permalink change stales every card below it — and nothing else in the repo
+#     ever invokes a generator, so without this the cards drift silently. Runs
+#     BEFORE the build check below so that build sees the regenerated PNGs.
+run_check "social-cards-generate" bash scripts/gen-social-cards.sh
 
 # 7. Hugo build with --buildDrafts so the rendered HTML in public/ matches
 #    what production will serve (excluding the auto-deploy gate). Builds ALL
