@@ -105,14 +105,51 @@ def check_wired(failures: list[str]) -> None:
                         "nothing in the repo ever regenerates a card")
 
 
+def _card_fingerprints() -> dict[str, tuple[int, int]]:
+    """size + mtime_ns of every card in the working tree, so a test that writes one
+    can be caught doing it."""
+    out = {}
+    for p in sorted((ROOT / "content").rglob("share-card.png")):
+        st = p.stat()
+        out[str(p.relative_to(ROOT))] = (st.st_size, st.st_mtime_ns)
+    for name in ("share-card.png", "default-card.png"):
+        p = ROOT / "content" / name
+        if p.exists():
+            st = p.stat()
+            out[str(p.relative_to(ROOT))] = (st.st_size, st.st_mtime_ns)
+    return out
+
+
+def _first_carded_slug() -> str:
+    """The FIRST bundle in cards.tsv — the generator's first target for that set.
+
+    Which row is chosen matters. The generators write share-card.png into content/ page
+    bundles as they go, so deleting the sidecar of a LATER row lets every earlier row
+    render a real card into the working tree before the run dies. Deleting the FIRST
+    row's sidecar makes it fail on its first lookup, before anything is written, and
+    reading the row from the TSV rather than hardcoding it keeps that true if the file
+    is reordered. (Found the hard way: an earlier version of this test named a
+    mid-file row and silently regenerated a shipped card on every run.)
+    """
+    tsv = ROOT / "scripts" / "social-cards" / "cards.tsv"
+    for raw in tsv.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if line and not line.startswith("#"):
+            return f"hire-hoi/ai-consultancy/{line.split(chr(9))[0].strip()}"
+    sys.exit(f"FAIL: {tsv} has no card rows")
+
+
 def check_fail_loud(built: Path, failures: list[str]) -> None:
     """AC 3.0 assertion 3 — a missing trail.json fails the generator, naming the page.
 
     Executed, not read. The generator is pointed at a COPY of the built tree with one
-    sidecar deleted, so the working tree is never touched and no card is written (the
-    run dies during trail resolution, before any render).
+    sidecar deleted, so the built tree is untouched; and the sidecar chosen is the
+    FIRST target of the set, so the run dies during trail resolution before writing any
+    card. The working tree's cards are fingerprinted either side of the run and any
+    change is a failure — this test must never mutate the repo.
     """
-    victim = "hire-hoi/ai-consultancy/claude-code-harness-architect"
+    victim = _first_carded_slug()
+    before = _card_fingerprints()
     tmp = Path(tempfile.mkdtemp(prefix="card-build-order-"))
     try:
         shutil.copytree(built, tmp / "public", symlinks=True,
@@ -135,6 +172,12 @@ def check_fail_loud(built: Path, failures: list[str]) -> None:
                             f"{victim}; output was {(proc.stdout + proc.stderr)[-300:]!r}")
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+
+    touched = [k for k, v in _card_fingerprints().items() if before.get(k) != v]
+    if touched:
+        failures.append(f"AC 3.0: the fail-loud check WROTE cards into the working tree: {touched}. "
+                        f"This test must be side-effect free; card generation is a reviewed step "
+                        f"(AC 3.7), not something a test does behind the operator's back.")
 
 
 def check_strict_bites(built: Path, failures: list[str]) -> None:
