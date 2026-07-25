@@ -180,14 +180,27 @@ def test_every_test_file_is_listed_in_ci():
 
     A guard that cannot fail guards nothing. This is the assertion that makes the
     class self-policing: add a test file, and CI fails until something runs it.
+
+    COMMENT LINES ARE STRIPPED FIRST, for the same reason `_invocations()` above
+    strips them: ci.yml discusses its own test files constantly, and a file named
+    only in prose is not wired. Counting a comment as wiring would let a file whose
+    real invocation was deleted -- but whose explanatory comment survived -- pass
+    this check, which is precisely the failure mode the test exists to catch. Three
+    of the current matches for this very file are comment-only.
     """
-    listed = set(re.findall(r"(?:scripts|tests)/test_[a-z0-9_]+\.py",
-                            CI.read_text(encoding="utf-8")))
+    code = "\n".join(
+        line for line in CI.read_text(encoding="utf-8").splitlines()
+        if not line.strip().startswith("#")
+    )
+    listed = set(re.findall(r"(?:scripts|tests)/test_[a-z0-9_]+\.py", code))
     on_disk = {
         f"{d}/{p.name}"
         for d in ("scripts", "tests")
         for p in sorted((ROOT / d).glob("test_*.py"))
     }
+    # A glob that returned nothing would make the subtraction below empty and the
+    # assertion vacuous, which is the same class of silent pass being guarded against.
+    assert on_disk, "found no test_*.py under scripts/ or tests/ - the glob is wrong"
     unlisted = sorted(on_disk - listed)
     assert not unlisted, (
         f"{len(unlisted)} test file(s) exist but appear in no ci.yml pytest "
