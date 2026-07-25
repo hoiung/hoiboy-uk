@@ -123,6 +123,17 @@ exclude = [
   # session and cascade-skips Deploy. NOT a broken link.
   # added: 2026-07-22; expires: 2026-10-20 (90 days)
   "^https?://(www\\.)?noahkagan\\.com(/.*)?$",
+  # css-tricks.com and ryanholiday.net began returning 415 Unsupported Media Type
+  # to requests from GitHub Actions runner IPs on 2026-07-25, breaking CI on main
+  # (3 consecutive red runs, Deploy cascade-skipped) with no repo change: the links
+  # have sat in docs/research/14_BLOG_CRAFT.md since 2026-04-12 and passed every
+  # run until 13:55 UTC that day. Unlike the anti-bot entries above this is ORIGIN-IP
+  # blocking, not user-agent blocking -- verified 2026-07-25: all three return 200
+  # locally under a browser UA AND under lychee's own UA, so spoofing the agent
+  # would not help. NOT broken links. Re-test from CI before renewing.
+  # added: 2026-07-25; expires: 2026-10-23 (90 days)
+  "^https?://(www\\.)?css-tricks\\.com(/.*)?$",
+  "^https?://(www\\.)?ryanholiday\\.net(/.*)?$",
   # Root-relative paths (href="/js/...", href="/legal/...", href="/private/...")
   # are Hugo internal paths that get rewritten at render time. Lychee scans
   # raw markdown and has no Hugo context, so it cannot resolve them without
