@@ -139,7 +139,8 @@ def fit_eyebrow(eyebrow, usable_px=EB_USABLE, max_fs=EB_FS, min_fs=EB_MIN_FS, tr
     At the 26px ceiling that is 52 characters. The longest trail on the site today is
     'HIRE HOI > AI CONSULTANCY > PORTFOLIO' at 37, so nothing shrinks yet; a deeper
     future trail shrinks instead of overflowing, and one that will not fit even at
-    min_fs (75 characters) fails loud rather than running off the edge of the card.
+    min_fs (78 characters; 77 still fit at fs=16) fails loud rather than running off
+    the edge of the card.
     """
     for fs in range(max_fs, min_fs - 1, -1):
         if len(eyebrow) * (fs * 0.6 + tracking) <= usable_px:
