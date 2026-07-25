@@ -6,9 +6,22 @@
     <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
     {{- with .Params.categories -}}
       &nbsp;&middot;&nbsp;
+      {{- /* Resolve the category's real page and use ITS permalink. This chip used to
+             hand-build "/{{ $c | urlize }}/", which was correct until blog-priv#62 moved
+             the category landings under /blogs/ -- after which every post emitted a
+             retired URL that only survived via a 301, on a page whose breadcrumb and
+             sidebar already pointed at the live path. Same rule, same reason, same
+             failure mode as layouts/_partials/breadcrumb-trail.html: a guessed
+             root-level URL is a silent dead link, so a declared category with no landing
+             fails the build rather than being papered over. */ -}}
       {{- range $i, $c := . -}}
         {{- if $i }}, {{ end -}}
-        <a href="/{{ $c | urlize }}/">{{ $c }}</a>
+        {{- $section := site.GetPage (printf "/%s" $c) -}}
+        {{- if $section -}}
+          <a href="{{ $section.RelPermalink }}">{{ $c }}</a>
+        {{- else -}}
+          {{- errorf "single.html: %q declares category %q but content/%s/_index.md does not exist" $.RelPermalink $c $c -}}
+        {{- end -}}
       {{- end -}}
     {{- end -}}
   </div>
