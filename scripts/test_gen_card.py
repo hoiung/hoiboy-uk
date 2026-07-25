@@ -126,3 +126,53 @@ def test_long_title_drops_tagline_rather_than_overlap():
     svg = gc.make_landing_svg(title, AI_CONSULTANCY_DESC, "data:image/png;base64,AAAA")
     assert 'class="tag">' not in svg              # tagline dropped
     assert ">Automation Roadmap<" in svg          # title still rendered in full
+
+
+# ---- fit_title (LEAF cards) ---------------------------------------------------
+# The landing path above has been guarded against the tagline-vs-signature collision
+# since blog-priv#61. make_svg, the LEAF/service path, had no equivalent, so a title
+# long enough for a third line pushed its tagline onto the signature and shipped that
+# way: the operator caught it on the real ai-product-builder card at AC 3.7 review.
+# These are the leaf twins of the two landing tests above.
+
+LEAF_TITLE_37 = "AI Product Demo/MVP/Prototype Builder"   # the real title that broke
+
+
+def test_leaf_title_never_exceeds_two_lines():
+    # make_svg's geometry defines a one-line and a two-line case only; a third line is
+    # what moves tag_y past SIG_CLEAR_Y. The 37-char real title is the discriminating
+    # case: the conservative 22-char wrap gives it 3 lines, the card's real width gives 2.
+    assert len(gc.wrap_title(LEAF_TITLE_37)) == 3        # pre-fix behaviour, still true
+    fs, lines = gc.fit_title(LEAF_TITLE_37)
+    assert len(lines) <= gc.TITLE_MAX_LINES, lines
+    assert "".join(lines).replace(" ", "") == LEAF_TITLE_37.replace(" ", "")  # nothing lost
+
+
+def test_leaf_tagline_never_overlaps_signature_for_any_title_length():
+    # Same assertion the landing path makes, applied to make_svg. Every title here is a
+    # real or realistic leaf title; none may place its tagline past the clearance line.
+    for title in ("Portfolio",                                   # 1 line
+                  "Business Automation Services",                # 2 lines
+                  LEAF_TITLE_37,                                 # 3 lines pre-fix
+                  "AI Product Demo And MVP And Prototype Builder Service"):
+        svg = gc.make_svg("HIRE HOI > AI CONSULTANCY", title, "A tagline.",
+                          "data:image/png;base64,AAAA", gc.HOIBOY_PAL)
+        ys = [float(y) for y in re.findall(r'y="([\d.]+)" class="tag"', svg)]
+        assert ys, f"{title}: no tagline rendered"
+        assert all(y <= gc.SIG_CLEAR_Y for y in ys), f"{title}: tagline y {ys} past SIG_CLEAR_Y"
+
+
+def test_leaf_title_that_cannot_fit_fails_loud():
+    # Fail loud beats rendering a broken card, because a 3-line title still renders.
+    import pytest
+    with pytest.raises(SystemExit):
+        gc.fit_title("Supercalifragilistic " * 12)
+
+
+def test_short_leaf_titles_keep_their_original_size_and_wrap():
+    # The fix must not touch any card that already fitted: <=2 lines at width 22 returns
+    # exactly what the pre-fix inline expression returned. This is what kept the other 32
+    # cards byte-identical through the AC 3.7 re-approval.
+    assert gc.fit_title("Portfolio") == (gc.TITLE_FS_1L, ["Portfolio"])
+    assert gc.fit_title("Business Automation Services") == (
+        gc.TITLE_FS_2L, ["Business Automation", "Services"])
