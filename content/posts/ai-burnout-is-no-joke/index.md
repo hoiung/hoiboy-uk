@@ -12,7 +12,7 @@ When I started using Claude Code, I didn't think it would push me that hard. In 
 
 ## 12 to 15 Hours a Day, Every Day
 
-The project that did it was [my automated trading system](/posts/building-a-production-grade-trading-system-with-claude-code/), plus the constant refinement and experimentation on my own AI harness (the rulebook and guardrails I built so the AI works to my standards, which went through three generations, SST1 to SST3, along the way).
+The project that did it was [my automated trading system](/blogs/building-a-production-grade-trading-system-with-claude-code/), plus the constant refinement and experimentation on my own AI harness (the rulebook and guardrails I built so the AI works to my standards, which went through three generations, SST1 to SST3, along the way).
 
 Nine months into the build, I started to notice that in the prior 3 months alone, I had pulled more than 10 days where I was working 24 to 30 hours straight, with only short food breaks. And that was on top of the baseline. I was already pulling 12 to 15 hours a day, every day.
 
@@ -40,7 +40,7 @@ By the 9th month, I was totally burned mentally, emotionally, and physically. I 
 
 I did lack exercise. I dropped my weekly climbing and stopped dancing, but I did try to run most days of the week. Eating was the one thing I kept right. I enjoy cooking, the meals I prepare are generally well balanced, and the time in the kitchen was good time away from the computer to allow my brain to rest.
 
-(I have said this before in [Entrepreneurship in a Nutshell](/posts/entrepreneurship-in-a-nutshell/): burnout is a real cost, not a badge. I knew the lesson. It got me anyway *again*.)
+(I have said this before in [Entrepreneurship in a Nutshell](/blogs/entrepreneurship-in-a-nutshell/): burnout is a real cost, not a badge. I knew the lesson. It got me anyway *again*.)
 
 ## What Came Out of It
 

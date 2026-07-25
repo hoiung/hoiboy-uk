@@ -31,7 +31,7 @@ I didn't do too bad academically, I got through it. The real problem: how do I a
 
 ## Three Years of Book Stuffing
 
-There were challenges that forced me to change, probably a whole blog on its own, so I'll leave it there. When I started my own business at 23, the struggle was real. With a goal in front of me, I tried to learn the same old school way: read lots of books, memorise what I can, then apply it. Check out my [other blog on the 127 books](/posts/every-book-ive-read-in-20-years/) I read over those years.
+There were challenges that forced me to change, probably a whole blog on its own, so I'll leave it there. When I started my own business at 23, the struggle was real. With a goal in front of me, I tried to learn the same old school way: read lots of books, memorise what I can, then apply it. Check out my [other blog on the 127 books](/blogs/every-book-ive-read-in-20-years/) I read over those years.
 
 I went through a lot of books. And I can tell you, probably the most ineffective way to learn.
 
@@ -71,9 +71,9 @@ Active learning versus passive or autonomous. Active learning is active listenin
 
 I spent years learning to dance and made this exact mistake early on. Regurgitating from books is the same as passive learning. Just cramming knowledge into the body. It's ineffective, probably only useful for know-it-alls who can't handle a real situation or apply what they "know". You know the type. Talk the talk, can't walk the walk.
 
-In my [dance blogs](/posts/become-the-dance-listener/) I go on about active learning. Train the body consciously, not subconsciously until it goes autonomous. Worst way to learn to dance. You can't adapt to the music, constantly off beat, moving for the sake of moving. That isn't dancing! Active dancing is hearing the music change, microseconds of forecasting ahead, in tune with your partner, aware of your surroundings, dancing on time, adapting to the layers it takes you on, co-creating together. That's dance. No autonomous shortcut. We wire our brains by training the basics 10,000 times for every movement.
+In my [dance blogs](/blogs/become-the-dance-listener/) I go on about active learning. Train the body consciously, not subconsciously until it goes autonomous. Worst way to learn to dance. You can't adapt to the music, constantly off beat, moving for the sake of moving. That isn't dancing! Active dancing is hearing the music change, microseconds of forecasting ahead, in tune with your partner, aware of your surroundings, dancing on time, adapting to the layers it takes you on, co-creating together. That's dance. No autonomous shortcut. We wire our brains by training the basics 10,000 times for every movement.
 
-What Bruce Lee said: "do not fear the man who practice 10,000 different moves once, but fear the man who practices one punch 10,000 times". Or something like that. I'd add to it though. It means exploring that one movement 10,000 times, in as many different ways as you can. Otherwise it's just autonomous learning again, and now you've got [bad habits to undo](/posts/understanding-dance-growth-plateaux-bad-habits/). This is the difference between [copying and actually understanding](/posts/5-stages-learning-social-dance-movements/) the what, when, why, and how of applying it. Learn the workflow, the feedback loops, stay aware, keep adjusting. Whatever you're learning should be a piece you actually need for what you're building.
+What Bruce Lee said: "do not fear the man who practice 10,000 different moves once, but fear the man who practices one punch 10,000 times". Or something like that. I'd add to it though. It means exploring that one movement 10,000 times, in as many different ways as you can. Otherwise it's just autonomous learning again, and now you've got [bad habits to undo](/blogs/understanding-dance-growth-plateaux-bad-habits/). This is the difference between [copying and actually understanding](/blogs/5-stages-learning-social-dance-movements/) the what, when, why, and how of applying it. Learn the workflow, the feedback loops, stay aware, keep adjusting. Whatever you're learning should be a piece you actually need for what you're building.
 
 I should avoid the AI talk in this blog, but I'll mention it briefly. I believe once AI have learned to learn active learning, then they're probably on the level of becoming sentient.
 
@@ -91,7 +91,7 @@ Exploration matters. The other big one is consistency. Once in a full moon won't
 
 ## Keep It Simple, Stupid
 
-Keep it simple, stupid. What does that actually mean? Stick to the foundations and basic building blocks. Stop chasing the fancy, over-engineered material that looks cool and is probably impractical. It's the old "learn to walk before you run", except [most people seem to want to fly](/posts/7-dance-tips-zero-to-hero/) lol.
+Keep it simple, stupid. What does that actually mean? Stick to the foundations and basic building blocks. Stop chasing the fancy, over-engineered material that looks cool and is probably impractical. It's the old "learn to walk before you run", except [most people seem to want to fly](/blogs/7-dance-tips-zero-to-hero/) lol.
 
 And stop believing the influencers and YouTubers selling you "master it in 5 days". Very likely not gurus at all. They're selling hot air, probably no strong foundation themselves. True mastery often looks like something simple, done really well.
 

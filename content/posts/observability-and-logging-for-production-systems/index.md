@@ -10,7 +10,7 @@ description: "Observability and logging are what stop an AI-built system failing
 
 Here is a fast way to set yourself up to fail. Build a whole system with AI, or just vibe code your way to something that runs, and never once make it tell you what it is doing inside. It will look fine. It will click and load and show you numbers. And the day something goes wrong, you will be standing there in the dark with no idea what broke, or where.
 
-That blind spot is what observability fixes. If you are building anything you actually want to rely on, this matters as much as the [tests I wrote about last time](/posts/3-types-of-tests-for-production-systems/). The two go hand in hand, and I will get to why.
+That blind spot is what observability fixes. If you are building anything you actually want to rely on, this matters as much as the [tests I wrote about last time](/blogs/3-types-of-tests-for-production-systems/). The two go hand in hand, and I will get to why.
 
 ## What observability actually means
 
@@ -42,7 +42,7 @@ An error message on a dashboard when one of your processes has fallen over is ob
 
 Here is where it ties back to the tests.
 
-Observability is what lets you build the [three types of tests](/posts/3-types-of-tests-for-production-systems/) in the first place. The two work hand in hand to take a system from a rough concept, to a beta, to something genuinely ready for production. Without them, it isn't production ready. Full stop. Because the day something goes wrong, and it will, you won't know what went wrong or how to fix it.
+Observability is what lets you build the [three types of tests](/blogs/3-types-of-tests-for-production-systems/) in the first place. The two work hand in hand to take a system from a rough concept, to a beta, to something genuinely ready for production. Without them, it isn't production ready. Full stop. Because the day something goes wrong, and it will, you won't know what went wrong or how to fix it.
 
 And you have to build it in as you go. Bake it into the design from the start, not bolt it on later once you are already in trouble. I treat it as part of building the thing, not a chore for afterwards. It is the same rule my [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) bakes in: structured logging and fail-loud errors go in at the same time as the feature, never after the first incident.
 

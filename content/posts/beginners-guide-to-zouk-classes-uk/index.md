@@ -175,7 +175,7 @@ Uni Society Curita Facebook: https://www.facebook.com/events/1673646972949146/
 
 ---
 
-Don't know what Zouk is? Then you must read **[What is Zouk?](/posts/what-is-zouk-aam/)**!
-Don't forget to check out my **[7 dance tips from Zero to Hero](/posts/7-dance-tips-zero-to-hero/)**!
+Don't know what Zouk is? Then you must read **[What is Zouk?](/blogs/what-is-zouk-aam/)**!
+Don't forget to check out my **[7 dance tips from Zero to Hero](/blogs/7-dance-tips-zero-to-hero/)**!
 
 ***If you've enjoyed this blog then you should subscribe to our email list! By doing so, you will be first to hear our stories, tips, advice and more. No spam! Just don't forget to confirm your subscription otherwise you won't be subscribed.***

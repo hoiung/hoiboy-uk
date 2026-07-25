@@ -8,7 +8,7 @@ description: "Three years in. Two years of learning. One year building auto_pb. 
 
 <!-- iamhoi -->
 
-It's been over 3 years since I started this journey. Two years of intense learning. One year of intense building, which turned everything I'd picked up into an automated trading platform with a simple (not so simple) MVWAP strategy and a workflow that's almost fully automated. Almost. I kept a human in the loop for the actual trade entry decisions, on purpose. If you want the build side of that story, it's over here: [Building a Production-Grade Trading System with Claude Code](/posts/building-a-production-grade-trading-system-with-claude-code/).
+It's been over 3 years since I started this journey. Two years of intense learning. One year of intense building, which turned everything I'd picked up into an automated trading platform with a simple (not so simple) MVWAP strategy and a workflow that's almost fully automated. Almost. I kept a human in the loop for the actual trade entry decisions, on purpose. If you want the build side of that story, it's over here: [Building a Production-Grade Trading System with Claude Code](/blogs/building-a-production-grade-trading-system-with-claude-code/).
 
 This post isn't about the build. This post is about what it took to learn what I know now. Which isn't a lot. But it's still an ongoing journey.
 

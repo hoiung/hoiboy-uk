@@ -61,7 +61,7 @@ Truth is, I have been doing this long before the internet made it easy. Back the
 
 I used to blog my adventures and my dance journey purely for fun. Then one month I decided to write a very negative post and actually put my voice out there.
 
-[The London rant.](/posts/how-to-avoid-becoming-a-terrible-dancer-in-london/)
+[The London rant.](/blogs/how-to-avoid-becoming-a-terrible-dancer-in-london/)
 
 I would not recommend reading it, honestly. It is a long, cranky piece about the quality of learning and dancers' egos. But the gist is a set of questions nobody was asking out loud. What is actually being done to improve how dancers learn? How are students learning? What, how, and who, are they learning from?
 
@@ -175,7 +175,7 @@ And here is the part I am proudest of. That community is still running today. Ye
 
 Which brings me neatly to my latest one. If any of this landed with you, come and take a look at what I am building now, [Asians & Gingers in Tech](/community/asians-gingers-in-tech/). Different scene, same instinct. Find the people, give them a reason, build the thing that is not there yet. I would love your support, so have a read, join the groups, and follow along.
 
-(PS. I have moved all my old dance writing from the previous site over to [the dance section here](/dance/), if you ever fancy a read. I am carving out time to write more of it too, because my thinking on the dance has moved on a fair bit since.)
+(PS. I have moved all my old dance writing from the previous site over to [the dance section here](/blogs/dance/), if you ever fancy a read. I am carving out time to write more of it too, because my thinking on the dance has moved on a fair bit since.)
 
 ## A few memories
 

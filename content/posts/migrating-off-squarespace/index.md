@@ -9,7 +9,7 @@ description: "I moved a site off Squarespace onto a free stack and let an AI age
 
 <!-- iamhoi -->
 
-I had a small site sitting on Squarespace. It was the marketing site for id8u, a dating-platform side project I've written about before (the idea that won't die, [here](/posts/id8u-adventure-dating/)). Squarespace is lovely and easy. It is also £204 a year for the Business plan, plus 20 percent VAT on top, so call it £245 a year. For a brochure site that barely changes.
+I had a small site sitting on Squarespace. It was the marketing site for id8u, a dating-platform side project I've written about before (the idea that won't die, [here](/blogs/id8u-adventure-dating/)). Squarespace is lovely and easy. It is also £204 a year for the Business plan, plus 20 percent VAT on top, so call it £245 a year. For a brochure site that barely changes.
 
 I wanted it on the same stack this very blog runs on: Hugo and Cloudflare Pages. Hugo is a static site generator, which means it takes a folder of plain text files and turns them into a fast website with no database and no login page (nothing sitting there to hack). Cloudflare Pages then hosts the result for free. The only thing left to pay for is the domain name, which is under £10 a year.
 

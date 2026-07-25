@@ -123,9 +123,56 @@ def _url_matches(url: str, glob: str) -> bool:
     return fnmatch.fnmatch(url, glob) or fnmatch.fnmatch(url.rstrip("/"), glob.rstrip("/*"))
 
 
-def page_url(index_path: Path, content_root: Path, fm: str) -> str:
-    """Served URL: frontmatter `url:` override, else a `slug:` override on the leaf
-    segment, else the directory path."""
+def load_url_index(public: Path) -> dict[str, str]:
+    """content-bundle key -> served URL, read from Hugo's own per-page trail.json.
+
+    This is the ONLY authority on where a page is served. Deriving it from the
+    content path (see page_url's fallback) re-implements Hugo's permalink
+    resolution in Python, and blog-priv#62 is exactly the change that breaks such
+    a re-implementation: `[permalinks.page] posts = "/blogs/:slugorcontentbasename/"`
+    means content/posts/<dir>/ is served at /blogs/<slug>/, which no amount of
+    frontmatter-reading recovers from the path alone.
+
+    Reuses the generators' index (scripts/social-cards/card_common.py) rather than
+    a second copy, so the card pipeline and this guard resolve URLs identically.
+
+    `required=False`: a tree with no sidecars yields {} rather than a hard exit. The
+    generators cannot proceed without trails (no eyebrow can be derived) but this
+    guard can: it degrades to the content-path fallback, and `--strict` then names
+    every page whose derived URL the build does not serve. Exiting here instead
+    would also break every synthetic --built fixture, which is a fabricated tree
+    with no Hugo output in it.
+    """
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "social-cards"))
+    from card_common import load_trails                      # noqa: PLC0415
+    trails = load_trails(public, required=False)
+    if not trails:
+        print(f"warning: no trail.json sidecars under {public}; served URLs fall back "
+              f"to content-path derivation, which is not permalink-aware. Use --strict "
+              f"to turn every unresolved page into a failure.", file=sys.stderr)
+    return {key: (entry.get("url") or "") for key, entry in trails.items()}
+
+
+def page_url(index_path: Path, content_root: Path, fm: str,
+             url_index: dict[str, str] | None = None) -> str:
+    """Served URL for a content page.
+
+    With `url_index` (from load_url_index), Hugo's own answer wins. Without it,
+    falls back to: frontmatter `url:` override, else a `slug:` override on the
+    leaf segment, else the directory path.
+
+    The fallback is NOT permalink-aware and is wrong for anything under a
+    [permalinks] rule. It survives because the source-only mode has no build to
+    read, and because `--built --strict` turns any page whose derived URL is not
+    actually served into a named [rendered-missing] failure rather than the
+    silent skip that let a wrong derivation pass 87 pages while CI stayed green.
+    """
+    if url_index is not None:
+        key = index_path.parent.relative_to(content_root).as_posix()
+        key = "" if key == "." else key
+        served = url_index.get(key)
+        if served:
+            return served if served.endswith("/") else served + "/"
     m = re.search(r'^url:\s*["\']?([^"\'\n]+?)["\']?\s*$', fm, re.M)
     if m:
         url = m.group(1).strip()
@@ -302,9 +349,10 @@ def check_built(content_root: Path, headers_path: Path, public: Path,
     violations: list[str] = []
     noindex_globs = parse_noindex_globs(headers_path)
     og_re = re.compile(r'<meta property="og:image" content="([^"]+)"')
+    url_index = load_url_index(public)
     for bundle_dir, index_path in chain(leaf_bundles(content_root), landing_bundles(content_root)):
         fm = read_frontmatter(index_path)
-        url = page_url(index_path, content_root, fm)
+        url = page_url(index_path, content_root, fm, url_index)
         if is_excluded(fm, url, noindex_globs):
             continue
         rendered = public / url.strip("/") / "index.html"

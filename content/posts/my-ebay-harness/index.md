@@ -30,7 +30,7 @@ I built the harness.
 
 ## Why a harness, not a script
 
-I have done this dance before. Built a [trading harness](/posts/building-a-production-grade-trading-system-with-claude-code/) for swing trades. Built a [blogging harness](/posts/your-voice-is-a-brand/) for this site. Same shape, different trade. Get burned by the same problem in three different domains, and you stop writing scripts. You write a harness.
+I have done this dance before. Built a [trading harness](/blogs/building-a-production-grade-trading-system-with-claude-code/) for swing trades. Built a [blogging harness](/blogs/your-voice-is-a-brand/) for this site. Same shape, different trade. Get burned by the same problem in three different domains, and you stop writing scripts. You write a harness.
 
 A script does one thing. A harness does many things (the power of AI integration!). A script reads from one API. A harness knows about three APIs and which one to ask first. A script crashes on a malformed input. A harness gives a refusal you can read in plain English and act on. A harness has the specific guardrails its operator told it to have, and not the ones nobody asked for. A script is a tool. A harness is a workshop.
 
@@ -38,13 +38,13 @@ The real point is the conversation. I say "Analyse this week's performance. Whic
 
 Or another one. I drop a folder of clear photos of new stock onto Claude Code and say "list these on eBay." It reads the model numbers, MPNs, serial numbers off the photos. The harness runs the competitor scan, picks a title, fills the item specifics, drafts the condition description, computes the break-even floor, and stages the create call ready for me to apply. What used to be a chunk of an evening (reading datasheets, copying serial numbers, drafting listing copy by hand) becomes a supervision step I do while the kettle boils. That is the time-save.
 
-Why bother with all this. Claude Code reads my plain English and decides what to do. The MCP server exposes eBay's APIs as tools the agent can call. The harness is the apparatus around all of that, the validators, the refusals, the dry-runs, the audit trail, the operator-specific rules, the thing that narrows the LLM's wide probabilistic output onto the business outcome I actually want. As I said in [the first post about all this](/posts/why-do-we-need-an-ai-harness/), the harness does not make the LLM deterministic. It makes my business outcome deterministic. Together the three layers handle the repetitive tactical work, the listings to update, the funnels to read, the prices to check, the snapshots to log, the facts to surface, the questions to answer, and free me up for the bit a machine cannot do for me. The strategy. The thinking. The fine-tuning of what I sell, how I describe it, how I price it. The actual running of the trade. Tedium gets automated. Judgement stays mine.
+Why bother with all this. Claude Code reads my plain English and decides what to do. The MCP server exposes eBay's APIs as tools the agent can call. The harness is the apparatus around all of that, the validators, the refusals, the dry-runs, the audit trail, the operator-specific rules, the thing that narrows the LLM's wide probabilistic output onto the business outcome I actually want. As I said in [the first post about all this](/blogs/why-do-we-need-an-ai-harness/), the harness does not make the LLM deterministic. It makes my business outcome deterministic. Together the three layers handle the repetitive tactical work, the listings to update, the funnels to read, the prices to check, the snapshots to log, the facts to surface, the questions to answer, and free me up for the bit a machine cannot do for me. The strategy. The thinking. The fine-tuning of what I sell, how I describe it, how I price it. The actual running of the trade. Tedium gets automated. Judgement stays mine.
 
-{{< zoom-image src="/posts/why-do-we-need-an-ai-harness/cones.svg" alt="Three panels showing the same probabilistic LLM with more deterministic harness stacked on top. A raw LLM sprays outputs at random with no cone. The general harness that ships with every AI tool gives a wide cone that lands a few on target, with most falling short and several scattering outside. Your own custom harness, bolted on top, tightens the cone onto your bullseye, with only the odd stray outside." title="The harness narrows the spray onto the business outcome" >}}
+{{< zoom-image src="/blogs/why-do-we-need-an-ai-harness/cones.svg" alt="Three panels showing the same probabilistic LLM with more deterministic harness stacked on top. A raw LLM sprays outputs at random with no cone. The general harness that ships with every AI tool gives a wide cone that lands a few on target, with most falling short and several scattering outside. Your own custom harness, bolted on top, tightens the cone onto your bullseye, with only the odd stray outside." title="The harness narrows the spray onto the business outcome" >}}
 
-Same chassis as the trading harness and the blog harness. [Reshaped](/posts/sst3-ai-harness-reshapeable-knife/) for reselling. Built on top of [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) (the underlying methodology I run for everything: my trading bot, my blog, my CV, this post you are reading right now). Just pointed at the eBay platform instead of IBKR or Hugo.
+Same chassis as the trading harness and the blog harness. [Reshaped](/blogs/sst3-ai-harness-reshapeable-knife/) for reselling. Built on top of [SST3-AI-Harness](https://github.com/hoiung/SST3-AI-Harness) (the underlying methodology I run for everything: my trading bot, my blog, my CV, this post you are reading right now). Just pointed at the eBay platform instead of IBKR or Hugo.
 
-The thesis from the recent posts, [every domain expert needs their own harness](/posts/every-sme-needs-their-own-harness/), needed proof. Not metaphor. Not philosophy. A real one. Public. Operating. Mine.
+The thesis from the recent posts, [every domain expert needs their own harness](/blogs/every-sme-needs-their-own-harness/), needed proof. Not metaphor. Not philosophy. A real one. Public. Operating. Mine.
 
 ## The 15-day arc
 
@@ -112,7 +112,7 @@ This is the model I keep recommending to other operators. Build (or borrow) the 
 
 ## So
 
-Same blade metal as trading and blogging. Reshaped for reselling. The repo is public if you want to see what fifteen days of focused work looks like. The philosophy lives over [here](/posts/every-sme-needs-their-own-harness/) if you want the why first.
+Same blade metal as trading and blogging. Reshaped for reselling. The repo is public if you want to see what fifteen days of focused work looks like. The philosophy lives over [here](/blogs/every-sme-needs-their-own-harness/) if you want the why first.
 
 Build your own. Then come back and tell me what your knife looks like.
 

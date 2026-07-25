@@ -1,0 +1,119 @@
+# Every URL retired by blog-priv#62, captured from a build of the tree
+# immediately BEFORE the move (hugo v0.160.0, 2026-07-25). This file is the
+# baseline scripts/test_permalink_contract.py and
+# scripts/test_redirects_coverage.py assert against: a redirect set can only
+# be proven complete against the set of URLs that actually used to exist.
+#
+# Regenerating it from a POST-move build would make both tests vacuous, which
+# is why it is checked in rather than derived at test time.
+#
+# 87 pages + 8 feeds + 8 taxonomy URLs.
+
+# --- pages (sitemap <loc>) ---
+/adventure/
+/dance/
+/entrepreneurship/
+/food-booze/
+/life/
+/posts/
+/posts/16-skills-ultimate-adventurer/
+/posts/3-decisions-to-change-your-dating-life/
+/posts/3-types-of-tests-for-production-systems/
+/posts/5-common-mistakes-dance-teachers/
+/posts/5-stages-learning-social-dance-movements/
+/posts/7-dance-tips-zero-to-hero/
+/posts/7-reasons-practice-zouk-solo/
+/posts/ai-broke-the-3d-modelling-barrier/
+/posts/ai-burnout-is-no-joke/
+/posts/ai-jargon-for-newbies/
+/posts/ai-job-hunting-jack-and-jill/
+/posts/bakeoff-teaser-battle-of-the-ai-harnesses/
+/posts/become-the-dance-listener/
+/posts/beginners-guide-to-zouk-classes-uk/
+/posts/birmingham-bouldering-centre/
+/posts/building-a-production-grade-trading-system-with-claude-code/
+/posts/clockworks-of-a-dance-scene/
+/posts/dancing-is-for-girls-hell-no/
+/posts/deterministic-vs-probabilistic/
+/posts/dont-use-ai-to-write-human-experiences/
+/posts/dutchzouk-international-congress-2014/
+/posts/dynamic-workflows-sst3-integration/
+/posts/entrepreneurship-in-a-nutshell/
+/posts/every-book-ive-read-in-20-years/
+/posts/every-sme-needs-their-own-harness/
+/posts/falling-zouk-love-russian-saga/
+/posts/food-for-thoughts-dance-teachers-organisers/
+/posts/for-the-love-of-wine/
+/posts/foundation/
+/posts/grading-the-whole-market-was-noise/
+/posts/grindelwald-switzerland/
+/posts/guide-types-zouk-classes/
+/posts/hen-and-chickens-pub-grill/
+/posts/how-i-watch-client-harnesses/
+/posts/how-to-actually-build-communities/
+/posts/how-to-avoid-becoming-a-terrible-dancer-in-london/
+/posts/i-built-my-own-automated-meeting-notes/
+/posts/id8u-adventure-dating/
+/posts/key-to-effective-zouk-practice/
+/posts/learning-ai-is-hard/
+/posts/learning-how-to-learn/
+/posts/llm-wiki-debate/
+/posts/market-breadth-market-conditions-signals-and-market-regime/
+/posts/maturity-grading-from-backtest-data/
+/posts/migrating-off-squarespace/
+/posts/my-baby-steps-to-becoming-a-professional-trader/
+/posts/my-ebay-harness/
+/posts/no-graphs-back-to-basics/
+/posts/observability-and-logging-for-production-systems/
+/posts/overfitting-tests-for-my-trading-system/
+/posts/overthink-mode/
+/posts/poland-big-bang-zouk-theory/
+/posts/prompts-agents-harnesses-whats-next/
+/posts/reportadancer-doomed-to-fail/
+/posts/reverse-engineering-moju-ginger-shots/
+/posts/same-dancers-on-the-sidelines/
+/posts/scaling-without-quality/
+/posts/shipping-ralph-review-trio/
+/posts/sizing-up-on-rare-strong-setups/
+/posts/sst3-ai-harness-reshapeable-knife/
+/posts/talk-using-ai-to-build-trading-tools/
+/posts/tech-stack-behind-my-automated-trading-system/
+/posts/the-sun-had-set-for-2014/
+/posts/turtle-bay-restaurant/
+/posts/understanding-dance-growth-plateaux-bad-habits/
+/posts/we-wanted-more-properties/
+/posts/what-are-basic-movements-and-why-important/
+/posts/what-is-zouk-aam/
+/posts/what-to-practice-zouk-solo/
+/posts/why-ai-hallucination-keeps-happening/
+/posts/why-do-we-need-an-ai-harness/
+/posts/why-im-launching-ai-managed-harness-services/
+/posts/why-scope-beats-code/
+/posts/will-uk-dance-connexion-change-zouk-london/
+/posts/woodsmoke-bushcraft-course/
+/posts/x-books-that-will-change-your-dating-life/
+/posts/your-voice-is-a-brand/
+/posts/zouk-dance-camps-boot-camps-2020/
+/posts/zouktime-brazilian-dance-congress/
+/tech-ai/
+/trading/
+
+# --- per-category + section RSS feeds (filesystem walk; Hugo keeps .xml out of the sitemap) ---
+/adventure/index.xml
+/dance/index.xml
+/entrepreneurship/index.xml
+/food-booze/index.xml
+/life/index.xml
+/posts/index.xml
+/tech-ai/index.xml
+/trading/index.xml
+
+# --- `categories` taxonomy, switched off in Phase 6 ---
+/categories/
+/categories/adventure/
+/categories/dance/
+/categories/entrepreneurship/
+/categories/food-booze/
+/categories/life/
+/categories/tech-ai/
+/categories/trading/

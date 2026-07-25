@@ -260,17 +260,47 @@ jobs:
       - name: Card eyebrow + build-order tests (built tree)
         run: python3 -m pytest scripts/test_eyebrow_render.py scripts/test_eyebrow_width.py scripts/test_card_build_order.py -q
 
+      # The /blogs/ URL contract. test_permalink_contract asserts all 87 retired
+      # URLs map 1:1 onto live ones under the two-rule mapping (the redirect set is
+      # the only thing keeping 39 files of cross-repo links alive, including a
+      # submitted funding application). test_redirects_order pins the ai-jargon
+      # alias ABOVE the wildcard that would swallow it, 301-only, no chains.
+      # test_redirects_coverage resolves every retired URL, canonical AND
+      # slash-less, against the built tree. test_hub_listing asserts /blogs/ is a
+      # real page inside <main> (a document-wide check passes on the empty state,
+      # because the sidebar carries all 7 category links on every page).
+      # test_page_url_permalinks pins the check_social_cards derivation that
+      # silently skipped 87 pages. test_section_keyed_regression covers the 6
+      # .Section-keyed sites. test_taxonomy_cleanup asserts the categories: front
+      # matter key SURVIVES on all 79 posts. test_emdash_hub_coverage mutation-tests
+      # that the hub landing is inside the em-dash guard despite living in the
+      # legacy-exempt content/posts directory.
+      - name: Blogs IA tests (URLs, redirects, hub, taxonomy)
+        run: |
+          python3 -m pytest scripts/test_permalink_contract.py scripts/test_redirects_order.py \
+            scripts/test_redirects_coverage.py scripts/test_hub_listing.py \
+            scripts/test_page_url_permalinks.py scripts/test_section_keyed_regression.py \
+            scripts/test_taxonomy_cleanup.py scripts/test_emdash_hub_coverage.py -q
+
+      # blog-priv#62: posts and the 7 category landings moved under /blogs/, so
+      # these paths are the NEW contract. The retired ones are asserted too, from
+      # the opposite direction: they must NOT be built, or a stale template would
+      # keep serving a duplicate at the old URL while its 301 also fires, and the
+      # canonical would be ambiguous. `tags` is deliberately unmoved (A11).
       - name: URL contract assertion
         run: |
           set -e
-          for p in food-booze adventure dance tech-ai life entrepreneurship trading tags posts; do
-            test -f "public/$p/index.html" || { echo "::error::missing /$p/index.html"; exit 1; }
+          for p in food-booze adventure dance tech-ai life entrepreneurship trading; do
+            test -f "public/blogs/$p/index.html" || { echo "::error::missing /blogs/$p/index.html"; exit 1; }
+            test ! -e "public/$p" || { echo "::error::retired /$p/ still built; it must only exist as a 301"; exit 1; }
           done
+          test -f "public/blogs/index.html" || { echo "::error::missing /blogs/ hub"; exit 1; }
+          test -f "public/tags/index.html" || { echo "::error::missing /tags/index.html"; exit 1; }
           test -f "public/index.html" || { echo "::error::missing root index.html"; exit 1; }
           test -f "public/index.xml" || { echo "::error::missing root RSS feed"; exit 1; }
           test -f "public/sitemap.xml" || { echo "::error::missing sitemap.xml"; exit 1; }
           test -f "public/robots.txt" || { echo "::error::missing robots.txt"; exit 1; }
-          test -f "public/posts/foundation/index.html" || { echo "::error::missing foundation post"; exit 1; }
+          test -f "public/blogs/foundation/index.html" || { echo "::error::missing foundation post"; exit 1; }
           test -f "public/tags/foundation/index.html" || { echo "::error::missing foundation tag page"; exit 1; }
           echo "URL contract OK"
 

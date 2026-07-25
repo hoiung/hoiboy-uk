@@ -212,10 +212,14 @@ def check_strict_bites(built: Path, failures: list[str]) -> None:
         shutil.rmtree(tmp, ignore_errors=True)
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    """`argv=None` reads sys.argv, which under pytest is the pytest command line
+    (file paths + flags), so argparse exits 2 before a single assertion runs. CI
+    invokes these through pytest, so the entry point below passes an explicit []
+    and this signature is what makes that possible."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--built", default="public", help="built site root (default: public)")
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
 
     built = Path(args.built)
     if not built.is_absolute():
@@ -244,7 +248,7 @@ def main() -> int:
 
 def test_card_build_order() -> None:
     """pytest entry point (CI runs pytest through explicit file lists)."""
-    assert main() == 0
+    assert main([]) == 0
 
 
 if __name__ == "__main__":

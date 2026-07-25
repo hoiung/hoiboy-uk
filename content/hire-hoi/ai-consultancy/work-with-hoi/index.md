@@ -8,9 +8,9 @@ hideDate: true
 Every personal "I built / I shipped / I run / I designed" claim on this page is listed here with a verifiable URL. Stage 5 audit greps this block, tallies it against page claims, and flags anything unmatched.
 
 I built SST3-AI-Harness and dogfood it on every project I own -> https://github.com/hoiung/sst3-ai-harness
-I shipped Ralph Review Trio as a public Claude Code plugin -> https://hoiboy.uk/posts/shipping-ralph-review-trio/
+I shipped Ralph Review Trio as a public Claude Code plugin -> https://hoiboy.uk/blogs/shipping-ralph-review-trio/
 I built and published ebay-seller-tool, an MCP server I use daily -> https://github.com/hoiung/ebay-seller-tool
-I designed, run, and babysit daily a live automated pullback swing trading platform on real capital -> https://hoiboy.uk/trading/
+I designed, run, and babysit daily a live automated pullback swing trading platform on real capital -> https://hoiboy.uk/blogs/trading/
 -->
 
 <!-- iamhoi -->
@@ -128,11 +128,11 @@ That is what I am building for you. Not a pretty thing. A working thing.
 
 I built my own multi-agent harness and run it on every repo I own (linked on the blog post about it). Solo workflow, three-tier review loop, subagent swarm pattern, governance hooks. I dogfood it daily. Below are just a few samples from the full list. You can also check out [my portfolio]({{< ref "/hire-hoi/ai-consultancy/portfolio" >}}) to see what I am doing or have done for other clients.
 
-[Ralph Review Trio](https://hoiboy.uk/posts/shipping-ralph-review-trio/), one of the skills from that harness, ships as a public Claude Code plugin. It has caught real bugs in its own shipping and in the private codebases it reviews.
+[Ralph Review Trio](https://hoiboy.uk/blogs/shipping-ralph-review-trio/), one of the skills from that harness, ships as a public Claude Code plugin. It has caught real bugs in its own shipping and in the private codebases it reviews.
 
 I shipped [ebay-seller-tool](https://github.com/hoiung/ebay-seller-tool), an MCP server I use on my own businesses. Commercial use, not a toy.
 
-I run a live [automated pullback swing trading platform](https://hoiboy.uk/trading/) on real capital. I designed it, Claude implemented, I babysit it daily. Nine thousand commits and counting. Eleven thousand strategy evaluations.
+I run a live [automated pullback swing trading platform](https://hoiboy.uk/blogs/trading/) on real capital. I designed it, Claude implemented, I babysit it daily. Nine thousand commits and counting. Eleven thousand strategy evaluations.
 
 The harness I install in your business is not a theoretical pattern. It is the one that survives contact with my own code (which is the one harness anyone honestly should be selling).
 

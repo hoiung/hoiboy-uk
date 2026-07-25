@@ -94,13 +94,13 @@ So in reality, 200K or 1M is not a lot. First you feed it the initial context ju
 
 Shit, isn't it...
 
-But knowing that is the entire point. It is what helps you cut the hallucinations down, and keep as much quality in your work as you can. Because the moment a hallucination creeps in, it does not just cost you that one bad answer. It quietly creates more work for you to find and fix later, often long after you have moved on. Anyone who has used AI for real work for a while knows that sinking feeling. It is part of why I keep saying that [learning this stuff properly is hard](/posts/learning-ai-is-hard/).
+But knowing that is the entire point. It is what helps you cut the hallucinations down, and keep as much quality in your work as you can. Because the moment a hallucination creeps in, it does not just cost you that one bad answer. It quietly creates more work for you to find and fix later, often long after you have moved on. Anyone who has used AI for real work for a while knows that sinking feeling. It is part of why I keep saying that [learning this stuff properly is hard](/blogs/learning-ai-is-hard/).
 
 And that is the real takeaway here. Managing that context window is one of the biggest levers you have. Keep it lean and deliberate and you do two things at once: you cut the hallucinations down, and you keep each implementation pointed at the goal you started with. Let it bloat and you tend to lose both. It drifts off, forgets what you were actually building, and quietly starts solving its own version of the job.
 
 ## Short term memory vs long term memory
 
-So far I have been talking about the problems with short term memory. I have not said much about long term memory for AI, and the honest truth is there isn't a worthwhile solution for it yet. There was an attempt at it called LLM Wiki, which I wrote about in [one of my own posts](/posts/llm-wiki-debate/). I don't think it is a good approach, though. It creates more problems than it solves. Others have tried to build on top of it, and Google recently put out something along similar lines. I still reckon we are a long way off solving long term memory properly, but we will get there eventually, at the pace AI is moving.
+So far I have been talking about the problems with short term memory. I have not said much about long term memory for AI, and the honest truth is there isn't a worthwhile solution for it yet. There was an attempt at it called LLM Wiki, which I wrote about in [one of my own posts](/blogs/llm-wiki-debate/). I don't think it is a good approach, though. It creates more problems than it solves. Others have tried to build on top of it, and Google recently put out something along similar lines. I still reckon we are a long way off solving long term memory properly, but we will get there eventually, at the pace AI is moving.
 
 Failing ideas are stepping stones to better ideas. I may be critical at times, but I do respect the idea trying to solve a big problem.
 
@@ -116,9 +116,9 @@ I don't touch this one. The tools I use hide it anyway. Grounding does the real 
 
 ## What I actually do about it
 
-Like I said, I lean on a harness, something that wraps all of this in guardrails, governance, and a fair bit more, so the AI has less room to wander off. I have written about why that matters in [why every subject matter expert needs their own AI harness](/posts/every-sme-needs-their-own-harness/).
+Like I said, I lean on a harness, something that wraps all of this in guardrails, governance, and a fair bit more, so the AI has less room to wander off. I have written about why that matters in [why every subject matter expert needs their own AI harness](/blogs/every-sme-needs-their-own-harness/).
 
-A few other tips. Keep your implementations small. Build in little blocks, one piece at a time, just like Lego, rather than trying to spin up an entire system, platform or app in one go. Try to build the whole thing at once and you will get slop. (I wrote a whole post on that one too: [why I spend more tokens refining scope than writing code](/posts/why-scope-beats-code/).)
+A few other tips. Keep your implementations small. Build in little blocks, one piece at a time, just like Lego, rather than trying to spin up an entire system, platform or app in one go. Try to build the whole thing at once and you will get slop. (I wrote a whole post on that one too: [why I spend more tokens refining scope than writing code](/blogs/why-scope-beats-code/).)
 
 And there is more to building one small block at a time. You learn as you go. You start to understand your own architecture and your design intent. It does not matter whether you can code or not, you will learn to read code just by staring at the screen while it builds each small block. That part matters more than people think. Because if you do not know how your own app or platform works, then who does?
 

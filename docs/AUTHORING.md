@@ -66,23 +66,23 @@ Two rules govern it:
 
 The harness family shares two house diagrams instead of re-drawing the same idea in every post:
 
-- `cones.svg` shows what a harness DOES. Home post: `/posts/why-do-we-need-an-ai-harness/`.
+- `cones.svg` shows what a harness DOES. Home post: `/blogs/why-do-we-need-an-ai-harness/`.
 - `harness-layers.svg` shows what a harness IS. Home post: `/hire-hoi/ai-consultancy/claude-code-harness-architect/`.
 
 To reuse one in another post, reference its home-post URL (mechanic (b)) instead of copying the file into the new page bundle:
 
 ```text
-{{< zoom-image src="/posts/why-do-we-need-an-ai-harness/cones.svg" alt="accurate description of the image" title="short caption tailored to THIS post" >}}
+{{< zoom-image src="/blogs/why-do-we-need-an-ai-harness/cones.svg" alt="accurate description of the image" title="short caption tailored to THIS post" >}}
 ```
 
 - **No copy.** One physical file per diagram lives in its home bundle; every reuse points at that published URL. Do not copy the SVG into the consuming bundle, because copies drift out of sync.
 - **Alt stays accurate to the image.** The `alt` may be identical across reuses (correct, since the image is identical). Only the visible `title` caption varies per post. Keep captions voice-clean: no em dash, no `voice_rules.py` banned words.
 - **Redundancy trap.** Do not place a diagram right next to prose that already restates it word for word. Put it where the argument is made in words but the reader gets no visual. A nearby paraphrase is fine; a verbatim restatement is not.
 - **Recurrence ceiling.** Reuse `cones.svg` in at most 4 posts and `harness-layers.svg` in at most 4. The core explainers carry BOTH diagrams: `sst3-ai-harness-reshapeable-knife` and `every-sme-needs-their-own-harness` (both as reuses), plus `why-do-we-need-an-ai-harness` (its native `cones.svg` alongside a reused `harness-layers.svg` where it defines what a harness is). Every other post carries at most one.
-- **Rename caveat.** The reuse URL couples to the home post's slug. If either home post (`why-do-we-need-an-ai-harness` or `claude-code-harness-architect`) is renamed or moved, the reuse refs 404 with no CI catch: lychee excludes `content/posts` and `public/posts`, and the `zoom-image` shortcode passes `src` through raw with no resource check. So grep every reuse ref for the old path and fix them all in the same commit:
+- **Rename caveat.** The reuse URL couples to the home post's slug. If either home post (`why-do-we-need-an-ai-harness` or `claude-code-harness-architect`) is renamed or moved, the reuse refs 404 with no CI catch: lychee excludes `content/posts` and `public/blogs`, and the `zoom-image` shortcode passes `src` through raw with no resource check. So grep every reuse ref for the old path and fix them all in the same commit:
 
 ```text
-grep -rlE 'src="/posts/why-do-we-need-an-ai-harness/cones\.svg"' content/
+grep -rlE 'src="/blogs/why-do-we-need-an-ai-harness/cones\.svg"' content/
 grep -rlE 'src="/hire-hoi/ai-consultancy/claude-code-harness-architect/harness-layers\.svg"' content/
 ```
 
@@ -152,29 +152,35 @@ The wrapping enforcer (`scripts/check-iamhoi-wrapping.py`) blocks commits where 
 
 ## 6a. Internal links: section landings list, posts host
 
-Posts live at `/posts/<slug>/` regardless of category. Section landings (`/dance/`, `/food-booze/`, `/tech-ai/`, `/life/`, `/entrepreneurship/`, `/trading/`, `/adventure/`) are auto-generated index pages from Hugo's category taxonomy. They LIST the posts in that category. They DO NOT HOST individual posts.
+Posts live at `/blogs/<slug>/` regardless of category, and the 7 category landings at `/blogs/<category>/` (`/blogs/dance/`, `/blogs/food-booze/`, `/blogs/tech-ai/`, `/blogs/life/`, `/blogs/entrepreneurship/`, `/blogs/trading/`, `/blogs/adventure/`). A landing LISTS the posts in its category. It DOES NOT HOST them.
 
-A link like `/dance/some-post/` is broken even though it looks plausible. The post is at `/posts/some-post/`; `/dance/` is the category landing where Hugo lists all dance posts. Cloudflare's fallback silently routes 404s to the homepage, so the bug surfaces as "click goes to homepage".
+`<slug>` is the SERVED slug: a post's frontmatter `slug:` overrides its bundle directory name, so `content/posts/2026-04-07-foundation/` is published at `/blogs/foundation/`. Link the slug, not the directory.
+
+The retired pre-blog-priv#62 shapes (`/posts/<slug>/`, `/tech-ai/`) still resolve for visitors through the 301s in `static/_redirects`, but the validator rejects them in-repo: an internal link should not take a redirect hop.
+
+A link like `/blogs/dance/some-post/` is broken even though it looks plausible. The post is at `/blogs/some-post/`; `/blogs/dance/` is the landing where Hugo lists all dance posts. Cloudflare's fallback silently routes 404s to the homepage, so the bug surfaces as "click goes to homepage".
 
 | Form | Routes to |
 |---|---|
-| `/posts/some-post/` | `content/posts/some-post/index.md` (the post) |
-| `/dance/` | `content/dance/_index.md` (auto-generated category landing) |
-| `/dance/some-post/` | Cloudflare fallback returns the homepage HTML (HTTP 200, but no real page, the bug class) |
+| `/blogs/some-post/` | `content/posts/some-post/index.md` (the post; the content directory did NOT move) |
+| `/blogs/dance/` | `content/dance/_index.md` (the category landing) |
+| `/blogs/` | `content/posts/_index.md` (the Blogs hub, listing the 7 categories) |
+| `/blogs/dance/some-post/` | Cloudflare fallback returns the homepage HTML (HTTP 200, but no real page, the bug class) |
+| `/posts/some-post/`, `/dance/` | 301 to the `/blogs/` equivalent (retired; do not author these) |
 
 Worked example. Cross-linking another post:
 
 ```markdown
-[the 2016 London rant](/posts/how-to-avoid-becoming-a-terrible-dancer-in-london/) still holds up.
+[the 2016 London rant](/blogs/how-to-avoid-becoming-a-terrible-dancer-in-london/) still holds up.
 ```
 
 NOT:
 
 ```markdown
-[the 2016 London rant](/dance/how-to-avoid-becoming-a-terrible-dancer-in-london/) ← broken, do not use
+[the 2016 London rant](/blogs/dance/how-to-avoid-becoming-a-terrible-dancer-in-london/) ← broken, do not use
 ```
 
-The `scripts/validate_internal_links.py` pre-commit hook + CI step rejects the broken form with an actionable hint (`did you mean /posts/<slug>/?`). Run it manually any time: `python3 scripts/validate_internal_links.py`.
+The `scripts/validate_internal_links.py` pre-commit hook + CI step rejects the broken form with an actionable hint (`did you mean /blogs/<slug>/?`). Run it manually any time: `python3 scripts/validate_internal_links.py`.
 
 ## 7. Drafts
 

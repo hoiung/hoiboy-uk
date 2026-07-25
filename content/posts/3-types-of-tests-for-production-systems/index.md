@@ -10,7 +10,7 @@ description: "Unit, workflow, and end-to-end tests are how I know a system works
 
 You can build a thing that looks finished, runs without crashing, and is still quietly wrong. That's the part nobody warns you about when coding with AI. The code compiles, the screen shows numbers, everything *feels* done, and underneath, a calculation is off by a decimal or a function is sitting there never actually being called. With AI doing the typing, this happens more, not less.
 
-So when I build something real, like my [automated swing-trading system](/posts/building-a-production-grade-trading-system-with-claude-code/), I don't trust "it ran." I trust tests (lots and lots of tests). There are three types I use to cover as many edge cases as possible and get to a reliable, robust system that's ready for production.
+So when I build something real, like my [automated swing-trading system](/blogs/building-a-production-grade-trading-system-with-claude-code/), I don't trust "it ran." I trust tests (lots and lots of tests). There are three types I use to cover as many edge cases as possible and get to a reliable, robust system that's ready for production.
 
 I've baked this straight into my [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness): any system it builds has to ship all three tiers of tests by default. No skipping a tier just because a feature looks too simple to bother with (that's usually the exact bit that breaks later). That rule is the reason a build burns a lot more tokens than just hammering out the feature and walking away. It costs more up front. But a system with no tests is a system you can't refine, can't trust, and definitely can't put anywhere near real money. So I pay the tax.
 
@@ -36,7 +36,7 @@ That's what the second tier is for. A module or a component, with all the functi
 
 The piston is fine. Now does the engine actually run?
 
-This is also where lazy testing quietly betrays you. A mock that swallows whatever you throw at it will accept a call that passes the wrong thing, and your test goes green over a bug. So the assertions have to check the real wiring, not just that *a* call happened. (Same energy as my [three-tier Ralph Review](/posts/shipping-ralph-review-trio/) for code: one layer is never enough.)
+This is also where lazy testing quietly betrays you. A mock that swallows whatever you throw at it will accept a call that passes the wrong thing, and your test goes green over a bug. So the assertions have to check the real wiring, not just that *a* call happened. (Same energy as my [three-tier Ralph Review](/blogs/shipping-ralph-review-trio/) for code: one layer is never enough.)
 
 ## 3. End-to-end tests: drive the whole car
 
@@ -54,7 +54,7 @@ Take the car out for a driving test. Not "the engine runs on the bench," but the
 
 Every one of these tests runs on pre-defined inputs where I already know the expected output. That's the whole game. I know what should come out, so if something else comes out, the test fails loudly and points at where it went wrong. No quiet shrug, no plausible-looking-but-wrong answer slipping through. A loud, ugly, unmissable failure. Then I kick off the AI to go investigate.
 
-For the workflow and E2E tiers especially, this only works if the system was built with proper observability underneath. Clear logging at every step, alerts or messages when something breaks, and fail-loud errors that are actually readable so I (or the AI) can diagnose them fast. A test can tell you *that* something broke. Good observability tells you *where* and *why*. I won't go into that here, it deserves its own post, [which is now up](/posts/observability-and-logging-for-production-systems/).
+For the workflow and E2E tiers especially, this only works if the system was built with proper observability underneath. Clear logging at every step, alerts or messages when something breaks, and fail-loud errors that are actually readable so I (or the AI) can diagnose them fast. A test can tell you *that* something broke. Good observability tells you *where* and *why*. I won't go into that here, it deserves its own post, [which is now up](/blogs/observability-and-logging-for-production-systems/).
 
 ## The catch nobody mentions: they need upkeep
 

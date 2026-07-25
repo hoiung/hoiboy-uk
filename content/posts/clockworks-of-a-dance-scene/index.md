@@ -7,7 +7,7 @@ source_file: "voice-corpus/blogs/30_clockworks-of-a-dance-scene.md"
 source_era: "ZoukBase (WordPress)"
 description: "The ten roles that keep a dance scene alive: leaders, teachers, mentors, DJs, performers, bloggers, photographers and organisers, plus ego and pricing."
 ---
-Following on from '[**Poland's Big Bang Zouk Theory**](/posts/poland-big-bang-zouk-theory/)', I am sure there are many ways to grow a healthy dance scene. but here are some of my thoughts and general thinking based on observations who are the main contributors that make a thriving and healthy dance scene.
+Following on from '[**Poland's Big Bang Zouk Theory**](/blogs/poland-big-bang-zouk-theory/)', I am sure there are many ways to grow a healthy dance scene. but here are some of my thoughts and general thinking based on observations who are the main contributors that make a thriving and healthy dance scene.
 
 Some contributors may play several roles, some may choose to play one role. Nonetheless, they each are important and can't be disregarded as a lesser importance when it comes to growing a healthy and thriving dance scene.
 

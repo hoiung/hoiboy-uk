@@ -131,7 +131,7 @@ If you follow some of my suggestions below, I could somewhat guarantee that you 
 2. Secondly, you are the problem.
 3. Thirdly, identify where the problem lies within you. If you don't know, then ask us where you are going wrong. I really don't mind being asked on the dance floor during social for feedback; just don't expect me to teach you how to dance!
 4. Fourthly, work out a plan how to fix your problems; go back to beginner's class, have private one-on-one classes with teachers but be specific what you want to get out of it.
-5. Try different dance teachers, different nights, and different dance school/organisations. This benefits you by exposing you to as many teachers and other dancers/students as possible. Here's a link to find available Zouk classes in London/Birmingham/Manchester: [**A Beginners Guide to Zouk Classes in UK**](/posts/beginners-guide-to-zouk-classes-uk/).
+5. Try different dance teachers, different nights, and different dance school/organisations. This benefits you by exposing you to as many teachers and other dancers/students as possible. Here's a link to find available Zouk classes in London/Birmingham/Manchester: [**A Beginners Guide to Zouk Classes in UK**](/blogs/beginners-guide-to-zouk-classes-uk/).
 6. Don't drink too much alcohol, you don't need it to become a better dancer and would only make yourself think you dance better but in reality… you suck.
 7. If you can't let go of your ego, then at least put it aside during a dance. If you find that you aren't developing or learning anything new anymore, then I would suggest a self assessment to find out why.
 8. You don't need to be gifted and talented in Zouk to be a good dancer. The naturally talented dancers are a minority but having talent still requires hours of training and hard work to become a good dancer. The majority of us, such as myself are not gifted or naturally talented in dancing. For us to become a good dancer, yes, we do have to work twice as hard. I've always believed that dancing is a skill that anyone can learn, enjoy and become good at it. Only if you really want to.
@@ -324,8 +324,8 @@ Again, thanks for reading.
 
 **Here are a few others that may interest you!**
 
-- [**What is Zouk?**](/posts/what-is-zouk-aam/)
-- [**A Beginners Guide to Zouk Classes in UK**](/posts/beginners-guide-to-zouk-classes-uk/)
-- [**7 Dance Tips from Zero to Hero**](/posts/7-dance-tips-zero-to-hero/)
-- [**The Biggest Zouk Family Gathering in Europe - DutchZouk! International Congress 2014**](/posts/dutchzouk-international-congress-2014/)
-- [**ZoukTime! 5th Brazilian Dance Congress**](/posts/zouktime-brazilian-dance-congress/)
+- [**What is Zouk?**](/blogs/what-is-zouk-aam/)
+- [**A Beginners Guide to Zouk Classes in UK**](/blogs/beginners-guide-to-zouk-classes-uk/)
+- [**7 Dance Tips from Zero to Hero**](/blogs/7-dance-tips-zero-to-hero/)
+- [**The Biggest Zouk Family Gathering in Europe - DutchZouk! International Congress 2014**](/blogs/dutchzouk-international-congress-2014/)
+- [**ZoukTime! 5th Brazilian Dance Congress**](/blogs/zouktime-brazilian-dance-congress/)

@@ -44,20 +44,62 @@ disableHugoGeneratorInject = true
   taxonomy = ["HTML"]
   term = ["HTML"]
 
-# Categories primary, tags secondary. Per docs/research/06_TAXONOMY.md.
+# Tags primary, series secondary. Per docs/research/06_TAXONOMY.md.
+#
+# There is deliberately NO `category` taxonomy (blog-priv#62 Phase 6). It used to
+# map to "categories" and produced 8 indexable /categories/* URLs that listed the
+# same posts as the /blogs/<category>/ landings, were not noindex, rendered the
+# literal word "Categories", and carried mangled auto-titles ("Tech-Ai"). Two
+# indexable pages listing identical content compete with each other; the landings
+# win because they are hand-titled and now sit at the canonical /blogs/ URL.
+# /categories/* 301s into /blogs/* in static/_redirects.
+#
+# What this removes is the TAXONOMY MAPPING only. The `categories:` front-matter
+# key stays on all 79 posts and is load-bearing: layouts/_partials/breadcrumb-trail.html,
+# layouts/_partials/related-posts.html, layouts/_default/list.html and
+# layouts/_default/single.html all read .Params.categories, so stripping the key
+# would empty every category landing and break the post breadcrumb.
+# Asserted by scripts/test_taxonomy_cleanup.py.
+#
 # `series` taxonomy added 2026-04-26 (Issue #3) for grouping multi-post sequences
 # (bake-off teaser + future results posts). Term page renders via
 # layouts/series/term.html (Hugo lookup chain: series/term.html >
 # _default/term.html > _default/taxonomy.html). Posts opt-in via
 # `series: <name>` + `order: <int>` frontmatter.
 [taxonomies]
-  category = "categories"
   tag = "tags"
   series = "series"
 
-# Permalinks for tags taxonomy. Categories use section landings instead
-# of taxonomy permalink rewrite (avoids section vs taxonomy collision).
-[permalinks]
+# Permalinks. Posts and the 7 blog categories live under /blogs/ (blog-priv#62):
+# `Blogs` is a real level in the information architecture, so it is a real level
+# in the URL too, instead of category landings sitting at the root competing with
+# /hire-hoi/ and /legal/. Every retired URL is 301'd in static/_redirects.
+#
+# `:slugorcontentbasename` is load-bearing and is NOT interchangeable with
+# `:slug`. It reproduces Hugo's own default for this section (frontmatter `slug:`
+# when set, else the content directory name); `:slug` alone falls back to a
+# title-derived string and silently rewrites 51 of the 82 post URLs, which builds
+# clean and emits the same URL count while breaking the 1:1 redirect mapping.
+# `:filename` was removed in Hugo 0.144+ and hard-fails the build.
+# Asserted by scripts/test_permalink_contract.py.
+#
+# The 7 category sections are listed individually because a section permalink
+# pattern is a literal path, not a prefix rule. Categories still use section
+# landings rather than a taxonomy permalink rewrite (avoids the section vs
+# taxonomy collision); the redundant `categories` taxonomy itself is switched off
+# further up in [taxonomies].
+[permalinks.page]
+  posts = "/blogs/:slugorcontentbasename/"
+[permalinks.section]
+  posts = "/blogs/"
+  tech-ai = "/blogs/tech-ai/"
+  entrepreneurship = "/blogs/entrepreneurship/"
+  trading = "/blogs/trading/"
+  food-booze = "/blogs/food-booze/"
+  adventure = "/blogs/adventure/"
+  dance = "/blogs/dance/"
+  life = "/blogs/life/"
+[permalinks.term]
   tags = "/tags/:slug/"
 
 # Pagination for taxonomy term pages (food-booze/, tech-ai/, etc).

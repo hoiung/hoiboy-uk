@@ -54,7 +54,7 @@ A raw LLM, on its own, has no cone at all. It sprays everywhere. Most outputs mi
 
 Here is the bit worth getting straight. Every AI tool you actually touch already comes with a general harness baked in. Claude, ChatGPT, Perplexity, the coding agents, they all ship with one. That default harness is what gives you a cone at all, instead of pure spray. It helps a lot. But it is built for everyone, so it aims at a generic target, not yours, and the labs keep changing it whenever they like, with zero input from you.
 
-The bit you actually bolt on is your own custom harness, stacked on top of theirs. That is when the cone tightens right onto your bullseye. The general layer gives you the basics. Your custom layer knows your trade, your rules, the exact thing you are trying to hit. And because it is yours, it does not move when a lab ships an update underneath. (More on why every expert ends up building that top layer: [Every SME Needs Their Own AI Harness](/posts/every-sme-needs-their-own-harness/).)
+The bit you actually bolt on is your own custom harness, stacked on top of theirs. That is when the cone tightens right onto your bullseye. The general layer gives you the basics. Your custom layer knows your trade, your rules, the exact thing you are trying to hit. And because it is yours, it does not move when a lab ships an update underneath. (More on why every expert ends up building that top layer: [Every SME Needs Their Own AI Harness](/blogs/every-sme-needs-their-own-harness/).)
 
 And those dots still landing outside the cones, even with a harness? A general one lets more slip. Your own lets fewer. Neither gets to zero. A harness shifts the odds hard in your favour, it never gets them to perfect.
 
@@ -64,6 +64,6 @@ Here is the bit that surprised even me. When someone [reverse-engineered Claude 
 
 The probabilistic part is the magic. The deterministic part is most of the actual engineering. You need both, working together. A hybrid approach is what makes it reliable-ish.
 
-AI is probabilistic. The harness shifts the odds. It does not erase them. If you want the long version, start here: [Why Do We Need an AI Harness?](/posts/why-do-we-need-an-ai-harness/)
+AI is probabilistic. The harness shifts the odds. It does not erase them. If you want the long version, start here: [Why Do We Need an AI Harness?](/blogs/why-do-we-need-an-ai-harness/)
 
 <!-- iamhoiend -->

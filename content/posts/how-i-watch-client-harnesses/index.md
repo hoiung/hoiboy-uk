@@ -9,7 +9,7 @@ description: "I build AI harnesses that run on my clients' machines. Here is the
 
 <!-- iamhoi -->
 
-I build AI harnesses for clients. A harness is the simple scaffolding around Claude Code that makes it actually useful for real work: the rules, the guardrails, the workflow, the standards it has to follow. I have written before about [why you even need one](/posts/why-do-we-need-an-ai-harness/). This post is about what happens after I hand one over.
+I build AI harnesses for clients. A harness is the simple scaffolding around Claude Code that makes it actually useful for real work: the rules, the guardrails, the workflow, the standards it has to follow. I have written before about [why you even need one](/blogs/why-do-we-need-an-ai-harness/). This post is about what happens after I hand one over.
 
 Because once I hand a harness over, it does not live on my machine. It lives on theirs.
 
@@ -69,7 +69,7 @@ Onboarding a new machine ended up as one command that does the lot: make the cli
 
 ## Simple is the point
 
-I have spent [twenty years building things](/posts/entrepreneurship-in-a-nutshell/), and the lesson keeps repeating: the stuff running quietly in the background should be simple. Nobody needs excitement from the system watching their machines.
+I have spent [twenty years building things](/blogs/entrepreneurship-in-a-nutshell/), and the lesson keeps repeating: the stuff running quietly in the background should be simple. Nobody needs excitement from the system watching their machines.
 
 So now I glance at one screen and I know. Every client harness, current or not, drifted or clean, alive or dead. That is how I will manage harnesses for clients from here on. Not by hoping. But by looking.
 

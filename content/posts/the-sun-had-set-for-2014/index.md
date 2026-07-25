@@ -21,7 +21,7 @@ Summing my travels, adventures and hobbies within this little time machine. My B
 
 I've started learning about wine and attended numerous courses with Birmingham School of Wine, Loki Wine Merchant, Neal's Yard Dairy and took my knowledge along with my travels in Europe.
 
-[For The Love Of Wine](/posts/for-the-love-of-wine/)
+[For The Love Of Wine](/blogs/for-the-love-of-wine/)
 
 ### Party mad in Bucharest, Romania
 
@@ -39,13 +39,13 @@ My 10 days journey to Bangkok then to Taiwan. It was good to see old friends aga
 
 10 days trekking trip through the Alps then jump through some crazy canyons in Chli Schlier and finally Paragliding off First Mountain.
 
-[Scenic Lovers must Visit Grindelwald, Switzerland](/posts/grindelwald-switzerland/)
+[Scenic Lovers must Visit Grindelwald, Switzerland](/blogs/grindelwald-switzerland/)
 
 ### Bushcraft with Woodsmoke in the Lake District
 
 7 days course out in the wild learning to live with what nature can provide.
 
-[Woodsmoke - Woodlanders Bushcraft Course](/posts/woodsmoke-bushcraft-course/)
+[Woodsmoke - Woodlanders Bushcraft Course](/blogs/woodsmoke-bushcraft-course/)
 
 ### Beer Biking fun at Budapest, Hungary
 
@@ -55,13 +55,13 @@ Another weekend of great company, food, alcohol and parties.
 
 Returning to BRNO for the second time for another amazing dance off.
 
-[ZoukTime! 5th Brazilian Dance Congress](/posts/zouktime-brazilian-dance-congress/)
+[ZoukTime! 5th Brazilian Dance Congress](/blogs/zouktime-brazilian-dance-congress/)
 
 ### Temptation wins, off to DutchZouk! Breda, Holland
 
 After BRNO, my blood injected full of dance. Couldn't help but crash my finance once more to complete my 3/3 Zouk congresses of this year.
 
-[The Biggest Zouk Family Gathering in Europe - DutchZouk! International Congress 2014](/posts/dutchzouk-international-congress-2014/)
+[The Biggest Zouk Family Gathering in Europe - DutchZouk! International Congress 2014](/blogs/dutchzouk-international-congress-2014/)
 
 ### Training with Fearless MMA
 
@@ -71,7 +71,7 @@ It's been an intense year of training and took my fitness to a whole new level. 
 
 This had been my favourite hobby of the year. Every route was like a puzzle I just had to solve and conquer! Can't wait to take this to the outdoors.
 
-[Birmingham Bouldering Centre](/posts/birmingham-bouldering-centre/)
+[Birmingham Bouldering Centre](/blogs/birmingham-bouldering-centre/)
 
 It had been a great year filled with many memorable moments. Every year should be just like 2014 or better. The start of 2015 will be a busy one for me. I've already crashed my cashflow by booking 4 trips within the first 4 months!
 

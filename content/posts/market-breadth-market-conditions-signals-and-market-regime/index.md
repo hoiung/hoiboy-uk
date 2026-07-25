@@ -10,7 +10,7 @@ description: "Six months of studying the QQQ turned into three tools: a breadth 
 
 Before I automated anything, I spent a good 6 months just studying the market. No code, no system yet, just me and the charts. 2,000+ hours, easily. 10 to 12 hours a day, every day, just trying to understand how the overall market moves.
 
-Everything I came up with came out of watching one thing: the QQQ, my market monitor. It turned into three separate angles, and this post walks through all three. If you want the engineering side of how the platform itself got built, [that story is over here](/posts/building-a-production-grade-trading-system-with-claude-code/). This one is about the studying that came first. And when studying each one, I also studied hundreds of stocks alongside it, to understand their movement over time together with the QQQ's, across multiple timeframes. Hence why the study took 6 months and not 6 days!
+Everything I came up with came out of watching one thing: the QQQ, my market monitor. It turned into three separate angles, and this post walks through all three. If you want the engineering side of how the platform itself got built, [that story is over here](/blogs/building-a-production-grade-trading-system-with-claude-code/). This one is about the studying that came first. And when studying each one, I also studied hundreds of stocks alongside it, to understand their movement over time together with the QQQ's, across multiple timeframes. Hence why the study took 6 months and not 6 days!
 
 ## 1) Market Breadth using T2108 % (Daily timeframe)
 
@@ -68,7 +68,7 @@ Just remember, there is no golden signal. Nobody actually knows what the market 
 
 I fine-tuned some of this through study, yes. But honestly, most of what I learned came from losing money when a bet went wrong, then going back over the market conditions afterwards to work out what I missed. That is what builds the intuition, the feel you get from staring at all this information that no algorithm could easily calculate. And I'm deliberately trying not to overengineer it.
 
-That is exactly why angle number 2, the PVA + MACD read, is built as a human in the loop check (HITL, a step the system will not let me skip). There are too many nuances in it to hand cleanly to an algorithm, so I keep myself in the loop. (If you want the longer story of how I got into any of this, it is in [my baby steps to becoming a professional trader](/posts/my-baby-steps-to-becoming-a-professional-trader/).)
+That is exactly why angle number 2, the PVA + MACD read, is built as a human in the loop check (HITL, a step the system will not let me skip). There are too many nuances in it to hand cleanly to an algorithm, so I keep myself in the loop. (If you want the longer story of how I got into any of this, it is in [my baby steps to becoming a professional trader](/blogs/my-baby-steps-to-becoming-a-professional-trader/).)
 
 And here is that latest human in the loop design, live on my plan-trade page (built with Claude Code under my [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) workflow, same as the rest of the platform). It reminds me what I am looking for, tells me to go and review my study notes, and makes me tick the box before it will let me place an order. I've forgotten this step too many times and paid for it lol. So dumb right? Hence why I built it into the workflow, permanently.
 

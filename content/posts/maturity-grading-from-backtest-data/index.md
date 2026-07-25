@@ -278,16 +278,16 @@ Quick note on the links below: they all open in a new tab. If you would rather g
 
 First, the actual algorithm. The whole maturity grade written out in full: the formulas, the lookback windows, the grade thresholds, and a working reference implementation in Python. I wrote it to be handed straight to an AI (Claude, ChatGPT, whatever you use) so you can drop it into your own system and start playing. It's no big secret, and honestly it might save you the months it took me to land on it.
 
-- <a href="/posts/maturity-grading-from-backtest-data/maturity_grade_algorithm.pdf" target="_blank" rel="noopener">Download: the full maturity grade algorithm (PDF, built to hand to an AI)</a>
+- <a href="/blogs/maturity-grading-from-backtest-data/maturity_grade_algorithm.pdf" target="_blank" rel="noopener">Download: the full maturity grade algorithm (PDF, built to hand to an AI)</a>
 
 Next, the little tool I built to dial in how those grades look on screen. Drag the sliders and the whole set of maturity badges re-lights, so you can tune the brightness curve to your own taste. Between the algorithm and this, you've got the whole set: the maths and the look.
 
-- <a href="/posts/maturity-grading-from-backtest-data/maturity_badge_intensity_tuner.html" target="_blank" rel="noopener">Download: the maturity badge tuner (HTML, open it in a browser)</a>
+- <a href="/blogs/maturity-grading-from-backtest-data/maturity_badge_intensity_tuner.html" target="_blank" rel="noopener">Download: the maturity badge tuner (HTML, open it in a browser)</a>
 
 And finally, the data behind the post. The same combo-by-combo numbers behind the whole ranking:
 
-- <a href="/posts/maturity-grading-from-backtest-data/maturity_combo_all_trades.html" target="_blank" rel="noopener">Download: every maturity combo, all backtested trades (HTML)</a>
-- <a href="/posts/maturity-grading-from-backtest-data/maturity_combo_tslc_ab.html" target="_blank" rel="noopener">Download: every maturity combo, the TSLC-A/B tradeable set only (HTML)</a>
+- <a href="/blogs/maturity-grading-from-backtest-data/maturity_combo_all_trades.html" target="_blank" rel="noopener">Download: every maturity combo, all backtested trades (HTML)</a>
+- <a href="/blogs/maturity-grading-from-backtest-data/maturity_combo_tslc_ab.html" target="_blank" rel="noopener">Download: every maturity combo, the TSLC-A/B tradeable set only (HTML)</a>
 
 The two data files are self-contained pages: every Daily, Weekly and Monthly grade combination, how many trades it produced, the average R, the stop-out rate and the win rate, laid out so you can see which shapes carried an edge and which were just noise. The first is the raw universe of backtested trades, the second is filtered down to the trades my system would actually take. As I said, this came out of four months of backtesting across my eight strategies, working out what holds up and what doesn't. If I had to put a price on what I'm handing over here, it's worth more than £100K to me, and even that's a fraction of the real value: 3.5 years learning to trade, 20-plus years of engineering, and 40-odd years of life experience, all of it baked into where the platform sits today and into building this universal grading system.
 

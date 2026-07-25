@@ -2,6 +2,15 @@
 
 **Date**: 2026-04-07
 
+> **SUPERSEDED IN PART. Read this box before the body.** This is the original
+> planning document and it is kept for the decision trail, not as a description of
+> the current site. Three of its decisions have since been reversed or overtaken;
+> each reversal is recorded in "Update (2026-07-25, blog-priv#62)" at the bottom
+> rather than edited away, because a decision quietly deleted is a decision nobody
+> can audit. Current state in one line: **7 categories, served at
+> `/blogs/<category>/`, rendered by `layouts/_default/list.html`, with no
+> `categories` taxonomy at all.**
+
 ## Decision
 
 - **Categories** (primary, sidebar nav): `food`, `adventure`, `dance`, `tech`
@@ -105,7 +114,7 @@ Every page has a breadcrumb trail at the top of the main content:
 ## Hugo implementation
 
 - **Sidebar**: standard flat partial (`layouts/partials/sidebar.html`) .  ~15 lines
-- **Category landing**: custom taxonomy template (`layouts/_default/taxonomy.html`) iterating `.Pages.GroupByDate "2006"` .  ~40 lines
+- **Category landing**: SUPERSEDED. Landings are Hugo SECTIONS, not taxonomy terms, and render through `layouts/_default/list.html`, which cross-filters `site.RegularPages` on `Params.categories`. No taxonomy template is involved.
 - **Breadcrumbs**: walking `.Parent` chain (`layouts/partials/breadcrumbs.html`) .  ~15 lines
 - All native Hugo, no plugins
 - Congo theme has breadcrumbs and grouped taxonomy pages built in .  even less work for us
@@ -128,3 +137,50 @@ Flagged posts go into `docs/research/categorisation-review.md` as a checklist fo
 ## Future categories
 
 Add by editing `config.toml` and the sidebar partial. No migration needed .  existing posts keep their categories. New category just shows up in nav.
+
+## Update (2026-07-25, blog-priv#62)
+
+Three reversals, recorded rather than silently applied (AP #28: a doc that states
+an intent has to state the reversal too, or the next reader re-derives the old
+decision from a document that still argues for it).
+
+**1. Short root-level category URLs are REVERSED.** The body says the sidebar
+links to `/food/`, `/adventure/` and so on, "with permalink rewrites in config so
+URLs stay short". That was a deliberate choice and it is now undone: the 7
+categories are served at `/blogs/<category>/`.
+
+Why: root-level category URLs put blog categories on the same footing as the real
+top-level sections, so `/entrepreneurship/` sat beside `/hire-hoi/` and `/legal/`
+as if it were the same kind of thing. It is not. `Blogs` is a real level in the
+information architecture, and the site now says so in all four places that express
+it: the URL, the on-page breadcrumb (`Home > Blogs > Tech & AI > <post>`), the
+sidebar heading, and the social-card eyebrow. Every retired URL 301s
+(`static/_redirects`); posts moved too, `/posts/<slug>/` to `/blogs/<slug>/`.
+
+**2. The `categories` taxonomy is switched OFF.** The body declares
+`category = "categories"` under `[taxonomies]`. It is gone. It produced 8
+indexable `/categories/*` URLs listing exactly the same posts as the landings,
+not `noindex`, rendering the literal word "Categories" with mangled auto-titles
+("Tech-Ai"). Two indexable pages listing identical content compete; the landings
+win because they are hand-titled and now canonical. `/categories/*` 301s into
+`/blogs/*`. **`tags` (217 URLs) and `series` (2 URLs) are untouched.**
+
+What was removed is the taxonomy MAPPING only. The `categories:` front-matter key
+stays on all 79 posts and is load-bearing: `breadcrumb-trail.html`,
+`related-posts.html`, `_default/list.html` and `_default/single.html` all read
+`.Params.categories`, so stripping the key would empty every landing and break the
+post breadcrumb. Asserted by `scripts/test_taxonomy_cleanup.py`.
+
+**3. There are 7 categories, not 4.** The body names `food`, `adventure`, `dance`,
+`tech`. The live set, in the operator's stated order, is: Tech & AI,
+Entrepreneurship, Trading, Food & Booze, Adventure, Dance, Life
+(`tech-ai`, `entrepreneurship`, `trading`, `food-booze`, `adventure`, `dance`,
+`life`). `config/_default/menus.toml` is the authoritative list; templates and
+tests read it rather than hardcoding slugs.
+
+**Where the current contract lives**: `config/_default/hugo.toml` `[permalinks]`
+and `[taxonomies]`; `config/_default/menus.toml`; `static/_redirects`;
+`content/posts/_index.md` (the `/blogs/` hub). Enforced by
+`scripts/test_permalink_contract.py`, `test_redirects_order.py`,
+`test_redirects_coverage.py`, `test_hub_listing.py`,
+`test_section_keyed_regression.py` and `test_taxonomy_cleanup.py`.

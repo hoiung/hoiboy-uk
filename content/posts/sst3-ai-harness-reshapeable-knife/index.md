@@ -121,7 +121,7 @@ It's a cowboy. It's a loose cannon. It's the Wild West with extra confidence. Br
 
 ## How the harness clamps the cowboy
 
-{{< zoom-image src="/posts/why-do-we-need-an-ai-harness/cones.svg" alt="Three panels showing the same probabilistic LLM with more deterministic harness stacked on top. A raw LLM sprays outputs at random with no cone. The general harness that ships with every AI tool gives a wide cone that lands a few on target, with most falling short and several scattering outside. Your own custom harness, bolted on top, tightens the cone onto your bullseye, with only the odd stray outside." title="How the harness clamps the spray onto target" >}}
+{{< zoom-image src="/blogs/why-do-we-need-an-ai-harness/cones.svg" alt="Three panels showing the same probabilistic LLM with more deterministic harness stacked on top. A raw LLM sprays outputs at random with no cone. The general harness that ships with every AI tool gives a wide cone that lands a few on target, with most falling short and several scattering outside. Your own custom harness, bolted on top, tightens the cone onto your bullseye, with only the odd stray outside." title="How the harness clamps the spray onto target" >}}
 
 Plain English, how it actually stops each of those:
 
@@ -259,7 +259,7 @@ If you take one thing from this post: **the AI doesn't know your standards. You 
 
 Everything else is implementation detail.
 
-If you want the full reasoning on why I spend more tokens on scope than on code, I wrote that up separately: [Why I Spend More Tokens Refining Scope Than Writing Code](https://hoiboy.uk/posts/why-scope-beats-code/).
+If you want the full reasoning on why I spend more tokens on scope than on code, I wrote that up separately: [Why I Spend More Tokens Refining Scope Than Writing Code](https://hoiboy.uk/blogs/why-scope-beats-code/).
 
 Watch this space. More posts coming on the specific bits. The Ralph Review system. The voice guard for writing. The MCP server for evidence-enforced GitHub operations. How I use subagent swarms for research. The ebay-seller-tool that turns hours of listing admin into minutes. Plenty more where this came from.
 

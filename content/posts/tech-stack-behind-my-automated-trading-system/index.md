@@ -13,7 +13,7 @@ I recently gave a talk to the London Investments and Traders Group. Afterwards I
 
 So here it is. The parts list.
 
-If you want the story of how it all came together (the crashes, the rebuilds, the things I broke and then had to fix), that one already exists: [building a production-grade trading system](/posts/building-a-production-grade-trading-system-with-claude-code/). This post is just the breakdown. What each piece is, and what it's there for.
+If you want the story of how it all came together (the crashes, the rebuilds, the things I broke and then had to fix), that one already exists: [building a production-grade trading system](/blogs/building-a-production-grade-trading-system-with-claude-code/). This post is just the breakdown. What each piece is, and what it's there for.
 
 ## AI tooling
 
@@ -104,7 +104,7 @@ It barely breaks a sweat most of the time. The live trading side is tiny, the Ru
 
 A couple of things that never show up on screen but matter more than the flashy parts.
 
-**Logging.** Both sides keep detailed logs ([loguru](https://github.com/Delgan/loguru) on the Python side, [tracing](https://github.com/tokio-rs/tracing) on the Rust side), so when something misbehaves I can see exactly what happened and when, instead of guessing. If you want the longer version of why I care about this, there's a whole post on it: [Observability, You Can't Fix What You Can't See](/posts/observability-and-logging-for-production-systems/).
+**Logging.** Both sides keep detailed logs ([loguru](https://github.com/Delgan/loguru) on the Python side, [tracing](https://github.com/tokio-rs/tracing) on the Rust side), so when something misbehaves I can see exactly what happened and when, instead of guessing. If you want the longer version of why I care about this, there's a whole post on it: [Observability, You Can't Fix What You Can't See](/blogs/observability-and-logging-for-production-systems/).
 
 **A watchdog.** Every process has to check in on a timer. If one goes quiet, the operating system restarts it on its own. Between that and the redundancy managers, the system is built to pick itself back up without me sitting there watching it.
 
@@ -114,6 +114,6 @@ That's the lot. PostgreSQL holding everything, Redis keeping it fast, Python doi
 
 I didn't pick any of this to look clever. Each piece is there because it does a job the others couldn't, and the simple, dependable option usually won. The interesting part was never the tools anyway. It was deciding what talks to what, and what is allowed to touch real money.
 
-If you want the how-it-got-built story instead of the parts list, [it's over here](/posts/building-a-production-grade-trading-system-with-claude-code/). And if you're wondering about the harness I used to direct all of this, that's the [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness).
+If you want the how-it-got-built story instead of the parts list, [it's over here](/blogs/building-a-production-grade-trading-system-with-claude-code/). And if you're wondering about the harness I used to direct all of this, that's the [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness).
 
 <!-- iamhoiend -->

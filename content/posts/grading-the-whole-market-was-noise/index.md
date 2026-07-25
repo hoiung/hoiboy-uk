@@ -18,7 +18,7 @@ Quick disclaimer: I am not a data scientist, none of this is trading advice, and
 
 Here's the actual goal, because it matters. I don't just want to know which stock to buy. I want to know what the whole market is doing, so I can size my risk to it: when to be aggressive and size up, and when to pull the size back because the move is getting extended. If I could read the market's "state" the way I read a single stock, I'd know when to press and when to ease off. That was the original thought, and everything below was me chasing it.
 
-And I had a head start. A few weeks back I finally cracked [a maturity grade for individual stocks](/posts/maturity-grading-from-backtest-data/): one letter, A to E, that reads where a stock is in its move (early, ripe, or cooked) across three timeframes, plus a cliff symbol for another performance measure. It took 7 days of ripping out a broken first attempt and rebuilding from the data, but it works. I trust it enough to read before I pull the trigger.
+And I had a head start. A few weeks back I finally cracked [a maturity grade for individual stocks](/blogs/maturity-grading-from-backtest-data/): one letter, A to E, that reads where a stock is in its move (early, ripe, or cooked) across three timeframes, plus a cliff symbol for another performance measure. It took 7 days of ripping out a broken first attempt and rebuilding from the data, but it works. I trust it enough to read before I pull the trigger.
 
 So the leap felt obvious. If I can grade a stock, why not grade the whole market the same way? QQQ tracks the Nasdaq-100, the big tech-heavy names, and I use it as my read on the market. Give it an A to E grade each week. Graded A means the market is hot, so size up. A dead E means it's quiet, so trim back. I even had a name for it: QQQM. The M is for maturity.
 
@@ -56,7 +56,7 @@ Look at that. A clean drop from +1.34R at A down to +0.15R at E, in order. Nearl
 
 By every test I'd normally trust, "size up at A" looked proven. Claude said as much. But I didn't write it down as a win. Something felt off, and I couldn't tell you what.
 
-That is the trap. An [AI hallucination](/posts/why-ai-hallucination-keeps-happening/) trap, that is!
+That is the trap. An [AI hallucination](/blogs/why-ai-hallucination-keeps-happening/) trap, that is!
 
 ## "Show me the proof"
 
@@ -94,7 +94,7 @@ That refusal is the whole job. Build with AI and it will hand you clean, confide
 
 Nothing was wired into the live system, so there was nothing to unwind. I deleted the grade, scrapped the mockups, and went back to my simple moving-average regime. Open or closed. That's the whole market read I have actual evidence for, and after 30 hours trying to beat it with something cleverer, I trust the simple version more than ever.
 
-If you want the longer version of how I learned to test like this, it's in [my overfitting tests](/posts/overfitting-tests-for-my-trading-system/). The [trading system itself](/posts/building-a-production-grade-trading-system-with-claude-code/) is what all of this protects.
+If you want the longer version of how I learned to test like this, it's in [my overfitting tests](/blogs/overfitting-tests-for-my-trading-system/). The [trading system itself](/blogs/building-a-production-grade-trading-system-with-claude-code/) is what all of this protects.
 
 ## Was it a waste?
 

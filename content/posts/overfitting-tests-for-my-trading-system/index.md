@@ -8,7 +8,7 @@ description: "I paused my live trading system and ran over 340,000 backtests acr
 
 <!-- iamhoi -->
 
-Four months ago, [my trading system](/posts/building-a-production-grade-trading-system-with-claude-code/) went live. At that point it was running on a flat 10 years of backtest data (a backtest is replaying your strategy over historical data to see how it would have done), right up to today's date, for all 3 timeframes I trade: daily, weekly, and monthly. Then I decided to put it on pause for a few weeks, because I realised I hadn't done any overfitting tests, and I had optimised my system according to that one slice of data.
+Four months ago, [my trading system](/blogs/building-a-production-grade-trading-system-with-claude-code/) went live. At that point it was running on a flat 10 years of backtest data (a backtest is replaying your strategy over historical data to see how it would have done), right up to today's date, for all 3 timeframes I trade: daily, weekly, and monthly. Then I decided to put it on pause for a few weeks, because I realised I hadn't done any overfitting tests, and I had optimised my system according to that one slice of data.
 
 A few weeks or 1-2 months at best. Lol. It turned into 3-4 months.
 
@@ -42,7 +42,7 @@ Running so many backtests actually helped iron out even more bugs, especially as
 
 ## No Such Thing as FOMO
 
-I kept my paper account running through all of this (a paper account trades the same system with fake money), and it did make some nice trades on the big bounce back in April. Lol, wish that was my live cash account! Anyways, one thing I've learned over [the last 3 years](/posts/my-baby-steps-to-becoming-a-professional-trader/) is that there are always opportunities to make money on the market, so there is no such thing as FOMO (fear of missing out). Just be patient until the next correction... which seems to be happening now.
+I kept my paper account running through all of this (a paper account trades the same system with fake money), and it did make some nice trades on the big bounce back in April. Lol, wish that was my live cash account! Anyways, one thing I've learned over [the last 3 years](/blogs/my-baby-steps-to-becoming-a-professional-trader/) is that there are always opportunities to make money on the market, so there is no such thing as FOMO (fear of missing out). Just be patient until the next correction... which seems to be happening now.
 
 ## Analysing the Data
 

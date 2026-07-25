@@ -48,7 +48,7 @@ Because practice is the common denominator under almost every one of those items
 
 And here's the funny thing. Practice, exploration, mistakes, they all arrive together. Is it really a mistake when you're exploring a movement or a sound? Like any trade, any profession, you need to know your tools and when to use them. In 360 degrees. In multiple layers, vertically and horizontally. At angles you didn't even know existed until you tried.
 
-I won't go deeper into that rabbit hole here. My old blogs dive into it properly, and I'd rather point you there than retype a decade of notes. The 2016 London rant ([how to avoid becoming a terrible dancer in London](/posts/how-to-avoid-becoming-a-terrible-dancer-in-london/)) still holds up. So does [understanding dance growth, plateaux and bad habits](/posts/understanding-dance-growth-plateaux-bad-habits/), [the key to effective Zouk practice](/posts/key-to-effective-zouk-practice/), and [what to practice solo](/posts/what-to-practice-zouk-solo/). Go read those if you want the engineering of it. This post is the observation.
+I won't go deeper into that rabbit hole here. My old blogs dive into it properly, and I'd rather point you there than retype a decade of notes. The 2016 London rant ([how to avoid becoming a terrible dancer in London](/blogs/how-to-avoid-becoming-a-terrible-dancer-in-london/)) still holds up. So does [understanding dance growth, plateaux and bad habits](/blogs/understanding-dance-growth-plateaux-bad-habits/), [the key to effective Zouk practice](/blogs/key-to-effective-zouk-practice/), and [what to practice solo](/blogs/what-to-practice-zouk-solo/). Go read those if you want the engineering of it. This post is the observation.
 
 ## The same dancers on the sidelines
 
@@ -88,7 +88,7 @@ So yeah, sometimes I sit there watching the idlers while sipping my drink and ni
 
 We welcome new dancers. Always. And it's not because we've forgotten the old ones.
 
-I love dancing with older dancers who are still at a similar level to mine (and still improving), or dancers who are constantly improving and changing their dance. Why? Because the dance isn't the same twice! Every time we connect, there's something new to explore. A new texture, a new idea, a new bit of musicality they've been working on. That's fun. It's all mindset. (There's a book called *Mindset* that I recommend in my [books list](/posts/every-book-ive-read-in-20-years/), and yes it applies to dance too.)
+I love dancing with older dancers who are still at a similar level to mine (and still improving), or dancers who are constantly improving and changing their dance. Why? Because the dance isn't the same twice! Every time we connect, there's something new to explore. A new texture, a new idea, a new bit of musicality they've been working on. That's fun. It's all mindset. (There's a book called *Mindset* that I recommend in my [books list](/blogs/every-book-ive-read-in-20-years/), and yes it applies to dance too.)
 
 <!-- iamhoi-skip -->
 When I dance with someone who hasn't improved in god-knows how many years, it's the same experience every single time. Boring. Can't connect. Can't do much. And worse, to try and do more raises the risk of my own injury. I've strained my back too many times over the years forcing through bad connection to bother doing it again.

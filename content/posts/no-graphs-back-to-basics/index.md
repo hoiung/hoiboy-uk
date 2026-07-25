@@ -18,7 +18,7 @@ For a couple of months we ran `code-review-graph` MCP as part of every review se
 
 We adopted it earlier in the year because subagent-only structural search was, frankly, slow and lossy on wide-diff queries. Ask a swarm of subagents "what is the blast radius of this change to a hub module" and you get back a brave attempt that frequently misses sites an AST graph would surface in a millisecond. The graph made wide-diff reviews cheap. The five tools were small. The on-disk format was just SQLite. This is roughly the right shape of structural-code data for our use cases, and it stayed roughly right for about ten weeks.
 
-We even built a discriminator rule around it. Every reviewer subagent in our harness emits `mcp_graph_available: yes | no` as the first line of its result block (`yes` plus grep-only evidence is a fail; `no` plus a documented grep fallback is a pass). That rule was introduced in [Shipping the Ralph Review Trio](/posts/shipping-ralph-review-trio/), and it exists precisely because the tool was flaky enough to make "did the reviewer actually use the graph" a question worth answering on every output. The rule was the safety net. The tool was the trapeze.
+We even built a discriminator rule around it. Every reviewer subagent in our harness emits `mcp_graph_available: yes | no` as the first line of its result block (`yes` plus grep-only evidence is a fail; `no` plus a documented grep fallback is a pass). That rule was introduced in [Shipping the Ralph Review Trio](/blogs/shipping-ralph-review-trio/), and it exists precisely because the tool was flaky enough to make "did the reviewer actually use the graph" a question worth answering on every output. The rule was the safety net. The tool was the trapeze.
 
 ## What broke
 

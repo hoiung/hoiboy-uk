@@ -164,7 +164,7 @@ This site ships a custom theme inside `layouts/` and `assets/`. There is no upst
 
 Manual verification checklist after any layout change:
 1. `hugo --gc -e production` builds with zero warnings, zero errors
-2. Local preview: `hugo server`, then check `/`, `/about/`, `/food-booze/`, `/adventure/`, `/dance/`, `/tech-ai/`, `/posts/foundation/`, `/tags/`
+2. Local preview: `hugo server`, then check `/`, `/about/`, `/blogs/`, `/blogs/food-booze/`, `/blogs/adventure/`, `/blogs/dance/`, `/blogs/tech-ai/`, `/blogs/foundation/`, `/tags/`
 3. Sidebar renders, breadcrumbs render
 4. CI green
 5. Lighthouse score on homepage stays within baseline (`10_BASELINE_METRICS.md`)

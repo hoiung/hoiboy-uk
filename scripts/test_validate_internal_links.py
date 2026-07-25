@@ -3,13 +3,19 @@ satisfies dotfiles#460 W4 pending improvement — every new pre-commit
 hook must be self-tested on a contrived input that exercises the new
 logic at least once).
 
-Three contrived inputs:
+Four contrived inputs:
  * ``valid.md``               — exercise every PASS path, expect exit 0
  * ``bad_section_prefix.md``  — exercise the section-prefix FAIL path
- * ``bad_post_slug.md``       — exercise the missing-post-bundle FAIL path
+ * ``bad_post_slug.md``       — exercise the unserved-slug FAIL path
+ * ``bad_retired_url.md``     — exercise the retired pre-/blogs/ FAIL path
 
 Tests invoke the validator as a subprocess so the CLI surface is exercised
 end-to-end (argparse, repo_root resolution, exit codes, stderr format).
+
+``test_classify_url_contract`` additionally calls ``_classify`` directly, in
+BOTH directions, on the pair blog-priv#62 AC 5.7 turns on: every ``/blogs/*``
+form must be VALID and the retired ``/tech-ai/`` must be INVALID. Asserting only
+the first half would pass on a validator that accepts everything.
 """
 
 from __future__ import annotations
@@ -22,6 +28,9 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SCRIPT = REPO_ROOT / "scripts" / "validate_internal_links.py"
 FIXTURES = REPO_ROOT / "scripts" / "tests" / "fixtures" / "validate_internal_links_fixtures"
+
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from validate_internal_links import _classify, _served_post_slugs  # noqa: E402
 
 
 def _run(*paths: Path) -> subprocess.CompletedProcess[str]:
@@ -46,9 +55,9 @@ def test_bad_section_prefix_exits_one() -> None:
         f"bad_section_prefix.md should fail; got exit {result.returncode}\n"
         f"stderr:\n{result.stderr}"
     )
-    # Error must reference the section ('dance') AND the suggested correction ('/posts/').
-    assert re.search(r"dance.*did you mean /posts/", result.stderr, re.IGNORECASE), (
-        f"expected 'dance ... did you mean /posts/' hint; got:\n{result.stderr}"
+    # Error must reference the category ('dance') AND the suggested correction.
+    assert re.search(r"dance.*did you mean /blogs/", result.stderr, re.IGNORECASE), (
+        f"expected 'dance ... did you mean /blogs/' hint; got:\n{result.stderr}"
     )
 
 
@@ -64,6 +73,80 @@ def test_bad_post_slug_exits_one() -> None:
         result.stderr,
         re.IGNORECASE | re.DOTALL,
     ), f"expected 'nonexistent...broken internal link'; got:\n{result.stderr}"
+    # A bundle DIRECTORY name whose page is served under a frontmatter `slug:`
+    # override is not a served URL either, and must be rejected by the same run.
+    assert "2026-04-07-foundation" in result.stderr, (
+        "a link to the bundle dir of a slug-overridden post must be rejected "
+        f"(it is not the URL the site serves); got:\n{result.stderr}"
+    )
+
+
+def test_bad_retired_url_exits_one() -> None:
+    """The pre-/blogs/ URL shapes are rejected, each named with its class."""
+    result = _run(FIXTURES / "bad_retired_url.md")
+    assert result.returncode == 1, (
+        f"bad_retired_url.md should fail; got exit {result.returncode}\n"
+        f"stderr:\n{result.stderr}"
+    )
+    for retired in ("/posts/same-dancers-on-the-sidelines/", "/tech-ai/", "/dance/index.xml"):
+        assert retired in result.stderr, (
+            f"retired URL {retired} was not flagged; got:\n{result.stderr}"
+        )
+    assert result.stderr.lower().count("retired url") == 3, (
+        f"expected all 3 hits classified as retired; got:\n{result.stderr}"
+    )
+
+
+def test_classify_url_contract() -> None:
+    """blog-priv#62 AC 5.7, asserted in BOTH directions.
+
+    Accepting `/blogs/*` proves nothing on its own: a validator that returned
+    True unconditionally would pass that half. The retired shapes are asserted
+    INVALID in the same test so the pair discriminates.
+    """
+    valid = [
+        "/blogs/",                              # the hub
+        "/blogs/tech-ai/",                      # a category landing
+        "/blogs/same-dancers-on-the-sidelines/",  # a post at its directory name
+        "/blogs/foundation/",                   # a post at its frontmatter slug
+        "/blogs/index.xml",                     # the section feed
+        "/blogs/tech-ai/index.xml",             # a per-category feed
+    ]
+    invalid = [
+        "/tech-ai/",                            # retired category landing
+        "/dance/",
+        "/posts/same-dancers-on-the-sidelines/",  # retired post URL
+        "/posts/",
+        "/blogs/tech-ai/some-post/",            # section-prefix bug
+        "/blogs/2026-04-07-foundation/",        # bundle dir, not the served slug
+        "/blogs/no-such-post/",
+    ]
+    for target in valid:
+        ok, msg = _classify(target, REPO_ROOT)
+        assert ok, f"{target} must be VALID; validator said: {msg}"
+    for target in invalid:
+        ok, _ = _classify(target, REPO_ROOT)
+        assert not ok, f"{target} must be INVALID; validator accepted it"
+
+
+def test_served_slugs_track_frontmatter_overrides() -> None:
+    """The served-slug set is what the site publishes, not the directory listing.
+
+    Both halves matter: the override must be present AND the directory name it
+    replaced must be absent. Without the second half a resolver that simply
+    returned every directory name would pass.
+    """
+    served = _served_post_slugs(REPO_ROOT)
+    for slug in ("foundation", "ai-jargon-for-newbies"):
+        assert slug in served, f"{slug} is served but missing from the slug set"
+    for bundle_dir in ("2026-04-07-foundation", "ai-jargon-for-noobs"):
+        assert bundle_dir not in served, (
+            f"{bundle_dir} is a bundle directory whose page is served under a "
+            f"frontmatter `slug:` override; it is not itself a served URL"
+        )
+    assert len(served) == len(list((REPO_ROOT / "content" / "posts").glob("*/index.md"))), (
+        "every post bundle must contribute exactly one served slug"
+    )
 
 
 def test_ref_style_image_only_def_does_not_false_positive(tmp_path) -> None:
@@ -92,7 +175,7 @@ def test_ref_style_used_as_both_image_and_link_still_validates(tmp_path) -> None
     suppression only applies when the ref is image-only."""
     md = tmp_path / "img_and_link_ref.md"
     md.write_text(
-        "![alt][shared] and [text][shared]\n\n[shared]: /dance/foo/\n",
+        "![alt][shared] and [text][shared]\n\n[shared]: /blogs/dance/foo/\n",
         encoding="utf-8",
     )
     result = subprocess.run(
