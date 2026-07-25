@@ -24,7 +24,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from redirects_rules import Rule, parse, resolve  # noqa: E402
+from redirects_rules import Rule, match, parse, resolve  # noqa: E402
 
 REDIRECTS = ROOT / "static" / "_redirects"
 
@@ -82,16 +82,24 @@ def check_no_static_shadowed(rules: list[Rule], failures: list[str]) -> None:
     the top would split every pair from its rationale. Asserting the property that
     actually matters -- no static shadowed by an EARLIER wildcard -- gets the safety
     without the cost, and this check is what makes that trade defensible rather than
-    merely convenient. (Ralph Tier 3 round 2 measured both orderings against a 212-URL
-    corpus: zero resolution differences, so this is a latent-hazard guard, not a fix.)
+    merely convenient. (Ralph Tier 3 measured both orderings against the 198-form
+    retired-URL corpus: zero resolution differences, so this is a latent-hazard guard,
+    not a fix.)
+
+    "Would also match it" is answered by the shared `match()` from redirects_rules, NOT
+    by a local prefix comparison. redirects_rules.py's own header states the reason --
+    one parser, so the two tests cannot disagree -- and a local reimplementation here
+    did disagree: it treated `/posts` as shadowed by an earlier `/posts/*`, while the
+    canonical matcher correctly returns no match, because a slash-less path is its own
+    source (the second rule the _redirects header documents). That is a false positive
+    on the exact edge case this file exists to reason about.
     """
     dynamic = [r for r in rules if "*" in r.source]
     for static in (r for r in rules if "*" not in r.source):
         for wild in dynamic:
             if wild.index >= static.index:
                 continue
-            prefix = wild.source[:-1]          # "/posts/*" -> "/posts/"
-            if static.source.startswith(prefix.rstrip("/") + "/") or static.source == prefix.rstrip("/"):
+            if match(wild, static.source) is not None:
                 failures.append(
                     f"AC 5.4: static rule {static.source} (line {static.line_no}) sits "
                     f"BELOW the wildcard {wild.source} (line {wild.line_no}) that also "
