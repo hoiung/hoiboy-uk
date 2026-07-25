@@ -75,6 +75,51 @@ def check_budget_derivation(failures: list[str]) -> int:
     return capacity
 
 
+def check_fail_loud_floor(failures: list[str]) -> None:
+    """fit_eyebrow's fail-loud branch fires, and it fires at the DERIVED boundary.
+
+    Ralph Tier 3 (round 4) found that branch had no coverage at all, and Tier 2
+    (round 5) confirmed the gap survived the docstring correction: the only other
+    assertion on these constants pins the 52/53 full-size capacity, nowhere near the
+    min_fs floor. So the number this issue just corrected in prose (78, not 75) had no
+    regression backstop, and the exact defect class being fixed -- a stale hand-derived
+    constant -- could recur silently on the next tweak.
+
+    Derived here rather than hardcoded, so a deliberate constant change updates the
+    expectation while an ACCIDENTAL one still fails: at min_fs the advance is
+    min_fs*0.6 + tracking px per character, so floor(usable / advance) characters fit
+    and one more must exit.
+    """
+    advance = gen_card.EB_MIN_FS * 0.6 + gen_card.EB_TRACK
+    fits = int(gen_card.EB_USABLE // advance)
+
+    try:
+        got = gen_card.fit_eyebrow("X" * fits)
+    except SystemExit:
+        failures.append(
+            f"fit_eyebrow rejected {fits} characters, which the budget says fits at "
+            f"{gen_card.EB_MIN_FS}px ({advance}px/char into {gen_card.EB_USABLE}px). "
+            f"The floor moved below its derivation."
+        )
+    else:
+        if got != gen_card.EB_MIN_FS:
+            failures.append(
+                f"fit_eyebrow returned {got}px for {fits} characters, expected the "
+                f"{gen_card.EB_MIN_FS}px floor - the shrink ladder stops early."
+            )
+
+    try:
+        gen_card.fit_eyebrow("X" * (fits + 1))
+    except SystemExit:
+        pass                                   # correct: overruns even at min_fs
+    else:
+        failures.append(
+            f"fit_eyebrow accepted {fits + 1} characters instead of failing loud. "
+            f"That eyebrow runs off the edge of the card, silently, on a generated "
+            f"PNG nobody re-reads."
+        )
+
+
 def check_gen_card_pages(trails: dict, failures: list[str]) -> int:
     """Every gen_card-carded page's eyebrow fits 980px at its fitted size."""
     checked = 0
@@ -165,6 +210,7 @@ def main(argv: list[str] | None = None) -> int:
     failures: list[str] = []
 
     capacity = check_budget_derivation(failures)
+    check_fail_loud_floor(failures)
     n_card = check_gen_card_pages(trails, failures)
     n_agit = check_agit_pages(trails, failures)
 
@@ -176,7 +222,7 @@ def main(argv: list[str] | None = None) -> int:
 
     print(f"OK: {n_card} gen_card eyebrows fit {gen_card.EB_USABLE}px "
           f"(full-size capacity {capacity} chars); {n_agit} AGIT eyebrows fit their panels, "
-          f"nothing clipped")
+          f"nothing clipped; the fail-loud floor fires at its derived boundary")
     return 0
 
 
