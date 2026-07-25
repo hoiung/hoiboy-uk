@@ -50,7 +50,7 @@ Reads:  scripts/social-cards/cards.tsv, legal-cards.tsv, hire-hoi-cards.tsv (slu
 Deps:   rsvg-convert (librsvg), Pillow.  Re-run after editing a *.tsv.
 """
 import subprocess, sys, os, html, textwrap, pathlib, base64, io, re
-from card_common import font_face, load_trails, bundle_key, eyebrow_for
+from card_common import TrailIndex, font_face, load_trails, bundle_key, eyebrow_for
 
 # --- Palettes (canonical: docs/research/07_DESIGN_TOKENS.md) ------------------
 # A style selects a PALETTE only. The eyebrow is deliberately not part of it: it is
@@ -410,7 +410,7 @@ def make_home_svg(photo_uri, logo_uri, pal=HOIBOY_PAL, eyebrow=""):
 </svg>'''
 
 
-def gen_landings(tsv, logo_uri, trails):
+def gen_landings(tsv: pathlib.Path, logo_uri: str, trails: TrailIndex | None) -> int:
     """Generate share-card.png for each section-landing path in landing-cards.tsv. Each
     row is a bundle path under content/ whose _index.md supplies the title + (optional)
     tagline. Writes into that landing's own bundle so head.html resolves it as og:image."""
@@ -442,7 +442,7 @@ def gen_landings(tsv, logo_uri, trails):
     return n
 
 
-def gen_home(logo_uri, trails):
+def gen_home(logo_uri: str, trails: TrailIndex | None) -> int:
     """Generate the home page's photo-composite share card from the mug photo."""
     if not HOME_MUG.exists():
         sys.exit(f"missing required input: {HOME_MUG}")
@@ -458,7 +458,8 @@ def gen_home(logo_uri, trails):
     return 1
 
 
-def gen_section(section, tsv, logo_uri, trails):
+def gen_section(section: str, tsv: pathlib.Path, logo_uri: str,
+                trails: TrailIndex | None) -> int:
     """Generate share-card.png for each row of a section TSV (slug/title/tagline[/style])."""
     if not tsv.exists():
         sys.exit(f"missing required input: {tsv}")
