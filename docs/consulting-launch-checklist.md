@@ -22,7 +22,7 @@ The consulting landing pages render external CTAs (Cal.com, optionally Stripe) w
 
 ### Gate 4: Lychee rendered-HTML link check
 
-`scripts/pre-publish.sh` check `consulting-link-liveness` runs `lychee` against `public/hire-hoi/ai-consultancy/**/index.html` post-Hugo-build. A `cal.com/OPERATOR_TODO_REPLACE_BEFORE_LAUNCH/20min-discovery` URL would 404 and fail this gate. The `lychee.toml` `exclude_path` was tightened from `public` to `public/posts` so consulting paths are reachable.
+`scripts/pre-publish.sh` check `consulting-link-liveness` runs `lychee` against `public/hire-hoi/ai-consultancy/**/index.html` post-Hugo-build. A `cal.com/OPERATOR_TODO_REPLACE_BEFORE_LAUNCH/20min-discovery` URL would 404 and fail this gate. The `lychee.toml` `exclude_path` was tightened from `public` to the blog's built output alone so consulting paths are reachable. That entry is now `public/blogs` (blog-priv#62 moved the rendered blog there; it read `public/posts` before).
 
 ## Replacement procedure (operator)
 
