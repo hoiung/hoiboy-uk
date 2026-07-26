@@ -155,6 +155,16 @@ jobs:
       - name: Config-traceability + iamhoi-wrapping unit tests
         run: python3 -m pytest scripts/test_check_config_traceability.py scripts/test_check_iamhoi_wrapping.py -q
 
+      # The CTA button's cascade contract, scored from the stylesheet source so
+      # it needs no browser and can run here. The shortcode emitted class="btn"
+      # from launch with nothing defining it, and the obvious bare `.btn` fix
+      # then LOSES to `.main a` (0-1-1 beats 0-1-0) and repaints it as an
+      # underlined link. Both regressions fail this file. The browser-computed
+      # half runs in pre-publish.sh, which is the lane that has Chromium, and
+      # this file asserts that gate is wired. blog-priv#63.
+      - name: CTA button cascade + contrast unit tests
+        run: python3 -m pytest scripts/test_cta_button.py -q
+
       # test_gen_card and test_check_svg_dimensions are source-only (no built tree)
       # and were in NO pytest invocation until blog-priv#62 -- the same "a file nobody
       # lists never runs" class documented below at the frontmatter step. blog-priv#62
