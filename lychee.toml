@@ -134,6 +134,15 @@ exclude = [
   # added: 2026-07-25; expires: 2026-10-23 (90 days)
   "^https?://(www\\.)?css-tricks\\.com(/.*)?$",
   "^https?://(www\\.)?ryanholiday\\.net(/.*)?$",
+  # nngroup.com (Nielsen Norman Group) returns 403 Forbidden to GitHub Actions
+  # runner IPs. Same ORIGIN-IP blocking class as css-tricks/ryanholiday directly
+  # above, same file: two citations in docs/research/14_BLOG_CRAFT.md, at :213
+  # and :416, that have sat there unchanged since 2026-04-12. Verified 2026-07-26:
+  # both return 200 from a local IP, and the merge that surfaced this touched
+  # neither the file nor any link, so nothing in the repo changed. It failed CI on
+  # main and cascade-skipped Deploy. NOT broken links. Re-test from CI before renewing.
+  # added: 2026-07-26; expires: 2026-10-24 (90 days)
+  "^https?://(www\\.)?nngroup\\.com(/.*)?$",
   # Root-relative paths (href="/js/...", href="/legal/...", href="/private/...")
   # are Hugo internal paths that get rewritten at render time. Lychee scans
   # raw markdown and has no Hugo context, so it cannot resolve them without
