@@ -34,6 +34,14 @@ __pycache__/
 # Code review graph (local AST index, regenerable)
 .code-review-graph/
 
+# Agent working state: git worktrees and scratch files. This repo is PUBLIC and
+# nothing under .claude/ is tracked (the last tracked contents were removed at
+# a301458 when the AGIT back-office moved to a private repo), but the directory
+# was never ignored, so a `git add -A` or an auto-staging pre-commit hook could
+# sweep agent scratch into a public commit. Surfaced by the blog-priv#63 Stage 5
+# raw-tools audit.
+.claude/
+
 # AGIT member-submission PII records + Gmail OAuth credentials are owned by the
 # private agit-ops back-office and live at $HOME-external paths (~/.agit-records,
 # ~/.agit-secrets). This public repo no longer writes them; these guards remain as
