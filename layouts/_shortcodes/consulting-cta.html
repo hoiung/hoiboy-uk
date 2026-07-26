@@ -17,6 +17,15 @@
 
   consulting-ops#2 Phase 0 AC 0.1.
 
+  Emits class="btn" only. It carried a second class, "btn-secondary", from the
+  day it shipped; nothing has ever defined that class, and there is exactly one
+  button style on this site, so it named a variant that does not exist. Dropped
+  in blog-priv#63 rather than defined, because inventing a second style nobody
+  asked for to justify a leftover class is the wrong direction. A real variant,
+  when one is needed, gets its class added here AND a rule in main.css in the
+  same change. Styling lives at `.main a.btn` (see the comment there for why the
+  selector is scoped that way).
+
   Example:
     {{< consulting-cta type="calcom" >}}
     {{< consulting-cta type="calcom" label="Book a call" >}}
@@ -32,9 +41,9 @@
 {{- if eq $type "calcom" -}}
   {{- $url := $data.calcom_booking | default "" -}}
   {{- if or (eq $url "") (strings.Contains $url $todoMarker) -}}
-    <a href="{{ $mailtoHref }}" class="btn btn-secondary">{{ .Get "label" | default "Email Hoi to start" }}</a>
+    <a href="{{ $mailtoHref }}" class="btn">{{ .Get "label" | default "Email Hoi to start" }}</a>
   {{- else -}}
-    <a href="{{ $url }}" class="btn btn-secondary" rel="noopener" target="_blank">{{ .Get "label" | default "Book a 20-min discovery call" }}</a>
+    <a href="{{ $url }}" class="btn" rel="noopener" target="_blank">{{ .Get "label" | default "Book a 20-min discovery call" }}</a>
   {{- end -}}
 {{- else -}}
   {{- errorf "consulting-cta: unknown type %q (V2 supports: calcom)" $type -}}
