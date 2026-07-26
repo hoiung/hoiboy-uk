@@ -34,12 +34,14 @@ distinct, correctly-sized social card instead of falling back to a generic image
   `eyebrow_svg` emits no text node rather than an empty one. It used to read
   `PERSONAL BLOG`.
 - **default** - `content/default-card.png`, the `og:image` fallback for
-  **taxonomy / term pages only** (`/tags/` and `/tags/<tag>/` - generated, no content
-  bundle, so they cannot hold a co-located card). Replaced the old `hoi-mug.jpg`.
+  **taxonomy / term pages only** (`/tags/`, `/tags/<tag>/`, `/series/` and
+  `/series/<series>/` - generated, no content bundle, so they cannot hold a
+  co-located card). Replaced the old `hoi-mug.jpg`.
   This used to say `/tags/`, `/categories/*`. blog-priv#62 switched the `categories`
   taxonomy off, so `/categories/*` no longer generates at all - it survives only as a
-  301 into `/blogs/*`, and the landings it duplicated own their own cards. `tags` is
-  now the only taxonomy this fallback serves.
+  301 into `/blogs/*`, and the landings it duplicated own their own cards. `tags`
+  and `series` are the two taxonomies this fallback still serves (verified against
+  a build: `/series/` and `/series/bakeoff/` both resolve to `default-card`).
 
 Run `python3 scripts/social-cards/gen_card.py [consulting] [legal] [hire-hoi]
 [landings] [home] [default]` (no args = all six). `layouts/_partials/head.html`
