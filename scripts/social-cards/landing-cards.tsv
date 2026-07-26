@@ -24,13 +24,17 @@ hire-hoi/ai-consultancy
 hire-hoi/ict-consultancy
 legal
 skills
-
-# --- title-only (no frontmatter description) ---
+# The 7 blog categories. Their descriptions are the SAME blurbs the /blogs/ hub
+# body shows under each `## <Category>` heading, copied verbatim into each
+# landing's own frontmatter (blog-priv#61) - so the hub page, the category
+# page's meta description and its share-card tagline all read identically.
+tech-ai
+entrepreneurship
+trading
 food-booze
 adventure
 dance
-tech-ai
 life
-entrepreneurship
-trading
+
+# --- title-only (no frontmatter description) ---
 community
