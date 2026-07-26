@@ -122,9 +122,12 @@ strong, b { font-weight: 550; }
 
    Fill is --cta, which is the logo green DARKENED FOR LEGIBILITY and not the
    logo green itself. See config/_default/params.toml for the measured numbers;
-   the short version is that the logo's own #228b22 is a mid-tone that clears AA
-   4.5:1 with no label colour at all, so this trades a shade of brand fidelity
-   for a label at 4.82:1. Deliberately NOT --accent either: the accent is
+   the short version is that the logo's own #228b22 is a mid-tone that no label
+   colour in THIS THEME's palette can clear AA 4.5:1 against (white 4.39:1,
+   --fg #1a1a1a 3.97:1), so this trades a shade of brand fidelity for a label at
+   4.82:1. It is not that #228b22 fails universally, which is what an earlier
+   version of this comment implied: pure black clears it at 4.78:1, but pure
+   black is not a colour this theme uses. Deliberately NOT --accent either: the accent is
    already the colour of every link on the site, so an accent button reads as
    page furniture rather than as the one thing to click.
 

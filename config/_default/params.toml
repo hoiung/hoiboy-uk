@@ -27,22 +27,35 @@ accentColor = "#c0533a"
 # is exact rather than approximate, because getting it wrong once already cost a
 # round trip.
 #
-# The logo's own green is #228b22 (sampled from assets/images/logo.png, dominant
-# across the source and all four served sizes; it is exactly the CSS named
-# colour `forestgreen`). This value is that green darkened by rgb(10, 7, 10).
+# The logo's own green is #228b22, which is exactly the CSS named colour
+# `forestgreen`. This value is that green darkened by rgb(10, 7, 10).
+#
+# Precisely: #228b22 is the dominant GREEN in assets/images/logo.png at 52,819
+# opaque pixels, but only 4th by overall pixel count, behind the #87ceeb field at
+# 58.57%. It holds that same rank in the three favicon derivatives head.html
+# resizes from logo.png (32/192/180); the wide sidebar logo is a different source
+# file, logo_wide.png, and carries none of it. The earlier wording here said
+# "dominant across the source and all four served sizes", which overstated on
+# both halves.
 #
 # It is NOT the logo colour and must not be labelled as such. It was chosen over
 # the exact logo green on a readability comparison the operator made on the live
 # site, having seen both deployed:
 #
-#   fill      white label   near-black label   note
-#   #228b22   4.39:1 FAIL   3.95:1 FAIL        exact logo green; a mid-tone, so
-#                                              NO label colour clears AA 4.5:1
-#   #188418   4.82:1 pass   -                  shipped; clears AA at normal size
+#   fill      white label   --fg #1a1a1a label   note
+#   #228b22   4.39:1 FAIL   3.97:1 FAIL          exact logo green, a mid-tone
+#   #188418   4.82:1 pass   -                    shipped, clears AA at body size
 #
-# So the brand green is unreachable at AA on body-size text, and this is the
-# deliberate trade: a shade off the logo, in exchange for a label that is
-# comfortably legible. Operator decision, made with both rendered live.
+# One caveat, because the earlier wording overreached into "NO label colour
+# clears AA 4.5:1" and that is false: #228b22 DOES clear 4.5:1 against pure black
+# (4.78:1), and against every grey up to #0a0a0a. What makes it unusable is this
+# theme's own palette, whose text colour is --fg #1a1a1a in light mode and
+# #e8e8e8 in dark. Against those two there is no passing label, so the brand
+# green is unreachable at AA here even though it is not unreachable in the
+# abstract.
+#
+# Hence the deliberate trade: a shade off the logo, in exchange for a label that
+# is comfortably legible. Operator decision, made with both rendered live.
 #
 # Deliberately NOT accentColor either: that is already the colour of every link
 # on the site, so a terracotta button reads as page furniture rather than a call
