@@ -52,6 +52,7 @@ AGIT_FEATURE_W = agit.CW - agit.PHOTO_W - 2 * agit.PAD
 AGIT_SECTION_W = agit.CW - agit.SEC_TX - agit.SEC_PAD_R
 
 AGIT_BUNDLE = "community/agit-featured"
+RULE_GB_FLOOR = agit.RULE_GB_FLOOR
 
 
 def check_budget_derivation(failures: list[str]) -> int:
@@ -267,6 +268,80 @@ def main(argv: list[str] | None = None) -> int:
 def test_eyebrow_width() -> None:
     """pytest entry point (CI runs pytest through explicit file lists)."""
     assert main([]) == 0
+
+
+def _agit_avail(eyebrow: str) -> tuple[int, int]:
+    """(available px between the eyebrow bottom and the watermark, body_bottom) for a
+    feature card carrying `eyebrow`, re-derived from build_share_card's own constants."""
+    inner = AGIT_FEATURE_W
+    body_bottom = agit.CH - 42 - agit.LOGO_CARD - agit.BODY_CLEAR
+    eb_fs, _ls, eb_lines = agit._fit_eyebrow(eyebrow, inner, agit.EB_FS)
+    eb_y = 52 + eb_fs
+    _ts, eb_last_y = agit._eyebrow_tspans(eb_lines, 0, eb_y, eb_fs + 6)
+    if not eb_lines:
+        eb_last_y = eb_y
+    return body_bottom - (eb_last_y + agit.BODY_CLEAR), body_bottom
+
+
+def test_agit_body_never_overlaps_the_watermark_however_deep_the_trail() -> None:
+    """The eyebrow's LINE COUNT must never push the name/role block into the logo.
+
+    This is the vertical twin of the width assertions above, and of
+    test_gen_card.py's SIG_CLEAR_Y guard. Width-fitting an eyebrow bounds its own
+    width; it says nothing about the height of the block underneath, and a
+    2-line eyebrow moves that block down by ~24px. Before blog-priv#62 the eyebrow
+    was a fixed one-line brand string so this could not vary; once it became the
+    page's own parent trail it could, and the real card shipped 13px into the
+    watermark's clearance before _fit_stack was added.
+
+    Every trail below is a real or realistic AGIT eyebrow, deepest last."""
+    eyebrows = [
+        "AGIT FEATURED",
+        "JOIN COMMUNITY > AGIT FEATURED",
+        "JOIN COMMUNITY > ASIANS & GINGERS IN TECH > AGIT FEATURED",   # the live one
+    ]
+    # The real name/role, plus a longer role that is the realistic next feature.
+    people = [
+        ("Hoi aka Hoiboy", "AI Product & Automation Engineer"),
+        ("Hoi aka Hoiboy", "Senior AI Product and Automation Engineering Lead"),
+        ("A Much Longer Contributor Name", "AI Product & Automation Engineer"),
+    ]
+    for eyebrow in eyebrows:
+        avail, body_bottom = _agit_avail(eyebrow)
+        for name, role in people:
+            name_fs, name_lines, role_fs, role_lines, rule_gb = agit._fit_stack(
+                name, role, AGIT_FEATURE_W, avail, True, True)
+            stack = agit._stack_height(name_fs, name_lines, role_fs, role_lines,
+                                       True, True, rule_gb)
+            assert stack <= avail, (
+                f"{eyebrow!r} + {name!r}/{role!r}: stack {stack} exceeds {avail} available")
+            start = (body_bottom - avail) + (avail - stack) / 2
+            assert start + stack <= body_bottom, (
+                f"{eyebrow!r} + {name!r}/{role!r}: block ends at {start + stack:.0f}, "
+                f"past body_bottom {body_bottom}")
+            # Elasticity order: whitespace before type. Compare against the size
+            # _fit_lines alone would choose, NOT against ROLE_MAX: a long role is
+            # legitimately smaller because it has to wrap inside the panel WIDTH in
+            # <= 2 lines, which is a different constraint from vertical fit.
+            natural_role_fs, _ = agit._fit_lines(
+                role, agit.PLEX_R, AGIT_FEATURE_W, agit.ROLE_MAX, 2)
+            assert RULE_GB_FLOOR <= rule_gb <= agit.RULE_GB
+            if rule_gb > RULE_GB_FLOOR:
+                assert role_fs == natural_role_fs, (
+                    f"{eyebrow!r} + {role!r}: role shrank to {role_fs} below its "
+                    f"width-fitted {natural_role_fs} while the gap was still {rule_gb}, "
+                    f"above its {RULE_GB_FLOOR} floor")
+
+
+def test_agit_body_that_cannot_fit_fails_loud() -> None:
+    """_fit_stack exits rather than silently clamping. The pre-fix code centred with
+    max(0, ...), so an over-tall block started at region_top and ran past the logo with
+    no error at all, which is exactly how the 13px overlap shipped."""
+    import pytest   # local: this file also runs as a plain script (see __main__)
+
+    with pytest.raises(SystemExit) as excinfo:
+        agit._fit_stack("Name", "Role", AGIT_FEATURE_W, 40, True, True)
+    assert "does not fit above the watermark" in str(excinfo.value)
 
 
 if __name__ == "__main__":
