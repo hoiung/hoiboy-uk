@@ -102,8 +102,11 @@ disableHugoGeneratorInject = true
 [permalinks.term]
   tags = "/tags/:slug/"
 
-# Pagination for taxonomy term pages (food-booze/, tech-ai/, etc).
-# Future-proofs for thousands of posts per category.
+# Pagination default. blog-priv#62 removed the `category` taxonomy, so the 7 blog
+# categories are section landings at /blogs/<cat>/ rather than taxonomy term pages;
+# the taxonomies that remain are tags and series. Currently inert either way: no
+# layout calls .Paginate or .Paginator, and Hugo reports 0 paginator pages. Kept as
+# the ceiling that would apply if a list template ever starts paginating.
 [pagination]
   pagerSize = 50
 
