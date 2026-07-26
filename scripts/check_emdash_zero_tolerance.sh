@@ -24,9 +24,13 @@
 # is stuck inside the legacy-exempt directory by the framework rather than by
 # anything about its prose: it is new, post-cutoff, operator-approved copy that
 # every category page links up to. Measured before adding it (2026-07-25): an em
-# dash injected into that file passed this guard AND check_emdash_newposts.py
-# (date-gated, and a section landing carries no date) AND the marker-driven
-# check-ai-writing-tells.py, so nothing in the repo covered it. Naming the file
+# dash injected into that file passed this guard AND check_emdash_newposts.py,
+# which selects via posts.rglob('index.md') and so never matches an _index.md.
+# The marker-driven check-ai-writing-tells.py DOES catch it, because the hub has
+# carried <!-- iamhoi --> markers since its first commit; re-measured 2026-07-26 by
+# injecting an em dash, which returns exit 1 and 'TOTAL: 1 tells in 1 files'. So the
+# gap this carve-out closes is grep-side only, and it is real: without the explicit
+# name, this guard skips the file. Naming the file
 # explicitly beats loosening --exclude-dir, which would drag in all 79 legacy
 # posts. grep applies --exclude-dir only while recursing, so an explicitly named
 # file inside an excluded directory is still read (asserted by the guard's own
