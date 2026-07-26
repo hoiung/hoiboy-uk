@@ -244,6 +244,13 @@ jobs:
       - name: Social-card guard (rendered og:image — template-regression backstop)
         run: python3 scripts/check_social_cards.py --built public
 
+      # Reads the BUILT tree: asserts Hugo emitted public/404.html, that the
+      # template's content block actually rendered, and that every navigation
+      # link ON the 404 page resolves. Without a root 404.html Cloudflare Pages
+      # soft-404s every dead URL as HTTP 200. blog-priv#64.
+      - name: 404 gate (no soft-404; the 404 page's own links resolve)
+        run: python3 scripts/test_404.py --built public
+
       # Both read the BUILT tree, so they sit after the Hugo build, not with the
       # source-only unit tests above. Listed by name because CI runs pytest
       # through explicit file lists: a test file nobody lists never runs, which

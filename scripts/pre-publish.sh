@@ -36,6 +36,8 @@
 #                         match production exactly; rendered HTML lands in public/)
 #   7a.Social cards      (check_social_cards.py --built public: rendered backstop
 #                         for a head.html/hero-pick template regression)
+#   7b.404 gate          (test_404.py --built public: root 404.html emitted, its
+#                         content block rendered, and its own links resolve)
 #   8. Rendered links    (lychee on rendered HTML NOT raw .md — catches broken
 #                         cross-section links + missing assets that markdown-only
 #                         lychee cannot see. CAVEAT: lychee.toml exclude_path
@@ -220,6 +222,14 @@ run_check "hugo-build" hugo_build
 #     og:image is its own card, not the site default. Catches a head.html/hero-pick
 #     template regression the source-only guard (check #4b) cannot see (#52 Stage 5).
 run_check "social-cards-rendered" python3 scripts/check_social_cards.py --built public
+
+# 7b. 404 gate: the build must emit a root 404.html, its content block must have
+#     actually rendered, and every navigation link ON that page must resolve.
+#     Cloudflare Pages returns a 404 status only when that file exists; without
+#     it every dead URL soft-404s as HTTP 200 with page HTML, which also makes
+#     check #8 below structurally unable to fail on a dead internal link.
+#     blog-priv#64.
+run_check "404-gate" python3 scripts/test_404.py --built public
 
 # 8. Lychee on rendered HTML — catches broken cross-section links + missing
 #    assets that markdown-only lychee misses (e.g. a `[link](../other-section/)`

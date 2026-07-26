@@ -198,11 +198,13 @@ hoiboy-uk/
 ├── layouts/
 │   ├── baseof.html          # Shell, sidebar + main + footer
 │   ├── index.html           # Homepage
+│   ├── 404.html             # Custom 404. MUST exist: Cloudflare Pages returns a 404
+│   │                        #   status only when the build emits a root 404.html;
+│   │                        #   without it every dead URL soft-404s (200 + homepage)
 │   ├── _partials/           # head, sidebar, breadcrumbs, footer, post-list*, post-cards*
 │   └── _default/            # single, list, taxonomy (handles /tags/ AND /food/)
 ├── content/
 │   ├── _index.md            # Homepage stub
-│   ├── about.md
 │   ├── posts/<slug>/        # Page bundles
 │   ├── {food-booze,adventure,dance,tech-ai,life,entrepreneurship,trading}/_index.md  # 7 category landings
 │   └── {hire-hoi,legal,skills,private}/_index.md  # non-category sections (hire-hoi = AI/ICT consultancy + permanent roles; private = noindex)

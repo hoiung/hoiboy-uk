@@ -151,6 +151,18 @@ repos:
         pass_filenames: false
         files: ^(content/.*|static/_headers)$
 
+      - id: check-404
+        name: Custom 404 exists (no soft-404)
+        # Source lane only: pre-commit has no build. Cloudflare Pages returns a
+        # 404 status ONLY when the output carries a root 404.html, so deleting
+        # layouts/404.html silently restores the site-wide soft-404 (every dead
+        # URL answering HTTP 200 with page HTML). The built-output and link
+        # checks run in CI + pre-publish against a real build. blog-priv#64.
+        entry: python3 scripts/test_404.py --source-only
+        language: system
+        pass_filenames: false
+        always_run: true
+
       - id: consulting-yaml-no-operator-todo
         name: Block OPERATOR_TODO placeholders in data/consulting.yaml
         # consulting-ops#2 AC 0.3 — defence-in-depth alongside the Hugo

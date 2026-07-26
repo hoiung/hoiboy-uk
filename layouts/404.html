@@ -1,0 +1,45 @@
+{{- /* Custom 404. Its ABSENCE was the site-wide soft-404: Cloudflare Pages serves
+       a 404 status only when the build emits a root 404.html, so without this file
+       every nonexistent URL fell through to the homepage with HTTP 200. That is
+       invisible to a human (the page looks fine) but tells a crawler the URL is a
+       real, indexable, duplicate-of-home page, and it hides genuinely broken links
+       from every link checker, because nothing ever returns a failing status.
+
+       static/_redirects already documented the gap twice ("there is no custom 404
+       to catch it") and relied on bare slash-less rules to work around it; those
+       rules stay, because a 301 to the right page still beats a correct 404.
+
+       Uses the same baseof shell as every other page, so the sidebar nav gives a
+       lost reader a real way out. Deliberately plain: this is functional copy, not
+       operator-voice prose, so it carries no iamhoi markers. Links are taken from
+       config/_default/menus.toml rather than invented.
+
+       Verified: scripts/test_404.py asserts the build emits public/404.html and
+       that Cloudflare's contract for it holds. blog-priv#64. */ -}}
+{{ define "main" }}
+{{- /* `data-page="404"` is the contract scripts/test_404.py asserts on. It is
+       load-bearing, not decoration: an empty `define "main"` still renders the
+       whole shell (sidebar, footer, brand h1), so a page-size floor cannot tell
+       a rendered 404 from a blank one. Proven, not assumed - a byte-size check
+       was written here first and passed the blank-block mutation. */ -}}
+<article class="post" data-page="404">
+  <h1>Page not found</h1>
+
+  <p>That link is broken, or the page has moved. Nothing is wrong with your browser.</p>
+
+  <p>If you arrived from a link on this site, it is a bug worth knowing about:
+    <a href="https://github.com/hoiung/hoiboy-uk/issues">report it here</a>.</p>
+
+  <h2>Try one of these</h2>
+
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/blogs/">All blogs</a></li>
+    <li><a href="/hire-hoi/ai-consultancy/">AI Consultancy</a></li>
+    <li><a href="/hire-hoi/permanent-roles/">Permanent Roles</a></li>
+    <li><a href="/community/asians-gingers-in-tech/">Asians &amp; Gingers in Tech</a></li>
+  </ul>
+
+  <p>Or use the menu for a specific category.</p>
+</article>
+{{ end }}
