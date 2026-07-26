@@ -26,6 +26,15 @@ build needed), matching how ``layouts/_partials/head.html`` resolves ``og:image`
     default card.  The default card is thus reserved for taxonomy/term pages
     (which have no content bundle and cannot hold a card).
 
+  Check D - card presence (auto-sections, blog-priv#61 2nd increment).  Hugo also
+    renders a list page for a content directory that has NO ``_index.*``.  Check C
+    enumerates ``_index.*`` landings only, so such a directory is invisible to it and
+    silently serves the default card - which is how ``/posts/`` shipped the default
+    until blog-priv#62 gave it a ``content/posts/_index.md``.  An auto-section CAN
+    hold a card (Hugo still publishes the directory's files as page resources), so
+    this checks card PRESENCE like Check C; the fix it recommends is the ``_index.*``
+    because ``gen_card.py landings`` reads each card's copy from that frontmatter.
+
 ``ext`` spans the content formats Hugo renders natively on this site: ``.md``,
 ``.markdown``, ``.html`` (CONTENT_EXTS).
 
@@ -267,6 +276,62 @@ def landing_bundles(content_root: Path):
         yield content_root, home_idx
 
 
+def auto_sections(content_root: Path):
+    """Yield every directory Hugo renders as a section list page with NO ``_index.*``
+    to back it (a Hugo "auto-section").
+
+    Hugo renders a list page for any content directory, whether or not it carries an
+    ``_index.*``. Check C only enumerates ``_index.*`` landings, so an auto-section is
+    invisible to it and silently serves the site default card. That is exactly how
+    ``/posts/`` shipped the default card until blog-priv#62 gave it a
+    ``content/posts/_index.md``.
+
+    An auto-section CAN hold a card: Hugo still publishes the directory's files as
+    page resources, so a root ``share-card.<raster>`` does become the ``og:image``.
+    Verified against a real build - a probe directory with a ``share-card.png`` and no
+    ``_index.md`` rendered ``og:image`` = its own ``share-card_hu_<hash>.jpg``, not the
+    default. So this check tests card PRESENCE (like Check C), not ``_index.*``
+    absence; a carded auto-section is not a violation.
+
+    The practical remedy is still to add the ``_index.*``, because
+    ``gen_card.py landings`` sources each card's title and tagline from the landing's
+    own frontmatter and an auto-section has none.
+
+    A directory is an auto-section when it is an ancestor of at least one real page,
+    is not itself a leaf bundle (a leaf bundle is a PAGE, not a section), is not a
+    resource directory inside one, and has no ``_index.*``. ``content_root`` is NOT a
+    candidate: home is Check C's (it enumerates the home bundle explicitly), and a
+    site with no ``content/_index.md`` at all is a broken Hugo tree rather than this
+    defect class."""
+    page_ancestors: set[Path] = set()
+
+    def add_ancestors(start: Path) -> None:
+        d = start
+        while d != content_root and d.parent != d:    # stop BEFORE content_root (home = Check C)
+            page_ancestors.add(d)
+            d = d.parent
+
+    for bundle_dir, _ in leaf_bundles(content_root):
+        add_ancestors(bundle_dir.parent)
+    for f in flat_pages(content_root):
+        add_ancestors(f.parent)
+
+    for d in sorted(page_ancestors):
+        if index_file(d):                             # a leaf bundle is a page, not a section
+            continue
+        if section_index_file(d):                     # backed by _index.* -> Check C owns it
+            continue
+        if _under_a_bundle(d, content_root):          # bundle resource dir, never a section
+            continue
+        yield d
+
+
+def section_dir_url(dirpath: Path, content_root: Path) -> str:
+    """Served URL for an auto-section directory (it has no frontmatter to override)."""
+    rel = dirpath.relative_to(content_root).as_posix()
+    return "/" + rel + "/" if rel != "." else "/"
+
+
 def landing_card_status(bundle_dir: Path) -> str:
     """og:image resolution for a section/home landing: a root share-card.<raster> wins
     ('ok'); a root share-card.svg emits NO og:image ('svg-sharecard'); anything else
@@ -331,6 +396,27 @@ def check(content_root: Path, headers_path: Path) -> list[str]:
                 f"[landing-card-missing] {rel} ({url}): indexable section/home landing has no "
                 f"share-card.*; falls back to the default card. Add it to landing-cards.tsv and "
                 f"run gen_card.py landings (or gen_card.py home for the home page)."
+            )
+
+    for section_dir in auto_sections(content_root):
+        url = section_dir_url(section_dir, content_root)
+        if is_excluded("", url, noindex_globs):       # no frontmatter exists; _headers decides
+            continue
+        rel = section_dir.relative_to(content_root).as_posix()
+        status = landing_card_status(section_dir)
+        if status == "svg-sharecard":
+            violations.append(
+                f"[auto-section-card-svg] {rel} ({url}): share-card is an SVG; head.html emits "
+                f"NO og:image for an SVG. Use a raster share-card.png (run gen_card.py landings)."
+            )
+        elif status == "none":
+            violations.append(
+                f"[auto-section-uncarded] {rel} ({url}): Hugo renders this directory as an "
+                f"indexable section list page, but it has no _index.* so Check C cannot see it "
+                f"and it owns no share-card - it serves the default card. Add {rel}/_index.md "
+                f"(title + description, which is where gen_card.py reads the card copy from), "
+                f"then add '{rel}' to scripts/social-cards/landing-cards.tsv and run "
+                f"gen_card.py landings."
             )
     return violations
 
