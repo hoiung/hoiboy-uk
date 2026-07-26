@@ -13,9 +13,12 @@ Two halves, and BOTH are needed. A rule can exist and still be useless:
      check could never see the 8 RSS feeds it claims to cover.
 
 The bare slash-less variant of every retired path is asserted separately, because
-a Cloudflare `/x/*` rule does not match `/x` and this site has no custom 404 to
-catch the difference. `static/_redirects` documents that gotcha for /consulting;
-this test is what stops it being documented but unenforced.
+a Cloudflare `/x/*` rule does not match `/x`. Since blog-priv#64 an uncaught `/x`
+returns a real 404 instead of soft-404ing to the homepage, so the failure is at
+least visible now, but the bare rules still matter: a 301 to the page the reader
+wanted beats a correct 404, and it preserves the ranking the old URL carries.
+`static/_redirects` documents that gotcha for /consulting; this test is what
+stops it being documented but unenforced.
 
 Usage:  python3 scripts/test_redirects_coverage.py [--built public]
 Exit 0 = every retired URL lands somewhere real. Exit 1 = a named failure.

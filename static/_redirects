@@ -5,9 +5,12 @@
 #     source path, the top-most redirect is applied." A general wildcard placed
 #     above a specific rule therefore SWALLOWS it. That is why the ai-jargon
 #     alias below sits above /posts/*, not below it.
-#  2. A SLASH-LESS PATH IS ITS OWN SOURCE. /x/* does not match /x, and this site
-#     has no custom 404 to catch the difference, so every moved path gets a bare
-#     rule as well as a wildcard.
+#  2. A SLASH-LESS PATH IS ITS OWN SOURCE. /x/* does not match /x, so every
+#     moved path gets a bare rule as well as a wildcard. Since blog-priv#64 the
+#     site DOES have a custom 404, so an uncaught /x now returns a real 404
+#     rather than soft-404ing to the homepage. Keep the bare rules anyway: a 301
+#     to the page the reader actually wanted beats even a correct 404, both for
+#     them and for the ranking the old URL still carries.
 #
 # Every rule is 301 (permanent): 302 tells search engines the move is temporary
 # and the old URL keeps the ranking. No rule's target is another rule's source
@@ -17,7 +20,9 @@
 # now lives at /hire-hoi/ai-consultancy/*. Explicit 301 (permanent) so search
 # engines and externally cached share-cards follow the move.
 # The bare /consulting (no trailing slash) needs its own rule: the wildcard below
-# does not match a slash-less path, and there is no custom 404 to catch it.
+# does not match a slash-less path. Without this rule it would now land on the
+# custom 404 (blog-priv#64) rather than the homepage, which is more honest but
+# still loses a reader who asked for a page that exists.
 /consulting /hire-hoi/ai-consultancy/ 301
 /consulting/* /hire-hoi/ai-consultancy/:splat 301
 
