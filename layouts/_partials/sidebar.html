@@ -15,7 +15,18 @@
     <h2>Hire Hoi</h2>
     <ul class="consulting-menu">
       {{- range . -}}
-        <li><a href="{{ .URL }}" class="cta-link{{ if hasPrefix $.RelPermalink .URL }} active{{ end }}">{{ .Name | safeHTML }}</a></li>
+        {{- /* hasPrefix, not eq, unlike the sibling menus above and below: the
+               Hire Hoi entries are section roots with pages beneath them, so a
+               reader on /hire-hoi/ai-consultancy/<service>/ keeps the parent
+               highlighted. That is the only intended difference.
+
+               Carried a `cta-link` class too until blog-priv#63. Nothing in
+               main.css ever defined it and nothing else in the repo referenced
+               it, so it named a treatment that does not exist, the same defect
+               as the `btn-secondary` removed from the consulting-cta shortcode
+               in the same issue. `active` stays: it IS defined, at
+               `.sidebar nav a.active`. */ -}}
+        <li><a href="{{ .URL }}"{{ if hasPrefix $.RelPermalink .URL }} class="active"{{ end }}>{{ .Name | safeHTML }}</a></li>
       {{- end -}}
     </ul>
     {{- end -}}
