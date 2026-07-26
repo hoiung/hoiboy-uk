@@ -43,8 +43,12 @@ distinct, correctly-sized social card instead of falling back to a generic image
   and `series` are the two taxonomies this fallback still serves (verified against
   a build: `/series/` and `/series/bakeoff/` both resolve to `default-card`).
 
-Run `python3 scripts/social-cards/gen_card.py [consulting] [legal] [hire-hoi]
-[landings] [home] [default]` (no args = all six). `layouts/_partials/head.html`
+Run `bash scripts/gen-social-cards.sh` — the wrapper, which builds, generates,
+rebuilds and verifies. A bare `python3 scripts/social-cards/gen_card.py
+[consulting] [legal] [hire-hoi] [landings] [home] [default]` (no args = all six)
+regenerates against an **already-built** tree only: every eyebrow comes from that
+page's `public/<url>/trail.json`, so a bundle Hugo has not rendered yet exits with
+"no trail.json for content bundle ...". `layouts/_partials/head.html`
 picks up a page's own `share-card.*` as its `og:image` (resized to 1200 wide,
 aspect preserved), and `default-card.png` as the taxonomy fallback.
 

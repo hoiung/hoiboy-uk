@@ -74,6 +74,16 @@ CONTENT_EXTS = (".md", ".markdown", ".html")   # Hugo natively-rendered content 
 RASTER_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
 DEFAULT_CARD_MARKERS = ("default-card", "hoi-mug")   # og:image URLs that ARE the site default
 
+# The remedy every violation message points at. Deliberately the wrapper, never a bare
+# `gen_card.py <set>`: a card's eyebrow is read from the page's public/<url>/trail.json
+# sidecar, which only exists once Hugo has rendered that page. The commonest way to hit
+# this guard is to add a NEW landing and run the checks before any build, and in exactly
+# that state `gen_card.py` exits non-zero from card_common.eyebrow_for ("no trail.json
+# for content bundle ..."). Sending the reader to the bare generator therefore bounces
+# them into a second, unrelated-looking error. gen-social-cards.sh builds first, so it
+# works from a cold tree. (blog-priv#61, Ralph T3 finding F6.)
+REGEN_CMD = "scripts/gen-social-cards.sh"
+
 
 def read_frontmatter(path: Path) -> str:
     """Return the raw YAML frontmatter block (between the first two --- lines)."""
@@ -393,12 +403,12 @@ def check(content_root: Path, headers_path: Path,
         if status == "svg-sharecard":
             violations.append(
                 f"[card-svg] {rel} ({url}): share-card is an SVG; head.html emits NO "
-                f"og:image for an SVG. Use a raster share-card.png (run gen_card.py)."
+                f"og:image for an SVG. Use a raster share-card.png (run {REGEN_CMD})."
             )
         elif status == "none":
             violations.append(
                 f"[card-missing] {rel} ({url}): no share-card.* or raster hero; "
-                f"falls back to the default card. Run gen_card.py or add a hero.*"
+                f"falls back to the default card. Run {REGEN_CMD}, or add a hero.*"
             )
 
     for bundle_dir, index_path in landing_bundles(content_root):
@@ -411,13 +421,13 @@ def check(content_root: Path, headers_path: Path,
         if status == "svg-sharecard":
             violations.append(
                 f"[landing-card-svg] {rel} ({url}): share-card is an SVG; head.html emits NO "
-                f"og:image for an SVG. Use a raster share-card.png (run gen_card.py landings/home)."
+                f"og:image for an SVG. Use a raster share-card.png (run {REGEN_CMD})."
             )
         elif status == "none":
             violations.append(
                 f"[landing-card-missing] {rel} ({url}): indexable section/home landing has no "
                 f"share-card.*; falls back to the default card. Add it to landing-cards.tsv and "
-                f"run gen_card.py landings (or gen_card.py home for the home page)."
+                f"run {REGEN_CMD}."
             )
 
     # Home with no content/_index.md: Hugo still renders "/", but landing_bundles
@@ -433,7 +443,7 @@ def check(content_root: Path, headers_path: Path,
                     f"[auto-section-uncarded] . ({home_url}): the site has no "
                     f"content/_index.md, so Hugo renders home from no content file and "
                     f"Check C cannot enumerate it; it serves the default card. Add "
-                    f"content/_index.md, then run gen_card.py home."
+                    f"content/_index.md, then run {REGEN_CMD}."
                 )
 
     for section_dir in auto_sections(content_root):
@@ -445,7 +455,7 @@ def check(content_root: Path, headers_path: Path,
         if status == "svg-sharecard":
             violations.append(
                 f"[auto-section-card-svg] {rel} ({url}): share-card is an SVG; head.html emits "
-                f"NO og:image for an SVG. Use a raster share-card.png (run gen_card.py landings)."
+                f"NO og:image for an SVG. Use a raster share-card.png (run {REGEN_CMD})."
             )
         elif status == "none":
             violations.append(
@@ -454,7 +464,7 @@ def check(content_root: Path, headers_path: Path,
                 f"and it owns no share-card - it serves the default card. Add {rel}/_index.md "
                 f"(title + description, which is where gen_card.py reads the card copy from), "
                 f"then add '{rel}' to scripts/social-cards/landing-cards.tsv and run "
-                f"gen_card.py landings."
+                f"{REGEN_CMD}."
             )
     return violations
 

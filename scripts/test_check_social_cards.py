@@ -557,6 +557,45 @@ def test_built_home_landing_own_card_passes(tmp_path):
     assert csc.check_built(content, _headers(tmp_path, ""), public) == []
 
 
+# ---- remedy wording -----------------------------------------------------------
+
+def test_every_violation_names_the_command_that_works_from_a_cold_tree(tmp_path):
+    """Every remedy points at gen-social-cards.sh, never a bare `gen_card.py <set>`.
+
+    The commonest way to reach this guard is to add a page and run the checks before
+    any build. In that state gen_card.py exits non-zero from card_common.eyebrow_for,
+    because a card's eyebrow comes from public/<url>/trail.json and Hugo has not
+    written one yet - so a message naming the bare generator bounces the reader into a
+    second, unrelated-looking error. gen-social-cards.sh builds first. Asserted over
+    ALL four checks at once so a new violation string cannot regress the wording.
+
+    `[bundle-form]` is deliberately exempt from the "names the command" half: its
+    remedy is to restructure the file into a leaf bundle, which no generator can do.
+    The "no bare generator" half still covers it.
+    """
+    REGEN_TAGS = ("card-svg", "card-missing", "auto-section-uncarded",
+                  "landing-card-svg", "landing-card-missing", "auto-section-card-svg")
+    content = tmp_path / "content"
+    _bundle(content, "posts/a", card=None)              # A/B: singular, uncarded
+    _flat(content, "hire-hoi/flat")                     # A: flat singular
+    _landing(content, "skills", card=None)              # C: landing, uncarded
+    _bundle(content, "auto/x", seed_sections=False)     # D: auto-section, uncarded
+    (content / "legal").mkdir(parents=True, exist_ok=True)
+    (content / "legal" / "_index.md").write_text("---\ntitle: L\n---\n")
+    (content / "legal" / "share-card.svg").write_text("<svg/>")   # C: svg card
+
+    v = csc.check(content, _headers(tmp_path, ""))
+    assert v, "fixture must produce violations or this test is vacuous"
+    regen = [m for m in v if any(m.startswith(f"[{t}]") for t in REGEN_TAGS)]
+    # every regen-remedied check must be exercised, else the sweep passes by omission
+    assert len(regen) >= 4, f"fixture covered too few regen violations: {regen}"
+    for msg in regen:
+        assert "gen-social-cards.sh" in msg, f"remedy missing from: {msg}"
+    for msg in v:
+        assert "run gen_card.py" not in msg, f"bare-generator remedy survived in: {msg}"
+        assert "Run gen_card.py" not in msg, f"bare-generator remedy survived in: {msg}"
+
+
 # ---- CLI ----------------------------------------------------------------------
 
 def test_cli_exit_codes(tmp_path):
