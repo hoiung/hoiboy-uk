@@ -253,56 +253,43 @@ def test_hover_state_does_not_hand_the_underline_back():
 # Accessibility
 # --------------------------------------------------------------------------
 
-# WCAG 2.1 contrast minimums. 4.5:1 for normal-size text, 3:1 for large text
-# (>=18.66px bold or >=24px regular) and for UI component boundaries.
+# WCAG 2.1 contrast minimum for normal-size text. The button label is ~16px at
+# weight 600, which is NOT "large text" (that needs >=18.66px bold or >=24px),
+# so 4.5:1 is the applicable threshold and the 3:1 large-text allowance does not
+# apply here.
 AA_NORMAL = 4.5
-AA_LARGE = 3.0
 
 
-def test_label_contrast_clears_the_large_text_floor():
+def test_label_contrast_clears_wcag_aa():
     """Computed from the two colours in source, so a colour change re-tests it.
 
-    The floor is 3:1, not 4.5:1, and that is a recorded decision rather than a
-    slackened gate. The fill is the LOGO green (#228b22, exactly CSS
-    `forestgreen`), which the operator requires verbatim: "I want the logo
-    green. that's the theme colour, not some made up green." An earlier revision
-    shipped #188418, a green darkened until it cleared 4.5:1, and that was
-    rejected precisely because inventing a colour to satisfy a test is backwards.
+    The floor is the full 4.5:1 for normal-size text, and the fill is chosen to
+    meet it rather than the threshold being lowered to accept the fill. Both
+    directions of that trade were tried live and the history is worth keeping,
+    because the wrong lesson is easy to draw from it:
 
-    #228b22 is a mid-tone, so at normal text size NEITHER label clears AA:
-    white is 4.39:1 and near-black is 3.95:1. There is no label colour that
-    rescues it. Keeping the brand colour therefore means accepting the 3:1
-    floor, which white clears at 4.39:1.
+      #188418   4.82:1   shipped. The logo green darkened by rgb(10, 7, 10).
+      #228b22   4.39:1   the exact logo green. A mid-tone, so it clears 4.5:1
+                         with NO label colour at all (near-black is 3.95:1).
 
-    The assertion stays discriminating: a genuinely unreadable fill still fails
-    (the #9be89b mutation is 2.0:1). What it no longer does is force the brand
-    colour to move.
+    The earlier failure here was never the hex. It was describing #188418 as
+    "taken from the logo" when it is a derivative, so nobody could see a trade
+    had been made. The colour is now the same value with that trade written
+    down, in params.toml and in main.css, as an operator decision taken with
+    both versions deployed and compared for readability.
+
+    So: do not relax this threshold to fit a future colour. If a brand colour
+    cannot clear 4.5:1, that is a finding to surface, not a number to edit.
     """
     _, decls = base_rule()
     label = declaration(decls, "color")
     assert label, "the button rule sets no label colour."
     ratio = contrast_ratio(hex_to_rgb(label), hex_to_rgb(cta_color()))
-    assert ratio >= AA_LARGE, (
-        f"label {label} on fill {cta_color()} is {ratio:.2f}:1, below even the "
-        f"WCAG large-text/UI minimum of {AA_LARGE}:1. The fill is unreadable, "
-        f"not merely imperfect."
-    )
-
-
-def test_the_aa_normal_shortfall_is_recorded_not_forgotten():
-    """If the fill ever clears 4.5:1, say so, so the concession can be dropped.
-
-    A known shortfall that nobody re-checks becomes permanent by accident. This
-    fails when the situation IMPROVES, which is the point: it forces the docs
-    and the 3:1 concession above to be revisited rather than left as folklore.
-    """
-    _, decls = base_rule()
-    ratio = contrast_ratio(hex_to_rgb(declaration(decls, "color")), hex_to_rgb(cta_color()))
-    assert ratio < AA_NORMAL, (
-        f"the label now clears {AA_NORMAL}:1 at {ratio:.2f}:1. Good news, and it "
-        f"means the large-text concession is no longer needed: restore the "
-        f"{AA_NORMAL} floor in the test above and update the notes in "
-        f"params.toml and main.css that describe the shortfall."
+    assert ratio >= AA_NORMAL, (
+        f"label {label} on fill {cta_color()} is {ratio:.2f}:1, below the WCAG "
+        f"AA minimum of {AA_NORMAL}:1 for body-size text. Note that the exact "
+        f"logo green (#228b22) sits here at 4.39:1: if that is what has just "
+        f"been set, the fix is a darker derivative, not a lower threshold."
     )
 
 

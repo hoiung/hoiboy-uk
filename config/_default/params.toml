@@ -23,23 +23,31 @@ authorSameAs = [
 # Accent: warm terracotta. Single colour applied to links + active nav.
 accentColor = "#c0533a"
 
-# CTA button fill. THE LOGO GREEN, sampled from assets/images/logo.png, where it
-# is the dominant green across the source and every served size (and is exactly
-# the CSS named colour `forestgreen`). This is the brand colour, not a value
-# picked to satisfy a contrast target. Do not nudge it: an earlier revision of
-# this issue shipped #188418, a darkened approximation, and the operator
-# correctly rejected it as invented.
+# CTA button fill. The LOGO GREEN DARKENED FOR LEGIBILITY, and that description
+# is exact rather than approximate, because getting it wrong once already cost a
+# round trip.
 #
-# Deliberately NOT accentColor: that is already the colour of every link on the
-# site, so a terracotta button reads as page furniture rather than a call to
-# action.
+# The logo's own green is #228b22 (sampled from assets/images/logo.png, dominant
+# across the source and all four served sizes; it is exactly the CSS named
+# colour `forestgreen`). This value is that green darkened by rgb(10, 7, 10).
 #
-# CONTRAST, stated plainly rather than buried: #228b22 is a mid-tone, so at
-# normal text size it clears neither AA label option (white 4.39:1, near-black
-# 3.95:1, both under 4.5:1). It DOES clear the 3:1 large-text threshold. The
-# button therefore keeps a white label and scripts/test_cta_button.py asserts
-# the 3:1 floor, with the shortfall recorded rather than hidden.
-ctaColor = "#228b22"
+# It is NOT the logo colour and must not be labelled as such. It was chosen over
+# the exact logo green on a readability comparison the operator made on the live
+# site, having seen both deployed:
+#
+#   fill      white label   near-black label   note
+#   #228b22   4.39:1 FAIL   3.95:1 FAIL        exact logo green; a mid-tone, so
+#                                              NO label colour clears AA 4.5:1
+#   #188418   4.82:1 pass   -                  shipped; clears AA at normal size
+#
+# So the brand green is unreachable at AA on body-size text, and this is the
+# deliberate trade: a shade off the logo, in exchange for a label that is
+# comfortably legible. Operator decision, made with both rendered live.
+#
+# Deliberately NOT accentColor either: that is already the colour of every link
+# on the site, so a terracotta button reads as page furniture rather than a call
+# to action.
+ctaColor = "#188418"
 
 # Per-section layout switch. Sections in textFirstSections render
 # as plain title+date list (Tech & AI). All others get image-card layout.
