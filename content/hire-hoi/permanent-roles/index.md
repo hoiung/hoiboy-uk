@@ -22,7 +22,7 @@ There are two kinds of permanent role I am looking for:
 
 <!-- iamhoi -->
 
-I am a founder at heart with an engineer's mind, most drawn to very hands-on, founding-startup work: scoping the product, building it, and owning it end to end. With agentic coding I move fast, a prototype or MVP in days rather than weeks, then iterate from there. Shipping fast shouldn't be sloppy. A demo, prototype or MVP still has to work, and it has to be quality controlled. AI makes it easy to generate something that looks finished; what I care about is whether it holds up underneath: the logic, the workflow, the wiring, the design intent. That is what my own custom harness is for: a specialised framework I built and use for this.
+I am a founder at heart with an engineer's mind, most drawn to very hands-on, founding-startup work: scoping the product, building it, and owning it end to end. With agentic coding I move fast, a prototype or MVP in days rather than weeks, then iterate from there. Shipping fast does not mean AI slop. A demo, prototype or MVP still has to work, and it has to be quality controlled. AI makes it easy to generate something that looks finished; what I care about is whether it holds up underneath: the logic, the workflow, the wiring, the design intent. That is what my own custom harness is for: a specialised framework I built and use for this.
 
 As an entrepreneur, I know the importance of testing the water, which is what MVPs and working prototypes are for: getting something in front of real users and seeing how it goes. Either stop the ones there is no real want or market for, or refine and scale the ones users actually want. Perfection is not the goal.
 
