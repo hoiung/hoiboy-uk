@@ -41,7 +41,9 @@ slug: best-ramen-shimokitazawa
   category a HARD BUILD FAILURE (`errorf` in `layouts/_partials/breadcrumb-trail.html`
   and `layouts/_default/single.html`), because a category with no `_index.md` landing
   used to emit a silently dead link. The old "single word" wording is what produced the
-  `[food]` example above, which builds on `origin/main` and breaks the build here.
+  `categories: [food]` frontmatter example this file used to carry, which built fine
+  before blog-priv#62 and is a hard build failure after it; the example above was
+  corrected to `[food-booze]` in the same change.
   `docs/AUTHORING.md` is the canonical list.
 
 ## Hugo wiring
