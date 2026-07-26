@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Unit tests for check_social_cards.py (hoiboy-uk #52, blog-priv#61).
 
-Covers all three failure classes (A bundle-form, B singular-card, C section/home
-landing card), every exclusion path, the content-format spread (.md/.markdown/
-.html), nested child bundles, SVG share-cards, the section/home hero-does-not-count
-rule, the rendered-HTML backstop, and CLI exit codes.
+Covers all four failure classes (A bundle-form, B singular-card, C section/home
+landing card, D auto-section card), every exclusion path, the content-format spread
+(.md/.markdown/.html), nested child bundles, SVG share-cards, the section/home
+hero-does-not-count rule, the C/D handoff, the rendered-HTML backstop, and CLI exit
+codes.
 """
 from __future__ import annotations
 
@@ -24,8 +25,28 @@ _spec.loader.exec_module(csc)
 PNG = b"\x89PNG\r\n\x1a\n"
 
 
+def _seed_sections(root: Path, page_dir: Path):
+    """Back every ancestor section of `page_dir` with a carded `_index.md`.
+
+    A real site's sections are branch bundles; a fixture that drops
+    content/posts/a/index.md with no content/posts/_index.md is a Hugo AUTO-section,
+    which Check D flags on its own (blog-priv#61 2nd increment). Seeding keeps each
+    test asserting the ONE class it targets instead of also tripping Check D. Skips
+    any ancestor that is itself a leaf bundle (nested child-bundle fixtures), since
+    an index.* and an _index.* must never share a directory. Opt out with
+    seed_sections=False to build a deliberately uncarded auto-section."""
+    d = page_dir.parent
+    while d != root and d.parent != d:
+        if not any((d / ("index" + e)).exists() for e in (".md", ".markdown", ".html")):
+            if not any((d / ("_index" + e)).exists() for e in (".md", ".markdown", ".html")):
+                (d / "_index.md").write_text("---\ntitle: S\n---\n", encoding="utf-8")
+                (d / "share-card.png").write_bytes(PNG)
+        d = d.parent
+
+
 def _bundle(root: Path, rel: str, frontmatter: str = "title: X",
-            card: str | None = "share-card.png", ext: str = ".md"):
+            card: str | None = "share-card.png", ext: str = ".md",
+            seed_sections: bool = True):
     d = root / rel
     d.mkdir(parents=True, exist_ok=True)
     (d / ("index" + ext)).write_text(f"---\n{frontmatter}\n---\nbody\n", encoding="utf-8")
@@ -33,13 +54,18 @@ def _bundle(root: Path, rel: str, frontmatter: str = "title: X",
         cp = d / card
         cp.parent.mkdir(parents=True, exist_ok=True)
         cp.write_bytes(PNG) if cp.suffix.lower() != ".svg" else cp.write_text("<svg/>")
+    if seed_sections:
+        _seed_sections(root, d)
     return d
 
 
-def _flat(root: Path, rel: str, ext: str = ".md", frontmatter: str = "title: X"):
+def _flat(root: Path, rel: str, ext: str = ".md", frontmatter: str = "title: X",
+          seed_sections: bool = True):
     p = (root / rel).with_suffix(ext)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(f"---\n{frontmatter}\n---\nbody\n", encoding="utf-8")
+    if seed_sections:
+        _seed_sections(root, p)
     return p
 
 
@@ -346,6 +372,78 @@ def test_landing_headers_noindex_excluded(tmp_path):
     _landing(content, "hidden-section", card=None)
     headers = _headers(tmp_path, "/hidden-section/*\n  X-Robots-Tag: noindex\n")
     assert csc.check(content, headers) == []
+
+
+# ---- Check D: auto-sections (no _index.*) (blog-priv#61 2nd increment) --------
+
+def test_auto_section_uncarded_flagged(tmp_path):
+    # content/posts/a/index.md with NO content/posts/_index.md: Hugo still renders
+    # /posts/ as a list page, Check C cannot see it, and it serves the default card.
+    # This is the /posts/ defect blog-priv#62 fixed by adding content/posts/_index.md.
+    content = tmp_path / "content"
+    _bundle(content, "posts/a", seed_sections=False)
+    v = csc.check(content, _headers(tmp_path, ""))
+    assert len(_cats(v, "auto-section-uncarded")) == 1
+    assert "posts (/posts/)" in v[0]
+
+
+def test_auto_section_with_card_passes(tmp_path):
+    # An auto-section CAN own a card: Hugo publishes the directory's files as page
+    # resources, so a root share-card.<raster> really does become the og:image
+    # (verified against a real hugo build, not inferred). So Check D tests card
+    # PRESENCE, exactly like Check C - a carded auto-section is not a violation.
+    content = tmp_path / "content"
+    _bundle(content, "posts/a", seed_sections=False)
+    (content / "posts" / "share-card.png").write_bytes(PNG)
+    assert _cats(csc.check(content, _headers(tmp_path, "")), "auto-section-uncarded") == []
+
+
+def test_auto_section_svg_card_flagged(tmp_path):
+    content = tmp_path / "content"
+    _bundle(content, "posts/a", seed_sections=False)
+    (content / "posts" / "share-card.svg").write_text("<svg/>")
+    v = csc.check(content, _headers(tmp_path, ""))
+    assert len(_cats(v, "auto-section-card-svg")) == 1
+    assert _cats(v, "auto-section-uncarded") == []
+
+
+def test_auto_section_gains_index_handed_to_check_c(tmp_path):
+    # Adding the _index.* moves ownership to Check C. Exactly one of the two fires -
+    # no double-report for the same directory.
+    content = tmp_path / "content"
+    _bundle(content, "posts/a", seed_sections=False)
+    _landing(content, "posts", card=None)
+    v = csc.check(content, _headers(tmp_path, ""))
+    assert len(_cats(v, "landing-card-missing")) == 1
+    assert _cats(v, "auto-section-uncarded") == []
+
+
+def test_auto_section_headers_noindex_excluded(tmp_path):
+    # An auto-section has no frontmatter, so static/_headers is the only exclusion
+    # signal. This is what keeps the real tree's content/private/tools clean.
+    content = tmp_path / "content"
+    _bundle(content, "private/tools/thing", seed_sections=False)
+    headers = _headers(tmp_path, "/private/*\n  X-Robots-Tag: noindex, nofollow\n")
+    assert _cats(csc.check(content, headers), "auto-section-uncarded") == []
+
+
+def test_leaf_bundle_and_its_resource_dirs_are_not_auto_sections(tmp_path):
+    # A leaf bundle is a PAGE, not a section, and its nested resource dirs are
+    # resources - neither may ever be reported as an uncarded auto-section.
+    content = tmp_path / "content"
+    d = _bundle(content, "posts/gallery")
+    (d / "website").mkdir()
+    (d / "website" / "shot-01.jpg").write_bytes(PNG)
+    assert _cats(csc.check(content, _headers(tmp_path, "")), "auto-section-uncarded") == []
+
+
+def test_content_root_is_not_an_auto_section(tmp_path):
+    # Home is Check C's (landing_bundles yields the home bundle explicitly); Check D
+    # must not also claim content/ itself, which would emit a "." path.
+    content = tmp_path / "content"
+    _bundle(content, "posts/a")
+    v = csc.check(content, _headers(tmp_path, ""))
+    assert _cats(v, "auto-section-uncarded") == []
 
 
 def test_built_landing_default_flagged(tmp_path):
