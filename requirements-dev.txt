@@ -8,3 +8,11 @@
 pytest
 pyyaml
 piexif
+# Pillow: the social-card generators measure text and composite images with it
+# (scripts/social-cards/gen_card.py imports PIL at 4 sites, gen_agit_feature.py at
+# module level). It was an undeclared local-only dependency until blog-priv#62 wired
+# scripts/test_gen_card.py into CI for the first time -- the tests import gen_card,
+# gen_card imports PIL, CI installs only this file, so the step failed on the merge
+# commit with ModuleNotFoundError. It could not fail earlier: ci.yml triggers on
+# `push: branches: [main]` and `pull_request` only, and a solo branch is neither.
+pillow
