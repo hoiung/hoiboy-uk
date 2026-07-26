@@ -65,6 +65,29 @@ SOURCE = ROOT / "layouts" / "404.html"
 # the content block is empty (verified by mutation, not assumed).
 CONTENT_MARKER = 'data-page="404"'
 
+# Markers that only layouts/baseof.html can put on the page: the doctype and
+# <div class="layout"> come from the shell itself, the sidebar from its partial.
+# CONTENT_MARKER alone cannot tell a page that rendered THROUGH the shell from a
+# standalone template that merely carries the attribute, because the marker
+# lives in the content block either way.
+#
+# That gap was real, not hypothetical. Replacing layouts/404.html with a bare
+# <article data-page="404"> carrying two working links, no `define "main"` and
+# no partials, produced a 160-byte public/404.html with no doctype, no head, no
+# stylesheet and no navigation, and every check here still exited 0. The issue's
+# own Expected Behavior ("The 404 page uses the site shell so a lost reader has
+# real navigation") had no gate behind it at all.
+SHELL_MARKERS = ("<!doctype html>", 'class="layout"', 'class="sidebar')
+
+# Cloudflare Pages also serves this template as an ordinary asset at /404.html,
+# which 308-redirects to /404 and answers HTTP 200. Without a robots rule that
+# is an indexable page titled "Page not found" - the same soft-200 class this
+# whole gate exists to eliminate, just parked at one fixed URL instead of spread
+# across every dead path. static/_headers is where the site already keeps that
+# kind of rule (see the thanks-page block).
+HEADERS = ROOT / "static" / "_headers"
+NOINDEX_RULE = re.compile(r"^/404\*?\s*$\s+^\s*X-Robots-Tag:\s*noindex", re.M)
+
 # The 404 page's OWN content block, isolated from the shared shell. Check C is
 # scoped to this and not to the whole document, which is a correctness fix and
 # not a tidy-up: the shared sidebar puts 11 root-relative nav links on every page
@@ -131,6 +154,20 @@ def main(argv: list[str] | None = None) -> int:
             "HTTP 200 plus page HTML (a soft-404)."
         )
 
+    # E. NOINDEX. A source-file rule, so it runs in every lane including
+    # pre-commit, which has no build.
+    if not HEADERS.is_file():
+        failures.append(f"{HEADERS.relative_to(ROOT)} is missing, so the 404 "
+                        "page cannot be kept out of the search index.")
+    elif not NOINDEX_RULE.search(HEADERS.read_text(encoding="utf-8")):
+        failures.append(
+            "static/_headers has no `X-Robots-Tag: noindex` rule for /404*. "
+            "Cloudflare serves this template at /404.html -> 308 -> /404 with "
+            "HTTP 200, so without that rule the site publishes an indexable "
+            "page titled 'Page not found' - the soft-200 this gate exists to "
+            "prevent, relocated rather than removed."
+        )
+
     if args.source_only:
         if failures:
             print("404 GATE FAILED:", file=sys.stderr)
@@ -160,6 +197,18 @@ def main(argv: list[str] | None = None) -> int:
                 "template's content block rendered nothing. The file exists and is "
                 "not small (the shared shell fills it), but the page says nothing "
                 "to the reader."
+            )
+
+        # D. SHELL. See SHELL_MARKERS: proves the page rendered THROUGH
+        # layouts/baseof.html rather than as a standalone template.
+        missing = [m for m in SHELL_MARKERS if m not in html]
+        if missing:
+            failures.append(
+                f"{args.built}/404.html is missing {missing}, so it did not "
+                "render through layouts/baseof.html. It carries the content "
+                "marker but not the site shell, which means no head, no "
+                "stylesheet and no sidebar: a lost reader gets a bare block of "
+                "text with no way out. Use `{{ define \"main\" }}`."
             )
 
         # C. LINKS, scoped to the page's own content block (see CONTENT_BLOCK).

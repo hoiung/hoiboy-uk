@@ -13,6 +13,16 @@
 /community/asians-gingers-in-tech/thanks/*
   X-Robots-Tag: noindex, nofollow
 
+# The 404 template (blog-priv#64) is also reachable as an ordinary page:
+# Cloudflare serves it at /404.html, which 308-redirects to /404 and answers
+# HTTP 200 with the full "Page not found" HTML. Left alone that is an indexable
+# soft-200, which is the exact defect blog-priv#64 removed from every dead URL,
+# so it would have been relocated to one fixed URL rather than fixed. The 404
+# RESPONSES themselves are unaffected: this only tells crawlers not to index the
+# page when they reach it by its own address. Asserted by scripts/test_404.py.
+/404*
+  X-Robots-Tag: noindex, nofollow
+
 # Turnstile (challenges.cloudflare.com) is allowed site-wide in the /* CSP below,
 # for the widget on the community "Get featured" form. Cloudflare Pages JOINS
 # same-name headers across path rules rather than replacing them, so a per-path

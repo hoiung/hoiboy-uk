@@ -5,9 +5,10 @@
        real, indexable, duplicate-of-home page, and it hides genuinely broken links
        from every link checker, because nothing ever returns a failing status.
 
-       static/_redirects already documented the gap twice ("there is no custom 404
-       to catch it") and relied on bare slash-less rules to work around it; those
-       rules stay, because a 301 to the right page still beats a correct 404.
+       static/_redirects documented the gap twice before this shipped and relied on
+       bare slash-less rules to work around it; those rules stay, because a 301 to
+       the right page still beats a correct 404. Both of those comments have since
+       been reworded to say so, rather than still asserting no 404 exists.
 
        Uses the same baseof shell as every other page, so the sidebar nav gives a
        lost reader a real way out. Deliberately plain: this is functional copy, not
@@ -22,7 +23,7 @@
        whole shell (sidebar, footer, brand h1), so a page-size floor cannot tell
        a rendered 404 from a blank one. Proven, not assumed - a byte-size check
        was written here first and passed the blank-block mutation. */ -}}
-<article class="post" data-page="404">
+<article data-page="404">
   <h1>Page not found</h1>
 
   <p>That link is broken, or the page has moved. Nothing is wrong with your browser.</p>
