@@ -31,9 +31,14 @@
 # cannot be retroactively edited. The rules below are the only thing keeping
 # those links alive.
 
-# The one post whose published path is not its slug: content/posts/ai-jargon-for-noobs/
-# sets `slug: ai-jargon-for-newbies`, so the /posts/* wildcard would send it to a
-# dead /blogs/ai-jargon-for-noobs/. It MUST stay above that wildcard (see 1 above).
+# Two posts publish under a slug that is not their bundle name (see the same list in
+# scripts/validate_internal_links.py): 2026-04-07-foundation -> foundation, and
+# ai-jargon-for-noobs -> ai-jargon-for-newbies. Only the second needs a rule here, and
+# the reason is its ALIAS, not its slug: it sets aliases: ["/posts/ai-jargon-for-noobs/"],
+# so that URL really was served, and the /posts/* wildcard would send it to a dead
+# /blogs/ai-jargon-for-noobs/. foundation never served under its bundle name, so the
+# wildcard already maps its one real URL correctly. This MUST stay above that wildcard
+# (see 1 above).
 /posts/ai-jargon-for-noobs /blogs/ai-jargon-for-newbies/ 301
 /posts/ai-jargon-for-noobs/ /blogs/ai-jargon-for-newbies/ 301
 
