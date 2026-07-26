@@ -54,10 +54,18 @@ flat `.md`/`.markdown`/`.html` (Check A), a singular page that would fall back t
 the default card (Check B), an indexable `_index.md` landing (section or home)
 missing its own `share-card.*` (Check C - no hero fallback, since `head.html`'s
 hero-pick is `.IsPage`-only), or an indexable auto-section missing its own card
-(Check D - a content directory Hugo renders as a list page with no `_index.*` at
-all, so Check C cannot enumerate it; `/posts/` served the default this way until
-blog-priv#62 added `content/posts/_index.md`). So no indexable page can silently
-ship the generic default.
+(Check D - a TOP-LEVEL content directory Hugo renders as a list page with no
+`_index.*` at all, so Check C cannot enumerate it; `/posts/` served the default this
+way until blog-priv#62 added `content/posts/_index.md`. Check D also covers home
+when `content/_index.md` is absent, which Check C cannot see either).
+
+Between them these cover every page kind the site renders. One caveat worth knowing
+rather than assuming away: in source-only mode there is no build to read, so a
+section's served URL is derived from its content path, and a `[permalinks.section]`
+rule makes those differ (`content/posts` serves at `/blogs/`). That URL is only used
+to fnmatch `static/_headers` for noindex, so the blind spot is narrow - a stale glob
+could silence one section - and it closes entirely when a build is present, since
+`--built` hands the source check Hugo's own `trail.json` URL index.
 
 Fix a Check D violation by adding the directory's `_index.md` and a
 `landing-cards.tsv` row, not by hand-dropping a PNG: an auto-section can technically
