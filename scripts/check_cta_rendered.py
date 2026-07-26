@@ -85,15 +85,28 @@ DEFAULT_MIN_INSTANCES = 6
 
 SCHEMES = ("light", "dark")
 
-# Every class attribute in the document, quoted or not. Hugo's minifier drops
-# the quotes around a single-token value, so the built HTML says class=btn where
-# the source said class="btn".
+# Every class attribute in the document, quoted or not.
+#
+# READ THIS BEFORE GREPPING THE BUILT TREE. Hugo's minifier here does NOT drop
+# attribute quotes: config/_default/hugo.toml:117 sets `keepQuotes = true`, so
+# the built HTML always says class="btn", exactly as the source did. Measured on
+# the built tree: 11,642 quoted single-token class attributes, 0 unquoted.
+#
+# This matters because the opposite belief is self-confirming and cost this
+# session real time. A probe for the unquoted form returns 0 on EVERY page,
+# including the pages that do carry the button, so it reads as "the button is
+# nowhere" and quietly confirms whatever hypothesis you brought to it. Always
+# grep class="btn" WITH the quotes. The unquoted branch below is kept only as
+# defensive tolerance in case the minifier config ever changes; it is not
+# evidence of anything today.
 #
 # The tokens are then compared whole. A `\bbtn\b` substring match looks
 # equivalent and is not: `-` is a non-word character, so it matches inside
 # `menu-toggle-btn`, the mobile nav hamburger that the shared sidebar puts on
-# every page of the site. That made this gate "find" the button on all 468
-# pages, then fail on the 400-odd where no such element exists.
+# every page of the site. That made this gate "find" the button on all 339 built
+# HTML pages, then fail on the 333 where no such element exists. (339 is the
+# file count this gate walks via rglob below. Hugo separately reports 468 "page
+# objects" in its build summary; the two numbers are not interchangeable.)
 CLASS_ATTR = re.compile(r'class=(?:"([^"]*)"|\'([^\']*)\'|([^\s>]+))')
 
 COMMENTS = re.compile(r"/\*.*?\*/", re.S)
