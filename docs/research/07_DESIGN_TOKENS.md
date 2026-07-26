@@ -7,6 +7,7 @@
 | Token | Value | Rationale |
 |---|---|---|
 | Accent colour | `#c0533a` (terracotta) | Warm, earthy, food/adventure friendly. WCAG AA on white (4.78:1) and on `#fafafa` (4.65:1). |
+| CTA button fill | `#188418` (green) | The discovery-call button only. White label at 4.82:1, clearing WCAG AA for body-size text. This is the logo green DARKENED, not the logo green: the logo's own `#228b22` (exactly CSS `forestgreen`) measures 4.39:1 against white and 3.97:1 against `--fg #1a1a1a`, so no label colour this theme uses clears AA on it. Deliberately not the accent, which is already every link on the site. Added blog-priv#63. |
 | Body text | `#1a1a1a` on `#fafafa` (light), `#e8e8e8` on `#141414` (dark) | AAA contrast in both modes |
 | Body font | Inter (Google Fonts) | Humanist sans, warm, reads at small sizes, voice-fit (not academic) |
 | Mono font | JetBrains Mono → SF Mono → Menlo system fallback | Tech posts |
@@ -17,14 +18,15 @@
 
 ## Single source of truth
 
-`config/_default/params.toml > accentColor` is the canonical accent colour. Read by `assets/css/main.css` via Hugo template processing (`resources.ExecuteAsTemplate`). Changing the hex in `params.toml` automatically updates the rendered CSS.
+`config/_default/params.toml > accentColor` is the canonical accent colour, and `> ctaColor` the canonical CTA fill. Both are read by `assets/css/main.css` via Hugo template processing (`resources.ExecuteAsTemplate`), as `--accent` and `--cta`. Changing either hex in `params.toml` automatically updates the rendered CSS, and `scripts/check_config_traceability.py` fails the build if a declared param is read by no layout.
 
 ## Notes
 
-- Greyscale base for body text and chrome. Accent applied ONLY to links and active-nav indicator. No other colour anywhere.
+- Greyscale base for body text and chrome. Accent applied ONLY to links and active-nav indicator. One CTA green (`--cta`) on the discovery-call button. No other colour anywhere. (This line read "No other colour anywhere" with no CTA exception until blog-priv#63, which is worth knowing: as written it told a future reader the green should not exist, which is a direct route back to the unstyled-button defect that issue fixed.)
 - Inter loaded from Google Fonts (`?family=Inter:wght@400;600;700`). System fonts as fallback so first paint never blocks on font load.
 - No custom dark-mode toggle in Phase 0. System preference rules. Revisit in a later phase if user demand exists.
 - Accent contrast checked manually via WebAIM Contrast Checker. Re-check if accent is changed.
+- CTA contrast is checked automatically, not manually: `scripts/test_cta_button.py` computes the ratio from the two colours in source and fails below 4.5:1, so a future fill change re-tests itself. If a brand colour cannot clear 4.5:1, that is a finding to surface, not a threshold to lower.
 
 ---
 
