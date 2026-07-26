@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Guard: every indexable page (singular AND section/home landing) owns its card.
 
-Three failure classes are caught deterministically from the source tree (no Hugo
+Four failure classes are caught deterministically from the source tree (no Hugo
 build needed), matching how ``layouts/_partials/head.html`` resolves ``og:image``:
 
   Check A - bundle form.  A singular content page must be a leaf bundle
@@ -27,13 +27,16 @@ build needed), matching how ``layouts/_partials/head.html`` resolves ``og:image`
     (which have no content bundle and cannot hold a card).
 
   Check D - card presence (auto-sections, blog-priv#61 2nd increment).  Hugo also
-    renders a list page for a content directory that has NO ``_index.*``.  Check C
-    enumerates ``_index.*`` landings only, so such a directory is invisible to it and
-    silently serves the default card - which is how ``/posts/`` shipped the default
-    until blog-priv#62 gave it a ``content/posts/_index.md``.  An auto-section CAN
-    hold a card (Hugo still publishes the directory's files as page resources), so
-    this checks card PRESENCE like Check C; the fix it recommends is the ``_index.*``
-    because ``gen_card.py landings`` reads each card's copy from that frontmatter.
+    renders a list page for a TOP-LEVEL content directory that has NO ``_index.*``.
+    Check C enumerates ``_index.*`` landings only, so such a directory is invisible
+    to it and silently serves the default card - which is how ``/posts/`` shipped the
+    default until blog-priv#62 gave it a ``content/posts/_index.md``.  An
+    auto-section CAN hold a card (Hugo still publishes the directory's files as page
+    resources), so this checks card PRESENCE like Check C; the fix it recommends is
+    the ``_index.*`` because ``gen_card.py landings`` reads each card's copy from
+    that frontmatter.  Check D also covers HOME when ``content/_index.md`` is absent:
+    Hugo still renders ``/``, but ``landing_bundles`` yields nothing for it, so Check
+    C would silently stop covering the site's highest-traffic page.
 
 ``ext`` spans the content formats Hugo renders natively on this site: ``.md``,
 ``.markdown``, ``.html`` (CONTENT_EXTS).
@@ -277,14 +280,12 @@ def landing_bundles(content_root: Path):
 
 
 def auto_sections(content_root: Path):
-    """Yield every directory Hugo renders as a section list page with NO ``_index.*``
-    to back it (a Hugo "auto-section").
+    """Yield every TOP-LEVEL content directory Hugo renders as a section list page
+    with NO ``_index.*`` to back it (a Hugo "auto-section").
 
-    Hugo renders a list page for any content directory, whether or not it carries an
-    ``_index.*``. Check C only enumerates ``_index.*`` landings, so an auto-section is
-    invisible to it and silently serves the site default card. That is exactly how
-    ``/posts/`` shipped the default card until blog-priv#62 gave it a
-    ``content/posts/_index.md``.
+    Check C only enumerates ``_index.*`` landings, so an auto-section is invisible to
+    it and silently serves the site default card. That is exactly how ``/posts/``
+    shipped the default card until blog-priv#62 gave it a ``content/posts/_index.md``.
 
     An auto-section CAN hold a card: Hugo still publishes the directory's files as
     page resources, so a root ``share-card.<raster>`` does become the ``og:image``.
@@ -297,38 +298,58 @@ def auto_sections(content_root: Path):
     ``gen_card.py landings`` sources each card's title and tagline from the landing's
     own frontmatter and an auto-section has none.
 
-    A directory is an auto-section when it is an ancestor of at least one real page,
-    is not itself a leaf bundle (a leaf bundle is a PAGE, not a section), is not a
-    resource directory inside one, and has no ``_index.*``. ``content_root`` is NOT a
-    candidate: home is Check C's (it enumerates the home bundle explicitly), and a
-    site with no ``content/_index.md`` at all is a broken Hugo tree rather than this
-    defect class."""
-    page_ancestors: set[Path] = set()
+    **Only depth-1 directories qualify.** Hugo makes a directory a section when it is
+    top-level OR carries an ``_index.*`` - a NESTED directory without one is not a
+    section at all, and its pages belong to the ancestor section. Measured on the
+    pinned Hugo (0.160.0 extended): with ``content/toplevel/deeper/pageC/index.md``
+    and ``content/parent/nested/pageB/index.md``, the build rendered ``/toplevel/``
+    (kind=section) and ``/parent/`` (kind=section) but emitted NO page for
+    ``/toplevel/deeper/`` or ``/parent/nested/``. Walking every ancestor would flag
+    directories Hugo never serves and assert something false about them.
 
-    def add_ancestors(start: Path) -> None:
-        d = start
-        while d != content_root and d.parent != d:    # stop BEFORE content_root (home = Check C)
-            page_ancestors.add(d)
-            d = d.parent
-
-    for bundle_dir, _ in leaf_bundles(content_root):
-        add_ancestors(bundle_dir.parent)
-    for f in flat_pages(content_root):
-        add_ancestors(f.parent)
-
-    for d in sorted(page_ancestors):
+    ``content_root`` is not yielded here; home is handled separately in ``check()``
+    because it needs no depth rule and its URL is always ``/``."""
+    for d in sorted(p for p in content_root.iterdir() if p.is_dir()):
         if index_file(d):                             # a leaf bundle is a page, not a section
             continue
         if section_index_file(d):                     # backed by _index.* -> Check C owns it
             continue
-        if _under_a_bundle(d, content_root):          # bundle resource dir, never a section
+        if _holds_a_page(d, content_root):            # an empty/asset-only dir is not a section
+            yield d
+
+
+def _holds_a_page(dirpath: Path, content_root: Path) -> bool:
+    """True if `dirpath` contains at least one real content page beneath it. A
+    top-level directory with no pages (e.g. an asset-only folder) is not rendered as
+    a section, so it is not an auto-section either."""
+    for f in dirpath.rglob("*"):
+        if not f.is_file() or f.suffix.lower() not in CONTENT_EXTS:
             continue
-        yield d
+        if f.stem in ("index", "_index") or not _under_a_bundle(f, content_root):
+            return True
+    return False
 
 
-def section_dir_url(dirpath: Path, content_root: Path) -> str:
-    """Served URL for an auto-section directory (it has no frontmatter to override)."""
+def section_dir_url(dirpath: Path, content_root: Path,
+                    url_index: dict[str, str] | None = None) -> str:
+    """Served URL for an auto-section directory.
+
+    With `url_index` (from load_url_index) Hugo's own answer wins - the same contract
+    `page_url` uses, and for the same reason: a ``[permalinks.section]`` rule means the
+    content path is NOT the served path (blog-priv#62 maps ``posts`` to ``/blogs/``),
+    so deriving the URL from the directory name re-implements Hugo's permalink
+    resolution and gets it wrong. That matters here because the noindex exclusion
+    fnmatches this URL against ``static/_headers``: a wrong URL both false-positives on
+    a rule written for the real path and silently skips on a stale one.
+
+    The content-path fallback exists only for source-only mode, where there is no
+    build to read; ``--built --strict`` is what turns an unresolved page into a
+    named failure rather than a silent skip."""
     rel = dirpath.relative_to(content_root).as_posix()
+    if url_index is not None:
+        served = url_index.get("" if rel == "." else rel)
+        if served:
+            return served if served.endswith("/") else served + "/"
     return "/" + rel + "/" if rel != "." else "/"
 
 
@@ -349,7 +370,8 @@ def landing_card_status(bundle_dir: Path) -> str:
     return "svg-sharecard" if share_svg else "none"
 
 
-def check(content_root: Path, headers_path: Path) -> list[str]:
+def check(content_root: Path, headers_path: Path,
+          url_index: dict[str, str] | None = None) -> list[str]:
     violations: list[str] = []
     noindex_globs = parse_noindex_globs(headers_path)
 
@@ -398,8 +420,24 @@ def check(content_root: Path, headers_path: Path) -> list[str]:
                 f"run gen_card.py landings (or gen_card.py home for the home page)."
             )
 
+    # Home with no content/_index.md: Hugo still renders "/", but landing_bundles
+    # yields nothing for it, so Check C silently stops covering the highest-traffic
+    # page. Verified: a tree with no content/_index.md renders kind=home at / serving
+    # default-card, and the guard passed before this clause existed.
+    if not section_index_file(content_root):
+        home_url = section_dir_url(content_root, content_root, url_index)
+        if not is_excluded("", home_url, noindex_globs):
+            status = landing_card_status(content_root)
+            if status != "ok":
+                violations.append(
+                    f"[auto-section-uncarded] . ({home_url}): the site has no "
+                    f"content/_index.md, so Hugo renders home from no content file and "
+                    f"Check C cannot enumerate it; it serves the default card. Add "
+                    f"content/_index.md, then run gen_card.py home."
+                )
+
     for section_dir in auto_sections(content_root):
-        url = section_dir_url(section_dir, content_root)
+        url = section_dir_url(section_dir, content_root, url_index)
         if is_excluded("", url, noindex_globs):       # no frontmatter exists; _headers decides
             continue
         rel = section_dir.relative_to(content_root).as_posix()
@@ -436,11 +474,8 @@ def check_built(content_root: Path, headers_path: Path, public: Path,
     noindex_globs = parse_noindex_globs(headers_path)
     og_re = re.compile(r'<meta property="og:image" content="([^"]+)"')
     url_index = load_url_index(public)
-    for bundle_dir, index_path in chain(leaf_bundles(content_root), landing_bundles(content_root)):
-        fm = read_frontmatter(index_path)
-        url = page_url(index_path, content_root, fm, url_index)
-        if is_excluded(fm, url, noindex_globs):
-            continue
+
+    def verify_rendered(url: str) -> None:
         rendered = public / url.strip("/") / "index.html"
         if not rendered.exists():
             if strict:
@@ -449,7 +484,7 @@ def check_built(content_root: Path, headers_path: Path, public: Path,
                     f"og:image was never checked (page_url() derived a URL the build does "
                     f"not serve, or the page did not render)."
                 )
-            continue                                  # alias/permalink edge — source check owns it
+            return                                    # alias/permalink edge — source check owns it
         html = rendered.read_text(encoding="utf-8", errors="replace")
         m = og_re.search(html)
         og = m.group(1) if m else ""
@@ -459,6 +494,22 @@ def check_built(content_root: Path, headers_path: Path, public: Path,
                 f"({og or 'MISSING'}); a real page must render its own card "
                 f"(template regression or missing card)."
             )
+
+    for bundle_dir, index_path in chain(leaf_bundles(content_root), landing_bundles(content_root)):
+        fm = read_frontmatter(index_path)
+        url = page_url(index_path, content_root, fm, url_index)
+        if is_excluded(fm, url, noindex_globs):
+            continue
+        verify_rendered(url)
+
+    # Auto-sections render too, and are exactly the kind Check D was added to protect,
+    # so the template-regression backstop must cover them as well (they were omitted
+    # from this chain when Check D first landed).
+    for section_dir in auto_sections(content_root):
+        url = section_dir_url(section_dir, content_root, url_index)
+        if is_excluded("", url, noindex_globs):
+            continue
+        verify_rendered(url)
     return violations
 
 
@@ -483,12 +534,18 @@ def main() -> int:
     headers_path = Path(args.headers)
 
     try:
-        violations = check(content_root, headers_path)
+        public = None
         if args.built:
             public = Path(args.built)
             if not public.is_dir():
                 print(f"error: --built dir not found: {public}", file=sys.stderr)
                 return 2
+        # With a build available, hand the source check Hugo's own URL index so the
+        # noindex exclusion fnmatches the URL Hugo really serves, not one derived from
+        # the content path (a [permalinks.section] rule makes those differ).
+        violations = check(content_root, headers_path,
+                           load_url_index(public) if public else None)
+        if public:
             violations += check_built(content_root, headers_path, public, strict=args.strict)
     except OSError as e:
         print(f"error: {e}", file=sys.stderr)
@@ -501,7 +558,8 @@ def main() -> int:
         print(f"\n{len(violations)} violation(s).", file=sys.stderr)
         return 1
     scope = ("source + rendered (strict)" if args.strict else "source + rendered") if args.built else "source"
-    print(f"Social-card guard: OK ({scope}; every indexable page - singular + section/home landing - owns its card).")
+    print(f"Social-card guard: OK ({scope}; every indexable page - singular, "
+          f"section/home landing, auto-section - owns its card).")
     return 0
 
 
