@@ -231,6 +231,15 @@ run_check "social-cards-rendered" python3 scripts/check_social_cards.py --built 
 #     blog-priv#64.
 run_check "404-gate" python3 scripts/test_404.py --built public
 
+# 7c. CTA button, as the BROWSER computes it. Loads every built page carrying
+#     a.btn in headless Chromium, in both colour schemes, and asserts the
+#     computed fill, label colour and text-decoration. This is the only lane
+#     with a browser, so it is the only lane that can prove the cascade rather
+#     than model it: `scripts/test_cta_button.py` scores selector specificity
+#     from source in CI, which stays green for a stylesheet that is correct and
+#     a page that is not. blog-priv#63.
+run_check "cta-rendered" python3 scripts/check_cta_rendered.py --built public
+
 # 8. Lychee on rendered HTML — catches broken cross-section links + missing
 #    assets that markdown-only lychee misses (e.g. a `[link](../other-section/)`
 #    that resolves under Hugo's permalink scheme but not under raw-md walk).
