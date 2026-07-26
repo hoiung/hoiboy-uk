@@ -269,8 +269,11 @@ def test_label_contrast_clears_wcag_aa():
     because the wrong lesson is easy to draw from it:
 
       #188418   4.82:1   shipped. The logo green darkened by rgb(10, 7, 10).
-      #228b22   4.39:1   the exact logo green. A mid-tone, so it clears 4.5:1
-                         with NO label colour at all (near-black is 3.95:1).
+      #228b22   4.39:1   the exact logo green, against white. Against this
+                         theme's --fg #1a1a1a it is 3.97:1. Both fail, so no
+                         label colour the theme actually uses clears 4.5:1 on
+                         it. (It is not a universal failure: pure black clears
+                         it at 4.78:1. The theme just never uses pure black.)
 
     The earlier failure here was never the hex. It was describing #188418 as
     "taken from the logo" when it is a derivative, so nobody could see a trade
@@ -335,14 +338,35 @@ def test_the_rendered_cascade_gate_is_wired():
     nowhere (tests/test_gate_wiring.py, scripts/test_gen_card.py). Comment lines
     are stripped: pre-publish.sh documents its own gates at length, and a gate
     named only in prose is not wired.
+
+    This asserts the INVOCATION SHAPE, not that the filename appears somewhere.
+    An earlier version was a bare `RENDERED_GATE in code` substring test, which
+    a Stage 5 mutation defeated in one line: rewriting the call as
+    `echo "scripts/check_cta_rendered.py"`, or as a disabled variable
+    assignment, kept the test green while the gate no longer ran. A substring is
+    evidence that a string is present, never that a program is executed.
+
+    Scope note, so nobody reads more coverage into this than exists:
+    scripts/pre-publish.sh is the MANUAL pre-publish lane. It is not invoked by
+    CI or by pre-commit, deliberately, because it is the only lane with Chromium
+    and installing a browser on every push is not free. So this test proves the
+    browser gate runs when a human runs pre-publish, which is the documented
+    publish step, and NOT that it runs on every commit. The automatic half of
+    this file's coverage is the specificity scoring above, which needs no
+    browser and does run in CI.
     """
     code = "\n".join(
         line for line in PRE_PUBLISH.read_text(encoding="utf-8").splitlines()
         if not line.strip().startswith("#")
     )
-    assert RENDERED_GATE in code, (
-        f"{RENDERED_GATE} is not invoked by scripts/pre-publish.sh. Specificity "
-        f"is scored from source here, which is a model of the cascade and not "
-        f"the cascade itself; the browser check is what proves it. Unwired, it "
-        f"runs never."
+    invocation = re.compile(
+        rf"^\s*run_check\s+\S+\s+python3\s+{re.escape(RENDERED_GATE)}(?![\w./-])",
+        re.M,
+    )
+    assert invocation.search(code), (
+        f"{RENDERED_GATE} is not INVOKED by scripts/pre-publish.sh in the "
+        f"`run_check <name> python3 {RENDERED_GATE} ...` shape every other gate "
+        f"in that file uses. Specificity is scored from source here, which is a "
+        f"model of the cascade and not the cascade itself; the browser check is "
+        f"what proves it. Naming the file without calling it means it runs never."
     )
