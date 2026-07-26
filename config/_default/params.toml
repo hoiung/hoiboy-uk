@@ -23,6 +23,13 @@ authorSameAs = [
 # Accent: warm terracotta. Single colour applied to links + active nav.
 accentColor = "#c0533a"
 
+# CTA button fill. Forest green, taken from the logo (operator decision after
+# rendering all three logo colours on the real page in both themes, blog-priv#63).
+# Deliberately NOT accentColor: that is already the colour of every link on the
+# site, so a terracotta button reads as page furniture rather than a call to
+# action. White label on this is 4.82:1, clearing WCAG AA.
+ctaColor = "#188418"
+
 # Per-section layout switch. Sections in textFirstSections render
 # as plain title+date list (Tech & AI). All others get image-card layout.
 textFirstSections = ["tech-ai", "entrepreneurship", "trading"]
