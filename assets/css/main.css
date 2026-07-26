@@ -7,7 +7,7 @@
 
 :root {
   --accent: {{ site.Params.accentColor | default "#c0533a" }};
-  --cta: {{ site.Params.ctaColor | default "#188418" }};
+  --cta: {{ site.Params.ctaColor | default "#228b22" }};
   --fg: #1a1a1a;
   --fg-muted: #555;
   --bg: #fafafa;
@@ -120,10 +120,13 @@ strong, b { font-weight: 550; }
    load-bearing for the same reason. It is overriding an inherited underline,
    not omitting one. scripts/test_cta_button.py fails on either regression.
 
-   Fill is --cta (forest green from the logo), deliberately NOT --accent: the
-   accent is already the colour of every link on the site, so an accent button
-   reads as page furniture rather than as the one thing to click. White on
-   --cta is 4.82:1, clearing WCAG AA; that ratio is asserted, not assumed.
+   Fill is --cta, the LOGO green, deliberately NOT --accent: the accent is
+   already the colour of every link on the site, so an accent button reads as
+   page furniture rather than as the one thing to click. The logo green is a
+   mid-tone, so at normal text size it clears neither AA label option (white
+   4.39:1, near-black 3.95:1). It clears the 3:1 large-text floor, which is what
+   scripts/test_cta_button.py asserts. Brand fidelity is the operator's explicit
+   call here and the shortfall is recorded rather than hidden.
 
    Hover darkens the FILL only, derived from --cta rather than declared as a
    second colour, so the token stays the single source of truth. Where

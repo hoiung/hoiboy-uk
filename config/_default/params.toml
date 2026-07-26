@@ -23,12 +23,23 @@ authorSameAs = [
 # Accent: warm terracotta. Single colour applied to links + active nav.
 accentColor = "#c0533a"
 
-# CTA button fill. Forest green, taken from the logo (operator decision after
-# rendering all three logo colours on the real page in both themes, blog-priv#63).
+# CTA button fill. THE LOGO GREEN, sampled from assets/images/logo.png, where it
+# is the dominant green across the source and every served size (and is exactly
+# the CSS named colour `forestgreen`). This is the brand colour, not a value
+# picked to satisfy a contrast target. Do not nudge it: an earlier revision of
+# this issue shipped #188418, a darkened approximation, and the operator
+# correctly rejected it as invented.
+#
 # Deliberately NOT accentColor: that is already the colour of every link on the
 # site, so a terracotta button reads as page furniture rather than a call to
-# action. White label on this is 4.82:1, clearing WCAG AA.
-ctaColor = "#188418"
+# action.
+#
+# CONTRAST, stated plainly rather than buried: #228b22 is a mid-tone, so at
+# normal text size it clears neither AA label option (white 4.39:1, near-black
+# 3.95:1, both under 4.5:1). It DOES clear the 3:1 large-text threshold. The
+# button therefore keeps a white label and scripts/test_cta_button.py asserts
+# the 3:1 floor, with the shortfall recorded rather than hidden.
+ctaColor = "#228b22"
 
 # Per-section layout switch. Sections in textFirstSections render
 # as plain title+date list (Tech & AI). All others get image-card layout.
