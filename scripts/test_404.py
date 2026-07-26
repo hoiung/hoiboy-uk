@@ -65,7 +65,35 @@ SOURCE = ROOT / "layouts" / "404.html"
 # the content block is empty (verified by mutation, not assumed).
 CONTENT_MARKER = 'data-page="404"'
 
-HREF = re.compile(r'href="(/[^"]*)"')
+# The 404 page's OWN content block, isolated from the shared shell. Check C is
+# scoped to this and not to the whole document, which is a correctness fix and
+# not a tidy-up: the shared sidebar puts 11 root-relative nav links on every page
+# of the site, so a whole-document scan made the "no navigation links at all"
+# guard below unreachable, and let the page's entire "Try one of these" escape
+# list be deleted while this gate still reported "every navigation link on it
+# resolves". Proven by mutation: removing the <ul> wholesale exited 0.
+#
+# The sidebar's own links are not skipped work, they are covered site-wide by
+# scripts/validate_internal_links.py. What only this gate can check is the escape
+# hatch the 404 page adds for a reader who is already lost.
+CONTENT_BLOCK = re.compile(
+    r'<article[^>]*\bdata-page="404"[^>]*>(.*?)</article>', re.S)
+
+
+def site_base() -> str:
+    """baseURL from config, so an absolute self-link is not invisible to check C."""
+    cfg = (ROOT / "config" / "_default" / "hugo.toml").read_text(encoding="utf-8")
+    m = re.search(r'^\s*baseURL\s*=\s*["\']([^"\']+)["\']', cfg, re.M)
+    return m.group(1).rstrip("/") if m else ""
+
+
+# Matches a root-relative href AND the same link written absolutely against the
+# site's own baseURL, normalising both to a path. A root-relative-only pattern
+# went invisible the moment a link was written with absURL/permalink, which is a
+# routine refactor, so the gate would have silently stopped checking.
+HREF = re.compile(
+    r'href="(?:' + re.escape(site_base()) + r')?(/[^"]*)"' if site_base()
+    else r'href="(/[^"]*)"')
 
 # Asset URLs are emitted by the shared shell (fingerprinted CSS, images,
 # favicon, feeds) and are verified by the site's other gates. This check is
@@ -134,25 +162,36 @@ def main(argv: list[str] | None = None) -> int:
                 "to the reader."
             )
 
-        # C. LINKS
-        nav = sorted({
-            u for u in HREF.findall(html)
-            if not u.startswith(ASSET_PREFIXES)
-            and not u.lower().endswith(ASSET_SUFFIXES)
-        })
-        if not nav:
+        # C. LINKS, scoped to the page's own content block (see CONTENT_BLOCK).
+        block = CONTENT_BLOCK.search(html)
+        if not block:
             failures.append(
-                "the 404 page offers no navigation links at all - a dead end for a "
-                "lost reader, and this check would otherwise pass by having nothing "
-                "to verify."
+                f"{args.built}/404.html carries {CONTENT_MARKER} but its "
+                "<article> block could not be isolated, so the escape links "
+                "cannot be checked. Do not widen this check back to the whole "
+                "document: the shared sidebar's links would make it pass "
+                "unconditionally."
             )
-        for u in nav:
-            if not resolves(u, public):
+        else:
+            nav = sorted({
+                u for u in HREF.findall(block.group(1))
+                if not u.startswith(ASSET_PREFIXES)
+                and not u.lower().endswith(ASSET_SUFFIXES)
+            })
+            if not nav:
                 failures.append(
-                    f"the 404 page links to {u}, which the build does not serve. "
-                    "The one page a lost reader is guaranteed to see must not itself "
-                    "contain dead links."
+                    "the 404 page's own content offers no navigation links at all - "
+                    "a dead end for a lost reader. The shared sidebar does not count: "
+                    "every page has it, so it cannot tell a useful 404 from a useless "
+                    "one."
                 )
+            for u in nav:
+                if not resolves(u, public):
+                    failures.append(
+                        f"the 404 page links to {u}, which the build does not serve. "
+                        "The one page a lost reader is guaranteed to see must not itself "
+                        "contain dead links."
+                    )
 
     if failures:
         print("404 GATE FAILED:", file=sys.stderr)
