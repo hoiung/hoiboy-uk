@@ -64,7 +64,14 @@ EB_FS    = 18        # eyebrow size CEILING (justified across the panel via lett
 EB_LINES = 2         # a deep trail wraps rather than shrinking to an illegible size
 EB_FLOOR = 12        # smallest eyebrow size _fit_lines may drop to
 NAME_MAX = 80        # name font ceiling (shrinks to fit; floor is _fit_lines' default 12)
+NAME_FLOOR = 48      # smallest name size _fit_stack may drop to before failing loud
 ROLE_MAX = 28        # role font ceiling
+ROLE_FLOOR = 18      # smallest role size _fit_stack may drop to before failing loud
+BODY_CLEAR = 18      # the name/role block keeps this much clear of the watermark, both
+                     # above (below the eyebrow) and below (above the logo). blog-priv#62
+                     # made the eyebrow a wrapping parent trail instead of a fixed
+                     # one-line brand string, which pushes the block down, so this is
+                     # now enforced by _fit_stack rather than assumed.
 LOGO_CARD = 92       # watermark size on the card
 
 # --- hero geometry ---
@@ -220,6 +227,61 @@ def _eyebrow_tspans(lines, tx, first_y, line_h):
     return out, y
 
 
+RULE_GT, RULE_H, RULE_GB = 30, 6, 44   # gap above the rule, its height, gap below it
+RULE_GB_FLOOR = 28                     # the rule-to-role gap gives way before any type does
+
+
+def _stack_height(name_fs, name_lines, role_fs, role_lines, have_role, have_num,
+                  rule_gb=RULE_GB):
+    """Total height of the #N / name / rule / role block.
+
+    Defined ONCE and used by both the fitter and the emitter below, so the measured
+    height and the drawn height cannot drift apart."""
+    num_fs = round(name_fs * 2 / 3) if have_num else 0
+    num_gap = 10 if have_num else 0
+    return ((num_fs + num_gap)
+            + len(name_lines) * (name_fs + 2)
+            + RULE_GT + RULE_H
+            + (rule_gb + len(role_lines) * (role_fs + 8) if have_role else 0))
+
+
+def _fit_stack(name, role, inner, avail, have_role, have_num):
+    """Largest (name_fs, name_lines, role_fs, role_lines, rule_gb) whose assembled block
+    fits `avail` px of vertical room between the eyebrow and the watermark.
+
+    Elasticity order, most elastic first: the rule-to-role GAP gives way before any type
+    does, then the role, then the name. Whitespace is the cheapest thing to spend, and
+    the name is the dominant element by design (see _feature_number), so it gives last.
+
+    Why this exists: `_fit_lines` caps the LINE COUNT of one text run, which bounds that
+    run's width but says nothing about the height of the assembled block. Before
+    blog-priv#62 the eyebrow was a fixed one-line brand string, so `region_top` was a
+    constant 88 and the block always fitted; the eyebrow then became the page's own
+    parent trail, which wraps to EB_LINES and pushes `region_top` down by ~24px. The old
+    code centred with `max(0, (avail - stack) / 2)`, so an over-tall block silently
+    started at `region_top` and ran PAST the logo with no error. Measured on the one real
+    feature: stack 379 against 366 available, 13px into the watermark's clearance. That
+    13px now comes out of the 44px gap instead of the type. This fails loud instead."""
+    for name_mx in range(NAME_MAX, NAME_FLOOR - 1, -1):
+        name_fs, name_lines = _fit_lines(name, VT323, inner, name_mx, 2)
+        for role_mx in range(ROLE_MAX, ROLE_FLOOR - 1, -1):
+            if have_role:
+                role_fs, role_lines = _fit_lines(role, PLEX_R, inner, role_mx, 2)
+            else:
+                role_fs, role_lines = role_mx, []
+            for rule_gb in range(RULE_GB, RULE_GB_FLOOR - 1, -1):
+                if _stack_height(name_fs, name_lines, role_fs, role_lines,
+                                 have_role, have_num, rule_gb) <= avail:
+                    return name_fs, name_lines, role_fs, role_lines, rule_gb
+                if not have_role:
+                    break    # no role block, so the gap below the rule is not drawn
+            if not have_role:
+                break        # no role to shrink; only the name can give
+    sys.exit(f"share-card body does not fit above the watermark: name={name!r} "
+             f"role={role!r} still needs more than {avail}px at name={NAME_FLOOR}px / "
+             f"role={ROLE_FLOOR}px / gap={RULE_GB_FLOOR}px. Shorten the name or the role.")
+
+
 def build_share_card(photo, name, role, out_png, eyebrow, number=None):
     tx = PHOTO_W + PAD
     inner = CW - PHOTO_W - 2 * PAD
@@ -227,33 +289,35 @@ def build_share_card(photo, name, role, out_png, eyebrow, number=None):
     logo_px = LOGO_CARD
     logo_x = CW - 42 - logo_px
     logo_y = CH - 42 - logo_px
-    body_bottom = logo_y - 18                    # keep text clear of the watermark
+    body_bottom = logo_y - BODY_CLEAR             # keep text clear of the watermark
 
     eb_fs, eb_ls, eb_lines = _fit_eyebrow(eyebrow, inner, EB_FS)
     eb_y = top + eb_fs
     eb_ts, eb_last_y = _eyebrow_tspans(eb_lines, tx, eb_y, eb_fs + 6)
     if not eb_lines:
         eb_last_y = eb_y
-    region_top = eb_last_y + 18   # symmetric with body_bottom (logo_y - 18) so the block centres between the eyebrow bottom and the logo top
+    region_top = eb_last_y + BODY_CLEAR   # symmetric with body_bottom so the block centres between the eyebrow bottom and the logo top
 
-    name_fs, name_lines = _fit_lines(name, VT323, inner, NAME_MAX, 2)
-    name_lh = name_fs + 2
     num = str(number).strip() if number not in (None, "") else ""
-    num_fs = round(name_fs * 2 / 3) if num else 0     # kicker is 2/3 of the fitted name size
-    num_gap = 10 if num else 0                          # gap between the #N kicker and the name
     role = (role or "").strip()
     if role.lower() in ("(not given)", "not given"):   # the skill's missing-field sentinel
         role = ""
     have_role = bool(role)
-    if have_role:
-        role_fs, role_lines = _fit_lines(role, PLEX_R, inner, ROLE_MAX, 2)
-        role_lh = role_fs + 8
-    else:
-        role_fs, role_lines, role_lh = ROLE_MAX, [], ROLE_MAX + 8
 
-    rule_gt, rule_h, rule_gb = 30, 6, 44
-    stack = (num_fs + num_gap) + len(name_lines) * name_lh + rule_gt + rule_h + (rule_gb + len(role_lines) * role_lh if have_role else 0)
-    start = region_top + max(0, ((body_bottom - region_top) - stack) / 2)
+    name_fs, name_lines, role_fs, role_lines, rule_gb = _fit_stack(
+        name, role, inner, body_bottom - region_top, have_role, bool(num))
+    name_lh = name_fs + 2
+    role_lh = role_fs + 8
+    num_fs = round(name_fs * 2 / 3) if num else 0     # kicker is 2/3 of the fitted name size
+    num_gap = 10 if num else 0                          # gap between the #N kicker and the name
+
+    rule_gt, rule_h = RULE_GT, RULE_H
+    stack = _stack_height(name_fs, name_lines, role_fs, role_lines, have_role, bool(num),
+                          rule_gb)
+    start = region_top + ((body_bottom - region_top) - stack) / 2
+    assert start + stack <= body_bottom, (            # _fit_stack's postcondition
+        f"share-card body overflows the watermark clearance: end={start + stack:.0f} "
+        f"> body_bottom={body_bottom}")
 
     y = start
     num_ts = ""
