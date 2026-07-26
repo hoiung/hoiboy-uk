@@ -45,6 +45,7 @@ Run:  python3 -m pytest scripts/test_cta_button.py -q
 
 from __future__ import annotations
 
+import functools
 import re
 import sys
 from pathlib import Path
@@ -70,6 +71,7 @@ COMMENTS = re.compile(r"/\*.*?\*/", re.S)
 RULE = re.compile(r"([^{}]+)\{([^{}]*)\}", re.S)
 
 
+@functools.lru_cache(maxsize=None)
 def stylesheet() -> str:
     """main.css with comments stripped.
 
@@ -158,6 +160,7 @@ def contrast_ratio(a: tuple[int, int, int], b: tuple[int, int, int]) -> float:
     return (hi + 0.05) / (lo + 0.05)
 
 
+@functools.lru_cache(maxsize=None)
 def cta_color() -> str:
     """`ctaColor` as declared in params.toml.
 
@@ -308,18 +311,64 @@ def test_the_button_is_reachable_by_keyboard():
 # The class the shortcode emits, and the gate that checks the real cascade
 # --------------------------------------------------------------------------
 
+# Hugo and HTML comments in the shortcode, stripped before any class is scraped.
+#
+# This is load-bearing, not hygiene. The shortcode's own comment block contains
+# the sentence: Emits class="btn" only. A scrape over the raw file therefore
+# found `btn` in the PROSE, so deleting class="btn" from both real anchors -
+# which drops the site's only commercial CTA back to unstyled underlined body
+# copy on all five service pages - left the whole CI lane green, 8/8. The file's
+# two sibling helpers already strip comments for exactly this reason
+# (`stylesheet()` strips CSS comments, the wiring test strips shell comments);
+# this one did not, and it was the only automatic gate standing between the
+# defect and production.
+HUGO_COMMENT = re.compile(r"\{\{-?\s*/\*.*?\*/\s*-?\}\}", re.S)
+HTML_COMMENT = re.compile(r"<!--.*?-->", re.S)
+ANCHOR_TAG = re.compile(r"<a\b[^>]*>", re.I)
+
+
+def shortcode_anchor_classes() -> set[str]:
+    """Class tokens carried by real <a> tags in the shortcode, comments removed.
+
+    Scoped to anchor tags rather than the whole file so a class named in prose,
+    or on some other element, cannot stand in for the button actually having it.
+    """
+    html = SHORTCODE.read_text(encoding="utf-8")
+    html = HTML_COMMENT.sub(" ", HUGO_COMMENT.sub(" ", html))
+    return {
+        cls
+        for tag in ANCHOR_TAG.findall(html)
+        for attr in re.findall(r'class="([^"]*)"', tag)
+        for cls in attr.split()
+    }
+
+
+def test_the_shortcode_anchor_actually_carries_the_button_class():
+    """The positive half: the CTA anchor really is a button.
+
+    Every other test here checks that IF an element carries `btn` THEN it is
+    styled correctly. None of them noticed when the class was removed from the
+    anchors altogether, because the rule, the token and the contrast all stayed
+    perfectly valid for an element that no longer existed. A gate that only
+    validates the styling of an absent thing is not a regression gate.
+    """
+    classes = shortcode_anchor_classes()
+    assert "btn" in classes, (
+        f"no <a> tag in {SHORTCODE.name} carries the `btn` class (found "
+        f"{sorted(classes) or 'no classes at all'}). The discovery-call CTA is "
+        f"then an ordinary link: it inherits `.main a`, so it renders as "
+        f"underlined terracotta body copy, which is the exact defect "
+        f"blog-priv#63 was opened to fix."
+    )
+
+
 def test_the_shortcode_emits_no_class_the_stylesheet_does_not_define():
     """`btn-secondary` shipped for months naming a variant that never existed.
 
     Dropped in blog-priv#63 rather than invented. This asserts the general rule
     instead of that one name: every class the CTA anchor carries has a rule.
     """
-    html = SHORTCODE.read_text(encoding="utf-8")
-    emitted = {
-        cls
-        for attr in re.findall(r'class="([^"]*)"', html)
-        for cls in attr.split()
-    }
+    emitted = shortcode_anchor_classes()
     assert emitted, "the consulting-cta shortcode emits no class at all."
     css = stylesheet()
     undefined = sorted(c for c in emitted if not re.search(rf"\.{re.escape(c)}(?![\w-])", css))
