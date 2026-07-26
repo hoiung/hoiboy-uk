@@ -51,10 +51,19 @@ aspect preserved), and `default-card.png` as the taxonomy fallback.
 **Guard:** `scripts/check_social_cards.py` (pre-commit + pre-publish + CI, with a
 rendered-HTML backstop) fails the build on: a singular indexable page that is a
 flat `.md`/`.markdown`/`.html` (Check A), a singular page that would fall back to
-the default card (Check B), or an indexable `_index.md` landing (section or home)
+the default card (Check B), an indexable `_index.md` landing (section or home)
 missing its own `share-card.*` (Check C - no hero fallback, since `head.html`'s
-hero-pick is `.IsPage`-only). So no indexable page can silently ship the generic
-default.
+hero-pick is `.IsPage`-only), or an indexable auto-section missing its own card
+(Check D - a content directory Hugo renders as a list page with no `_index.*` at
+all, so Check C cannot enumerate it; `/posts/` served the default this way until
+blog-priv#62 added `content/posts/_index.md`). So no indexable page can silently
+ship the generic default.
+
+Fix a Check D violation by adding the directory's `_index.md` and a
+`landing-cards.tsv` row, not by hand-dropping a PNG: an auto-section can technically
+hold a card (Hugo publishes the directory's files as page resources), but
+`gen_card.py landings` reads each card's title and tagline from the landing's own
+frontmatter, so without the `_index.md` there is nothing for the generator to read.
 
 The `slug` is the page bundle path under `content/hire-hoi/ai-consultancy/`, so **nested
 slugs work as-is** — a client case study at
