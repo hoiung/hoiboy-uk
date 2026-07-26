@@ -158,14 +158,14 @@ Posts live at `/blogs/<slug>/` regardless of category, and the 7 category landin
 
 The retired pre-blog-priv#62 shapes (`/posts/<slug>/`, `/tech-ai/`) still resolve for visitors through the 301s in `static/_redirects`, but the validator rejects them in-repo: an internal link should not take a redirect hop.
 
-A link like `/blogs/dance/some-post/` is broken even though it looks plausible. The post is at `/blogs/some-post/`; `/blogs/dance/` is the landing where Hugo lists all dance posts. Cloudflare's fallback silently routes 404s to the homepage, so the bug surfaces as "click goes to homepage".
+A link like `/blogs/dance/some-post/` is broken even though it looks plausible. The post is at `/blogs/some-post/`; `/blogs/dance/` is the landing where Hugo lists all dance posts. Since blog-priv#64 the URL returns a real HTTP 404 and serves the custom 404 page, so the bug surfaces as "click lands on Page not found". It used to surface as "click goes to homepage", because with no `layouts/404.html` Cloudflare silently fell back to the homepage with HTTP 200; if you are following older notes, that symptom no longer occurs.
 
 | Form | Routes to |
 |---|---|
 | `/blogs/some-post/` | `content/posts/some-post/index.md` (the post; the content directory did NOT move) |
 | `/blogs/dance/` | `content/dance/_index.md` (the category landing) |
 | `/blogs/` | `content/posts/_index.md` (the Blogs hub, listing the 7 categories) |
-| `/blogs/dance/some-post/` | Cloudflare fallback returns the homepage HTML (HTTP 200, but no real page, the bug class) |
+| `/blogs/dance/some-post/` | HTTP 404, serving the custom 404 page (`layouts/404.html`). Still a broken link, but it now announces itself instead of soft-404ing to the homepage |
 | `/posts/some-post/`, `/dance/` | 301 to the `/blogs/` equivalent (retired; do not author these) |
 
 Worked example. Cross-linking another post:
@@ -206,7 +206,7 @@ Hugo skips drafts in production builds. Public repo + draft frontmatter = safe (
 - [ ] Local preview: `hugo server`, click around the post
 - [ ] Headings start at `##`, no skipped levels
 - [ ] Internal links resolve, external links live
-- [ ] **Pre-publish gate**: `bash scripts/pre-publish.sh content/posts/<slug>/`. Runs all 15 gates (consulting-yaml, em-dash, voice-tells, frontmatter, frontmatter-project-pages, social-cards, no-future-date, wordcount, secrets, svg-dimensions, social-cards-generate, hugo-build, social-cards-rendered, rendered-link-liveness, consulting-link-liveness) in one go (exit 0 = clean to publish). The rendered-HTML lychee (`rendered-link-liveness`) and `consulting-link-liveness` checks are **manual-only, NOT CI-enforced**: they need a full local `hugo --buildDrafts` build plus live external-URL probing, so they stay in this manual pre-publish step. CI runs the markdown-level lychee (`./**/*.md`) as the automated link tier; nothing elsewhere claims these two rendered checks are CI-enforced.
+- [ ] **Pre-publish gate**: `bash scripts/pre-publish.sh content/posts/<slug>/`. Runs all 17 gates (consulting-yaml, em-dash, voice-tells, frontmatter, frontmatter-project-pages, social-cards, no-future-date, wordcount, secrets, svg-dimensions, social-cards-generate, hugo-build, social-cards-rendered, 404-gate, cta-rendered, rendered-link-liveness, consulting-link-liveness) in one go (exit 0 = clean to publish). `cta-rendered` needs Playwright plus a one-time `playwright install chromium`; it is the only gate that drives a real browser, which is why it lives here rather than in CI. The rendered-HTML lychee (`rendered-link-liveness`) and `consulting-link-liveness` checks are **manual-only, NOT CI-enforced**: they need a full local `hugo --buildDrafts` build plus live external-URL probing, so they stay in this manual pre-publish step. CI runs the markdown-level lychee (`./**/*.md`) as the automated link tier; nothing elsewhere claims these two rendered checks are CI-enforced.
 
   **Neither link tier checks a post.** `lychee.toml` `exclude_path` contains **both** `public/blogs` and `content/posts`, so for a post target the rendered tier and the CI markdown tier each report `0 Total` and pass without checking anything. (`public/blogs` is the BUILT path; blog-priv#62 moved the rendered output there from `public/posts`. `content/posts` is the source path and did not move.) Measured: a post returns 0 links on both tiers, a consulting page returns 37 on the rendered tier. The exclusions are deliberate and predate blog-priv#55, so **the links in a new post must be checked by hand** before you publish. Do not read a green pre-publish run as evidence that a post's links resolve. The same caveat is restated in the `CAVEAT:` paragraph of the gate-8 entry in `scripts/pre-publish.sh`'s header block (same substance, different wording, so check both when either changes).
 - [ ] Commit with descriptive message

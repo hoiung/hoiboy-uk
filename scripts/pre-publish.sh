@@ -1,7 +1,7 @@
 #!/bin/bash
 # Pre-publish gate aggregator for hoiboy.uk new blog posts.
 #
-# Runs 15 sequential gates fail-fast on first non-zero exit:
+# Runs 17 sequential gates fail-fast on first non-zero exit:
 #   1. Consulting YAML   (data/consulting.yaml MUST NOT contain OPERATOR_TODO
 #                         substring — global gate, blocks publish whenever a
 #                         placeholder URL is unreplaced. consulting-ops#2 AC 0.2.)
@@ -26,7 +26,7 @@
 #                         future-dated post from the production build)
 #   5. Word count        (check_wordcount.py >3000 = fail. POSTS ONLY: this gate
 #                         SKIPs for consulting/legal/skills/private targets, so a
-#                         non-post run reports 14 PASS + 1 SKIP, not 15 PASS.)
+#                         non-post run reports 16 PASS + 1 SKIP, not 17 PASS.)
 #   6. Private leaks     (check-public-repo-secrets.py)
 #   6b.SVG dimensions    (check_svg_dimensions.py)
 #   6c.Social cards      (gen-social-cards.sh — the AC 3.0 two-pass card build:
@@ -37,7 +37,14 @@
 #   7a.Social cards      (check_social_cards.py --built public: rendered backstop
 #                         for a head.html/hero-pick template regression)
 #   7b.404 gate          (test_404.py --built public: root 404.html emitted, its
-#                         content block rendered, and its own links resolve)
+#                         content block rendered, it went through the baseof
+#                         shell, its own escape links resolve, and static/_headers
+#                         keeps /404* out of the index. blog-priv#64.)
+#   7c.CTA rendered      (check_cta_rendered.py --built public: the browser's
+#                         COMPUTED fill, label colour and text-decoration for the
+#                         discovery-call button, in both colour schemes. This is
+#                         the only lane with Chromium, which is why the gate lives
+#                         here and not in CI. blog-priv#63.)
 #   8. Rendered links    (lychee on rendered HTML NOT raw .md — catches broken
 #                         cross-section links + missing assets that markdown-only
 #                         lychee cannot see. CAVEAT: lychee.toml exclude_path
