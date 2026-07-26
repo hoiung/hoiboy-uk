@@ -16,3 +16,12 @@ piexif
 # commit with ModuleNotFoundError. It could not fail earlier: ci.yml triggers on
 # `push: branches: [main]` and `pull_request` only, and a solo branch is neither.
 pillow
+# Playwright: scripts/check_cta_rendered.py drives headless Chromium to read the
+# CTA button's COMPUTED style, which is the only way to test a cascade rather
+# than model it. It was undeclared until the blog-priv#63 Stage 5 audit: the
+# gate's one invocation path (scripts/pre-publish.sh) would hit its own
+# `except ImportError` and exit 2 for anyone who set up exactly as documented.
+# The browser binary is a separate one-time step and is NOT pip-installable:
+#   playwright install chromium
+# CI does not install either; the browser half runs in the pre-publish lane.
+playwright

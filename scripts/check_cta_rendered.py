@@ -292,7 +292,12 @@ def main(argv: list[str] | None = None) -> int:
             finally:
                 browser.close()
     finally:
+        # Both calls, in this order. shutdown() stops the serve loop but leaves
+        # the listening socket open for the garbage collector; server_close()
+        # releases the fd. Matches scripts/test_check_ai_crawler_access.py:97-98,
+        # which is the repo's existing pattern for the same primitive.
         httpd.shutdown()
+        httpd.server_close()
 
     if failures:
         print("CTA RENDER GATE FAILED:", file=sys.stderr)
