@@ -111,6 +111,31 @@ def noindex_globs() -> list[str]:
     spec.loader.exec_module(mod)
     return mod.parse_noindex_globs(HEADERS)
 
+
+def noindex_covers_404(globs: list[str]) -> bool:
+    """True when one of `globs` names the 404 page itself.
+
+    `/404`, `/404/` and `/404*` are three spellings of the same rule and all
+    count. Two near-misses deliberately do not:
+
+      `/404.html`  Cloudflare 308-redirects that asset path to `/404`, and it is
+                   `/404` that answers HTTP 200. A rule pinned to the `.html`
+                   form leaves the URL a crawler actually lands on uncovered.
+      `/*`         a site-wide blanket rule would technically cover the 404, but
+                   the gate requires the rule to NAME the page. Inheriting it
+                   means a later narrowing of the blanket silently un-covers the
+                   404, with nothing connecting the two edits.
+
+    Extracted from an inline expression in `main()` at Ralph round 2 so it could
+    be tested at all: it had none of the shapes above pinned by anything, on a
+    predicate whose whole job is telling near-misses apart. The original also
+    accepted a second empty-string form, which was unreachable -- reaching it
+    needs a glob made only of `/` and `*`, which cannot also start with `/404` --
+    so it is gone rather than carried as an untestable branch.
+    """
+    return any(g.startswith("/404") and g.rstrip("*").rstrip("/") == "/404"
+               for g in globs)
+
 # The 404 page's OWN content block, isolated from the shared shell. Check C is
 # scoped to this and not to the whole document, which is a correctness fix and
 # not a tidy-up: the shared sidebar puts 11 root-relative nav links on every page
@@ -182,8 +207,7 @@ def main(argv: list[str] | None = None) -> int:
     if not HEADERS.is_file():
         failures.append(f"{HEADERS.relative_to(ROOT)} is missing, so the 404 "
                         "page cannot be kept out of the search index.")
-    elif not any(g.rstrip("*").rstrip("/") in ("/404", "") and g.startswith("/404")
-                 for g in noindex_globs()):
+    elif not noindex_covers_404(noindex_globs()):
         failures.append(
             "static/_headers has no `X-Robots-Tag: noindex` rule for /404*. "
             "Cloudflare serves this template at /404.html -> 308 -> /404 with "
@@ -302,6 +326,153 @@ def main(argv: list[str] | None = None) -> int:
     print(f"404 gate: OK (source template present; {args.built}/404.html emitted; "
           "every navigation link on it resolves).")
     return 0
+
+
+# ---------------------------------------------------------------------------
+# Unit tests for the noindex helpers above.
+#
+# pytest collects this file by name and, until Ralph round 2, found NOTHING in
+# it: it is a CLI gate wearing a `test_` prefix, so the suite counted it as a
+# test file while it asserted nothing at all. Thirteen other gates under
+# scripts/ are both a CLI and a pytest module, so the coverage goes here in the
+# house pattern rather than into a companion file that would have to be called
+# `test_test_404.py`.
+#
+# Deliberately NO `import pytest`. pre-commit runs this file as a bare CLI
+# (`--source-only`, hook `check-404`), and a gate that cannot start unless a
+# test framework is installed fails for a reason that has nothing to do with the
+# site. Plain `test_*` functions and the `tmp_path` / `monkeypatch` fixtures need
+# no import, so the CLI stays independent of pytest.
+#
+# CI runs these through an explicit pytest step, SEPARATE from the existing
+# `python3 scripts/test_404.py --built public` step -- that one is the CLI, and
+# a CLI run executes no test functions. Worth stating because
+# tests/test_gate_wiring.py is satisfied by the file being NAMED in ci.yml, and
+# the CLI line already names it: without the added pytest step these tests would
+# have been listed, green locally, and never once run by CI. That is precisely
+# the "a test file nobody runs" class the wiring guard exists to catch, arriving
+# through the one door the guard does not watch.
+# ---------------------------------------------------------------------------
+
+def _headers(tmp_path, body: str) -> Path:
+    p = tmp_path / "_headers"
+    p.write_text(body, encoding="utf-8")
+    return p
+
+
+def test_noindex_globs_reads_the_rule_whatever_order_the_block_declares_it(tmp_path, monkeypatch):
+    """A `_headers` block carries any number of directives in ANY order.
+
+    This is the case the hand-rolled regex this helper replaced got wrong: it
+    required `X-Robots-Tag` to be the line immediately after the path, so moving
+    a sibling directive above it -- a functionally identical edit -- false-FAILED
+    the gate. This file already ships a four-directive block for the
+    meet-recorder page, so the shape is real, not hypothetical.
+    """
+    monkeypatch.setattr(sys.modules[__name__], "HEADERS", _headers(tmp_path, (
+        "/404*\n"
+        "  X-Frame-Options: DENY\n"
+        "  Referrer-Policy: no-referrer\n"
+        "  X-Robots-Tag: noindex, nofollow\n"
+    )))
+    assert noindex_globs() == ["/404*"]
+
+
+def test_noindex_globs_tolerates_blank_lines_and_tab_indentation(tmp_path, monkeypatch):
+    monkeypatch.setattr(sys.modules[__name__], "HEADERS", _headers(tmp_path, (
+        "/404*\n"
+        "\n"
+        "\tX-Robots-Tag: noindex, nofollow\n"
+    )))
+    assert noindex_globs() == ["/404*"]
+
+
+def test_noindex_globs_accepts_the_none_directive(tmp_path, monkeypatch):
+    """`X-Robots-Tag: none` is `noindex, nofollow` by another name."""
+    monkeypatch.setattr(sys.modules[__name__], "HEADERS", _headers(tmp_path, (
+        "/404*\n  X-Robots-Tag: none\n"
+    )))
+    assert noindex_globs() == ["/404*"]
+
+
+def test_noindex_globs_ignores_a_commented_out_rule(tmp_path, monkeypatch):
+    """A commented rule is not a rule. Cloudflare never reads it, nor may this."""
+    monkeypatch.setattr(sys.modules[__name__], "HEADERS", _headers(tmp_path, (
+        "# /404*\n#   X-Robots-Tag: noindex, nofollow\n"
+    )))
+    assert noindex_globs() == []
+
+
+def test_noindex_globs_returns_nothing_when_the_block_sets_no_robots_directive(tmp_path, monkeypatch):
+    monkeypatch.setattr(sys.modules[__name__], "HEADERS", _headers(tmp_path, (
+        "/404*\n  X-Frame-Options: DENY\n"
+    )))
+    assert noindex_globs() == []
+
+
+def test_noindex_covers_404_accepts_every_spelling_of_the_rule():
+    for glob in ("/404", "/404/", "/404*", "/404/*"):
+        assert noindex_covers_404([glob]), f"{glob} should count as covering /404"
+
+
+def test_noindex_covers_404_rejects_the_html_asset_path():
+    """`/404.html` 308s to `/404`, and `/404` is what answers 200.
+
+    Covering only the asset path leaves the URL a crawler actually reaches
+    uncovered, which is the soft-200 this whole gate exists to prevent, just
+    relocated by one redirect hop.
+    """
+    assert not noindex_covers_404(["/404.html"])
+
+
+def test_noindex_covers_404_rejects_a_sitewide_blanket_rule():
+    """A `/*` rule would cover the 404 today and silently stop tomorrow.
+
+    Narrowing the blanket is an edit nobody would connect to the 404 page, so
+    the gate requires a rule that NAMES it.
+    """
+    assert not noindex_covers_404(["/*"])
+    assert not noindex_covers_404(["/"])
+
+
+def test_noindex_covers_404_rejects_unrelated_and_near_miss_paths():
+    assert not noindex_covers_404([])
+    assert not noindex_covers_404(["/private/tools/meet-recorder/*"])
+    assert not noindex_covers_404(["/404-not-this-one/*"])
+
+
+def test_the_shipped_headers_file_actually_covers_the_404():
+    """The end-to-end anchor: real file, real parser, real predicate.
+
+    Every test above runs on synthetic input, so all of them would stay green if
+    the rule were deleted from the shipped `static/_headers`. This is the one
+    that reads what the site actually ships.
+    """
+    assert noindex_covers_404(noindex_globs()), (
+        "static/_headers no longer carries an X-Robots-Tag noindex rule naming "
+        "/404. Cloudflare serves the template at /404.html -> 308 -> /404 with "
+        "HTTP 200, so without it the site publishes an indexable page titled "
+        "'Page not found'."
+    )
+
+
+def test_the_source_lane_fails_when_the_noindex_rule_is_missing(tmp_path, monkeypatch, capsys):
+    """Predicate to exit code, so the wiring is pinned and not just the logic.
+
+    A correct predicate whose result is dropped on the floor in `main()` gates
+    nothing, and no assertion above would notice.
+    """
+    monkeypatch.setattr(sys.modules[__name__], "HEADERS", _headers(tmp_path, (
+        "/thanks/*\n  X-Robots-Tag: noindex\n"
+    )))
+    assert main(["--source-only"]) == 1
+    assert "no `X-Robots-Tag: noindex` rule for /404*" in capsys.readouterr().err
+
+
+def test_the_source_lane_passes_against_the_shipped_headers_file(capsys):
+    """The negative test above is only meaningful if the positive one holds."""
+    assert main(["--source-only"]) == 0
+    capsys.readouterr()
 
 
 if __name__ == "__main__":

@@ -155,6 +155,17 @@ jobs:
       - name: Config-traceability + iamhoi-wrapping unit tests
         run: python3 -m pytest scripts/test_check_config_traceability.py scripts/test_check_iamhoi_wrapping.py -q
 
+      # The 404 gate's noindex helpers, source-only so they run before the build.
+      # SEPARATE from the `python3 scripts/test_404.py --built public` step further
+      # down: that one invokes the file as a CLI, and a CLI run executes no test
+      # functions. The distinction is load-bearing rather than pedantic, because
+      # tests/test_gate_wiring.py is satisfied by the file being NAMED anywhere in
+      # this workflow -- which the CLI step already does. So the gate that exists
+      # to stop a test file going unrun would have reported this one as wired
+      # while nothing ever ran it. blog-priv#64, Ralph round 2.
+      - name: 404 noindex-rule unit tests
+        run: python3 -m pytest scripts/test_404.py -q
+
       # The CTA button's cascade contract, scored from the stylesheet source so
       # it needs no browser and can run here. The shortcode emitted class="btn"
       # from launch with nothing defining it, and the obvious bare `.btn` fix
