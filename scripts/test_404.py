@@ -199,6 +199,33 @@ def main(argv: list[str] | None = None) -> int:
                 "to the reader."
             )
 
+        # E2. NOINDEX, second layer, in the page itself.
+        #
+        # static/_headers (check E) is authoritative, but it is one file away from
+        # a reformat that silently stops matching, and nothing about a header is
+        # visible in the built artefact. The meta tag is, so assert it here.
+        #
+        # Also: no canonical. Hugo hard-codes this page's output filename as
+        # 404.html regardless of the site's clean-URL permalinks, so .Permalink is
+        # /404.html, which Cloudflare 308-redirects to /404. A canonical pointing
+        # at a redirect is wrong anywhere, and a deliberately non-indexable page
+        # should not declare one at all.
+        if 'name="robots"' not in html or "noindex" not in html:
+            failures.append(
+                f"{args.built}/404.html carries no `noindex` robots meta tag. "
+                "layouts/_partials/head.html emits one for .Kind == \"404\"; if "
+                "that guard is gone, the only thing keeping this page out of the "
+                "index is static/_headers, and a single reformat there would "
+                "publish an indexable page titled 'Page not found'."
+            )
+        if 'rel="canonical"' in html:
+            failures.append(
+                f"{args.built}/404.html declares a canonical URL. Hugo emits "
+                "https://hoiboy.uk/404.html there, which 308-redirects to /404, so "
+                "it points at a redirect; and a page this deliberately "
+                "non-indexable should not declare a canonical at all."
+            )
+
         # D. SHELL. See SHELL_MARKERS: proves the page rendered THROUGH
         # layouts/baseof.html rather than as a standalone template.
         missing = [m for m in SHELL_MARKERS if m not in html]

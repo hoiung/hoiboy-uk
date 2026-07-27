@@ -10,11 +10,25 @@
      This is the same mechanism Phase 7 chose (noindex, not a robots.txt
      Disallow), delivered a second way, so it does not reintroduce the
      two-mechanisms-cancelling problem that phase fixed. */ -}}
-{{- if .Params.noindex }}
+{{- /* The 404 page is noindex by KIND, not by frontmatter: a 404 template has no
+       frontmatter, so it cannot set .Params.noindex. Without this it shipped as an
+       indexable HTTP 200 page titled "Page not found" (blog-priv#64 Stage 5).
+       static/_headers carries the authoritative X-Robots-Tag for /404*; this meta
+       is the second layer, because _headers is one file away from a reformat that
+       silently stops matching. */ -}}
+{{- if or .Params.noindex (eq .Kind "404") }}
 <meta name="robots" content="noindex, nofollow">
 {{- end }}
 <meta name="author" content="{{ site.Params.author }}">
+{{- /* No canonical on the 404. Hugo hard-codes that page's output filename as
+       404.html regardless of the site's clean-URL permalinks, so .Permalink is
+       https://hoiboy.uk/404.html, which Cloudflare 308-redirects to /404. A
+       canonical pointing at a redirect is wrong on any page, and on a deliberately
+       non-indexable one it should not be declared at all. Every other page kind is
+       unaffected: verified 335 -> 334 canonicals, the single delta being /404.html. */ -}}
+{{- if ne .Kind "404" }}
 <link rel="canonical" href="{{ .Permalink }}">
+{{- end }}
 {{- with .OutputFormats.Get "rss" }}
 <link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}" title="{{ site.Title }}">
 {{- end }}
