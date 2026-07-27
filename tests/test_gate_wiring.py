@@ -166,6 +166,31 @@ def test_the_two_scopes_together_cover_every_tree_the_validator_knows_about():
 
 TEST_PATH = re.compile(r"(?:scripts|tests)/test_[a-z0-9_]+\.py")
 
+# Shell operators that end one command and begin another. A single `run:` line
+# can chain several, and only the pytest ones run test functions.
+SHELL_SPLIT = re.compile(r"&&|\|\||;|\|")
+
+
+def _strip_comment(line: str) -> str:
+    """Drop a trailing shell comment, leaving a `#` that sits inside quotes.
+
+    Whole-comment lines were already handled by a `startswith("#")` test, which
+    is not the same thing: a comment can follow real code on the same line, and
+    that is where ci.yml discusses its own steps. `ci.yml:257` is why this is
+    quote-aware rather than a plain `split("#")` -- it runs `grep -v '^#'`, and
+    cutting at that `#` would silently truncate a real command.
+    """
+    quote: str | None = None
+    for i, ch in enumerate(line):
+        if quote:
+            if ch == quote:
+                quote = None
+        elif ch in "'\"":
+            quote = ch
+        elif ch == "#" and (i == 0 or line[i - 1].isspace()):
+            return line[:i]
+    return line
+
 
 def _pytest_covered(text: str) -> set[str]:
     """Every test file ci.yml actually RUNS UNDER PYTEST, not merely mentions.
@@ -176,27 +201,89 @@ def _pytest_covered(text: str) -> set[str]:
     A CLI run executes no test functions, so counting it as coverage says a file
     is run when nothing runs its tests.
 
-    Backslash continuations are rejoined first: ci.yml lists long pytest runs
-    across several lines, and judging each physical line on its own would class
-    every continuation line as a non-pytest invocation.
+    Three narrowings, each closing a way a filename can appear near a pytest
+    command without pytest running it. Ralph round 4 found the first two by
+    building them, after round 3's fix caught only the crudest form:
+
+      1. TRAILING COMMENTS. Stripping whole-comment lines is not enough. A step
+         rewritten to `run: python3 -m pytest scripts/other.py -q  # test_x.py
+         used to run here` deleted the real invocation while leaving the name on
+         a pytest line, and scored as covered.
+      2. CHAINED COMMANDS. `python3 -m pytest a.py && python3 b.py --flag` is
+         one line running one pytest command and one CLI command; crediting the
+         whole line credits `b.py` for a run that never collects it.
+      3. POSITION. Even inside a pytest segment, only text AFTER the `pytest`
+         token is an argument to it.
+
+    Backslash continuations are rejoined after comment-stripping and before
+    splitting: ci.yml lists long pytest runs across several lines, and judging
+    each physical line alone would class every continuation as non-pytest.
     """
-    lines = [l for l in text.splitlines() if not l.strip().startswith("#")]
     logical: list[str] = []
     buf = ""
-    for line in lines:
-        stripped = line.rstrip()
-        if stripped.endswith("\\"):
-            buf += stripped[:-1] + " "
+    for raw in text.splitlines():
+        line = _strip_comment(raw).rstrip()
+        if not line.strip():
             continue
-        logical.append(buf + stripped)
+        if line.endswith("\\"):
+            buf += line[:-1] + " "
+            continue
+        logical.append(buf + line)
         buf = ""
     if buf:
         logical.append(buf)
+
     covered: set[str] = set()
     for command in logical:
-        if "pytest" in command:
-            covered.update(TEST_PATH.findall(command))
+        for segment in SHELL_SPLIT.split(command):
+            if "pytest" not in segment:
+                continue
+            covered.update(TEST_PATH.findall(segment.split("pytest", 1)[1]))
     return covered
+
+
+def test_pytest_covered_credits_only_real_pytest_arguments():
+    """Unit-test the guard's own helper, because the guard is the last line.
+
+    Every case below is a way a filename appears without pytest running it, and
+    each one scored as covered at some point in this issue's Ralph rounds. A
+    guard whose own parser is untested is exactly the shape this file exists to
+    stop, one level further down.
+    """
+    real = "        run: python3 -m pytest scripts/test_a.py scripts/test_b.py -q"
+    assert _pytest_covered(real) == {"scripts/test_a.py", "scripts/test_b.py"}
+
+    # A bare CLI run is not a pytest run, however the file is named.
+    assert _pytest_covered("        run: python3 scripts/test_a.py --built public") == set()
+
+    # A whole-line comment is prose.
+    assert _pytest_covered("        # python3 -m pytest scripts/test_a.py -q") == set()
+
+    # A TRAILING comment after real code is also prose (round 4, finding 1).
+    trailing = ("        run: python3 -m pytest scripts/test_b.py -q  "
+                "# scripts/test_a.py used to run here")
+    assert _pytest_covered(trailing) == {"scripts/test_b.py"}
+
+    # Chaining does not launder a CLI invocation into a pytest one.
+    for joiner in ("&&", ";", "|"):
+        chained = (f"        run: python3 -m pytest scripts/test_b.py -q {joiner} "
+                   f"python3 scripts/test_a.py --flag")
+        assert _pytest_covered(chained) == {"scripts/test_b.py"}, joiner
+
+    # A name BEFORE the pytest token is not an argument to it.
+    assert _pytest_covered(
+        "        run: python3 scripts/test_a.py && python3 -m pytest scripts/test_b.py"
+    ) == {"scripts/test_b.py"}
+
+    # Continuations still rejoin, so a multi-line pytest list is credited whole.
+    multi = ("        run: python3 -m pytest scripts/test_a.py \\\n"
+             "            scripts/test_b.py -q")
+    assert _pytest_covered(multi) == {"scripts/test_a.py", "scripts/test_b.py"}
+
+    # A quoted '#' is not a comment; cutting there would truncate a real command
+    # (ci.yml:257 runs `grep -v '^#'`).
+    quoted = "        run: grep -v '^#' f && python3 -m pytest scripts/test_a.py -q"
+    assert _pytest_covered(quoted) == {"scripts/test_a.py"}
 
 
 def test_every_test_file_is_actually_run_by_pytest_in_ci():
