@@ -148,6 +148,31 @@ def expected_fill() -> str:
 # treats it as top-level.
 CONDITIONAL_AT_RULE = re.compile(r"@(?:media|supports|container)\b[^{]*\{", re.I)
 
+# A CSS string literal, single or double quoted, honouring backslash escapes.
+STRING_LITERAL = re.compile(r"""(['"])(?:\\.|(?!\1)[^\\])*\1""", re.S)
+
+
+def _blank_strings(css: str) -> str:
+    """Blank the CONTENTS of string literals, keeping quotes and total length.
+
+    A brace inside a string is data, not structure. `content: "}"` is ordinary
+    valid CSS - this stylesheet already uses `content` for list markers - and
+    it desynchronised the brace-depth counter below, truncating an @media block
+    early so the rest of it leaked into the "unconditional" text. A dark-only
+    `.main a.btn` rule then came back as the single universal label and was
+    asserted under the light scheme too: the exact silent-wrong-answer this
+    file's conditional handling exists to stop, reached by another door
+    (blog-priv#63, Ralph round 8).
+
+    Blanking rather than deleting keeps every offset intact, so nothing else
+    that reads this text shifts underneath. Applied once, up front, which fixes
+    the depth counter and the flat rule-scan together instead of hardening one
+    and leaving the other - the mistake that produced this finding in the first
+    place (round 4 made comment-stripping quote-aware and left the split naive).
+    """
+    return STRING_LITERAL.sub(
+        lambda m: m.group(0)[0] + " " * (len(m.group(0)) - 2) + m.group(0)[0], css)
+
 
 def _split_conditional(css: str) -> tuple[str, list[tuple[str, str]]]:
     """Separate unconditional CSS from conditional at-rule blocks.
@@ -217,7 +242,7 @@ def expected_label() -> str:
     an unrelated change. Modelling the cascade properly would need a real CSS
     parser, which is not worth it for one rule.
     """
-    css = COMMENTS.sub("", CSS.read_text(encoding="utf-8-sig"))
+    css = _blank_strings(COMMENTS.sub("", CSS.read_text(encoding="utf-8-sig")))
     unconditional, conditional = _split_conditional(css)
 
     # A conditional rule is not the unconditional answer. Checked BEFORE the

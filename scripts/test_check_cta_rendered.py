@@ -420,3 +420,53 @@ def test_expected_fill_survives_a_byte_order_mark(tmp_path, monkeypatch):
     params.write_bytes(b"\xef\xbb\xbf" + b'ctaColor = "#188418"\n')
     monkeypatch.setattr(ccr, "PARAMS", params)
     assert ccr.expected_fill() == ccr.hex_to_rgb_string("#188418")
+
+
+def test_a_brace_inside_a_string_cannot_smuggle_a_conditional_rule_out(tmp_path, monkeypatch):
+    """`content: "}"` is ordinary CSS, and it used to break the block scan.
+
+    The brace-depth counter had no string awareness, so the closing brace inside
+    that string ended the `@media` block early and the rest of it leaked into
+    the text treated as unconditional. A dark-only `.main a.btn` then came back
+    as the single universal label with no die at all, and was asserted under the
+    light scheme too (Ralph round 8, reproduced against the real function).
+
+    This stylesheet already uses `content` for list markers, so the construct is
+    not exotic.
+    """
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        '@media (prefers-color-scheme: dark) {\n'
+        '  .sidebar li::marker { content: "}"; }\n'
+        '  .main a.btn { color: #000000; }\n'
+        '}\n',
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ccr, "CSS", css)
+    with pytest.raises(SystemExit):
+        ccr.expected_label()
+
+
+def test_a_brace_in_a_string_does_not_disturb_an_unconditional_answer(tmp_path, monkeypatch):
+    """The counterpart: blanking string contents must not lose a real rule."""
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        '.sidebar li::marker { content: "{"; }\n'
+        '.main a.btn { color: #ffffff; }\n'
+        '.footer::after { content: \'}\'; }\n',
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ccr, "CSS", css)
+    assert ccr.expected_label() == ccr.hex_to_rgb_string("#ffffff")
+
+
+def test_blank_strings_preserves_offsets_and_quotes():
+    """Length and quoting are preserved so nothing downstream shifts."""
+    src = '.a { content: "}}"; } .b { content: \'{\'; }'
+    out = ccr._blank_strings(src)
+    assert len(out) == len(src)
+    assert "}" not in out[out.index('"'):out.index('"') + 4]
+    assert out.count('"') == 2 and out.count("'") == 2
+    # An escaped quote must not end the literal early.
+    esc = '.a { content: "a\\"}b"; }'
+    assert "}" not in ccr._blank_strings(esc)[15:20]
