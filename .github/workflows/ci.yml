@@ -374,7 +374,7 @@ jobs:
         run: python3 -m pytest tests/test_gate_mutations.py -q
 
       - name: Markdown lint
-        uses: DavidAnson/markdownlint-cli2-action@v23
+        uses: DavidAnson/markdownlint-cli2-action@v24
         with:
           config: .markdownlint.json
           globs: |
