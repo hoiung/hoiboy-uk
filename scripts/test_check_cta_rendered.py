@@ -470,3 +470,74 @@ def test_blank_strings_preserves_offsets_and_quotes():
     # An escaped quote must not end the literal early.
     esc = '.a { content: "a\\"}b"; }'
     assert "}" not in ccr._blank_strings(esc)[15:20]
+
+
+def test_expected_label_takes_the_last_declaration_not_the_first(tmp_path, monkeypatch):
+    """Within one rule the cascade takes the LAST declaration. So must the gate.
+
+    Reading the first made this gate model a colour the browser never paints,
+    and because the sibling authority scores its WCAG 4.5:1 assertion from the
+    same parse, an unreadable button passed both gates green: 4.82:1 reported,
+    1.10:1 rendered. Found by the deep dive Ralph escalated to after nine rounds
+    had all landed elsewhere in this file.
+    """
+    css = tmp_path / "synthetic.css"
+    css.write_text(".main a.btn { color: #ffffff; color: #6b6b6b; }\n", encoding="utf-8")
+    monkeypatch.setattr(ccr, "CSS", css)
+    assert ccr.expected_label() == ccr.hex_to_rgb_string("#6b6b6b")
+
+
+def test_expected_label_dies_actionably_on_a_non_hex_colour(tmp_path, monkeypatch):
+    """`color: var(--cta-label)` is the likeliest edit to this rule.
+
+    Line 138 of main.css is the only hardcoded colour left in the stylesheet;
+    every other one is already a var() token. Unguarded this reached
+    `int("va", 16)` and surfaced as a raw ValueError traceback pointing at a
+    conversion helper, which tells the reader nothing about what to fix.
+    """
+    css = tmp_path / "synthetic.css"
+    css.write_text(".main a.btn { color: var(--cta-label); }\n", encoding="utf-8")
+    monkeypatch.setattr(ccr, "CSS", css)
+    with pytest.raises(SystemExit) as exc:
+        ccr.expected_label()
+    assert exc.value.code == 2
+
+
+def test_expected_label_dies_naming_the_line_on_an_unterminated_quote(tmp_path, monkeypatch):
+    """A CSS string cannot span a newline; the blanker used to let it.
+
+    With `re.S` a forgotten closing quote paired with the NEXT quote of the same
+    type however far away and blanked every real brace between them. Here the
+    button's own rule is swallowed and a DISAGREEING `.footer a.btn` survives
+    outside the span, so the function returned red silently with no die at all -
+    defeating the ambiguity-is-fatal contract it documents (Ralph round 9).
+    """
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        '.decoy::before { content: "oops-unterminated; }\n'
+        ".main a.btn { color: #ffffff; }\n"
+        '.tag::after { content: "properly closed"; }\n'
+        ".footer a.btn { color: #ff0000; }\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ccr, "CSS", css)
+    with pytest.raises(SystemExit) as exc:
+        ccr.expected_label()
+    assert exc.value.code == 2
+
+
+def test_blank_strings_accepts_the_real_stylesheet_unchanged():
+    """The unterminated-quote probe must not false-fire on valid CSS.
+
+    Blanking preserves the quotes so offsets do not shift, which means probing
+    the BLANKED text re-anchors on a closing quote and reports valid CSS as
+    broken. The probe therefore runs on a copy with the literals removed
+    outright. This test is the regression pin for that distinction.
+
+    Comments are stripped first because that is exactly what `expected_label`
+    does before it blanks. It matters: main.css:111 contains an apostrophe
+    inside a comment ("the site's only commercial call to action"), which is a
+    lone quote the probe would rightly flag if a comment ever reached it.
+    """
+    raw = ccr.CSS.read_text(encoding="utf-8-sig")
+    assert ccr._blank_strings(ccr.COMMENTS.sub("", raw))

@@ -117,9 +117,28 @@ def die(msg: str, code: int = 2) -> None:
     raise SystemExit(code)
 
 
+HEX_COLOUR = re.compile(r"#?(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\Z")
+
+
 def hex_to_rgb_string(value: str) -> str:
-    """`#188418` -> `rgb(24, 132, 24)`, which is how Chromium reports it."""
-    h = value.strip().lstrip("#")
+    """`#188418` -> `rgb(24, 132, 24)`, which is how Chromium reports it.
+
+    Only a hex literal can be converted here. Every OTHER colour in main.css is
+    already a `var()` token, so `color: var(--cta-label)` on the button rule is
+    the single most likely edit to this file - and without the guard below it
+    reached `int("va", 16)` and surfaced as a raw ValueError traceback pointing
+    at this function, which tells the reader nothing about what to fix.
+    """
+    h = value.strip()
+    if not HEX_COLOUR.match(h):
+        die(
+            f"{CSS}: the button's colour is declared as `{h}`, which is not a hex "
+            f"literal. This gate models the cascade by reading the stylesheet, so "
+            f"it can only resolve hex values - a var()/named/rgb() colour has to be "
+            f"resolved by the browser it is compared against. Either inline the hex "
+            f"here or teach this gate to resolve the token."
+        )
+    h = h.lstrip("#")
     if len(h) == 3:
         h = "".join(c * 2 for c in h)
     return f"rgb({int(h[0:2], 16)}, {int(h[2:4], 16)}, {int(h[4:6], 16)})"
@@ -149,7 +168,17 @@ def expected_fill() -> str:
 CONDITIONAL_AT_RULE = re.compile(r"@(?:media|supports|container)\b[^{]*\{", re.I)
 
 # A CSS string literal, single or double quoted, honouring backslash escapes.
-STRING_LITERAL = re.compile(r"""(['"])(?:\\.|(?!\1)[^\\])*\1""", re.S)
+# Deliberately NOT re.S, and the body excludes a raw newline: per CSS syntax a
+# string ends at the newline (it becomes a "bad-string" and the parser recovers
+# there). With re.S an unterminated quote instead paired with the NEXT quote of
+# the same type however far away, blanking every real brace in between - which
+# either buried the button's own rule behind a misleading "no stateless a.btn
+# rule found", or, when a second disagreeing rule survived outside the swallowed
+# span, returned the WRONG colour silently with no die at all. That defeated the
+# ambiguity-is-fatal contract this file promises (blog-priv#63, Ralph round 9).
+STRING_LITERAL = re.compile(r"""(['"])(?:\\.|(?!\1)[^\\\n])*\1""")
+
+QUOTE = re.compile(r"""(?<!\\)['"]""")
 
 
 def _blank_strings(css: str) -> str:
@@ -170,8 +199,26 @@ def _blank_strings(css: str) -> str:
     and leaving the other - the mistake that produced this finding in the first
     place (round 4 made comment-stripping quote-aware and left the split naive).
     """
-    return STRING_LITERAL.sub(
+    blanked = STRING_LITERAL.sub(
         lambda m: m.group(0)[0] + " " * (len(m.group(0)) - 2) + m.group(0)[0], css)
+    # Any quote still standing after the well-formed literals are blanked never
+    # closes. Report it by line and name it as the cause: the failure otherwise
+    # surfaces as "no stateless a.btn rule found", which blames the button for a
+    # typo somewhere else entirely.
+    # Probe on a copy with the well-formed literals removed OUTRIGHT, quotes and
+    # all. Blanking keeps its quotes (offsets must not shift), so probing the
+    # blanked text re-anchors on a CLOSING quote and false-fires on valid CSS.
+    probe = STRING_LITERAL.sub(lambda m: " " * len(m.group(0)), css)
+    stray = QUOTE.search(probe)
+    if stray:
+        line = probe.count("\n", 0, stray.start()) + 1
+        die(
+            f"{CSS} line {line}: unterminated string literal ({stray.group(0)}). A "
+            f"CSS string cannot span a newline, so this quote never closes and the "
+            f"button's label colour cannot be read. Fix the quote; this gate is not "
+            f"reporting a problem with the button."
+        )
+    return blanked
 
 
 def _split_conditional(css: str) -> tuple[str, list[tuple[str, str]]]:
@@ -209,9 +256,14 @@ def _stateless_anchor_labels(css: str) -> dict[str, str]:
         matching = [s for s in sels if re.search(r"\ba\.btn(?![\w-])", s) and ":" not in s]
         if not matching:
             continue
-        m = re.search(r"(?:^|;)\s*color\s*:\s*([^;]+)", decls)
-        if m:
-            found.setdefault(hex_to_rgb_string(m.group(1)), matching[0])
+        # LAST declaration wins, which is what the cascade does within a rule.
+        # `re.search` took the FIRST, so `color: #fff; color: #6b6b6b;` made this
+        # gate model a colour the browser never paints - and because the sibling
+        # authority scores WCAG contrast from the same parse, an unreadable
+        # button passed both gates green.
+        decl = re.findall(r"(?:^|;)\s*color\s*:\s*([^;]+)", decls)
+        if decl:
+            found.setdefault(hex_to_rgb_string(decl[-1]), matching[0])
     return found
 
 

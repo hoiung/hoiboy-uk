@@ -134,12 +134,29 @@ def base_rule() -> tuple[str, str]:
 
 
 def declaration(decls: str, prop: str) -> str | None:
-    m = re.search(rf"(?:^|;)\s*{re.escape(prop)}\s*:\s*([^;]+)", decls)
-    return m.group(1).strip() if m else None
+    # LAST wins, as the cascade does within a rule. Taking the FIRST made the
+    # WCAG assertion below score a colour the browser never paints: a duplicate
+    # `color: #fff; color: #6b6b6b;` reported 4.82:1 while the button rendered
+    # at 1.10:1, green in CI (blog-priv#63, post-Ralph deep dive).
+    found = re.findall(rf"(?:^|;)\s*{re.escape(prop)}\s*:\s*([^;]+)", decls)
+    return found[-1].strip() if found else None
+
+
+HEX_COLOUR = re.compile(r"#?(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\Z")
 
 
 def hex_to_rgb(value: str) -> tuple[int, int, int]:
-    h = value.strip().lstrip("#")
+    # Guarded for the same reason as the sibling gate's hex_to_rgb_string: every
+    # other colour in main.css is a var() token, so `color: var(--cta-label)` is
+    # the likeliest edit here, and unguarded it surfaced as `int("va", 16)`.
+    h = value.strip()
+    assert HEX_COLOUR.match(h), (
+        f"the button's colour is declared as `{h}`, which is not a hex literal. "
+        f"This test resolves the cascade by reading the stylesheet, so it can only "
+        f"handle hex values - a var()/named/rgb() colour must be resolved by the "
+        f"browser instead."
+    )
+    h = h.lstrip("#")
     if len(h) == 3:
         h = "".join(c * 2 for c in h)
     return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16))
@@ -442,3 +459,46 @@ def test_cta_color_survives_a_byte_order_mark(tmp_path, monkeypatch):
         assert cta_color() == "#188418"
     finally:
         cta_color.cache_clear()
+
+
+def test_declaration_takes_the_last_not_the_first():
+    """The WCAG assertion in this file scores whatever `declaration` returns.
+
+    Within one rule the cascade takes the LAST declaration. Taking the first
+    made this test score a colour the browser never paints: with a duplicated
+    `color`, it reported 4.82:1 while the button actually rendered at 1.10:1,
+    and CI stayed green. That is a fail-OPEN in the lane that gates the deploy,
+    which is why it is pinned here and not only in the sibling gate.
+    """
+    decls = " background: var(--cta); color: #fff; color: #6b6b6b; "
+    assert declaration(decls, "color") == "#6b6b6b"
+
+
+def test_declaration_still_finds_a_single_declaration():
+    """Control: the ordinary one-declaration case is unchanged."""
+    assert declaration(" color: #ffffff; ", "color") == "#ffffff"
+    assert declaration(" background: var(--cta); ", "color") is None
+
+
+def test_hex_to_rgb_rejects_a_non_hex_colour():
+    """`color: var(--cta-label)` is the likeliest edit to the button rule.
+
+    Every other colour in main.css is already a var() token. Unguarded, this
+    raised `ValueError: invalid literal for int() with base 16: 'va'` - and it
+    hit BOTH authorities at once, because the hex-only assumption was copied
+    into each rather than being a difference between them. Independence of the
+    two gates is about the cascade MODEL, not about value parsing.
+    """
+    import pytest
+
+    for bad in ("var(--cta-label)", "white", "rgb(255, 255, 255)"):
+        with pytest.raises(AssertionError):
+            hex_to_rgb(bad)
+
+
+def test_hex_to_rgb_still_accepts_every_real_hex_form():
+    """Control: the forms the stylesheet and params.toml actually use."""
+    assert hex_to_rgb("#ffffff") == (255, 255, 255)
+    assert hex_to_rgb("#fff") == (255, 255, 255)
+    assert hex_to_rgb("188418") == (24, 132, 24)
+    assert hex_to_rgb("  #188418  ") == (24, 132, 24)
