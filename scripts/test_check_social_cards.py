@@ -674,3 +674,24 @@ def test_directive_order_within_a_block_does_not_matter(tmp_path):
     body = ("/x*\n  X-Frame-Options: DENY\n  Referrer-Policy: no-referrer\n"
             "  X-Robots-Tag: noindex, nofollow\n")
     assert csc.parse_noindex_globs(_headers(tmp_path, body)) == ["/x*"]
+
+
+def test_a_byte_order_mark_does_not_hide_the_first_block(tmp_path):
+    """A BOM used to make the first block's path line unrecognisable.
+
+    `'﻿/404*'.startswith('/')` is False, so `current` never got set and the
+    rule under it was dropped. Reachable without anyone doing anything odd:
+    alphabetise the blocks in static/_headers (`/404*` sorts first) and save
+    from a BOM-emitting editor on Windows. The 404 loses its noindex and every
+    gate stays green (blog-priv#64, Ralph round 6).
+    """
+    body = ("/404*\n  X-Robots-Tag: noindex, nofollow\n\n"
+            "/private/*\n  X-Robots-Tag: noindex, nofollow\n")
+    assert csc.parse_noindex_globs(_headers(tmp_path, body)) == ["/404*", "/private/*"]
+
+    bom = tmp_path / "bom" / "_headers"
+    bom.parent.mkdir(parents=True, exist_ok=True)
+    bom.write_bytes(b"\xef\xbb\xbf" + body.encode("utf-8"))
+    assert csc.parse_noindex_globs(bom) == ["/404*", "/private/*"], (
+        "a leading BOM swallowed the first block's rule"
+    )

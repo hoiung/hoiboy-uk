@@ -161,7 +161,13 @@ def parse_noindex_globs(headers_path: Path) -> list[str]:
         return []
     globs: list[str] = []
     current: str | None = None
-    for raw in headers_path.read_text(encoding="utf-8").splitlines():
+    # utf-8-sig, not utf-8: a leading BOM makes the first line start with U+FEFF
+    # rather than "/", so the first block's path line is not recognised and its
+    # rule is dropped silently. The reachable path is mundane - alphabetise the
+    # blocks in this file (`/404*` sorts first) and save from any BOM-emitting
+    # editor on Windows - and it costs the 404 page its noindex with every gate
+    # still green (blog-priv#64, Ralph round 6).
+    for raw in headers_path.read_text(encoding="utf-8-sig").splitlines():
         if not raw.strip() or raw.lstrip().startswith("#"):
             continue
         if raw.startswith("/"):                      # a path-glob line
