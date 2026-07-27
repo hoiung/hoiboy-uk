@@ -169,6 +169,41 @@ def test_expected_label_ignores_the_hover_rule(tmp_path, monkeypatch):
     )
 
 
+def test_expected_label_ignores_a_rule_that_exists_only_inside_a_comment(tmp_path, monkeypatch):
+    """`expected_label` strips CSS comments before scanning, and must keep doing so.
+
+    Its rule scan is `([^{}]+)\\{([^{}]*)\\}` over the whole file, which cannot
+    tell a real declaration from one quoted inside `/* ... */`. Nothing tested
+    that: removing the `COMMENTS.sub` call entirely left all 22 tests passing,
+    because none of the 20 comments in the shipped `main.css` happens to contain
+    a brace today. Silently untested, not silently safe.
+
+    Not a hypothetical risk in this file specifically. The block immediately
+    above `.main a.btn` is a long WHY-comment full of colour and contrast prose,
+    which is exactly where someone eventually pastes an example rule. If that
+    example were read as real, the gate would compute the wrong label colour and
+    then assert it against every page, in a check whose entire purpose is WCAG
+    contrast.
+
+    NOTE THE COMMENT TEXT: it deliberately contains no colon. The first draft of
+    this test said "do not copy:" and the mutation slipped past, because the
+    state-layer filter (`":" not in s`) rejected the commented rule for an
+    unrelated reason, so the test passed without comment-stripping ever running.
+    A colon anywhere in the commented selector makes this assertion vacuous.
+    """
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        "/* Example, do not copy - .main a.btn { color: #ff0000; } */\n"
+        ".main a.btn { color: #ffffff; }\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ccr, "CSS", css)
+    assert ccr.expected_label() == ccr.hex_to_rgb_string("#ffffff"), (
+        "expected_label read a rule out of a CSS comment. The COMMENTS.sub call "
+        "is what stops the brace-scan treating commented examples as real."
+    )
+
+
 def test_the_shipped_stylesheet_still_has_a_hover_rule_worth_ignoring():
     """The premise anchor for the test above, kept honest about what it proves.
 
