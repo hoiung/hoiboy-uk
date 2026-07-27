@@ -164,22 +164,67 @@ def test_the_two_scopes_together_cover_every_tree_the_validator_knows_about():
     )
 
 
-def test_every_test_file_is_listed_in_ci():
-    """No test file can exist without CI running it (blog-priv#62, Ralph Tier 3).
+TEST_PATH = re.compile(r"(?:scripts|tests)/test_[a-z0-9_]+\.py")
+
+
+def _pytest_covered(text: str) -> set[str]:
+    """Every test file ci.yml actually RUNS UNDER PYTEST, not merely mentions.
+
+    The distinction is the whole point. Several gates in scripts/ are BOTH a CLI
+    and a pytest module, and ci.yml invokes some of them both ways -- once as
+    `python3 scripts/x.py --flag` and once as `python3 -m pytest scripts/x.py`.
+    A CLI run executes no test functions, so counting it as coverage says a file
+    is run when nothing runs its tests.
+
+    Backslash continuations are rejoined first: ci.yml lists long pytest runs
+    across several lines, and judging each physical line on its own would class
+    every continuation line as a non-pytest invocation.
+    """
+    lines = [l for l in text.splitlines() if not l.strip().startswith("#")]
+    logical: list[str] = []
+    buf = ""
+    for line in lines:
+        stripped = line.rstrip()
+        if stripped.endswith("\\"):
+            buf += stripped[:-1] + " "
+            continue
+        logical.append(buf + stripped)
+        buf = ""
+    if buf:
+        logical.append(buf)
+    covered: set[str] = set()
+    for command in logical:
+        if "pytest" in command:
+            covered.update(TEST_PATH.findall(command))
+    return covered
+
+
+def test_every_test_file_is_actually_run_by_pytest_in_ci():
+    """No test file can exist without CI RUNNING it (blog-priv#62, Ralph Tier 3).
 
     CI invokes pytest through EXPLICIT FILE LISTS -- there is no `testpaths` config
     and no directory-wide collection -- so a test file nobody lists never runs. It
     still passes locally, which is worse than having no test at all: the local suite
     count reports coverage that CI does not enforce.
 
-    This repo has now been bitten by that twice. `tests/test_gate_wiring.py` itself
-    shipped unlisted in blog-priv#55 (see the comment above the frontmatter step in
-    ci.yml), and blog-priv#62 found `scripts/test_gen_card.py` unlisted while that
-    same issue was rewriting its subject under test. Both were caught by an audit
-    rather than by the suite, because no assertion existed to catch them.
+    This repo has now been bitten by that three times. `tests/test_gate_wiring.py`
+    itself shipped unlisted in blog-priv#55 (see the comment above the frontmatter
+    step in ci.yml), and blog-priv#62 found `scripts/test_gen_card.py` unlisted while
+    that same issue was rewriting its subject under test. Both were caught by an
+    audit rather than by the suite, because no assertion existed to catch them.
 
-    A guard that cannot fail guards nothing. This is the assertion that makes the
-    class self-policing: add a test file, and CI fails until something runs it.
+    The third was this guard's own blind spot, and it is why the check now asks
+    HOW a file is invoked rather than only WHETHER it is named. It used to match
+    the filename anywhere in a non-comment line. `scripts/test_404.py` is a CLI
+    gate wearing a `test_` prefix that ci.yml already ran as
+    `python3 scripts/test_404.py --built public`, so when blog-priv#64 added 12
+    pytest tests to it plus a `python3 -m pytest scripts/test_404.py -q` step, the
+    CLI line alone satisfied this assertion. Deleting the pytest step left the
+    guard green and the 12 tests silently unrun -- the very defect the guard
+    exists to prevent, one level up the wiring stack, in the one file whose name
+    collides with itself. Proven by mutation, both directions: deleting that step
+    used to give `5 passed` and now fails, while deleting a step for a file with
+    no CLI sibling always failed correctly.
 
     COMMENT LINES ARE STRIPPED FIRST, for the same reason `_invocations()` above
     strips them: ci.yml discusses its own test files constantly, and a file named
@@ -188,11 +233,7 @@ def test_every_test_file_is_listed_in_ci():
     this check, which is precisely the failure mode the test exists to catch. Three
     of the current matches for this very file are comment-only.
     """
-    code = "\n".join(
-        line for line in CI.read_text(encoding="utf-8").splitlines()
-        if not line.strip().startswith("#")
-    )
-    listed = set(re.findall(r"(?:scripts|tests)/test_[a-z0-9_]+\.py", code))
+    covered = _pytest_covered(CI.read_text(encoding="utf-8"))
     on_disk = {
         f"{d}/{p.name}"
         for d in ("scripts", "tests")
@@ -201,10 +242,18 @@ def test_every_test_file_is_listed_in_ci():
     # A glob that returned nothing would make the subtraction below empty and the
     # assertion vacuous, which is the same class of silent pass being guarded against.
     assert on_disk, "found no test_*.py under scripts/ or tests/ - the glob is wrong"
-    unlisted = sorted(on_disk - listed)
+    # Likewise, a rejoining bug that produced no pytest commands at all would make
+    # every file look unlisted rather than silently pass, but assert it explicitly
+    # so the failure names the real cause instead of listing all 33 files.
+    assert covered, (
+        "no pytest invocation found in ci.yml at all - _pytest_covered is broken, "
+        "not the workflow."
+    )
+    unlisted = sorted(on_disk - covered)
     assert not unlisted, (
-        f"{len(unlisted)} test file(s) exist but appear in no ci.yml pytest "
-        f"invocation, so CI never runs them: {unlisted}. Add each to a pytest step "
-        f"(built-tree tests belong after the Hugo build step, source-only tests "
-        f"before it)."
+        f"{len(unlisted)} test file(s) exist but are run by no ci.yml PYTEST "
+        f"invocation, so CI never runs their tests: {unlisted}. Add each to a "
+        f"pytest step (built-tree tests belong after the Hugo build step, "
+        f"source-only tests before it). Being named on a bare `python3 <file>` "
+        f"CLI line does NOT count: that runs the file, not its test functions."
     )
