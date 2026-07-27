@@ -503,7 +503,8 @@ def test_expected_label_dies_actionably_on_a_non_hex_colour(tmp_path, monkeypatc
     assert exc.value.code == 2
 
 
-def test_expected_label_dies_naming_the_line_on_an_unterminated_quote(tmp_path, monkeypatch):
+def test_expected_label_dies_naming_the_line_on_an_unterminated_quote(
+        tmp_path, monkeypatch, capsys):
     """A CSS string cannot span a newline; the blanker used to let it.
 
     With `re.S` a forgotten closing quote paired with the NEXT quote of the same
@@ -525,6 +526,18 @@ def test_expected_label_dies_naming_the_line_on_an_unterminated_quote(tmp_path, 
         ccr.expected_label()
     assert exc.value.code == 2
 
+    # Assert WHICH failure, and WHERE. Exit code 2 alone does not distinguish
+    # this from the several other die() paths in the function, and with `re.S`
+    # restored the stray quote is located on the WRONG line - so a code-only
+    # assertion passed against the defect and reported as coverage. Found by
+    # tests/test_gate_mutations.py, which is exactly what that file is for.
+    message = capsys.readouterr().err
+    assert "unterminated string literal" in message, message
+    assert "line 1:" in message, (
+        f"the unterminated quote is on line 1; the gate blamed a different line, "
+        f"which sends the reader to CSS that is not the problem.\n{message}"
+    )
+
 
 def test_blank_strings_accepts_the_real_stylesheet_unchanged():
     """The unterminated-quote probe must not false-fire on valid CSS.
@@ -541,3 +554,46 @@ def test_blank_strings_accepts_the_real_stylesheet_unchanged():
     """
     raw = ccr.CSS.read_text(encoding="utf-8-sig")
     assert ccr._blank_strings(ccr.COMMENTS.sub("", raw))
+
+
+def test_two_unterminated_quotes_do_not_silently_swallow_the_button_rule(
+        tmp_path, monkeypatch, capsys):
+    """The case that proves dropping `re.S` is load-bearing, not belt-and-braces.
+
+    With ONE stray quote the probe catches it either way, so that input does not
+    discriminate - the first version of this pin used it and passed against the
+    defect, and even the line number matched, because blanking replaces the
+    swallowed newlines with spaces so the count comes out the same by accident.
+
+    With TWO, `re.S` pairs them ACROSS the intervening lines, swallowing the
+    button's own rule and consuming BOTH quotes, so the probe finds nothing left
+    to complain about and a DISAGREEING `.footer a.btn` is returned silently.
+    That is the round-9 defect exactly: a wrong colour, no die.
+
+    Without `re.S` neither quote closes on its own line, no literal matches, and
+    the stray quote is reported. Found by tests/test_gate_mutations.py, which is
+    the file that exists to catch a pin that does not discriminate.
+    """
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        '.a::before { content: "unterminated one\n'
+        ".main a.btn { color: #ffffff; }\n"
+        '.b::after { content: "unterminated two\n'
+        ".footer a.btn { color: #ff0000; }\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ccr, "CSS", css)
+    with pytest.raises(SystemExit) as exc:
+        ccr.expected_label()
+    assert exc.value.code == 2
+
+    # The MESSAGE is what discriminates, not the exit code. With `re.S` restored
+    # this input ALSO dies - but as "no stateless a.btn rule found", blaming the
+    # button for a quote typo elsewhere and sending the reader to the wrong file
+    # entirely. An exit-code-only assertion passed against the defect.
+    message = capsys.readouterr().err
+    assert "unterminated string literal" in message, (
+        f"the gate died, but not for the right reason. It must name the stray "
+        f"quote; anything else sends the reader after a rule that is present and "
+        f"correct.\n{message}"
+    )

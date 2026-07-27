@@ -361,6 +361,18 @@ jobs:
       - name: Frontmatter parser unit tests
         run: python3 -m pytest scripts/test_validate_frontmatter.py tests/test_gate_wiring.py -q
 
+      # Mutation tests: put each defect back and require its own test to go red.
+      # Ralph ran nine rounds on blog-priv#63/#64 and could not terminate, because
+      # the acceptance criterion looked BACKWARDS - a corpus of mutations each
+      # named after a defect already found. Five separate times in that workstream
+      # a test asserted a HELPER rather than the WIRING, so reverting the real
+      # call site left the suite green. Every one was caught by reintroducing the
+      # defect and none by reading the diff. This step makes that check automatic.
+      # It rewrites repo files in place and restores them, which is safe on an
+      # ephemeral CI checkout and is asserted clean by its own last test.
+      - name: Gate mutation tests (guards must fail when their defect returns)
+        run: python3 -m pytest tests/test_gate_mutations.py -q
+
       - name: Markdown lint
         uses: DavidAnson/markdownlint-cli2-action@v23
         with:
