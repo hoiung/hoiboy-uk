@@ -168,7 +168,7 @@ TEST_PATH = re.compile(r"(?:scripts|tests)/test_[a-z0-9_]+\.py")
 
 # Shell operators that end one command and begin another. A single `run:` line
 # can chain several, and only the pytest ones run test functions.
-SHELL_SPLIT = re.compile(r"&&|\|\||;|\|")
+SHELL_OPERATORS = ("&&", "||", ";", "|")
 
 
 def _strip_comment(line: str) -> str:
@@ -190,6 +190,68 @@ def _strip_comment(line: str) -> str:
         elif ch == "#" and (i == 0 or line[i - 1].isspace()):
             return line[:i]
     return line
+
+
+def _split_commands(line: str) -> list[str]:
+    """Split one shell line into commands, ignoring operators inside quotes.
+
+    Quote-awareness is not decoration. Round 4 made comment-stripping
+    quote-aware and left this half naive, so a quoted `;` inside an `echo`
+    string split the line and handed the fragment after it a pytest credit it
+    had not earned (Ralph round 5).
+    """
+    parts: list[str] = []
+    buf = ""
+    quote: str | None = None
+    i = 0
+    while i < len(line):
+        ch = line[i]
+        if quote:
+            buf += ch
+            if ch == quote:
+                quote = None
+            i += 1
+            continue
+        if ch in "'\"":
+            quote = ch
+            buf += ch
+            i += 1
+            continue
+        for op in SHELL_OPERATORS:
+            if line.startswith(op, i):
+                parts.append(buf)
+                buf = ""
+                i += len(op)
+                break
+        else:
+            buf += ch
+            i += 1
+    parts.append(buf)
+    return parts
+
+
+def _unquoted(segment: str) -> str:
+    """The segment with quoted spans blanked out.
+
+    A filename inside a string literal is text the shell passes to `echo`, not a
+    path pytest collects. Blanking the spans means neither the `pytest` token nor
+    a test path can be claimed from prose that merely happens to sit on a
+    command line.
+    """
+    out = []
+    quote: str | None = None
+    for ch in segment:
+        if quote:
+            if ch == quote:
+                quote = None
+            out.append(" ")
+            continue
+        if ch in "'\"":
+            quote = ch
+            out.append(" ")
+            continue
+        out.append(ch)
+    return "".join(out)
 
 
 def _pytest_covered(text: str) -> set[str]:
@@ -235,10 +297,11 @@ def _pytest_covered(text: str) -> set[str]:
 
     covered: set[str] = set()
     for command in logical:
-        for segment in SHELL_SPLIT.split(command):
-            if "pytest" not in segment:
+        for segment in _split_commands(command):
+            bare = _unquoted(segment)
+            if "pytest" not in bare:
                 continue
-            covered.update(TEST_PATH.findall(segment.split("pytest", 1)[1]))
+            covered.update(TEST_PATH.findall(bare.split("pytest", 1)[1]))
     return covered
 
 
@@ -284,6 +347,18 @@ def test_pytest_covered_credits_only_real_pytest_arguments():
     # (ci.yml:257 runs `grep -v '^#'`).
     quoted = "        run: grep -v '^#' f && python3 -m pytest scripts/test_a.py -q"
     assert _pytest_covered(quoted) == {"scripts/test_a.py"}
+
+    # A filename inside a STRING is prose the shell hands to echo, and a quoted
+    # operator must not split the line (round 5, finding 2). Both halves of this
+    # one case: the echo mentions pytest AND a filename AND carries a ';'.
+    laundered = ('        run: echo "reminder: pytest scripts/test_a.py -q covers '
+                 'this; keep it wired"; python3 scripts/test_a.py --built public')
+    assert _pytest_covered(laundered) == set()
+
+    # The same shape must not suppress a REAL invocation elsewhere on the line.
+    mixed = ('        run: echo "see scripts/test_a.py; note" && '
+             'python3 -m pytest scripts/test_b.py -q')
+    assert _pytest_covered(mixed) == {"scripts/test_b.py"}
 
 
 def test_every_test_file_is_actually_run_by_pytest_in_ci():
