@@ -37,6 +37,9 @@ ROOT = Path(__file__).resolve().parent.parent
 # `expires:` inside a `#` comment. Anchored to the comment so a date appearing
 # inside a regex pattern cannot be mistaken for metadata.
 EXPIRES_RE = re.compile(r"#.*?\bexpires:\s*(\d{4}-\d{2}-\d{2})")
+# The `exclude` key exactly. `exclude_path` is a DIFFERENT key that this file
+# declares first, and a prefix test opened the allowlist block on it.
+_EXCLUDE_KEY = re.compile(r"exclude\s*=")
 # A quoted string on its own line inside the exclude list is an entry.
 ENTRY_RE = re.compile(r'^\s*"')
 
@@ -54,7 +57,11 @@ def check(config: Path, today: dt.date) -> tuple[list[str], int]:
 
     for i, line in enumerate(lines, start=1):
         stripped = line.strip()
-        if stripped.startswith("exclude"):
+        # The KEY, not any key that starts with those seven letters.
+        # `lychee.toml:53` declares `exclude_path` BEFORE `exclude`, so a bare
+        # startswith opened the block on the wrong key and swept the lines
+        # between the two into it.
+        if _EXCLUDE_KEY.match(stripped):
             in_exclude = True
             continue
         if in_exclude and stripped.startswith("]"):

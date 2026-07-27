@@ -7,6 +7,7 @@ Dead key (declared but never read) = FAIL. Standards Fail Fast.
 from __future__ import annotations
 import re
 import sys
+import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -32,14 +33,34 @@ def is_key_referenced(key: str, text: str) -> bool:
 
 
 def extract_keys(toml: str) -> list[str]:
+    """Every param key declared in params.toml, nested tables included.
+
+    Parsed with `tomllib` (Python 3.11+ stdlib, no dependency) rather than
+    scanned line by line. The scanner read any line containing `=` as a
+    declaration, so prose inside a TOML multi-line string - a bio block with
+    `something = other` in it - registered as a key that layouts must then
+    reference, and a key inside a nested table registered under its bare name
+    with no way to tell the two apart.
+
+    Measured on the current params.toml both approaches yield the same 8 keys,
+    so this changes no verdict today. It removes the class rather than waiting
+    for the first multi-line value to introduce it.
+    """
+    try:
+        data = tomllib.loads(toml)
+    except tomllib.TOMLDecodeError as exc:
+        print(f"FAIL: {PARAMS} is not valid TOML: {exc}", file=sys.stderr)
+        raise SystemExit(1)
+
     keys: list[str] = []
-    for line in toml.splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        if "=" in line and not line.startswith("["):
-            key, _, _ = line.partition("=")
-            keys.append(key.strip())
+
+    def walk(table: dict) -> None:
+        for key, value in table.items():
+            keys.append(key)
+            if isinstance(value, dict):
+                walk(value)
+
+    walk(data)
     return keys
 
 
@@ -51,7 +72,8 @@ def main() -> int:
         print(f"FAIL: {LAYOUTS} missing", file=sys.stderr)
         return 1
 
-    keys = extract_keys(PARAMS.read_text(encoding="utf-8"))
+    # utf-8-sig: tomllib REJECTS a leading BOM outright (blog-priv#63 round 7).
+    keys = extract_keys(PARAMS.read_text(encoding="utf-8-sig"))
     layout_text = ""
     for f in LAYOUTS.rglob("*.html"):
         layout_text += f.read_text(encoding="utf-8")

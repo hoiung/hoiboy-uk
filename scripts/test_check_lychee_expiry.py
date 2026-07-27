@@ -115,3 +115,36 @@ def test_real_repo_config_is_clean(capsys):
     # The live config must pass, or the gate is red on main.
     assert cle.main([]) == 0
     assert "none past expiry" in capsys.readouterr().out
+
+
+def test_the_exclude_block_is_not_opened_by_exclude_path(tmp_path):
+    """`exclude_path` is a DIFFERENT key, and lychee.toml declares it FIRST.
+
+    A `startswith("exclude")` prefix test opened the allowlist block on it and
+    swept every line between the two keys into it. The decoy below sits in that
+    gap and carries no expiry, so under the prefix test it is counted as an
+    allowlist entry AND reported as missing an expiry date - a false failure on
+    a line that is not an allowlist entry at all.
+
+    Driven through `check()`, not by asserting on the regex constant. Asserting
+    the constant proves the constant and says nothing about whether the scanner
+    USES it: the first version of this test did exactly that, and reverting the
+    call site to the prefix test left it green.
+    """
+    cfg = tmp_path / "lychee.toml"
+    cfg.write_text(
+        'exclude_path = ["public/blogs", "legacy"]\n'
+        '  "^https?://decoy-not-an-allowlist-entry\\.example$",\n'
+        'exclude = [\n'
+        '  # added: 2026-07-01; expires: 2026-10-01 (90 days)\n'
+        '  "^https?://real\\.example$",\n'
+        ']\n',
+        encoding="utf-8",
+    )
+    failures, checked = cle.check(cfg, TODAY)
+    assert checked == 1, (
+        f"expected only the ONE real allowlist entry to be checked, got {checked}. "
+        f"More means the block opened on exclude_path and swept in a line that is "
+        f"not an allowlist entry."
+    )
+    assert failures == [], failures

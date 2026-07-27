@@ -183,3 +183,25 @@ class TestConstants:
         posts = Path(__file__).resolve().parents[1] / "content" / "posts"
         for slug in cwc.GRANDFATHERED_SLUGS:
             assert (posts / slug / "index.md").exists(), f"grandfathered slug {slug!r} missing on disk"
+
+
+def test_an_unterminated_comment_does_not_swallow_real_words():
+    """A stray `<!--` used to pair with the NEXT `-->` however far away.
+
+    In this repo that next one is typically the closing `<!-- iamhoiend -->`
+    voice marker, so every word between them was deleted before counting. On a
+    word-count CEILING that is fail-OPEN: the post measures shorter than it is
+    and an over-3000-word post passes.
+    """
+    md = ("real words here <!-- iamhoi\n"
+          "more real words that must still count\n"
+          "<!-- iamhoiend --> tail words")
+    stripped = cwc._HTML_COMMENT_RE.sub("", md)
+    assert "more real words that must still count" in stripped
+    assert "iamhoiend" not in stripped
+
+
+def test_ordinary_comments_are_still_stripped():
+    """Control: well-formed comments must not start surviving the strip."""
+    assert cwc._HTML_COMMENT_RE.sub("", "a <!-- one --> b <!-- two --> c") == "a  b  c"
+    assert cwc._HTML_COMMENT_RE.sub("", "a <!-- multi\nline\ncomment --> b") == "a  b"

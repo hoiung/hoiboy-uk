@@ -48,7 +48,12 @@ GRANDFATHERED_SLUGS: frozenset[str] = frozenset({
 })
 
 _FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
-_HTML_COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
+# A comment body may not itself contain `<!--`. Without that guard an
+# unterminated `<!--` paired with the NEXT `-->` however far away - typically
+# the closing `<!-- iamhoiend -->` marker - and every word between them was
+# deleted before counting. That is fail-OPEN on a word-count ceiling: the post
+# is measured as shorter than it is, so an over-3000-word post passes.
+_HTML_COMMENT_RE = re.compile(r"<!--(?:(?!<!--)[\s\S])*?-->")
 _FENCED_CODE_RE = re.compile(r"```.*?```", re.DOTALL)
 _INLINE_CODE_RE = re.compile(r"`[^`]*`")
 _SHORTCODE_ANGLE_RE = re.compile(r"\{\{<.*?>\}\}", re.DOTALL)
