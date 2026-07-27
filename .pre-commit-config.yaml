@@ -13,6 +13,15 @@ repos:
       - id: check-merge-conflict
       - id: check-yaml
       - id: check-toml
+      # A BOM must never enter a tracked file. Two gates were hardened to
+      # TOLERATE one after it silently dropped the first block of
+      # static/_headers (costing the 404 its noindex with every gate green) and
+      # crashed the TOML readers. Tolerating it makes those parsers MORE
+      # permissive than the consumers they model - Cloudflare Pages very likely
+      # drops a BOM-prefixed first block, and that is not testable from here.
+      # Making the input impossible is the fix that does not depend on guessing
+      # what the consumer does (blog-priv#64, Ralph rounds 6 and 7).
+      - id: fix-byte-order-marker
       - id: end-of-file-fixer
       - id: mixed-line-ending
         args: [--fix=lf]
