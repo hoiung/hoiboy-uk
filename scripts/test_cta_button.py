@@ -423,3 +423,22 @@ def test_the_rendered_cascade_gate_is_wired():
         f"model of the cascade and not the cascade itself; the browser check is "
         f"what proves it. Naming the file without calling it means it runs never."
     )
+
+
+def test_cta_color_survives_a_byte_order_mark(tmp_path, monkeypatch):
+    """A BOM-prefixed params.toml must not crash this reader.
+
+    TOML disallows a leading BOM, so `tomllib.loads` raises, and the pre-3.11
+    regex fallback's `^` cannot match before the BOM byte either. The fix
+    (utf-8-sig on both paths) shipped in 621fe11 alongside a pinning test for
+    the sibling reader in check_cta_rendered.py, but none here: reverting this
+    file's one line left all 9 tests passing (Ralph round 8).
+    """
+    params = tmp_path / "params.toml"
+    params.write_bytes(b"\xef\xbb\xbf" + b'ctaColor = "#188418"\n')
+    monkeypatch.setattr(sys.modules[__name__], "PARAMS", params)
+    cta_color.cache_clear()
+    try:
+        assert cta_color() == "#188418"
+    finally:
+        cta_color.cache_clear()
