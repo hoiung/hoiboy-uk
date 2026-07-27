@@ -475,5 +475,40 @@ def test_the_source_lane_passes_against_the_shipped_headers_file(capsys):
     capsys.readouterr()
 
 
+def test_a_failure_to_read_the_noindex_rules_is_not_swallowed(monkeypatch):
+    """The gate must fail LOUDLY when it cannot determine the noindex state.
+
+    `noindex_globs()` imports `check_social_cards.py` at call time, so renaming,
+    moving or breaking that file makes this raise. The dangerous repair is a
+    silent one: wrapping the call in `except Exception: covered = True` makes the
+    gate report the rule as present when it has no idea, which is AP #12's
+    fail-loud rule inverted on the exact check that keeps the 404 out of the
+    search index.
+
+    Nothing forced an exception here until this test, so that catch could be
+    added and ship green -- measured, not assumed: adding it left the file at 12
+    passed and the CLI lane at exit 0. And once the parser really did go missing,
+    the CLI lane STILL exited 0 while only the pytest lane noticed, so the
+    pre-commit gate was the one lane that would have stayed quiet.
+
+    Asserting propagation rather than a specific exit code deliberately: the
+    contract is that a broken gate is never mistaken for a passing one, and any
+    loud failure satisfies it.
+    """
+    def boom() -> list[str]:
+        raise RuntimeError("check_social_cards.py could not be imported")
+
+    monkeypatch.setattr(sys.modules[__name__], "noindex_globs", boom)
+    try:
+        result = main(["--source-only"])
+    except RuntimeError:
+        return  # propagated: correct.
+    raise AssertionError(
+        f"the 404 gate returned {result} instead of letting the failure "
+        "propagate. It could not read the noindex rules and reported a verdict "
+        "anyway, so a missing X-Robots-Tag rule would now pass silently."
+    )
+
+
 if __name__ == "__main__":
     sys.exit(main())
