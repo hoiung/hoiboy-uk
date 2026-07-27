@@ -176,3 +176,70 @@ def test_short_leaf_titles_keep_their_original_size_and_wrap():
     assert gc.fit_title("Portfolio") == (gc.TITLE_FS_1L, ["Portfolio"])
     assert gc.fit_title("Business Automation Services") == (
         gc.TITLE_FS_2L, ["Business Automation", "Services"])
+
+
+def test_read_meta_reads_a_folded_block_scalar_description(tmp_path):
+    """`description: >` is ordinary YAML, and the regex reader returned ">".
+
+    That single character rendered straight into the committed 1200x630
+    share-card.png that is served as og:image for the landing. Nothing caught
+    it: check_social_cards.py asserts a card EXISTS, never what it says. The
+    only fail-open in this repo's card lane that reaches a reader.
+    """
+    md = tmp_path / "_index.md"
+    md.write_text(
+        "---\ntitle: Hire Hoi\ndescription: >\n"
+        "  AI systems built and shipped\n  by one practitioner.\n---\n",
+        encoding="utf-8",
+    )
+    title, desc = gc.read_landing_meta(md)
+    assert title == "Hire Hoi"
+    assert desc == "AI systems built and shipped by one practitioner."
+
+
+def test_read_meta_reads_a_literal_block_scalar_description(tmp_path):
+    """The `|` form folds newlines differently but must not degrade either."""
+    md = tmp_path / "_index.md"
+    md.write_text(
+        "---\ntitle: Hire Hoi\ndescription: |\n  AI systems built and shipped.\n---\n",
+        encoding="utf-8",
+    )
+    assert gc.read_landing_meta(md) == ("Hire Hoi", "AI systems built and shipped.")
+
+
+def test_read_meta_dies_rather_than_rendering_a_non_string(tmp_path):
+    """An unquoted date-like description parses as a date, not text.
+
+    Rendering its Python repr onto a card would ship "datetime.date(2026, 7, 27)"
+    as the tagline, and a generated PNG is not something anyone re-reads before
+    publishing. Fail loud instead.
+    """
+    import pytest
+
+    md = tmp_path / "_index.md"
+    md.write_text("---\ntitle: Hire Hoi\ndescription:\n  - a\n  - b\n---\n", encoding="utf-8")
+    with pytest.raises(SystemExit):
+        gc.read_landing_meta(md)
+
+
+def test_read_meta_matches_every_real_landing_in_the_tsv():
+    """Regression pin: the real landings must parse, and parse as text.
+
+    This is the check that would have caught the block-scalar defect without
+    anyone thinking to test block scalars, because it reads what actually ships.
+    """
+    tsv = SC / "landing-cards.tsv"
+    seen = 0
+    for line in tsv.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        path = Path(__file__).resolve().parent.parent / "content" / line.split("\t")[0]
+        if path.is_dir():
+            path = path / "_index.md"
+        assert path.exists(), f"landing-cards.tsv names a missing landing: {path}"
+        title, desc = gc.read_landing_meta(path)
+        assert title and isinstance(title, str)
+        assert desc is None or (isinstance(desc, str) and desc.strip() not in (">", "|"))
+        seen += 1
+    assert seen >= 14, f"expected the full landing set, parsed only {seen}"

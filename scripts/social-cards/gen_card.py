@@ -50,6 +50,7 @@ Reads:  scripts/social-cards/cards.tsv, legal-cards.tsv, hire-hoi-cards.tsv (slu
 Deps:   rsvg-convert (librsvg), Pillow.  Re-run after editing a *.tsv.
 """
 import subprocess, sys, os, html, textwrap, pathlib, base64, io, re
+import yaml  # already declared: requirements-dev.txt
 from card_common import TrailIndex, font_face, load_trails, bundle_key, eyebrow_for
 
 # --- Palettes (canonical: docs/research/07_DESIGN_TOKENS.md) ------------------
@@ -285,17 +286,48 @@ def _signature_svg(logo_uri, text=True):
 
 
 def read_landing_meta(index_md):
-    """(title, description|None) from a landing _index.md frontmatter. Mirrors the
-    quote-stripping regex in scripts/check_social_cards.py, so a landing card's title
-    and tagline are the page's OWN frontmatter - single source of truth, no invented
-    copy. A landing with no `description:` gets a title-only card."""
+    """(title, description|None) from a landing _index.md frontmatter.
+
+    A landing card's title and tagline are the page's OWN frontmatter - single
+    source of truth, no invented copy. A landing with no `description:` gets a
+    title-only card.
+
+    Parsed with yaml.safe_load, exactly as the sibling reader
+    scripts/validate_frontmatter.py:96 already does, rather than with a
+    line-anchored regex. The regex captured only the FIRST line of a value, so a
+    block scalar
+
+        description: >
+          a perfectly ordinary folded description
+
+    collapsed to the single character ">" and rendered that straight into the
+    committed 1200x630 share-card.png served as og:image. Nothing caught it:
+    scripts/check_social_cards.py asserts a card EXISTS, never what it says.
+    """
     text = index_md.read_text(encoding="utf-8", errors="replace")
     m = re.match(r"^---\n(.*?)\n---", text, re.S)
-    fm = m.group(1) if m else ""
+    try:
+        fm = yaml.safe_load(m.group(1)) if m else None
+    except yaml.YAMLError as exc:
+        sys.exit(f"unparseable frontmatter in {index_md}: {exc}")
+    if fm is None:
+        fm = {}
+    if not isinstance(fm, dict):
+        sys.exit(f"frontmatter is not a mapping in {index_md}: {type(fm).__name__}")
 
     def field(name):
-        mm = re.search(rf'^{name}:\s*["\']?(.+?)["\']?\s*$', fm, re.M)
-        return mm.group(1).strip() if mm else None
+        value = fm.get(name)
+        if value is None:
+            return None
+        # Die rather than render a Python repr into a PNG: a date-like or
+        # numeric `description` parses as a non-str and would ship as e.g.
+        # "datetime.date(2026, 7, 27)" on a card nobody re-reads before publish.
+        if not isinstance(value, (str, int, float)):
+            sys.exit(
+                f"{name} in {index_md} parsed as {type(value).__name__}, not text. "
+                f"Quote it, so the card renders the words you meant."
+            )
+        return str(value).strip() or None
 
     title = field("title")
     if not title:
