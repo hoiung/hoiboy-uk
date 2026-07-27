@@ -162,8 +162,14 @@ jobs:
       # underlined link. Both regressions fail this file. The browser-computed
       # half runs in pre-publish.sh, which is the lane that has Chromium, and
       # this file asserts that gate is wired. blog-priv#63.
+      # test_check_cta_rendered covers the PURE helpers of the browser gate
+      # (expected fill/label, whole-token class match, built-tree URL shaping).
+      # Those decide what "correct" means, and they needed no browser, yet they
+      # were reachable only through the manual Chromium lane until Ralph Tier 2
+      # flagged the missing companion test. The browser half stays in
+      # pre-publish.sh.
       - name: CTA button cascade + contrast unit tests
-        run: python3 -m pytest scripts/test_cta_button.py -q
+        run: python3 -m pytest scripts/test_cta_button.py scripts/test_check_cta_rendered.py -q
 
       # test_gen_card and test_check_svg_dimensions are source-only (no built tree)
       # and were in NO pytest invocation until blog-priv#62 -- the same "a file nobody
