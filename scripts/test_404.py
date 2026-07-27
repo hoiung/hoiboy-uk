@@ -52,6 +52,7 @@ Exit 0 = pass. Exit 1 = a named failure. Exit 2 = no build to check.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import re
 import sys
 from pathlib import Path
@@ -86,7 +87,29 @@ SHELL_MARKERS = ("<!doctype html>", 'class="layout"', 'class="sidebar')
 # across every dead path. static/_headers is where the site already keeps that
 # kind of rule (see the thanks-page block).
 HEADERS = ROOT / "static" / "_headers"
-NOINDEX_RULE = re.compile(r"^/404\*?\s*$\s+^\s*X-Robots-Tag:\s*noindex", re.M)
+
+
+def noindex_globs() -> list[str]:
+    """Path globs `static/_headers` marks noindex, via the repo's existing parser.
+
+    Reused rather than re-implemented, deliberately. The first version of this
+    check hand-rolled `re.compile(r"^/404\\*?\\s*$\\s+^\\s*X-Robots-Tag:\\s*noindex")`,
+    which requires the header line to sit IMMEDIATELY after the path line. That
+    is not how Cloudflare's `_headers` works: a block carries any number of
+    directives in any order, and this very file already has a four-directive
+    block (`/private/tools/meet-recorder/*`). So reordering the directives under
+    `/404*` -- a functionally identical edit -- would have false-FAILED the gate,
+    and two parsers for one file would have disagreed about the same contract.
+
+    `check_social_cards.py` already scans this file correctly for exactly this
+    purpose. One file, one parser.
+    """
+    spec = importlib.util.spec_from_file_location(
+        "check_social_cards", ROOT / "scripts" / "check_social_cards.py")
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = mod
+    spec.loader.exec_module(mod)
+    return mod.parse_noindex_globs(HEADERS)
 
 # The 404 page's OWN content block, isolated from the shared shell. Check C is
 # scoped to this and not to the whole document, which is a correctness fix and
@@ -159,7 +182,8 @@ def main(argv: list[str] | None = None) -> int:
     if not HEADERS.is_file():
         failures.append(f"{HEADERS.relative_to(ROOT)} is missing, so the 404 "
                         "page cannot be kept out of the search index.")
-    elif not NOINDEX_RULE.search(HEADERS.read_text(encoding="utf-8")):
+    elif not any(g.rstrip("*").rstrip("/") in ("/404", "") and g.startswith("/404")
+                 for g in noindex_globs()):
         failures.append(
             "static/_headers has no `X-Robots-Tag: noindex` rule for /404*. "
             "Cloudflare serves this template at /404.html -> 308 -> /404 with "
