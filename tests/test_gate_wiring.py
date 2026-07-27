@@ -25,6 +25,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+import yaml  # already declared: requirements-dev.txt
+
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -297,11 +299,78 @@ def _pytest_covered(text: str) -> set[str]:
 
     covered: set[str] = set()
     for command in logical:
+        # 4. SWALLOWED FAILURE. `python3 -m pytest x.py || true` runs the tests
+        #    and then throws the verdict away: the step is green whatever they
+        #    say, so the file is not GATED by CI even though it is run by it.
+        #    An `||` BEFORE the pytest token is the opposite case - pytest is the
+        #    fallback and its failure still fails the step - so position decides.
+        bare_command = _unquoted(command)
+        swallowed = False
+        if "pytest" in bare_command and "||" in bare_command:
+            swallowed = bare_command.index("||") > bare_command.index("pytest")
+        if swallowed:
+            continue
         for segment in _split_commands(command):
             bare = _unquoted(segment)
             if "pytest" not in bare:
                 continue
             covered.update(TEST_PATH.findall(bare.split("pytest", 1)[1]))
+    return covered
+
+
+# `if:` values that still let the step run AND still let it fail the build.
+# `always()` runs the step even after an earlier failure, and it can itself go
+# red, so it is real coverage - this file's own `--scope consulting` test exists
+# because that guard is load-bearing. Anything outside this set cannot be
+# evaluated statically and is refused, which fails LOUD rather than crediting a
+# step that may never execute.
+_RUNS_AND_CAN_FAIL = frozenset({"true", "always()", "success()"})
+
+
+def _neutered(node: object) -> str | None:
+    """Why this job/step cannot turn CI red, or None if it can.
+
+    A gate that runs but cannot fail the build is not a gate. `if:` accepts
+    arbitrary GitHub expressions, which cannot be evaluated here, so anything
+    other than a literal true is treated as NOT-credited: fail closed, and say
+    so, rather than guess at an expression's runtime value.
+    """
+    if not isinstance(node, dict):
+        return None
+    if node.get("continue-on-error") is True:
+        return "continue-on-error: true"
+    condition = node.get("if")
+    if condition is not None and str(condition).strip().lower() not in _RUNS_AND_CAN_FAIL:
+        return f"if: {condition}"
+    return None
+
+
+def _workflow_pytest_covered(workflow_text: str) -> set[str]:
+    """Every test file the WORKFLOW both runs under pytest AND is gated by.
+
+    `_pytest_covered` above answers a shell question and is deliberately kept
+    that way, with its own unit test and three pinned mutations. This answers
+    the structural question it cannot see: a step whose job is `if: false`, or
+    which carries `continue-on-error: true`, runs pytest and can never turn CI
+    red. All three escapes credited before this existed, which made the guard
+    fail OPEN in exactly the direction it was written to prevent.
+
+    Rounds 3, 4 and 5 each hardened the LEXING of the command and none asked
+    whether the credited command can actually fail the build.
+    """
+    document = yaml.safe_load(workflow_text)
+    if not isinstance(document, dict):
+        return set()
+    covered: set[str] = set()
+    for job in (document.get("jobs") or {}).values():
+        if not isinstance(job, dict) or _neutered(job):
+            continue
+        for step in job.get("steps") or []:
+            if not isinstance(step, dict) or _neutered(step):
+                continue
+            run = step.get("run")
+            if isinstance(run, str):
+                covered |= _pytest_covered(run)
     return covered
 
 
@@ -395,7 +464,7 @@ def test_every_test_file_is_actually_run_by_pytest_in_ci():
     this check, which is precisely the failure mode the test exists to catch. Three
     of the current matches for this very file are comment-only.
     """
-    covered = _pytest_covered(CI.read_text(encoding="utf-8"))
+    covered = _workflow_pytest_covered(CI.read_text(encoding="utf-8"))
     on_disk = {
         f"{d}/{p.name}"
         for d in ("scripts", "tests")
@@ -419,3 +488,89 @@ def test_every_test_file_is_actually_run_by_pytest_in_ci():
         f"source-only tests before it). Being named on a bare `python3 <file>` "
         f"CLI line does NOT count: that runs the file, not its test functions."
     )
+
+
+def test_a_step_that_cannot_fail_the_build_is_not_coverage():
+    """A gate that runs but can never turn CI red is not a gate.
+
+    All four of these credited before `_workflow_pytest_covered` existed, so the
+    guard failed OPEN in the exact direction it was written to prevent: a test
+    file could be neutered in ci.yml and the wiring test stayed green. Rounds 3,
+    4 and 5 each hardened the LEXING of the command; none asked whether the
+    credited command can actually fail the build.
+    """
+    def wf(job_extra="", step_extra="", command="python3 -m pytest scripts/test_a.py -q"):
+        return (f"jobs:\n  ci:\n{job_extra}    steps:\n      - name: run\n"
+                f"{step_extra}        run: {command}\n")
+
+    # Control: an ordinary step is credited.
+    assert _workflow_pytest_covered(wf()) == {"scripts/test_a.py"}
+
+    # A job or step that never runs is not coverage.
+    assert _workflow_pytest_covered(wf(job_extra="    if: false\n")) == set()
+    assert _workflow_pytest_covered(wf(step_extra="        if: false\n")) == set()
+    assert _workflow_pytest_covered(
+        wf(step_extra="        if: github.event_name == 'schedule'\n")) == set()
+
+    # A step whose failure is ignored runs the tests and discards the verdict.
+    assert _workflow_pytest_covered(wf(job_extra="    continue-on-error: true\n")) == set()
+    assert _workflow_pytest_covered(wf(step_extra="        continue-on-error: true\n")) == set()
+
+    # ...as does swallowing the exit code in the shell.
+    assert _workflow_pytest_covered(
+        wf(command="python3 -m pytest scripts/test_a.py -q || true")) == set()
+
+    # But `||` BEFORE pytest is the opposite case: pytest is the fallback and
+    # its failure still fails the step, so it stays credited.
+    assert _workflow_pytest_covered(
+        wf(command="test -f x || python3 -m pytest scripts/test_a.py -q")
+    ) == {"scripts/test_a.py"}
+
+    # `if: always()` runs the step MORE, and it can still go red. Real coverage.
+    assert _workflow_pytest_covered(
+        wf(step_extra="        if: always()\n")) == {"scripts/test_a.py"}
+
+
+def test_neutering_a_real_ci_step_is_caught_by_the_wiring_guard():
+    """Mutation, against the REAL ci.yml rather than a synthetic fixture.
+
+    The guard's value is entirely in what it does to the file that ships. Adding
+    `continue-on-error: true` to a real pytest step must drop that file's
+    coverage, which is what makes the guard's own assertion fail.
+    """
+    real = CI.read_text(encoding="utf-8")
+    baseline = _workflow_pytest_covered(real)
+    assert "scripts/test_404.py" in baseline
+
+    marker = "python3 -m pytest scripts/test_404.py -q"
+    assert marker in real, "ci.yml no longer runs test_404.py the expected way"
+    line_start = real.rfind("\n", 0, real.index(marker)) + 1
+    indent = " " * (len(real[line_start:]) - len(real[line_start:].lstrip()))
+    mutated = real.replace(
+        real[line_start:real.index(marker) + len(marker)],
+        f"{indent}continue-on-error: true\n{indent}run: {marker}", 1)
+
+    assert "scripts/test_404.py" not in _workflow_pytest_covered(mutated), (
+        "neutering a real pytest step with continue-on-error still credited it. "
+        "The guard is measuring the text and not the wiring."
+    )
+
+    # And drive the GUARD, not just the helper. Asserting on the helper proves
+    # the helper works and says nothing about whether the guard calls it: the
+    # first version of this test did exactly that, and swapping the guard back
+    # to the shell-only credit left all eight tests green. Point the module's CI
+    # at the neutered workflow and require the guard itself to go red.
+    import sys as _sys
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as tmp:
+        neutered = Path(tmp) / "ci.yml"
+        neutered.write_text(mutated, encoding="utf-8")
+        module = _sys.modules[__name__]
+        original = module.CI
+        module.CI = neutered
+        try:
+            with pytest.raises(AssertionError):
+                test_every_test_file_is_actually_run_by_pytest_in_ci()
+        finally:
+            module.CI = original
