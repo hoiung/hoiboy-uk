@@ -282,3 +282,58 @@ def test_both_colour_schemes_are_checked():
     """A button that reads correctly in light and vanishes in dark is a defect
     for half the readers, so the gate runs every page under both."""
     assert set(ccr.SCHEMES) == {"light", "dark"}
+
+
+# --------------------------------------------------------------------------
+# expected_label anchors to the CTA's own selector
+# --------------------------------------------------------------------------
+
+def test_expected_label_ignores_a_btn_rule_that_cannot_match_the_cta(tmp_path, monkeypatch):
+    """The CTA is an `<a class="btn">`. A rule not matching an anchor is not it.
+
+    `.btn` is an ordinary class name to reuse. A scroll-to-top or copy-code
+    button declared earlier in the sheet used to win purely on file order, and
+    the browser gate then asserted that colour against the real CTA on every
+    page (Ralph round 6, proven by construction).
+    """
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        ".scroll-top button.btn { color: #ff0000; }\n"
+        ".main a.btn { color: #ffffff; }\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ccr, "CSS", css)
+    assert ccr.expected_label() == ccr.hex_to_rgb_string("#ffffff")
+
+
+def test_expected_label_dies_when_two_anchor_rules_disagree(tmp_path, monkeypatch):
+    """Which rule wins is a cascade question. The gate refuses to guess it."""
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        ".footer a.btn { color: #ff0000; }\n"
+        ".main a.btn { color: #ffffff; }\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ccr, "CSS", css)
+    with pytest.raises(SystemExit):
+        ccr.expected_label()
+
+
+def test_expected_label_dies_when_no_anchor_rule_exists(tmp_path, monkeypatch):
+    css = tmp_path / "synthetic.css"
+    css.write_text(".scroll-top button.btn { color: #ff0000; }\n", encoding="utf-8")
+    monkeypatch.setattr(ccr, "CSS", css)
+    with pytest.raises(SystemExit):
+        ccr.expected_label()
+
+
+def test_agreeing_duplicate_anchor_rules_are_not_an_error(tmp_path, monkeypatch):
+    """Only DISAGREEMENT is fatal; restating the same colour is harmless."""
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        ".main a.btn { color: #ffffff; }\n"
+        ".main article a.btn { color: #fff; }\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ccr, "CSS", css)
+    assert ccr.expected_label() == ccr.hex_to_rgb_string("#ffffff")

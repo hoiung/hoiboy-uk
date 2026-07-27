@@ -139,17 +139,41 @@ def expected_fill() -> str:
 
 
 def expected_label() -> str:
-    """The label colour the stylesheet's stateless .btn rule declares."""
+    """The label colour the stylesheet's stateless `a.btn` rule declares.
+
+    Anchored to `a.btn`, not to a bare `.btn`, and that is load-bearing. The CTA
+    is an `<a class="btn">`; a rule that does not match an anchor cannot be the
+    one styling it. Matching any colon-free selector containing `.btn` returned
+    whichever such rule came FIRST in file order, so adding an ordinary
+    `.scroll-top button.btn { color: ... }` above line 138 made this compute the
+    wrong label and the browser gate then assert that wrong value against the
+    real button on every page (blog-priv#64, Ralph round 6). Proven by
+    construction: a decoy rule declared first returned its colour, not the CTA's.
+
+    Ambiguity is fatal rather than resolved. If several stateless `a.btn` rules
+    declare DIFFERENT colours, which one wins is a cascade question this gate
+    deliberately does not answer - the browser does. Guessing would put the
+    silent-wrong-answer back, so it dies and names them instead.
+    """
     css = COMMENTS.sub("", CSS.read_text(encoding="utf-8"))
+    found: dict[str, str] = {}
     for sel_group, decls in re.findall(r"([^{}]+)\{([^{}]*)\}", css, re.S):
         sels = [s.strip() for s in sel_group.split(",")]
-        if not any(re.search(r"\.btn(?![\w-])", s) and ":" not in s for s in sels):
+        matching = [s for s in sels if re.search(r"\ba\.btn(?![\w-])", s) and ":" not in s]
+        if not matching:
             continue
         m = re.search(r"(?:^|;)\s*color\s*:\s*([^;]+)", decls)
         if m:
-            return hex_to_rgb_string(m.group(1))
-    die("no stateless .btn rule with a color declaration found in assets/css/main.css")
-    return ""  # unreachable; keeps type checkers quiet
+            found.setdefault(hex_to_rgb_string(m.group(1)), matching[0])
+    if not found:
+        die("no stateless `a.btn` rule with a color declaration found in "
+            "assets/css/main.css. The CTA is an <a class=\"btn\">, so its label "
+            "colour has to come from a rule that matches an anchor.")
+    if len(found) > 1:
+        die("assets/css/main.css declares more than one stateless `a.btn` label "
+            "colour, so this gate cannot say which applies to the CTA: "
+            + ", ".join(f"{sel} -> {rgb}" for rgb, sel in sorted(found.items())))
+    return next(iter(found))
 
 
 def has_button(html: str) -> bool:
