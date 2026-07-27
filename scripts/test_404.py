@@ -410,6 +410,28 @@ def test_noindex_globs_returns_nothing_when_the_block_sets_no_robots_directive(t
     assert noindex_globs() == []
 
 
+def test_a_preview_size_directive_does_not_count_as_noindex(tmp_path, monkeypatch):
+    """`max-image-preview:none` limits preview image SIZE. It does not deindex.
+
+    The shared parser used to match the bare word `none` anywhere in the header
+    value, so a block carrying only this real, standard directive reported the
+    404 as protected and every check went green over a fully indexable page --
+    the exact defect this gate exists to prevent (Ralph round 5). Pinned here as
+    well as at the parser, because this is the gate that acts on the answer.
+    """
+    monkeypatch.setattr(sys.modules[__name__], "HEADERS", _headers(tmp_path, (
+        "/404*\n  X-Robots-Tag: max-image-preview:none\n"
+    )))
+    assert not noindex_covers_404(noindex_globs())
+
+
+def test_a_preview_size_directive_beside_a_real_noindex_still_counts(tmp_path, monkeypatch):
+    monkeypatch.setattr(sys.modules[__name__], "HEADERS", _headers(tmp_path, (
+        "/404*\n  X-Robots-Tag: max-image-preview:none, noindex\n"
+    )))
+    assert noindex_covers_404(noindex_globs())
+
+
 def test_noindex_covers_404_accepts_every_spelling_of_the_rule():
     for glob in ("/404", "/404/", "/404*", "/404/*"):
         assert noindex_covers_404([glob]), f"{glob} should count as covering /404"

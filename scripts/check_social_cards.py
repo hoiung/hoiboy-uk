@@ -123,6 +123,38 @@ def _in_child_bundle(bundle_dir: Path, f: Path) -> bool:
     return False
 
 
+# Robots directives that TAKE a value, so the text after their colon is a
+# parameter and never an indexing instruction. `max-image-preview:none` limits
+# preview image size; it says nothing about indexing. Matching a bare `none`
+# anywhere in the header value read that as "this page is noindexed" and
+# reported a fully indexable page as protected (blog-priv#64, Ralph round 5).
+_VALUED_DIRECTIVES = frozenset({
+    "max-snippet", "max-image-preview", "max-video-preview", "unavailable_after",
+})
+
+
+def _is_noindex_value(value: str) -> bool:
+    """True when an `X-Robots-Tag` value actually asks for no indexing.
+
+    The value is a comma-separated directive list. A directive is either bare
+    (`noindex`, `nofollow`, `none`, `all`), valued (`max-image-preview:none`),
+    or bare behind a user-agent prefix (`googlebot: noindex`). Both of the last
+    two contain a colon, so the key is what tells them apart.
+    """
+    for raw_directive in value.split(","):
+        directive = raw_directive.strip().lower()
+        if not directive:
+            continue
+        if ":" in directive:
+            key, _, rest = directive.partition(":")
+            if key.strip() in _VALUED_DIRECTIVES:
+                continue                             # a parameter, not a verdict
+            directive = rest.strip()                 # a user-agent prefix
+        if directive in ("noindex", "none"):
+            return True
+    return False
+
+
 def parse_noindex_globs(headers_path: Path) -> list[str]:
     """Path globs that static/_headers marks noindex (X-Robots-Tag: noindex|none)."""
     if not headers_path.exists():
@@ -134,7 +166,10 @@ def parse_noindex_globs(headers_path: Path) -> list[str]:
             continue
         if raw.startswith("/"):                      # a path-glob line
             current = raw.strip()
-        elif current and re.search(r"X-Robots-Tag:.*\b(noindex|none)\b", raw, re.I):
+            continue
+        header, sep, value = raw.partition(":")
+        if current and sep and header.strip().lower() == "x-robots-tag" \
+                and _is_noindex_value(value):
             globs.append(current)
             current = None                           # one match per block is enough
     return globs

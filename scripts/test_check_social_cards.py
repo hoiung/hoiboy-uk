@@ -614,3 +614,63 @@ def test_cli_exit_codes(tmp_path):
     missing = subprocess.run([sys.executable, str(GUARD), "--content",
                               str(tmp_path / "nope")], capture_output=True)
     assert missing.returncode == 2
+
+
+# ---- parse_noindex_globs: which X-Robots-Tag values really mean "noindex" -----
+#
+# This parser is shared. scripts/test_404.py reuses it as the single authority on
+# whether static/_headers keeps the 404 page out of the search index, so a false
+# positive here reports an indexable page as protected in a gate whose entire
+# purpose is to stop exactly that (blog-priv#64, Ralph round 5).
+#
+# The defect these pin: the old regex looked for the bare word `none` anywhere in
+# the header value, and `max-image-preview:none` is a real, standard robots
+# directive that limits preview image SIZE and says nothing about indexing.
+
+def _globs(tmp_path: Path, header: str) -> list[str]:
+    return csc.parse_noindex_globs(_headers(tmp_path, f"/x*\n  {header}\n"))
+
+
+def test_noindex_and_none_are_recognised(tmp_path):
+    for value in ("noindex", "noindex, nofollow", "none", "NOINDEX",
+                  "nofollow, noindex"):
+        assert _globs(tmp_path, f"X-Robots-Tag: {value}") == ["/x*"], value
+
+
+def test_a_valued_directive_is_a_parameter_not_a_verdict(tmp_path):
+    """`max-image-preview:none` limits preview size. It does not deindex.
+
+    A maintainer adding it to a block for that unrelated reason, without keeping
+    a real noindex line, used to make every check report the page as protected.
+    """
+    for value in ("max-image-preview:none", "max-image-preview: none",
+                  "max-snippet:-1, max-image-preview:large",
+                  "unavailable_after: 2030-01-01"):
+        assert _globs(tmp_path, f"X-Robots-Tag: {value}") == [], value
+
+
+def test_a_valued_directive_beside_a_real_noindex_still_counts(tmp_path):
+    assert _globs(tmp_path, "X-Robots-Tag: max-image-preview:none, noindex") == ["/x*"]
+
+
+def test_a_user_agent_prefix_is_not_mistaken_for_a_valued_directive(tmp_path):
+    """`googlebot: noindex` also contains a colon; the KEY is what tells them apart."""
+    assert _globs(tmp_path, "X-Robots-Tag: googlebot: noindex") == ["/x*"]
+    assert _globs(tmp_path, "X-Robots-Tag: googlebot: noindex, nosnippet") == ["/x*"]
+
+
+def test_directives_that_permit_indexing_are_not_matched(tmp_path):
+    for value in ("nofollow", "all", "nosnippet", "noarchive"):
+        assert _globs(tmp_path, f"X-Robots-Tag: {value}") == [], value
+
+
+def test_another_header_carrying_the_word_none_is_not_matched(tmp_path):
+    """Only X-Robots-Tag decides indexing, whatever other headers happen to say."""
+    assert _globs(tmp_path, "X-Frame-Options: none") == []
+    assert _globs(tmp_path, "Permissions-Policy: geolocation=none") == []
+
+
+def test_directive_order_within_a_block_does_not_matter(tmp_path):
+    body = ("/x*\n  X-Frame-Options: DENY\n  Referrer-Policy: no-referrer\n"
+            "  X-Robots-Tag: noindex, nofollow\n")
+    assert csc.parse_noindex_globs(_headers(tmp_path, body)) == ["/x*"]
