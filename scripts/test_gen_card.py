@@ -243,3 +243,25 @@ def test_read_meta_matches_every_real_landing_in_the_tsv():
         assert desc is None or (isinstance(desc, str) and desc.strip() not in (">", "|"))
         seen += 1
     assert seen >= 14, f"expected the full landing set, parsed only {seen}"
+
+
+def test_read_meta_dies_on_a_yaml_boolean_description(tmp_path):
+    """`description: no` is a YAML 1.1 boolean, and bool subclasses int.
+
+    So it slipped through an `isinstance(value, (str, int, float))` guard and
+    would have rendered the word "False" onto a published og:image card.
+    """
+    import pytest
+
+    for scalar in ("no", "yes", "true", "false", "on", "off"):
+        md = tmp_path / "_index.md"
+        md.write_text(f"---\ntitle: Hire Hoi\ndescription: {scalar}\n---\n", encoding="utf-8")
+        with pytest.raises(SystemExit):
+            gc.read_landing_meta(md)
+
+
+def test_read_meta_still_accepts_a_quoted_boolean_like_word(tmp_path):
+    """Quoted, it is text and must render as written."""
+    md = tmp_path / "_index.md"
+    md.write_text('---\ntitle: Hire Hoi\ndescription: "No."\n---\n', encoding="utf-8")
+    assert gc.read_landing_meta(md) == ("Hire Hoi", "No.")

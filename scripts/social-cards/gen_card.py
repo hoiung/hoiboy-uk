@@ -322,7 +322,11 @@ def read_landing_meta(index_md):
         # Die rather than render a Python repr into a PNG: a date-like or
         # numeric `description` parses as a non-str and would ship as e.g.
         # "datetime.date(2026, 7, 27)" on a card nobody re-reads before publish.
-        if not isinstance(value, (str, int, float)):
+        # bool BEFORE the numeric check: bool subclasses int in Python, so an
+        # unquoted YAML 1.1 boolean-like scalar (no / yes / on / off / true /
+        # false) passed straight through and rendered "False" onto the card.
+        # A landing described as "no" is not fanciful - it is one word.
+        if isinstance(value, bool) or not isinstance(value, (str, int, float)):
             sys.exit(
                 f"{name} in {index_md} parsed as {type(value).__name__}, not text. "
                 f"Quote it, so the card renders the words you meant."

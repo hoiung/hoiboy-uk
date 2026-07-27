@@ -70,17 +70,44 @@ BTN_CLASS = re.compile(r"\.btn(?![\w-])")
 COMMENTS = re.compile(r"/\*.*?\*/", re.S)
 RULE = re.compile(r"([^{}]+)\{([^{}]*)\}", re.S)
 
+# A CSS string literal. Not re.S, and the body excludes a raw newline, because
+# per CSS syntax a string ends at the newline rather than running on to pair
+# with some later quote.
+STRING_LITERAL = re.compile(r"""(['"])(?:\\.|(?!\1)[^\\\n])*\1""")
+
+
+def blank_string_contents(css: str) -> str:
+    """Blank the CONTENTS of string literals, preserving quotes and length.
+
+    A brace inside a string is data, not structure, and `RULE` above cannot tell
+    the difference. `content: "}"` is ordinary valid CSS - this stylesheet
+    already uses `content` for list markers - and inside the button's own rule
+    it ended the declaration capture early, so `declaration()` returned an
+    EARLIER `color` while the browser painted a LATER one. Because
+    `test_label_contrast_clears_wcag_aa` is the only WCAG gate in this repo and
+    scores whatever `declaration()` returns, that reported 4.82:1 for a button
+    actually rendering at 1.56:1, with every gate green.
+
+    Deliberately an INDEPENDENT implementation of the same idea as
+    `check_cta_rendered.py`'s `_blank_strings`, not an import of it. The two
+    gates are a source model and a real browser, and sharing a parser would let
+    them agree on the same wrong answer (rationale recorded in e9a927f). Fixing
+    one defect in BOTH files is AP #9; merging the files is not.
+    """
+    return STRING_LITERAL.sub(
+        lambda m: m.group(0)[0] + " " * (len(m.group(0)) - 2) + m.group(0)[0], css)
+
 
 @functools.lru_cache(maxsize=None)
 def stylesheet() -> str:
-    """main.css with comments stripped.
+    """main.css with comments stripped and string contents blanked.
 
     Stripping is not cosmetic. The comment above the button rule discusses
     `.btn` and `.main a` at length, precisely because the selector needs
     explaining. Parsed naively, that prose reads as several extra rules and the
     specificity assertions below start scoring English.
     """
-    return COMMENTS.sub("", CSS.read_text(encoding="utf-8"))
+    return blank_string_contents(COMMENTS.sub("", CSS.read_text(encoding="utf-8")))
 
 
 def specificity(selector: str) -> tuple[int, int, int]:
@@ -502,3 +529,51 @@ def test_hex_to_rgb_still_accepts_every_real_hex_form():
     assert hex_to_rgb("#fff") == (255, 255, 255)
     assert hex_to_rgb("188418") == (24, 132, 24)
     assert hex_to_rgb("  #188418  ") == (24, 132, 24)
+
+
+def test_a_brace_inside_a_string_does_not_truncate_the_button_rule(tmp_path, monkeypatch):
+    """`content: "}"` is valid CSS and used to fool the ONLY WCAG gate here.
+
+    The rule-scanning regex cannot tell a structural brace from one inside a
+    string, so the declaration capture ended early and `declaration()` returned
+    an EARLIER `color` than the browser paints. test_label_contrast_clears_wcag_aa
+    scores whatever `declaration()` returns, so it reported 4.82:1 for a button
+    rendering at 1.56:1 - a fail-OPEN in the lane that gates the deploy.
+
+    The sibling gate got this fix at dee4ffb and this file did not, which is the
+    same "hardened one consumer, left the sibling" shape a fourth time.
+
+    Asserted through `base_rule()`, i.e. through `stylesheet()`, NOT by calling
+    `blank_string_contents` directly. Calling the helper proves the helper works
+    and says nothing about whether anything USES it: the first version of this
+    test did exactly that and still passed with the blanking removed from
+    `stylesheet()`. A gate that measures something the shared shell supplies is
+    vacuous, which is a shape this repo has already been bitten by.
+    """
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        ".main a.btn { background: var(--cta); color: #ffffff; "
+        'content: "}"; color: #146214; text-decoration: none; }\n',
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(sys.modules[__name__], "CSS", css)
+    stylesheet.cache_clear()
+    try:
+        _sel, decls = base_rule()
+        assert declaration(decls, "color") == "#146214"
+    finally:
+        stylesheet.cache_clear()
+
+
+def test_blank_string_contents_preserves_offsets_and_quotes():
+    """Length and quoting are preserved so nothing downstream shifts."""
+    src = '.a { content: "}}"; } .b { content: \'{\'; }'
+    out = blank_string_contents(src)
+    assert len(out) == len(src)
+    assert out.count('"') == 2 and out.count("'") == 2
+    assert "}" not in out[out.index('"'):out.index('"') + 4]
+
+
+def test_the_real_stylesheet_still_yields_exactly_one_stateless_btn_rule():
+    """Regression pin: blanking must not disturb the real file's parse."""
+    assert base_rule()[0] == ".main a.btn"
