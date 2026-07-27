@@ -167,10 +167,14 @@ def cta_color() -> str:
     Read from the config rather than from the CSS: the config is where the
     value lives (No Hardcoded Settings), and the CSS only consumes it.
     """
+    # utf-8-sig on both paths: TOML disallows a leading BOM, so a BOM-prefixed
+    # save raised an unhandled TOMLDecodeError here, and the regex fallback's
+    # `^` cannot match before the BOM byte either. The sibling reader in
+    # check_cta_rendered.py had the identical defect (Ralph round 7).
     if sys.version_info >= (3, 11):
         import tomllib
-        return tomllib.loads(PARAMS.read_text(encoding="utf-8"))["ctaColor"]
-    m = re.search(r'^ctaColor\s*=\s*"([^"]+)"', PARAMS.read_text(encoding="utf-8"), re.M)
+        return tomllib.loads(PARAMS.read_text(encoding="utf-8-sig"))["ctaColor"]
+    m = re.search(r'^ctaColor\s*=\s*"([^"]+)"', PARAMS.read_text(encoding="utf-8-sig"), re.M)
     assert m, "ctaColor is not declared in config/_default/params.toml"
     return m.group(1)
 
