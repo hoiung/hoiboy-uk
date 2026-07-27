@@ -654,9 +654,22 @@ def test_a_valued_directive_beside_a_real_noindex_still_counts(tmp_path):
 
 
 def test_a_user_agent_prefix_is_not_mistaken_for_a_valued_directive(tmp_path):
-    """`googlebot: noindex` also contains a colon; the KEY is what tells them apart."""
-    assert _globs(tmp_path, "X-Robots-Tag: googlebot: noindex") == ["/x*"]
-    assert _globs(tmp_path, "X-Robots-Tag: googlebot: noindex, nosnippet") == ["/x*"]
+    """`googlebot: noindex` also contains a colon; the KEY is what tells them apart.
+
+    Both forms are colon-bearing and NEITHER grants a blanket noindex, but they
+    are rejected for different reasons and the parser must keep telling them
+    apart: `max-image-preview:none` is a parameter that says nothing about
+    indexing, while `googlebot: noindex` is a real indexing verdict that simply
+    binds one crawler.
+
+    Round 5 read the agent-scoped form as a blanket verdict. That is the wrong
+    direction for this parser: it is the repo's only EXEMPTION-granting
+    derivation, so a page could skip its share-card requirement, and the 404
+    could be reported as protected, on one crawler's say-so while every other
+    crawler stayed free to index it. Corrected to fail closed.
+    """
+    assert _globs(tmp_path, "X-Robots-Tag: googlebot: noindex") == []
+    assert _globs(tmp_path, "X-Robots-Tag: googlebot: noindex, nosnippet") == []
 
 
 def test_directives_that_permit_indexing_are_not_matched(tmp_path):
@@ -695,3 +708,33 @@ def test_a_byte_order_mark_does_not_hide_the_first_block(tmp_path):
     assert csc.parse_noindex_globs(bom) == ["/404*", "/private/*"], (
         "a leading BOM swallowed the first block's rule"
     )
+
+
+def test_a_user_agent_scoped_directive_is_not_a_blanket_verdict(tmp_path):
+    """`X-Robots-Tag: googlebot: noindex` binds googlebot and nobody else.
+
+    Every other crawler stays free to index the page, so it cannot stand in for
+    a blanket noindex. This is the repo's only EXEMPTION-granting derivation -
+    is_excluded() lets a page skip its share-card requirement entirely, and
+    scripts/test_404.py reuses this same parser as its authority on whether the
+    404 is kept out of the index. Fail closed: agent-scoped does not count.
+
+    This is Ralph round 5's function, direction and class surviving round 5's
+    own fix, which is why it is pinned rather than left to a tenth round.
+    """
+    for value in ("googlebot: noindex", "googlebot: none", "bingbot: noindex",
+                  "GOOGLEBOT: NOINDEX", "googlebot-news: none"):
+        assert _globs(tmp_path, f"X-Robots-Tag: {value}") == [], value
+
+
+def test_a_blanket_directive_alongside_a_scoped_one_still_counts(tmp_path):
+    """Do not over-narrow: a real blanket directive in the list still wins."""
+    for value in ("googlebot: noindex, noindex", "noindex, googlebot: none",
+                  "max-image-preview:none, noindex"):
+        assert _globs(tmp_path, f"X-Robots-Tag: {value}") == ["/x*"], value
+
+
+def test_the_real_headers_file_still_protects_the_404(tmp_path):
+    """Regression pin on what actually ships, not on a synthetic fixture."""
+    globs = csc.parse_noindex_globs(SCRIPTS.parent / "static" / "_headers")
+    assert "/404*" in globs, globs

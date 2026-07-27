@@ -146,10 +146,18 @@ def _is_noindex_value(value: str) -> bool:
         if not directive:
             continue
         if ":" in directive:
-            key, _, rest = directive.partition(":")
+            key, _, _rest = directive.partition(":")
             if key.strip() in _VALUED_DIRECTIVES:
                 continue                             # a parameter, not a verdict
-            directive = rest.strip()                 # a user-agent prefix
+            # Anything else colon-bearing is a USER-AGENT prefix, and it binds
+            # only that crawler: `X-Robots-Tag: googlebot: noindex` leaves every
+            # other crawler free to index the page. Treating it as a blanket
+            # verdict granted a page a full exemption on one crawler's say-so -
+            # and this is the repo's only EXEMPTION-granting derivation, feeding
+            # both is_excluded() below and the 404 noindex assertion in
+            # scripts/test_404.py through the shared parser. Fail CLOSED: an
+            # agent-scoped directive does not count.
+            continue
         if directive in ("noindex", "none"):
             return True
     return False
