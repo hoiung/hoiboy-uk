@@ -126,7 +126,11 @@ def hex_to_rgb_string(value: str) -> str:
 
 
 def expected_fill() -> str:
-    text = PARAMS.read_text(encoding="utf-8")
+    # utf-8-sig for the same reason parse_noindex_globs uses it: a BOM-prefixed
+    # save from a Windows editor is a real thing on this operator's host, and
+    # TOML disallows a leading BOM, so plain utf-8 turned that into an unhandled
+    # TOMLDecodeError traceback instead of this file's normal actionable die().
+    text = PARAMS.read_text(encoding="utf-8-sig")
     if sys.version_info >= (3, 11):
         import tomllib
         colour = tomllib.loads(text).get("ctaColor")
@@ -136,6 +140,54 @@ def expected_fill() -> str:
     if not colour:
         die("ctaColor is not declared in config/_default/params.toml")
     return hex_to_rgb_string(colour)
+
+
+# Conditional at-rules. Their contents apply only when the condition holds, so a
+# rule inside one is NOT the unconditional answer this gate needs. The flat
+# brace-scan below cannot see nesting at all: it extracts the inner rule and
+# treats it as top-level.
+CONDITIONAL_AT_RULE = re.compile(r"@(?:media|supports|container)\b[^{]*\{", re.I)
+
+
+def _split_conditional(css: str) -> tuple[str, list[tuple[str, str]]]:
+    """Separate unconditional CSS from conditional at-rule blocks.
+
+    Returns the CSS with every `@media` / `@supports` / `@container` block
+    removed, plus a list of `(condition, body)` for the blocks taken out, so
+    each can be inspected and reported by name.
+    """
+    kept: list[str] = []
+    blocks: list[tuple[str, str]] = []
+    i = 0
+    while True:
+        m = CONDITIONAL_AT_RULE.search(css, i)
+        if not m:
+            kept.append(css[i:])
+            return "".join(kept), blocks
+        kept.append(css[i:m.start()])
+        depth, j = 1, m.end()
+        while j < len(css) and depth:
+            if css[j] == "{":
+                depth += 1
+            elif css[j] == "}":
+                depth -= 1
+            j += 1
+        blocks.append((m.group(0).rstrip("{").strip(), css[m.end():j - 1]))
+        i = j
+
+
+def _stateless_anchor_labels(css: str) -> dict[str, str]:
+    """rgb -> the selector that declared it, for stateless `a.btn` rules."""
+    found: dict[str, str] = {}
+    for sel_group, decls in re.findall(r"([^{}]+)\{([^{}]*)\}", css, re.S):
+        sels = [s.strip() for s in sel_group.split(",")]
+        matching = [s for s in sels if re.search(r"\ba\.btn(?![\w-])", s) and ":" not in s]
+        if not matching:
+            continue
+        m = re.search(r"(?:^|;)\s*color\s*:\s*([^;]+)", decls)
+        if m:
+            found.setdefault(hex_to_rgb_string(m.group(1)), matching[0])
+    return found
 
 
 def expected_label() -> str:
@@ -154,21 +206,43 @@ def expected_label() -> str:
     declare DIFFERENT colours, which one wins is a cascade question this gate
     deliberately does not answer - the browser does. Guessing would put the
     silent-wrong-answer back, so it dies and names them instead.
+
+    KNOWN BOUNDARY, tested rather than merely stated (Ralph round 7). The match
+    is the literal substring `a.btn`, which is not CSS selector semantics. Two
+    legitimate refactors that still style the button - `.main .btn` and
+    `.main :where(a).btn`, both (0,2,0) and so both still beating `.main a` -
+    make this find nothing and die. That is a LOUD failure with an actionable
+    message, not a wrong answer, and pinning it here means the next maintainer
+    meets a documented boundary instead of a confusing exit 2 in the middle of
+    an unrelated change. Modelling the cascade properly would need a real CSS
+    parser, which is not worth it for one rule.
     """
-    css = COMMENTS.sub("", CSS.read_text(encoding="utf-8"))
-    found: dict[str, str] = {}
-    for sel_group, decls in re.findall(r"([^{}]+)\{([^{}]*)\}", css, re.S):
-        sels = [s.strip() for s in sel_group.split(",")]
-        matching = [s for s in sels if re.search(r"\ba\.btn(?![\w-])", s) and ":" not in s]
-        if not matching:
-            continue
-        m = re.search(r"(?:^|;)\s*color\s*:\s*([^;]+)", decls)
-        if m:
-            found.setdefault(hex_to_rgb_string(m.group(1)), matching[0])
+    css = COMMENTS.sub("", CSS.read_text(encoding="utf-8-sig"))
+    unconditional, conditional = _split_conditional(css)
+
+    # A conditional rule is not the unconditional answer. Checked BEFORE the
+    # main scan because the flat brace-scan cannot see nesting: a dark-mode rule
+    # was extracted as though it were top-level, which made a base+dark pair
+    # look like an ambiguous duplicate, and - far worse - made a dark-only rule
+    # return silently as the single expected label asserted under BOTH schemes.
+    for condition, body in conditional:
+        inside = _stateless_anchor_labels(body)
+        if inside:
+            die(f"assets/css/main.css declares a CTA label colour inside "
+                f"`{condition}` ({', '.join(sorted(inside))}). This gate derives "
+                f"ONE expected label and asserts it under every scheme in "
+                f"SCHEMES, so it cannot represent a colour that only applies "
+                f"sometimes. Either keep a single label colour for the button, "
+                f"or give this gate a per-scheme expectation to match.")
+
+    found = _stateless_anchor_labels(unconditional)
     if not found:
         die("no stateless `a.btn` rule with a color declaration found in "
             "assets/css/main.css. The CTA is an <a class=\"btn\">, so its label "
-            "colour has to come from a rule that matches an anchor.")
+            "colour has to come from a rule that matches an anchor. Note this "
+            "check looks for the literal `a.btn`: a selector that styles the "
+            "button without that exact form (`.main .btn`, `:where(a).btn`) is "
+            "a known unsupported shape, not a missing rule.")
     if len(found) > 1:
         die("assets/css/main.css declares more than one stateless `a.btn` label "
             "colour, so this gate cannot say which applies to the CTA: "

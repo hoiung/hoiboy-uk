@@ -337,3 +337,86 @@ def test_agreeing_duplicate_anchor_rules_are_not_an_error(tmp_path, monkeypatch)
     )
     monkeypatch.setattr(ccr, "CSS", css)
     assert ccr.expected_label() == ccr.hex_to_rgb_string("#ffffff")
+
+
+def test_a_dark_mode_label_rule_is_rejected_not_silently_returned(tmp_path, monkeypatch):
+    """A rule inside `@media` applies sometimes. The gate asserts one value always.
+
+    The flat brace-scan has no concept of nesting, so a conditional rule used to
+    be extracted as though it were top-level. Two bad outcomes, and the second
+    is the dangerous one (Ralph round 7):
+
+      base + dark   -> looked like an ambiguous duplicate of one selector
+      dark ONLY     -> returned SILENTLY as the single expected label, then
+                       asserted under the light scheme too, where it is wrong
+
+    This stylesheet already uses `prefers-color-scheme` for other properties, so
+    the construct is one edit away, not hypothetical.
+    """
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        "@media (prefers-color-scheme: dark) { .main a.btn { color: #000000; } }\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ccr, "CSS", css)
+    with pytest.raises(SystemExit):
+        ccr.expected_label()
+
+
+def test_a_base_rule_plus_a_dark_override_is_also_rejected(tmp_path, monkeypatch):
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        ".main a.btn { color: #ffffff; }\n"
+        "@media (prefers-color-scheme: dark) { .main a.btn { color: #000000; } }\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ccr, "CSS", css)
+    with pytest.raises(SystemExit):
+        ccr.expected_label()
+
+
+def test_an_unrelated_media_block_does_not_disturb_the_answer(tmp_path, monkeypatch):
+    """Only a CTA label rule inside a condition is a problem.
+
+    main.css carries several `@media` blocks for other properties, and they must
+    keep working. This also pins that the block-removal finds the right closing
+    brace: a nested block that swallowed too much would take the real rule with it.
+    """
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        "@media (max-width: 40rem) { .sidebar { display: none; } .main { padding: 0; } }\n"
+        ".main a.btn { color: #ffffff; }\n"
+        "@media print { .main a.btn { background: none; } }\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ccr, "CSS", css)
+    assert ccr.expected_label() == ccr.hex_to_rgb_string("#ffffff")
+
+
+def test_the_literal_a_dot_btn_requirement_is_a_known_tested_boundary(tmp_path, monkeypatch):
+    """Selectors that genuinely style the CTA but avoid the literal `a.btn`.
+
+    `.main .btn` and `.main :where(a).btn` are both (0,2,0) and both still beat
+    `.main a` at (0,1,1), so the button really is styled in each case. This gate
+    matches a substring, not CSS semantics, so it dies. Pinned deliberately: the
+    failure is loud and explains itself, and a maintainer meeting it during an
+    otherwise-correct refactor should find it documented rather than surprising.
+    """
+    for selector in (".main .btn", ".main :where(a).btn"):
+        css = tmp_path / f"{selector.replace(' ', '_').replace(':', '')}.css"
+        css.write_text(f"{selector} {{ color: #ffffff; }}\n", encoding="utf-8")
+        monkeypatch.setattr(ccr, "CSS", css)
+        with pytest.raises(SystemExit):
+            ccr.expected_label()
+
+
+def test_expected_fill_survives_a_byte_order_mark(tmp_path, monkeypatch):
+    """TOML disallows a leading BOM, so plain utf-8 crashed with a traceback.
+
+    Every other failure in this gate is an actionable die(). This one was an
+    unhandled TOMLDecodeError, which tells a reader nothing (Ralph round 7).
+    """
+    params = tmp_path / "params.toml"
+    params.write_bytes(b"\xef\xbb\xbf" + b'ctaColor = "#188418"\n')
+    monkeypatch.setattr(ccr, "PARAMS", params)
+    assert ccr.expected_fill() == ccr.hex_to_rgb_string("#188418")
