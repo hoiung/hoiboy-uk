@@ -137,23 +137,53 @@ def test_expected_label_reads_the_stateless_btn_rule_from_the_stylesheet():
     assert ccr.expected_label() == ccr.hex_to_rgb_string("#ffffff")
 
 
-def test_expected_label_ignores_the_hover_rule():
+def test_expected_label_ignores_the_hover_rule(tmp_path, monkeypatch):
     """`:hover` is a state layer, not the button's resting appearance.
 
-    The helper filters selectors containing `:`. If it stopped doing so it could
-    pick up a state rule's colour and assert the wrong thing on every page.
+    `expected_label` filters selectors containing `:`. Without that filter it
+    returns whichever matching rule comes FIRST in file order, which could be a
+    state rule, and then the browser gate asserts the wrong resting colour on
+    every page it checks.
+
+    Asserted against a SYNTHETIC stylesheet, not the shipped one, and that is
+    the whole point of this test. The first version of it read `main.css` and
+    asserted substrings of the raw text without ever calling `expected_label` --
+    so deleting the filter outright left all 21 tests passing (Ralph round 2,
+    proven by mutation). Two properties of the real stylesheet hid the defect:
+    the stateless rule is declared BEFORE the hover rule, and both happen to
+    declare the same `#fff`. Either one alone makes the filter's removal
+    invisible. The synthetic sheet below inverts both -- hover first, and a
+    different colour -- so the two branches cannot return the same answer.
+    """
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        ".main a.btn:hover { color: #ff0000; }\n"
+        ".main a.btn { color: #ffffff; }\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ccr, "CSS", css)
+    assert ccr.expected_label() == ccr.hex_to_rgb_string("#ffffff"), (
+        "expected_label picked up the :hover rule. Its selector filter "
+        '(`":" not in s`) is what skips state layers; without it the first '
+        "matching rule in file order wins."
+    )
+
+
+def test_the_shipped_stylesheet_still_has_a_hover_rule_worth_ignoring():
+    """The premise anchor for the test above, kept honest about what it proves.
+
+    The synthetic-sheet test proves the FILTER works. It cannot notice that the
+    hover rule was deleted from `main.css`, at which point the filter guards
+    nothing and the test above passes for a condition that no longer exists.
+    This one watches the real file, and is deliberately the only assertion here
+    that does.
     """
     css = ccr.CSS.read_text(encoding="utf-8")
     assert ".main a.btn:hover" in css, (
-        "this test's premise is gone: there is no hover rule to ignore."
+        "assets/css/main.css no longer declares a `.main a.btn:hover` rule, so "
+        "expected_label's state-layer filter now has nothing to skip. Either "
+        "restore the hover state or retire the filter and its test together."
     )
-    # The hover rule declares color:#fff too, so prove the filter by construction
-    # rather than by coincidence: a stateless rule must exist and be the source.
-    stateless = [
-        s for s in css.splitlines()
-        if s.startswith(".main a.btn ") or s.startswith(".main a.btn{")
-    ]
-    assert stateless, "no stateless .main a.btn rule found in main.css"
 
 
 # --------------------------------------------------------------------------
