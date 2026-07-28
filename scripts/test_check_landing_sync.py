@@ -91,6 +91,35 @@ def test_orphan_heading_names_the_heading(section_copy, capsys):
     assert "ai-adoption-talk-moved" in err, err
 
 
+def test_rename_without_updating_the_landing_names_both_titles(section_copy, capsys):
+    """(c) Bundle kept, its frontmatter title changed -> red on `name mismatch`.
+
+    The third failure branch, and the one a real rename actually hits: the slug and
+    the directory are untouched, so neither orphan check fires. Only the title moved,
+    which is exactly what happens when a service is renamed on its own page and the
+    landing is forgotten. Without this the branch at `check_landing_sync.py:185-190`
+    was live but unproven, which is the condition this file's own docstring exists
+    to forbid.
+    """
+    page = section_copy / "ai-adoption-talk" / "index.md"
+    text = page.read_text(encoding="utf-8")
+    assert 'title: "AI Adoption Talk (FREE)"' in text
+    page.write_text(
+        text.replace('title: "AI Adoption Talk (FREE)"', 'title: "AI Adoption Chat (FREE)"'),
+        encoding="utf-8",
+    )
+
+    assert cls.main() == 1
+    err = capsys.readouterr().err
+    assert "name mismatch" in err, err
+    assert "AI Adoption Chat (FREE)" in err, err     # the page's new title
+    assert "## AI Adoption Talk (FREE)" in err, err  # the landing heading left behind
+    assert "ai-adoption-talk" in err, err            # and the bundle they disagree about
+    # Red for THIS reason: the directory never moved, so neither orphan check applies.
+    assert "orphan bundle" not in err, err
+    assert "orphan heading" not in err, err
+
+
 def test_non_service_bundles_are_excluded_not_counted(section_copy):
     """The exclusions are named exceptions, not a count fudge.
 
