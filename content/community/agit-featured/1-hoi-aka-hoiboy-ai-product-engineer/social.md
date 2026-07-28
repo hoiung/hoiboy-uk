@@ -9,10 +9,10 @@ community, shares matter more than clicks to hoiboy.uk (that traffic comes on it
 own). So the Source link goes in the first comment, never in the post body.
 
 **The first comment is not optional.** The short-form copy ends "Full story below.",
-which is a promise the Source comment keeps. Post the copy, then immediately post the
-Source line as the first comment. Postiz cannot do this step (see
-`POSTIZ-FIRST-COMMENT: UNRESOLVED` in SKILL.md): it is by hand on every channel,
-including the automated three.
+which is a promise the Source comment keeps. On the three automated channels Postiz
+posts it for you: it goes out on the same call as the post, as the child of it. On the
+MANUAL channels below, post the copy first, then immediately post the Source line as
+the first comment yourself.
 
 Every string below sits in a fenced block, so the markdownlint pre-commit hook cannot
 reword post copy. All copy is derived from the approved wording of the feature page
