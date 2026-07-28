@@ -1,6 +1,6 @@
 ---
 title: "Pricing & Billing"
-description: "How I price and bill across all five services: AI Managed Harness Services, Business Automation Services, AI Adoption Training, the AI Product Demo/MVP/Prototype Builder, and the AI Adoption Talk (FREE). The detailed pricing matrix, the billing rhythm, and what each side covers, owns, and keeps. UK-based, prices exclude VAT."
+description: "How I price and bill across all five services: the AI Adoption Talk (FREE), AI Managed Harness Services, Business Automation Services, AI Adoption Training, and the AI Product Demo/MVP/Prototype Builder. The detailed pricing matrix, the billing rhythm, and what each side covers, owns, and keeps. UK-based, prices exclude VAT."
 hideDate: true
 ---
 
@@ -22,14 +22,31 @@ At a glance. All prices exclude VAT (charged at the prevailing rate; VAT-registe
 
 <div class="sub-processor-table pricing-matrix-table">
 
-| Step | AI Managed Harness | Business Automation | AI Adoption Training | AI Product Builder | AI Adoption Talk (FREE) |
+| Step | AI Adoption Talk (FREE) | AI Managed Harness | Business Automation | AI Adoption Training | AI Product Builder |
 |---|---|---|---|---|---|
-| 1. Discovery | Free 20-min call | Free 20-min call | Free 20-min call | Free 20-min call | Free 20-min call, to agree a date and your office location |
-| 2. Paid scoping | Company audit, £1,500 per day | Requirements, £1,500 per day | Programme design, £1,500 per day | Brief + sign-off, 0.5 day (£500) | None. Nothing to scope: the session is fixed at 45+15 |
-| 3. Delivery, priced off the scoping | Fixed fee per phase + build budget | Day-scoped drawdown budget | One quote off the design | Day-based build, £1,000 per day | Free. 45-min talk + 15-min Q&A, in person at your London office |
-| 4. Aftercare (optional) | Free first month, hourly pack, monthly maintenance | Pay-as-you-go or pre-paid block | None | None | None. No follow-up sales call |
+| 1. Discovery | Free 20-min call, to agree a date and your office location | Free 20-min call | Free 20-min call | Free 20-min call | Free 20-min call |
+| 2. Paid scoping | None. Nothing to scope: the session is fixed at 45+15 | Company audit, £1,500 per day | Requirements, £1,500 per day | Programme design, £1,500 per day | Brief + sign-off, 0.5 day (£500) |
+| 3. Delivery, priced off the scoping | Free. 45-min talk + 15-min Q&A, in person at your London office | Fixed fee per phase + build budget | Day-scoped drawdown budget | One quote off the design | Day-based build, £1,000 per day |
+| 4. Aftercare (optional) | None. No follow-up sales call | Free first month, hourly pack, monthly maintenance | Pay-as-you-go or pre-paid block | None | None |
 
 </div>
+
+### AI Adoption Talk (FREE)
+
+<!-- iamhoi -->
+
+There is no ladder here, because there is nothing to bill. The whole service is one free session, and the table exists so the offer set reads completely rather than leaving you to guess.
+
+| Step | Price | Notes |
+|---|---|---|
+| 1. Discovery call | Free | 20-minute call; the only step. We agree a date and where your office is in London |
+| 2. Paid scoping | None | Nothing to scope. The session is fixed at 45 minutes plus 15 minutes of Q&A before we speak |
+| 3. Delivery | Free | The talk, in person at your London office. Invite anyone who is available and free to join |
+| 4. Aftercare | None | No proposal and no follow-up sales call unless you ask me for one |
+
+I cover my own travel and expenses to get to you, so the at-cost on-site line that applies to my paid work does not apply here. London only, in person.
+
+<!-- iamhoiend -->
 
 ### AI Managed Harness Services
 
@@ -85,23 +102,6 @@ The harness engagement runs as a ladder. Each phase is priced off the phase befo
 | 2. Brief + sign-off | £500 (fixed half-day at £1,000/day) | Captures the brief and agrees the build day-count before any build starts; billed upfront |
 | 3. Build | £1,000 per day, billed by the half day | Day-count agreed at the brief; you sign off as it comes together, and each signed-off half-day bills in the month it lands |
 | 4. Handover | Included | You own the demo, MVP, or prototype; clean handover, no lock-in. Want it taken further later? That is simply more build days at the same rate |
-
-<!-- iamhoiend -->
-
-### AI Adoption Talk (FREE)
-
-<!-- iamhoi -->
-
-There is no ladder here, because there is nothing to bill. The whole service is one free session, and the table exists so the offer set reads completely rather than leaving you to guess.
-
-| Step | Price | Notes |
-|---|---|---|
-| 1. Discovery call | Free | 20-minute call; the only step. We agree a date and where your office is in London |
-| 2. Paid scoping | None | Nothing to scope. The session is fixed at 45 minutes plus 15 minutes of Q&A before we speak |
-| 3. Delivery | Free | The talk, in person at your London office. Invite anyone who is available and free to join |
-| 4. Aftercare | None | No proposal and no follow-up sales call unless you ask me for one |
-
-I cover my own travel and expenses to get to you, so the at-cost on-site line that applies to my paid work does not apply here. London only, in person.
 
 <!-- iamhoiend -->
 
