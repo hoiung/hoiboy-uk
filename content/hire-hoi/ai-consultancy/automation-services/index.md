@@ -47,7 +47,7 @@ Built for owner-operator teams of roughly 10 to 50 people who feel understaffed 
 
 ## Pricing summary
 
-Requirements is £1,500 per day + VAT (1-3 days by scope), billed upfront, and the build then runs as a day-scoped drawdown budget rather than a fixed-fee phase ladder. Full pricing and billing terms are on the [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}).
+Requirements is £1,500 per day + VAT (1-3 days by scope), billed upfront, and the build then runs as a day-scoped drawdown budget rather than a fixed-fee phase ladder. Full pricing and billing terms across all five services are on the [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}).
 
 <!-- iamhoiend -->
 
