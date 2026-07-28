@@ -74,16 +74,22 @@ SELECTOR = "a.btn"
 # /hire-hoi/permanent-roles/) plus the four service pages". That was a
 # conflation: those three landing pages call the `brand-intro` shortcode, not
 # `consulting-cta`, and carry no button at all. The real coverage is six
-# service pages under /hire-hoi/ai-consultancy/ holding seven buttons, because
-# claude-code-harness-architect calls the shortcode twice (top and bottom of a
-# long page).
+# CTA-bearing pages under /hire-hoi/ai-consultancy/ holding seven buttons,
+# because claude-code-harness-architect calls the shortcode twice (top and
+# bottom of a long page).
+#
+# "CTA-bearing", not "service": the six are the five service pages plus
+# work-with-hoi, which check_landing_sync.py's NON_SERVICE_SLUGS classifies as
+# "the front door / who-I-am page, not an offer". Counting it as a service made
+# these two gates disagree about what work-with-hoi is.
 #
 # Both floors are load-bearing. Pages alone would not notice the second button
 # on the harness-architect page disappearing.
 #
-# Raised 5/6 -> 6/7 in hoiboy-uk#54 when ai-adoption-talk became the sixth
-# service page. Measured, not guessed: pre-publish reports 14 instances across
-# 6 pages x 2 colour schemes, i.e. 7 buttons.
+# Raised 5/6 -> 6/7 in hoiboy-uk#54 when ai-adoption-talk added a sixth
+# CTA-bearing page. It is the FIFTH service, not the sixth. Measured, not
+# guessed: pre-publish reports 14 instances across 6 pages x 2 colour schemes,
+# i.e. 7 buttons.
 DEFAULT_MIN_PAGES = 6
 DEFAULT_MIN_INSTANCES = 7
 
