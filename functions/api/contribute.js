@@ -41,6 +41,17 @@ const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 // field name -> max length (server-side length caps; a valid-token bot can still POST garbage)
 const FIELD_CAPS = { name: 100, email: 254, email_confirm: 254, role: 150, superpowers: 300, feature: 8000 };
+
+// Consent-label versions this endpoint accepts. The form posts the version of the
+// label it rendered, so the emailed record shows which wording the member actually
+// agreed to -- an Article 9(2)(a) explicit-consent surface, so "they ticked a box"
+// is not enough on its own; which box matters. An unknown or absent version is
+// REJECTED rather than defaulted: a silent default would relabel an old submission
+// as consenting to wording it never saw. Newest first; keep older entries so
+// in-flight submissions from a cached page still validate.
+// MUST match the hidden input in content/community/asians-gingers-in-tech/index.md.
+// Gate: tests/test_agit_consent_version.py
+const KNOWN_CONSENT_VERSIONS = ["2026-07-28"];
 // Optional social-links field: multi-line (one profile link per line), kept as
 // newlines for the notification email so the operator sees one link per line.
 const SOCIALS_MAX_LINES = 20;
@@ -225,6 +236,15 @@ export async function onRequestPost(context) {
     return textResponse(400, "Please tick the consent box so we can publish your feature.");
   }
 
+  // ...and we must know WHICH consent label was ticked. Fail loud on absent or
+  // unrecognised: defaulting would silently attribute the current wording to a
+  // member who agreed to different wording.
+  const consentVersion = clean(form.get("consent_version"), 32);
+  if (!KNOWN_CONSENT_VERSIONS.includes(consentVersion)) {
+    log("validation-reject", { reason: "unknown consent version", consentVersion: consentVersion || null });
+    return textResponse(400, "This form is out of date. Please reload the page and submit again.");
+  }
+
   // 5. Optional photo: size gate, then read the bytes once and verify the real
   //    format by magic bytes (never trust the client-declared Content-Type).
   const image = form.get("photo");
@@ -264,6 +284,7 @@ export async function onRequestPost(context) {
     `Email: ${email}`,
     `Tech role: ${role || "(not given)"}`,
     `Superpowers: ${superpowers || "(not given)"}`,
+    `Consent label version: ${consentVersion}`,
     "",
     "Socials / where to tag them:",
     socials || "(not given)",
