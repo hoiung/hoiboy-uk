@@ -264,15 +264,20 @@ def test_pages_with_button_is_sorted_and_deterministic(tmp_path):
 # --------------------------------------------------------------------------
 
 def test_the_default_floors_match_the_measured_coverage():
-    """5 pages / 6 buttons, measured, not guessed.
+    """6 pages / 7 buttons, measured, not guessed.
 
     `claude-code-harness-architect` calls the shortcode twice, top and bottom,
     which is why instances exceed pages. If a service page is added or removed
     these floors are meant to be updated deliberately, and this assertion is
     what makes that a conscious edit rather than a silent drift.
+
+    hoiboy-uk#54 is the first time that drift-catch actually fired: adding
+    ai-adoption-talk as the sixth service page moved the coverage to 6/7, and
+    landing the constants without this assertion would have flipped a green,
+    CI-wired test to failing.
     """
-    assert ccr.DEFAULT_MIN_PAGES == 5
-    assert ccr.DEFAULT_MIN_INSTANCES == 6
+    assert ccr.DEFAULT_MIN_PAGES == 6
+    assert ccr.DEFAULT_MIN_INSTANCES == 7
     assert ccr.DEFAULT_MIN_INSTANCES >= ccr.DEFAULT_MIN_PAGES, (
         "there cannot be fewer button instances than pages carrying one."
     )

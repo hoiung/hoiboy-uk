@@ -73,15 +73,19 @@ SELECTOR = "a.btn"
 # sites (/hire-hoi/ai-consultancy/, /hire-hoi/ict-consultancy/,
 # /hire-hoi/permanent-roles/) plus the four service pages". That was a
 # conflation: those three landing pages call the `brand-intro` shortcode, not
-# `consulting-cta`, and carry no button at all. The real coverage is five
-# service pages under /hire-hoi/ai-consultancy/ holding six buttons, because
+# `consulting-cta`, and carry no button at all. The real coverage is six
+# service pages under /hire-hoi/ai-consultancy/ holding seven buttons, because
 # claude-code-harness-architect calls the shortcode twice (top and bottom of a
 # long page).
 #
 # Both floors are load-bearing. Pages alone would not notice the second button
 # on the harness-architect page disappearing.
-DEFAULT_MIN_PAGES = 5
-DEFAULT_MIN_INSTANCES = 6
+#
+# Raised 5/6 -> 6/7 in hoiboy-uk#54 when ai-adoption-talk became the sixth
+# service page. Measured, not guessed: pre-publish reports 14 instances across
+# 6 pages x 2 colour schemes, i.e. 7 buttons.
+DEFAULT_MIN_PAGES = 6
+DEFAULT_MIN_INSTANCES = 7
 
 SCHEMES = ("light", "dark")
 
