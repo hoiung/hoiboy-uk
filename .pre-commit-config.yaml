@@ -160,6 +160,19 @@ repos:
         pass_filenames: false
         files: ^(content/.*|static/_headers)$
 
+      - id: check-landing-sync
+        name: Landing-sync guard (section landing lists exactly the service bundles)
+        # hoiboy-uk#54 AC 3.2. Both directions: a service bundle with no `## <Service>`
+        # block on content/hire-hoi/ai-consultancy/_index.md, and a block whose "Read
+        # the full offer" link points at a bundle that is not there. Comparison is
+        # set-based on the LINKED SLUG, never a count and never a hardcoded list -
+        # non-service bundles (work-with-hoi, pricing-billing, portfolio) are named
+        # exclusions inside the script, with reasons.
+        entry: python3 scripts/check_landing_sync.py
+        language: system
+        pass_filenames: false
+        files: ^content/hire-hoi/ai-consultancy/.*$
+
       - id: check-404
         name: Custom 404 exists (no soft-404)
         # Source lane only: pre-commit has no build. Cloudflare Pages returns a
