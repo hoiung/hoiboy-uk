@@ -335,6 +335,16 @@ th { background: var(--bg-card); font-weight: 600; }
 .sub-processor-table th:nth-child(7) { width: 11%; }
 .sub-processor-table td:nth-child(7) { width: 11%; white-space: nowrap; }
 
+/* The Pricing Matrix (/hire-hoi/ai-consultancy/pricing-billing/) reuses the wrapper above
+   for its overflow-x behaviour only (hoiboy-uk#54 AC 2.11: reuse, don't add a second
+   mechanism, AP #10). It must NOT inherit the nth-child column tuning, which is measured
+   for the 7-column sub-processor table: on the 6-column matrix those rules pin the last
+   two service columns to 13-14% and apply `word-break: break-all`, which splits a price
+   mid-word. Specificity has to beat `.sub-processor-table td:nth-child(N)` (0,2,1), hence
+   the doubled class. */
+.sub-processor-table.pricing-matrix-table th:nth-child(5), .sub-processor-table.pricing-matrix-table td:nth-child(5),
+.sub-processor-table.pricing-matrix-table th:nth-child(6), .sub-processor-table.pricing-matrix-table td:nth-child(6) { width: auto; word-break: normal; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
