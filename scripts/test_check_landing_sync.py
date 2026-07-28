@@ -166,3 +166,58 @@ def test_duplicate_titles_cannot_share_one_block(section_copy, capsys):
     assert cls.main() == 1
     err = capsys.readouterr().err
     assert "duplicate service titles" in err, err
+
+
+def test_a_cross_link_above_the_offer_line_does_not_hijack_the_binding(section_copy, capsys):
+    """A second ai-consultancy ref in a block must not rebind it (hoiboy-uk#54).
+
+    The gate's docstring says the '[Read the full offer](...)' link is what binds
+    a block to a bundle. The regex did not say that: it took the FIRST
+    ai-consultancy ref anywhere in the block. Nothing forbids a service block
+    carrying an ordinary cross-link, so adding one above the offer line silently
+    rebound the block to that slug, and the gate then failed naming the wrong
+    bundle. A failure that points at the wrong file is worse than a clean one.
+
+    This whole file had eight tests and not one of them put two refs in a block,
+    so the defect was live and unprovable at the same time.
+    """
+    landing = section_copy / "_index.md"
+    text = landing.read_text(encoding="utf-8-sig")
+    # A legitimate editorial cross-link, inserted ABOVE the offer link in the
+    # first service block. Points at a real sibling bundle, so it is not a typo.
+    text = text.replace(
+        '[Read the full offer]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-talk" >}})',
+        'Costs are on the [pricing page]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-training" >}}).\n\n'
+        '[Read the full offer]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-talk" >}})',
+        1,
+    )
+    landing.write_text(text, encoding="utf-8")
+
+    assert cls.main() == 0, capsys.readouterr().err
+
+
+def test_a_reworded_offer_label_is_named_as_its_own_failure(section_copy, capsys):
+    """Losing the label is a different defect from never having a link.
+
+    Both leave the block unbound, but one is fixed by restoring a label and the
+    other by adding a link, so they get separate messages. Without this the
+    anchored regex would just report 'carries no Read the full offer link' on a
+    block that visibly carries one, and the next reader would go looking for a
+    link that is already there.
+    """
+    landing = section_copy / "_index.md"
+    text = landing.read_text(encoding="utf-8-sig").replace(
+        '[Read the full offer]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-talk" >}})',
+        '[Read more]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-talk" >}})',
+        1,
+    )
+    landing.write_text(text, encoding="utf-8")
+
+    assert cls.main() == 1
+    err = capsys.readouterr().err
+    assert "unbound heading" in err, err
+    assert "## AI Adoption Talk (FREE)" in err, err
+    assert "ai-adoption-talk" in err, err
+    # It must NOT claim the block carries no link, which is the message the
+    # anchored regex would otherwise produce for a block that plainly has one.
+    assert "carries no" not in err, err
