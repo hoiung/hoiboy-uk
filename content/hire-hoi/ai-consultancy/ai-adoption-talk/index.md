@@ -1,7 +1,7 @@
 ---
 title: "AI Adoption Talk (FREE)"
 date: 2026-07-28T01:00:00+01:00
-description: "A free 45-minute talk plus 15 minutes of Q&A, in person at your London office, open to anyone on your team who is available and free to join. Why AI hallucination keeps happening and the ways to reduce it, run as a conversation so I hear how your people use AI today. Absolutely free, no strings attached, and I am not there to sell. Book a 20-minute call to agree dates and your office location."
+description: "A free 45-minute talk plus 15 minutes of Q&A, in person at your London office, open to anyone on your team who is available and free to join. Why AI hallucination keeps happening and the ways to reduce it, run as a conversation so I hear how your people use AI today. Absolutely free, no strings attached, and I am not there to sell you my services. Book a 20-minute call to agree dates and your office location."
 hideDate: true
 ---
 
@@ -17,7 +17,7 @@ I run it as a conversation, not a lecture. I want the room talking. How are your
 
 > **Before we start.** This is a talk and a discussion, not advisory work. Everything I share comes from my own experience in IT and AI, and it is not professional advice. I hold back from telling you what to do in your own specific situation, because that would be advice, and I would be liable for it even though the session is free. You share your experience, I share mine, and what you do with it is your call.
 
-I am not there to sell. I am there to give some free advice so your staff can use AI more efficiently. If something comes of it later, good. If not, your team still got the session.
+I am not there to sell you my services. I am there to help your staff use AI more efficiently. If something comes of it later, good. If not, your team still got the session.
 
 ## How it works
 
