@@ -15,6 +15,8 @@ I built it in the same style as the talk I gave to the London Investors and Trad
 
 I run it as a conversation, not a lecture. I want the room talking. How are your people using AI right now, what frustrates them, what breaks, what have they quietly given up on? That part matters as much as my slides. AI is moving fast and everyone uses it differently, so I learn from the room as much as the room learns from me.
 
+This is a talk and a discussion, not advisory work. I share what I have learned from my own experience in IT and AI, you share yours, and what you do with it is your call. It is not professional advice.
+
 I am not there to sell. I am there to give some free advice so your staff can use AI more efficiently. If something comes of it later, good. If not, your team still got the session.
 
 ## How it works
