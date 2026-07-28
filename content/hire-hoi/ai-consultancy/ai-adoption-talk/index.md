@@ -17,7 +17,7 @@ I run it as a conversation, not a lecture. I want the room talking. How are your
 
 > **Before we start.** This is a talk and a discussion, not advisory work. Everything I share comes from my own experience in IT and AI, and it is not professional advice. I hold back from telling you what to do in your own specific situation, because that would be advice, and I would be liable for it even though the session is free. You share your experience, I share mine, and what you do with it is your call.
 
-I am not there to sell you my services. I am there to help your staff use AI more efficiently. If something comes of it later, good. If not, your team still got the session.
+I am not there to sell you my services. This session is focused on sharing some of my learnings of using AI and what I felt made me an effective user. I am happy for you to borrow some of these ideas and concepts for your own workflow.
 
 ## How it works
 
