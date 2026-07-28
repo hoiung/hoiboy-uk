@@ -1,6 +1,6 @@
 ---
 title: "Work with Hoi"
-description: "The front door to working with me. Who I am, who this is for, what I do not do, and the four ways I can help: AI Managed Harness Services, Business Automation Services, AI Adoption Training, and the AI Product Demo/MVP/Prototype Builder. Straight talk, no sales-page fluff. UK-based, international clients welcome."
+description: "The front door to working with me. Who I am, who this is for, what I do not do, and the five ways I can help: AI Managed Harness Services, Business Automation Services, AI Adoption Training, the AI Product Demo/MVP/Prototype Builder, and the AI Adoption Talk (FREE). Straight talk, no sales-page fluff. UK-based, international clients welcome."
 hideDate: true
 ---
 
@@ -27,16 +27,17 @@ This page is also a deterrent for the kind of client I really do not want to wor
 
 Hi, I am Hoi. Late introduction, now that I have gotten some of my bits above out of the way. I have loved taking technology apart since I was about 7, and I never really stopped. I have spent roughly 20 years building my own businesses as a serial entrepreneur (design and print, import and export, hospitality, a dance school, and a handful of smaller ventures), running concurrently with about 12 years of a corporate career, including 8 years at Canonical (the company behind Ubuntu), where I spent my days translating infrastructure realities for non-engineering people. So I have sat at both ends of the table: the owner signing the cheques and the person delivering the work. Now I am back to my own gig, at my own pace, doing the part I love most, which is being on the ground helping you get real value out of AI.
 
-In a sense, I am basically a pencil sharpener. My value is helping your team become sharper at what they do. So the four services I offer are just a different grain of the same sharpening service for your team. Blunt tools give blunt results, sharp tools give sharp results. Simple.
+In a sense, I am basically a pencil sharpener. My value is helping your team become sharper at what they do. So the five services I offer are just a different grain of the same sharpening service for your team. Blunt tools give blunt results, sharp tools give sharp results. Simple.
 
-Four ways I can help, depending on what you need:
+Five ways I can help, depending on what you need:
 
 - **[AI Managed Harness Services]({{< ref "/hire-hoi/ai-consultancy/claude-code-harness-architect" >}})**: a custom AI harness that automates your routine work, built audit-first and kept running.
 - **[Business Automation Services]({{< ref "/hire-hoi/ai-consultancy/automation-services" >}})**: done-for-you automation, for when you would rather I build it than learn it.
 - **[AI Adoption Training]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-training" >}})**: done-with-you training, so your team learns to use AI properly on their real work.
 - **[AI Product Demo/MVP/Prototype Builder]({{< ref "/hire-hoi/ai-consultancy/ai-product-builder" >}})**: contract me to build your demo, MVP, or prototype, so you can test an idea without a permanent hire.
+- **[AI Adoption Talk (FREE)]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-talk" >}})**: a free 45-minute talk plus 15 minutes of Q&A at your London office, on why AI hallucination keeps happening and how to reduce it.
 
-All four run on the same engine (free discovery call, paid scoping step, delivery priced off the scoping), and the numbers for every step live in one place: [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}).
+Every paid service runs on the same engine (free discovery call, paid scoping step, delivery priced off the scoping), and the numbers for every step live in one place: [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}). The talk sits outside that engine: there is nothing to scope and nothing to price, so the 20-minute call is only there to agree a date and your office location.
 
 A lot of AI gets built the wrong way round: the solution gets built first (code is cheap now, anyone can vibe-code an app), then someone tries to fit your problem into it. I work the other way. I start from your customer's experience and what your business needs right now and in the near future, then work backwards to a solution that fits YOUR problem. AI can build almost anything these days; the real value is gluing the pieces together in the right order for you. That is exactly why the paid scoping step exists: I spend that time understanding your business before anything gets built.
 
@@ -113,6 +114,8 @@ So that is what I am offering, on my actual blog where you can read who I am, wh
 As a bonus you get my bubbly, fun, no-nonsense (maybe a sprinkle of sarcasm) personality. We will figure out on a 20-minute discovery call whether working together is going to be a wonderful and pleasurable experience for both of us, well before any money or SOW (Statement of Work; the legal contract that locks the scope, deliverables, fees, and terms of a phase) lands on the table.
 
 No slide deck, no sales pitch on that call. I am more interested in listening to your problems and helping you solve them.
+
+That holds for the free talk too. Booking it is the same 20-minute call doing the same job: we agree a date and where your office is in London. There is a slide deck on the day, for your team in the room, but not on the call and not aimed at you.
 
 And while we are on this. The bigger problem with AI right now is people spending too much time making things LOOK nice that do not actually WORK. The pretty UI on top of the broken bit. The demo that landed on camera after take 17 (and the previous 16 takes you never saw). The "I built a full platform in 1 day with AI" that looks super fancy on a Youtube video (you've seen the genre).
 
