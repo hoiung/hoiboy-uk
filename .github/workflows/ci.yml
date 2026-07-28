@@ -374,6 +374,15 @@ jobs:
       - name: Frontmatter parser unit tests
         run: python3 -m pytest scripts/test_validate_frontmatter.py tests/test_gate_wiring.py -q
 
+      # Consent-label version traceability (agit-ops#3 AC 1.9). Three surfaces have
+      # to agree and nothing at runtime couples them: the hidden input in the AGIT
+      # form, KNOWN_CONSENT_VERSIONS in functions/api/contribute.js, and the
+      # lock-step mirror of that list in tests/contribute.test.js. Bump one and not
+      # the others and every submission 400s, silently, until someone reports it.
+      # Source-only, so it runs before the Hugo build.
+      - name: AGIT consent-version traceability
+        run: python3 -m pytest tests/test_agit_consent_version.py -q
+
       # Mutation tests: put each defect back and require its own test to go red.
       # Ralph ran nine rounds on blog-priv#63/#64 and could not terminate, because
       # the acceptance criterion looked BACKWARDS - a corpus of mutations each
