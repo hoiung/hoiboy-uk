@@ -97,7 +97,7 @@ def test_rename_without_updating_the_landing_names_both_titles(section_copy, cap
     The third failure branch, and the one a real rename actually hits: the slug and
     the directory are untouched, so neither orphan check fires. Only the title moved,
     which is exactly what happens when a service is renamed on its own page and the
-    landing is forgotten. Without this the branch at `check_landing_sync.py:185-190`
+    landing is forgotten. Without this the branch at `check_landing_sync.py:184-189`
     was live but unproven, which is the condition this file's own docstring exists
     to forbid.
     """
