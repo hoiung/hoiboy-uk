@@ -8,10 +8,20 @@ Post native. Social platforms downrank posts with a link in the body, and for th
 community, shares matter more than clicks to hoiboy.uk (that traffic comes on its
 own). So the Source link goes in the first comment, never in the post body.
 
-**Every channel gets the summary, never the full story.** The full story lives on the
-feature page, and the link to it goes in the first comment. Instagram caps a caption at
-2200 characters and the story runs to 6248, so it never fit there anyway; the same short
-copy goes out everywhere so the channels read consistently.
+**TWO copy types, never the full story.** The full story lives on the feature page
+and the link to it goes in the first comment. What goes out is one of two types,
+and a channel's own character cap decides which one it takes:
+
+| Type | Channels | Cap |
+|---|---|---|
+| **summary** | Facebook Page, Instagram, LinkedIn Group, Meetup, Facebook Group, Substack | 63206 / 2200 / 3000 |
+| **super short summary** | Bluesky, X | 300 / 280 |
+
+A cap is a CEILING for one bucket, never a TARGET for all of them. One string sized
+to Bluesky pasted everywhere throws away ~1950 characters of an Instagram caption:
+that reads as consistency but is the smallest-common-denominator failure. Each copy
+fence below is labelled with its type and its exact length, and
+`agit_social_post.py` refuses to post on any mismatch.
 
 **The first comment is not optional.** The copy ends "See comment for full story.", which
 is a promise only the Source comment keeps. On the three automated channels Postiz posts
@@ -59,12 +69,22 @@ agit-social repo. That repo's deploy/CHANNELS.md is the canonical channel split.
 
 **Image:** `share-card.png` (1200x630 landscape).
 
-Post (243 chars):
+Post (summary, 1007 chars):
 
 ```text
 Meet Hoi!
 
-First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. See comment for full story. #AsiansInTech #GingersInTech #AGIT #DataCentre
+First feature on Asians & Gingers in Tech, so I went first.
+
+Eight years at Canonical, the company behind Ubuntu. My title said Data Centre Engineer the whole time, but the role outgrew the title almost straight away: infrastructure architect, procurement lead, project manager and data centre manager, running the sites largely on my own for years. I designed and rolled out Canonical's cloud data centres across London, Boston and Taipei.
+
+One year we had a two week sprint in Malta and the entire equipment shipment got sent to the US by mistake, then ended up in Kabul. We only found out on the setup weekend, two days before 500+ engineers started landing. Armed with two credit cards, me and Gareth bootstrapped the whole setup by hand out of a hotel room.
+
+Nobody threw a party for any of it. The work just spoke for itself, even when the title didn't. That is usually how it goes for the quiet ones.
+
+See comment for full story.
+
+#AsiansInTech #GingersInTech #AGIT #DataCentre #Automation
 ```
 
 First comment:
@@ -78,12 +98,22 @@ Source: https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-product-en
 **Image:** `hero.jpg` (1080x1350 portrait). REQUIRED. Instagram rejects a text-only post.
 It is the only channel taking the portrait crop; the landscape card is wrong here.
 
-Caption (233 chars):
+Caption (summary, 1007 chars):
 
 ```text
 Meet Hoi!
 
-First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. See comment for full story. #AsiansInTech #GingersInTech #AGIT #DataCentre
+First feature on Asians & Gingers in Tech, so I went first.
+
+Eight years at Canonical, the company behind Ubuntu. My title said Data Centre Engineer the whole time, but the role outgrew the title almost straight away: infrastructure architect, procurement lead, project manager and data centre manager, running the sites largely on my own for years. I designed and rolled out Canonical's cloud data centres across London, Boston and Taipei.
+
+One year we had a two week sprint in Malta and the entire equipment shipment got sent to the US by mistake, then ended up in Kabul. We only found out on the setup weekend, two days before 500+ engineers started landing. Armed with two credit cards, me and Gareth bootstrapped the whole setup by hand out of a hotel room.
+
+Nobody threw a party for any of it. The work just spoke for itself, even when the title didn't. That is usually how it goes for the quiet ones.
+
+See comment for full story.
+
+#AsiansInTech #GingersInTech #AGIT #DataCentre #Automation
 ```
 
 First comment:
@@ -96,9 +126,9 @@ Source: https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-product-en
 
 **Image:** `share-card.png` (1200x630 landscape).
 
-Fits inside Bluesky's 300-character cap.
+The super short summary, inside Bluesky's 300-character cap.
 
-Post (233 chars):
+Post (super short, 254 chars):
 
 ```text
 Meet Hoi!
@@ -122,9 +152,9 @@ any of them.
 
 **Image:** `share-card.png` (1200x630 landscape).
 
-MANUAL. 280 characters including the hashtags.
+MANUAL. The super short summary: 280 characters including the hashtags.
 
-Post (233 chars):
+Post (super short, 254 chars):
 
 ```text
 Meet Hoi!
@@ -148,32 +178,45 @@ audit anyway.
 
 **Image:** `share-card.png` (1200x630 landscape).
 
-MANUAL. Groups have no API, and there is no AGIT Page. Group posts do not get the same
-first-comment treatment, so the Source goes inline:
+MANUAL. The summary, inside LinkedIn's 3000-character cap. Groups have no API, and
+there is no AGIT Page. Group posts do not get the same first-comment treatment, so
+the Source goes inline instead:
+
+Post (summary, 1071 chars):
 
 ```text
 Meet Hoi!
 
-First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. Full story: https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-product-engineer/
+First feature on Asians & Gingers in Tech, so I went first.
+
+Eight years at Canonical, the company behind Ubuntu. My title said Data Centre Engineer the whole time, but the role outgrew the title almost straight away: infrastructure architect, procurement lead, project manager and data centre manager, running the sites largely on my own for years. I designed and rolled out Canonical's cloud data centres across London, Boston and Taipei.
+
+One year we had a two week sprint in Malta and the entire equipment shipment got sent to the US by mistake, then ended up in Kabul. We only found out on the setup weekend, two days before 500+ engineers started landing. Armed with two credit cards, me and Gareth bootstrapped the whole setup by hand out of a hotel room.
+
+Nobody threw a party for any of it. The work just spoke for itself, even when the title didn't. That is usually how it goes for the quiet ones.
+
+Full story: https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-product-engineer/
+
+#AsiansInTech #GingersInTech #AGIT #DataCentre #Automation
 ```
 
 ### Meetup
 
 **Image:** `share-card.png` (1200x630 landscape).
 
-MANUAL. No posting API. Post as a group announcement using the inline-Source block
-above.
+MANUAL. The summary. No posting API. Post as a group announcement using the
+inline-Source block above.
 
 ### Facebook Group
 
 **Image:** `share-card.png` (1200x630 landscape).
 
-MANUAL. No posting API, and distinct from the automated Facebook Page. Same
-inline-Source block.
+MANUAL. The summary. No posting API, and distinct from the automated Facebook Page.
+Same inline-Source block.
 
 ### Substack
 
 **Image:** `share-card.png` (1200x630 landscape).
 
-MANUAL. No posting API. Runs as a Note rather than an issue of the newsletter, using
-the inline-Source block.
+MANUAL. The summary. No posting API. Runs as a Note rather than an issue of the
+newsletter, using the inline-Source block.
