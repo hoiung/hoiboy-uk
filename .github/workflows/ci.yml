@@ -238,6 +238,19 @@ jobs:
       - name: Social-card guard (every singular page owns its og:image card)
         run: python3 scripts/check_social_cards.py
 
+      # hoiboy-uk#54 AC 3.2. Adding a service means editing a page bundle AND a
+      # `## <Service>` block on the section landing, and nothing connected the two:
+      # the 4th service shipped with its block but no propagation, and a 5th bundle
+      # with no block at all would have been just as invisible.
+      - name: Landing-sync guard (section landing lists exactly the service bundles)
+        run: python3 scripts/check_landing_sync.py
+
+      # The mutation tests for the guard above. Listed by name because CI runs pytest
+      # through explicit file lists, so a file nobody lists never runs (the defect
+      # blog-priv#62 found in test_404.py, which collected zero tests for its whole life).
+      - name: Landing-sync guard mutation tests
+        run: python3 -m pytest scripts/test_check_landing_sync.py -q
+
       - name: Setup Node (meet-recorder JS tests)
         uses: actions/setup-node@v4
         with:
