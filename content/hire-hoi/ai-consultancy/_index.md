@@ -1,13 +1,13 @@
 ---
 title: "AI Consultancy"
-description: "AI consulting for owner-operator-led teams: AI Managed Harness Services, Business Automation Services, AI Adoption Training, and the AI Product Demo/MVP/Prototype Builder, plus a portfolio of client work. Audit-first builds, deliverable-anchored automation, done-with-you training, ongoing Monthly Maintenance Package."
+description: "AI consulting for owner-operator-led teams: AI Managed Harness Services, Business Automation Services, AI Adoption Training, the AI Product Demo/MVP/Prototype Builder, and the AI Adoption Talk (FREE), plus a portfolio of client work. Audit-first builds, deliverable-anchored automation, done-with-you training."
 ---
 
 <!-- iamhoi -->
 
 {{< brand-intro >}}
 
-I help owner-operator CEOs at small businesses (5 to 50 employees) get their AI tooling working as a system, not as a scattered collection of half-finished experiments. There are four ways to work with me, plus a portfolio of what that looks like in practice. New here, or not sure which one fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}), the front door.
+I help owner-operator CEOs at small businesses (5 to 50 employees) get their AI tooling working as a system, not as a scattered collection of half-finished experiments. There are five ways to work with me, one of which is free, plus a portfolio of what that looks like in practice. New here, or not sure which one fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}), the front door.
 
 UK-based; international clients welcome (travel and accommodation at cost when scope needs me on-site, no markup).
 
@@ -35,9 +35,15 @@ Got an idea you want built and tested? Contract me to build your demo, MVP, or p
 
 [Read the full offer]({{< ref "/hire-hoi/ai-consultancy/ai-product-builder" >}})
 
+## AI Adoption Talk (FREE)
+
+Want a low-risk way to see how I work? I come to your London office and give a 45-minute talk plus 15 minutes of Q&A on why AI hallucination keeps happening and how to reduce it. Invite anyone who is available and free to join. It runs as a conversation, so I hear how your people use AI today. Absolutely free, no strings attached, and I am not there to sell.
+
+[Read the full offer]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-talk" >}})
+
 ## Pricing & Billing
 
-Full pricing and billing terms across all four services, in one place.
+Full pricing and billing terms across all five services, in one place. The talk is free; the rest are paid.
 
 [See pricing and billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}})
 
