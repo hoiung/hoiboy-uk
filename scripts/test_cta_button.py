@@ -365,7 +365,7 @@ def test_the_button_is_reachable_by_keyboard():
 # the sentence: Emits class="btn" only. A scrape over the raw file therefore
 # found `btn` in the PROSE, so deleting class="btn" from both real anchors -
 # which drops the site's only commercial CTA back to unstyled underlined body
-# copy on all six service pages - left the whole CI lane green, 8/8. The file's
+# copy on all six CTA-bearing pages - left the whole CI lane green, 8/8. The file's
 # two sibling helpers already strip comments for exactly this reason
 # (`stylesheet()` strips CSS comments, the wiring test strips shell comments);
 # this one did not, and it was the only automatic gate standing between the
