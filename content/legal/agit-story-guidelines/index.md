@@ -1,10 +1,10 @@
 ---
 title: AGIT Story Guidelines
 date: 2026-07-12
-lastmod: 2026-07-12
+lastmod: 2026-07-28
 description: How Asians & Gingers in Tech features work. What to share, how we edit for clarity not facts, your approval before anything goes public, and how to take a feature down.
 hideDate: true
-version: 1.0.0
+version: 1.1.0
 ---
 
 <!-- iamhoi-exempt -->
@@ -71,6 +71,14 @@ Nothing in these guidelines limits any responsibility that the law does not allo
 ## 8. Changed your mind? Take it down
 
 A published feature stays up only as long as you want it to. Email **[hello@hoiboy.uk](mailto:hello@hoiboy.uk)** and ask us to take it down, and we will, promptly. You don't need to give a reason.
+
+Taking it down covers every place the feature reached, not just the page you can see:
+
+- **The live page** comes down straight away.
+- **The posting kit on our business Google Drive**, which holds the published images and the announcement copy, is deleted.
+- **The public repository this site is built from** keeps its full history, so removing the page does not by itself remove the feature from that history. On a take-down request we also run a documented history purge, which rewrites the repository's history to strip the feature's photo, name and story out of it.
+
+One honest limit. Because the repository is public, anyone could already have taken a copy: a fork, a clone, a search-engine cache, an archive site, or a screenshot. A history purge removes the feature from our copy and from what GitHub serves. It cannot reach copies other people already hold, and nobody publishing anywhere public can promise otherwise.
 
 The same address is the way to reach us about anything here, including if you spot something in a live feature that needs fixing.
 
