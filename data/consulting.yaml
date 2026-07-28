@@ -61,6 +61,15 @@ automation_services:
 ai_product_builder:
   calcom_booking: "https://cal.eu/hoiboyuk/discovery"
 
+# AI Adoption Talk (FREE) offer (hoiboy-uk#54). Same discovery call as every other
+# offer (one Cal.com event triages all), so calcom_booking reuses the live URL. The
+# booking is a 20-minute coordination call to agree dates and the London office
+# location; the talk itself is free and attendees never touch Cal.com.
+# Read by: layouts/_shortcodes/consulting-cta.html (CTA href, via offer="ai_adoption_talk")
+#          -> content/hire-hoi/ai-consultancy/ai-adoption-talk/index.md.
+ai_adoption_talk:
+  calcom_booking: "https://cal.eu/hoiboyuk/discovery"
+
 harness_architect:
   # Live booking URL (replaced 2026-05-08 - Cal.com EU instance, event-type id 284432).
   # Pre-Worker (hoiboy-uk#28): bookings fire Cal.com's default emails; post-Worker:
