@@ -8,11 +8,15 @@ Post native. Social platforms downrank posts with a link in the body, and for th
 community, shares matter more than clicks to hoiboy.uk (that traffic comes on its
 own). So the Source link goes in the first comment, never in the post body.
 
-**The first comment is not optional.** The short-form copy ends "Full story below.",
-which is a promise the Source comment keeps. On the three automated channels Postiz
-posts it for you: it goes out on the same call as the post, as the child of it. On the
-MANUAL channels below, post the copy first, then immediately post the Source line as
-the first comment yourself.
+**Every channel gets the summary, never the full story.** The full story lives on the
+feature page, and the link to it goes in the first comment. Instagram caps a caption at
+2200 characters and the story runs to 6248, so it never fit there anyway; the same short
+copy goes out everywhere so the channels read consistently.
+
+**The first comment is not optional.** The copy ends "See comment for full story.", which
+is a promise only the Source comment keeps. On the three automated channels Postiz posts
+it for you: it goes out on the same call as the post, as the child of it. On the MANUAL
+channels below, post the copy first, then immediately post the Source line yourself.
 
 Every string below sits in a fenced block, so the markdownlint pre-commit hook cannot
 reword post copy. All copy is derived from the approved wording of the feature page
@@ -55,10 +59,11 @@ agit-social repo. That repo's deploy/CHANNELS.md is the canonical channel split.
 
 **Image:** `share-card.png` (1200x630 landscape).
 
-Post the full feature story natively. Facebook has room for the whole thing, so paste
-the story from the feature page rather than a cut of it, then append the hashtag set
-above. This file deliberately does not reproduce the story: the feature page is the
-single source, so the two cannot drift.
+Post (243 chars):
+
+```text
+First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. See comment for full story. #AsiansInTech #GingersInTech #AGIT #DataCentre
+```
 
 First comment:
 
@@ -74,7 +79,7 @@ It is the only channel taking the portrait crop; the landscape card is wrong her
 Caption (233 chars):
 
 ```text
-First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. Full story below. #AsiansInTech #GingersInTech #AGIT #DataCentre
+First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. See comment for full story. #AsiansInTech #GingersInTech #AGIT #DataCentre
 ```
 
 First comment:
@@ -92,7 +97,7 @@ Fits inside Bluesky's 300-character cap.
 Post (233 chars):
 
 ```text
-First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. Full story below. #AsiansInTech #GingersInTech #AGIT #DataCentre
+First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. See comment for full story. #AsiansInTech #GingersInTech #AGIT #DataCentre
 ```
 
 First comment:
@@ -116,7 +121,7 @@ MANUAL. 280 characters including the hashtags.
 Post (233 chars):
 
 ```text
-First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. Full story below. #AsiansInTech #GingersInTech #AGIT #DataCentre
+First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. See comment for full story. #AsiansInTech #GingersInTech #AGIT #DataCentre
 ```
 
 First comment:
