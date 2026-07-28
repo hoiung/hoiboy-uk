@@ -272,9 +272,15 @@ def test_the_default_floors_match_the_measured_coverage():
     what makes that a conscious edit rather than a silent drift.
 
     hoiboy-uk#54 is the first time that drift-catch actually fired: adding
-    ai-adoption-talk as the sixth service page moved the coverage to 6/7, and
+    ai-adoption-talk as a sixth CTA-bearing page moved the coverage to 6/7, and
     landing the constants without this assertion would have flipped a green,
     CI-wired test to failing.
+
+    "CTA-bearing", not "service": ai-adoption-talk is the FIFTH service. The
+    sixth CTA-bearing page is work-with-hoi, which check_landing_sync.py's
+    NON_SERVICE_SLUGS classifies as "not an offer". check_cta_rendered.py's own
+    comment says the same; this docstring said "sixth service page" until the
+    two were reconciled.
     """
     assert ccr.DEFAULT_MIN_PAGES == 6
     assert ccr.DEFAULT_MIN_INSTANCES == 7
