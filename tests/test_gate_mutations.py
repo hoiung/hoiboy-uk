@@ -160,6 +160,26 @@ def test_reverting_a_guard_turns_its_own_test_red(source, now, reverted, test_fi
     )
 
 
+# Byte snapshot of every file the mutations write to, taken at import time and
+# therefore before any mutation has run. The leak check below compares against
+# THIS, not against git.
+#
+# It used to run `git diff --name-only` on the same paths. That compares the
+# working tree to the index, which answers a different question: it fires on
+# any unstaged edit, including legitimate uncommitted work by whoever is
+# editing these gates right now. hoiboy-uk#54 edited check_cta_rendered.py and
+# the suite went red with "a mutation leaked" while nothing had leaked; staging
+# the file made it pass, which is a tell that the check was measuring staging,
+# not leakage. A snapshot has neither failure mode: it is blind to what git
+# thinks and sensitive only to a change that happened during this run.
+_GUARDED_FILES = sorted({m.values[0] for m in MUTATIONS})
+_TREE_SNAPSHOT = {
+    path: (ROOT / path).read_bytes()
+    for path in _GUARDED_FILES
+    if (ROOT / path).exists()
+}
+
+
 def test_the_tree_is_left_exactly_as_it_was_found():
     """Every mutation restores its file; prove no edit leaked out of a failure.
 
@@ -167,12 +187,18 @@ def test_the_tree_is_left_exactly_as_it_was_found():
     write and the restore, the working tree would carry a reverted guard and
     every later assertion in this session would be measured against it.
     """
-    result = subprocess.run(
-        ["git", "diff", "--name-only", "--"] + sorted({m.values[0] for m in MUTATIONS}),
-        capture_output=True, text=True, cwd=ROOT,
+    missing = [p for p in _GUARDED_FILES if p not in _TREE_SNAPSHOT]
+    assert not missing, (
+        f"guarded files absent at import, so no snapshot exists for them: {missing}"
     )
-    assert result.returncode == 0, result.stderr
-    assert result.stdout.strip() == "", (
-        f"a mutation leaked into the working tree: {result.stdout.strip()!r}. "
-        f"Restore those files before trusting any other result in this run."
+
+    drifted = [
+        path for path, original in _TREE_SNAPSHOT.items()
+        if (ROOT / path).read_bytes() != original
+    ]
+    assert not drifted, (
+        f"a mutation leaked into the working tree: {drifted!r}. These files "
+        f"differ from their contents at the start of this pytest session, so a "
+        f"mutation wrote to them and did not restore. Restore them before "
+        f"trusting any other result in this run."
     )
