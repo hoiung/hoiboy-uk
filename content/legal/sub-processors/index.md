@@ -1,10 +1,10 @@
 ---
 title: Sub-processors
 date: 2026-05-09
-lastmod: 2026-07-13
+lastmod: 2026-07-28
 description: HOIBOY AI LTD sub-processor list (AI Managed Harness Services) - vendor names, services, data categories, locations, transfer mechanisms, DPA references.
 hideDate: true
-version: 1.2.0
+version: 1.3.0
 ---
 
 <!-- iamhoi-exempt -->
@@ -44,6 +44,8 @@ When this page updates, affected Clients on active engagements receive an email 
 
 This section is **separate from the consultancy sub-processor list above**. The Asians & Gingers in Tech "Get featured" form is a public site feature, not part of any client engagement, MSA, SOW, or the DPA Annex, so it carries its own disclosure and is not subject to the client change-notification mechanism above. Intake (photo storage, spam protection, delivery) uses **Cloudflare**, already the site's infrastructure provider. The approval step, where we email the submitter the exact final wording of their feature and read their reply because nothing is published without their emailed approval, uses **Google** (the Gmail API on `hoiboyuk@gmail.com`); Google is a distinct processor of the submitter's data and is listed below.
 
+Publishing a feature uses **GitHub**: this site's content lives in a public GitHub repository, so a feature that goes live is committed there and stays in that repository's public history. Preparing the announcement uses **Google Drive**: the published images and the announcement copy are written to the operator's business Drive as a per-feature posting kit. Alongside those, the submission and the approval evidence are also held in **local storage on the operator's own workstation** (the workstation is the operator's own equipment, not a third party, so it has no row below; what it retains is described in the [Privacy Notice](https://hoiboy.uk/legal/privacy/) retention section). Each third-party processor is listed below.
+
 <div class="sub-processor-table">
 
 | Service | Role for the form | Data processed | Retention |
@@ -52,10 +54,18 @@ This section is **separate from the consultancy sub-processor list above**. The 
 | **Cloudflare Turnstile** | Bot / spam protection on the form | Visitor IP address + a challenge token (verified server-side) | Transient (verification only) |
 | **Cloudflare email** (Email Routing + native send) | Delivers the submission to `hello@hoiboy.uk` | The submitted form fields + photo, as an email | Per inbox retention |
 | **Google Gmail** (Google LLC, `hoiboyuk@gmail.com`; Gmail API, least-privilege `gmail.send` + `gmail.readonly` scopes) | Emails the submitter the exact final wording of their feature for approval and reads their reply (the "no publish without your emailed approval" step) | The submitter's email address, the final feature wording (their story), and their approval reply | Kept as part of the feature's legal-evidence record (see the [Privacy Notice](https://hoiboy.uk/legal/privacy/) retention section) |
+| **GitHub** (GitHub, Inc., a Microsoft company) | Public source repository and site build for a published feature: this site's content is stored and built from a public GitHub repository | The published photo, the published name, and the published story, committed to a public repository | Permanent in that repository's git history for as long as the feature is published. On an erasure request we also run the git-history purge described in the [Story Guidelines](https://hoiboy.uk/legal/agit-story-guidelines/) take-it-down section; copies already taken by third-party forks, clones and caches are outside our control |
+| **Google Drive** (Google LLC; the operator's business Drive, synced from the operator's workstation) | Per-feature posting kit, so a published feature can be announced on the community's social channels | The published images (never the raw photo you uploaded), the published name, and a condensed retelling of the published story | Kept while the feature is published, and deleted when the feature is taken down |
 
 </div>
 
-Cloudflare's DPA, processing location (US primary, global edge), and UK-to-US transfer mechanism are the same as the Cloudflare row in the consultancy table above. Google's DPA, processing location (US), and UK-to-US transfer mechanism (DPF + UK Extension; SCCs + UK IDTA fallback) are the same as the Google row in the consultancy table above.
+Cloudflare's DPA, processing location (US primary, global edge), and UK-to-US transfer mechanism are the same as the Cloudflare row in the consultancy table above.
+
+The Google services in this section are a **different deployment** from the Google row in the consultancy table above, which is a Google Workspace EU instance operated by Google Ireland Limited. Gmail on `hoiboyuk@gmail.com` and the operator's business Google Drive are operated by **Google LLC**, processing in the **US**. Transfer mechanism: DPF + UK Extension (verify at https://www.dataprivacyframework.gov/list), with SCCs + UK IDTA as fallback. Governing terms: https://policies.google.com/terms and https://policies.google.com/privacy.
+
+**GitHub** (GitHub, Inc., a Microsoft company) processes in the **US**. Transfer mechanism: DPF + UK Extension (verify at https://www.dataprivacyframework.gov/list), with SCCs + UK IDTA as fallback. Privacy statement: https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement.
+
+The operator's own workstation is in the **UK**, so the local copy described above is not an international transfer.
 
 ## Cross-references
 
@@ -72,4 +82,4 @@ This page is reviewed at:
 - Annual sub-processor list refresh (12-month cadence from previous refresh date).
 - Ad-hoc on vendor delisting notice or material vendor change.
 
-Last reviewed: 2026-05-09.
+Last reviewed: 2026-07-28.
