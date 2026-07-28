@@ -13,7 +13,7 @@ UK-based; international clients welcome (travel and accommodation at cost when s
 
 ## AI Adoption Talk (FREE)
 
-Want a low-risk way to see how I work? I come to your London office and give a 45-minute talk plus 15 minutes of Q&A on why AI hallucination keeps happening and how to reduce it. Invite anyone who is available and free to join. It runs as a conversation, so I hear how your people use AI today. Absolutely free, no strings attached, and I am not there to sell.
+I come to your London office and give a 45-minute talk plus 15 minutes of Q&A on why AI hallucination keeps happening and how to reduce it. Invite anyone who is available and free to join. It runs as a conversation, so I hear how your people use AI today. Absolutely free, no strings attached, and I am not there to sell.
 
 [Read the full offer]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-talk" >}})
 
