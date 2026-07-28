@@ -34,7 +34,7 @@ Founders and owner-operators with an idea they want built and tested, without co
 
 ## Pricing summary
 
-Simple and flat: £1,000 per day + VAT, billed by the half day, plus a fixed half-day (£500) up front to capture the brief and agree the day-count before any build starts. Handover is included and you own what I build. Full pricing and billing terms across all four services are on the [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}).
+Simple and flat: £1,000 per day + VAT, billed by the half day, plus a fixed half-day (£500) up front to capture the brief and agree the day-count before any build starts. Handover is included and you own what I build. Full pricing and billing terms across all five services are on the [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}).
 
 <!-- iamhoiend -->
 
