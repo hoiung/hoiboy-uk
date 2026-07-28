@@ -50,7 +50,22 @@ import yaml
 
 # The "Read the full offer" link inside a landing block, e.g.
 #   [Read the full offer]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-talk" >}})
-REF_RE = re.compile(r'\{\{<\s*ref\s+"/hire-hoi/ai-consultancy/([A-Za-z0-9._-]+)"')
+#
+# ANCHORED on the link label, because the label is what the docstring above says
+# binds a block to a bundle. The first version matched any ai-consultancy ref
+# anywhere in the block and took the first one, so it did not do what its own
+# comment claimed: adding a legitimate cross-link ABOVE the offer line (a "see
+# also the pricing page" sort of link, which nothing forbids) silently rebound
+# the block to that slug. The gate then failed naming the wrong bundle, which is
+# worse than a clean failure because it sends the next reader to the wrong file.
+OFFER_REF_RE = re.compile(
+    r'\[Read the full offer\]\(\s*\{\{<\s*ref\s+"/hire-hoi/ai-consultancy/([A-Za-z0-9._-]+)"'
+)
+
+# Any ai-consultancy ref at all. NEVER used for binding - only to tell "this
+# block has no offer link" apart from "this block has one but someone reworded
+# the label", which are the same symptom with very different fixes.
+ANY_REF_RE = re.compile(r'\{\{<\s*ref\s+"/hire-hoi/ai-consultancy/([A-Za-z0-9._-]+)"')
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SECTION = REPO_ROOT / "content" / "hire-hoi" / "ai-consultancy"
@@ -129,22 +144,29 @@ def landing_blocks() -> list[tuple[str, str | None]]:
     its title, so the title still matched. The slug is what the reader actually
     follows, so the slug is what is compared, with the title checked on top.
     """
-    blocks: list[tuple[str, str | None]] = []
+    blocks: list[tuple[str, str | None, str | None]] = []
     heading: str | None = None
     slug: str | None = None
+    stray: str | None = None
     for line in LANDING.read_text(encoding="utf-8-sig").splitlines():
         if line.startswith("## "):
             if heading is not None:
-                blocks.append((heading, slug))
+                blocks.append((heading, slug, stray))
             candidate = line[3:].strip()
             heading = None if candidate in NON_SERVICE_HEADINGS else candidate
             slug = None
-        elif heading is not None and slug is None:
-            match = REF_RE.search(line)
-            if match:
-                slug = match.group(1)
+            stray = None
+        elif heading is not None:
+            if slug is None:
+                match = OFFER_REF_RE.search(line)
+                if match:
+                    slug = match.group(1)
+            if stray is None:
+                other = ANY_REF_RE.search(line)
+                if other:
+                    stray = other.group(1)
     if heading is not None:
-        blocks.append((heading, slug))
+        blocks.append((heading, slug, stray))
     return blocks
 
 
@@ -155,7 +177,7 @@ def main() -> int:
 
     bundles = service_bundles()
     blocks = landing_blocks()
-    linked = {slug for _, slug in blocks if slug}
+    linked = {slug for _, slug, _ in blocks if slug}
 
     failures = []
 
@@ -169,8 +191,18 @@ def main() -> int:
             )
 
     # Direction 2: a block advertises a service whose bundle is not there.
-    for heading, slug in blocks:
-        if slug is None:
+    for heading, slug, stray in blocks:
+        if slug is None and stray is not None:
+            # The discriminating case. Same symptom as a missing link, entirely
+            # different fix, so it gets its own message rather than sending the
+            # reader off to add a link that is already there.
+            failures.append(
+                f"unbound heading: '## {heading}' on {_rel(LANDING)} links to "
+                f"'{stray}' but not through a '[Read the full offer](...)' link, "
+                f"which is what binds a block to a bundle. Either restore that "
+                f"exact label or the block is not tied to anything."
+            )
+        elif slug is None:
             failures.append(
                 f"orphan heading: '## {heading}' on {_rel(LANDING)} carries no "
                 f"'Read the full offer' link, so nothing ties it to a bundle."
