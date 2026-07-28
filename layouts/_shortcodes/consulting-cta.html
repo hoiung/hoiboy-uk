@@ -37,7 +37,19 @@
   {{- errorf "consulting-cta: no data for offer %q at data/consulting.yaml" $offer -}}
 {{- end -}}
 {{- $todoMarker := "OPERATOR_TODO_REPLACE_BEFORE_LAUNCH" -}}
-{{- $mailtoHref := "mailto:hello@hoiboy.uk?subject=AI%20Managed%20Harness%20services%20discovery%20call" -}}
+{{- /*
+  The fallback subject is per-offer, read from the same data file as the URL.
+  It was a single hardcoded "AI Managed Harness services discovery call" used for
+  every offer, which was already wrong for the automation and product-builder
+  pages and became a live risk with the free talk: a visitor to a page promising
+  "free, no strings attached, I am not there to sell" would have opened an email
+  titled as a services discovery call. Offers without their own subject get a
+  neutral one, never another offer's. (hoiboy-uk#54, Ralph Sonnet round 3.)
+*/ -}}
+{{- $subject := $data.mailto_subject | default "Enquiry from hoiboy.uk" -}}
+{{- /* %20 not +. A mailto: query is not form-encoded, so a `+` from querify /
+   urlquery reaches some mail clients as a literal plus in the subject line. */ -}}
+{{- $mailtoHref := printf "mailto:hello@hoiboy.uk?subject=%s" (urlquery $subject | replaceRE `\+` "%20") -}}
 {{- if eq $type "calcom" -}}
   {{- $url := $data.calcom_booking | default "" -}}
   {{- if or (eq $url "") (strings.Contains $url $todoMarker) -}}

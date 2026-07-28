@@ -52,6 +52,7 @@ business:
 # Read by: layouts/_shortcodes/consulting-cta.html (CTA href, via offer="automation_services")
 #          -> content/hire-hoi/ai-consultancy/automation-services/index.md.
 automation_services:
+  mailto_subject: "Business Automation Services enquiry"
   calcom_booking: "https://cal.eu/hoiboyuk/discovery"
 
 # AI Product Demo/MVP/Prototype Builder offer (blog-priv#60). Same discovery call as the
@@ -59,6 +60,7 @@ automation_services:
 # Read by: layouts/_shortcodes/consulting-cta.html (CTA href, via offer="ai_product_builder")
 #          -> content/hire-hoi/ai-consultancy/ai-product-builder/index.md.
 ai_product_builder:
+  mailto_subject: "AI Product Demo/MVP/Prototype Builder enquiry"
   calcom_booking: "https://cal.eu/hoiboyuk/discovery"
 
 # AI Adoption Talk (FREE) offer (hoiboy-uk#54). Same discovery call as every other
@@ -68,9 +70,13 @@ ai_product_builder:
 # Read by: layouts/_shortcodes/consulting-cta.html (CTA href, via offer="ai_adoption_talk")
 #          -> content/hire-hoi/ai-consultancy/ai-adoption-talk/index.md.
 ai_adoption_talk:
+  # Deliberately not "discovery call": this offer is free and the page promises
+  # no sell, so the degraded-CTA email must not read like a sales enquiry.
+  mailto_subject: "Free AI Adoption Talk for our team"
   calcom_booking: "https://cal.eu/hoiboyuk/discovery"
 
 harness_architect:
+  mailto_subject: "AI Managed Harness services discovery call"
   # Live booking URL (replaced 2026-05-08 - Cal.com EU instance, event-type id 284432).
   # Pre-Worker (hoiboy-uk#28): bookings fire Cal.com's default emails; post-Worker:
   # Brevo Hoi-voice templates take over. See docs/cal-eu-setup.md for full setup.
