@@ -31,7 +31,7 @@ In a sense, I am basically a pencil sharpener. My value is helping your team bec
 
 Five ways I can help, depending on what you need:
 
-- **[AI Adoption Talk (FREE)]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-talk" >}})**: a free 45-minute talk plus 15 minutes of Q&A at your London office, on why AI hallucination keeps happening and how to reduce it.
+- **[AI Adoption Talk (FREE)]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-talk" >}})**: a free 45-minute talk plus 15 minutes of Q&A at your London office, on how I actually use AI day to day, what worked and what did not.
 - **[AI Managed Harness Services]({{< ref "/hire-hoi/ai-consultancy/claude-code-harness-architect" >}})**: a custom AI harness that automates your routine work, built audit-first and kept running.
 - **[Business Automation Services]({{< ref "/hire-hoi/ai-consultancy/automation-services" >}})**: done-for-you automation, for when you would rather I build it than learn it.
 - **[AI Adoption Training]({{< ref "/hire-hoi/ai-consultancy/ai-adoption-training" >}})**: done-with-you training, so your team learns to use AI properly on their real work.
