@@ -203,8 +203,13 @@ Before you fill it in, have a quick read of the <a href="/legal/agit-story-guide
   </div>
 
   <div class="agit-field agit-consent">
+    <!-- Version of the consent label below. Posted with the form so a record shows
+         which wording the member actually agreed to. MUST stay in the
+         KNOWN_CONSENT_VERSIONS list in functions/api/contribute.js; bump BOTH
+         whenever the label text changes. Gate: tests/test_agit_consent_version.py -->
+    <input type="hidden" name="consent_version" value="2026-07-28">
     <input type="checkbox" id="agit-consent" name="consent" required>
-    <label for="agit-consent">I confirm this is my own true experience and mine to share, that I have permission to name anyone I've named (or I'm happy for them to be anonymised), and that I've read the <a href="/legal/agit-story-guidelines/" target="_blank" rel="noopener noreferrer">Story Guidelines</a>. I agree my photo may be published, my story may be edited for clarity into a public feature, and that I'll approve the exact final wording by email before it goes live. If I've shared any social links above, I'm happy to be tagged or @-mentioned there when my feature is shared. My submission is processed by Cloudflare (R2 storage, Turnstile, and email) to make that happen. See the <a href="/legal/privacy/" target="_blank" rel="noopener noreferrer">Privacy Notice</a>.</label>
+    <label for="agit-consent">I confirm this is my own true experience and mine to share, that I have permission to name anyone I've named (or I'm happy for them to be anonymised), and that I've read the <a href="/legal/agit-story-guidelines/" target="_blank" rel="noopener noreferrer">Story Guidelines</a>. I agree my photo may be published, my story may be edited for clarity into a public feature, and that I'll approve the exact final wording by email before it goes live. If I've shared any social links above, I'm happy to be tagged or @-mentioned there when my feature is shared. My submission is processed by Cloudflare (R2 photo storage, Turnstile spam checks, and email delivery), by Google (Gmail to send me the approval email, and Drive to hold the posting kit used to announce my feature), and by GitHub (the public repository this site is stored and built from) to make that happen. I understand that a published feature is committed to that public repository and stays in its history, that taking my feature down removes the live page and we then purge it from that history, and that copies already taken by other people are outside anyone's control. See the <a href="/legal/privacy/" target="_blank" rel="noopener noreferrer">Privacy Notice</a>.</label>
   </div>
 
   <div class="agit-field cf-turnstile" data-sitekey="0x4AAAAAADz-CB1k9o8zx3S8"></div>
