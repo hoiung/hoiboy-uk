@@ -62,7 +62,7 @@ agit-social repo. That repo's deploy/CHANNELS.md is the canonical channel split.
 Post (243 chars):
 
 ```text
-Meet Hoi.
+Meet Hoi!
 
 First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. See comment for full story. #AsiansInTech #GingersInTech #AGIT #DataCentre
 ```
@@ -81,7 +81,7 @@ It is the only channel taking the portrait crop; the landscape card is wrong her
 Caption (233 chars):
 
 ```text
-Meet Hoi.
+Meet Hoi!
 
 First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. See comment for full story. #AsiansInTech #GingersInTech #AGIT #DataCentre
 ```
@@ -101,7 +101,7 @@ Fits inside Bluesky's 300-character cap.
 Post (233 chars):
 
 ```text
-Meet Hoi.
+Meet Hoi!
 
 First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. See comment for full story. #AsiansInTech #GingersInTech #AGIT #DataCentre
 ```
@@ -127,7 +127,7 @@ MANUAL. 280 characters including the hashtags.
 Post (233 chars):
 
 ```text
-Meet Hoi.
+Meet Hoi!
 
 First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. See comment for full story. #AsiansInTech #GingersInTech #AGIT #DataCentre
 ```
@@ -152,7 +152,7 @@ MANUAL. Groups have no API, and there is no AGIT Page. Group posts do not get th
 first-comment treatment, so the Source goes inline:
 
 ```text
-Meet Hoi.
+Meet Hoi!
 
 First feature on Asians & Gingers in Tech, so I went first. 8 years quietly building Canonical's cloud data centres, and a Malta sprint where our kit ended up in Kabul. Full story: https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-product-engineer/
 ```
