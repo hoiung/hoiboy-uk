@@ -9,7 +9,7 @@ description: "A plain-English tour of the data providers, languages, libraries a
 
 <!-- iamhoi -->
 
-I recently gave a talk to the London Investments and Traders Group. Afterwards I ended up in a few smaller chats with other techies, and the same question kept coming back: what did you actually use to build the thing? What data providers, what languages, what libraries, what tools?
+I recently gave a talk to the London Investors and Traders Group. Afterwards I ended up in a few smaller chats with other techies, and the same question kept coming back: what did you actually use to build the thing? What data providers, what languages, what libraries, what tools?
 
 So here it is. The parts list.
 

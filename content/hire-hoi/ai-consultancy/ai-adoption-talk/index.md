@@ -11,7 +11,7 @@ I give this talk away for free. No charge, no catch, no strings attached.
 
 It is 45 minutes of talk plus 15 minutes of Q&A, in person at your London office. You can invite anyone who is available and free to join the session. Your whole team, one department, whoever wants to sit in.
 
-I built it in the same style as the talk I gave to the London Investments and Traders Group, re-cut for an office instead of a room of traders. It covers why AI hallucination keeps happening and the ways to reduce it, which is the one topic that slipped my mind on the day and that I had to follow up on afterwards. I built it for entry level AI users: people who are not deep in IT but who know their own work inside out, and people still early in their professional life who are learning as they go.
+I built it in the same style as the talk I gave to the London Investors and Traders Group, re-cut for an office instead of a room of traders. It covers why AI hallucination keeps happening and the ways to reduce it, which is the one topic that slipped my mind on the day and that I had to follow up on afterwards. I built it for entry level AI users: people who are not deep in IT but who know their own work inside out, and people still early in their professional life who are learning as they go.
 
 I run it as a conversation, not a lecture. I want the room talking. How are your people using AI right now, what frustrates them, what breaks, what have they quietly given up on? That part matters as much as my slides. AI is moving fast and everyone uses it differently, so I learn from the room as much as the room learns from me.
 

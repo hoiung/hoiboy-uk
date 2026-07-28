@@ -4,12 +4,12 @@ date: 2026-06-16T19:45:00+01:00
 draft: false
 categories: ["tech-ai", "trading"]
 tags: ["ai", "trading", "talk", "public-speaking", "llm", "harness"]
-description: "I gave a talk to the London Investments and Traders Group on using AI to build trading tools. It went on for 2+ hours. Here are my slides and keynotes."
+description: "I gave a talk to the London Investors and Traders Group on using AI to build trading tools. It went on for 2+ hours. Here are my slides and keynotes."
 ---
 
 <!-- iamhoi -->
 
-On Saturday the 13th of June 2026, I gave a talk to the London Investments and Traders Group. The topic was "Using AI to build trading tools".
+On Saturday the 13th of June 2026, I gave a talk to the London Investors and Traders Group. The topic was "Using AI to build trading tools".
 
 It turned out fruitful. I originally created this talk to be only about 30 minutes long, and left 30 minutes for Q&A. It went on for 2+ hours, with many questions, discussions and debates. For me that was very positive feedback, because so many people were interested and very engaged. Which is why they managed to hang around for that long lol.
 
