@@ -14,7 +14,7 @@ and a channel's own character cap decides which one it takes:
 
 | Type | Channels | Cap |
 |---|---|---|
-| **summary** | Facebook Page, Instagram, LinkedIn Group, Meetup, Facebook Group, Substack | 63206 / 2200 / 3000 |
+| **summary** | Facebook Page, Instagram, LinkedIn Group, Facebook Group, Substack | 63206 / 2200 / 3000 |
 | **super short summary** | Bluesky, X | 300 / 280 |
 
 A cap is a CEILING for one bucket, never a TARGET for all of them. One string sized
@@ -39,7 +39,7 @@ Both images sit in this folder beside this file. They are different shapes on pu
 
 | File | Size | Shape | Use it on |
 |---|---|---|---|
-| `share-card.png` | 1200x630 | landscape | Facebook Page, Bluesky, X, LinkedIn Group, Meetup, Facebook Group, Substack |
+| `share-card.png` | 1200x630 | landscape | Facebook Page, Bluesky, X, LinkedIn Group, Facebook Group, Substack |
 | `hero.jpg` | 1080x1350 | portrait | Instagram ONLY |
 
 **Every post gets an image.** A feed post with no image gets a fraction of the reach, and
@@ -144,9 +144,9 @@ Source: https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-product-en
 
 ## MANUAL (operator posts these by hand)
 
-X and TikTok are deferred to manual by operator decision 2026-07-24. Meetup, Facebook
-Group, LinkedIn Group and Substack have no posting API at all. Nothing here automates
-any of them.
+X and TikTok are deferred to manual by operator decision 2026-07-24. Facebook Group,
+LinkedIn Group and Substack have no posting API at all. Nothing here automates any of
+them. Meetup is not a feature channel: it is the events surface.
 
 ### X
 
@@ -199,13 +199,6 @@ Full story: https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-produc
 
 #AsiansInTech #GingersInTech #AGIT #DataCentre #Automation
 ```
-
-### Meetup
-
-**Image:** `share-card.png` (1200x630 landscape).
-
-MANUAL. The summary. No posting API. Post as a group announcement using the
-inline-Source block above.
 
 ### Facebook Group
 
