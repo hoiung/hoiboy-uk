@@ -11,7 +11,7 @@ I give this talk away for free. No charge, no catch, no strings attached.
 
 It is 45 minutes of talk plus 15 minutes of Q&A, in person at your London office. You can invite anyone who is available and free to join the session. Your whole team, one department, whoever wants to sit in.
 
-The talk is the one I gave to the London Investments and Traders Group. It covers why AI hallucination keeps happening and the ways to reduce it. I built it for entry level AI users: people who are not deep in IT but who know their own work inside out, and people still early in their professional life who are learning as they go.
+I built it in the same style as the talk I gave to the London Investments and Traders Group, re-cut for an office instead of a room of traders. It covers why AI hallucination keeps happening and the ways to reduce it, which is the one topic that slipped my mind on the day and that I had to follow up on afterwards. I built it for entry level AI users: people who are not deep in IT but who know their own work inside out, and people still early in their professional life who are learning as they go.
 
 I run it as a conversation, not a lecture. I want the room talking. How are your people using AI right now, what frustrates them, what breaks, what have they quietly given up on? That part matters as much as my slides. AI is moving fast and everyone uses it differently, so I learn from the room as much as the room learns from me.
 
@@ -33,7 +33,9 @@ I am doing this because it is the easiest way for me to meet people properly. I 
 
 ## Pricing summary
 
-Free. There is no fee, no minimum head count, and nothing to sign.
+Free. There is no fee, no minimum head count, and nothing you have to sign to book it or to have me turn up.
+
+If your own legal or security people would rather have an NDA in place before an outsider talks to your team, that is completely fine and I have one ready to sign. Your side asks for it, not mine. The session runs as a conversation about how your people actually work, so if that makes anyone uncomfortable without paperwork, the paperwork is the easy part.
 
 The travel and accommodation at cost line on my other services does not apply here. This talk is London only, in person, and I cover my own travel and expenses to get to you. That is the half day I am giving away, and it is the whole of what it costs you.
 
