@@ -186,3 +186,48 @@ test('cleanLines coerces null/undefined/blank to an empty string', () => {
   assert.equal(cleanLines('', 20, 300, 1000), '');
   assert.equal(cleanLines('   \n  \n', 20, 300, 1000), '');
 });
+
+// ----------------------------------------------------------------------
+// Consent-label version (#3 AC 1.9).
+//
+// An Article 9(2)(a) explicit-consent surface: "they ticked a box" is not
+// enough on its own, the record has to show WHICH wording they ticked. The
+// form posts the version it rendered; the endpoint rejects absent/unknown
+// rather than defaulting, because a default would attribute the current
+// wording to someone who agreed to different wording.
+//
+// KNOWN_CONSENT_VERSIONS mirrors functions/api/contribute.js in lock-step per
+// this file's header convention. tests/test_agit_consent_version.py asserts
+// the two lists and the form's hidden input all agree, so this mirror cannot
+// drift silently.
+// ----------------------------------------------------------------------
+
+const KNOWN_CONSENT_VERSIONS = ['2026-07-28'];
+
+// Mirror of the endpoint's acceptance test: clean() first, then membership.
+function consentVersionAccepted(raw) {
+  return KNOWN_CONSENT_VERSIONS.includes(clean(raw, 32));
+}
+
+test('consent version: a submission with no consent_version is rejected', () => {
+  assert.equal(consentVersionAccepted(undefined), false);
+  assert.equal(consentVersionAccepted(null), false);
+  assert.equal(consentVersionAccepted(''), false);
+});
+
+test('consent version: an unrecognised version is rejected, never defaulted', () => {
+  assert.equal(consentVersionAccepted('2026-01-01'), false);
+  assert.equal(consentVersionAccepted('latest'), false);
+  assert.equal(consentVersionAccepted('2026-07-2'), false);
+});
+
+test('consent version: the current label version is accepted', () => {
+  assert.equal(consentVersionAccepted('2026-07-28'), true);
+});
+
+test('consent version: surrounding whitespace and control chars do not smuggle a match', () => {
+  // clean() trims and strips control chars, so a padded value still resolves.
+  assert.equal(consentVersionAccepted('  2026-07-28  '), true);
+  // ...but injected structure does not become a different accepted value.
+  assert.equal(consentVersionAccepted('2026-07-28\nBcc:evil'), false);
+});
