@@ -19,10 +19,10 @@ _spec.loader.exec_module(gc)
 # The real longest landing description (content/hire-hoi/ai-consultancy/_index.md).
 AI_CONSULTANCY_DESC = (
     "AI consulting for owner-operator-led teams: AI Managed Harness Services, "
-    "Business Automation Services, AI Adoption Training, and the AI Product "
-    "Demo/MVP/Prototype Builder, plus a portfolio of client work. Audit-first "
-    "builds, deliverable-anchored automation, done-with-you training, ongoing "
-    "Monthly Maintenance Package."
+    "Business Automation Services, AI Adoption Training, the AI Product "
+    "Demo/MVP/Prototype Builder, and the AI Adoption Talk (FREE), plus a "
+    "portfolio of client work. Audit-first builds, deliverable-anchored "
+    "automation, done-with-you training."
 )
 
 
