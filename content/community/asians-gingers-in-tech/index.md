@@ -57,7 +57,7 @@ Want to bring this to your own city? Come and say hello. I'm one man, and I can 
 
 **Already run a community of your own?** Let's team up. I'm always up for collaborative events and for bringing different groups together in the same room.
 
-**Sponsorships are always welcome too.** We are currently setting things up as a Community Interest Company (CIC), which is a charity structure so we can apply for local grants and corporate sponsorships. Every penny we ever receive goes straight back into running our meetups and featured series. So if you or your company want to help back what we’re building, get in touch.
+**Sponsorships are always welcome too.** If you or your company want to help back what we’re building, get in touch.
 
 Email me at [hello@hoiboy.uk](mailto:hello@hoiboy.uk).
 <!-- iamhoiend -->
