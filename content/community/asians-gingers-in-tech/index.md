@@ -47,7 +47,9 @@ Come join the weirdest niche community. 🧡🤝
 ## Help build this
 
 <!-- iamhoi -->
-**Asians & Gingers in Tech is a strictly not-for-profit community run entirely to support and elevate diverse talent in technology.** This isn't my first community. I built the largest Brazilian Zouk community online, ran its live events, and it's still the largest today. Now I'm doing the same here. If you want the story of how, [here's everything I learned](/blogs/how-to-actually-build-communities/).
+**Asians & Gingers in Tech is a strictly not-for-profit community run entirely to support and elevate diverse talent in technology.**
+
+This isn't my first community. I built the largest Brazilian Zouk community online, ran its live events, and it's still the largest today. Now I'm doing the same here. If you want the story of how, [here's everything I learned](/blogs/how-to-actually-build-communities/).
 
 Right now the meetups are London only, because that's where I am. It's not meant to stay that way.
 
