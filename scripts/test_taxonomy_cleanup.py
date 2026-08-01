@@ -31,18 +31,27 @@ POSTS = ROOT / "content" / "posts"
 # Measured before the change (2026-07-25): the sitemap carried 217 tag URLs and
 # 2 series URLs, and Phase 6 must not touch either (A11).
 #
-# blog-priv#66 Phase 4 moved the tag floor 217 -> 211 DELIBERATELY. Six /tags/
-# terms were retired by merging mechanically-duplicate tags (casing, plural and
-# whitespace spellings of a term that already existed); each retired URL has a
-# 301 in static/_redirects and a line in the coverage baseline, so it is a
-# migration rather than a loss. The number is derived, not fitted: 216 term
-# pages plus the /tags/ landing is 217 sitemap paths today, minus the 6 that
-# stop generating. Eight merges were applied but only six retire a URL -
-# `brazilian-zouk` survives via what-is-zouk-aam and `AI` already slugged to
-# `ai`. If this number ever needs to move again, move it for a reason you can
-# write down here; loosening it to make a red test go quiet is how the taxonomy
-# loses pages unnoticed, which is the whole point of a floor.
-EXPECT_TAGS = 211
+# blog-priv#66 moved the tag floor 217 -> 210 DELIBERATELY, in two steps. SEVEN
+# /tags/ terms were retired by merging mechanically-duplicate tags (casing,
+# plural and whitespace spellings of a term that already existed); each retired
+# URL has a 301 in static/_redirects and a line in the coverage baseline, so it
+# is a migration rather than a loss.
+#
+# The number is derived, not fitted. At base 9179b55 the sitemap carried 217
+# /tags/ paths: 216 term pages plus the /tags/ landing. Phase 4 applied eight
+# merges, of which six retire a URL (`brazilian-zouk` survives via
+# what-is-zouk-aam, and `AI` already slugged to `ai`), taking it to 211. Ralph
+# escalation #1 then found a seventh: `llms` (1 holder, overthink-mode) is the
+# plural of `llm` (6 holders) and is the same shape as congress -> congresses and
+# beginners -> beginner, both of which WERE merged. It was never enumerated and
+# never excluded - the Phase 4 "derivation" reprinted the issue's own eight-row
+# table rather than detecting duplicates generically, so it structurally could
+# not surface a pair nobody had already named. That takes the floor to 210.
+#
+# If this number ever needs to move again, move it for a reason you can write
+# down here; loosening it to make a red test go quiet is how the taxonomy loses
+# pages unnoticed, which is the whole point of a floor.
+EXPECT_TAGS = 210
 EXPECT_SERIES = 2
 
 _LOC_RE = re.compile(r"<loc>\s*([^<\s]+)\s*</loc>")
@@ -85,8 +94,8 @@ def check_sitemap(built: Path, failures: list[str]) -> None:
                                   ("series", "/series/", EXPECT_SERIES)):
         n = len([p for p in paths if p.startswith(prefix)])
         if n < expect:
-            failures.append(f"AC 6.4: {n} {label} URLs in the sitemap, down from the "
-                            f"{expect} measured before Phase 6. {label.title()} is out of "
+            failures.append(f"AC 6.4: {n} {label} URLs in the sitemap, below the floor of "
+                            f"{expect}. {label.title()} is out of "
                             f"scope for this change, so a DROP means the taxonomy was "
                             f"collateral damage. Growth is fine and is not checked.")
 
@@ -136,7 +145,7 @@ def main(argv: list[str] | None = None) -> int:
 
     n = len(sorted(POSTS.glob("*/index.md")))
     print(f"OK: the `categories` taxonomy is off (0 /categories/ URLs), tags and series "
-          f"have not dropped below their pre-Phase-6 {EXPECT_TAGS}/{EXPECT_SERIES}, and "
+          f"have not dropped below their floors of {EXPECT_TAGS}/{EXPECT_SERIES}, and "
           f"all {n} posts keep their `categories:` front-matter key")
     return 0
 
