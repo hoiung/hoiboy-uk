@@ -3,7 +3,7 @@ title: "How to Actually Build Communities. This is the Way."
 date: 2026-07-12T14:30:00+01:00
 draft: false
 categories: [entrepreneurship, dance, life, adventure, tech-ai, food-booze, trading]
-tags: ["community building", "Brazilian Zouk", "leadership", "entrepreneurship", "dance", "starting from scratch", "AGIT"]
+tags: ["community", "zouk", "leadership", "entrepreneurship", "dance", "starting from scratch", "AGIT"]
 description: "I built the biggest Brazilian Zouk community online, in a dance most have never heard of. What it actually takes to build one from nothing, ugly bits and all."
 resources:
   - src: "shots/1-group-international-events.webp"
