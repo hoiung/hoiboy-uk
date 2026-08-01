@@ -44,7 +44,12 @@
   pages and became a live risk with the free talk: a visitor to a page promising
   "free, no strings attached, I am not there to sell" would have opened an email
   titled as a services discovery call. Offers without their own subject get a
-  neutral one, never another offer's. (hoiboy-uk#54, Ralph Sonnet round 3.)
+  neutral one, never another offer's. CAVEAT (Stage 5): the `| default` below is
+  only reachable for an offer key that has no mailto_subject. An invocation that
+  passes no `offer=` at all resolves to the `harness_architect` DEFAULT on line 34
+  and inherits ITS subject - which is why the training page needed its own key.
+  work-with-hoi:171 still relies on that default deliberately (it is the hub).
+  (hoiboy-uk#54, Ralph Sonnet round 3; caveat added Stage 5.)
 */ -}}
 {{- $subject := $data.mailto_subject | default "Enquiry from hoiboy.uk" -}}
 {{- /* %20 not +. A mailto: query is not form-encoded, so a `+` from querify /
