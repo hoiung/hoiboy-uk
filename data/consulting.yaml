@@ -5,6 +5,9 @@
 # reads `{{ .Site.Data.consulting.<key> }}` reserved for future migration.
 #
 # Config Traceability - every key below has a documented reader (AC 2.5).
+# MAINTAINED BY HAND. check_config_traceability.py reads params.toml only, so
+# nothing enforces this claim for THIS file (issue body CQ3 records the gap as
+# an accepted non-goal). Treat the line above as a convention, not a gate.
 # Numeric *_gbp keys are present per AC 2.1 spec; some are programmatic-check-only
 # (AC 2.5 carve-out: "OK if unread but document as such").
 #
@@ -73,6 +76,12 @@ ai_adoption_talk:
   # Deliberately not "discovery call": this offer is free and the page promises
   # no sell, so the degraded-CTA email must not read like a sales enquiry.
   mailto_subject: "Free AI Adoption Talk for our team"
+  calcom_booking: "https://cal.eu/hoiboyuk/discovery"
+
+ai_adoption_training:
+  # Without this key the page falls to the `harness_architect` DEFAULT on line 34
+  # of the shortcode, so a training enquiry opened titled as a harness discovery call.
+  mailto_subject: "AI Adoption Training enquiry"
   calcom_booking: "https://cal.eu/hoiboyuk/discovery"
 
 harness_architect:
