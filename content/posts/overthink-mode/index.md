@@ -38,7 +38,7 @@ Xhigh and max overthink. High sits in the middle of the five. High wins.
 
 Every time a new Claude model drops (Opus something, Sonnet something else, Haiku whatever), the effort setting resets on me. New model, same arrow-key shuffle. Open settings, arrow down to the effort row, skip past auto (never use it), step past low and medium, step back from xhigh and max, land on high. Done. Carry on with the actual work.
 
-I've done this so many times it's pure muscle memory now. I've been experimenting with effort levels for the last nine or ten months, across every Claude release, and on ChatGPT's reasoning knob when OpenAI added one. Different names, different tier counts (Claude Code alone keeps changing how many steps and modes live on the dial), same dial underneath, same answer every single time.
+I've done this so many times my fingers get there before I've finished thinking about it. I've been experimenting with effort levels for the last nine or ten months, across every Claude release, and on ChatGPT's reasoning knob when OpenAI added one. Different names, different tier counts (Claude Code alone keeps changing how many steps and modes live on the dial), same dial underneath, same answer every single time.
 
 Middle tier. Every model. Every release. Best of both worlds.
 
