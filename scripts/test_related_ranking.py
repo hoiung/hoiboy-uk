@@ -228,7 +228,19 @@ def check_tie_break(meta, rn_map, failures: list[str]) -> int:
     Tier 2 reverted both top-ups from `$ordered` to `$byDate`, undoing half the
     operator-authorised change, and the suite still passed with exit 0 and the same
     61 buckets. Enumerating the pools instead of the one pass that prompted the fix
-    is what closes the class.
+    is what closes the ORDERING half of the class.
+
+    WHAT THIS FUNCTION DOES NOT COVER, stated plainly so the next reader does not
+    over-trust it. It asserts reach-ordering WITHIN whatever each pool contributed.
+    It does NOT assert that the passes ran in the right ORDER - that the category
+    top-up is exhausted before the last resort. `check_topup` owns that half, and the
+    two are complements, not substitutes. Ralph round 5 Tier 2 proved the distinction
+    by disabling the category filter so the last resort drew from both pools at once:
+    `check_topup` produced 13 failures, and this function reported zero, because a
+    reach-ascending prefix of a merged pool leaves each SUBSET internally
+    reach-sorted, so the taken-vs-left comparison is still satisfied. The suite
+    catches that mutation; this function alone does not. Do not delete `check_topup`
+    on the theory that this supersedes it.
 
     Only a pool the 5-link cap cut through can discriminate; a pool consumed whole,
     or one that contributed nothing, leaves nothing behind to compare against and is
@@ -258,9 +270,12 @@ def check_tie_break(meta, rn_map, failures: list[str]) -> int:
             pools.append((f"at {n} shared tag(s)", members))
 
         # The two top-ups draw only from zero-shared-tag candidates. The last resort
-        # takes anything still unpicked, but it can only run once the category pool
-        # is exhausted, so by then the posts left are exactly the ones with no shared
-        # category - which is why these two pools partition cleanly.
+        # scans every unpicked candidate, but each top-up loop walks its whole list
+        # and only no-ops once the box holds 5 - it never breaks early - so by the
+        # time the last resort can take anything, the category pool is either
+        # exhausted or the box is full. That is what makes these two pools a correct
+        # partition OF THE OUTCOME the template produces. It is not an independent
+        # check that the passes ran in that order; see the docstring.
         zero = [o for o in others if not _shared(meta, slug, o)]
         shares_cat = [o for o in zero if meta[slug].categories & meta[o].categories]
         no_cat = [o for o in zero if not (meta[slug].categories & meta[o].categories)]
