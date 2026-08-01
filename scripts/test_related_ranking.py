@@ -82,6 +82,27 @@ def _tag_matching_siblings(meta: dict[str, PostMeta], slug: str) -> int:
     return sum(1 for other in meta if other != slug and _shared(meta, slug, other))
 
 
+def _reach(meta: dict[str, PostMeta]) -> dict[str, int]:
+    """slug -> how many OTHER posts share at least one tag with it.
+
+    An INDEPENDENT re-derivation of what `layouts/_partials/readnext-reach.html`
+    computes in Go. That independence is the whole point: reach had exactly one
+    producer and no verifier, so the template could be deleted outright and every
+    check here still passed. Deriving it a second time, from the front matter
+    rather than from the rendered HTML, is what lets `check_tie_break` below
+    discriminate.
+
+    Keep this definition and the template's in step. If they ever disagree,
+    `check_tie_break` starts failing for a reason that has nothing to do with the
+    ranking - which is the same contract `_norm_terms` carries against the
+    template's tag lowering.
+    """
+    return {
+        slug: sum(1 for other in meta if other != slug and _shared(meta, slug, other))
+        for slug in meta
+    }
+
+
 def check_links_resolve(meta, rn_map, failures: list[str]) -> None:
     """Every href in a box resolves to a post this test knows about.
 
@@ -178,6 +199,77 @@ def check_topup(meta, rn_map, failures: list[str]) -> None:
             remaining.discard(link)
 
 
+def check_tie_break(meta, rn_map, failures: list[str]) -> int:
+    """Ties on shared-tag count go to the LEAST-REACHABLE post, not the newest.
+
+    This is the operator-authorised tie-break (blog-priv#66 `## Scope update`) and
+    it is the mechanism the whole change now rests on: it took the site from 6
+    zero-inbound posts back to 2 and halved the hub again, at no relevance cost.
+
+    Ralph round 3 Tier 2 proved it had NO gate. Reverting the sort key from
+    `reach * 1000 + date-rank` to plain `date-rank` - deleting the mechanism
+    outright - left every other check green, because `check_hub_cap`'s ceiling of
+    30 cannot tell the reach hub (12) from the recency hub (24), and
+    `check_monotonic` / `check_topup` only constrain shared-tag count and top-up
+    SEQUENCING, never which candidate wins a tie. A gate that passes in both the
+    fixed and the broken state is not a gate.
+
+    THE PROPERTY. Candidates are bucketed by exact shared-tag count, descending.
+    Within a bucket the template walks `$ordered` (reach ascending, then date
+    descending) and takes candidates until the box holds 5. So for every bucket:
+    every candidate PICKED from it must sort at or before every candidate LEFT in
+    it, under the key `(reach, date-rank)`.
+
+    Only the boundary bucket - the one the 5-link cap cut through - can discriminate;
+    a bucket consumed whole leaves nothing behind to compare against, so it is
+    skipped rather than counted as a pass. The return value is how many boundary
+    buckets actually got compared, so a corpus that stops producing them reports
+    that plainly instead of passing vacuously.
+    """
+    reach = _reach(meta)
+    by_date = sorted(meta, key=lambda s: meta[s].date, reverse=True)
+    date_rank = {slug: i for i, slug in enumerate(by_date)}
+    key = lambda s: (reach[s], date_rank[s])  # noqa: E731 - the template's sort key
+
+    discriminating = 0
+    for slug, links in sorted(rn_map.items()):
+        picked = set(links)
+        buckets: dict[int, list[str]] = {}
+        for other in meta:
+            if other == slug:
+                continue
+            n = _shared(meta, slug, other)
+            if n:
+                buckets.setdefault(n, []).append(other)
+
+        for n, members in sorted(buckets.items(), reverse=True):
+            taken = [m for m in members if m in picked]
+            left = [m for m in members if m not in picked]
+            if not taken or not left:
+                continue  # consumed whole, or contributed nothing: nothing to compare
+            discriminating += 1
+            worst_taken = max(taken, key=key)
+            best_left = min(left, key=key)
+            if key(worst_taken) > key(best_left):
+                failures.append(
+                    f"AC 1.6/tie-break: /blogs/{slug}/ took {worst_taken} "
+                    f"(reach {reach[worst_taken]}) over {best_left} "
+                    f"(reach {reach[best_left]}) at {n} shared tag(s). Ties must go "
+                    f"to the least-reachable post, so a post with fewer other ways "
+                    f"in gets the slot. This is what fails if the sort key in "
+                    f"related-posts.html loses its reach factor."
+                )
+                break
+
+    if not discriminating:
+        failures.append(
+            "AC 1.6/tie-break: no bucket in the whole corpus had both a picked and "
+            "an unpicked member, so this check compared nothing. It would pass with "
+            "the reach mechanism deleted. Treat as a failure, not a pass."
+        )
+    return discriminating
+
+
 def check_hub_cap(meta, rn_map, failures: list[str]) -> tuple[str, int]:
     """AC 1.6: no post monopolises the boxes. Returns the measured hub."""
     counts = inbound_counts(rn_map, sorted(meta))
@@ -264,6 +356,7 @@ def main(argv: list[str] | None = None) -> int:
     check_box_size(meta, rn_map, failures)
     check_monotonic(meta, rn_map, failures)
     check_topup(meta, rn_map, failures)
+    tie_buckets = check_tie_break(meta, rn_map, failures)
     hub, hub_count = check_hub_cap(meta, rn_map, failures)
     covered = check_edge_cases(meta, rn_map, failures)
 
@@ -275,8 +368,9 @@ def main(argv: list[str] | None = None) -> int:
 
     print(f"OK: all {len(rn_map)} Read Next boxes are ordered by shared-tag count, "
           f"descending; every box is {min(BOX_SIZE, len(meta) - 1)} links with "
-          f"zero-shared-tag top-ups only in the tail; the largest hub is {hub} at "
-          f"{hub_count} of {len(meta)} (cap {HUB_CAP}).")
+          f"zero-shared-tag top-ups only in the tail; ties went to the "
+          f"least-reachable post in all {tie_buckets} boundary bucket(s); the "
+          f"largest hub is {hub} at {hub_count} of {len(meta)} (cap {HUB_CAP}).")
     for line in covered:
         print(f"    edge case covered: {line}")
     return 0
