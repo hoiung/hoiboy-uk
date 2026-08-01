@@ -66,13 +66,15 @@ def read_baseline() -> list[str]:
 
     BOTH taxonomies are filtered out, for the one reason in the docstring above.
     `/categories/` was excluded when Phase 6 switched that taxonomy off; blog-priv#66
-    Phase 4 retired 6 `/tags/` terms by merging mechanically-duplicate tags, and they
+    retired 7 `/tags/` terms by merging mechanically-duplicate tags, and they
     are the same shape of thing. A taxonomy URL has no 1:1 live counterpart under
     /blogs/ to map onto, so leaving it in here fails `check_mapping` twice over -
     once as "matches neither rule", once as "the mapping is not 1:1" - for a URL this
     test never claimed to own. scripts/test_redirects_coverage.py is what proves those
-    six resolve, and it reads the same baseline file precisely so the two cannot
-    disagree about which URLs were retired.
+    seven resolve, and it reads the same baseline file precisely so the two cannot
+    disagree about which URLs were retired. Note the filter is the generic
+    `not u.startswith("/tags/")`, not a hardcoded count, so it stayed correct while
+    this docstring said six.
     """
     if not BASELINE.exists():
         sys.exit(f"AC 5.2: baseline not found at {BASELINE}; without it this test "

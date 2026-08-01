@@ -19,7 +19,7 @@ TWO FRONT-MATTER TRAPS, both verified on the live corpus, both silent:
     and `categories:` as block-style YAML lists rather than inline arrays. An
     inline-array regex returns 214 distinct tags / 417 applications against the
     correct 218 / 423 (measured 2026-08-01 at base 9179b55, BEFORE this issue's
-    Phase 4 merges took distinct tags to 210; the pair is quoted as-of because
+    merges took distinct tags to 209; the pair is quoted as-of because
     what matters is the 4-tag gap the regex opens, not either total). Hence
     PyYAML, not a regex - reached here through
     `validate_frontmatter.parse_frontmatter`, the repo's single front-matter
