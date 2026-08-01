@@ -118,14 +118,20 @@
 /categories/tech-ai/
 /categories/trading/
 
-# blog-priv#66 Phase 4: the 6 /tags/ terms retired by the mechanical tag merges.
-# Only these six stop generating. "Brazilian Zouk" and "AI" were also merged in
+# blog-priv#66: the 7 /tags/ terms retired by the mechanical tag merges.
+# Only these seven stop generating. "Brazilian Zouk" and "AI" were also merged in
 # front matter but their slugs survive (what-is-zouk-aam still emits
 # brazilian-zouk; Hugo already slugged AI to ai), so a rule for either would 301
 # a live page or self-loop. Derived from source, not from the merge list.
+#
+# The first six landed in Phase 4. `llms` is the seventh, found by Ralph
+# escalation #1: the plural of `llm`, same shape as congress -> congresses, never
+# enumerated and never excluded because the Phase 4 "derivation" reprinted the
+# issue's own table instead of detecting duplicates generically.
 /tags/congress/
 /tags/beginners/
 /tags/trading-system/
 /tags/maturity-grade/
 /tags/lessons-learned/
 /tags/community-building/
+/tags/llms/
