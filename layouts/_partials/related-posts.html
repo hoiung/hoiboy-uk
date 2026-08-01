@@ -1,24 +1,98 @@
 {{- /*
-  Read Next: up to 5 posts that share at least one category with the current
-  post, excluding the post itself:
-    - the newest 3 in the shared category (promote recent work), plus
-    - the post immediately AFTER this one chronologically (if it exists), plus
-    - the post immediately BEFORE this one chronologically (if it exists).
-  Deduped and sorted newest-first. Renders nothing when the post has no
-  categories or no siblings share one. Called from _default/single.html.
+  Read Next: 5 posts, ranked by how many TAGS they share with the current post,
+  most-shared first, ties broken newest-first. Where fewer than 5 posts share a
+  tag, the remaining slots are topped up by shared category and then by plain
+  recency, so every post renders exactly 5 links. Called from
+  _default/single.html. (blog-priv#66)
+
+  WHY NOT Hugo's native .Related: it computes ONE combined weighted score
+  against ONE global threshold, so it cannot express a tags-then-category-then-
+  recency fallback CHAIN. Reproduced on the pinned 0.160.0 binary: with tags
+  weight 80, categories weight 10 and threshold 20, a category-only match
+  returns nothing; at threshold 0 it returns. There is no per-call threshold
+  override. Template glue is needed either way, and at 80 posts a hand-rolled
+  intersect costs ~0.2s against a 0.49s full-build baseline, so performance does
+  not break the tie either. Do NOT add a [related] block to hugo.toml expecting
+  it to replace this.
+
+  TAG NORMALISATION. Terms are lowered before comparing, because the corpus
+  carries `AI` alongside `ai`. They are also run through printf "%v" first,
+  because the-sun-had-set-for-2014 carries 2014 and 2015 as YAML ints and
+  `lower` on a non-string errors the build. This mirrors scripts/readnext_parse.py
+  exactly - if the two ever disagree about what a shared tag is,
+  scripts/test_related_ranking.py starts failing for a reason that has nothing
+  to do with the ranking.
+
+  ORDERING. The n-descending pass buckets by exact shared-tag count rather than
+  calling `sort` on a computed key, so the result does not depend on whether
+  Hugo's sort is stable. Within a bucket the pages are still in the date-
+  descending order they were scored in.
 */ -}}
 {{- $self := . -}}
-{{- with .Params.categories -}}
-  {{- $siblings := where (where site.RegularPages "Section" "posts") "Params.categories" "intersect" . -}}
-  {{- $siblings = where $siblings "Permalink" "!=" $self.Permalink -}}
-  {{- $picks := first 3 (sort $siblings "Date" "desc") -}}
-  {{- with first 1 (sort (where $siblings "Date" "gt" $self.Date) "Date" "asc") -}}
-    {{- $picks = $picks | union . -}}
+{{- $selfTags := slice -}}
+{{- range .Params.tags -}}
+  {{- $selfTags = $selfTags | append (lower (printf "%v" .)) -}}
+{{- end -}}
+
+{{- $byDate := where (where site.RegularPages "Section" "posts") "Permalink" "!=" $self.Permalink -}}
+{{- $byDate = sort $byDate "Date" "desc" -}}
+
+{{- $scored := slice -}}
+{{- $maxShared := 0 -}}
+{{- range $byDate -}}
+  {{- $tags := slice -}}
+  {{- range .Params.tags -}}
+    {{- $tags = $tags | append (lower (printf "%v" .)) -}}
   {{- end -}}
-  {{- with first 1 (sort (where $siblings "Date" "lt" $self.Date) "Date" "desc") -}}
-    {{- $picks = $picks | union . -}}
+  {{- $n := 0 -}}
+  {{- if and $selfTags $tags -}}
+    {{- $n = len (intersect $selfTags $tags) -}}
   {{- end -}}
-  {{- with first 5 (sort $picks "Date" "desc") -}}
+  {{- $scored = $scored | append (dict "page" . "n" $n) -}}
+  {{- if gt $n $maxShared -}}
+    {{- $maxShared = $n -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $picks := slice -}}
+{{- $seen := slice -}}
+{{- if gt $maxShared 0 -}}
+  {{- range $k := seq $maxShared -1 1 -}}
+    {{- range $scored -}}
+      {{- if and (eq .n $k) (lt (len $picks) 5) -}}
+        {{- $picks = $picks | append .page -}}
+        {{- $seen = $seen | append .page.RelPermalink -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Top-up 1: shared category, newest first. The `with` guard is what keeps a
+       post with no categories from erroring on the `intersect` below; no post in
+       the corpus is in that state today, and the guard is defensive, not dead. */ -}}
+{{- if lt (len $picks) 5 -}}
+  {{- with $self.Params.categories -}}
+    {{- range where $byDate "Params.categories" "intersect" . -}}
+      {{- if and (lt (len $picks) 5) (not (in $seen .RelPermalink)) -}}
+        {{- $picks = $picks | append . -}}
+        {{- $seen = $seen | append .RelPermalink -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Top-up 2: plain recency, so the box is always 5 long even for a post that
+       shares neither a tag nor a category with enough siblings. */ -}}
+{{- if lt (len $picks) 5 -}}
+  {{- range $byDate -}}
+    {{- if and (lt (len $picks) 5) (not (in $seen .RelPermalink)) -}}
+      {{- $picks = $picks | append . -}}
+      {{- $seen = $seen | append .RelPermalink -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- with $picks }}
   <nav class="read-next" aria-label="Read next">
     <h2>Read Next</h2>
     <ul class="read-next-list">
@@ -27,5 +101,4 @@
       {{- end }}
     </ul>
   </nav>
-  {{- end -}}
 {{- end -}}
