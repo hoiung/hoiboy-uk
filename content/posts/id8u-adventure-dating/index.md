@@ -2,7 +2,7 @@
 title: "iD8u: The Idea That Won't Die"
 date: 2026-04-10T11:00:00+01:00
 categories: [entrepreneurship]
-tags: [startup, dating, adventure, side-project, ai, lessons-learned]
+tags: [startup, dating, adventure, side-project, ai, lessons]
 slug: id8u-adventure-dating
 description: "I've been sitting on this dating platform idea since COVID. It's been paused 4 times. It keeps coming back. Here's what 5 years of not building it taught me."
 ---
