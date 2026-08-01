@@ -263,7 +263,7 @@ See `docs/AUTHORING.md` for the full contract: frontmatter rules, image placemen
 
 1. `content/posts/<slug>/index.md` with frontmatter: `title`, `date`, `description` (**required** since blog-priv#55: the gate rejects a post without one, at pre-commit and in CI), `categories: [<one of food-booze, adventure, dance, tech-ai, life, entrepreneurship, trading>]`, `tags: [...]`
 2. Images in same folder as `index.md`, referenced by relative path with mandatory alt text
-3. For any new prose (date >= 2026-04-07) written in Hoi's voice: RAG from `docs/research/11_VOICE_PROFILE.md` (in-repo) AND `../dotfiles/voice/base/VOICE_PROFILE.md` (canonical) BEFORE drafting (no generic outputs, ever)
+3. For any new prose (date >= 2026-04-07) written in Hoi's voice: RAG from `docs/research/11_VOICE_PROFILE.md` (in-repo) AND `../dotfiles/voice/base/VOICE_PROFILE.md` (canonical) BEFORE drafting (no generic outputs, ever). Loading is not checking: after drafting, run the Cite-or-cut pass as well, so every AI-drafted claim or number carries a named source and an uncitable one gets cut rather than softened. `check-ai-writing-tells.py` exits 0 on a fabricated claim, so it does not cover this. Canonical: `../dotfiles/.claude/skills/voice/SKILL.md` section 3
 4. Commit, push. CI runs, then deploy hook fires, then live in ~90 seconds
 
 ### Social Cards (og:image)
