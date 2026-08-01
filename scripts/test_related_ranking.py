@@ -212,7 +212,8 @@ def check_tie_break(meta, rn_map, failures: list[str]) -> int:
     Ralph round 3 Tier 2 proved it had NO gate. Reverting the sort key from
     `reach * 1000 + date-rank` to plain `date-rank` - deleting the mechanism
     outright - left every other check green, because `check_hub_cap`'s ceiling of
-    30 cannot tell the reach hub (12) from the recency hub (24), and
+    30 cannot tell the reach hub (12 when that mutation was run, 11 today) from
+    the recency hub (24), and
     `check_monotonic` / `check_topup` only constrain shared-tag count and top-up
     SEQUENCING, never which candidate wins a tie. A gate that passes in both the
     fixed and the broken state is not a gate.
