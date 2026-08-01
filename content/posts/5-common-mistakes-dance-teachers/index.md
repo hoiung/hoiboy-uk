@@ -38,6 +38,8 @@ There may only be a couple of geniuses within the class capable of remembering t
 
 Long routines are mentally challenging, prone to more mistakes and last thing you want is muscle memory storing any bad habits and mistakes because you were trying too hard beyond capacity.
 
+*(2026 note: I've since changed my mind on the term "muscle memory". Muscles have no memory. Leaving the 2014 words as they were. See [Moving Consciously in Brazilian Zouk Dance](/blogs/moving-consciously-in-brazilian-zouk/).)*
+
 Bite size learning had always been an effective and efficient way to learn. Even teaching a short routine but focusing on getting it right and spending the time to fix student's mistakes would offer much better results.
 
 > "Classes that taught one single complex move are the one's I can still remember without any additional practice. All the long routines classes I have completely forgotten!"
