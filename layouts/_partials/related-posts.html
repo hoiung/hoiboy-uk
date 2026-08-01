@@ -8,7 +8,9 @@
 
   WHY NOT Hugo's native .Related: it computes ONE combined weighted score
   against ONE global threshold, so it cannot express a tags-then-category-then-
-  recency fallback CHAIN. Reproduced on the pinned 0.160.0 binary: with tags
+  last-resort fallback CHAIN (the third pass was recency when this was written;
+  it is now least-reachable, and the point about .Related is unchanged either
+  way - it cannot express a CHAIN at all). Reproduced on the pinned 0.160.0 binary: with tags
   weight 80, categories weight 10 and threshold 20, a category-only match
   returns nothing; at threshold 0 it returns. There is no per-call threshold
   override. Template glue is needed either way, and performance does not break
@@ -21,8 +23,13 @@
   built nothing and times only the help text.)
   Do NOT add a [related] block to hugo.toml expecting it to replace this.
 
-  TAG NORMALISATION. Terms are lowered before comparing, because the corpus
-  carries `AI` alongside `ai`. They are also run through printf "%v" first,
+  TAG NORMALISATION. Terms are lowered before comparing. The original reason was
+  that the corpus carried `AI` alongside `ai` - this issue's OWN Phase 4 merged
+  those, so at HEAD no term has more than one raw spelling and the lowering is
+  currently VACUOUS: delete it from all three sites and nothing observable
+  changes. It is kept deliberately, as a cheap guard against the next post that
+  types `Zouk`, not because anything today needs it. Do not read a passing suite
+  as evidence that it is load-bearing. They are also run through printf "%v" first,
   because the-sun-had-set-for-2014 carries 2014 and 2015 as YAML ints and
   `lower` on a non-string errors the build. This mirrors the lower-and-coerce of
   scripts/readnext_parse.py `_norm_terms` - if the two ever disagree about what a
@@ -32,8 +39,11 @@
   Two documented differences that do NOT bite today: `_norm_terms` also strips
   surrounding whitespace and drops empty terms, which this does not. Neither can
   diverge on the current corpus - it carries zero padded and zero empty tags
-  (checked) - but a future `tags: [" zouk "]` would match here and not there.
-  Add the strip on both sides rather than one if that ever appears.
+  (checked) - but a future `tags: [" zouk "]` would be normalised THERE and not
+  HERE, so the Python side would see a match this template misses. (An earlier
+  version of this paragraph had those two sides swapped.) There are THREE tag
+  sites, not two: this file twice and readnext-reach.html once. Add the strip to
+  all three, or to none.
 
   ORDERING. The n-descending pass buckets by exact shared-tag count rather than
   calling `sort` on a computed key, so the result does not depend on whether
@@ -44,12 +54,20 @@
   go to the NEWEST post, and that quietly concentrated the site: one post held 24
   of 80 boxes and six posts had no inbound links at all. Those six were not
   isolated - migrating-off-squarespace shares a tag with 26 other posts,
-  overthink-mode with 19 - they just lost every tie to something newer. Ties now
+  overthink-mode with 25 - they just lost every tie to something newer. Ties now
   go to the post with the lowest REACH (fewest other posts sharing any tag with
   it), so the slot goes to whoever has the fewest other ways in. Measured over
-  all 80 boxes: hub 24 -> 12, posts with no inbound links 6 -> 2, and the number
+  all 80 boxes: hub 24 -> 11, posts with no inbound links 6 -> 2, and the number
   of links that share a tag is UNCHANGED at 371 of 400 - this redistributes who
-  gets linked, it does not make the boxes less relevant.
+  gets linked, it does not make the boxes less relevant. (The hub figure moved
+  12 -> 11 when the `llms` -> `llm` merge landed; re-derive it rather than
+  trusting this line if the corpus has moved again.)
+
+  KNOWN LIMIT of reach, recorded because the aggregate hides it: reach counts
+  POTENTIAL neighbours, not realised links, and the two correlate weakly
+  (pearson ~0.2). A maximally tag-connected post can still receive nothing - it
+  loses every tie precisely BECAUSE its reach is high. So this redistributes
+  starvation rather than removing it; it does not make every post reachable.
 
   The sort key is `reach * 1000 + date-rank`, one number, unique per candidate
   (date-rank is a unique index below 1000). A single unique key means the result
@@ -104,9 +122,19 @@
 {{- end -}}
 
 {{- /* Top-up 1: shared category, least-reachable first (it iterates $ordered,
-       the same reach-ascending order the tag pass uses). The `with` guard is what keeps a
-       post with no categories from erroring on the `intersect` below; no post in
-       the corpus is in that state today, and the guard is defensive, not dead. */ -}}
+       the same reach-ascending order the tag pass uses). The `with` guard is what
+       keeps a post with no categories from erroring on the `intersect` below; no
+       post in the corpus is in that state today, and the guard is defensive, not
+       dead.
+
+       NORMALISATION ASYMMETRY, deliberate and bounded. This is the ONE comparison
+       in the file that does NOT go through the lower-and-coerce the header
+       describes: categories are intersected RAW, while readnext_parse.py pushes
+       them through `_norm_terms`. It cannot bite today - measured, all 80 posts
+       carry categories as already-lowercase stripped strings drawn from a fixed
+       set of 7 - but a category typed `Life` or ` life ` would match in Python
+       and not here. If categories ever stop being a closed hand-maintained set,
+       normalise on both sides. */ -}}
 {{- if lt (len $picks) 5 -}}
   {{- with $self.Params.categories -}}
     {{- $cats := . -}}
