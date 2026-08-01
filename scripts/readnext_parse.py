@@ -18,7 +18,9 @@ TWO FRONT-MATTER TRAPS, both verified on the live corpus, both silent:
   * SHAPE. `content/posts/entrepreneurship-in-a-nutshell/index.md` writes `tags:`
     and `categories:` as block-style YAML lists rather than inline arrays. An
     inline-array regex returns 214 distinct tags / 417 applications; the correct
-    figures via PyYAML are 218 / 423. Hence yaml.safe_load, not a regex.
+    figures via PyYAML are 218 / 423. Hence PyYAML, not a regex - reached here
+    through `validate_frontmatter.parse_frontmatter`, which is the repo's single
+    front-matter oracle rather than a second copy of the same fence logic.
 
   * TYPE. PyYAML fixes the shape trap and CAUSES this one.
     `content/posts/the-sun-had-set-for-2014/index.md` carries `2014` and `2015`
@@ -42,12 +44,18 @@ import sys
 from pathlib import Path
 from typing import NamedTuple
 
-import yaml
-
 ROOT = Path(__file__).resolve().parent.parent
 POSTS = ROOT / "content" / "posts"
 
-_FRONTMATTER_RE = re.compile(r"\A---\s*\n(.*?)\n---\s*(?:\n|\Z)", re.S)
+# Sibling import, so `scripts/` must be importable however this module was
+# reached: as a CLI (`python3 scripts/readnext_parse.py`, which puts scripts/ on
+# the path for free), via `test_related_ranking.py` (which inserts it itself), or
+# by pytest naming this file directly on the command line - which does NOT, and
+# is exactly how CI runs it.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from validate_frontmatter import parse_frontmatter  # noqa: E402
+
 _BOX_RE = re.compile(r'<ul class="read-next-list">(.*?)</ul>', re.S)
 _HREF_RE = re.compile(r'<li><a href="([^"]+)"')
 
@@ -87,17 +95,23 @@ def _norm_terms(value: object) -> frozenset[str]:
 def frontmatter(path: Path) -> dict:
     """The YAML front-matter block of a page bundle, parsed.
 
-    Fails loudly rather than returning {} on a page with no front matter: a
-    silent empty dict would drop that post's tags and quietly shrink every
-    count computed from them.
+    Delegates the fence-strip and the PyYAML load to
+    `validate_frontmatter.parse_frontmatter`, which already owns that job for
+    the repo's own front-matter gate. Re-deriving the fence regex here gave the
+    tree two parsers that could disagree about what front matter IS - the exact
+    divergence class blog-priv#56 spent nine Ralph rounds killing when it
+    replaced a 145-line hand-rolled parser with PyYAML. One oracle. (Ralph
+    Tier 2, AP #10.)
+
+    What this wrapper adds is the LOUD contract: `parse_frontmatter` returns
+    None for a page with no fence, because a body-only file is legitimately not
+    front matter in its context. Here it is not - a post with no front matter
+    has no tags, and silently returning {} would drop it from every count
+    computed downstream while the denominator still said 80.
     """
-    text = path.read_text(encoding="utf-8")
-    m = _FRONTMATTER_RE.match(text)
-    if not m:
+    data = parse_frontmatter(path.read_text(encoding="utf-8"))
+    if data is None:
         raise ValueError(f"{path}: no YAML front-matter block")
-    data = yaml.safe_load(m.group(1))
-    if not isinstance(data, dict):
-        raise ValueError(f"{path}: front matter parsed as {type(data).__name__}, not a mapping")
     return data
 
 
