@@ -2,7 +2,7 @@
 title: "ZoukTime! 5th Brazilian Dance Congress"
 date: 2014-09-30T12:00:00+01:00
 categories: [dance]
-tags: [zouk, congress, brazil, dance, zouktime]
+tags: [zouk, congresses, brazil, dance, zouktime]
 source_file: "voice-corpus/blogs/19_zouktime-brazilian-dance-congress.md"
 source_era: "AdventureAnd.Me (Joomla)"
 note: "Pages 2-5 of the original 5-page post were lost; only the first 939 words remain."
