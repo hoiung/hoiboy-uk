@@ -1,0 +1,46 @@
+{{- /*
+  Returns a map of post RelPermalink -> REACH: how many OTHER posts share at
+  least one tag with it. Called once per build via partialCached from
+  related-posts.html. (blog-priv#66)
+
+  WHY THIS EXISTS. The Read Next box ranks by shared-tag count, and most posts
+  tie. Whoever wins a tie gets the link. Ties used to go to the newest post,
+  which quietly concentrated the whole site onto a handful of recent posts and
+  left six with no inbound links at all - and not because those six were
+  isolated: migrating-off-squarespace shares a tag with 26 other posts,
+  overthink-mode with 19. They simply lost every tie. Sorting ties by reach
+  ascending hands the slot to the post that has the fewest other ways in.
+
+  WHY REACH AND NOT AN ACTUAL INBOUND COUNT. A true inbound count is circular -
+  it depends on every box, and every box depends on it. Hugo renders pages
+  independently and in parallel, so accumulating one during render would also be
+  order-dependent and non-deterministic. Reach is a static property of the
+  corpus: same input, same answer, whatever order the pages render in.
+
+  COST. One O(n^2) pass, 80 posts -> 6400 tag intersections, computed once per
+  build because partialCached keys it on a constant. Do NOT call this from a
+  bare `partial` - that would run it once per page and make it O(n^3).
+*/ -}}
+{{- $tags := dict -}}
+{{- range where site.RegularPages "Section" "posts" -}}
+  {{- $t := slice -}}
+  {{- range .Params.tags -}}
+    {{- $t = $t | append (lower (printf "%v" .)) -}}
+  {{- end -}}
+  {{- $tags = merge $tags (dict .RelPermalink $t) -}}
+{{- end -}}
+{{- $reach := dict -}}
+{{- range $url, $mine := $tags -}}
+  {{- $n := 0 -}}
+  {{- range $other, $theirs := $tags -}}
+    {{- if ne $url $other -}}
+      {{- if and $mine $theirs -}}
+        {{- if gt (len (intersect $mine $theirs)) 0 -}}
+          {{- $n = add $n 1 -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $reach = merge $reach (dict $url $n) -}}
+{{- end -}}
+{{- return $reach -}}
