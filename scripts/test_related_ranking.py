@@ -15,8 +15,12 @@ property is re-derived from the corpus rather than assumed, so a corpus that
 moves on reports honestly instead of failing for the wrong reason.
 
   AC 1.2  every box is exactly 5 links, and where fewer than 5 siblings share a
-          tag the remainder are category-then-recency top-ups with zero shared
-          tags.
+          tag the remainder are category-then-last-resort top-ups with zero
+          shared tags. Both top-ups iterate least-reachable-first, not
+          newest-first (the operator-authorised tie-break change; see the
+          `## Scope update` comment on blog-priv#66). The ORDER within a top-up
+          is not what this check asserts - it asserts the category top-up is
+          exhausted before the last resort runs.
   AC 1.4  the oldest post renders a full box (the includeNewer=false failure
           mode does not occur on the hand-rolled route).
   AC 1.5  the named edge cases still render: two categories, newest, oldest,
@@ -165,10 +169,10 @@ def check_topup(meta, rn_map, failures: list[str]) -> None:
         for offset, link in enumerate(tail):
             if not meta[slug].categories & meta[link].categories and remaining:
                 failures.append(
-                    f"AC 1.2: /blogs/{slug}/ fell to recency at link "
+                    f"AC 1.2: /blogs/{slug}/ fell to the last-resort top-up at link "
                     f"{matches + offset + 1} ({link}) while {len(remaining)} unpicked "
                     f"sibling(s) still shared a category. The category top-up must be "
-                    f"exhausted before the recency top-up runs."
+                    f"exhausted before the last-resort top-up runs."
                 )
                 break
             remaining.discard(link)
