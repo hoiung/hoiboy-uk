@@ -608,3 +608,101 @@ def test_two_unterminated_quotes_do_not_silently_swallow_the_button_rule(
         f"quote; anything else sends the reader after a rule that is present and "
         f"correct.\n{message}"
     )
+
+
+# --------------------------------------------------------------------------
+# The reported location survives a multi-line comment above the typo
+# --------------------------------------------------------------------------
+
+def test_the_reported_line_is_counted_against_the_original_file(
+        tmp_path, monkeypatch, capsys):
+    """A comment above the stray quote must not shift the line number.
+
+    `expected_label` used to strip comments with `COMMENTS.sub("", ...)`, which
+    deletes their newlines too, so every line after a multi-line comment counted
+    short by exactly the number of lines that comment spanned. The shipped
+    stylesheet opens with a comment block, so in practice EVERY reported line
+    number was wrong, and the reader was sent to CSS that is fine.
+
+    The comment here spans four lines and the stray quote sits on line 6. A
+    discriminating input: with the old deletion the message says line 2.
+    """
+    css = tmp_path / "synthetic.css"
+    css.write_text(
+        "/* a comment block\n"
+        "   that spans\n"
+        "   several lines\n"
+        "   like the real stylesheet's header */\n"
+        ".main a.btn { color: #ffffff; }\n"
+        '.decoy::before { content: "oops-unterminated; }\n',
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ccr, "CSS", css)
+    with pytest.raises(SystemExit) as exc:
+        ccr.expected_label()
+    assert exc.value.code == 2
+
+    message = capsys.readouterr().err
+    assert "unterminated string literal" in message, message
+    assert "line 6:" in message, (
+        f"the stray quote is on line 6 of the file as written. A different "
+        f"number means the count ran against text with the comment removed "
+        f"rather than blanked, which sends the reader to the wrong line.\n"
+        f"{message}"
+    )
+
+
+def test_blank_comments_preserves_length_and_line_count():
+    """Blanking must be offset-neutral, which is the whole point of it.
+
+    If it changed either, every position computed downstream would drift and the
+    fix above would be re-broken by a plausible-looking edit.
+    """
+    raw = ccr.CSS.read_text(encoding="utf-8-sig")
+    blanked = ccr._blank_comments(raw)
+    assert len(blanked) == len(raw)
+    assert blanked.count("\n") == raw.count("\n")
+    # The CONTENT still has to stop being readable, or a rule inside a comment
+    # would be picked up as a declaration.
+    assert "/*" not in blanked
+
+
+# --------------------------------------------------------------------------
+# A non-hex colour names the file it was actually read from
+# --------------------------------------------------------------------------
+
+def test_a_non_hex_fill_blames_params_toml_not_the_stylesheet(
+        tmp_path, monkeypatch, capsys):
+    """Two callers, two source files, one message that named only one of them.
+
+    `hex_to_rgb_string` is reached from `expected_fill` (value from
+    `params.toml`) and from `_stateless_anchor_labels` (value from `main.css`),
+    and the die() named the stylesheet unconditionally. A `ctaColor` that is not
+    a hex literal therefore sent the reader to `main.css` to find a declaration
+    that is not in it.
+    """
+    params = tmp_path / "params.toml"
+    params.write_text('ctaColor = "var(--brand)"\n', encoding="utf-8")
+    monkeypatch.setattr(ccr, "PARAMS", params)
+    with pytest.raises(SystemExit) as exc:
+        ccr.expected_fill()
+    assert exc.value.code == 2
+
+    message = capsys.readouterr().err
+    assert "params.toml" in message, (
+        f"the value came from params.toml and the message has to say so.\n{message}"
+    )
+    assert "main.css" not in message, (
+        f"the message named the stylesheet for a value declared in the TOML.\n{message}"
+    )
+
+
+def test_a_non_hex_label_still_blames_the_stylesheet(tmp_path, monkeypatch, capsys):
+    """The other direction, so the fix above cannot be a blanket relabel."""
+    css = tmp_path / "main.css"
+    css.write_text(".main a.btn { color: var(--cta-label); }\n", encoding="utf-8")
+    monkeypatch.setattr(ccr, "CSS", css)
+    with pytest.raises(SystemExit) as exc:
+        ccr.expected_label()
+    assert exc.value.code == 2
+    assert "main.css" in capsys.readouterr().err
