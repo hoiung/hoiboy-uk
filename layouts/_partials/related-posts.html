@@ -23,10 +23,16 @@
   TAG NORMALISATION. Terms are lowered before comparing, because the corpus
   carries `AI` alongside `ai`. They are also run through printf "%v" first,
   because the-sun-had-set-for-2014 carries 2014 and 2015 as YAML ints and
-  `lower` on a non-string errors the build. This mirrors scripts/readnext_parse.py
-  exactly - if the two ever disagree about what a shared tag is,
-  scripts/test_related_ranking.py starts failing for a reason that has nothing
-  to do with the ranking.
+  `lower` on a non-string errors the build. This mirrors the lower-and-coerce of
+  scripts/readnext_parse.py `_norm_terms` - if the two ever disagree about what a
+  shared tag is, scripts/test_related_ranking.py starts failing for a reason that
+  has nothing to do with the ranking.
+
+  Two documented differences that do NOT bite today: `_norm_terms` also strips
+  surrounding whitespace and drops empty terms, which this does not. Neither can
+  diverge on the current corpus - it carries zero padded and zero empty tags
+  (checked) - but a future `tags: [" zouk "]` would match here and not there.
+  Add the strip on both sides rather than one if that ever appears.
 
   ORDERING. The n-descending pass buckets by exact shared-tag count rather than
   calling `sort` on a computed key, so the result does not depend on whether
