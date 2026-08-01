@@ -27,3 +27,4 @@
 # Blank lines and #-comments are ignored.
 
 /blogs/moving-consciously-in-brazilian-zouk/
+/blogs/brazilian-zouk-basic-timing-who-steps-first/
