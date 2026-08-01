@@ -35,6 +35,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 BASELINE = ROOT / "scripts" / "tests" / "fixtures" / "blogs_ia" / "retired_urls.txt"
+# Live /blogs/ URLs for pages authored AFTER the migration, which by definition have
+# no retired URL mapping onto them. See that file's header for why they are not added
+# to the baseline instead.
+ADDED_SINCE = ROOT / "scripts" / "tests" / "fixtures" / "blogs_ia" / "added_since_migration.txt"
 
 CATEGORIES = (
     "tech-ai", "entrepreneurship", "trading", "food-booze", "adventure", "dance", "life",
@@ -65,6 +69,19 @@ def read_baseline() -> list[str]:
     urls = [ln.strip() for ln in BASELINE.read_text(encoding="utf-8").splitlines()]
     return [u for u in urls if u.startswith("/") and not u.endswith(".xml")
             and not u.startswith("/categories/")]
+
+
+def read_added_since() -> set[str]:
+    """Live /blogs/ URLs for pages authored after the migration.
+
+    Absent file is fine and means "nothing published since the move" -- unlike the
+    baseline, whose absence would make the test vacuous, this one only ever widens
+    what AC 5.2 tolerates, and an empty set widens it by nothing.
+    """
+    if not ADDED_SINCE.exists():
+        return set()
+    return {ln.strip() for ln in ADDED_SINCE.read_text(encoding="utf-8").splitlines()
+            if ln.strip().startswith("/")}
 
 
 def sitemap_paths(built: Path) -> set[str]:
@@ -109,11 +126,22 @@ def check_mapping(retired: list[str], live: set[str], failures: list[str]) -> No
     if len(retired) != len(mapped):
         failures.append(f"AC 5.2: {len(retired)} retired URLs collapsed onto "
                         f"{len(mapped)} targets, so the mapping is not 1:1")
-    extra = blogs_live - mapped
+    added_since = read_added_since()
+    extra = blogs_live - mapped - added_since
     if extra:
         failures.append(f"AC 5.2: the new tree serves {len(extra)} /blogs/ URL(s) that "
-                        f"no retired URL maps onto: {sorted(extra)[:5]}. Either a page "
-                        f"was added or the baseline is stale.")
+                        f"no retired URL maps onto: {sorted(extra)[:5]}. Either the "
+                        f"baseline is stale, or a page was added after the migration "
+                        f"and needs listing in {ADDED_SINCE.name}.")
+
+    # The acknowledgement list cannot rot: a URL named there that the site no longer
+    # serves is a dead line, and dead lines are how an allowlist quietly stops meaning
+    # anything. Fail on it rather than let it accumulate.
+    dead_ack = added_since - blogs_live
+    if dead_ack:
+        failures.append(f"AC 5.2: {ADDED_SINCE.name} lists {len(dead_ack)} URL(s) the "
+                        f"sitemap does not serve: {sorted(dead_ack)[:5]}. Remove the "
+                        f"stale line(s) or restore the page.")
 
 
 def check_sitemap_clean(live: set[str], failures: list[str]) -> None:

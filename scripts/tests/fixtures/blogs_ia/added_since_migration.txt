@@ -1,0 +1,29 @@
+# Live /blogs/ URLs for pages created AFTER the blog-priv#62 URL migration.
+#
+# Why this file exists. scripts/test_permalink_contract.py asserts AC 5.2 in two
+# directions: every retired URL still resolves onto a live one (the half that
+# matters, and that stays untouched), AND every live /blogs/ URL is the image of
+# some retired URL. The second direction is only meaningful as a staleness check
+# on the migration snapshot itself. Read literally it also says "no page may ever
+# be added again", because a page authored after the move has no old URL to have
+# been redirected from. The first post published after the move
+# (moving-consciously-in-brazilian-zouk, 2026-08-01) hit exactly that and turned
+# main red; no post between the 2026-07-25 capture and that date had exercised it.
+#
+# The fix is NOT to add a line to retired_urls.txt. That file documents itself as
+# a capture of the tree immediately BEFORE the move, so a URL that never existed
+# cannot honestly go in it, and doing so once means doing it for every future
+# post until the file means nothing.
+#
+# This file is the acknowledgement list instead. A live /blogs/ URL passes AC 5.2
+# if it is either the image of a retired URL or named here. Anything in neither
+# still fails loudly, so the staleness check keeps its teeth: an accidental new
+# page, a slug typo, or a stale baseline all still turn the test red.
+#
+# Entries are also checked in reverse: a URL listed here that the sitemap does
+# NOT serve fails the test, so this file cannot rot into a pile of dead lines.
+#
+# Add the post's live URL here when you publish a new page under /blogs/.
+# Blank lines and #-comments are ignored.
+
+/blogs/moving-consciously-in-brazilian-zouk/
