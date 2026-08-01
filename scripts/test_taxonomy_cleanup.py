@@ -30,7 +30,19 @@ POSTS = ROOT / "content" / "posts"
 
 # Measured before the change (2026-07-25): the sitemap carried 217 tag URLs and
 # 2 series URLs, and Phase 6 must not touch either (A11).
-EXPECT_TAGS = 217
+#
+# blog-priv#66 Phase 4 moved the tag floor 217 -> 211 DELIBERATELY. Six /tags/
+# terms were retired by merging mechanically-duplicate tags (casing, plural and
+# whitespace spellings of a term that already existed); each retired URL has a
+# 301 in static/_redirects and a line in the coverage baseline, so it is a
+# migration rather than a loss. The number is derived, not fitted: 216 term
+# pages plus the /tags/ landing is 217 sitemap paths today, minus the 6 that
+# stop generating. Eight merges were applied but only six retire a URL -
+# `brazilian-zouk` survives via what-is-zouk-aam and `AI` already slugged to
+# `ai`. If this number ever needs to move again, move it for a reason you can
+# write down here; loosening it to make a red test go quiet is how the taxonomy
+# loses pages unnoticed, which is the whole point of a floor.
+EXPECT_TAGS = 211
 EXPECT_SERIES = 2
 
 _LOC_RE = re.compile(r"<loc>\s*([^<\s]+)\s*</loc>")
