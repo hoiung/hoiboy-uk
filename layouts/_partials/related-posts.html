@@ -10,10 +10,12 @@
   recency fallback CHAIN. Reproduced on the pinned 0.160.0 binary: with tags
   weight 80, categories weight 10 and threshold 20, a category-only match
   returns nothing; at threshold 0 it returns. There is no per-call threshold
-  override. Template glue is needed either way, and at 80 posts a hand-rolled
-  intersect costs ~0.2s against a 0.49s full-build baseline, so performance does
-  not break the tie either. Do NOT add a [related] block to hugo.toml expecting
-  it to replace this.
+  override. Template glue is needed either way, and performance does not break
+  the tie: at 80 posts the hand-rolled intersect costs nothing measurable. Swap
+  this partial for a recency-only stub and time 5 warm `hugo --gc --minify -e
+  production` runs each way - the two distributions overlap (stub 0.12-0.21s,
+  this partial 0.13-0.16s), so the difference sits under run-to-run variance.
+  Do NOT add a [related] block to hugo.toml expecting it to replace this.
 
   TAG NORMALISATION. Terms are lowered before comparing, because the corpus
   carries `AI` alongside `ai`. They are also run through printf "%v" first,
