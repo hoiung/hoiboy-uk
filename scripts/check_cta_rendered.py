@@ -45,7 +45,22 @@ Usage:
   python3 scripts/check_cta_rendered.py --built public
   python3 scripts/check_cta_rendered.py --built public --screenshots ~/DevProjects/screenshots/cta-button
 
-Exit 0 = pass. 1 = a named failure. 2 = cannot run (no build, no browser).
+Exit 0 = pass. 1 = a named failure against the built pages. 2 = cannot run.
+
+"Cannot run" is wider than a missing dependency and the contract has to say so,
+because six `die()` branches reach it and a reader who expects only "no build,
+no browser" reads those as a crash. Exit 2 covers every condition under which
+this gate cannot state what it would assert:
+
+  no build directory, no Playwright/Chromium
+  `ctaColor` absent from params.toml
+  a colour this gate cannot resolve (any non-hex value, in either source file)
+  an unterminated string literal in the stylesheet
+  no stateless `a.btn` rule, several that disagree, or one that applies only
+  inside a conditional at-rule
+
+Exit 1 is reserved for the two failures that ARE an answer: coverage dropped
+below the floors, or a computed property on a real button did not match.
 """
 
 from __future__ import annotations
@@ -121,6 +136,27 @@ CLASS_ATTR = re.compile(r'class=(?:"([^"]*)"|\'([^\']*)\'|([^\s>]+))')
 
 COMMENTS = re.compile(r"/\*.*?\*/", re.S)
 
+NON_NEWLINE = re.compile(r"[^\n]")
+
+
+def _blank_comments(css: str) -> str:
+    """Blank every CSS comment, keeping its newlines and its total length.
+
+    `COMMENTS.sub("", css)` deletes the comment outright, newlines and all, and
+    every offset after it shifts up by however many lines the comment spanned.
+    `_blank_strings` reports the location of an unterminated quote by counting
+    newlines, so a multi-line comment anywhere above the typo made that count
+    short and the gate named a line the reader would find nothing wrong with -
+    on a stylesheet whose top-of-file comment block alone spans several lines.
+
+    Blanking is the same trick `_blank_strings` already uses on string literals,
+    for the same reason: the comment's CONTENT must stop being readable (a
+    declaration inside a comment is not a declaration, and `main.css` carries an
+    apostrophe in a comment that the stray-quote probe would otherwise flag)
+    while every byte after it keeps its position.
+    """
+    return COMMENTS.sub(lambda m: NON_NEWLINE.sub(" ", m.group(0)), css)
+
 
 def die(msg: str, code: int = 2) -> None:
     print(f"CTA RENDER GATE: {msg}", file=sys.stderr)
@@ -130,7 +166,7 @@ def die(msg: str, code: int = 2) -> None:
 HEX_COLOUR = re.compile(r"#?(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\Z")
 
 
-def hex_to_rgb_string(value: str) -> str:
+def hex_to_rgb_string(value: str, source: Path | None = None) -> str:
     """`#188418` -> `rgb(24, 132, 24)`, which is how Chromium reports it.
 
     Only a hex literal can be converted here. Every OTHER colour in main.css is
@@ -138,15 +174,23 @@ def hex_to_rgb_string(value: str) -> str:
     the single most likely edit to this file - and without the guard below it
     reached `int("va", 16)` and surfaced as a raw ValueError traceback pointing
     at this function, which tells the reader nothing about what to fix.
+
+    `source` names the file the value came from. Two callers reach here from two
+    DIFFERENT files - the label from the stylesheet, the fill from
+    `params.toml` - and the message used to name the stylesheet unconditionally.
+    A non-hex `ctaColor` therefore sent the reader to `main.css` to look for a
+    declaration that is not in it. Defaulted rather than required so the
+    conversion stays callable on its own; the two real callers both pass it.
     """
     h = value.strip()
     if not HEX_COLOUR.match(h):
+        where = source if source is not None else CSS
         die(
-            f"{CSS}: the button's colour is declared as `{h}`, which is not a hex "
+            f"{where}: the button's colour is declared as `{h}`, which is not a hex "
             f"literal. This gate models the cascade by reading the stylesheet, so "
             f"it can only resolve hex values - a var()/named/rgb() colour has to be "
             f"resolved by the browser it is compared against. Either inline the hex "
-            f"here or teach this gate to resolve the token."
+            f"in that file or teach this gate to resolve the token."
         )
     h = h.lstrip("#")
     if len(h) == 3:
@@ -168,7 +212,9 @@ def expected_fill() -> str:
         colour = m.group(1) if m else None
     if not colour:
         die("ctaColor is not declared in config/_default/params.toml")
-    return hex_to_rgb_string(colour)
+    # PARAMS, not the default: this value came from the TOML, and naming the
+    # stylesheet here sends the reader to a file that does not declare it.
+    return hex_to_rgb_string(colour, PARAMS)
 
 
 # Conditional at-rules. Their contents apply only when the condition holds, so a
@@ -273,7 +319,7 @@ def _stateless_anchor_labels(css: str) -> dict[str, str]:
         # button passed both gates green.
         decl = re.findall(r"(?:^|;)\s*color\s*:\s*([^;]+)", decls)
         if decl:
-            found.setdefault(hex_to_rgb_string(decl[-1]), matching[0])
+            found.setdefault(hex_to_rgb_string(decl[-1], CSS), matching[0])
     return found
 
 
@@ -304,7 +350,7 @@ def expected_label() -> str:
     an unrelated change. Modelling the cascade properly would need a real CSS
     parser, which is not worth it for one rule.
     """
-    css = _blank_strings(COMMENTS.sub("", CSS.read_text(encoding="utf-8-sig")))
+    css = _blank_strings(_blank_comments(CSS.read_text(encoding="utf-8-sig")))
     unconditional, conditional = _split_conditional(css)
 
     # A conditional rule is not the unconditional answer. Checked BEFORE the
@@ -444,10 +490,22 @@ def main(argv: list[str] | None = None) -> int:
                                     f"--cta token did not resolve; the accent colour means the "
                                     f"wrong token; anything else means another rule won.")
                             if got["td"] != "none":
+                                # Names the SHAPE of the defect, not a culprit. This
+                                # said `.main a` (0-1-1) had won, which is where it
+                                # came from historically but is not something the
+                                # computed value can tell you: any later or more
+                                # specific rule produces the identical symptom, and
+                                # naming one sends the reader to a selector that may
+                                # be innocent. Chromium does not expose the winning
+                                # rule through getComputedStyle, so the message hands
+                                # over the one route that does answer it.
                                 failures.append(
                                     f"{where}: text-decoration-line is {got['td']!r}, expected "
-                                    f"'none'. This is the specificity defect: `.main a` (0-1-1) "
-                                    f"has beaten the button rule and it is painting a link.")
+                                    f"'none'. Some rule matching this element has beaten the "
+                                    f"button rule and it is painting a link. Which one is not "
+                                    f"visible from the computed value: open the page in DevTools, "
+                                    f"select the button, and read the Styles pane for the "
+                                    f"text-decoration declaration that is not struck through.")
                             if got["fg"] != label:
                                 failures.append(
                                     f"{where}: color is {got['fg']}, expected {label}. If it "
