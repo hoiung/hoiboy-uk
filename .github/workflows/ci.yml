@@ -328,13 +328,21 @@ jobs:
       # .Section-keyed sites. test_taxonomy_cleanup asserts the categories: front
       # matter key SURVIVES on all 79 posts. test_emdash_hub_coverage mutation-tests
       # that the hub landing is inside the em-dash guard despite living in the
-      # legacy-exempt content/posts directory.
+      # legacy-exempt content/posts directory. test_related_ranking asserts the
+      # Read Next box is ordered by shared-tag count (blog-priv#66) - the box is
+      # otherwise only covered by test_section_keyed_regression, which asserts it
+      # EXISTS and holds a link, so a ranking returning five arbitrary posts on
+      # every page would pass. readnext_parse carries its own smoke test over
+      # every post's front matter; it is the shared parser both the ranking test
+      # and the Phase 0 baseline use, so it is listed explicitly rather than left
+      # to be collected by name.
       - name: Blogs IA tests (URLs, redirects, hub, taxonomy)
         run: |
           python3 -m pytest scripts/test_permalink_contract.py scripts/test_redirects_order.py \
             scripts/test_redirects_coverage.py scripts/test_hub_listing.py \
             scripts/test_page_url_permalinks.py scripts/test_section_keyed_regression.py \
-            scripts/test_taxonomy_cleanup.py scripts/test_emdash_hub_coverage.py -q
+            scripts/test_taxonomy_cleanup.py scripts/test_emdash_hub_coverage.py \
+            scripts/readnext_parse.py scripts/test_related_ranking.py -q
 
       # blog-priv#62: posts and the 7 category landings moved under /blogs/, so
       # these paths are the NEW contract. The retired ones are asserted too, from
