@@ -292,5 +292,48 @@ def test_readnext_parse() -> None:
     assert main([]) == 0
 
 
+def test_frontmatter_guard_is_loud(tmp_path) -> None:
+    """All four degenerate front-matter shapes raise, none is waved through.
+
+    The guard is `not data`, not `data is None`, and the difference is the whole
+    reason this test exists: `parse_frontmatter` returns None ONLY for a missing
+    fence, while an empty fence, a whitespace-only one and an explicit `null` all
+    come back as `{}` - falsy but not None. A `data is None` guard passes those
+    three straight through as a post with zero tags, silently, which is exactly
+    the outcome `frontmatter`'s docstring promises to prevent.
+
+    That guard was corrected in 7884906 on the strength of an ad-hoc check that
+    was never persisted; Ralph round 3 Tier 2 pointed out the contract had no test
+    behind it. A hand-run check proves the code once. This proves it every build.
+    """
+    # Measured, not assumed: `missing-fence` returns None, the other three return
+    # `{}`. A TAB inside the fence is deliberately not in this set - PyYAML rejects
+    # tabs as indentation and raises ScannerError before the guard is ever reached,
+    # which is loud by a different mechanism and would test PyYAML, not this guard.
+    shapes = {
+        "missing-fence": "no front matter here\n",
+        "empty-fence": "---\n---\n",
+        "whitespace-only-fence": "---\n   \n\n---\n",
+        "explicit-null-fence": "---\nnull\n---\n",
+    }
+    for label, text in shapes.items():
+        path = tmp_path / f"{label}.md"
+        path.write_text(text, encoding="utf-8")
+        try:
+            frontmatter(path)
+        except ValueError:
+            continue
+        raise AssertionError(
+            f"{label}: frontmatter() returned instead of raising. A post with no "
+            f"usable front matter has no tags, so letting it through drops it from "
+            f"every count computed downstream while the denominator still says 80."
+        )
+
+    # And the guard is not simply "raise on everything": a real fence still parses.
+    good = tmp_path / "good.md"
+    good.write_text("---\ntitle: t\ntags: [zouk]\n---\nbody\n", encoding="utf-8")
+    assert frontmatter(good)["tags"] == ["zouk"]
+
+
 if __name__ == "__main__":
     sys.exit(main())
