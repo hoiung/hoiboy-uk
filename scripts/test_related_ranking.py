@@ -54,9 +54,12 @@ from readnext_parse import PostMeta, inbound_counts, post_meta, read_next_map  #
 # literal so a corpus smaller than 6 posts does not fail for the wrong reason.
 BOX_SIZE = 5
 
-# AC 1.6. The Stage-1 simulation predicted a maximum of 24 of 80; the ceiling is
-# 30 to leave room for an implementation that differs slightly from it. The
-# pre-fix maximum was 77 of 80, so this discriminates.
+# AC 1.6. The ceiling is 30. It was set against the Stage-1 simulation's
+# predicted maximum of 24 of 80, which was a RECENCY-era prediction; the shipped
+# reach tie-break lands far lower (11 of 80 at the time of writing). The pre-fix
+# maximum was 77 of 80, so the cap still discriminates against a full revert -
+# but note it is NOT tight enough to catch a partial regression on its own, which
+# is exactly the hole check_tie_break exists to cover.
 HUB_CAP = 30
 
 
@@ -128,8 +131,8 @@ def check_box_size(meta, rn_map, failures: list[str]) -> None:
         if len(links) != expected:
             failures.append(
                 f"AC 1.2: /blogs/{slug}/ Read Next has {len(links)} links, expected "
-                f"{expected}. Reading (A) tops up with category then recency so every "
-                f"box is full; a short box means a top-up stage stopped firing."
+                f"{expected}. Reading (A) tops up with category then a last resort so "
+                f"every box is full; a short box means a top-up stage stopped firing."
             )
 
 
@@ -154,7 +157,7 @@ def check_monotonic(meta, rn_map, failures: list[str]) -> None:
 
 
 def check_topup(meta, rn_map, failures: list[str]) -> None:
-    """AC 1.2: below 5 tag matches, the tail is category-then-recency filler.
+    """AC 1.2: below 5 tag matches, the tail is category-then-last-resort filler.
 
     Checked on every post that actually exercises the top-up rather than on one
     named example, so the check cannot go vacuous when the named post gains a
@@ -179,9 +182,9 @@ def check_topup(meta, rn_map, failures: list[str]) -> None:
         if not tail:
             continue
         # EVERY tail slot, not just the first. Checking only tail[0] leaves the
-        # gate blind to a top-up that starts correctly and then falls to recency
-        # partway down while category candidates remain - link 4 category, link 5
-        # recency-with-candidates-left would have passed. (Ralph Tier 3.)
+        # gate blind to a top-up that starts correctly and then falls to the last
+        # resort partway down while category candidates remain - link 4 category,
+        # link 5 last-resort-with-candidates-left would have passed. (Ralph Tier 3.)
         picked = set(known[:matches])
         remaining = {
             other for other in meta
