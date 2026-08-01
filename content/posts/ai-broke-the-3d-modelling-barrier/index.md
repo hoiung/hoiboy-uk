@@ -2,7 +2,7 @@
 title: "I Bounced Off 3D Tools for 20 Years. AI Changed That."
 date: 2026-07-07T19:05:00+01:00
 categories: [tech-ai]
-tags: ["AI", "3D modelling", "Blender", "SketchUp", "learning"]
+tags: ["ai", "3D modelling", "Blender", "SketchUp", "learning"]
 description: "Blender, Maya, SketchUp. I have had a proper go at all three over twenty years and none of them stuck. A three-day client job finally showed me why that changed."
 ---
 
