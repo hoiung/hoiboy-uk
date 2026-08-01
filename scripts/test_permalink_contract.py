@@ -62,13 +62,24 @@ _RETIRED_REF_RE = re.compile(
 
 
 def read_baseline() -> list[str]:
-    """The retired PAGE URLs (feeds and taxonomy URLs are the coverage test's job)."""
+    """The retired PAGE URLs (feeds and taxonomy URLs are the coverage test's job).
+
+    BOTH taxonomies are filtered out, for the one reason in the docstring above.
+    `/categories/` was excluded when Phase 6 switched that taxonomy off; blog-priv#66
+    Phase 4 retired 6 `/tags/` terms by merging mechanically-duplicate tags, and they
+    are the same shape of thing. A taxonomy URL has no 1:1 live counterpart under
+    /blogs/ to map onto, so leaving it in here fails `check_mapping` twice over -
+    once as "matches neither rule", once as "the mapping is not 1:1" - for a URL this
+    test never claimed to own. scripts/test_redirects_coverage.py is what proves those
+    six resolve, and it reads the same baseline file precisely so the two cannot
+    disagree about which URLs were retired.
+    """
     if not BASELINE.exists():
         sys.exit(f"AC 5.2: baseline not found at {BASELINE}; without it this test "
                  f"would compare the new sitemap against itself and pass vacuously")
     urls = [ln.strip() for ln in BASELINE.read_text(encoding="utf-8").splitlines()]
     return [u for u in urls if u.startswith("/") and not u.endswith(".xml")
-            and not u.startswith("/categories/")]
+            and not u.startswith("/categories/") and not u.startswith("/tags/")]
 
 
 def read_added_since() -> set[str]:
