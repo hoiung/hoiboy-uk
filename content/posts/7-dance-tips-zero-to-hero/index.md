@@ -12,6 +12,8 @@ description: "Seven ways to speed up social dance learning without picking up ba
 
 If you are impatient like me and always like the fasts track but afraid of shortcuts that can cause bad habits. Here are a few suggestions that may help speed up your learning process and get you onto the dance floor with confidence. However, like all skills, you still need to give it time before your muscle memory kicks in, so it is still true that it is down to lots of practice.
 
+*(2026 note: I've since changed my mind on the term "muscle memory". Muscles have no memory. Leaving the 2014 words as they were. See [Moving Consciously in Brazilian Zouk Dance](/blogs/moving-consciously-in-brazilian-zouk/).)*
+
 ## Zero to Hero
 
 Here are 7 methods I've use to build up my Zouk confidence. I'm sure it can be applied to any other social dances.
