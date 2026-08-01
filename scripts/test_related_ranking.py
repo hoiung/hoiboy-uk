@@ -214,17 +214,27 @@ def check_tie_break(meta, rn_map, failures: list[str]) -> int:
     SEQUENCING, never which candidate wins a tie. A gate that passes in both the
     fixed and the broken state is not a gate.
 
-    THE PROPERTY. Candidates are bucketed by exact shared-tag count, descending.
-    Within a bucket the template walks `$ordered` (reach ascending, then date
-    descending) and takes candidates until the box holds 5. So for every bucket:
+    THE PROPERTY, and it holds for ALL THREE selection passes, not just the first.
+    The template walks `$ordered` (reach ascending, then date descending) three
+    times: once per shared-tag bucket, once for the category top-up, once for the
+    last resort. Each pass draws from its own eligibility pool. So for every pool:
     every candidate PICKED from it must sort at or before every candidate LEFT in
     it, under the key `(reach, date-rank)`.
 
-    Only the boundary bucket - the one the 5-link cap cut through - can discriminate;
-    a bucket consumed whole leaves nothing behind to compare against, so it is
-    skipped rather than counted as a pass. The return value is how many boundary
-    buckets actually got compared, so a corpus that stops producing them reports
-    that plainly instead of passing vacuously.
+    Covering only the tag pass is not enough, and this is the second time that lesson
+    landed on this function. The first version bucketed on `if n:` - shared-tag count
+    of at least one - which silently discarded every candidate the two top-ups draw
+    from, because those pools are zero-shared-tag BY CONSTRUCTION. Ralph round 4
+    Tier 2 reverted both top-ups from `$ordered` to `$byDate`, undoing half the
+    operator-authorised change, and the suite still passed with exit 0 and the same
+    61 buckets. Enumerating the pools instead of the one pass that prompted the fix
+    is what closes the class.
+
+    Only a pool the 5-link cap cut through can discriminate; a pool consumed whole,
+    or one that contributed nothing, leaves nothing behind to compare against and is
+    skipped rather than counted as a pass. The return value is how many pools
+    actually got compared, so a corpus that stops producing them reports that plainly
+    instead of passing vacuously.
     """
     reach = _reach(meta)
     by_date = sorted(meta, key=lambda s: meta[s].date, reverse=True)
@@ -234,15 +244,32 @@ def check_tie_break(meta, rn_map, failures: list[str]) -> int:
     discriminating = 0
     for slug, links in sorted(rn_map.items()):
         picked = set(links)
+        others = [o for o in meta if o != slug]
+
+        # One pool per selection pass, in the order the template runs them.
+        pools: list[tuple[str, list[str]]] = []
+
         buckets: dict[int, list[str]] = {}
-        for other in meta:
-            if other == slug:
-                continue
+        for other in others:
             n = _shared(meta, slug, other)
             if n:
                 buckets.setdefault(n, []).append(other)
-
         for n, members in sorted(buckets.items(), reverse=True):
+            pools.append((f"at {n} shared tag(s)", members))
+
+        # The two top-ups draw only from zero-shared-tag candidates. The last resort
+        # takes anything still unpicked, but it can only run once the category pool
+        # is exhausted, so by then the posts left are exactly the ones with no shared
+        # category - which is why these two pools partition cleanly.
+        zero = [o for o in others if not _shared(meta, slug, o)]
+        shares_cat = [o for o in zero if meta[slug].categories & meta[o].categories]
+        no_cat = [o for o in zero if not (meta[slug].categories & meta[o].categories)]
+        if shares_cat:
+            pools.append(("in the category top-up", shares_cat))
+        if no_cat:
+            pools.append(("in the last-resort top-up", no_cat))
+
+        for label, members in pools:
             taken = [m for m in members if m in picked]
             left = [m for m in members if m not in picked]
             if not taken or not left:
@@ -254,10 +281,10 @@ def check_tie_break(meta, rn_map, failures: list[str]) -> int:
                 failures.append(
                     f"AC 1.6/tie-break: /blogs/{slug}/ took {worst_taken} "
                     f"(reach {reach[worst_taken]}) over {best_left} "
-                    f"(reach {reach[best_left]}) at {n} shared tag(s). Ties must go "
-                    f"to the least-reachable post, so a post with fewer other ways "
-                    f"in gets the slot. This is what fails if the sort key in "
-                    f"related-posts.html loses its reach factor."
+                    f"(reach {reach[best_left]}) {label}. Ties must go to the "
+                    f"least-reachable post, so a post with fewer other ways in gets "
+                    f"the slot. This is what fails if any of the three passes in "
+                    f"related-posts.html stops iterating $ordered."
                 )
                 break
 
