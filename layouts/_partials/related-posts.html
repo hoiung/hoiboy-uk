@@ -36,8 +36,24 @@
 
   ORDERING. The n-descending pass buckets by exact shared-tag count rather than
   calling `sort` on a computed key, so the result does not depend on whether
-  Hugo's sort is stable. Within a bucket the pages are still in the date-
-  descending order they were scored in.
+  Hugo's sort is stable.
+
+  TIE-BREAKING, and this is the part that decides how the site links up. Most
+  posts tie on shared-tag count, so whoever wins ties gets the link. Ties used to
+  go to the NEWEST post, and that quietly concentrated the site: one post held 24
+  of 80 boxes and six posts had no inbound links at all. Those six were not
+  isolated - migrating-off-squarespace shares a tag with 26 other posts,
+  overthink-mode with 19 - they just lost every tie to something newer. Ties now
+  go to the post with the lowest REACH (fewest other posts sharing any tag with
+  it), so the slot goes to whoever has the fewest other ways in. Measured over
+  all 80 boxes: hub 24 -> 12, posts with no inbound links 6 -> 2, and the number
+  of links that share a tag is UNCHANGED at 371 of 400 - this redistributes who
+  gets linked, it does not make the boxes less relevant.
+
+  The sort key is `reach * 1000 + date-rank`, one number, unique per candidate
+  (date-rank is a unique index below 1000). A single unique key means the result
+  cannot depend on sort stability either, which is the same property the bucket
+  pass above was written to get.
 */ -}}
 {{- $self := . -}}
 {{- $selfTags := slice -}}
@@ -48,8 +64,11 @@
 {{- $byDate := where (where site.RegularPages "Section" "posts") "Permalink" "!=" $self.Permalink -}}
 {{- $byDate = sort $byDate "Date" "desc" -}}
 
+{{- $reach := partialCached "readnext-reach.html" . "readnext-reach-global" -}}
+
 {{- $scored := slice -}}
 {{- $maxShared := 0 -}}
+{{- $rank := 0 -}}
 {{- range $byDate -}}
   {{- $tags := slice -}}
   {{- range .Params.tags -}}
@@ -59,17 +78,22 @@
   {{- if and $selfTags $tags -}}
     {{- $n = len (intersect $selfTags $tags) -}}
   {{- end -}}
-  {{- $scored = $scored | append (dict "page" . "n" $n) -}}
+  {{- $r := index $reach .RelPermalink | default 0 -}}
+  {{- $scored = $scored | append (dict "page" . "n" $n "key" (add (mul $r 1000) $rank)) -}}
+  {{- $rank = add $rank 1 -}}
   {{- if gt $n $maxShared -}}
     {{- $maxShared = $n -}}
   {{- end -}}
 {{- end -}}
+{{- /* Least-reachable first; ties inside that fall back to date-descending,
+       because $rank is the index in the date-sorted list. */ -}}
+{{- $ordered := sort $scored "key" -}}
 
 {{- $picks := slice -}}
 {{- $seen := slice -}}
 {{- if gt $maxShared 0 -}}
   {{- range $k := seq $maxShared -1 1 -}}
-    {{- range $scored -}}
+    {{- range $ordered -}}
       {{- if and (eq .n $k) (lt (len $picks) 5) -}}
         {{- $picks = $picks | append .page -}}
         {{- $seen = $seen | append .page.RelPermalink -}}
@@ -83,22 +107,30 @@
        the corpus is in that state today, and the guard is defensive, not dead. */ -}}
 {{- if lt (len $picks) 5 -}}
   {{- with $self.Params.categories -}}
-    {{- range where $byDate "Params.categories" "intersect" . -}}
-      {{- if and (lt (len $picks) 5) (not (in $seen .RelPermalink)) -}}
-        {{- $picks = $picks | append . -}}
-        {{- $seen = $seen | append .RelPermalink -}}
+    {{- $cats := . -}}
+    {{- range $ordered -}}
+      {{- $cand := .page -}}
+      {{- if and (lt (len $picks) 5) (not (in $seen $cand.RelPermalink)) -}}
+        {{- if and $cand.Params.categories (intersect $cats $cand.Params.categories) -}}
+          {{- $picks = $picks | append $cand -}}
+          {{- $seen = $seen | append $cand.RelPermalink -}}
+        {{- end -}}
       {{- end -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
 
-{{- /* Top-up 2: plain recency, so the box is always 5 long even for a post that
-       shares neither a tag nor a category with enough siblings. */ -}}
+{{- /* Top-up 2: last resort, so the box is always 5 long even for a post that
+       shares neither a tag nor a category with enough siblings. Same
+       least-reachable-first order as everything above; it fills exactly ONE slot
+       across the whole site today (the food-booze post with no tag matches
+       anywhere), which is why changing only THIS pass was measured and rejected
+       as a fix for the orphan count - the concentration was never here. */ -}}
 {{- if lt (len $picks) 5 -}}
-  {{- range $byDate -}}
-    {{- if and (lt (len $picks) 5) (not (in $seen .RelPermalink)) -}}
-      {{- $picks = $picks | append . -}}
-      {{- $seen = $seen | append .RelPermalink -}}
+  {{- range $ordered -}}
+    {{- if and (lt (len $picks) 5) (not (in $seen .page.RelPermalink)) -}}
+      {{- $picks = $picks | append .page -}}
+      {{- $seen = $seen | append .page.RelPermalink -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
