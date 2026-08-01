@@ -3,7 +3,7 @@ title: "Ultrathink Mode aka Overthink Mode. Why I Keep Turning It Off."
 date: 2026-04-18T12:00:00+01:00
 draft: false
 categories: [tech-ai]
-tags: [claude, claude-code, llms, ai-workflow, productivity]
+tags: [claude, claude-code, llm, ai-workflow, productivity]
 slug: overthink-mode
 description: "Claude's highest effort setting burns more tokens than it saves. I call it overthink mode. Nine months of experiments, middle every time, across every model."
 ---
