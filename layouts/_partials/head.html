@@ -44,7 +44,11 @@
 <link rel="apple-touch-icon" sizes="180x180" href="{{ $appleTouch.RelPermalink }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&display=swap">
+{{/* The ital axis is load-bearing: without it Google Fonts serves only the roman
+     faces, so every <em> on the site fell back to a synthesised slant or none at
+     all. Probe before changing: the no-ital URL returns 0 `font-style: italic`
+     blocks, this one returns 5. */}}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&display=swap">
 <meta property="og:title" content="{{ $title }}">
 <meta property="og:description" content="{{ $desc }}">
 <meta property="og:url" content="{{ .Permalink }}">
