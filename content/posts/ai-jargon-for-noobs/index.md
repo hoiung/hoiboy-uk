@@ -5,7 +5,7 @@ draft: false
 slug: ai-jargon-for-newbies
 aliases: ["/posts/ai-jargon-for-noobs/"]
 categories: [tech-ai]
-tags: [ai, llm, jargon, beginners, harness]
+tags: [ai, llm, jargon, beginner, harness]
 description: "26 AI buzzwords (plus two the lists skip) in plain English, with an honest note on which I actually use and which I have never touched. Shoot me down."
 ---
 
