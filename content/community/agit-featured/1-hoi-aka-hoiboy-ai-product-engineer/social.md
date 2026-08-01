@@ -204,12 +204,50 @@ Full story: https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-produc
 
 **Image:** `share-card.png` (1200x630 landscape).
 
-MANUAL. The summary. No posting API, and distinct from the automated Facebook Page.
-Same inline-Source block.
+MANUAL. The summary, well inside Facebook's 63206-character cap. No posting API, and
+distinct from the automated Facebook Page. Groups get no first comment, so the Source
+goes inline:
+
+Post (summary, 1071 chars):
+
+```text
+Meet Hoi!
+
+First feature on Asians & Gingers in Tech, so I went first.
+
+Eight years at Canonical, the company behind Ubuntu. My title said Data Centre Engineer the whole time, but the role outgrew the title almost straight away: infrastructure architect, procurement lead, project manager and data centre manager, running the sites largely on my own for years. I designed and rolled out Canonical's cloud data centres across London, Boston and Taipei.
+
+One year we had a two week sprint in Malta and the entire equipment shipment got sent to the US by mistake, then ended up in Kabul. We only found out on the setup weekend, two days before 500+ engineers started landing. Armed with two credit cards, me and Gareth bootstrapped the whole setup by hand out of a hotel room.
+
+Nobody threw a party for any of it. The work just spoke for itself, even when the title didn't. That is usually how it goes for the quiet ones.
+
+Full story: https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-product-engineer/
+
+#AsiansInTech #GingersInTech #AGIT #DataCentre #Automation
+```
 
 ### Substack
 
 **Image:** `share-card.png` (1200x630 landscape).
 
-MANUAL. The summary. No posting API. Runs as a Note rather than an issue of the
-newsletter, using the inline-Source block.
+MANUAL. The summary. No posting API, and Substack publishes no Note character limit,
+so the length gate does not apply. Runs as a Note rather than an issue of the
+newsletter, with the Source inline:
+
+Post (summary, 1071 chars):
+
+```text
+Meet Hoi!
+
+First feature on Asians & Gingers in Tech, so I went first.
+
+Eight years at Canonical, the company behind Ubuntu. My title said Data Centre Engineer the whole time, but the role outgrew the title almost straight away: infrastructure architect, procurement lead, project manager and data centre manager, running the sites largely on my own for years. I designed and rolled out Canonical's cloud data centres across London, Boston and Taipei.
+
+One year we had a two week sprint in Malta and the entire equipment shipment got sent to the US by mistake, then ended up in Kabul. We only found out on the setup weekend, two days before 500+ engineers started landing. Armed with two credit cards, me and Gareth bootstrapped the whole setup by hand out of a hotel room.
+
+Nobody threw a party for any of it. The work just spoke for itself, even when the title didn't. That is usually how it goes for the quiet ones.
+
+Full story: https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-product-engineer/
+
+#AsiansInTech #GingersInTech #AGIT #DataCentre #Automation
+```
