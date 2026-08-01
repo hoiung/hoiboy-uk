@@ -153,18 +153,25 @@ def check_topup(meta, rn_map, failures: list[str]) -> None:
             continue
         if not tail:
             continue
+        # EVERY tail slot, not just the first. Checking only tail[0] leaves the
+        # gate blind to a top-up that starts correctly and then falls to recency
+        # partway down while category candidates remain - link 4 category, link 5
+        # recency-with-candidates-left would have passed. (Ralph Tier 3.)
         picked = set(known[:matches])
-        cat_candidates = {
+        remaining = {
             other for other in meta
             if other != slug and other not in picked and meta[slug].categories & meta[other].categories
         }
-        if cat_candidates and not meta[slug].categories & meta[tail[0]].categories:
-            failures.append(
-                f"AC 1.2: /blogs/{slug}/ fell straight to recency at link {matches + 1} "
-                f"({tail[0]}) while {len(cat_candidates)} unpicked sibling(s) still shared "
-                f"a category. The category top-up must be exhausted before the recency "
-                f"top-up runs."
-            )
+        for offset, link in enumerate(tail):
+            if not meta[slug].categories & meta[link].categories and remaining:
+                failures.append(
+                    f"AC 1.2: /blogs/{slug}/ fell to recency at link "
+                    f"{matches + offset + 1} ({link}) while {len(remaining)} unpicked "
+                    f"sibling(s) still shared a category. The category top-up must be "
+                    f"exhausted before the recency top-up runs."
+                )
+                break
+            remaining.discard(link)
 
 
 def check_hub_cap(meta, rn_map, failures: list[str]) -> tuple[str, int]:
