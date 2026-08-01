@@ -72,8 +72,10 @@
 
 # The `categories` taxonomy is switched off (blog-priv#62 Phase 6, hugo.toml
 # [taxonomies]). Its 8 URLs listed exactly the same posts as the landings above,
-# so each term maps onto its landing and the index maps onto the hub. `tags` and
-# `series` are deliberately untouched (A11) and have no rules here.
+# so each term maps onto its landing and the index maps onto the hub. `series` is
+# deliberately untouched (A11) and has no rules here. `tags` had none either
+# until blog-priv#66, which retired 7 mechanically-duplicate terms and added
+# their 301s at the end of this file.
 /categories /blogs/ 301
 /categories/* /blogs/:splat 301
 

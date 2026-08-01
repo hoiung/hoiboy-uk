@@ -22,9 +22,12 @@ Two assertions, both against a real build:
           rather than two that happen to agree today.
 
           /tags/* is excluded from the nav comparison: Hugo derives a tag term
-          title from whichever spelling it parses first, and the `ai` tag is
-          written "AI" in one post and "ai" in 28, so /tags/ai/ renders as "AI"
-          or "Ai" non-deterministically between builds. No tag ever appears in a
+          title from whichever spelling it parses first, so a term written with
+          two spellings renders non-deterministically between builds. That was
+          live when this was written - `ai` was spelled "AI" in one post and "ai"
+          in 28 - and blog-priv#66 has since merged every case-variant tag, so no
+          term carries two spellings at HEAD. The exclusion is kept as a guard
+          against the next one, not because a term is split today. No tag ever appears in a
           trail, so excluding them costs nothing and not excluding them makes
           this test flake.
 
