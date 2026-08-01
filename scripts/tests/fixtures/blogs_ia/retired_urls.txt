@@ -117,3 +117,15 @@
 /categories/life/
 /categories/tech-ai/
 /categories/trading/
+
+# blog-priv#66 Phase 4: the 6 /tags/ terms retired by the mechanical tag merges.
+# Only these six stop generating. "Brazilian Zouk" and "AI" were also merged in
+# front matter but their slugs survive (what-is-zouk-aam still emits
+# brazilian-zouk; Hugo already slugged AI to ai), so a rule for either would 301
+# a live page or self-loop. Derived from source, not from the merge list.
+/tags/congress/
+/tags/beginners/
+/tags/trading-system/
+/tags/maturity-grade/
+/tags/lessons-learned/
+/tags/community-building/
