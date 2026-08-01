@@ -85,6 +85,16 @@ exclude = [
   # links above. /community/asians-gingers-in-tech/. Verified reachable
   # in-browser (200) 2026-07-18. added: 2026-07-18; expires: 2026-10-16 (90 days)
   "^https?://([a-z0-9-]+\\.)?substack\\.com(/.*)?$",
+  # Bluesky (bsky.app) times out from GitHub Actions runner IPs. It is the one
+  # social domain in the AGIT follow list on /community/asians-gingers-in-tech/
+  # that was never allowlisted alongside the facebook/instagram/x/tiktok/
+  # substack entries above, so it went unnoticed until the voice-guard fix
+  # let lychee run again and it failed CI on main, cascade-skipping Deploy.
+  # Not a transient: lychee retries timeouts (max_retries defaults to 3,
+  # measured 2026-08-01), so this was four attempts at the configured 20s.
+  # Returns 200 in 0.6s from a local IP, verified 2026-08-01. NOT a broken link.
+  # added: 2026-08-01; expires: 2026-10-30 (90 days)
+  "^https?://(www\\.)?bsky\\.app(/.*)?$",
   # Cloudflare dashboard URLs require authentication; anonymous lychee
   # requests get 403. Referenced in cloudflare-api-token-setup.md runbook
   # as documented destinations for operator UI actions (token creation,
@@ -143,6 +153,21 @@ exclude = [
   # main and cascade-skipped Deploy. NOT broken links. Re-test from CI before renewing.
   # added: 2026-07-26; expires: 2026-10-24 (90 days)
   "^https?://(www\\.)?nngroup\\.com(/.*)?$",
+  # backlinko.com, seangoedecke.com and gohugo.io all fail from GitHub Actions
+  # runner IPs: backlinko with "Connection failed", the other two with timeouts.
+  # Same ORIGIN-IP blocking class as css-tricks/ryanholiday/nngroup directly
+  # above, and the same untouched-since-April citations: backlinko at
+  # docs/research/14_BLOG_CRAFT.md:206-207, seangoedecke at :395, gohugo at
+  # docs/research/16_AI_BOT_AND_SEO_POLICY.md:209. Nothing in the repo changed.
+  # Not transients: lychee retries timeouts (max_retries defaults to 3, measured
+  # 2026-08-01), so each timing-out URL had four attempts at the configured 20s
+  # and failed all four. All three return 200 in under a second from a local IP,
+  # verified 2026-08-01. They failed CI on main and cascade-skipped Deploy.
+  # NOT broken links. Re-test from CI before renewing.
+  # added: 2026-08-01; expires: 2026-10-30 (90 days)
+  "^https?://(www\\.)?backlinko\\.com(/.*)?$",
+  "^https?://(www\\.)?seangoedecke\\.com(/.*)?$",
+  "^https?://(www\\.)?gohugo\\.io(/.*)?$",
   # Root-relative paths (href="/js/...", href="/legal/...", href="/private/...")
   # are Hugo internal paths that get rewritten at render time. Lychee scans
   # raw markdown and has no Hugo context, so it cannot resolve them without
