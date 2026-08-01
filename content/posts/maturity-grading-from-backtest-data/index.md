@@ -3,7 +3,7 @@ title: "How I Analysed Backtested Data To Build A Maturity Graded Framework"
 date: 2026-06-27T21:45:00+01:00
 draft: false
 categories: ["tech-ai", "trading"]
-tags: ["backtesting", "swing-trading", "data-analysis", "claude-code", "trading-system", "maturity-grade"]
+tags: ["backtesting", "swing-trading", "data-analysis", "claude-code", "trading-systems", "maturity-grading"]
 description: "I built a maturity grade for my trading system, watched it run, and binned it. Here is how 4 months of backtest data turned one bad idea into something useful."
 ---
 
