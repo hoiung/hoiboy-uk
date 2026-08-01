@@ -17,10 +17,13 @@ TWO FRONT-MATTER TRAPS, both verified on the live corpus, both silent:
 
   * SHAPE. `content/posts/entrepreneurship-in-a-nutshell/index.md` writes `tags:`
     and `categories:` as block-style YAML lists rather than inline arrays. An
-    inline-array regex returns 214 distinct tags / 417 applications; the correct
-    figures via PyYAML are 218 / 423. Hence PyYAML, not a regex - reached here
-    through `validate_frontmatter.parse_frontmatter`, which is the repo's single
-    front-matter oracle rather than a second copy of the same fence logic.
+    inline-array regex returns 214 distinct tags / 417 applications against the
+    correct 218 / 423 (measured 2026-08-01 at base 9179b55, BEFORE this issue's
+    Phase 4 merges took distinct tags to 210; the pair is quoted as-of because
+    what matters is the 4-tag gap the regex opens, not either total). Hence
+    PyYAML, not a regex - reached here through
+    `validate_frontmatter.parse_frontmatter`, the repo's single front-matter
+    oracle, rather than a second copy of the same fence logic.
 
   * TYPE. PyYAML fixes the shape trap and CAUSES this one.
     `content/posts/the-sun-had-set-for-2014/index.md` carries `2014` and `2015`
@@ -48,10 +51,12 @@ ROOT = Path(__file__).resolve().parent.parent
 POSTS = ROOT / "content" / "posts"
 
 # Sibling import, so `scripts/` must be importable however this module was
-# reached: as a CLI (`python3 scripts/readnext_parse.py`, which puts scripts/ on
-# the path for free), via `test_related_ranking.py` (which inserts it itself), or
-# by pytest naming this file directly on the command line - which does NOT, and
-# is exactly how CI runs it.
+# reached. All three of today's routes already provide it - a CLI run puts the
+# script's own dir on the path, `test_related_ranking.py` inserts it, and
+# pytest's default `prepend` import mode inserts the rootdir of a directly-named
+# file. This line is insurance against the fourth: `--import-mode=importlib`,
+# which CI does not use today and which would break the import silently if it
+# ever did.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from validate_frontmatter import parse_frontmatter  # noqa: E402
@@ -103,15 +108,21 @@ def frontmatter(path: Path) -> dict:
     replaced a 145-line hand-rolled parser with PyYAML. One oracle. (Ralph
     Tier 2, AP #10.)
 
-    What this wrapper adds is the LOUD contract: `parse_frontmatter` returns
-    None for a page with no fence, because a body-only file is legitimately not
-    front matter in its context. Here it is not - a post with no front matter
-    has no tags, and silently returning {} would drop it from every count
+    What this wrapper adds is the LOUD contract: a post with no usable front
+    matter has no tags, so letting it through would drop it from every count
     computed downstream while the denominator still said 80.
+
+    The guard is `not data`, NOT `data is None`, and the difference is the whole
+    point. `parse_frontmatter` returns None only for a missing fence; an EMPTY
+    one (`---\\n---`), a whitespace-only one, and an explicit `null` all come
+    back as `{}`, which is falsy but not None. A `data is None` guard passes all
+    three straight through as a post with zero tags - silently, which is the
+    exact outcome this docstring claims to prevent. (Ralph Tier 3 caught the
+    wrapper asserting a contract it had stopped implementing.)
     """
     data = parse_frontmatter(path.read_text(encoding="utf-8"))
-    if data is None:
-        raise ValueError(f"{path}: no YAML front-matter block")
+    if not data:
+        raise ValueError(f"{path}: no usable YAML front-matter block")
     return data
 
 
