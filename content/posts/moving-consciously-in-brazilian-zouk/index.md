@@ -21,6 +21,8 @@ My greatest belief is that you should be conscious of every movement and every s
 
 The habits we learn through constant training are not something you automate then fire and forget. Every conscious decision, every minor touch and change, every breath should be checked.
 
+If you are moving for the sake of moving, with no conscious reasons, off time, automated, then you are not dancing. Sorry, not sorry for being blunt. That isn't dancing, you're just moving.
+
 While we are here, let me bust the term itself. Your muscles have no memory. None. They have no brain, they store nothing, they contract when they are told to and that is the whole job. What everyone calls muscle memory actually lives in your nervous system, in your brain and your spinal cord. It is a pathway that got faster. It is not a movement filed away somewhere safe and finished. That is exactly why it is so dangerous to trust it, because a faster pathway will carry a bad movement just as happily as a good one.
 
 I'll own this one before anyone else points it out. Go back through my older dance blogs and you will find me using the term myself. I think I used it just for the sake of using it, the way everybody does. I've known better for quite a while now, though I honestly couldn't tell you whether that was before or after I wrote those posts. The old words are staying exactly where they are. I've just put a note on them.
