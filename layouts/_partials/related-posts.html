@@ -13,8 +13,11 @@
   override. Template glue is needed either way, and performance does not break
   the tie: at 80 posts the hand-rolled intersect costs nothing measurable. Swap
   this partial for a recency-only stub and time 5 warm `hugo --gc --minify -e
-  production` runs each way - the two distributions overlap (stub 0.12-0.21s,
-  this partial 0.13-0.16s), so the difference sits under run-to-run variance.
+  production --quiet` runs each way - stub 0.35-0.61s against this partial's
+  0.48-0.65s, distributions that overlap, so the cost sits under run-to-run
+  variance rather than at any figure worth quoting. (Use `--quiet`, not `-q`:
+  Hugo 0.160.0 has no `-q` shorthand, so a run with it exits non-zero having
+  built nothing and times only the help text.)
   Do NOT add a [related] block to hugo.toml expecting it to replace this.
 
   TAG NORMALISATION. Terms are lowered before comparing, because the corpus
