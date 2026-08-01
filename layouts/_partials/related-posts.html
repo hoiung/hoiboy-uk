@@ -1,9 +1,10 @@
 {{- /*
   Read Next: 5 posts, ranked by how many TAGS they share with the current post,
-  most-shared first, ties broken newest-first. Where fewer than 5 posts share a
-  tag, the remaining slots are topped up by shared category and then by plain
-  recency, so every post renders exactly 5 links. Called from
-  _default/single.html. (blog-priv#66)
+  most-shared first, ties broken LEAST-REACHABLE-first (see TIE-BREAKING below;
+  it is the part that decides how the site links up). Where fewer than 5 posts
+  share a tag, the remaining slots are topped up by shared category and then by
+  a last resort, both in that same least-reachable order, so every post renders
+  exactly 5 links. Called from _default/single.html. (blog-priv#66)
 
   WHY NOT Hugo's native .Related: it computes ONE combined weighted score
   against ONE global threshold, so it cannot express a tags-then-category-then-
@@ -102,7 +103,8 @@
   {{- end -}}
 {{- end -}}
 
-{{- /* Top-up 1: shared category, newest first. The `with` guard is what keeps a
+{{- /* Top-up 1: shared category, least-reachable first (it iterates $ordered,
+       the same reach-ascending order the tag pass uses). The `with` guard is what keeps a
        post with no categories from erroring on the `intersect` below; no post in
        the corpus is in that state today, and the guard is defensive, not dead. */ -}}
 {{- if lt (len $picks) 5 -}}
