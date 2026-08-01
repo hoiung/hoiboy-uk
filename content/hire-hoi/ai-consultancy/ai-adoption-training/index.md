@@ -36,7 +36,7 @@ Why am I qualified for this, you may ask? Hm, good question. Probably because I 
 
 Same engine as everything I sell: a free discovery call, then a paid programme design, then delivery quoted off that design. The design is the scoping work. It produces your delivery plan and one number, before delivery starts, whether that lands as a single day with your team or a programme over several weeks. No public rate card here, because the programme is built around your people, not off a shelf. That is also why the AI Adoption Talk can carry FREE in its title while this page carries no number: the talk is one fixed hour that is the same for everyone, and this is not. Full pricing and billing terms across all five services are on the [Pricing & Billing]({{< ref "/hire-hoi/ai-consultancy/pricing-billing" >}}) page. New here, or weighing up which service fits? Start at [Work with Hoi]({{< ref "/hire-hoi/ai-consultancy/work-with-hoi" >}}).
 
-{{< consulting-cta type="calcom" label="Book a 20-min discovery call" >}}
+{{< consulting-cta type="calcom" offer="ai_adoption_training" label="Book a 20-min discovery call" >}}
 
 <!-- iamhoiend -->
 
