@@ -2,7 +2,7 @@
 title: "The Biggest Zouk Family Gathering in Europe - DutchZouk! International Congress 2014"
 date: 2014-12-04T12:00:00+00:00
 categories: [dance]
-tags: [zouk, congress, netherlands, dance, travel]
+tags: [zouk, congresses, netherlands, dance, travel]
 source_file: "voice-corpus/blogs/14_dutchzouk-international-congress-2014.md"
 source_era: "AdventureAnd.Me (Joomla)"
 description: "Studio 76 in Etten-Leur with over 100 artists and 1000 dancers. Musicality with Freddy and Andressa, the Mafie Zouker blacklist, and £863.56 all in."
