@@ -15,6 +15,10 @@ Decision matrix (default = PASS):
                                                       prose does NOT count)
   body has first-person prose AND no marker        -> FAIL exit 1
 
+`--require-all` replaces that last row with "body has ANY prose AND no marker
+-> FAIL", dropping the pronoun heuristic entirely. See `needs_markers` for
+which consumers want which mode and why.
+
 First-person detection:
   - regex `\\b(I|I'm|I've|Hoi)\\b` (case-sensitive) plus `\\b(my|me)\\b`
     (case-insensitive). Any single hit triggers detection.
@@ -43,6 +47,7 @@ _FIRST_PERSON_RE = re.compile(r"\b(I|I'm|I've|Hoi)\b")
 _FIRST_PERSON_LOWER_RE = re.compile(r"\b(my|me)\b", re.IGNORECASE)
 _FRONTMATTER_DATE_RE = re.compile(r"^date:\s*(\d{4}-\d{2}-\d{2})", re.MULTILINE)
 _MARKER_OPEN = "<!-- iamhoi -->"
+_MARKER_CLOSE = "<!-- iamhoiend -->"
 _MARKER_EXEMPT = "<!-- iamhoi-exempt -->"
 
 
@@ -101,56 +106,115 @@ def has_voice_prose(body: str) -> bool:
     not being Hoi-voice. Hoi's prose is reliably first-person; KEEP_LIST
     without first-person is generic professional vocabulary.
 
-    KNOWN COVERAGE BOUNDARY (dotfiles#560 Ralph Tier-3) — read this before
-    relying on the gate for a WEBSITE rather than a blog/CV:
+    COVERAGE BOUNDARY OF THIS PREDICATE — it is first-person SINGULAR only.
+    First-person PLURAL ("we", "our", "us") and THIRD-PERSON copy ("The
+    charity delivers…") raise no signal here, so on the default path this
+    checker never demands markers around them. Frontmatter is stripped before
+    the check, so `title:` and `description:` are likewise never seen.
 
-      The trigger is first-person SINGULAR only. First-person PLURAL
-      ("we", "our", "us") and THIRD-PERSON copy ("The charity delivers…")
-      raise no signal, so this checker never demands markers around them.
-      And `check-ai-writing-tells.py --mode blog` scans ONLY inside
-      `<!-- iamhoi --> … <!-- iamhoiend -->` regions. Composed, that means
-      unmarked third-person / first-person-plural prose is scanned by
-      NEITHER hook — it is not a bug in either one, it is the shape of the
-      pair. Frontmatter is stripped before the check, so `title:` and
-      `description:` are likewise never scanned.
-
-      That boundary is harmless for the blog/CV surfaces this was built for
-      (Hoi writes those in the first person singular). It matters for a
-      marketing site, whose dominant register is exactly the uncovered one.
-      An author who wants site copy guarded must wrap it in the markers
-      DELIBERATELY — nothing forces it.
-
-      SCOPE OF THAT CLAIM: "scanned by NEITHER hook" describes the pair AS
-      WIRED in the consumers today, NOT the limit of the tooling. It is not
-      the whole remedy space, and an earlier revision of this docstring was
-      wrong to imply it was. `check-ai-writing-tells.py` already ships a
-      `--structural` flag that deliberately bypasses marker-gating and reads
-      the WHOLE file, so its structural detectors DO fire on unmarked
-      third-person / first-person-plural prose. Measured, on unmarked
-      third-person site copy: without the flag the scan exits 0; with it the
-      same file exits 1 on a structural tell. No consumer currently passes
-      the flag, so turning it on is a per-repo config choice with a
-      fleet-consistency question attached — it is a real option, not a
-      no-op, and it is NOT the regex change described next.
-
-      Widening the trigger to `we|our|us` is a separate and much bigger
-      trade-off, not a free fix: it re-introduces the same false-positive
-      class the KEEP_LIST removal above eliminated, because third-party
-      documents (codes of conduct, job descriptions, quoted policy) are
-      written in exactly that register, and it changes behaviour in every
-      repo this file is vendored to. It is therefore left as an operator
-      decision rather than taken unilaterally. The corpus measurement behind
-      that call is recorded on the private tracking Issue, not here — this
-      file is vendored VERBATIM (`transforms: []`) to a PUBLIC consumer
-      repo, so it must never name a private repo or quote a private-corpus
-      statistic.
+    That is correct for the blog/CV surfaces this predicate was built for
+    (Hoi writes those in the first person singular) and WRONG for a website,
+    whose dominant register is exactly the uncovered one. Do not widen this
+    regex to fix that: `--require-all` (see `needs_markers`) is the mode a
+    website consumer wires, and it makes the pronoun question moot instead of
+    trading one blind spot for a false-positive class.
     """
     return bool(
         _FIRST_PERSON_RE.search(body) or _FIRST_PERSON_LOWER_RE.search(body)
     )
 
 
-def check_file(path: Path, check_only_new: bool) -> tuple[bool, str]:
+def has_prose(body: str) -> bool:
+    """True if the body carries any content line that is not a marker.
+
+    Marker lines and blank lines do not count, so a frontmatter-only stub
+    (a Hugo `_index.md` that sets `title:` and nothing else) is NOT treated
+    as prose and never fails `--require-all`. Without this a site's section
+    landings would all go red on day one with nothing to guard.
+    """
+    markers = {_MARKER_OPEN, _MARKER_EXEMPT, "<!-- iamhoiend -->",
+               "<!-- iamhoi-skip -->", "<!-- iamhoi-skipend -->"}
+    return any(
+        line.strip() and line.strip() not in markers
+        for line in body.split("\n")
+    )
+
+
+def unwrapped_prose(body: str) -> list[int]:
+    """Body-relative line numbers of prose sitting OUTSIDE every iamhoi region.
+
+    `has_marker` is satisfied by a single region anywhere in the file, so on its
+    own it cannot tell "this page is covered" from "this page has one covered
+    paragraph". Measured on a file with one wrapped sentence and an unwrapped one
+    carrying a banned word and an em dash: the wrapping check and the tells
+    scanner BOTH exit 0. That is the same composed hole `--require-all` closes at
+    the file level, one level down, so `--require-all` closes it here too.
+
+    Markers, blank lines, whole-line Hugo shortcodes and whole-line HTML comments
+    are not prose. Shortcodes are template calls rather than copy, and demanding
+    an author wrap `{{< figure … >}}` would be the kind of false positive that
+    gets a hook switched off.
+    """
+    stray: list[int] = []
+    in_region = False
+    for n, raw in enumerate(body.split("\n"), 1):
+        line = raw.strip()
+        if line == _MARKER_OPEN:
+            in_region = True
+            continue
+        if line == _MARKER_CLOSE:
+            in_region = False
+            continue
+        if in_region or not line:
+            continue
+        if line.startswith("{{") and line.endswith("}}"):
+            continue
+        if line.startswith("<!--") and line.endswith("-->"):
+            continue
+        stray.append(n)
+    return stray
+
+
+def needs_markers(body: str, require_all: bool) -> bool:
+    """Does this body have to be wrapped? The one place the two modes differ.
+
+    DEFAULT (`require_all=False`) — pronoun-triggered. A file is only forced
+    to carry markers when it contains first-person singular prose. Built for
+    blog/CV repos, where the corpus is mixed: legacy imports, third-party
+    quotes and generated boilerplate sit beside Hoi-voice prose, and a blanket
+    demand would fail on all of it.
+
+    `--require-all` — every file with prose must be marked or exempted, with
+    no pronoun test at all. This is the mode a WEBSITE consumer wires, and it
+    exists because the default composes into a hole there rather than a
+    narrow one:
+
+      `check-ai-writing-tells.py --mode blog` reads ONLY inside
+      `<!-- iamhoi --> … <!-- iamhoiend -->` regions. So on unmarked prose the
+      tells scanner is silent BY DESIGN and this checker is what is supposed
+      to force the wrapping. When the pronoun trigger misses — "We run classes
+      for beginners", "The charity delivers…" — nothing demands markers, so
+      nothing is ever scanned. Measured on a fixture carrying six banned words
+      and an em dash in first-person-plural prose: both hooks exit 0 on the
+      default path, both fail under `--require-all`.
+
+    Widening the pronoun regex to `we|our|us` was considered and rejected as
+    the remedy. It re-introduces the false-positive class the KEEP_LIST removal
+    eliminated (codes of conduct, job descriptions and quoted policy are
+    written in exactly that register), it still leaves third-person copy
+    uncovered, and it would change behaviour in every repo this file is
+    vendored to. `--require-all` is opt-in per repo, covers every register,
+    and routes the false-positive case through the carve-outs that already
+    exist for it: `<!-- iamhoi-skip -->` around a quoted block, or
+    `<!-- iamhoi-exempt -->` as the first non-blank line of a wholly
+    third-party file.
+    """
+    return has_prose(body) if require_all else has_voice_prose(body)
+
+
+def check_file(
+    path: Path, check_only_new: bool, require_all: bool = False
+) -> tuple[bool, str]:
     """Return (ok, message). ok=True means PASS."""
     try:
         text = path.read_text(encoding="utf-8-sig")
@@ -163,16 +227,28 @@ def check_file(path: Path, check_only_new: bool) -> tuple[bool, str]:
             return True, ""
 
     body = strip_frontmatter(text)
+    offset = text[: len(text) - len(body)].count("\n")  # body line -> file line
 
     if is_exempt(body):
         return True, ""
 
     if has_marker(body):
+        stray = unwrapped_prose(body) if require_all else []
+        if stray:
+            shown = ", ".join(str(n + offset) for n in stray[:10])
+            more = f" (+{len(stray) - 10} more)" if len(stray) > 10 else ""
+            return False, (
+                f"ERR: {path}: prose outside the iamhoi markers at line(s) "
+                f"{shown}{more}. One marked region does not cover the file — "
+                f"extend the region, or wrap the block and carve it out with "
+                f"`<!-- iamhoi-skip --> ... <!-- iamhoi-skipend -->` inside."
+            )
         return True, ""
 
-    if has_voice_prose(body):
+    if needs_markers(body, require_all):
+        what = "prose" if require_all else "Hoi-voice prose"
         return False, (
-            f"ERR: {path}: post contains Hoi-voice prose but no iamhoi wrapping. "
+            f"ERR: {path}: file contains {what} but no iamhoi wrapping. "
             f"Wrap each section in `<!-- iamhoi --> ... <!-- iamhoiend -->`, OR "
             f"add `<!-- iamhoi-exempt -->` as the first non-blank line for "
             f"whole-file bypass."
@@ -224,6 +300,17 @@ def main() -> int:
         action="store_false",
         help="Check every file regardless of frontmatter date.",
     )
+    parser.add_argument(
+        "--require-all",
+        dest="require_all",
+        action="store_true",
+        default=False,
+        help=(
+            "Demand markers on EVERY file carrying prose, not only files with "
+            "first-person singular pronouns. Website mode: covers we/our/us "
+            "and third-person copy, which the default trigger misses."
+        ),
+    )
     args = parser.parse_args()
 
     files = gather_files(args.paths, args.check_only_new)
@@ -232,7 +319,7 @@ def main() -> int:
 
     failures: list[str] = []
     for f in files:
-        ok, msg = check_file(f, args.check_only_new)
+        ok, msg = check_file(f, args.check_only_new, args.require_all)
         if not ok:
             failures.append(msg)
 
