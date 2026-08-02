@@ -353,6 +353,17 @@ jobs:
       - name: Blogs IA pre-push gate unit tests
         run: python3 -m pytest scripts/test_run_blogs_ia_suite.py -q
 
+      # #55 Stage 5. validate_internal_links.py resolves /tags/, /series/,
+      # /hire-hoi/, /legal/ and /community/ links by MODELLING what Hugo serves
+      # (urlize over frontmatter terms; page bundles plus url:/slug: overrides).
+      # A model can drift from the thing it models, and this one is what decides
+      # whether a pre-commit hook REJECTS a link, so drift means blocking a
+      # correct link. Compares the derivation against the built public/ tree,
+      # which is why it runs here rather than beside the other unit tests: it
+      # needs the Hugo build above.
+      - name: Internal-link resolver parity with the built tree
+        run: python3 -m pytest tests/test_taxonomy_terms_match_build.py -q
+
       # #55 Phase 4, the root-cause gate. exclude_path is a list of unanchored
       # REGEXES, and an over-broad entry fails silently: lychee reports 0 Total
       # and "No files found for this input source", which reads like a missing
