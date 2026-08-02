@@ -74,6 +74,26 @@
   cannot depend on sort stability either, which is the same property the bucket
   pass above was written to get.
 */ -}}
+{{- /* SECTION GATE, and it is load-bearing. _default/single.html calls this
+       partial UNCONDITIONALLY for every singular page, not just posts. The
+       pre-blog-priv#66 template wrapped its whole body in
+       `with .Params.categories`, which suppressed the box on non-post pages by
+       accident rather than by intent: no page outside content/posts/ carries a
+       `categories` key. blog-priv#66 moved that `with` down to scope only the
+       category top-up pass, which removed the accidental gate and shipped a
+       Read Next box onto all 18 categoryless singular pages - the legal
+       notices, the hire-hoi consultancy and portfolio pages, and the unlisted
+       operator tool page. Caught at Stage 5, live, after the merge.
+
+       Gate on Section, not on categories. Section is what the rule actually
+       means ("this box is for posts"), it does not silently unlatch when a
+       front-matter key changes, and it makes the intent greppable. The
+       regression is held down by scripts/test_related_ranking.py
+       `check_box_is_posts_only`, which walks every built index.html OUTSIDE
+       public/blogs/ and fails on any read-next-list it finds; note that
+       scripts/readnext_parse.py reads only public/blogs/<slug>/, so no figure
+       in this file or that module could ever have observed those 18 boxes. */ -}}
+{{- if eq .Section "posts" -}}
 {{- $self := . -}}
 {{- $selfTags := slice -}}
 {{- range .Params.tags -}}
@@ -174,4 +194,5 @@
       {{- end }}
     </ul>
   </nav>
+{{- end -}}
 {{- end -}}
