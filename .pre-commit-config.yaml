@@ -232,7 +232,9 @@ repos:
         # red CI on main, after the push. Running it here means the author finds
         # it first. The YAML SHAPE is copied from the two pre-push hooks in the
         # SST3 managed block below; the LOCATION deliberately is not. That block
-        # (:230-260) is propagated to 14 repos from
+        # (delimited by the >>> / <<< SST3 MANAGED BLOCK marker lines below --
+        # deliberately not cited by line number, which drifts on every edit to
+        # this file and had already gone stale) is propagated to 14 repos from
         # dotfiles/SST3/templates/pre-commit-managed-block.yaml, so a repo-local
         # hook placed inside it would be overwritten on the next propagation and
         # would show as managed-block drift in the meantime.
