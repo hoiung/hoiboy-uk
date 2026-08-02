@@ -189,3 +189,53 @@ def test_ref_style_used_as_both_image_and_link_still_validates(tmp_path) -> None
         f"{result.returncode}\nstderr:\n{result.stderr}"
     )
     assert "section-prefix" in result.stderr, result.stderr
+
+
+def test_zero_walk_is_a_failure_not_a_silent_pass(tmp_path):
+    """An empty content/ used to exit 0 with ZERO stdout (#55 Stage 5).
+
+    That made a run which walked nothing byte-identical in the CI log to a real
+    122-file run. It matters more for this gate than most: docs/AUTHORING.md
+    nominates this tier as the compensating control for keeping content/posts in
+    lychee's exclude_path, so a silent zero-walk means posts have no internal-link
+    coverage at all while the log still looks clean.
+    """
+    (tmp_path / "content").mkdir()
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--repo-root", str(tmp_path)],
+        capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 1, (
+        f"a walk that found no markdown must fail. stdout={result.stdout} "
+        f"stderr={result.stderr}"
+    )
+    assert "vacuous pass" in result.stderr, result.stderr
+
+
+def test_a_clean_run_states_how_many_files_it_scanned(tmp_path):
+    """A pass must be distinguishable from a vacuous one without reading the exit code."""
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--repo-root", str(REPO_ROOT)],
+        capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert re.search(r"OK \(\d+ file\(s\) scanned", result.stdout), (
+        f"a clean run must state its walk size. stdout={result.stdout}"
+    )
+
+
+def test_an_explicit_path_list_does_not_trip_the_walk_floor(tmp_path):
+    """pre-commit passes the STAGED set, which is legitimately empty on a non-md commit.
+
+    The floor is scoped to the walk for exactly this reason; without that scoping
+    every non-markdown commit would fail the hook.
+    """
+    md = tmp_path / "ok.md"
+    md.write_text("# no links here\n")
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), "--repo-root", str(REPO_ROOT), str(md)],
+        capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 0, (
+        f"an explicit path list must not trip the walk floor. stderr={result.stderr}"
+    )
