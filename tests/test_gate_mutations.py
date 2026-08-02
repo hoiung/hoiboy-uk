@@ -152,6 +152,23 @@ MUTATIONS = [
         "tests/test_taxonomy_terms_match_build.py",
         id="urlize-folds-the-underscore-and-rejects-a-live-tag",
     ),
+    # The single-segment allow-list is hand-maintained and had drifted in BOTH
+    # directions at once. One mutation per direction: a stale entry that accepts
+    # a 404, and a missing entry that rejects a live page.
+    pytest.param(
+        "scripts/validate_internal_links.py",
+        '        "tags",  # /tags/ taxonomy list page',
+        '        "about",',
+        "tests/test_taxonomy_terms_match_build.py",
+        id="allow-list-entry-for-a-page-that-404s",
+    ),
+    pytest.param(
+        "scripts/validate_internal_links.py",
+        '        "series",  # /series/ taxonomy list page',
+        "",
+        "tests/test_taxonomy_terms_match_build.py",
+        id="live-list-page-missing-from-the-allow-list",
+    ),
     pytest.param(
         "scripts/check_wordcount.py",
         '_HTML_COMMENT_RE = re.compile(r"<!--(?:(?!<!--)[\\s\\S])*?-->")',
