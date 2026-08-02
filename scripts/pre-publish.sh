@@ -358,17 +358,16 @@ rendered_link_check() {
     # links are counted and then suppressed: a typical post reports 41 Total /
     # 4 OK / 37 Excluded. External links are what this tier verifies, and they
     # are the class that rots without anyone touching the repo.
-    # Internal links are MOSTLY covered elsewhere, and the gap is worth knowing
-    # exactly. scripts/validate_internal_links.py (pre-commit AND ci.yml) resolves
-    # /blogs/<slug>/ and the 7 category landings against the content tree. It does
-    # NOT resolve /hire-hoi/, /legal/, /community/, /tags/ or /series/ paths: its
-    # _ALLOW_TWO_PREFIX set (that file, ~:84) returns True for them unconditionally.
-    # So the ~15 root-relative links under those five prefixes are resolved by
-    # NEITHER tier -- lychee rewrites them to hoiboy.uk and the allowlist then
-    # suppresses them. Stating the gap rather than implying coverage, because a
-    # comment claiming a check that does not exist is the defect this whole Issue
-    # is about. Closing it is a follow-up (it belongs in validate_internal_links.py,
-    # not here); do not read `41 Total` as 41 links verified.
+    # Internal links are covered by the other tier, not by this one.
+    # scripts/validate_internal_links.py (pre-commit AND ci.yml) resolves
+    # /blogs/<slug>/, the 7 category landings, /hire-hoi/, /legal/ and /community/
+    # against the content tree, and /tags/ and /series/ against the frontmatter
+    # terms Hugo generates its term pages from. That last group used to be an
+    # unconditional allow-list, which left the ~15 root-relative links under those
+    # five prefixes resolved by NEITHER tier; it was closed in the same Issue that
+    # documented it, so the split is now a real division of labour rather than a
+    # hole. Still do not read `41 Total` as 41 links verified: what THIS tier
+    # verifies is the external links.
     #
     # Zero-item floor. exclude_path voids even an explicitly-passed input and
     # says so only as "No files found for this input source", which reads like a
