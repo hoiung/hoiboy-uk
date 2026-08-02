@@ -418,6 +418,23 @@ def main() -> int:
     except FileNotFoundError as exc:
         print(f"validate_internal_links: {exc}", file=sys.stderr)
         return 2
+
+    # Zero-walk floor (#55 Stage 5). This gate used to exit 0 with ZERO stdout, so a
+    # run that walked nothing was byte-identical in the CI log to a real 122-file run.
+    # That matters more here than for most gates: docs/AUTHORING.md nominates this
+    # tier as the compensating control for keeping content/posts in lychee's
+    # exclude_path, so if it silently walks nothing, posts have no internal-link
+    # coverage at ALL and the log still looks clean.
+    # Scoped to the WALK: an explicit --paths of zero files is the caller's business
+    # (pre-commit passes the staged set, which is legitimately empty for a non-md commit).
+    if not args.paths and not files:
+        print(
+            "error: walked 0 markdown files under content/ - that tree is never "
+            "empty, so the root or the filename filter is broken (vacuous pass).",
+            file=sys.stderr,
+        )
+        return 1
+
     total = 0
     for md in files:
         try:
@@ -438,6 +455,9 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
+    # State the walk size, so a clean run is distinguishable from a vacuous one in a
+    # CI log (#55 Stage 5 — the whole class this Issue exists to close).
+    print(f"validate_internal_links: OK ({len(files)} file(s) scanned, 0 broken).")
     return 0
 
 
