@@ -25,12 +25,18 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SCRIPT = REPO_ROOT / "scripts" / "validate_internal_links.py"
 FIXTURES = REPO_ROOT / "scripts" / "tests" / "fixtures" / "validate_internal_links_fixtures"
 
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
-from validate_internal_links import _classify, _served_post_slugs  # noqa: E402
+from validate_internal_links import (  # noqa: E402
+    _ALLOW_TWO_PREFIX,
+    _classify,
+    _served_post_slugs,
+)
 
 
 def _run(*paths: Path) -> subprocess.CompletedProcess[str]:
@@ -239,3 +245,71 @@ def test_an_explicit_path_list_does_not_trip_the_walk_floor(tmp_path):
     assert result.returncode == 0, (
         f"an explicit path list must not trip the walk floor. stderr={result.stderr}"
     )
+
+
+# --- /hire-hoi/, /legal/, /community/, /tags/, /series/ resolution -----------
+# These five prefixes used to short-circuit to True (the old `_ALLOW_TWO_PREFIX`),
+# so every link beneath them passed this tier unchecked while the rendered tier
+# did not cover them either. The tests below assert BOTH directions on each
+# prefix: a served path passes AND an unserved one fails. Asserting only the
+# first half would pass on a validator that still accepts everything, which is
+# exactly the vacuous-gate shape this Issue exists to remove.
+
+@pytest.mark.parametrize(
+    "target",
+    [
+        "/legal/privacy/",
+        "/community/asians-gingers-in-tech/",
+        "/community/asians-gingers-in-tech/thanks/",  # frontmatter url: override
+        "/community/agit-featured/1-hoi-aka-hoiboy-ai-product-engineer/",
+        "/hire-hoi/permanent-roles/",
+        "/hire-hoi/ai-consultancy/portfolio/singerandsteel/",
+        "/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV.pdf",  # a file under static/
+        "/hire-hoi/index.xml",  # the per-section RSS feed
+        "/tags/ai/",
+        "/tags/auto_pb/",  # Hugo keeps the underscore; folding it to - would 404
+        "/series/bakeoff/",
+        "/tags/ai/index.xml",
+    ],
+)
+def test_a_served_two_segment_path_passes(target):
+    ok, message = _classify(target, REPO_ROOT)
+    assert ok, f"{target} is served by the live site but was rejected: {message}"
+
+
+@pytest.mark.parametrize(
+    "target",
+    [
+        "/legal/does-not-exist/",
+        "/community/nope/",
+        "/hire-hoi/ai-consultancy/ghost-service/",
+        "/tags/not-a-real-tag-anywhere/",
+        "/series/nope/",
+        # An `aliases:` target is a redirect stub, not a live path — same
+        # no-redirect-hop rule the retired /posts/ and /<category>/ URLs fail.
+        "/community/agit-featured/hoi-aka-hoiboy-ai-product-engineer/",
+        # Cloudflare Pages 308s the .html form to the extensionless canonical.
+        "/hire-hoi/ai-consultancy/portfolio/cu-architects/cu-architects-social-cards.html",
+    ],
+)
+def test_an_unserved_two_segment_path_fails(target):
+    ok, message = _classify(target, REPO_ROOT)
+    assert not ok, (
+        f"{target} is not served, but the validator accepted it — the "
+        f"unconditional two-segment allow-list has come back"
+    )
+    assert message, "a rejection must carry an explanatory message"
+
+
+def test_the_two_segment_prefixes_are_not_an_unconditional_allow_list():
+    """The regression guard, stated as the invariant rather than as examples.
+
+    Every prefix that takes a slug must reject at least one syntactically valid
+    path under it. A prefix that accepts everything is a gate examining nothing.
+    """
+    for prefix in sorted(_ALLOW_TWO_PREFIX):
+        ok, _ = _classify(f"/{prefix}/definitely-not-a-real-page/", REPO_ROOT)
+        assert not ok, (
+            f"/{prefix}/ accepts an arbitrary child path, so nothing beneath it "
+            f"is checked by this tier"
+        )
