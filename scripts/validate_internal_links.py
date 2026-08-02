@@ -192,6 +192,32 @@ def _served_post_slugs(repo_root: Path) -> frozenset[str]:
     return frozenset(slugs)
 
 
+@lru_cache(maxsize=None)
+def _retired_tag_terms(repo_root: Path) -> frozenset[str]:
+    """Tag terms that now exist only as a 301, read from ``static/_redirects``.
+
+    Derived rather than hard-coded so that retiring another tag extends the check
+    with no edit here. The redirect file is the single place that decides a term
+    is retired, so reading it is what keeps this rule and the redirect set from
+    drifting apart - the drift that let blog-priv#66 retire seven terms while
+    every internal-link rule still knew only about blog-priv#62's categories.
+
+    Matches the bare source form (``/tags/congress /tags/congresses/ 301``) and
+    ignores the ``/*`` wildcard twin, which carries the same term.
+    """
+    redirects = repo_root / "static" / "_redirects"
+    if not redirects.is_file():
+        return frozenset()
+    terms: set[str] = set()
+    for line in redirects.read_text(encoding="utf-8", errors="replace").splitlines():
+        parts = line.split()
+        if len(parts) >= 2 and parts[0].startswith("/tags/"):
+            term = parts[0][len("/tags/"):].strip("/")
+            if term and not term.endswith("*"):
+                terms.add(term)
+    return frozenset(terms)
+
+
 def _classify(target: str, repo_root: Path) -> tuple[bool, str]:
     """Return (ok, message). ``ok=True`` means the link passes; message is the
     error text when ``ok=False``."""
@@ -257,6 +283,21 @@ def _classify(target: str, repo_root: Path) -> tuple[bool, str]:
             f"unknown single-segment path '{target}' "
             f"(not blogs / hire-hoi / skills / about / legal / community / "
             f"index.xml / sitemap.xml)"
+        )
+    # A retired /tags/<term>/ (blog-priv#66). Checked BEFORE the allow-list below,
+    # which accepts any /tags/<slug>/ because taxonomy term pages are generated
+    # from frontmatter and cannot be enumerated from the markdown tree. The seven
+    # terms the mechanical tag merges retired are the exception: they are the one
+    # part of the taxonomy this repo CAN enumerate, because each one has a 301 in
+    # static/_redirects. Without this, an author writes
+    # `[congresses](/tags/congress/)`, pre-commit and CI pass, and every reader
+    # takes a needless redirect hop - exactly what the /posts/ and /<category>/
+    # rules above exist to prevent, applied to a class blog-priv#66 created and
+    # did not sweep.
+    if first == "tags" and len(parts) > 1 and parts[1] in _retired_tag_terms(repo_root):
+        return False, (
+            f"retired URL '{target}' - the tag '{parts[1]}' was merged away and now "
+            f"only survives as a 301 in static/_redirects. Link the live term instead."
         )
     # /hire-hoi/ai-consultancy/<slug>/ — sub-page of the hire-hoi section.
     if first in _ALLOW_TWO_PREFIX:
