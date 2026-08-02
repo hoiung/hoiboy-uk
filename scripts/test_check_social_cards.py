@@ -14,6 +14,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 SCRIPTS = Path(__file__).resolve().parent
 GUARD = SCRIPTS / "check_social_cards.py"
 
@@ -738,3 +740,86 @@ def test_the_real_headers_file_still_protects_the_404(tmp_path):
     """Regression pin on what actually ships, not on a synthetic fixture."""
     globs = csc.parse_noindex_globs(SCRIPTS.parent / "static" / "_headers")
     assert "/404*" in globs, globs
+
+
+# ---- walk floor: a guard that examined nothing must not report OK -------------
+#
+# This guard feeds three of pre-publish.sh's 17 gates and, until #55's post-pass
+# re-validation, had NO floor at any layer: with content/posts/ absent it printed
+# "OK" and exited 0 having examined zero posts. `--strict` did not cover it --
+# strict turns UNRESOLVED PAGE URLS into failures, not EMPTY WALKS, so a walk that
+# found nothing has nothing left unresolved and sails through strict too. That
+# false premise was the stated reason the Issue deferred this, which is why the
+# floor is asserted here by its MESSAGE rather than by exit code alone: exit 1 is
+# also what a real violation produces, so an exit-code-only test would not
+# distinguish "caught a vacuous walk" from "caught a missing card".
+
+def _floor_run(content, headers, *extra):
+    return subprocess.run(
+        [sys.executable, str(GUARD), "--content", str(content),
+         "--headers", str(headers), *extra],
+        capture_output=True, text=True,
+    )
+
+
+def test_walk_floor_fails_when_no_posts_are_walked(tmp_path):
+    content = tmp_path / "content"
+    _bundle(content, "legal/privacy")          # a compliant page, but no posts/
+    r = _floor_run(content, _headers(tmp_path, ""))
+    assert r.returncode == 1, f"a walk finding zero posts must fail. stdout={r.stdout} stderr={r.stderr}"
+    assert "walked 0 posts" in r.stderr, r.stderr
+    assert "vacuous pass" in r.stderr, r.stderr
+
+
+def test_walk_floor_fails_when_posts_dir_exists_but_is_empty(tmp_path):
+    """An existing-but-empty tree is the likelier real failure than a missing one."""
+    content = tmp_path / "content"
+    _bundle(content, "legal/privacy")
+    (content / "posts").mkdir(parents=True, exist_ok=True)
+    r = _floor_run(content, _headers(tmp_path, ""))
+    assert r.returncode == 1, r.stdout + r.stderr
+    assert "walked 0 posts" in r.stderr, r.stderr
+
+
+@pytest.mark.skipif(not (SCRIPTS.parent / "public").is_dir(), reason="./public not built")
+def test_walk_floor_also_fires_under_strict(tmp_path):
+    """`--strict` was the reason given for not needing this floor. It is not one.
+
+    Uses the repo's real ./public so the built layer contributes no violations of
+    its own -- violations are returned BEFORE the floor, so a synthetic empty
+    built tree would fail via that path instead and prove nothing about strict.
+    """
+    content = tmp_path / "content"
+    _bundle(content, "legal/privacy")
+    r = _floor_run(content, _headers(tmp_path, ""),
+                   "--built", str(SCRIPTS.parent / "public"), "--strict")
+    assert r.returncode == 1, r.stdout + r.stderr
+    assert "walked 0 posts" in r.stderr, (
+        "strict did not reach the walk floor. strict turns UNRESOLVED PAGE URLS "
+        f"into failures, not EMPTY WALKS. stderr={r.stderr}"
+    )
+
+
+def test_a_real_violation_is_not_masked_by_the_floor(tmp_path):
+    """Ordering: violations must be reported before the floor short-circuits."""
+    content = tmp_path / "content"
+    _bundle(content, "posts/ok")
+    _bundle(content, "posts/bad", card=None)
+    r = _floor_run(content, _headers(tmp_path, ""))
+    assert r.returncode == 1
+    assert "violation" in (r.stdout + r.stderr).lower(), r.stdout + r.stderr
+    assert "vacuous pass" not in r.stderr, (
+        "the floor swallowed a real violation; violations must return first"
+    )
+
+
+def test_the_guard_reports_what_it_walked(tmp_path):
+    """A passing run must be distinguishable from a vacuous one."""
+    content = tmp_path / "content"
+    _bundle(content, "posts/ok")
+    r = _floor_run(content, _headers(tmp_path, ""))
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert "1 posts" in r.stdout, (
+        f"a clean run must state its walk counts, or it is indistinguishable from "
+        f"one that examined nothing. stdout={r.stdout}"
+    )

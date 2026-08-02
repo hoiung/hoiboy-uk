@@ -210,8 +210,9 @@ hoiboy-uk/
 │   └── {hire-hoi,legal,skills,private}/_index.md  # non-category sections (hire-hoi = AI/ICT consultancy + permanent roles; private = noindex)
 ├── scripts/                 # 22 gate/validator scripts (frontmatter, config-traceability,
 │                            #   voice: iamhoi/tells/wordcount, EXIF, secret-scan, internal-links,
-│                            #   mirror-drift, lychee-expiry, blogs-IA pre-push runner)
-│                            #   + repo-authored tests + strip-exif/pre-publish/cloudflare-build
+│                            #   mirror-drift, lychee-expiry, social-cards, 404, pre-publish,
+│                            #   blogs-IA pre-push runner) + repo-authored tests
+│                            #   + strip-exif/cloudflare-build (manual fixers, NOT in the 22)
 ├── docs/research/           # Planning trail (numbered NN_TITLE.md, non-contiguous)
 ├── legacy/                  # Raw blog exports for Phase 1+ (gitignored)
 ├── .github/workflows/
