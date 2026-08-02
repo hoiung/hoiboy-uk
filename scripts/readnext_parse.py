@@ -6,12 +6,24 @@ ONE parser, imported by both the Phase 0 baseline capture and
 like-for-like. Two parsers would let the baseline and the test disagree about
 what a box contains, which is exactly the comparison the issue rests on.
 
-DENOMINATOR, load-bearing. Every count here is over the posts that RENDER a box
-- the bundles under `content/posts/` - never the 87 directories under
-`public/blogs/`. The extra 7 are `/blogs/<category>/` landing pages, which can
-never appear in a box because `related-posts.html` draws only from
-`site.RegularPages "Section" "posts"`. Counting over 87 reports all 7 landings
-as permanently zero-inbound and inflates the real figure from 2 to 9.
+DENOMINATOR, load-bearing. Every count here is over the POSTS - the bundles under
+`content/posts/`, resolved to `public/blogs/<slug>/index.html` - never the 87
+directories under `public/blogs/`. The extra 7 are `/blogs/<category>/` landing
+pages, which can never appear in a box because `related-posts.html` draws its
+candidates only from `site.RegularPages "Section" "posts"`. Counting over 87
+reports all 7 landings as permanently zero-inbound and inflates the real figure
+from 2 to 9.
+
+State that as "the posts", NOT as "the pages that render a box". The two are the
+same set only while `related-posts.html` is gated to the posts section, and for
+one release it was not: the box rendered on 18 categoryless singular pages
+(legal, hire-hoi, the unlisted tool page) and this module could not see any of
+them, because the path it builds is `public/blogs/<slug>/` by construction. Every
+figure it produced stayed correct for posts while being wrong for the site - the
+hub read 11 of 81 when the site-wide truth was 26. A denominator defined by what
+the parser LOOKS at cannot detect something appearing outside it, so the gate for
+that lives in `test_related_ranking.check_box_is_posts_only`, which walks the
+built tree directly instead of coming through here.
 
 TWO FRONT-MATTER TRAPS, both verified on the live corpus, both silent:
 
