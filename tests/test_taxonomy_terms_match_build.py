@@ -129,3 +129,68 @@ def test_alias_targets_are_not_accepted_as_live_paths() -> None:
         f"{alias} is an aliases: redirect stub, not a live path; accepting it "
         f"lets an in-repo link take a needless redirect hop"
     )
+
+
+def test_every_single_segment_allow_list_entry_is_really_served() -> None:
+    """The hand-maintained list must not accept a path the build does not serve.
+
+    It had drifted: ``about`` was listed with no ``content/about`` and a live
+    404 behind it, so the validator would have accepted a link to a dead page
+    without complaint. Nothing linked it, which is exactly why a hand-maintained
+    list rots unnoticed -- the wrong answer is only observable when someone
+    finally writes the link.
+    """
+    _require_build()
+    from validate_internal_links import _ALLOW_SINGLE  # noqa: PLC0415
+
+    unserved = sorted(
+        entry
+        for entry in _ALLOW_SINGLE
+        if entry
+        and not entry.endswith(".xml")
+        and not (PUBLIC / entry / "index.html").is_file()
+    )
+    assert not unserved, (
+        f"_ALLOW_SINGLE accepts single-segment paths the build does not serve: "
+        f"{unserved}. Either the page was removed and the entry is stale, or the "
+        f"build is missing it."
+    )
+
+
+def test_no_served_top_level_path_is_wrongly_rejected() -> None:
+    """The other direction: a live page the validator refuses to accept.
+
+    This is the failure mode that costs an author time rather than a reader a
+    404 -- a correct link blocked at pre-commit with no way to satisfy the hook.
+    It had drifted too: /tags/ and /series/ both serve a list page and both were
+    rejected, because a single-segment path is answered by _ALLOW_SINGLE before
+    it ever reaches the taxonomy branch that handles the bare list case.
+
+    Aliases are the documented exception. Hugo emits a redirect stub for each
+    ``aliases:`` entry, and this repo rejects linking a redirect hop on purpose,
+    so a served path whose HTML is a redirect stub is skipped here rather than
+    treated as a miss.
+    """
+    _require_build()
+    from validate_internal_links import _classify  # noqa: PLC0415
+
+    wrongly_rejected = []
+    for index in PUBLIC.rglob("index.html"):
+        rel = index.parent.relative_to(PUBLIC)
+        if str(rel) == "." or len(rel.parts) > 2:
+            continue
+        target = "/" + str(rel) + "/"
+        ok, _ = _classify(target, REPO_ROOT)
+        if ok:
+            continue
+        html = index.read_text(encoding="utf-8", errors="replace")
+        if 'http-equiv="refresh"' in html.lower():
+            continue  # an aliases: redirect stub, rejected by design.
+        if target.strip("/").split("/")[0] == "private":
+            continue  # unlisted operator-only tree, rejected by design.
+        wrongly_rejected.append(target)
+
+    assert not wrongly_rejected, (
+        f"the validator rejects live pages: {sorted(wrongly_rejected)}. Each one "
+        f"is a correct link an author cannot get past the pre-commit hook."
+    )
