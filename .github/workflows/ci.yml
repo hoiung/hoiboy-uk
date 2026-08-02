@@ -470,33 +470,29 @@ jobs:
       - name: Vendored drift-check pair wiring tests
         run: python3 -m pytest scripts/test_check_mirror_drift_wiring.py -q
 
+      # ZERO-LINK FLOOR: already present, supplied by the ACTION, not by this file.
+      # Documented here because a #55 Stage-5 audit angle read only these five lines,
+      # found no Total assertion, and reported the step as the one unfloored lychee
+      # caller. It is not: lychee-action's `failIfEmpty` input DEFAULTS TO TRUE, and
+      # its entrypoint greps lychee's MARKDOWN summary for `Total\s+\|\s+0` and fails
+      # the pipeline when it matches ("No links were found. This usually indicates a
+      # configuration error."). Verified against lycheeverse/lychee-action action.yml
+      # (failIfEmpty default: true) and entrypoint.sh (the grep) on 2026-08-02.
+      #
+      # CONSEQUENCE, and the reason this comment is long: that floor is implemented
+      # against the MARKDOWN output. Adding `--format json` here to make the count
+      # machine-readable REMOVES the floor -- the JSON payload has no `Total | 0`
+      # table row for the grep to match -- while looking like it adds one. That was
+      # tried in this Issue and reverted. Do not set `format:`/`--format` on this step
+      # without replacing the floor it silently deletes.
       - name: Lychee link check
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --config lychee.toml --format json --output ./lychee-out.json './**/*.md'
+          args: --config lychee.toml './**/*.md'
           fail: true
-
-      # Zero-link floor (#55 Stage 5). `fail: true` fails on link ERRORS, not on a run
-      # that examined nothing -- so if exclude_path widens, or the glob stops matching,
-      # lychee reports `0 Total` and exits 0 and this step goes green having checked no
-      # links at all. That is the exact defect this Issue exists to close, and this was
-      # its third lychee caller and the only unfloored one (pre-publish.sh's two gates
-      # were floored in Phase 1 / Ralph Tier 3).
-      - name: Lychee examined a non-zero number of links
-        if: always()
-        run: |
-          test -f ./lychee-out.json || { echo "::error::lychee produced no JSON output"; exit 1; }
-          python3 - <<'PY'
-          import json, sys
-          d = json.load(open("./lychee-out.json"))
-          total, errors, excl = d["total"], d["errors"], d["excludes"]
-          print(f"lychee corpus: {total} total, {excl} excluded, {errors} errors")
-          if total == 0:
-              print("::error::lychee examined 0 links. A link check that checks nothing "
-                    "must not pass. Most likely an exclude_path entry widened, or "
-                    "'./**/*.md' stopped matching.")
-              sys.exit(1)
-          PY
+          # failIfEmpty defaults to true; stated explicitly so the floor is visible
+          # in this file rather than only in the action's defaults.
+          failIfEmpty: true
 
       - name: Cache hygiene
         if: always()
