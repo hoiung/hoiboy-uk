@@ -64,7 +64,7 @@ Efficient. Brutal. Fair.
 
 ## I've been there too
 
-This isn't a follow problem. Leads are on those sidelines just as much. I've watched plenty of leads do the exact same thing for years. Stand on the edge, look busy on the phone, slip off for a drink every time a song kicks in (nah, just me, most dancers don't drink, so they don't even have that excuse lol). Equal opportunities stagnation, lead or follow doesn't matter.
+This isn't a follower problem. Leaders are on those sidelines just as much. I've watched plenty of leaders do the exact same thing for years. Stand on the edge, look busy on the phone, slip off for a drink every time a song kicks in (nah, just me, most dancers don't drink, so they don't even have that excuse lol). Equal opportunities stagnation, lead or follow doesn't matter.
 
 And I really really know how hard the start is. That learning curve is frightening. You don't know many moves. You can't feel the musicality yet. You feel awkward. You freeze up when the music starts and worry the other person will think you're rubbish (some might, honestly, but most couldn't care less, they just want to dance).
 
