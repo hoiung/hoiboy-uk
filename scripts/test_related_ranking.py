@@ -329,6 +329,51 @@ def check_hub_cap(meta, rn_map, failures: list[str]) -> tuple[str, int]:
     return hub, counts[hub]
 
 
+def check_box_is_posts_only(built: Path, failures: list[str]) -> int:
+    """The Read Next box renders ONLY on posts. Returns the pages scanned.
+
+    Why this exists, and why it scans a population no other check in this file
+    touches. `_default/single.html` calls `related-posts.html` for EVERY singular
+    page, not just posts. Before blog-priv#66 the partial wrapped its whole body
+    in `with .Params.categories`, which suppressed the box outside content/posts/
+    by accident: nothing else in the content tree carries a `categories` key.
+    blog-priv#66 moved that `with` down to scope only the category top-up, which
+    dropped the accidental gate and shipped a Read Next box onto all 18
+    categoryless singular pages - the legal notices, the hire-hoi consultancy and
+    portfolio pages, and the unlisted operator tool page. It reached production.
+
+    Nothing in the shipped suite could see it. Every other check here is fed by
+    `readnext_parse.read_next_map`, and `readnext_parse` resolves a post to
+    `public/blogs/<slug>/index.html` (see its DENOMINATOR docstring), so the post
+    set IS its universe by construction. A box on a legal page is not a wrong
+    value in that population, it is outside it. That is why this check walks the
+    built tree directly instead of going through the parser: a gate built on the
+    same denominator as the defect cannot ever observe the defect.
+
+    It also keeps the concentration figures honest. Each of those 18 pages
+    emitted the byte-identical 5 links, so they silently added +18 inbound to the
+    same five posts. `check_hub_cap` measured 11 of 81 while the site-wide truth
+    was 26, against a cap of 30, and every new categoryless page Hoi publishes
+    moved the real number up by one with CI green.
+    """
+    stray = sorted(
+        p for p in built.rglob("index.html")
+        if "blogs" not in p.relative_to(built).parts[:1]
+        and 'class="read-next-list"' in p.read_text(encoding="utf-8", errors="replace")
+    )
+    scanned = sum(1 for _ in built.rglob("index.html"))
+    for p in stray:
+        failures.append(
+            f"Read Next box rendered on {p.relative_to(built)}, which is not a post. "
+            f"The box is for posts only; `related-posts.html` is gated on "
+            f'`eq .Section "posts"` and something has removed or bypassed that gate. '
+            f"This is reader-facing on a public site (legal notices and client-facing "
+            f"consultancy pages ended up with five blog links), and it corrupts every "
+            f"inbound/hub figure this file reports."
+        )
+    return scanned
+
+
 def check_edge_cases(meta, rn_map, failures: list[str]) -> list[str]:
     """AC 1.4 + AC 1.5: the named edge cases still render a full box.
 
@@ -404,6 +449,7 @@ def main(argv: list[str] | None = None) -> int:
     check_topup(meta, rn_map, failures)
     tie_buckets = check_tie_break(meta, rn_map, failures)
     hub, hub_count = check_hub_cap(meta, rn_map, failures)
+    scanned = check_box_is_posts_only(built, failures)
     covered = check_edge_cases(meta, rn_map, failures)
 
     if failures:
@@ -416,7 +462,8 @@ def main(argv: list[str] | None = None) -> int:
           f"descending; every box is {min(BOX_SIZE, len(meta) - 1)} links with "
           f"zero-shared-tag top-ups only in the tail; ties went to the "
           f"least-reachable post in all {tie_buckets} boundary bucket(s); the "
-          f"largest hub is {hub} at {hub_count} of {len(meta)} (cap {HUB_CAP}).")
+          f"largest hub is {hub} at {hub_count} of {len(meta)} (cap {HUB_CAP}); "
+          f"and no box renders outside the post set ({scanned} built pages scanned).")
     for line in covered:
         print(f"    edge case covered: {line}")
     return 0
