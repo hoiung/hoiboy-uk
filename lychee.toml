@@ -65,7 +65,10 @@ exclude = [
   "^https?://(www\\.)?hoiboy\\.uk(/.*)?$",
   # LinkedIn returns HTTP 999 (anti-bot rate-limit) to lychee's user-agent,
   # which is not a real HTTP status. Sidebar profile link cannot be liveness-
-  # checked from CI without a logged-in cookie. added: 2026-05-06; expires: 2026-08-04 (90 days)
+  # checked from CI without a logged-in cookie. STRUCTURAL, not a transient outage:
+  # re-probed 2026-08-02 and LinkedIn still answers 999 to an anonymous request.
+  # This entry is expected to be renewed, not deleted, until lychee can present a
+  # cookie. added: 2026-08-02; expires: 2026-10-31 (90 days)
   "^https?://(www\\.)?linkedin\\.com(/.*)?$",
   # Meetup, Facebook and Instagram return 403/999 (anti-bot) to lychee's
   # user-agent, same class as linkedin above. Community join links on
@@ -110,7 +113,9 @@ exclude = [
   # Cloudflare dashboard URLs require authentication; anonymous lychee
   # requests get 403. Referenced in cloudflare-api-token-setup.md runbook
   # as documented destinations for operator UI actions (token creation,
-  # dashboard navigation). added: 2026-05-08; expires: 2026-08-06 (90 days)
+  # dashboard navigation). STRUCTURAL: the 403 is the auth wall, not an outage.
+  # Re-probed 2026-08-02, still 403 anonymously. Expected to be renewed, not
+  # deleted. added: 2026-08-02; expires: 2026-10-31 (90 days)
   "^https?://dash\\.cloudflare\\.com(/.*)?$",
   # Cal.com booking pages (cal.eu is the EU-region host, cal.com the parent
   # service) intermittently return 403 Forbidden to lychee's user-agent
@@ -187,6 +192,9 @@ exclude = [
   # paths OR content paths, never both). The earlier 'hugo --gc' build step
   # in the same CI job already fails on broken layouts / missing shortcodes /
   # undefined refs, so internal-link coverage is preserved.
-  # added: 2026-05-10; expires: 2026-08-08 (90 days)
+  # STRUCTURAL: this is a config decision about what lychee can resolve, not a
+  # site that might come back. Reviewed 2026-08-02 and the reasoning above still
+  # holds. Expected to be renewed, not deleted.
+  # added: 2026-08-02; expires: 2026-10-31 (90 days)
   "^/[^/]",
 ]
