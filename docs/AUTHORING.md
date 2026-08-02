@@ -183,6 +183,15 @@ NOT:
 
 The `scripts/validate_internal_links.py` pre-commit hook + CI step rejects the broken form with an actionable hint (`did you mean /blogs/<slug>/?`). Run it manually any time: `python3 scripts/validate_internal_links.py`.
 
+The same hook resolves the non-blog paths too, so these are rejected at commit time as well:
+
+| Link | Why it fails |
+|---|---|
+| `/legal/does-not-exist/` | No page under `content/legal/`, `content/hire-hoi/` or `content/community/` resolves to it, and no file in `static/` matches. A frontmatter `url:` or `slug:` override decides the served path, so link what the page serves, not its directory. |
+| `/tags/not-a-real-tag/` | Hugo generates a term page only for a term some page's frontmatter assigns. Add the tag to a page, or fix the link. |
+| an `aliases:` target | It resolves, but as a redirect. Link the canonical path instead, the same rule the retired pre-`/blogs/` URL shapes fail under. |
+| a static page linked with its `.html` extension | Cloudflare Pages serves a static `.html` file at its extensionless path and 308s the `.html` form to it, so the extensionless form is canonical. Drop the extension. |
+
 ## 7. Drafts
 
 ```yaml
