@@ -616,9 +616,31 @@ def main() -> int:
             print("  " + v, file=sys.stderr)
         print(f"\n{len(violations)} violation(s).", file=sys.stderr)
         return 1
+
+    # Walk floor (#55, Ralph post-pass re-validation). This guard feeds three of
+    # pre-publish.sh's gates and had no floor at ANY layer: with content/posts/
+    # and content/hire-hoi/ absent it printed OK and exited 0 having examined zero
+    # posts and zero consulting pages. `--strict` does not cover this -- it turns
+    # UNRESOLVED PAGE URLS into failures, not EMPTY WALKS, so a walk that found
+    # nothing has nothing to leave unresolved and sails through strict too.
+    # Same idiom as validate_frontmatter.py's, which already floors both its roots.
+    posts_seen = sum(1 for _ in (content_root / "posts").rglob("index.md")) \
+        if (content_root / "posts").is_dir() else 0
+    pages_seen = sum(1 for _ in content_root.rglob("index.md"))
+    if pages_seen == 0:
+        print(f"error: walked 0 singular pages under {content_root} - the content "
+              f"tree is never empty, so the root or the filename filter is broken "
+              f"(vacuous pass).", file=sys.stderr)
+        return 1
+    if posts_seen == 0:
+        print(f"error: walked 0 posts under {content_root / 'posts'} - the posts "
+              f"tree is never empty, so the root is wrong or the tree is missing "
+              f"(vacuous pass).", file=sys.stderr)
+        return 1
+
     scope = ("source + rendered (strict)" if args.strict else "source + rendered") if args.built else "source"
-    print(f"Social-card guard: OK ({scope}; every indexable page - singular, "
-          f"section/home landing, auto-section - owns its card).")
+    print(f"Social-card guard: OK ({scope}; {pages_seen} singular pages, {posts_seen} posts; "
+          f"every indexable page - singular, section/home landing, auto-section - owns its card).")
     return 0
 
 

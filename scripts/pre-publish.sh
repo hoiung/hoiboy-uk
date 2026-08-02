@@ -351,12 +351,17 @@ rendered_link_check() {
     # links are counted and then suppressed: a typical post reports 41 Total /
     # 4 OK / 37 Excluded. External links are what this tier verifies, and they
     # are the class that rots without anyone touching the repo.
-    # Internal links are NOT unchecked -- scripts/validate_internal_links.py is
-    # their tier, wired into pre-commit AND ci.yml, and it resolves them against
-    # the content tree rather than over the network. Two tiers, two link classes.
-    # Stated here because `41 Total` invites the reading that 41 links were
-    # verified, and the next person to tighten this should floor on OK+Errors
-    # only after deciding what should happen to the hoiboy.uk allowlist entry.
+    # Internal links are MOSTLY covered elsewhere, and the gap is worth knowing
+    # exactly. scripts/validate_internal_links.py (pre-commit AND ci.yml) resolves
+    # /blogs/<slug>/ and the 7 category landings against the content tree. It does
+    # NOT resolve /hire-hoi/, /legal/, /community/, /tags/ or /series/ paths: its
+    # _ALLOW_TWO_PREFIX set (that file, ~:84) returns True for them unconditionally.
+    # So the ~15 root-relative links under those five prefixes are resolved by
+    # NEITHER tier -- lychee rewrites them to hoiboy.uk and the allowlist then
+    # suppresses them. Stating the gap rather than implying coverage, because a
+    # comment claiming a check that does not exist is the defect this whole Issue
+    # is about. Closing it is a follow-up (it belongs in validate_internal_links.py,
+    # not here); do not read `41 Total` as 41 links verified.
     #
     # Zero-item floor. exclude_path voids even an explicitly-passed input and
     # says so only as "No files found for this input source", which reads like a
@@ -404,6 +409,14 @@ consulting_link_check() {
         printf >&2 'ERR: lychee not installed; install via cargo or apt\n'
         return 127
     fi
+    # Same DISCOVERED-not-VERIFIED caveat as gate 8's floor above, and this gate
+    # is MORE exposed to it: it reports ~468 Total of which ~39 are actually
+    # verified (~8%), because the allowlist suppresses the rest. Its stated job is
+    # catching a stale cal.com placeholder URL, so if the allowlist ever grows to
+    # cover that domain this floor would still pass on a large Total with the one
+    # URL that matters unchecked. The floor is a vacuity guard, not a coverage
+    # guarantee.
+    #
     # Zero-item floor, same class as gate 8's (#55, Ralph Tier 3). Without it
     # this gate reported PASS on whatever lychee said, including a run that
     # examined nothing -- one function below the gate this Issue exists to fix.
