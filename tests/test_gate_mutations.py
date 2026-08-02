@@ -134,6 +134,24 @@ MUTATIONS = [
         "scripts/test_check_social_cards.py",
         id="non-build-passes-the-rendered-og-image-tier",
     ),
+    # The two-segment prefixes were an unconditional allow-list for the whole life
+    # of the validator, so the 15 root-relative /hire-hoi/, /legal/, /community/,
+    # /tags/ and /series/ links in the repo were resolved by no tier at all. This
+    # mutation puts the allow-list back; the resolution tests must go red.
+    pytest.param(
+        "scripts/validate_internal_links.py",
+        "    if first in _TAXONOMY_TWO_PREFIX:",
+        "    if first in _ALLOW_TWO_PREFIX:\n        return True, \"\"\n    if first in _TAXONOMY_TWO_PREFIX:",
+        "scripts/test_validate_internal_links.py",
+        id="two-segment-prefixes-accept-anything-beneath-them",
+    ),
+    pytest.param(
+        "scripts/validate_internal_links.py",
+        '    slug = re.sub(r"[^a-z0-9_/-]", "", slug)',
+        '    slug = re.sub(r"[^a-z0-9/-]", "", slug)',
+        "tests/test_taxonomy_terms_match_build.py",
+        id="urlize-folds-the-underscore-and-rejects-a-live-tag",
+    ),
     pytest.param(
         "scripts/check_wordcount.py",
         '_HTML_COMMENT_RE = re.compile(r"<!--(?:(?!<!--)[\\s\\S])*?-->")',
