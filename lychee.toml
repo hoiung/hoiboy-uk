@@ -73,7 +73,21 @@ base_url = "https://hoiboy.uk"
 # `./.git/...` and `^\.git` does not match it, which disables the exclusion
 # rather than tightening it. Measured on ./.git/hooks/note.md: `^\.git` gives
 # 1 Total (leaked), `(^|/)\.git(/|$)` gives 0 Total (excluded).
-exclude_path = ["legacy", "node_modules", "(^|/)\\.git(/|$)", "content/posts", "scripts/tests/fixtures"]
+#
+# EVERY entry is boundary-anchored as `(^|/)<path>(/|$)` (#55 Phase 4). `.git`
+# was the instance that fired, but it was not special: as bare substrings,
+# `legacy` also matched docs/legacy-migration.md, `node_modules` matched
+# docs/node_modules-policy.md, `content/posts` matched content/postscript.md,
+# and `scripts/tests/fixtures` matched scripts/tests/fixtures-readme.md. Each
+# would have been silently unchecked with no warning beyond "No files found for
+# this input source". Fixing only `.git` would have left four loaded guns.
+# The tightening is behaviour-preserving and was measured, not assumed: across a
+# 3370-path corpus (all tracked files + the built public/ tree + every path in
+# its `./`-prefixed CI form) the bare and the anchored arrays exclude the SAME
+# 1102 paths. scripts/test_lychee_exclude_path.py holds the contract: every
+# entry needs a path it must still exclude AND a near-miss it must not, and an
+# entry added without that corpus fails the suite rather than passing untested.
+exclude_path = ["(^|/)legacy(/|$)", "(^|/)node_modules(/|$)", "(^|/)\\.git(/|$)", "(^|/)content/posts(/|$)", "(^|/)scripts/tests/fixtures(/|$)"]
 
 # Domains explicitly excluded from link check (allowlist).
 # Add entries with the comment format above. Empty by default.

@@ -353,6 +353,16 @@ jobs:
       - name: Blogs IA pre-push gate unit tests
         run: python3 -m pytest scripts/test_run_blogs_ia_suite.py -q
 
+      # #55 Phase 4, the root-cause gate. exclude_path is a list of unanchored
+      # REGEXES, and an over-broad entry fails silently: lychee reports 0 Total
+      # and "No files found for this input source", which reads like a missing
+      # file. Three separate entries have shipped that way (docs/research,
+      # public/blogs, then .git matching agit). This asserts every entry still
+      # excludes what it is for AND leaves near-miss paths checkable, and fails
+      # when an entry is added with no corpus rather than letting it go untested.
+      - name: Lychee exclude_path governance
+        run: python3 -m pytest scripts/test_lychee_exclude_path.py -q
+
       # blog-priv#62: posts and the 7 category landings moved under /blogs/, so
       # these paths are the NEW contract. The retired ones are asserted too, from
       # the opposite direction: they must NOT be built, or a stale template would
