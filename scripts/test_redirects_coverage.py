@@ -105,6 +105,47 @@ def check_taxonomy_gone(built: Path, failures: list[str]) -> None:
         )
 
 
+def check_retired_not_rebuilt(built: Path, failures: list[str]) -> int:
+    """No retired URL is served BOTH by its 301 and by a live page. Returns the count.
+
+    `check_taxonomy_gone` above asserts this for `/categories/` only, and it does
+    it by the mechanism that made it true: the taxonomy is switched off in
+    hugo.toml, so the directory cannot come back by accident. That mechanism does
+    NOT generalise. `tags` is still an active taxonomy, so any one of the seven
+    terms blog-priv#66 retired comes back the moment a future post types the old
+    spelling - Hugo rebuilds `/tags/congress/` as a real, sitemap-listed page
+    while `static/_redirects` still 301s it away. The site then advertises a
+    canonical URL that Cloudflare redirects, which is the exact duplicate-serving
+    ambiguity blog-priv#62 built these gates to prevent.
+
+    Nothing caught that. `test_taxonomy_cleanup.py` is deliberately a FLOOR ("growth
+    is fine and is not checked"), so by construction it cannot see a retired term
+    returning. The coverage half of THIS file only asserts each retired URL
+    RESOLVES, which stays true through the 301. `validate_frontmatter.py` accepts
+    `congress` because docs/AUTHORING.md specifies tags as freeform.
+
+    Derived from the baseline rather than from a hard-coded list, so retiring more
+    URLs in future extends this gate with no code change. That is the point: the
+    blog-priv#62 sites were hard-coded to blog-priv#62's instances, which is why
+    blog-priv#66 created seven more of the same class and swept none of them.
+    """
+    urls = read_baseline()
+    for url in urls:
+        rel = url.strip("/")
+        if not rel or rel.endswith((".xml", ".html")):
+            continue
+        if (built / rel / "index.html").is_file():
+            failures.append(
+                f"AC 6.3: {url} is retired (it has a 301 in static/_redirects) but the "
+                f"build emits public/{rel}/index.html as well. Two things now answer "
+                f"that URL and the canonical is ambiguous: the sitemap advertises the "
+                f"page while Cloudflare redirects it away. If the term is genuinely "
+                f"back in use, retire the redirect and drop it from the baseline; do "
+                f"not leave both."
+            )
+    return len(urls)
+
+
 def main(argv: list[str] | None = None) -> int:
     """`argv=None` reads sys.argv, which under pytest is the pytest command line
     (file paths + flags), so argparse exits 2 before a single assertion runs. CI
@@ -127,6 +168,7 @@ def main(argv: list[str] | None = None) -> int:
 
     checked = check(built, failures)
     check_taxonomy_gone(built, failures)
+    not_rebuilt = check_retired_not_rebuilt(built, failures)
 
     if failures:
         print(f"FAIL: {len(failures)} redirect-coverage violation(s):", file=sys.stderr)
@@ -135,7 +177,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     print(f"OK: {checked} retired URL forms (canonical + slash-less) all resolve "
-          f"through static/_redirects to a page the build serves")
+          f"through static/_redirects to a page the build serves, and none of the "
+          f"{not_rebuilt} retired URLs is ALSO emitted as a live page")
     return 0
 
 
