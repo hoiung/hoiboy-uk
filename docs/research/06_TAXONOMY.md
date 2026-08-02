@@ -174,6 +174,15 @@ not `noindex`, rendering the literal word "Categories" with mangled auto-titles
 win because they are hand-titled and now canonical. `/categories/*` 301s into
 `/blogs/*`. **`tags` (217 URLs) and `series` (2 URLs) are untouched.**
 
+> **Superseded counts, blog-priv#66 (2026-08-02).** The 217 above is correct as a
+> record of what blog-priv#62 left alone; it is no longer the live figure. #66
+> merged nine mechanically-duplicate tag spellings, which retired seven `/tags/`
+> URLs behind 301s in `static/_redirects`. The pinned Hugo 0.160.0 build now emits
+> **211** `/tags/` term pages and **1** `/series/`. Re-derive with
+> `find public/tags -mindepth 1 -maxdepth 1 -type d | wc -l` rather than quoting
+> either number; `scripts/test_taxonomy_cleanup.py` pins only a FLOOR (210), on
+> purpose, so the count moves freely upward as posts are published.
+
 What was removed is the taxonomy MAPPING only. The `categories:` front-matter key
 stays on all 79 posts and is load-bearing: `breadcrumb-trail.html`,
 `related-posts.html`, `_default/list.html` and `_default/single.html` all read
