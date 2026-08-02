@@ -130,8 +130,15 @@ print_summary() {
 #    pre-commit hook + Hugo shortcode mailto fallback. consulting-ops#2 AC 0.2.
 consulting_yaml_check() {
     local yaml="data/consulting.yaml"
+    # Fail loud on absence (#55 Stage 5). This used to `return 0`, and the identical
+    # shape is mirrored in .pre-commit-config.yaml and .github/workflows/ci.yml -- so
+    # renaming or moving this file turned all THREE tiers green simultaneously and an
+    # OPERATOR_TODO placeholder could ship. The file is tracked, so its absence is a
+    # defect, never a normal state: a "guard" that passes when its subject is missing
+    # is the vacuous-pass class this Issue exists to close.
     if [ ! -f "$yaml" ]; then
-        return 0
+        printf >&2 '  %s is missing. It is tracked, so this is a rename/deletion, not a normal state -- and this guard, its pre-commit twin and its ci.yml twin would all pass silently on it. Restore the file or update all three call sites together.\n' "$yaml"
+        return 1
     fi
     if grep -F 'OPERATOR_TODO' "$yaml" >/dev/null 2>&1; then
         printf >&2 '  consulting.yaml contains OPERATOR_TODO placeholder; refusing to publish\n'
