@@ -60,19 +60,36 @@ _SECTIONS = (
 _BLOG_ROOT = "blogs"
 
 # Single-segment allow-list (paths that are real first-level sections / pages).
+#
+# Hand-maintained, and therefore able to go stale in BOTH directions, which it
+# had: "about" was listed while /about/ returns 404 and no content/about exists
+# (a link to it would have been accepted silently), and /tags/ and /series/ were
+# absent while both serve a live list page (a correct link to either was
+# REJECTED at pre-commit). tests/test_taxonomy_terms_match_build.py now asserts
+# every entry against the built tree in both directions, so a future drift turns
+# a test red instead of quietly mis-answering.
 _ALLOW_SINGLE = frozenset(
     [
         "",  # bare "/"
         _BLOG_ROOT,  # /blogs/ hub (content/posts/_index.md)
         "hire-hoi",
         "skills",
-        "about",
         "legal",  # /legal/ section index (consulting-ops#6 Phase 6)
         "community",  # /community/ section index (#43 Phase 1)
+        "tags",  # /tags/ taxonomy list page
+        "series",  # /series/ taxonomy list page
         "index.xml",
         "sitemap.xml",
     ]
 )
+
+# Sections that are SERVED but must not be linked from content. /private/ is the
+# operator-only, unlisted, noindex tree (CLAUDE.md "Operator-only tools"), so a
+# link to it from a public page is a mistake even though the URL resolves. It is
+# rejected deliberately, with its own message, rather than falling through to
+# the generic "unknown internal path" — which read as a gap in the resolver on
+# audit, when it is the intended answer.
+_DELIBERATELY_UNLINKABLE = frozenset(["private"])
 
 # Multi-segment prefixes: paths that take one or more segments after the first.
 # Both sets used to be one unconditional allow-list (`_ALLOW_TWO_PREFIX`), which
@@ -372,6 +389,14 @@ def _classify(target: str, repo_root: Path) -> tuple[bool, str]:
     parts = stripped.split("/")
     first = parts[0]
 
+    # --- served, but deliberately not linkable ------------------------------
+    if first in _DELIBERATELY_UNLINKABLE:
+        return False, (
+            f"'{target}' is in the {first}/ tree, which is unlisted and noindex "
+            f"(operator-only). The URL resolves, but linking it from a public "
+            f"page publishes it; this rejection is deliberate, not a gap."
+        )
+
     # --- the live blog tree -------------------------------------------------
     if first == _BLOG_ROOT:
         if len(parts) == 1:
@@ -423,20 +448,18 @@ def _classify(target: str, repo_root: Path) -> tuple[bool, str]:
         if first in _ALLOW_SINGLE:
             return True, ""
         return False, (
-            f"unknown single-segment path '{target}' "
-            f"(not blogs / hire-hoi / skills / about / legal / community / "
-            f"index.xml / sitemap.xml)"
+            f"unknown single-segment path '{target}' (not "
+            f"{' / '.join(sorted(e for e in _ALLOW_SINGLE if e))})"
         )
-    # A retired /tags/<term>/ (blog-priv#66). Checked BEFORE the allow-list below,
-    # which accepts any /tags/<slug>/ because taxonomy term pages are generated
-    # from frontmatter and cannot be enumerated from the markdown tree. The seven
-    # terms the mechanical tag merges retired are the exception: they are the one
-    # part of the taxonomy this repo CAN enumerate, because each one has a 301 in
-    # static/_redirects. Without this, an author writes
-    # `[congresses](/tags/congress/)`, pre-commit and CI pass, and every reader
-    # takes a needless redirect hop - exactly what the /posts/ and /<category>/
-    # rules above exist to prevent, applied to a class blog-priv#66 created and
-    # did not sweep.
+    # A retired /tags/<term>/ (blog-priv#66). Checked BEFORE the term resolution
+    # below, and still needed after it: a retired term is one the mechanical tag
+    # merges REMOVED from every page's frontmatter, so the term resolver no
+    # longer derives it and would reject it as "no page assigns this tag". That
+    # is the right verdict for the wrong reason, and it loses the actionable
+    # half. static/_redirects is what knows the term was merged AWAY rather than
+    # never existing, so this branch names the live term to link instead.
+    # Without it, an author writes `[congresses](/tags/congress/)` and gets a
+    # generic rejection with no hint about where the tag went.
     if first == "tags" and len(parts) > 1 and parts[1] in _retired_tag_terms(repo_root):
         return False, (
             f"retired URL '{target}' - the tag '{parts[1]}' was merged away and now "
