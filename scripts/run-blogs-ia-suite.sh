@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# Run the Blogs IA suite as a pre-push gate (#55 AC 2.1-2.3).
+#
+# Until #55 this suite ran ONLY in ci.yml's "Blogs IA tests" step, so a broken
+# URL contract, a missing redirect, or a hub-listing regression was found by red
+# CI on main -- after the push, on the shared branch. The same tests run here
+# before the push can land, which is the whole point: the author learns from
+# their own terminal instead of from a broken main.
+#
+# The test list is NOT hardcoded here. It is passed in as arguments by the
+# `blogs-ia-suite` hook in .pre-commit-config.yaml, so the hook entry names every
+# file (AC 2.1 half (b)) and there is exactly one place per caller to edit.
+# scripts/test_run_blogs_ia_suite.py asserts that list stays identical to the one
+# in ci.yml -- two callers naming two different suites is the drift this gate
+# would otherwise invite.
+#
+# Exit codes:
+#   0 = every test passed
+#   1 = a test failed, or the ./public precondition is unmet
+#   2 = usage error (no test files passed)
+
+set -uo pipefail
+
+REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$REPO_ROOT" || exit 2
+
+if [[ $# -eq 0 ]]; then
+    printf >&2 'ERR: no test files passed. Usage: %s <test_file.py> [...]\n' "$0"
+    exit 2
+fi
+
+BUILD_CMD='hugo --gc --minify -e production'
+
+# Measured 2026-08-02 by parking ./public and running each file: these 8 FAIL
+# without a built tree; scripts/test_redirects_order.py and
+# scripts/test_emdash_hub_coverage.py pass without one (they read content/ and
+# config/ only). Stated explicitly because AC 2.3 requires the gate to say WHICH
+# tests need the tree, rather than emitting a stack trace and leaving the author
+# to work it out from a traceback.
+NEEDS_PUBLIC=(
+    scripts/test_permalink_contract.py
+    scripts/test_redirects_coverage.py
+    scripts/test_hub_listing.py
+    scripts/test_page_url_permalinks.py
+    scripts/test_section_keyed_regression.py
+    scripts/test_taxonomy_cleanup.py
+    scripts/readnext_parse.py
+    scripts/test_related_ranking.py
+)
+
+explain_public() {
+    # $1 = the headline problem
+    printf >&2 '\n%s\n\n' "$1"
+    printf >&2 'These %d of the Blogs IA tests read the BUILT site, not the sources:\n' "${#NEEDS_PUBLIC[@]}"
+    printf >&2 '  %s\n' "${NEEDS_PUBLIC[@]}"
+    printf >&2 '\nRun this, then push again:\n\n    %s\n\n' "$BUILD_CMD"
+}
+
+if [[ ! -d public ]]; then
+    explain_public "ERR: the Blogs IA suite needs a built ./public tree and there isn't one."
+    exit 1
+fi
+
+if [[ ! -f public/index.html ]]; then
+    explain_public "ERR: ./public exists but holds no index.html, so it is not a completed Hugo build."
+    exit 1
+fi
+
+# Staleness. A tree built before the most recent source edit makes every one of
+# the 8 tests above assert against output that no longer corresponds to the
+# sources being pushed -- they pass, and prove nothing about this push.
+newest_src=$(find content layouts config assets -type f -newer public/index.html -print -quit 2>/dev/null)
+if [[ -n "$newest_src" ]]; then
+    explain_public "ERR: ./public is STALE -- $newest_src is newer than public/index.html."
+    exit 1
+fi
+
+printf 'Blogs IA suite: %d test files, ./public built and current.\n' "$#"
+python3 -m pytest "$@" -q
+rc=$?
+
+if (( rc != 0 )); then
+    printf >&2 '\nBlogs IA suite FAILED (pytest exit %d). This gate runs pre-push so the\n' "$rc"
+    printf >&2 'failure lands in your terminal rather than as red CI on main. Fix it, or\n'
+    printf >&2 'bypass deliberately with: SKIP=blogs-ia-suite git push\n'
+fi
+exit $rc

@@ -74,6 +74,7 @@ hugo server
 ## Quality checks
 
 - `pre-commit` runs file hygiene + markdownlint + frontmatter validator + config traceability + word-count ceiling + voice guard + iamhoi-marker enforcement + internal-link validator + social-card guard (every singular page owns its og:image card) + secrets scan + mirror drift checks
+- at **push** time it also runs the 10-file Blogs IA suite (URL contract, redirects, hub listing, taxonomy) via the `blogs-ia-suite` hook, so a broken URL contract fails in your terminal instead of on main. It needs a built `./public`; run `hugo --gc --minify -e production` first
 - GitHub Actions builds Hugo, lints markdown, voice-guards em dashes, validates frontmatter and config traceability, and link-checks markdown outside `content/posts` (posts are excluded from that tier by design; their links are checked by the `rendered-link-liveness` gate in `scripts/pre-publish.sh`)
 - Cloudflare Pages deploys ONLY on green CI via deploy hook (auto-build disabled, no race)
 

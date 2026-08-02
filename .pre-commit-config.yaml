@@ -225,6 +225,40 @@ repos:
         always_run: true
         verbose: true
 
+      - id: blogs-ia-suite
+        name: Blogs IA suite (URLs, redirects, hub, taxonomy) at push time
+        # #55 AC 2.1. This suite used to run ONLY in ci.yml's "Blogs IA tests"
+        # step, so a broken URL contract or a missing redirect line was found by
+        # red CI on main, after the push. Running it here means the author finds
+        # it first. The YAML SHAPE is copied from the two pre-push hooks in the
+        # SST3 managed block below; the LOCATION deliberately is not. That block
+        # (:230-260) is propagated to 14 repos from
+        # dotfiles/SST3/templates/pre-commit-managed-block.yaml, so a repo-local
+        # hook placed inside it would be overwritten on the next propagation and
+        # would show as managed-block drift in the meantime.
+        #
+        # The 10 files are listed here rather than inside the runner so this
+        # entry names them all, and are asserted identical to ci.yml's list by
+        # scripts/test_run_blogs_ia_suite.py.
+        #
+        # Bypass: SKIP=blogs-ia-suite git push
+        entry: bash scripts/run-blogs-ia-suite.sh
+        args:
+          - scripts/test_permalink_contract.py
+          - scripts/test_redirects_order.py
+          - scripts/test_redirects_coverage.py
+          - scripts/test_hub_listing.py
+          - scripts/test_page_url_permalinks.py
+          - scripts/test_section_keyed_regression.py
+          - scripts/test_taxonomy_cleanup.py
+          - scripts/test_emdash_hub_coverage.py
+          - scripts/readnext_parse.py
+          - scripts/test_related_ranking.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+
       # >>> SST3 MANAGED BLOCK — DO NOT EDIT — propagated by propagate-block.py >>>
       - id: sst3-mirror-drift
         name: SST3 vendored file drift check (manifest-driven, staged-aware)
