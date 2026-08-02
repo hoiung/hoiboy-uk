@@ -79,12 +79,45 @@ fi
 # these 8 tests assert URL structure, redirects, hub listing and taxonomy from
 # rendered HTML, none of which depends on card image bytes. Card freshness is
 # gate 6c's job (scripts/check_social_cards.py --built), not this suite's.
-newest_src=$(find content layouts config assets -type f \
+#
+# SOURCE ROOTS (#55 Stage 5): Hugo reads SIX roots, and this scan originally named
+# four. `data/` is live -- layouts/_shortcodes/consulting-cta.html reads
+# `hugo.Data.consulting` -- and `static/` holds _redirects, which
+# scripts/test_redirects_coverage.py asserts against the BUILT tree. Editing
+# either and pushing without a rebuild passed the scan and tested a stale build.
+#
+# CONTENT STAMP (#55 Stage 5): mtime alone is not a proxy for "edited". Running
+# this hook through pre-commit rewrites unrelated working-tree files, bumping their
+# mtimes with byte-identical content, so a PASS invalidated its own precondition
+# and the very next run reported STALE on an unchanged tree -- measured three times.
+# Since pre-publish.sh always leaves an unstaged regenerated share-card.png, the
+# documented author workflow reliably produced it, and the fix for that is the same
+# SKIP= bypass the comment above calls worse than no gate at all.
+# So: mtime stays the cheap first signal, but a mtime hit is only STALE if the
+# source CONTENT also differs from what was verified against this build. The stamp
+# is written only after a genuine pass, so `hash == stamp` means "public/ was
+# already confirmed current for exactly these bytes". 698 files, ~0.17s.
+SRC_ROOTS=(content layouts config assets data static)
+STAMP=public/.blogs-ia-srchash
+
+src_hash() {
+    find "${SRC_ROOTS[@]}" -type f ! -name 'share-card.*' -print0 2>/dev/null \
+        | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1
+}
+
+current_hash=$(src_hash)
+newest_src=$(find "${SRC_ROOTS[@]}" -type f \
     ! -name 'share-card.*' -newer public/index.html -print -quit 2>/dev/null)
 if [[ -n "$newest_src" ]]; then
-    explain_public "ERR: ./public is STALE -- $newest_src is newer than public/index.html."
-    exit 1
+    if [[ -f $STAMP ]] && [[ "$(cat "$STAMP")" == "$current_hash" ]]; then
+        printf 'Blogs IA suite: %s is newer than the build, but source content is byte-identical to the last verified build (stamp match) -- not stale.\n' \
+            "$newest_src"
+    else
+        explain_public "ERR: ./public is STALE -- $newest_src is newer than public/index.html."
+        exit 1
+    fi
 fi
+printf '%s\n' "$current_hash" > "$STAMP"
 
 printf 'Blogs IA suite: %d test files, ./public built and current.\n' "$#"
 python3 -m pytest "$@" -q
