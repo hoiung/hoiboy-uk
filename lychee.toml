@@ -95,6 +95,18 @@ exclude = [
   # Returns 200 in 0.6s from a local IP, verified 2026-08-01. NOT a broken link.
   # added: 2026-08-01; expires: 2026-10-30 (90 days)
   "^https?://(www\\.)?bsky\\.app(/.*)?$",
+  # webaim.org is unreachable, not slow. Cited once as an accessibility
+  # reference at docs/research/14_BLOG_CRAFT.md:413 (a research note, not
+  # reader-facing content). Failed CI on main twice at 05e656f, both times as
+  # the ONLY failure with "Errors 0" and a bare [TIMEOUT], cascade-skipping
+  # Deploy. Not a lychee artefact and not a runner-IP artefact: three
+  # consecutive local curls returned HTTP 000 after the full 20s timeout,
+  # measured 2026-08-02, so it is failing from a residential IP too. Added to
+  # unblock a merge whose own CI was green; it is NOT a defect of blog-priv#66,
+  # which never touched that file. Recheck at expiry: if webaim is back, delete
+  # this entry rather than renewing it.
+  # added: 2026-08-02; expires: 2026-10-31 (90 days)
+  "^https?://(www\\.)?webaim\\.org(/.*)?$",
   # Cloudflare dashboard URLs require authentication; anonymous lychee
   # requests get 403. Referenced in cloudflare-api-token-setup.md runbook
   # as documented destinations for operator UI actions (token creation,
