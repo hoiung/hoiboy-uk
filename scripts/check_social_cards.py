@@ -532,6 +532,32 @@ def check_built(content_root: Path, headers_path: Path, public: Path,
     violations: list[str] = []
     noindex_globs = parse_noindex_globs(headers_path)
     og_re = re.compile(r'<meta property="og:image" content="([^"]+)"')
+
+    # BUILT-tree floor (#55 Stage 5 -- instance SIX of the vacuous-pass class).
+    # The content-tree floor in main() cannot see this one: it counts pages under
+    # content/, which is never empty, whereas this tier only reads pages that exist
+    # in public/. verify_rendered() below returns silently when the rendered file is
+    # absent and `strict` is off, so pointing --built at an empty or non-build
+    # directory made EVERY page take that silent return: zero HTML opened, zero
+    # violations, and the guard printed "OK (source + rendered; 103 singular pages,
+    # 85 posts)" and exited 0. Both live callers omit --strict
+    # (.github/workflows/ci.yml and scripts/pre-publish.sh), so strict was never the
+    # compensating control it looked like.
+    # Measured before this fix: `check_social_cards.py --built <empty dir>` -> exit 0.
+    #
+    # The test is "does this directory contain ANY rendered page", deliberately NOT
+    # "did we open one". A per-page counter false-positives where nothing was due to
+    # be opened -- a noindex-only tree, or an auto-section whose own index is
+    # legitimately absent -- and the existing suite caught that draft twice. A tree
+    # with no index.html at all is unambiguous: it is not a Hugo build.
+    if not any(public.rglob("index.html")):
+        return [
+            f"[rendered-vacuous] --built was given {public}, which contains no "
+            f"rendered index.html at all, so the rendered og:image tier would have "
+            f"examined nothing and still reported OK. That is not a build: run "
+            f"`hugo --gc --minify -e production` first, or point --built at the real "
+            f"output directory."
+        ]
     url_index = load_url_index(public)
 
     def verify_rendered(url: str) -> None:
