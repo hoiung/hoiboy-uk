@@ -38,7 +38,8 @@ hoiboy-uk/
 │   ├── posts/<slug>/        # Page bundles
 │   ├── {food-booze,adventure,dance,tech-ai,life,entrepreneurship,trading}/  # 7 category landings
 │   └── {hire-hoi,legal,skills,private}/  # non-category sections (hire-hoi = AI/ICT consultancy + permanent roles; private = noindex)
-├── scripts/                 # 18 gate/validator scripts: frontmatter, config-traceability, voice (iamhoi/tells/wordcount), EXIF, secret-scan, internal-links, mirror-drift
+├── scripts/                 # 22 gate/validator scripts: frontmatter, config-traceability, voice (iamhoi/tells/wordcount), EXIF, secret-scan, internal-links, mirror-drift,
+│                            #   lychee-expiry, blogs-IA pre-push runner. Re-derive: ls scripts/*.{py,sh} | xargs -n1 basename | grep -v '^test_' | grep -cE '^(check|validate|run-|pre-publish|strip-)'
 ├── docs/research/           # Planning trail (numbered NN_TITLE.md, non-contiguous)
 ├── lychee.toml              # Link checker config
 ├── .github/workflows/       # ci.yml + deploy.yml

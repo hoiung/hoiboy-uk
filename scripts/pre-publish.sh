@@ -344,6 +344,20 @@ rendered_link_check() {
         return 127
     fi
 
+    # What this floor does and does NOT prove (#55, Ralph Tier 3). It counts
+    # `Total`, which is links DISCOVERED, not links VERIFIED. `base_url` above
+    # rewrites every root-relative link to https://hoiboy.uk/..., and that domain
+    # is allowlisted in `exclude` (the CI-vs-deploy race), so a post's internal
+    # links are counted and then suppressed: a typical post reports 41 Total /
+    # 4 OK / 37 Excluded. External links are what this tier verifies, and they
+    # are the class that rots without anyone touching the repo.
+    # Internal links are NOT unchecked -- scripts/validate_internal_links.py is
+    # their tier, wired into pre-commit AND ci.yml, and it resolves them against
+    # the content tree rather than over the network. Two tiers, two link classes.
+    # Stated here because `41 Total` invites the reading that 41 links were
+    # verified, and the next person to tighten this should floor on OK+Errors
+    # only after deciding what should happen to the hoiboy.uk allowlist entry.
+    #
     # Zero-item floor. exclude_path voids even an explicitly-passed input and
     # says so only as "No files found for this input source", which reads like a
     # missing file and still exits 0 -- that is how this gate reported PASS on
@@ -390,8 +404,28 @@ consulting_link_check() {
         printf >&2 'ERR: lychee not installed; install via cargo or apt\n'
         return 127
     fi
+    # Zero-item floor, same class as gate 8's (#55, Ralph Tier 3). Without it
+    # this gate reported PASS on whatever lychee said, including a run that
+    # examined nothing -- one function below the gate this Issue exists to fix.
+    # The Issue declares a UNIFORM item-count contract across all 17 gates out of
+    # scope, and that stands; this closes the one instance whose trigger fired,
+    # rather than leaving a known live example of the defect being fixed above.
+    local out rc total
     # shellcheck disable=SC2086
-    lychee --config lychee.toml --root-dir "$REPO_ROOT/public" --no-progress $rendered
+    out=$(lychee --config lychee.toml --root-dir "$REPO_ROOT/public" --no-progress $rendered 2>&1)
+    rc=$?
+    printf '%s\n' "$out"
+    total=$(printf '%s' "$out" | grep -oE '[0-9]+ Total' | head -n1 | cut -d' ' -f1)
+    if [[ -z "$total" ]]; then
+        printf >&2 'ERR: consulting-link-liveness could not parse a link count from lychee. Refusing to report PASS on an unreadable result.\n'
+        return 1
+    fi
+    if (( total == 0 )); then
+        printf >&2 'ERR: consulting-link-liveness examined 0 links across %s consulting page(s). A gate that checks nothing must not pass. Check lychee.toml exclude_path, which voids even an explicitly-passed file.\n' \
+            "$(grep -c . <<< "$rendered")"
+        return 1
+    fi
+    return $rc
 }
 run_check "consulting-link-liveness" consulting_link_check
 

@@ -24,6 +24,7 @@ absent rather than passing vacuously.
 from __future__ import annotations
 
 import re
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -122,3 +123,56 @@ def test_taxonomy_pages_are_still_refused():
         "namespace and sorts first, so the gate would check it and report PASS "
         "having never seen the target page (#55 AC 1.7)."
     )
+
+
+@pytest.mark.skipif(not PUBLIC.is_dir(), reason="./public not built")
+def test_taxonomy_rejection_fires_behaviourally_not_just_textually():
+    """Execute the branch, don't just grep for it (#55, Ralph Tier 3).
+
+    Ralph Tier 3 correctly observed that the taxonomy-rejection loop is never
+    REACHED in normal operation: it only runs when the direct
+    `public/<section>/<slug>/index.html` path is missing, and for every real
+    collision slug that file exists, so the fallback never fires. A source-text
+    assertion alone would survive the branch being inverted.
+
+    This drives the real function with a slug that collides with a tag page while
+    having NO direct path, which is the only way in. `foundation` is the live
+    collision: public/tags/foundation/ and public/blogs/foundation/ both exist.
+    """
+    tags_page = PUBLIC / "tags" / "foundation" / "index.html"
+    if not tags_page.is_file():
+        pytest.skip("the tags/foundation collision no longer exists in the build")
+
+    # section `nonexistent` gives expected_prefix=public/nonexistent/, so the
+    # direct path is absent and the find-by-slug fallback is forced to run.
+    script = f"""
+    set -uo pipefail
+    REPO_ROOT={ROOT}
+    TARGET=content/nonexistent/foundation/index.md
+    POST_FILE=/dev/null
+    {_function_source()}
+    rendered_link_check
+    echo "RC=$?"
+    """
+    r = subprocess.run(["bash", "-c", script], cwd=ROOT, capture_output=True, text=True)
+    combined = r.stdout + r.stderr
+
+    assert "refusing taxonomy page" in combined, (
+        "the fallback did not refuse public/tags/foundation/index.html. A tag "
+        "listing page shares the slug namespace and SORTS FIRST, so without this "
+        "the gate checks a term page and reports PASS having never seen the "
+        f"target. Output:\n{combined}"
+    )
+    assert "public/tags/foundation/index.html" in combined, combined
+
+
+def _function_source() -> str:
+    """The real rendered_link_check(), lifted verbatim from the gate script."""
+    src = GATE.read_text(encoding="utf-8").splitlines()
+    start = next(i for i, ln in enumerate(src) if ln.startswith("rendered_link_check()"))
+    depth = 0
+    for end in range(start, len(src)):
+        depth += src[end].count("{") - src[end].count("}")
+        if depth == 0 and end > start:
+            return "\n".join(src[start:end + 1])
+    raise AssertionError("could not delimit rendered_link_check() in the gate script")
