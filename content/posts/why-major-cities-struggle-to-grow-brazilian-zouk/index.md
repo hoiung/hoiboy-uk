@@ -93,7 +93,7 @@ Working with the right people only. And fuck em if some do not want to work toge
 
 And yes, I can be loud about it. I am just not afraid to call a shovel a shovel. (If you have read [the London rant](/blogs/how-to-avoid-becoming-a-terrible-dancer-in-london/) from back in the day, you already know exactly how loud.)
 
-But ultimately, it is the act put into action that will change our Brazilian Zouk dance community's future away from a possible doom of extinction.
+But ultimately, it is the act put into action that will change our Brazilian Zouk dance community's future, so we are no longer heading towards extinction.
 
 ## One step at a time
 
