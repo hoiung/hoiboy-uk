@@ -106,7 +106,7 @@ Joining the Immersion Program, you will have access to a lot of contents about d
 
 Don't miss this special week, become a #badassbasic with a #badassembrace and improve your skills, learn how to give proper guidance to your own scene, train correctly avoiding to create bad habits, injuries and so much more!
 
-https://helsinkidancecentral.com/about/upcoming-events/immersionprogram/
+[https://helsinkidancecentral.com/about/upcoming-events/immersionprogram/](https://web.archive.org/web/20210415130435/https://helsinkidancecentral.com/about/upcoming-events/immersionprogram/)
 
 ## **ZoukDanceCamp Series: 'Retrace Your Dance Journey' with Anderson & Brenda - Chapter 1 (Grounding)**
 

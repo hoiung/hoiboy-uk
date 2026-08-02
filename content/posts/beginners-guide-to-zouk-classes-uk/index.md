@@ -56,7 +56,7 @@ https://www.facebook.com/zouktimetable
 Classes: Tuesday - Thursday 7:00pm - 10:00pm (Foundation 1, 2, 3, Novice 1, 2, 3 - depends on day & programme.)
 Please visit the official website for the current full programme, please note UKDC offers structured & progressive dance learning programmes and are not drop-in classes. The school is suitable and highly recommended for those looking for fully immersive, deep dive learning on how to social dancing.
 Teacher(s): Pedrinho, Linda, Renato, Anastasia.
-Website: https://www.ukdanceconnexion.com/
+Website: [former link]
 Facebook: https://www.facebook.com/ukdanceconnexion/
 
 ### Monday
@@ -106,12 +106,12 @@ Facebook: https://www.facebook.com/groups/41841525577
 
 **Zouk Mania, LSE SU, Saw Swee Hock Student Union Building, 1 Sheffield Street, London, WC2A 2AP.**
 Once a month on a Sunday 5:00pm - 9:00pm (club social only - see facebook or website for event date of this month)
-Website: http://zoukmania.com
+Website: [http://zoukmania.com](https://web.archive.org/web/20191213050515/http://zoukmania.com/)
 Facebook: https://www.facebook.com/zoukmaniacs
 
 **Zouk Mania Annual Boat Party**
 Once a year in August, this is a MUST GO boat party that you will absolutely love! (see facebook or website for the upcoming date)
-Website: http://zoukmania.com
+Website: [http://zoukmania.com](https://web.archive.org/web/20191213050515/http://zoukmania.com/)
 Facebook: https://www.facebook.com/zoukmaniacs
 
 ---
@@ -132,7 +132,7 @@ Facebook Page: https://www.facebook.com/ZoukBirmingham
 Classes: Every Tuesday 7:30pm - 9:30pm (Beginners, Improvers, Intermediate, Advanced)
 After Class Socials: 9:30pm - 11:30pm
 Teacher(s): Tina
-Website: http://www.latinoeuphoria.com
+Website: [http://www.latinoeuphoria.com](https://web.archive.org/web/20180805021851/http://latinoeuphoria.com/)
 Facebook: https://www.facebook.com/tina.zoukmanchester
 
 ### Wednesday
@@ -141,7 +141,7 @@ Facebook: https://www.facebook.com/tina.zoukmanchester
 Classes: Every Wednesday 7:30pm - 9:30pm (Beginners, Improvers, Intermediate, Advanced)
 After Class Socials: 9:30pm - 11:30pm
 Teacher(s): Tina
-Website: http://www.latinoeuphoria.com
+Website: [http://www.latinoeuphoria.com](https://web.archive.org/web/20180805021851/http://latinoeuphoria.com/)
 Facebook: https://www.facebook.com/tina.zoukmanchester
 
 ### Friday
@@ -151,7 +151,7 @@ Classes: Every Friday 7:30pm - 8:00pm (Intro to Brazilian Zouk FREE taster), 8:0
 After Class Socials: 9:00pm til late
 Teacher(s): Giuseppe Palumbo, Sara Conca, Daniel Harding, Jovi Baniela Alvarez, Michael Jones and Jenny Cousins.
 Additional information: There are also bootcamps for beginners. Don't miss out by joining the facebook groups for future dates and details.
-Website: http://www.espirito-latino.com *(no longer available)* (not sure if site gets updated often)
+Website: [http://www.espirito-latino.com](https://web.archive.org/web/20211201043142/http://espirito-latino.com/) *(no longer available)* (not sure if site gets updated often)
 Facebook: https://www.facebook.com/groups/251135155013584/ (suggest checking FB group for latest updates)
 
 ### Other Social Events

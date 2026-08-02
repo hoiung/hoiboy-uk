@@ -129,9 +129,9 @@ There was one particular hike we didn't get to do and was told of the magnificen
 
 Here are some links to help you decide the routes you would like to do!
 
-- http://www.jungfrau.ch/en/tourism/destinations/grindelwald-first/hiking-trails/
+- [http://www.jungfrau.ch/en/tourism/destinations/grindelwald-first/hiking-trails/](https://web.archive.org/web/20161028044854/http://www.jungfrau.ch:80/en/tourism/destinations/grindelwald-first/hiking-trails)
 - http://wild-about-travel.com/2013/09/grindelwald-hike-bachalpsee/
-- http://www.switzerland-hiking.ch/e/hiking-trail-switzerland/hiking-trail-summary.asp?codestation=56
+- [http://www.switzerland-hiking.ch/e/hiking-trail-switzerland/hiking-trail-summary.asp?codestation=56](https://web.archive.org/web/20181231025302/http://www.switzerland-hiking.ch:80/e/hiking-trail-switzerland/hiking-trail-summary.asp?codestation=56)
 
 ## JungFrauJoch - Top of Europe
 

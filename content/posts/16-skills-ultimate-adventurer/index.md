@@ -73,8 +73,8 @@ Now that you have read my list, ever wondered what kind of Adventurer you would 
 
 **Sailing**
 
-[http://www.edgbastonwatersports.co.uk/](http://www.edgbastonwatersports.co.uk/)
+[http://www.edgbastonwatersports.co.uk/](https://web.archive.org/web/20250409043348/http://edgbastonwatersports.co.uk/)
 
 **Windsurfing**
 
-[http://www.edgbastonwatersports.co.uk/](http://www.edgbastonwatersports.co.uk/)
+[http://www.edgbastonwatersports.co.uk/](https://web.archive.org/web/20250409043348/http://edgbastonwatersports.co.uk/)

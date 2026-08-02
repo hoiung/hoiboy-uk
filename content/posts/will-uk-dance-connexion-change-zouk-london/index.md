@@ -26,6 +26,6 @@ Sign up to their free taster day in August now because there are limited spaces 
 
 UK Dance Connexion Facebook: https://www.facebook.com/ukdanceconnexion/
 
-UK Dance Connexion Website: http://www.ukdanceconnexion.com/
+UK Dance Connexion Website: [former link]
 
 Not sure the different types of classes and what's right for you? Not to worry, I'll soon be publishing another blog post about the advantages and disadvantages of the different types of classes and who it's suitable for. Subscribe now and when I publish this blog, you'll be first to know by email.
