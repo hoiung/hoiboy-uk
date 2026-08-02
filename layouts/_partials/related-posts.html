@@ -14,7 +14,7 @@
   weight 80, categories weight 10 and threshold 20, a category-only match
   returns nothing; at threshold 0 it returns. There is no per-call threshold
   override. Template glue is needed either way, and performance does not break
-  the tie: at 80 posts the hand-rolled intersect costs nothing measurable. Swap
+  the tie: at 81 posts the hand-rolled intersect costs nothing measurable. Swap
   this partial for a recency-only stub and time 5 warm `hugo --gc --minify -e
   production --quiet` runs each way - stub 0.35-0.61s against this partial's
   0.48-0.65s, distributions that overlap, so the cost sits under run-to-run
@@ -50,18 +50,36 @@
   Hugo's sort is stable.
 
   TIE-BREAKING, and this is the part that decides how the site links up. Most
-  posts tie on shared-tag count, so whoever wins ties gets the link. Ties used to
-  go to the NEWEST post, and that quietly concentrated the site: one post held 24
-  of 80 boxes and six posts had no inbound links at all. Those six were not
-  isolated - migrating-off-squarespace shares a tag with 26 other posts,
-  overthink-mode with 25 - they just lost every tie to something newer. Ties now
-  go to the post with the lowest REACH (fewest other posts sharing any tag with
-  it), so the slot goes to whoever has the fewest other ways in. Measured over
-  all 80 boxes: hub 24 -> 11, posts with no inbound links 6 -> 2, and the number
-  of links that share a tag is UNCHANGED at 371 of 400 - this redistributes who
-  gets linked, it does not make the boxes less relevant. (The hub figure moved
-  12 -> 11 when the `llms` -> `llm` merge landed; re-derive it rather than
-  trusting this line if the corpus has moved again.)
+  posts tie on shared-tag count, so whoever wins ties gets the link.
+
+  READ THE BASELINE LABELS BEFORE QUOTING A NUMBER FROM HERE. There are TWO
+  different "before" states in this issue and conflating them is what made an
+  earlier version of this paragraph misleading:
+
+    (a) the PRE-ISSUE site, commit 9179b55, category-plus-date-neighbours with no
+        tag ranking at all: hub `how-to-actually-build-communities` 77 of 80
+        (96%), 2 posts with no inbound links. There were no ties to break here,
+        because nothing ranked by shared tags yet.
+    (b) the INTERMEDIATE state inside this branch, commit 02deb91, tag ranking
+        already in but ties still going to the NEWEST post: hub 24 of 81, 6 posts
+        with no inbound links. Reproducible - build that commit and run
+        scripts/readnext_parse.py.
+
+  Newest-first tie-breaking is what state (b) measures, and it concentrated the
+  site: one post held 24 boxes and six had nothing. Those six were not isolated -
+  migrating-off-squarespace shares a tag with 26 other posts, overthink-mode with
+  25 - they just lost every tie to something newer. Ties now go to the post with
+  the lowest REACH (fewest other posts sharing any tag with it), so the slot goes
+  to whoever has the fewest other ways in.
+
+  Measured at HEAD over all 81 post boxes (405 links): hub 11, posts with no
+  inbound links 2, and 376 of 405 links share at least one tag. Against (b) that
+  is hub 24 -> 11 and orphans 6 -> 2; against (a) it is hub 77 -> 11 and orphans
+  2 -> 2, i.e. the orphan count is a wash versus the pre-issue site and the real
+  win there is de-concentration. Both comparisons are honest; neither is the
+  whole story on its own. Re-derive rather than trusting any of these if the
+  corpus has moved - it already has once, when the `llms` -> `llm` merge shifted
+  the hub 12 -> 11.
 
   KNOWN LIMIT of reach, recorded because the aggregate hides it: reach counts
   POTENTIAL neighbours, not realised links, and the two correlate weakly
@@ -69,10 +87,18 @@
   loses every tie precisely BECAUSE its reach is high. So this redistributes
   starvation rather than removing it; it does not make every post reachable.
 
-  The sort key is `reach * 1000 + date-rank`, one number, unique per candidate
-  (date-rank is a unique index below 1000). A single unique key means the result
-  cannot depend on sort stability either, which is the same property the bucket
-  pass above was written to get.
+  The sort key is `reach * 1000 + date-rank`, one number, unique per candidate.
+  A single unique key means the result cannot depend on sort stability either,
+  which is the same property the bucket pass above was written to get.
+
+  THE 1000 IS A CORPUS-SIZE BOUND, not a structural guarantee, and nothing tests
+  it. date-rank is the candidate's index in the date-sorted list, so it is unique
+  and below 1000 only while the site has fewer than 1000 posts (81 today). Past
+  that, two candidates can collide on the key and reach silently stops deciding
+  the tie. The failure is graded, not loud: it starts as links REORDERING inside
+  a box, which the suite does not catch, and only becomes a changed link SET,
+  which it does, once a collision straddles the 5-link cap. If this site ever
+  approaches 1000 posts, widen the multiplier rather than trusting this line.
 */ -}}
 {{- /* SECTION GATE, and it is load-bearing. _default/single.html calls this
        partial UNCONDITIONALLY for every singular page, not just posts. The
@@ -143,14 +169,29 @@
 
 {{- /* Top-up 1: shared category, least-reachable first (it iterates $ordered,
        the same reach-ascending order the tag pass uses). The `with` guard is what
-       keeps a post with no categories from erroring on the `intersect` below; no
-       post in the corpus is in that state today, and the guard is defensive, not
-       dead.
+       keeps a page with no categories from erroring on the `intersect` below.
+       Zero of the 81 posts are in that state, so the guard is defensive, not
+       dead - but note that the population it guards is "posts" only because of
+       the SECTION GATE at the top of this file. Before that gate was restored,
+       this branch was taken on every build by the 18 categoryless singular pages
+       that were wrongly rendering a box, and taking it is what dropped them
+       straight to the last-resort pass. Do not read "no post is in that state"
+       as "this branch never executes" without checking what population the file
+       is running on.
+
+       A SCALAR `categories:` (a bare string rather than a list) does not merely
+       miss a match: `intersect` on a non-slice hard-fails the BUILD, and Hugo
+       reports the error against whichever page it was rendering, not the page
+       with the bad front matter. That is a materially harder diagnosis than a
+       missing link. The tags path three lines up was hardened against exactly
+       this class with `printf "%v"`; this path is not, because categories are a
+       closed hand-maintained set of 7 validated by scripts/validate_frontmatter.py.
+       If categories ever stop being validated, harden here too.
 
        NORMALISATION ASYMMETRY, deliberate and bounded. This is the ONE comparison
        in the file that does NOT go through the lower-and-coerce the header
        describes: categories are intersected RAW, while readnext_parse.py pushes
-       them through `_norm_terms`. It cannot bite today - measured, all 80 posts
+       them through `_norm_terms`. It cannot bite today - measured, all 81 posts
        carry categories as already-lowercase stripped strings drawn from a fixed
        set of 7 - but a category typed `Life` or ` life ` would match in Python
        and not here. If categories ever stop being a closed hand-maintained set,
@@ -172,10 +213,18 @@
 
 {{- /* Top-up 2: last resort, so the box is always 5 long even for a post that
        shares neither a tag nor a category with enough siblings. Same
-       least-reachable-first order as everything above; it fills exactly ONE slot
-       across the whole site today (the food-booze post with no tag matches
-       anywhere), which is why changing only THIS pass was measured and rejected
-       as a fix for the orphan count - the concentration was never here. */ -}}
+       least-reachable-first order as everything above; measured at HEAD it fills
+       exactly ONE slot across all 81 post boxes (reverse-engineering-moju-ginger-
+       shots, the food-booze post with no tag matches anywhere), which is why
+       changing only THIS pass was measured and rejected as a fix for the orphan
+       count - the concentration was never here.
+
+       "All 81 post boxes" is the whole population, but say it that way rather
+       than "the whole site": while the section gate was missing this pass was
+       ALSO filling 90 slots across 18 non-post pages, and the earlier wording
+       "one slot across the whole site" was measured on posts only and so could
+       never have surfaced them. Scope a count to the population it was taken
+       over. */ -}}
 {{- if lt (len $picks) 5 -}}
   {{- range $ordered -}}
     {{- if and (lt (len $picks) 5) (not (in $seen .page.RelPermalink)) -}}
