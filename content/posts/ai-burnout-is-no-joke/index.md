@@ -2,7 +2,7 @@
 title: "AI Burnout Is No Joke"
 date: 2026-06-10T15:00:00+01:00
 categories: [tech-ai, life]
-tags: [ai, burnout, claude-code, sst3]
+tags: ["ai-workflow", ai, burnout, claude-code, sst3]
 description: "Nine months of 12-15 hour days, 8 orchestrator chats, and 24-hour stints building a trading system with Claude Code. What burning out on AI actually feels like."
 ---
 

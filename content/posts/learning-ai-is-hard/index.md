@@ -4,7 +4,7 @@ date: 2026-04-23T12:00:00+01:00
 draft: false
 slug: learning-ai-is-hard
 categories: [tech-ai]
-tags: [ai, learning, discipline, claude-code, clickbait]
+tags: ["ai-workflow", ai, learning, discipline, claude-code, clickbait]
 description: "Three years of AI. Nine months of 15-hour days. Still tip of the iceberg. Why I close AI clickbait videos inside 60 seconds, every time."
 ---
 

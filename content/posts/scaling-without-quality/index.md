@@ -3,7 +3,7 @@ title: "Scaling Without Quality. Just Multiplying Bugs."
 date: 2026-04-19T12:00:00+01:00
 draft: false
 categories: [tech-ai]
-tags: [ai, claude-code, ai-orchestration, sst3, scaling, quality]
+tags: ["ai-workflow", ai, claude-code, ai-orchestration, sst3, scaling, quality]
 slug: scaling-without-quality
 description: "Every big release brings a bug storm. AI makes the storms expensive. Scale multiplies whatever you've already got. Build the base right, scaling gets easy."
 ---

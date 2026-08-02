@@ -2,7 +2,7 @@
 title: "Why I Spend More Tokens Refining Scope Than Writing Code"
 date: 2026-04-17T12:00:00+01:00
 categories: [tech-ai]
-tags: [ai, claude-code, sst3, governance, project-management]
+tags: ["ai-workflow", ai, claude-code, sst3, governance, project-management]
 slug: why-scope-beats-code
 description: "SST2 taught me the hard way. The scoping step costs tokens up front, but it is a tenth of what bad scope costs you later."
 ---
