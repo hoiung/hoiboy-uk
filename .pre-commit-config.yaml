@@ -256,6 +256,7 @@ repos:
           - scripts/test_emdash_hub_coverage.py
           - scripts/readnext_parse.py
           - scripts/test_related_ranking.py
+          - tests/test_taxonomy_terms_match_build.py
         language: system
         pass_filenames: false
         always_run: true
