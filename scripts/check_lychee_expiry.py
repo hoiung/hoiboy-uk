@@ -58,9 +58,10 @@ def check(config: Path, today: dt.date) -> tuple[list[str], int]:
     for i, line in enumerate(lines, start=1):
         stripped = line.strip()
         # The KEY, not any key that starts with those seven letters.
-        # `lychee.toml:53` declares `exclude_path` BEFORE `exclude`, so a bare
+        # lychee.toml declares `exclude_path` BEFORE `exclude`, so a bare
         # startswith opened the block on the wrong key and swept the lines
-        # between the two into it.
+        # between the two into it. (Deliberately no line number: the ordering is
+        # the invariant, and a pinned line drifts on every edit to the file.)
         if _EXCLUDE_KEY.match(stripped):
             in_exclude = True
             continue

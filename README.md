@@ -74,7 +74,7 @@ hugo server
 ## Quality checks
 
 - `pre-commit` runs file hygiene + markdownlint + frontmatter validator + config traceability + word-count ceiling + voice guard + iamhoi-marker enforcement + internal-link validator + social-card guard (every singular page owns its og:image card) + secrets scan + mirror drift checks
-- GitHub Actions builds Hugo, lints markdown, voice-guards em dashes, validates frontmatter and config traceability, checks internal markdown links and external links
+- GitHub Actions builds Hugo, lints markdown, voice-guards em dashes, validates frontmatter and config traceability, and link-checks markdown outside `content/posts` (posts are excluded from that tier by design; their links are checked by the `rendered-link-liveness` gate in `scripts/pre-publish.sh`)
 - Cloudflare Pages deploys ONLY on green CI via deploy hook (auto-build disabled, no race)
 
 See `docs/research/` for the planning trail and tooling decisions.

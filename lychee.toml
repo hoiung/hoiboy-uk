@@ -23,11 +23,17 @@ accept = [200, 201, 202, 203, 204, 301, 302, 307, 308]
 # hammered by CI -- the path-construction just has to succeed.
 base_url = "https://hoiboy.uk"
 
-# File path globs to skip (lychee scans args from CLI, this filters them).
-# `public/blogs` is excluded because per-post pre-publish.sh already validates
-# the rendered HTML for blog posts; `public/hire-hoi/ai-consultancy` is INTENTIONALLY NOT
-# excluded so consulting-ops#2 AC 0.4 (Cal.com URL liveness) can fire against
-# the rendered consulting page HTML.
+# Input paths to skip. Each value is an UNANCHORED REGULAR EXPRESSION matched
+# against the input path as lychee receives it -- NOT a glob. This matters more
+# than it looks: `.` is the regex any-character, so a naive `.git` also matches
+# `agit`, and CI passes `./**/*.md` so paths arrive `./`-prefixed while
+# pre-publish.sh passes them bare. Any entry added here must be checked against
+# BOTH invocation forms and against near-miss paths that must stay checkable.
+# scripts/test_lychee_exclude_path.py holds that contract.
+#
+# `public/hire-hoi/ai-consultancy` is INTENTIONALLY NOT excluded so
+# consulting-ops#2 AC 0.4 (Cal.com URL liveness) can fire against the rendered
+# consulting page HTML.
 #
 # `docs/research` WAS excluded and is not any more (blog-priv#55 Stage 5).
 # The exclusion silently voided every citation in the research corpus: ci.yml
@@ -43,14 +49,20 @@ base_url = "https://hoiboy.uk"
 # publishers, now allowlisted below rather than left to fail. Whenever a gate
 # appears to cover a file, prove the file is in scope, not merely that the gate
 # runs.
-# The two `posts`-shaped entries below are NOT the same kind of path and only one
-# of them moved in blog-priv#62. `public/blogs` is BUILT OUTPUT, which the URL
-# change relocated. `content/posts` is a CONTENT directory, which did not move and
-# must not be touched. Confusing them silently flips what the
-# rendered-link-liveness gate covers, because scripts/pre-publish.sh passes the
-# rendered path to lychee explicitly and exclude_path voids even an explicit
-# invocation (see the header note above).
-exclude_path = ["public/blogs", "legacy", "node_modules", ".git", "content/posts", "scripts/tests/fixtures"]
+# `public/blogs` WAS excluded here and is not any more (#55). It was the same
+# defect as `docs/research` above, two lines below the paragraph recording that
+# lesson: scripts/pre-publish.sh passes the rendered post path to lychee
+# EXPLICITLY, and this key voids even an explicit invocation, so the
+# rendered-link-liveness gate reported `0 Total` and exit 0 for every post from
+# blog-priv#62 until #55. Measured on one post: 0 Total with the entry present,
+# 46 Total / 37 Unique without it. Across the corpus once removed: 5036 links,
+# 1169 unique, and 14 errors + 1 timeout that no tier had ever seen.
+#
+# `content/posts` STAYS. It is the CONTENT path, not the built output, and
+# dropping it re-enables raw-markdown link checking over the voice-sacred legacy
+# corpus (scripts/test_permalink_contract.py states this). Its provenance is a
+# dated 2026-04-08 decision record. Deliberately out of scope for #55.
+exclude_path = ["legacy", "node_modules", ".git", "content/posts", "scripts/tests/fixtures"]
 
 # Domains explicitly excluded from link check (allowlist).
 # Add entries with the comment format above. Empty by default.
@@ -185,6 +197,19 @@ exclude = [
   "^https?://(www\\.)?backlinko\\.com(/.*)?$",
   "^https?://(www\\.)?seangoedecke\\.com(/.*)?$",
   "^https?://(www\\.)?gohugo\\.io(/.*)?$",
+  # axios.com, openai.com and lokiwine.co.uk return 403 Forbidden to lychee's
+  # user-agent, same anti-bot class as medium/dl.acm.org above. Surfaced by #55
+  # AC 0.1, the FIRST run of the rendered-link gate over the post corpus, which
+  # had been voided by the `public/blogs` exclude_path entry since blog-priv#62,
+  # so these had never been checked by any tier. Each returns a real response
+  # body under a browser user-agent (axios 4544 B, openai 9971 B, lokiwine
+  # 1041 B, measured 2026-08-02), so the resource exists behind an anti-bot wall
+  # and these are NOT broken links. Cited in content/posts/
+  # every-sme-needs-their-own-harness, prompts-agents-harnesses-whats-next and
+  # for-the-love-of-wine. added: 2026-08-02; expires: 2026-10-31 (90 days)
+  "^https?://(www\\.)?axios\\.com(/.*)?$",
+  "^https?://(www\\.)?openai\\.com(/.*)?$",
+  "^https?://(www\\.)?lokiwine\\.co\\.uk(/.*)?$",
   # Root-relative paths (href="/js/...", href="/legal/...", href="/private/...")
   # are Hugo internal paths that get rewritten at render time. Lychee scans
   # raw markdown and has no Hugo context, so it cannot resolve them without

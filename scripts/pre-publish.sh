@@ -47,15 +47,16 @@
 #                         here and not in CI. blog-priv#63.)
 #   8. Rendered links    (lychee on rendered HTML NOT raw .md — catches broken
 #                         cross-section links + missing assets that markdown-only
-#                         lychee cannot see. CAVEAT: lychee.toml exclude_path
-#                         contains BOTH "public/blogs" AND "content/posts", so
-#                         for a POST target this gate checks zero links and
-#                         still reports PASS, and so does the CI markdown-level
-#                         lychee. NEITHER tier checks a post; post links must be
-#                         verified by hand. This gate only really fires for
-#                         public/hire-hoi/ai-consultancy/<slug>/ per AC 0.4. Both exclusions
-#                         are deliberate and predate blog-priv#55; narrowing
-#                         them is its own scoped change, not a comment fix.)
+#                         lychee cannot see. This is the ONLY tier that checks a
+#                         post's links: "content/posts" stays in lychee.toml
+#                         exclude_path, so CI's markdown-level lychee reports
+#                         0 Total for a post by design. "public/blogs" was in
+#                         exclude_path too until #55, which meant this gate ALSO
+#                         checked zero links and still reported PASS for every
+#                         post: exclude_path voids even the explicit path passed
+#                         below. It now carries a zero-item floor: 0 links is a
+#                         FAILURE, not a pass, because a gate that examines
+#                         nothing must never report success.)
 #   8a.Consulting links  (consulting_link_check: live external-URL liveness)
 #
 # Checks 6+7 added per dotfiles Issue #447 Phase 7 (AP #18 per-shape recipe
@@ -266,18 +267,75 @@ rendered_link_check() {
     fm_slug=$(awk 'NR==1 && /^---/ {f=1; next} f && /^---/ {exit} f' "$POST_FILE" \
         | sed -n 's/^slug:[[:space:]]*//p' | head -n1 | tr -d '"'"'" | tr -d '[:space:]')
     [[ -n "$fm_slug" ]] && slug="$fm_slug"
+    # Which public/ subtree this target's section renders into. Every section
+    # renders to public/<section>/ EXCEPT posts, which [permalinks.page] in
+    # config/_default/hugo.toml maps to /blogs/. Derived from the target rather
+    # than hardcoded so legal/, hire-hoi/, skills/, private/ and community/
+    # targets keep resolving -- the fallback below is their DESIGNED path, not an
+    # error case, so it must not be narrowed to public/blogs/ only.
+    local section expected_prefix
+    section=${TARGET#content/}
+    section=${section%%/*}
+    case "$section" in
+        posts) expected_prefix="public/blogs/" ;;
+        *)     expected_prefix="public/$section/" ;;
+    esac
+
     # /blogs/<slug>/ since blog-priv#62 ([permalinks.page] posts in hugo.toml).
-    rendered="public/blogs/$slug/index.html"
+    rendered="$expected_prefix$slug/index.html"
     if [[ ! -f "$rendered" ]]; then
         printf >&2 'WARN: rendered HTML not at %s — looking for any matching slug\n' "$rendered"
-        rendered=$(find public -path "*/$slug/index.html" -type f 2>/dev/null | head -n1)
-        [[ -z "$rendered" ]] && { printf >&2 'ERR: cannot locate rendered HTML for slug %s\n' "$slug"; return 1; }
+        # A bare `find | head -n1` is not safe here: taxonomy pages share the
+        # slug namespace and sort first. For the real post slug `foundation`,
+        # public/tags/foundation/index.html precedes public/blogs/foundation/
+        # index.html, so the gate would check a tag listing page and report PASS
+        # having never seen the post. Same collision for adventure, dance,
+        # entrepreneurship and trading. Constrain to the target's own section and
+        # reject taxonomy output outright.
+        local candidate
+        rendered=""
+        while IFS= read -r candidate; do
+            case "$candidate" in
+                public/tags/*|public/series/*)
+                    printf >&2 'ERR: refusing taxonomy page %s for slug %s (a term page is not the target)\n' \
+                        "$candidate" "$slug"
+                    continue
+                    ;;
+            esac
+            [[ "$candidate" == "$expected_prefix"* ]] && { rendered="$candidate"; break; }
+        done < <(find public -path "*/$slug/index.html" -type f 2>/dev/null | sort)
+        if [[ -z "$rendered" ]]; then
+            printf >&2 'ERR: cannot locate rendered HTML for slug %s under %s\n' "$slug" "$expected_prefix"
+            return 1
+        fi
     fi
     if ! command -v lychee >/dev/null 2>&1; then
         printf >&2 'ERR: lychee not installed; install via cargo or apt\n'
         return 127
     fi
-    lychee --config lychee.toml --root-dir "$REPO_ROOT/public" --no-progress "$rendered"
+
+    # Zero-item floor. exclude_path voids even an explicitly-passed input and
+    # says so only as "No files found for this input source", which reads like a
+    # missing file and still exits 0 -- that is how this gate reported PASS on
+    # every post from blog-priv#62 to #55 without examining one link. Exit code
+    # alone is therefore not evidence the gate ran; the link COUNT is. Same
+    # fail-closed idiom as check_cta_rendered.py's --min-pages/--min-instances.
+    local out total
+    out=$(lychee --config lychee.toml --root-dir "$REPO_ROOT/public" --no-progress "$rendered" 2>&1)
+    local rc=$?
+    printf '%s\n' "$out"
+    total=$(printf '%s' "$out" | grep -oE '[0-9]+ Total' | head -n1 | cut -d' ' -f1)
+    if [[ -z "$total" ]]; then
+        printf >&2 'ERR: could not parse a link count from lychee output for %s; refusing to report PASS on an unreadable result\n' \
+            "$rendered"
+        return 1
+    fi
+    if (( total == 0 )); then
+        printf >&2 'ERR: rendered-link-liveness examined 0 links in %s. A gate that checks nothing must not pass. Most likely an entry in lychee.toml exclude_path matches this path (it voids even an explicitly-passed file); check exclude_path before assuming the page has no links.\n' \
+            "$rendered"
+        return 1
+    fi
+    return $rc
 }
 run_check "rendered-link-liveness" rendered_link_check
 

@@ -276,19 +276,29 @@ def check_authoring_doc(failures: list[str]) -> None:
 
 
 def check_lychee_exclude(failures: list[str]) -> None:
-    """AC 5.16 - lychee.toml excludes the BUILT path that moved, not the CONTENT
-    path that did not.
+    """AC 5.16 - lychee.toml excludes the CONTENT path, and NOT the built output.
 
     `exclude_path` is stronger than a glob filter: lychee.toml's own header records
     that it voids even an EXPLICIT invocation, and scripts/pre-publish.sh passes the
-    rendered path explicitly. So a stale entry here silently flips what the
+    rendered path explicitly. So an entry here silently flips what the
     rendered-link-liveness gate covers, with nothing asserting it either way.
 
-    Scoped to the exclude_path LINE. The AC's whole-file counts (public/blogs 1,
-    content/posts 1) cannot hold in a file whose convention is to explain every
-    exclusion in prose above it: any comment naming a path inflates them. The
-    `public/posts` half IS asserted file-wide, because there the count is 0 and a
-    mention anywhere would be stale documentation.
+    This assertion was INVERTED until #55. It required `public/blogs` to be present,
+    which is precisely what made the rendered-link gate examine zero links on every
+    post from blog-priv#62 onward while still exiting 0 - the test was holding the
+    defect in place. `public/blogs` is the BUILT output that pre-publish.sh hands to
+    lychee by explicit path, so excluding it voids the only tier that checks a post's
+    rendered links. It must now be ABSENT, and this check fails if it comes back.
+
+    `content/posts` is unchanged and still REQUIRED. It is the CONTENT path, not the
+    built output; dropping it re-enables raw-markdown link checking over the
+    voice-sacred legacy corpus. The two are not interchangeable, which is the
+    confusion that produced the original inversion.
+
+    Scoped to the exclude_path LINE. The AC's whole-file counts cannot hold in a file
+    whose convention is to explain every exclusion in prose above it: any comment
+    naming a path inflates them. The `public/posts` half IS asserted file-wide,
+    because there the count is 0 and a mention anywhere would be stale documentation.
     """
     lychee = ROOT / "lychee.toml"
     if not lychee.is_file():
@@ -302,10 +312,13 @@ def check_lychee_exclude(failures: list[str]) -> None:
     if line is None:
         failures.append("AC 5.16: lychee.toml has no exclude_path line")
         return
-    if "public/blogs" not in line:
-        failures.append("AC 5.16: exclude_path does not exclude the built output at "
-                        "public/blogs, so pre-publish.sh's rendered-link check changes "
-                        "scope silently")
+    if "public/blogs" in line:
+        failures.append("AC 5.16: exclude_path excludes the built output at "
+                        "public/blogs. pre-publish.sh passes that path to lychee "
+                        "explicitly and exclude_path voids even an explicit input, so "
+                        "the rendered-link-liveness gate reports `0 Total` and exits 0 "
+                        "for every post -- a gate that passes having checked nothing. "
+                        "Remove the entry (#55)")
     if "content/posts" not in line:
         failures.append("AC 5.16: exclude_path lost `content/posts`. Content directories "
                         "did NOT move; dropping it re-enables raw-markdown link checking "
@@ -340,29 +353,15 @@ _RETIRED_BUILT_PATH = "public/posts"
 # Adding a legitimate new historical mention means adding it here. That friction IS the
 # control - it forces the one re-read that would have caught the original AC 5.16 miss.
 # Matching the `_EXPECTED_LABELLED_LINES` pinned-exemption idiom already used above.
-_ALLOWED_RETIRED_MENTIONS = {
-    ("docs/AUTHORING.md",
-     "**Neither link tier checks a post.** `lychee.toml` `exclude_path` contains "
-     "**both** `public/blogs` and `content/posts`, so for a post target the rendered "
-     "tier and the CI markdown tier each report `0 Total` and pass without checking "
-     "anything. (`public/blogs` is the BUILT path; blog-priv#62 moved the rendered "
-     "output there from `public/posts`. `content/posts` is the source path and did not "
-     "move.) Measured: a post returns 0 links on both tiers, a consulting page returns "
-     "37 on the rendered tier. The exclusions are deliberate and predate blog-priv#55, "
-     "so **the links in a new post must be checked by hand** before you publish. Do not "
-     "read a green pre-publish run as evidence that a post's links resolve. The same "
-     "caveat is restated in the `CAVEAT:` paragraph of the gate-8 entry in "
-     "`scripts/pre-publish.sh`'s header block (same substance, different wording, so "
-     "check both when either changes)."),
-    ("docs/consulting-launch-checklist.md",
-     "`scripts/pre-publish.sh` check `consulting-link-liveness` runs `lychee` against "
-     "`public/hire-hoi/ai-consultancy/**/index.html` post-Hugo-build. A "
-     "`cal.com/OPERATOR_TODO_REPLACE_BEFORE_LAUNCH/20min-discovery` URL would 404 and "
-     "fail this gate. The `lychee.toml` `exclude_path` was tightened from `public` to "
-     "the blog's built output alone so consulting paths are reachable. That entry is "
-     "now `public/blogs` (blog-priv#62 moved the rendered blog there; it read "
-     "`public/posts` before)."),
-}
+#
+# EMPTY since #55, and that is a real state, not an oversight. Both pinned bodies
+# were rewritten by AC 1.8 and neither needs to name `public/posts` any more, so
+# both tuples were deleted in the same commit. Nothing in this suite asserts that a
+# pin still corresponds to a live line, so an orphaned pin would sit here exempting
+# a sentence that no longer exists, silently re-introducing the stale-pin drift the
+# block exists to prevent. A pin whose body is edited must be re-pinned VERBATIM or
+# deleted; there is no third option.
+_ALLOWED_RETIRED_MENTIONS: set[tuple[str, str]] = set()
 
 
 # Every sentence that defeated a HEURISTIC version of this guard, kept as fixtures. The
