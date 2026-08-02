@@ -115,6 +115,25 @@ MUTATIONS = [
         "scripts/test_check_lychee_expiry.py",
         id="allowlist-block-opens-on-the-wrong-key",
     ),
+    # #55 Stage 5. The Issue added five gate behaviours and registered none of them
+    # here, in the file whose whole premise is that a guard authored in the same pass
+    # as the code it guards cannot be trusted on a green run. Measured at the time:
+    # rewriting the `url:` branch to `&& false` left its own suite at
+    # "3 passed, 3 skipped" -- byte-identical to the control.
+    pytest.param(
+        "scripts/pre-publish.sh",
+        '    if [[ -n "$fm_url" ]]; then',
+        '    if [[ -n "$fm_url" ]] && false; then',
+        "scripts/test_pre_publish_rendered_path.py",
+        id="frontmatter-url-override-silently-ignored",
+    ),
+    pytest.param(
+        "scripts/check_social_cards.py",
+        '    if not any(public.rglob("index.html")):',
+        "    if False:",
+        "scripts/test_check_social_cards.py",
+        id="non-build-passes-the-rendered-og-image-tier",
+    ),
     pytest.param(
         "scripts/check_wordcount.py",
         '_HTML_COMMENT_RE = re.compile(r"<!--(?:(?!<!--)[\\s\\S])*?-->")',
