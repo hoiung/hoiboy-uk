@@ -6,14 +6,18 @@ Canonical Python copy of the rules described in the human-readable companion
 `dotfiles/voice/base/VOICE_PROFILE.md` Section 8 (anti-vocabulary) and Section 19
 (banned phrases / AI tells the operator never makes).
 
-This module is consumed by:
-  - dotfiles/SST3/scripts/check-ai-writing-tells.py  (canonical hook)
-  - hoiboy-uk/scripts/check-ai-writing-tells.py      (vendored byte-identical)
-  - hoiboy-uk/scripts/voice_rules.py                 (vendored byte-identical)
+This module is consumed by `check-ai-writing-tells.py` — the canonical hook here,
+plus a byte-identical vendored copy of BOTH files in every voice-guarded consumer.
+The consumer set is NOT enumerated here: it grew with #560 and would rot again on
+the next voice-guarded consumer, and this file is itself vendored to a PUBLIC
+mirror, so a literal list would publish the private consumer names. Read the
+`voice_rules.py` mirrors in `SST3/drift-manifest.json` for the current set — the
+manifest is the authority, the same rule this file already applies further down.
 
-Drift between canonical and vendored copies is enforced by a `cmp -s` bash
-pre-commit hook in hoiboy-uk. There is no parsed mirror of VOICE_PROFILE.md;
-the markdown is documentation, this file is the executable canonical.
+Drift between canonical and vendored copies is enforced by `check-mirror-drift.py`
+(manifest-driven), wired as a pre-commit hook in each consumer. There is no parsed
+mirror of VOICE_PROFILE.md; the markdown is documentation, this file is the
+executable canonical.
 
 Issue: hoiung/dotfiles#404
 """

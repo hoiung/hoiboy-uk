@@ -120,15 +120,30 @@ def has_voice_prose(body: str) -> bool:
       An author who wants site copy guarded must wrap it in the markers
       DELIBERATELY — nothing forces it.
 
-      Widening the trigger to `we|our|us` is a real trade-off, not a free
-      fix: it re-introduces the same false-positive class the KEEP_LIST
-      removal above eliminated, because third-party documents (codes of
-      conduct, job descriptions, quoted policy) are written in exactly that
-      register. It is therefore left as an operator decision rather than
-      taken unilaterally. The corpus measurement behind that call is
-      recorded on the private tracking Issue, not here — this file is
-      vendored VERBATIM (`transforms: []`) to a PUBLIC consumer repo, so it
-      must never name a private repo or quote a private-corpus statistic.
+      SCOPE OF THAT CLAIM: "scanned by NEITHER hook" describes the pair AS
+      WIRED in the consumers today, NOT the limit of the tooling. It is not
+      the whole remedy space, and an earlier revision of this docstring was
+      wrong to imply it was. `check-ai-writing-tells.py` already ships a
+      `--structural` flag that deliberately bypasses marker-gating and reads
+      the WHOLE file, so its structural detectors DO fire on unmarked
+      third-person / first-person-plural prose. Measured, on unmarked
+      third-person site copy: without the flag the scan exits 0; with it the
+      same file exits 1 on a structural tell. No consumer currently passes
+      the flag, so turning it on is a per-repo config choice with a
+      fleet-consistency question attached — it is a real option, not a
+      no-op, and it is NOT the regex change described next.
+
+      Widening the trigger to `we|our|us` is a separate and much bigger
+      trade-off, not a free fix: it re-introduces the same false-positive
+      class the KEEP_LIST removal above eliminated, because third-party
+      documents (codes of conduct, job descriptions, quoted policy) are
+      written in exactly that register, and it changes behaviour in every
+      repo this file is vendored to. It is therefore left as an operator
+      decision rather than taken unilaterally. The corpus measurement behind
+      that call is recorded on the private tracking Issue, not here — this
+      file is vendored VERBATIM (`transforms: []`) to a PUBLIC consumer
+      repo, so it must never name a private repo or quote a private-corpus
+      statistic.
     """
     return bool(
         _FIRST_PERSON_RE.search(body) or _FIRST_PERSON_LOWER_RE.search(body)
