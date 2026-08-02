@@ -363,6 +363,14 @@ jobs:
       - name: Lychee exclude_path governance
         run: python3 -m pytest scripts/test_lychee_exclude_path.py -q
 
+      # #55, Ralph Tier 2. rendered-link-liveness reads a page's BUILT html, and
+      # getting that path wrong has failed three ways, each passing something
+      # rather than erroring: a taxonomy page sorting first, a section whose url
+      # prefix differs (posts -> /blogs/), and a frontmatter url: override that
+      # replaces the whole path. This pins the resolution contract.
+      - name: Rendered-path resolution contract
+        run: python3 -m pytest scripts/test_pre_publish_rendered_path.py -q
+
       # blog-priv#62: posts and the 7 category landings moved under /blogs/, so
       # these paths are the NEW contract. The retired ones are asserted too, from
       # the opposite direction: they must NOT be built, or a stale template would

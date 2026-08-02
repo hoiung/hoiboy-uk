@@ -267,6 +267,21 @@ rendered_link_check() {
     fm_slug=$(awk 'NR==1 && /^---/ {f=1; next} f && /^---/ {exit} f' "$POST_FILE" \
         | sed -n 's/^slug:[[:space:]]*//p' | head -n1 | tr -d '"'"'" | tr -d '[:space:]')
     [[ -n "$fm_slug" ]] && slug="$fm_slug"
+    # A frontmatter `url:` overrides the WHOLE path, not merely the slug. Hugo
+    # serves the page at exactly that URL, so neither the section prefix nor the
+    # slug describes where it lands, and both derivations below are wrong for it.
+    # content/community/agit-thanks/ sets url: /community/asians-gingers-in-tech/
+    # thanks/ and renders two levels deeper under a DIFFERENT parent, so
+    # slug resolution looks for public/community/agit-thanks/index.html (absent)
+    # and the find fallback cannot rescue it either -- the real leaf segment is
+    # `thanks`, which never matches the slug `agit-thanks`. The gate therefore
+    # could not publish that page at all. Found by Ralph Tier 2 on #55, and it
+    # matters because that page is one of the 18 AGIT paths AC 3.2 requires be
+    # link-checked. Read from the same frontmatter slice as `slug:` above, so
+    # `url:` in body prose cannot hijack it.
+    local fm_url
+    fm_url=$(awk 'NR==1 && /^---/ {f=1; next} f && /^---/ {exit} f' "$POST_FILE" \
+        | sed -n 's/^url:[[:space:]]*//p' | head -n1 | tr -d '"'"'" | tr -d '[:space:]')
     # Which public/ subtree this target's section renders into. Every section
     # renders to public/<section>/ EXCEPT posts, which [permalinks.page] in
     # config/_default/hugo.toml maps to /blogs/. Derived from the target rather
@@ -281,6 +296,19 @@ rendered_link_check() {
         *)     expected_prefix="public/$section/" ;;
     esac
 
+    # A `url:` override is authoritative: resolve straight to it and do NOT fall
+    # through to the slug search, which would look under the wrong parent and, if
+    # some unrelated page happened to share the slug, could check the wrong file.
+    if [[ -n "$fm_url" ]]; then
+        rendered="public/${fm_url#/}"
+        rendered="${rendered%/}/index.html"
+        if [[ ! -f "$rendered" ]]; then
+            printf >&2 'ERR: frontmatter url: %s resolves to %s, which does not exist. Rebuild with: hugo --gc --minify -e production ... or correct the override.\n' \
+                "$fm_url" "$rendered"
+            return 1
+        fi
+        printf 'rendered-link-liveness: url: override -> %s\n' "$rendered"
+    else
     # /blogs/<slug>/ since blog-priv#62 ([permalinks.page] posts in hugo.toml).
     rendered="$expected_prefix$slug/index.html"
     if [[ ! -f "$rendered" ]]; then
@@ -305,9 +333,11 @@ rendered_link_check() {
             [[ "$candidate" == "$expected_prefix"* ]] && { rendered="$candidate"; break; }
         done < <(find public -path "*/$slug/index.html" -type f 2>/dev/null | sort)
         if [[ -z "$rendered" ]]; then
-            printf >&2 'ERR: cannot locate rendered HTML for slug %s under %s\n' "$slug" "$expected_prefix"
+            printf >&2 'ERR: cannot locate rendered HTML for slug %s under %s. If this page carries a frontmatter url: override, the override is what decides its path.\n' \
+                "$slug" "$expected_prefix"
             return 1
         fi
+    fi
     fi
     if ! command -v lychee >/dev/null 2>&1; then
         printf >&2 'ERR: lychee not installed; install via cargo or apt\n'
