@@ -19,7 +19,11 @@
   order-dependent and non-deterministic. Reach is a static property of the
   corpus: same input, same answer, whatever order the pages render in.
 
-  COST. One O(n^2) pass, 80 posts -> 6400 tag intersections, computed once per
+  COST. One O(n^2) pass. 81 posts today -> 6561 loop iterations and 6480 actual
+  intersect calls (n*n and n*(n-1); the diagonal is skipped by the `ne $url
+  $other` guard). Re-derive both from the post count rather than scaling the
+  numbers here, which were wrong for a whole release: they read 80 and 6400,
+  which was neither the corpus size nor n^2 of it. Computed once per
   build because partialCached keys it on a constant. Do NOT call this from a
   bare `partial` - that would run it once per page and make it O(n^3).
 */ -}}
