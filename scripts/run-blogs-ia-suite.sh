@@ -69,7 +69,18 @@ fi
 # Staleness. A tree built before the most recent source edit makes every one of
 # the 8 tests above assert against output that no longer corresponds to the
 # sources being pushed -- they pass, and prove nothing about this push.
-newest_src=$(find content layouts config assets -type f -newer public/index.html -print -quit 2>/dev/null)
+#
+# share-card.* is excluded deliberately. scripts/pre-publish.sh REGENERATES those
+# PNGs on every run (and `git checkout --` to revert them bumps the mtime again),
+# so an author who follows docs/AUTHORING.md and runs pre-publish.sh before
+# pushing would trip a STALE failure caused entirely by a generated artifact.
+# A gate that fires on the workflow it is documented alongside gets bypassed with
+# SKIP=, which is worse than not having it. Excluding them costs nothing here:
+# these 8 tests assert URL structure, redirects, hub listing and taxonomy from
+# rendered HTML, none of which depends on card image bytes. Card freshness is
+# gate 6c's job (scripts/check_social_cards.py --built), not this suite's.
+newest_src=$(find content layouts config assets -type f \
+    ! -name 'share-card.*' -newer public/index.html -print -quit 2>/dev/null)
 if [[ -n "$newest_src" ]]; then
     explain_public "ERR: ./public is STALE -- $newest_src is newer than public/index.html."
     exit 1
