@@ -62,7 +62,18 @@ base_url = "https://hoiboy.uk"
 # dropping it re-enables raw-markdown link checking over the voice-sacred legacy
 # corpus (scripts/test_permalink_contract.py states this). Its provenance is a
 # dated 2026-04-08 decision record. Deliberately out of scope for #55.
-exclude_path = ["legacy", "node_modules", ".git", "content/posts", "scripts/tests/fixtures"]
+#
+# The VCS entry is `(^|/)\.git(/|$)`, not `.git` (#55). As a bare `.git` it was
+# the any-character defect this header warns about, and it silently voided all
+# 18 tracked `agit` paths: the AGIT consent surfaces under content/legal and
+# content/community, docs/runbooks/agit-erasure.md, and the rest. Measured on
+# content/community/agit-thanks/index.md: 0 Total before, 11 Total after.
+# The `(^|/)` and `(/|$)` boundaries are load-bearing and a plain `^` anchor is
+# NOT a substitute -- CI passes `./**/*.md`, so a real VCS path arrives as
+# `./.git/...` and `^\.git` does not match it, which disables the exclusion
+# rather than tightening it. Measured on ./.git/hooks/note.md: `^\.git` gives
+# 1 Total (leaked), `(^|/)\.git(/|$)` gives 0 Total (excluded).
+exclude_path = ["legacy", "node_modules", "(^|/)\\.git(/|$)", "content/posts", "scripts/tests/fixtures"]
 
 # Domains explicitly excluded from link check (allowlist).
 # Add entries with the comment format above. Empty by default.
