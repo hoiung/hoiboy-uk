@@ -4,7 +4,7 @@ date: 2026-07-18T20:00:00+01:00
 categories: [dance]
 tags: [zouk, technique, timing, lead-and-follow, social-dance, fundamentals]
 slug: brazilian-zouk-basic-timing-who-steps-first
-description: "The follow always steps first and the lead follows within split seconds. Most dancers have never been taught it, and it is why the flow keeps breaking."
+description: "The follower always steps first and the leader follows within split seconds. Most dancers have never been taught it, and it is why the flow keeps breaking."
 ---
 
 <!-- iamhoi -->
@@ -13,13 +13,13 @@ Dancers who don't know the fundamental rules of Brazilian Zouk tend to make thes
 
 Do you know who steps first when you are being led?
 
-Does the lead step first? Does the follow step after feeling the signal direction? Or do they both step at the same time?
+Does the leader step first? Does the follower step after feeling the signal direction? Or do they both step at the same time?
 
 I wonder how many of you even know this...
 
 The answer is.
 
-The follow always steps first, and within split seconds the lead would step.
+The follower always steps first, and within split seconds the leader would step.
 
 ## Who leads the direction?
 
@@ -39,13 +39,13 @@ Common pitfall, the followers. They do not understand or know this rule, so they
 
 ## Do you know why this timing is important?
 
-It's a conversation, inviting each other to speak. We can't both be speaking at the same time otherwise it clashes. As a lead, I would have shown intention of any directional changes, and we need to listen for the follow to have made that commitment.
+It's a conversation, inviting each other to speak. We can't both be speaking at the same time otherwise it clashes. As a leader, I would have shown intention of any directional changes, and we need to listen for the follower to have made that commitment.
 
 Unfortunately, this is one of those basic rules in Brazilian Zouk that most dancers don't know. This is the basic understanding of its fundamental design, how partner dance foundation works, and how the two dancers communicate through [listening to each other's body](/blogs/become-the-dance-listener/) and weight transfer to be on time.
 
 ## Yes, I break this rule myself
 
-You will still find times of me having the step first as a lead. It's not because I don't know this fundamental rule. It's because I have to break this rule, due to the fact the follow does not know this and would not step first unless I show the commitment of the first step instead. So now I am slightly off time as a lead.
+You will still find times of me having the step first as a leader. It's not because I don't know this fundamental rule. It's because I have to break this rule, due to the fact the follower does not know this and would not step first unless I show the commitment of the first step instead. So now I am slightly off time as a leader.
 
 Another timing rule is, as a leader, we are supposed to be slightly leading ahead of time. So that when the follower steps, it lands on the beat, on the correct timing. It's fractional, and it should be unnoticeable. But I am exaggerating so you get the concept in your head.
 
@@ -59,7 +59,7 @@ I wonder how many of you even know this?
 
 It depends... If a leader is blocking per step, you have to listen every step as a follower. However. What is the default?
 
-By default rule of the fundamentals, Brazilian Zouk is 3 steps per 4 counts. Leaders need to listen that the follows have finished on the third step. Followers need to stop and listen that the lead has finished on their third step.
+By default rule of the fundamentals, Brazilian Zouk is 3 steps per 4 counts. Leaders need to listen that the followers have finished on the third step. Followers need to stop and listen that the leader has finished on their third step.
 
 Do you know why this is important?
 
@@ -81,7 +81,7 @@ This is why I hate it when ignorant dancers say it's easy. They don't go to clas
 
 ## Final questions to think about
 
-I'll wrap this up with some final questions to think about, because it's one of the most common mistakes both leaders and follows make when it comes to head movements. It follows the same fundamental rules I have discussed in this blog. Let's see if you've learned anything from here and understood it.
+I'll wrap this up with some final questions to think about, because it's one of the most common mistakes both leaders and followers make when it comes to head movements. It follows the same fundamental rules I have discussed in this blog. Let's see if you've learned anything from here and understood it.
 
 **Question for followers.** The leader initiates and starts a head movement intention, and shows which rotation direction to go. As a follower you do head movements.
 
