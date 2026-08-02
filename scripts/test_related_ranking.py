@@ -62,6 +62,10 @@ BOX_SIZE = 5
 # is exactly the hole check_tie_break exists to cover.
 HUB_CAP = 30
 
+# The multiplier in related-posts.html's `reach * 1000 + date-rank` sort key.
+# Mirrored here so check_sort_key_bound fails loudly if the corpus outgrows it.
+SORT_KEY_MULTIPLIER = 1000
+
 
 # The posts AC 1.5 names. They are PREFERENCES, not requirements: the anchor
 # falls back to whatever else in the corpus carries the same property, so a post
@@ -374,6 +378,33 @@ def check_box_is_posts_only(built: Path, failures: list[str]) -> int:
     return scanned
 
 
+def check_sort_key_bound(meta, failures: list[str]) -> None:
+    """The template's sort key stays unique while the corpus is under the multiplier.
+
+    `related-posts.html` sorts on `reach * 1000 + date-rank`, where date-rank is
+    the candidate's index in the date-sorted list. That key is unique per
+    candidate ONLY while there are fewer than 1000 posts. Past the bound two
+    candidates can collide and reach silently stops deciding the tie.
+
+    The failure is graded, not loud, which is why it needs a gate rather than a
+    comment: it starts as links REORDERING inside a box, which no other check
+    here can see, and only becomes a changed link SET, which they can, once a
+    collision straddles the 5-link cap. So the first symptom ships silently.
+
+    81 posts today, so this cannot fire yet. It exists to make the boundary loud
+    rather than leaving it to a comment nobody re-reads at post 1000.
+    """
+    if len(meta) >= SORT_KEY_MULTIPLIER:
+        failures.append(
+            f"the corpus has reached {len(meta)} posts, at or past the "
+            f"{SORT_KEY_MULTIPLIER} multiplier in related-posts.html's "
+            f"`reach * {SORT_KEY_MULTIPLIER} + date-rank` sort key. Two candidates "
+            f"can now collide on that key, which silently stops reach from "
+            f"deciding ties and reorders links inside boxes. Widen the multiplier "
+            f"in layouts/_partials/related-posts.html to exceed the post count."
+        )
+
+
 def check_edge_cases(meta, rn_map, failures: list[str]) -> list[str]:
     """AC 1.4 + AC 1.5: the named edge cases still render a full box.
 
@@ -450,6 +481,7 @@ def main(argv: list[str] | None = None) -> int:
     tie_buckets = check_tie_break(meta, rn_map, failures)
     hub, hub_count = check_hub_cap(meta, rn_map, failures)
     scanned = check_box_is_posts_only(built, failures)
+    check_sort_key_bound(meta, failures)
     covered = check_edge_cases(meta, rn_map, failures)
 
     if failures:
