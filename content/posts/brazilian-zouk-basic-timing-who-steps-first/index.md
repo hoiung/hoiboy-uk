@@ -75,6 +75,8 @@ So I still stand with my reasoning. If you plan to break the rules, you need to 
 
 Brazilian Zouk, or partner dance, or ballroom dance, isn't simply thinking it's a leader and follower where the leader leads and the follower follows. Each role has fundamental rules and responsibilities that they each own. I wish learning it was that simple. These are fundamental rules that make the partnership work.
 
+By not learning the fundamental rules properly, you're actually making your dance life harder. The learning is harder because you don't have the foundation to build upon. You need the understanding of how the dance works together, otherwise everything falls apart.
+
 This is why I hate it when ignorant dancers say it's easy. They don't go to class. And they wonder why no one wants to dance with them. No one asks you to dance because you are being held accountable for not knowing the fundamental rules, which makes it difficult, stressful, and challenging to dance with you. It's not fun, for me and you, or anyone else. We are held accountable for our lives, live the way it is, or change. Choose wisely.
 
 ## Final questions to think about
