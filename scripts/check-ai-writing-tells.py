@@ -119,7 +119,7 @@ EXEMPT_PATHS_CV: tuple[str, ...] = (
     # an iamhoi region of a NON-base voice file (voice/tones/, voice/CLASSIFICATION.md,
     # future voice/ prose) — those are marker-driven per the scan_file matrix.
     "voice/base/",
-    # Raw ground-truth corpus — relocated from job-hunter (the old cv-linkedin/
+    # Raw ground-truth corpus — relocated from the voice-doc consumer (the old cv-linkedin/
     # voice corpus) to dotfiles/voice/corpus/ per dotfiles#517 Phase F (operator-
     # approved override of the #513 PRIVATE-STAY). Never CV-prose to scan (may
     # contain authentic "banned" words used sincerely).
@@ -129,7 +129,7 @@ EXEMPT_PATHS_CV: tuple[str, ...] = (
     "cv-linkedin/MASTER_PROFILE.md",
     "cv-linkedin/METRIC_PROVENANCE.md",
     # cv-linkedin/VOICE_PROFILE.md removed (#513): relocated to dotfiles/voice/base/ (covered
-    # by the "voice/base/" prefix above); the job-hunter pointer stub at the old path is iamhoi-exempt.
+    # by the "voice/base/" prefix above); the voice-doc consumer's pointer stub at the old path is iamhoi-exempt.
     "cv-linkedin/PERSONA_CONTEXT.md",
     "cv-linkedin/INTERVIEW_PREP_BANK.md",
     "cv-linkedin/HIRER_PROFILE.md",

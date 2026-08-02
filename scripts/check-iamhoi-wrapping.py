@@ -92,7 +92,7 @@ def has_marker(body: str) -> bool:
 
 
 def has_voice_prose(body: str) -> bool:
-    """Return True if body contains first-person prose (I, I'm, I've, Hoi, my, me).
+    """Return True if body contains first-person SINGULAR prose (I, I'm, I've, Hoi, my, me).
 
     First-person pronouns are the only detection signal. The KEEP_LIST
     vocabulary path was removed after Issue #3 Sonnet review surfaced false-
@@ -100,6 +100,35 @@ def has_voice_prose(body: str) -> bool:
     (`leverage`, `robust`, `coach`, `back to basics`, etc) would FAIL despite
     not being Hoi-voice. Hoi's prose is reliably first-person; KEEP_LIST
     without first-person is generic professional vocabulary.
+
+    KNOWN COVERAGE BOUNDARY (dotfiles#560 Ralph Tier-3) — read this before
+    relying on the gate for a WEBSITE rather than a blog/CV:
+
+      The trigger is first-person SINGULAR only. First-person PLURAL
+      ("we", "our", "us") and THIRD-PERSON copy ("The charity delivers…")
+      raise no signal, so this checker never demands markers around them.
+      And `check-ai-writing-tells.py --mode blog` scans ONLY inside
+      `<!-- iamhoi --> … <!-- iamhoiend -->` regions. Composed, that means
+      unmarked third-person / first-person-plural prose is scanned by
+      NEITHER hook — it is not a bug in either one, it is the shape of the
+      pair. Frontmatter is stripped before the check, so `title:` and
+      `description:` are likewise never scanned.
+
+      That boundary is harmless for the blog/CV surfaces this was built for
+      (Hoi writes those in the first person singular). It matters for a
+      marketing site, whose dominant register is exactly the uncovered one.
+      An author who wants site copy guarded must wrap it in the markers
+      DELIBERATELY — nothing forces it.
+
+      Widening the trigger to `we|our|us` is a real trade-off, not a free
+      fix: it re-introduces the same false-positive class the KEEP_LIST
+      removal above eliminated, because third-party documents (codes of
+      conduct, job descriptions, quoted policy) are written in exactly that
+      register. It is therefore left as an operator decision rather than
+      taken unilaterally. The corpus measurement behind that call is
+      recorded on the private tracking Issue, not here — this file is
+      vendored VERBATIM (`transforms: []`) to a PUBLIC consumer repo, so it
+      must never name a private repo or quote a private-corpus statistic.
     """
     return bool(
         _FIRST_PERSON_RE.search(body) or _FIRST_PERSON_LOWER_RE.search(body)

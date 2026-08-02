@@ -250,7 +250,9 @@ NEGATION_PATTERN: re.Pattern[str] = re.compile(
 #   "this is the way to build X"  -> followed by "to ...", not a clause end
 # The explicit this|that prefix + the clause-end lookahead keep the rule from
 # false-positiving on natural language (which would otherwise break commits in
-# the vendored consumer repos: hoiboy-uk / job-hunter / blog-priv).
+# the vendored consumer repos: hoiboy-uk + the voice-guarded private ones —
+# see this file's mirrors in drift-manifest.json rather than a count here,
+# which #560 grew and would rot again on the next voice-guarded consumer).
 MOTTO_CANONICAL: str = "This is the Way"
 # group(1)=leading italic marker, group(2)=the phrase (any case), group(3)=trailing
 # italic marker; the lookahead requires a clause boundary right after the phrase.
@@ -282,8 +284,8 @@ def motto_is_correct(open_marker: str, phrase: str, close_marker: str) -> bool:
 # phrase. The operator repeatedly had it stripped/collapsed by agents and was
 # emphatic ("I will not accept any other way of writing it", "everywhere").
 #
-# SCOPE: this is a CV-MODE-ONLY check (job-hunter recruiter-facing docs). The
-# blog casual voice (hoiboy-uk / blog-priv) legitimately uses the bare forms and
+# SCOPE: this is a CV-MODE-ONLY check (the voice-doc consumer's recruiter-facing docs). The
+# blog casual voice (hoiboy-uk + the private blog-staging consumer) legitimately uses the bare forms and
 # has voice-sacred legacy posts, so check-ai-writing-tells.py runs this ONLY in
 # --mode cv (never blog). See scan_file / _check_lines(check_zero_to_one=...).
 #
@@ -322,7 +324,7 @@ def zero_to_one_is_correct(matched_text: str) -> bool:
 # canonical source / canonical form) is used heavily across the harness docs and
 # must NEVER be flagged — so no re.IGNORECASE here.
 #
-# SCOPE: CV-MODE only (job-hunter recruiter/client copy), same gate as the
+# SCOPE: CV-MODE only (the voice-doc consumer's recruiter/client copy), same gate as the
 # zero-to-one rule. Not run in blog mode.
 #
 # The pattern greedily grabs the " (Ubuntu[ Linux])" suffix when present, so a
