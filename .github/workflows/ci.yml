@@ -342,27 +342,17 @@ jobs:
             scripts/test_redirects_coverage.py scripts/test_hub_listing.py \
             scripts/test_page_url_permalinks.py scripts/test_section_keyed_regression.py \
             scripts/test_taxonomy_cleanup.py scripts/test_emdash_hub_coverage.py \
-            scripts/readnext_parse.py scripts/test_related_ranking.py -q
+            scripts/readnext_parse.py scripts/test_related_ranking.py \
+            tests/test_taxonomy_terms_match_build.py -q
 
       # #55 AC 2.1/2.4: the suite above now ALSO runs pre-push, via the
       # blogs-ia-suite hook in .pre-commit-config.yaml. Two callers naming two
       # lists is how a test ends up enforced in one place and silently unrun in
       # the other, so this asserts the two lists are set-equal, and that the
-      # runner still names the 8 files that need a built ./public in its
+      # runner still names the files that need a built ./public in its
       # missing-tree message rather than emitting a traceback.
       - name: Blogs IA pre-push gate unit tests
         run: python3 -m pytest scripts/test_run_blogs_ia_suite.py -q
-
-      # #55 Stage 5. validate_internal_links.py resolves /tags/, /series/,
-      # /hire-hoi/, /legal/ and /community/ links by MODELLING what Hugo serves
-      # (urlize over frontmatter terms; page bundles plus url:/slug: overrides).
-      # A model can drift from the thing it models, and this one is what decides
-      # whether a pre-commit hook REJECTS a link, so drift means blocking a
-      # correct link. Compares the derivation against the built public/ tree,
-      # which is why it runs here rather than beside the other unit tests: it
-      # needs the Hugo build above.
-      - name: Internal-link resolver parity with the built tree
-        run: python3 -m pytest tests/test_taxonomy_terms_match_build.py -q
 
       # #55 Phase 4, the root-cause gate. exclude_path is a list of unanchored
       # REGEXES, and an over-broad entry fails silently: lychee reports 0 Total
