@@ -473,8 +473,30 @@ jobs:
       - name: Lychee link check
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --config lychee.toml './**/*.md'
+          args: --config lychee.toml --format json --output ./lychee-out.json './**/*.md'
           fail: true
+
+      # Zero-link floor (#55 Stage 5). `fail: true` fails on link ERRORS, not on a run
+      # that examined nothing -- so if exclude_path widens, or the glob stops matching,
+      # lychee reports `0 Total` and exits 0 and this step goes green having checked no
+      # links at all. That is the exact defect this Issue exists to close, and this was
+      # its third lychee caller and the only unfloored one (pre-publish.sh's two gates
+      # were floored in Phase 1 / Ralph Tier 3).
+      - name: Lychee examined a non-zero number of links
+        if: always()
+        run: |
+          test -f ./lychee-out.json || { echo "::error::lychee produced no JSON output"; exit 1; }
+          python3 - <<'PY'
+          import json, sys
+          d = json.load(open("./lychee-out.json"))
+          total, errors, excl = d["total"], d["errors"], d["excludes"]
+          print(f"lychee corpus: {total} total, {excl} excluded, {errors} errors")
+          if total == 0:
+              print("::error::lychee examined 0 links. A link check that checks nothing "
+                    "must not pass. Most likely an exclude_path entry widened, or "
+                    "'./**/*.md' stopped matching.")
+              sys.exit(1)
+          PY
 
       - name: Cache hygiene
         if: always()
