@@ -46,6 +46,7 @@ NEEDS_PUBLIC=(
     scripts/test_taxonomy_cleanup.py
     scripts/readnext_parse.py
     scripts/test_related_ranking.py
+    tests/test_taxonomy_terms_match_build.py
 )
 
 explain_public() {
@@ -67,7 +68,7 @@ if [[ ! -f public/index.html ]]; then
 fi
 
 # Staleness. A tree built before the most recent source edit makes every one of
-# the 8 tests above assert against output that no longer corresponds to the
+# the tests above assert against output that no longer corresponds to the
 # sources being pushed -- they pass, and prove nothing about this push.
 #
 # share-card.* is excluded deliberately. scripts/pre-publish.sh REGENERATES those
