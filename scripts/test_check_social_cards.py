@@ -823,3 +823,50 @@ def test_the_guard_reports_what_it_walked(tmp_path):
         f"a clean run must state its walk counts, or it is indistinguishable from "
         f"one that examined nothing. stdout={r.stdout}"
     )
+
+
+def test_built_walk_floor_fails_when_zero_rendered_pages_are_opened(tmp_path):
+    """Instance six of the vacuous-pass class (#55 Stage 5).
+
+    verify_rendered() returns silently when the rendered file is absent and
+    --strict is off, and the CONTENT-tree floor above cannot see that: it counts
+    pages under content/, which is never empty. So an empty or partial public/
+    (interrupted build, wrong --destination, a section that stopped rendering)
+    made every page take the silent return -- zero HTML files opened, zero
+    violations -- and the guard printed
+    "OK (source + rendered; 103 singular pages, 85 posts)" and exited 0.
+
+    Both live callers omit --strict (.github/workflows/ci.yml and
+    scripts/pre-publish.sh), so strict was never the compensating control.
+    """
+    content = tmp_path / "content"
+    _bundle(content, "posts/ok")
+    empty_build = tmp_path / "public"
+    empty_build.mkdir()
+
+    r = _floor_run(content, _headers(tmp_path, ""), "--built", str(empty_build))
+    assert r.returncode == 1, (
+        "a --built run that opened zero rendered pages examined nothing and must "
+        f"not report OK. stdout={r.stdout} stderr={r.stderr}"
+    )
+    assert "rendered-vacuous" in (r.stdout + r.stderr), (
+        f"the failure must name the vacuity, not some incidental violation. "
+        f"stdout={r.stdout} stderr={r.stderr}"
+    )
+
+
+def test_built_walk_floor_stays_quiet_when_pages_really_are_rendered(tmp_path):
+    """The floor must not fire on a genuine build, or it is just a broken gate."""
+    content = tmp_path / "content"
+    _bundle(content, "posts/ok")
+    build = tmp_path / "public"
+    (build / "blogs" / "ok").mkdir(parents=True)
+    (build / "blogs" / "ok" / "index.html").write_text(
+        '<meta property="og:image" content="/blogs/ok/share-card.png">'
+    )
+
+    r = _floor_run(content, _headers(tmp_path, ""), "--built", str(build))
+    assert "rendered-vacuous" not in (r.stdout + r.stderr), (
+        f"a build with rendered pages must not trip the vacuity floor. "
+        f"stdout={r.stdout} stderr={r.stderr}"
+    )
