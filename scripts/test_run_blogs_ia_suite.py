@@ -212,3 +212,106 @@ def test_no_test_files_is_a_usage_error(tmp_path: Path):
         "a runner invoked with no test files must be a usage error, not a silent "
         "zero-test PASS -- that is the vacuous-gate class this whole issue is about."
     )
+
+
+def _tree(tmp_path: Path) -> Path:
+    """A minimal repo-shaped tree with a built ./public and all six source roots."""
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts" / "run-blogs-ia-suite.sh").write_bytes(RUNNER.read_bytes())
+    (tmp_path / "public").mkdir()
+    (tmp_path / "public" / "index.html").write_text("<html></html>")
+    for root in ("content", "layouts", "config", "assets", "data", "static"):
+        (tmp_path / root).mkdir()
+    (tmp_path / "content" / "post.md").write_text("# a post")
+    (tmp_path / "data" / "consulting.yaml").write_text("offer: {}\n")
+    (tmp_path / "static" / "_redirects").write_text("/old /new 301\n")
+    # The build must be the NEWEST thing in the tree, or `find -newer ... -quit`
+    # returns whichever source file happened to be written last and the test proves
+    # nothing about the root it names. Stamp it after the sources exist.
+    (tmp_path / "public" / "index.html").touch()
+    return tmp_path
+
+
+def _age(tmp_path: Path, rel: str, seconds: int = 10) -> None:
+    """Make `rel` look `seconds` newer than the build, without changing its bytes."""
+    import os
+
+    st = (tmp_path / "public" / "index.html").stat()
+    os.utime(tmp_path / rel, (st.st_atime + seconds, st.st_mtime + seconds))
+
+
+@pytest.mark.parametrize("root,rel", [
+    ("data", "data/consulting.yaml"),
+    ("static", "static/_redirects"),
+])
+def test_every_hugo_source_root_is_scanned(tmp_path: Path, root: str, rel: str):
+    """Hugo reads SIX roots; the scan named four, so two were invisible (#55 Stage 5).
+
+    data/ is live via layouts/_shortcodes/consulting-cta.html (`hugo.Data.consulting`)
+    and static/_redirects is exactly what scripts/test_redirects_coverage.py asserts
+    against the BUILT tree -- so editing either and pushing without a rebuild ran the
+    suite against output that no longer corresponded to the sources being pushed.
+    """
+    t = _tree(tmp_path)
+    (t / rel).write_text("# a real edit\n")     # content CHANGE, not just a touch
+    _age(t, rel)
+
+    r = _run(t)
+    assert r.returncode == 1, (
+        f"an unbuilt edit under {root}/ must be STALE, but the scan did not see it. "
+        f"stdout:\n{r.stdout}\nstderr:\n{r.stderr}"
+    )
+    assert rel in r.stderr, (
+        f"the gate must NAME {rel}; naming some other file means it tripped for an "
+        f"unrelated reason and this test proves nothing. stderr:\n{r.stderr}"
+    )
+
+
+def test_a_touched_but_unchanged_file_is_not_stale(tmp_path: Path):
+    """mtime is not a proxy for 'edited' (#55 Stage 5).
+
+    Running this hook through pre-commit rewrites unrelated working-tree files,
+    bumping mtimes with byte-identical content. That made a PASS invalidate its own
+    precondition: the next run reported STALE on an unchanged tree and demanded a
+    rebuild that changed nothing. Because pre-publish.sh always leaves a regenerated
+    share-card.png unstaged, the documented author workflow produced it reliably --
+    and the workaround is the SKIP= bypass the script's own comment calls worse than
+    having no gate at all.
+    """
+    t = _tree(tmp_path)
+    _run(t)                                     # first pass writes the content stamp
+    assert (t / "public" / ".blogs-ia-srchash").is_file(), (
+        "a passing run must record the stamp, or the next run cannot tell a touch "
+        "from an edit"
+    )
+
+    _age(t, "content/post.md")                  # mtime moves, bytes do not
+
+    r = _run(t)
+    assert "STALE" not in r.stderr, (
+        "a file whose mtime moved but whose CONTENT is identical to the last verified "
+        f"build is not stale. stderr:\n{r.stderr}"
+    )
+    assert "stamp match" in r.stdout, (
+        f"the gate must say WHY it allowed a newer mtime. stdout:\n{r.stdout}"
+    )
+
+
+def test_a_real_edit_after_a_stamp_is_still_rejected(tmp_path: Path):
+    """The stamp must not become a blanket exemption.
+
+    This is the direction that matters: the fix above is only safe if a genuine
+    content change still fails AFTER a stamp exists. Without this test the stamp
+    could silently turn the staleness gate into a no-op.
+    """
+    t = _tree(tmp_path)
+    _run(t)                                     # stamp now records the current bytes
+
+    (t / "content" / "post.md").write_text("# genuinely different bytes\n")
+    _age(t, "content/post.md")
+
+    r = _run(t)
+    assert r.returncode == 1, (
+        f"a real edit must still be STALE once a stamp exists. stderr:\n{r.stderr}"
+    )
+    assert "STALE" in r.stderr, r.stderr
