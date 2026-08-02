@@ -14,10 +14,19 @@ model's own assumptions. It is the reason the resolver is allowed to REJECT an
 unknown term at all: without this parity check, a derivation that under-collects
 would turn a pre-commit hook into a blocker on valid links.
 
-Requires a built tree (``hugo --gc --minify -e production``), like
-``test_gate_mutations.py``. It fails rather than skips when ``public/`` is
-absent: a link-resolution parity test that silently passes on a missing build is
-the same vacuous shape this Issue exists to remove.
+Runs inside the Blogs IA suite (``scripts/run-blogs-ia-suite.sh``, wired to
+pre-push and to ci.yml), which is where this repo keeps its built-tree tests and
+which refuses to run against a STALE ``public/``. That gating is not optional
+here: on a tree built before the newest source edit, a post that exists in
+``content/`` but not yet in the build makes the derivation a strict superset,
+and this test's own message would read as a resolver defect rather than as
+"rebuild first". Measured live, on an unbuilt post: ``derives tags terms Hugo
+does not serve: ['addiction', 'fishing', 'gaming', 'obsession']``.
+
+``_require_build`` below is the floor beneath that gate, not a substitute for
+it: it catches a MISSING build, the suite runner catches a stale one. It fails
+rather than skips, because a parity test that silently passes on a missing build
+is the same vacuous shape this Issue exists to remove.
 """
 
 from __future__ import annotations
