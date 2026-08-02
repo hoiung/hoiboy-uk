@@ -176,3 +176,43 @@ def _function_source() -> str:
         if depth == 0 and end > start:
             return "\n".join(src[start:end + 1])
     raise AssertionError("could not delimit rendered_link_check() in the gate script")
+
+
+@pytest.mark.skipif(not PUBLIC.is_dir(), reason="./public not built")
+def test_url_override_resolves_behaviourally_not_just_textually():
+    """Drive the real branch; a source-text grep survives it being inverted (#55 Stage 5).
+
+    The three asserts above read pre-publish.sh as TEXT. Stage 5 measured what that
+    is worth: rewriting line 302 to `if [[ -n "$fm_url" ]] && false; then` left this
+    file at "3 passed, 3 skipped" -- byte-identical to the control. The Ralph Tier 2
+    fix was invisible to its own tests, which is the exact shape
+    tests/test_gate_mutations.py exists to stop.
+
+    `lychee` is stubbed so this asserts the RESOLUTION CONTRACT only: no network, no
+    Hugo build, and the gate's own verdict on link liveness is a different test's job.
+    """
+    override_page = ROOT / "content" / "community" / "agit-thanks" / "index.md"
+    if not override_page.is_file():
+        pytest.skip("the agit-thanks url: override page no longer exists")
+
+    script = f"""
+    set -uo pipefail
+    REPO_ROOT={ROOT}
+    TARGET=content/community/agit-thanks/index.md
+    POST_FILE={override_page}
+    lychee() {{ printf 'stubbed-lychee\\n'; return 0; }}
+    {_function_source()}
+    rendered_link_check
+    echo "RC=$?"
+    """
+    r = subprocess.run(["bash", "-c", script], cwd=ROOT, capture_output=True, text=True)
+    combined = r.stdout + r.stderr
+
+    assert "url: override ->" in combined, (
+        "the frontmatter `url:` branch did not fire. This page renders at the path "
+        "its override names, not at its slug, so without this branch the gate cannot "
+        f"locate it at all and exits 1. Output:\n{combined}"
+    )
+    assert "public/community/asians-gingers-in-tech/thanks/index.html" in combined, (
+        f"the override resolved to the wrong path. Output:\n{combined}"
+    )
