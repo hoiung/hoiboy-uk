@@ -48,3 +48,6 @@ __pycache__/
 # a belt-and-suspenders so member PII / credentials can never be committed here.
 .agit-records/
 .agit-secrets/
+
+# lychee JSON output written by the CI zero-link floor step (#55 Stage 5)
+lychee-out.json
