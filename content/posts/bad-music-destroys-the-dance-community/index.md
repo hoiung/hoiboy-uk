@@ -29,8 +29,8 @@ Before I go further, here are 5 questions I would like you to sit with.
 
 1. If an event has a **DJ** and it is a **paid** event, does music quality matter?
 2. If an event has **no DJ** but it is still a **paid** event, does music quality matter?
-3. If the event is **free** and has a **DJ**, does music quality matter?
-4. If the event is **free** and has **no DJ**, does music quality matter?
+3. If an event has a **DJ** but the event is **free**, does music quality matter?
+4. If an event has **no DJ** and the event is **free**, does music quality matter?
 5. Does music quality matter if the event is held at a **park**, by a **riverside**, or **inside a venue**?
 
 My answer is the same for all 5. Music matters!
