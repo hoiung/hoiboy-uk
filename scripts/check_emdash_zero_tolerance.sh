@@ -17,6 +17,12 @@
 #                            script verbatim, em dashes intentional (consulting-ops#8)
 #   scripts/ not in scope  : source code, not voice prose; voice rules apply only
 #                            inside <!-- iamhoi --> markers (SST3 marker-driven model)
+#   functions/ IS in scope : also source code, but unlike scripts/ it emits strings
+#                            a READER sees. Every textResponse() in a Pages Function
+#                            is copy rendered in the browser on a failed submit, so
+#                            it is voice prose that merely happens to live in a .js
+#                            file. That is the distinction from scripts/, which is
+#                            never user-facing (#56 AC 4.6b).
 #
 # ...with ONE carve-out from the content/posts exclusion: content/posts/_index.md.
 # It is the /blogs/ hub landing (blog-priv#62 AC 4.1), not a legacy post. Hugo
@@ -41,7 +47,7 @@
 set -euo pipefail
 
 EMDASH=$'—'
-SCAN_PATHS=(content layouts assets config docs README.md content/posts/_index.md)
+SCAN_PATHS=(content layouts assets config docs functions README.md content/posts/_index.md)
 
 # -I skips binary files: the em-dash byte sequence (E2 80 94) can occur by chance
 # inside compressed image data (e.g. a committed JPEG render), which is never voice
