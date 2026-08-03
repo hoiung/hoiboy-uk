@@ -83,6 +83,11 @@ The community "Get featured" form (issue #43 Phase 2) posts to a Cloudflare Page
 | `AGIT_UPLOADS` | R2 bucket binding | Settings > Bindings > Add > R2 bucket | Private photo storage (bucket `agit-submissions`, private) |
 | `CF_EMAIL_TOKEN` | Secret (encrypted) | Settings > Variables and Secrets > Production | Cloudflare API token (Email Sending: Edit) for the REST send |
 | `CF_ACCOUNT_ID` | Secret (encrypted) | Settings > Variables and Secrets > Production | Account ID in the REST endpoint URL |
+| `BREVO_API_KEY` | Secret (encrypted) | Settings > Variables and Secrets > Production | Brevo marketing-lane key for the newsletter double opt-in call (issue #56) |
+| `BREVO_LIST_ID` | Plaintext variable | Settings > Variables and Secrets > Production | Numeric id of the `hoiboy.uk newsletter` list. NOT a secret, and deliberately NOT a `params.toml` key: a Pages Function cannot read Hugo config |
+| `BREVO_DOI_TEMPLATE_ID` | Plaintext variable | Settings > Variables and Secrets > Production | Numeric id of the double opt-in email template. Same rule as the list id |
+
+`functions/api/subscribe.js` checks all three by name before doing anything else and returns a loud 500 naming the missing ones, so a half-provisioned deploy fails on the first request instead of after a reader has filled the form. Verified against the real Workers runtime: with two of the three absent it returns 500 and logs `{"event":"config-missing","missing":["BREVO_LIST_ID","BREVO_DOI_TEMPLATE_ID"]}`.
 
 The Turnstile **site key** is public and lives in the form HTML (`content/community/asians-gingers-in-tech/index.md`, the `data-sitekey` on the `cf-turnstile` div). It is NOT a secret; commit it.
 
