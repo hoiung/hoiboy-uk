@@ -34,6 +34,13 @@ __pycache__/
 # Code review graph (local AST index, regenerable)
 .code-review-graph/
 
+# Wrangler local state. Created by `wrangler pages dev` (used to exercise a Pages
+# Function against the real Workers runtime) and by the break-glass
+# `wrangler pages deploy` in CLAUDE.md, so it appears for anyone following either
+# documented procedure. Local cache only, and this repo is PUBLIC, so it must
+# never be swept into a commit by an auto-staging hook.
+.wrangler/
+
 # Agent working state: git worktrees and scratch files. This repo is PUBLIC and
 # nothing under .claude/ is tracked (the last tracked contents were removed at
 # a301458 when the AGIT back-office moved to a private repo), but the directory
