@@ -1,10 +1,16 @@
-{{- /* .Section alone cannot express three of these five classes: the 404 page and
+{{- /* .Section alone cannot express three of these six classes: the 404 page and
        the home page both report .Section "" and home must SHOW the form, and all
        four community pages report .Section "community" while only the AGIT subtree
        is suppressed. The RelPermalink prefix also absorbs the url-override on
        agit-thanks, which lives at content/community/agit-thanks/ but serves under
-       /community/asians-gingers-in-tech/. */ -}}
-{{- $hide := or (eq .Section "legal") (eq .Section "private") (eq .Kind "404")
+       /community/asians-gingers-in-tech/.
+
+       "newsletter" is the form's OWN two confirmation pages plus their auto-section
+       list (#56 Phase 3). Offering the subscribe form to someone who has just been
+       told they are subscribed is the one placement that reads as broken, and the
+       pages did not exist when this predicate was first written in Phase 2. */ -}}
+{{- $hide := or (eq .Section "legal") (eq .Section "private") (eq .Section "newsletter")
+                (eq .Kind "404")
                 (strings.HasPrefix .RelPermalink "/community/asians-gingers-in-tech/") -}}
 {{- if not $hide -}}
   {{- partial "subscribe-form.html" . -}}

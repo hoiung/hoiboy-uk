@@ -46,17 +46,21 @@ MARKER = "subscribe-form"
 # alias stub or a standalone bundle asset, not a page with a footer to guard.
 BASEOF_MARKER = "<footer"
 
-# The five suppressed classes, as BUILT paths.
+# The six suppressed classes, as BUILT paths.
 #   /legal/*   operator instruction
 #   /private/* the per-path CSP at static/_headers:10 is narrower than the root
 #              policy and would break the Turnstile widget, so the form is removed
 #              rather than worked around
 #   404        a form posting from a URL that does not exist
 #   the AGIT signup and thanks pages, which already carry an email-capture form
+#   /newsletter/* the form's own confirmation pages: offering the form to someone
+#              just told they are subscribed is the one placement that reads as
+#              broken. Added in Phase 3, when those pages first existed.
 SUPPRESSED_PREFIXES = (
     "legal/",
     "private/",
     "community/asians-gingers-in-tech/",
+    "newsletter/",
 )
 SUPPRESSED_EXACT = ("404.html",)
 
