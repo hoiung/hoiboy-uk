@@ -246,6 +246,13 @@ run_check "hugo-build" hugo_build
 #     template regression the source-only guard (check #4b) cannot see (#52 Stage 5).
 run_check "social-cards-rendered" python3 scripts/check_social_cards.py --built public
 
+# 7a2. Subscribe-form placement, as the BUILT tree shows it. The suppression
+#      predicate in footer.html reaches every page kind through the one shared
+#      shell in baseof.html, so a wrong predicate ships site-wide. Asserts the
+#      marker is absent on the five suppressed classes, present on the named
+#      sample, and present on every other footer-bearing page tree-wide. #56.
+run_check "subscribe-placement" python3 scripts/check_subscribe_placement.py --built public
+
 # 7b. 404 gate: the build must emit a root 404.html, its content block must have
 #     actually rendered, and every navigation link ON that page must resolve.
 #     Cloudflare Pages returns a 404 status only when that file exists; without

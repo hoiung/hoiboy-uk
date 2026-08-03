@@ -262,6 +262,25 @@ repos:
         always_run: true
         stages: [pre-push]
 
+      # #56 AC 2.2a. This gate parses public/, and this repo separates a source
+      # lane from a built lane: this config has no build step at all and public/
+      # is gitignored, so a commit-stage entry would either red-fail every commit
+      # or silently no-op. Same placement reasoning as blogs-ia-suite above, and
+      # the script mirrors that runner's contract: it exits 2 naming the exact
+      # build command when ./public is absent, rather than passing vacuously.
+      #
+      # Rationale sits above the entry, never inside it, so the stage declaration
+      # stays close enough to the id line for a short grep window to reach it.
+      #
+      # Bypass: SKIP=check-subscribe-placement git push
+      - id: check-subscribe-placement
+        name: Subscribe-form placement (built tree; suppression predicate)
+        entry: python3 scripts/check_subscribe_placement.py --built public
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+
       # >>> SST3 MANAGED BLOCK — DO NOT EDIT — propagated by propagate-block.py >>>
       - id: sst3-mirror-drift
         name: SST3 vendored file drift check (manifest-driven, staged-aware)

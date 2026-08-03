@@ -303,6 +303,14 @@ jobs:
       - name: Social-card guard (rendered og:image — template-regression backstop)
         run: python3 scripts/check_social_cards.py --built public
 
+      # Reads the BUILT tree. The suppression predicate in footer.html reaches
+      # every page kind through the single shared shell in baseof.html, so a
+      # wrong predicate ships site-wide and no source-level grep can prove
+      # placement. Must run AFTER the Hugo build step above, never in the
+      # source lane. #56 AC 2.2a.
+      - name: Subscribe-form placement (suppressed on five classes, present elsewhere)
+        run: python3 scripts/check_subscribe_placement.py --built public
+
       # Reads the BUILT tree: asserts Hugo emitted public/404.html, that the
       # template's content block actually rendered, and that every navigation
       # link ON the 404 page resolves. Without a root 404.html Cloudflare Pages
