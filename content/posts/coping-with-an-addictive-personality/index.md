@@ -2,7 +2,7 @@
 title: "Coping With an Addictive Personality"
 date: 2026-07-27T18:00:00+01:00
 draft: false
-categories: [life]
+categories: [life, dance, tech-ai, entrepreneurship, trading, adventure]
 tags: [adhd, addiction, obsession, burnout, self-development, gaming, fishing, dance]
 description: "Never dip your toes in, always all in. Cartoons at 6am, 10 years of Counter-Strike, dance, fishing, and what an addictive personality actually costs."
 ---
@@ -11,7 +11,7 @@ description: "Never dip your toes in, always all in. Cartoons at 6am, 10 years o
 
 I have never been able to dip my toes into anything. Ever since I was young, whenever I got interested in something, there was never a "let me try a little bit of this and see how it goes". It was always all in.
 
-Learning computers. Computer games like Counter-Strike and Dota. Entrepreneurship. Brazilian Zouk. Now trading and AI. Every single one of them, the same pattern. I get obsessed and sucked in, investing a mass amount of time and money into learning it, and genuinely enjoying the process of learning it.
+Learning computers. Computer games like Counter-Strike and Dota. Entrepreneurship. Brazilian Zouk. Now trading, AI, and building communities. Every single one of them, the same pattern. I get obsessed and sucked in, investing a mass amount of time and money into learning it, and genuinely enjoying the process of learning it.
 
 The downside is burnout. And sometimes disconnecting from the people around me who sit outside of whatever I am buried in at the time.
 
@@ -46,6 +46,8 @@ By 28 came the dance world. Entered it, got obsessed, geeked out.
 Around 38 I got into fishing, mainly lure fishing, and yeah, copious hours learning it, watching YouTube and reading blogs and articles about how to get better at it.
 
 Now at 43 I am still dancing and still learning how to dance better, identifying what I am doing wrong or not quite right and what I can improve on. Practice, explore and experiment, refine, and document. And yes I still fish, I'm a member of my local fishing club, freshwater and sea, mainly targeting predator fish.
+
+And the current one is building communities. I've done it before, and it turns out that's my calling, because I've become really good at it. This time I'm taking it big. An MVP (minimum viable product) in London first, then scale it globally.
 
 Same pattern. Different decade.
 
