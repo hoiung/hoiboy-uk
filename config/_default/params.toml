@@ -68,3 +68,25 @@ textFirstSections = ["tech-ai", "entrepreneurship", "trading"]
 
 # Footer
 footerText = "Senh Hoi Ung. CC BY-SA."
+
+# Newsletter subscribe form (#56). Read by layouts/_partials/subscribe-form.html.
+#
+# Only genuinely configurable values live here. The consent label, its "No spam"
+# note and the consent_version string are NOT params: AC 1.1 pins that wording
+# across three surfaces (the form markup, KNOWN_CONSENT_VERSIONS in
+# functions/api/subscribe.js, and the mirror in tests/subscribe.test.js), and a
+# versioned legal string is not a parameter. No-Hardcoded-Settings governs
+# parameters, not legally versioned copy.
+#
+# The Brevo list id is deliberately absent. Every key declared here must be read
+# by a layout (see the header above), so declaring it would force the id into the
+# rendered HTML of every page for no consumer: a Pages Function cannot read
+# params.toml. It reaches functions/api/subscribe.js as the BREVO_LIST_ID
+# environment variable and nowhere else.
+subscribeAction = "/api/subscribe"
+
+# Public by design. A Turnstile SITE key is rendered into the page and is not a
+# secret (the paired secret key is the TURNSTILE_SECRET_KEY Pages binding). This
+# is the same widget the AGIT form uses, so the newsletter adds no new Turnstile
+# provisioning. See docs/research/09_DEPLOYMENT.md.
+turnstileSiteKey = "0x4AAAAAADz-CB1k9o8zx3S8"

@@ -1,2 +1,81 @@
+{{- /* Footer newsletter subscribe form (#56 AC 3.1 + AC 3.1a).
+
+       Rendered by layouts/_partials/footer.html behind the suppression predicate,
+       so this partial carries no page-kind logic of its own.
+
+       The Turnstile site key below is the SAME widget the AGIT form uses. One
+       Turnstile widget config serves every form on hoiboy.uk, so the newsletter
+       needs no new Turnstile provisioning and functions/api/subscribe.js verifies
+       against the TURNSTILE_SECRET_KEY binding that already exists. The AGIT copy
+       stays hardcoded at content/community/asians-gingers-in-tech/index.md:217
+       because a markdown content file cannot read site.Params.
+
+       The consent label is legally versioned copy, NOT a config value. AC 1.1 pins
+       its exact wording to the consent_version below, to KNOWN_CONSENT_VERSIONS in
+       functions/api/subscribe.js, and to the mirror in tests/subscribe.test.js.
+       Moving it into params.toml would break that pin, so it stays a literal.
+
+       The iamhoi markers are what the voice guard reads; they do not reach the
+       public HTML, because the production build minifies HTML comments away
+       (verified: head.html:127 carries one and public/index.html does not). */ -}}
 <div class="subscribe-form">
+  <!-- iamhoi -->
+  <h2 class="subscribe-form-title">Get new posts by email</h2>
+  <!-- iamhoiend -->
+  <form class="subscribe-form-body" method="POST" action="{{ site.Params.subscribeAction }}">
+
+    <div class="subscribe-field">
+      <label for="subscribe-name">Your name</label>
+      <input type="text" id="subscribe-name" name="name" maxlength="100" autocomplete="name" required>
+    </div>
+
+    <div class="subscribe-field">
+      <label for="subscribe-email">Your email</label>
+      <input type="email" id="subscribe-email" name="email" maxlength="254" autocomplete="email" required>
+    </div>
+
+    {{- /* Honeypot: positioned off-canvas rather than display:none, so a bot that
+           reads computed styles still fills it. aria-hidden plus tabindex="-1" keep
+           it away from people and assistive tech alike, which is why it carries no
+           label of its own. */ -}}
+    <div class="subscribe-hp" aria-hidden="true">
+      <input type="text" id="subscribe-website" name="website" tabindex="-1" autocomplete="off">
+    </div>
+
+    <div class="subscribe-field subscribe-consent">
+      {{- /* Version of the consent label below. Posted with the form so the stored
+             record shows which wording was accepted. MUST stay in the
+             KNOWN_CONSENT_VERSIONS list in functions/api/subscribe.js and in the
+             mirror in tests/subscribe.test.js; bump all three together whenever the
+             label text changes. Gate: tests/test_newsletter_consent_version.py */ -}}
+      <input type="hidden" name="consent_version" value="2026-08-03">
+      <input type="checkbox" id="subscribe-consent" name="consent" required>
+      {{- /* Explicit for/id pairing, not a wrapping label: the label contains an
+             anchor, and a label may not contain interactive content other than its
+             own control. Nesting the checkbox would also toggle it on a click meant
+             for the Privacy Notice link. */ -}}
+      <!-- iamhoi -->
+      <label for="subscribe-consent">Yes, email me new posts from hoiboy.uk. No spam. You can unsubscribe at any time. See the <a href="/legal/privacy/">Privacy Notice</a>.</label>
+      <!-- iamhoiend -->
+    </div>
+
+    <div class="subscribe-field cf-turnstile" data-sitekey="{{ site.Params.turnstileSiteKey }}"></div>
+
+    <div class="subscribe-field">
+      <button type="submit">Subscribe</button>
+    </div>
+
+  </form>
 </div>
+{{- /* No integrity="sha384-..." on the loader below, deliberately. Cloudflare
+       serves it as a mutable, auto-updating script and publishes no SRI hash, so
+       pinning one would break every form on the site at their next push. The repo's
+       existing loader at content/community/asians-gingers-in-tech/index.md:226 is
+       unpinned for the same reason. Documented here so a future SRI audit does not
+       re-raise it.
+
+       The script path is deliberately NOT spelled out in this comment: AC 3.1a
+       asserts it appears exactly once in this file, and naming it here would make
+       that count match the prose instead of the tag. Same defect this Issue already
+       hit once, at AC 2.2a. */ -}}
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
