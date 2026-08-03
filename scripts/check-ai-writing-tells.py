@@ -137,6 +137,21 @@ EXEMPT_PATHS_CV: tuple[str, ...] = (
     "docs/",
 )
 
+# File suffixes the scanner collects.
+#
+# Markdown was the only one until operator copy first moved into a TEMPLATE: a
+# consent label rendered by a Hugo partial is public operator-facing prose that
+# happens to live in a .html file, and a markdown-only collector cannot see it.
+# Pointing the guard at a template directory without this reported "[OK] No files
+# to scan" and exited 0 whether the copy was clean or full of tells, which is a
+# gate that cannot fail.
+#
+# Widening the collector is cheap because the guard is marker-driven and
+# default-SKIP: it reads only inside <!-- iamhoi --> regions, so an ordinary
+# template is collected and then scanned for nothing. Measured on the first
+# consumer to wire a template root: 35 files collected, 0 scanned, 0 flagged.
+SCAN_SUFFIXES: tuple[str, ...] = (".md", ".html")
+
 # Blog mode: default file selection (run by CI on the whole content/
 # + docs/research/ tree).
 DEFAULT_PATHS_BLOG: tuple[str, ...] = (
@@ -145,6 +160,19 @@ DEFAULT_PATHS_BLOG: tuple[str, ...] = (
     "content/about.md",
     "docs/research",
 )
+
+
+def collect_scannable(directory: Path) -> list[Path]:
+    """Every scannable file under a directory, in a deterministic order.
+
+    Sorted across the whole set rather than per suffix, so the scan order does
+    not depend on which suffix was listed first in SCAN_SUFFIXES.
+    """
+    found: list[Path] = []
+    for suffix in SCAN_SUFFIXES:
+        found.extend(directory.rglob(f"*{suffix}"))
+    return sorted(found)
+
 
 # Blog mode: whole-file scan whitelist. Currently empty — all hoiboy-uk
 # content is marker-opt-in or cutoff-filtered.
@@ -754,8 +782,8 @@ def main() -> int:
         for arg in args.paths:
             p = Path(arg).resolve()
             if p.is_dir():
-                files_to_scan.extend(sorted(p.rglob("*.md")))
-            elif p.exists() and p.suffix == ".md":
+                files_to_scan.extend(collect_scannable(p))
+            elif p.exists() and p.suffix in SCAN_SUFFIXES:
                 files_to_scan.append(p)
     else:
         if args.mode == "cv":
@@ -767,7 +795,7 @@ def main() -> int:
             for rel in DEFAULT_PATHS_BLOG:
                 p = repo_root / rel
                 if p.is_dir():
-                    files_to_scan.extend(sorted(p.rglob("*.md")))
+                    files_to_scan.extend(collect_scannable(p))
                 elif p.exists():
                     files_to_scan.append(p)
 

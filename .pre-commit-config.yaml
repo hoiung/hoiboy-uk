@@ -78,12 +78,19 @@ repos:
         language: system
         pass_filenames: false
         files: ^(config/_default/params\.toml|layouts/.*\.html|assets/.*\.css)$
+      # Template files joined the scan set in #56: the newsletter consent label is
+      # the first operator copy in this repo to live in a partial rather than a
+      # markdown file. The guard is marker-driven and default-SKIP, so an ordinary
+      # template is collected and scanned for nothing; only text inside
+      # <!-- iamhoi --> regions is read. Requires the canonical widened to collect
+      # .html at all (dotfiles cf5aa397) -- pointed at a template root without that,
+      # the guard reports "No files to scan" and exits 0 regardless of content.
       - id: check-voice-tells
         name: Voice guard (marker-driven)
         entry: python3 scripts/check-ai-writing-tells.py --mode blog --check-only-new
         language: system
         pass_filenames: true
-        files: ^(content/.*\.md|docs/research/.*\.md)$
+        files: ^(content/.*\.md|docs/research/.*\.md|layouts/.*\.html)$
       - id: check-iamhoi-wrapping
         name: Enforce iamhoi marker wrapping on new posts
         entry: python3 scripts/check-iamhoi-wrapping.py --check-only-new

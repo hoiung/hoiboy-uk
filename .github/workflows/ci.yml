@@ -120,8 +120,12 @@ jobs:
       - name: EXIF detector unit tests
         run: python3 -m pytest scripts/test_check_exif.py -q
 
+      # Template scan root added in #56, mirroring the pre-commit hook's files
+      # pattern. The consent label in layouts/_partials/subscribe-form.html is the
+      # first operator copy here to live outside a markdown file, and the guard is
+      # marker-driven so ordinary templates collect and scan nothing.
       - name: Voice guard tells (marker-driven, new posts only)
-        run: python3 scripts/check-ai-writing-tells.py --mode blog --check-only-new content/ docs/
+        run: python3 scripts/check-ai-writing-tells.py --mode blog --check-only-new content/ docs/ layouts/
 
       - name: iamhoi wrapping guard (new posts) — CI mirror of pre-commit hook
         run: python3 scripts/check-iamhoi-wrapping.py --check-only-new
