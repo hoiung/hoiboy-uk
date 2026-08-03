@@ -71,7 +71,7 @@ Imagine having a thousand things to think about already. Your frame, your timing
 
 It becomes stressful trying to figure out where the timing is.
 
-Ears bleeding from the music. Eyes bleeding from watching people dancing off time. Brain fried from processing all of this trauma. Then puking to try and exhume all that stress, and probably followed up with diarrhoea as a longer term after effect.
+Ears bleeding from the music. Eyes bleeding from watching people dancing off time. Brain fried from processing all of this trauma. Then puking to try and exhume all that stress, and probably followed by diarrhoea as a longer term after effect.
 
 {{< zoom-image src="music-reaction.webp" alt="A cartoon of Hoi at the edge of a dance floor wearing a look of dread, with comic red drips running from both ears and from under both eyes, being sick behind a bright pixelated censor block surrounded by sparkles, while mismatched sound waves and bent musical notes collide above his head and the dancers behind him carry on completely unbothered." title="Bad music. Live reaction." >}}
 
