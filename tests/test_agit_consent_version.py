@@ -23,31 +23,29 @@ every submission would 400. These assertions are that coupling.
 from __future__ import annotations
 
 import re
+import sys
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+# Parsing shared with the newsletter surface (#56 AC 4.3). Extracted so a fix to
+# the hidden-input pattern lands in both gates rather than one, which is the same
+# silent-drift failure these gates exist to catch, one level up.
+from consent_version_surfaces import (  # noqa: E402
+    REPO,
+    assignment_expression,
+    hidden_input_version,
+    js_string_list as _versions_from,
+)
+
 FORM = REPO / "content" / "community" / "asians-gingers-in-tech" / "index.md"
 ENDPOINT = REPO / "functions" / "api" / "contribute.js"
 JS_TEST = REPO / "tests" / "contribute.test.js"
 
-_LIST_RE = re.compile(r"KNOWN_CONSENT_VERSIONS\s*=\s*\[([^\]]*)\]")
-_HIDDEN_RE = re.compile(
-    r"""<input\s+type=["']hidden["']\s+name=["']consent_version["']\s+value=["']([^"']+)["']"""
-)
-
-
-def _versions_from(path: Path) -> list[str]:
-    """Extract the KNOWN_CONSENT_VERSIONS array literal from a JS source file."""
-    match = _LIST_RE.search(path.read_text(encoding="utf-8"))
-    assert match, f"no KNOWN_CONSENT_VERSIONS array literal found in {path.name}"
-    return re.findall(r"""["']([^"']+)["']""", match.group(1))
-
 
 def test_form_hidden_version_is_accepted_by_the_endpoint():
     """The version the form renders must be one the endpoint accepts."""
-    hidden = _HIDDEN_RE.search(FORM.read_text(encoding="utf-8"))
-    assert hidden, "the consent form has no hidden consent_version input"
-    rendered = hidden.group(1)
+    rendered = hidden_input_version(FORM)
     accepted = _versions_from(ENDPOINT)
     assert rendered in accepted, (
         f"the form posts consent_version={rendered!r} but contribute.js accepts "
@@ -89,11 +87,10 @@ def test_endpoint_rejects_an_absent_or_unknown_version():
     # so a pattern anchored near "consent_version" sits on the wrong side of the
     # closing parens and matches nothing however the default is written. That exact
     # hole let a `|| "2026-07-28"` default pass this gate when it was first written.
-    assign = re.search(r"const\s+consentVersion\s*=\s*(.+?);", source, re.DOTALL)
-    assert assign, "contribute.js does not assign consentVersion"
-    assert not re.search(r"\|\||\?\?", assign.group(1)), (
+    expression = assignment_expression(source, "consentVersion")
+    assert not re.search(r"\|\||\?\?", expression), (
         "contribute.js defaults consent_version when absent "
-        f"({assign.group(1).strip()!r}); that silently attributes the current "
+        f"({expression.strip()!r}); that silently attributes the current "
         "label to a member who never saw it"
     )
 
