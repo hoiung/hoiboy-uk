@@ -76,6 +76,7 @@ _ALLOW_SINGLE = frozenset(
         "skills",
         "legal",  # /legal/ section index (consulting-ops#6 Phase 6)
         "community",  # /community/ section index (#43 Phase 1)
+        "newsletter",  # /newsletter/ auto-section, noindex (#56 Phase 3)
         "tags",  # /tags/ taxonomy list page
         "series",  # /series/ taxonomy list page
         "index.xml",
@@ -101,7 +102,7 @@ _DELIBERATELY_UNLINKABLE = frozenset(["private"])
 #
 # Content sections: page bundles under content/<section>/, so the markdown tree
 # decides what is served and the paths are derived from it exactly.
-_CONTENT_TWO_PREFIX = frozenset(["hire-hoi", "legal", "community"])
+_CONTENT_TWO_PREFIX = frozenset(["hire-hoi", "legal", "community", "newsletter"])
 # Taxonomies: term pages Hugo generates from frontmatter rather than from a file
 # on disk, so their terms are derived by collecting every `tags:` / `series:`
 # value and applying Hugo's urlize. Verified to reproduce the built tree exactly
