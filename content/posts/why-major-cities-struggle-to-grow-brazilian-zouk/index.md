@@ -65,7 +65,7 @@ I am back for good, after taking a few years break from everything in life that 
 
 Hoi the critic, and a mastermind of building global Brazilian Zouk community. Back in the building.
 
-So instead of focusing on the international global dance scene, I am going to put my skills, experience and knowledge to good use and invest in the local communities instead, and change our direction away from doom.
+So instead of focusing on the international global dance scene, I am going to put my skills, experience and knowledge to good use and invest in the local communities instead (not just London), and change our direction away from doom. So for clarity, I plan to help every city in the world, but with a local growth strategy business plan.
 
 I have already started building the business model and the strategy, with a clear blueprint that tackles and reverses the effects of each of the problems I have highlighted above. And we will do much much more than that. You will find that we unite the dance community, the builders of our community, the teachers, and the students, and keep growing what I would call a healthy community.
 
