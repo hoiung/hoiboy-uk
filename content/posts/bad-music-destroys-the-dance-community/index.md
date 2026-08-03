@@ -15,6 +15,8 @@ Is there a good variety? Is it actually Zoukable (music you can genuinely dance 
 
 There have been times where I stood there listening and thought... wtf.
 
+Working together with Billy and other DJs, we've been discussing this topic quite thoroughly.
+
 Last night is what finally inspired me to finish this blog. A terrible set of music that went on for an hour and a half.
 
 I got there late, with only that hour and a half left of the party, and it was bad from the moment I walked in right through to the end. I have no idea if it had been going on before I arrived.
