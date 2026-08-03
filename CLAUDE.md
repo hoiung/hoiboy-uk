@@ -208,11 +208,27 @@ hoiboy-uk/
 │   ├── posts/<slug>/        # Page bundles
 │   ├── {food-booze,adventure,dance,tech-ai,life,entrepreneurship,trading}/_index.md  # 7 category landings
 │   └── {hire-hoi,legal,skills,private}/_index.md  # non-category sections (hire-hoi = AI/ICT consultancy + permanent roles; private = noindex)
-├── scripts/                 # 22 gate/validator scripts (frontmatter, config-traceability,
+├── functions/api/           # Cloudflare Pages Functions (server-side, NOT Hugo).
+│   ├── contribute.js        #   POST /api/contribute  - AGIT story submission
+│   └── subscribe.js         #   POST /api/subscribe   - newsletter double opt-in
+│                            #   Secrets/ids arrive as Pages env bindings, never from
+│                            #   params.toml: a Function cannot read Hugo config.
+├── static/                  # Copied verbatim to the site root. static/_headers carries
+│                            #   the CSP + per-path X-Robots-Tag rules Cloudflare applies.
+├── data/                    # Hugo data files (consulting.yaml et al)
+├── tests/                   # Cross-cutting suites. Python runs via explicit file lists in
+│                            #   ci.yml; JS runs via `npm test`, which names each file in
+│                            #   package.json. Both lists are gated by test_gate_wiring.py,
+│                            #   so a test file nobody lists fails the build rather than
+│                            #   silently never running.
+├── scripts/                 # 23 gate/validator scripts (frontmatter, config-traceability,
 │                            #   voice: iamhoi/tells/wordcount, EXIF, secret-scan, internal-links,
 │                            #   mirror-drift, lychee-expiry, social-cards, 404, pre-publish,
-│                            #   blogs-IA pre-push runner) + repo-authored tests
-│                            #   + strip-exif/cloudflare-build (manual fixers, NOT in the 22)
+│                            #   subscribe-form placement, blogs-IA pre-push runner)
+│                            #   + repo-authored tests + 7 helper modules (voice_rules,
+│                            #   sst3_*, redirects/readnext parsers, import_aam_sql)
+│                            #   + strip-exif/cloudflare-build (manual fixers). The 23 counts
+│                            #   gates only: helpers, tests and manual fixers are all excluded.
 ├── docs/research/           # Planning trail (numbered NN_TITLE.md, non-contiguous)
 ├── legacy/                  # Raw blog exports for Phase 1+ (gitignored)
 ├── .github/workflows/
@@ -344,4 +360,4 @@ wrangler pages deploy public --project-name=hoiboy-uk --branch=main
 ---
 
 *Template Version: SST3.0.0*
-*Last Updated: 2026-04-07*
+*Last Updated: 2026-08-04*
