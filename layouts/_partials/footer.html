@@ -1,3 +1,14 @@
+{{- /* .Section alone cannot express three of these five classes: the 404 page and
+       the home page both report .Section "" and home must SHOW the form, and all
+       four community pages report .Section "community" while only the AGIT subtree
+       is suppressed. The RelPermalink prefix also absorbs the url-override on
+       agit-thanks, which lives at content/community/agit-thanks/ but serves under
+       /community/asians-gingers-in-tech/. */ -}}
+{{- $hide := or (eq .Section "legal") (eq .Section "private") (eq .Kind "404")
+                (strings.HasPrefix .RelPermalink "/community/asians-gingers-in-tech/") -}}
+{{- if not $hide -}}
+  {{- partial "subscribe-form.html" . -}}
+{{- end -}}
 <footer>
   &copy; {{ now.Year }} {{ site.Params.footerText }}
   &middot;
