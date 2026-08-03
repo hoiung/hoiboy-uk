@@ -322,6 +322,78 @@ For full verification, "Show original" the received reply on the external side a
 
 If any check fails, debug at https://www.mail-tester.com - send a test, get a 9/10+ score, fix anything that drops points (typically SPF alignment if you forgot to merge include:spf.brevo.com into the existing record, or DKIM if the CNAMEs aren't propagating).
 
+## Newsletter / marketing lane (issue #56)
+
+Everything above this section is the TRANSACTIONAL lane (`/v3/smtp/*`). The blog's
+footer subscribe form uses the MARKETING lane (`/v3/contacts/*`) instead. Same
+account, same daily allowance: two separate APIs, one budget.
+
+### Recorded ids
+
+Filled in during Phase 0 of issue #56. **Nothing in this table is read by any code.**
+A value recorded here is documentation; the runtime gets its own copies as Pages
+variables (next subsection). Recording an id here and stopping is the exact defect
+that would make every submission fail.
+
+| Field | Value |
+|---|---|
+| newsletter list id | `OPERATOR_TODO` |
+| newsletter folder id | `OPERATOR_TODO` |
+| DOI template id | `OPERATOR_TODO` |
+| Bitwarden item (API key) | `brevo-hoiboy-uk-pages-api` |
+
+The list is named `hoiboy.uk newsletter`. `POST /v3/contacts/lists` requires both
+`name` and `folderId`, so the folder is created first.
+
+Alert automation, on one line because AC 0.3 greps for the pair together: trigger `Contact added to a list` scoped to that list, action `Notify by email` to `hoiboyuk@gmail.com`.
+
+Built in the dashboard; Brevo publishes no API for creating automations. Brevo also
+documents that this trigger does NOT fire when a contact is moved between lists, which
+is why AC 0.5 has to observe the alert arriving rather than assume it.
+
+### Runtime bindings (Cloudflare Pages, hoiboy-uk project)
+
+`functions/api/subscribe.js` fails loud with a 500 if any of these three is absent,
+and it checks them per name, so a deploy carrying two of three does not pass.
+
+| Variable | Kind | Source |
+|---|---|---|
+| `BREVO_API_KEY` | secret | the Bitwarden item above |
+| `BREVO_LIST_ID` | plaintext | newsletter list id |
+| `BREVO_DOI_TEMPLATE_ID` | plaintext | DOI template id |
+
+### The DOI call
+
+`POST /v3/contacts/doubleOptinConfirmation` takes `email`, `includeListIds`,
+`templateId` and `redirectionUrl`. Brevo sends the confirmation email and only adds
+the contact to the list once the link is clicked, so the call creates no confirmed
+subscriber on its own. `redirectionUrl` is `/newsletter/confirmed/`; the form's own
+303 goes to `/newsletter/check-inbox/`, because at that point the address is still
+unverified.
+
+The Function also sends `CONSENT_VERSION` and `CONSENT_TIMESTAMP` as contact
+attributes. The Privacy Notice states that pair is stored, so they are what make the
+claim true and what discharges the Article 7(1) burden of proving consent.
+
+**UNVERIFIED until the issue #56 AC 0.5 live probe**: the exact `code` string Brevo
+returns when the contact is already on the list. The Function matches it loosely and
+logs the raw code on every non-2xx, so the probe will show the real value in the
+Function logs. Record it here once observed.
+
+### The 300/day cap is shared, and this lane spends it two at a time
+
+The free tier's 300 outbound emails/day covers BOTH lanes. Each signup costs two
+sends: one double opt-in email, one operator alert. So the cap is exhausted at
+roughly **150 signups in a day**, and that is the point where the Cal.com
+transactional path starts competing for the same allowance rather than the newsletter
+simply throttling itself.
+
+At the volume a personal blog gets this never bites. It is written down because the
+failure mode is silent from the reader's side: they submit, and the confirmation email
+they are waiting for is the one that does not send. The Function answers a Brevo 429
+with a 503 and no retry loop, deliberately, because retrying against a shared cap is
+the worse failure.
+
 ## Rotation cadence
 
 Brevo does **not** offer built-in TTL on API or SMTP keys (Cloudflare does; Brevo doesn't). Rotation is calendar-driven.
