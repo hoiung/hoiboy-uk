@@ -6,7 +6,7 @@ Reads the BUILT tree, not the template source. The suppression predicate lives i
 shared shell at ``layouts/baseof.html``, so a wrong predicate ships site-wide and
 source-level greps cannot prove placement. Only a rendered tree can.
 
-Three assertions, in increasing strength:
+Four assertions, the first three in increasing strength:
 
 1. SUPPRESSED: the marker is absent from every page in the five suppressed classes.
 2. PRESENT: the marker is present on a named sample that deliberately includes the
@@ -20,6 +20,14 @@ Three assertions, in increasing strength:
    drift, because it needs no sample list: a page that stops rendering the form, or
    a newly added section that wrongly suppresses it, fails here even though nobody
    remembered to add it to PRESENT_PATHS.
+4. LINK TARGETS: every internal link the rendered form emits resolves to a file that
+   actually exists under the built tree. Nothing else in this repo checks a link
+   emitted from a TEMPLATE: ``validate_internal_links.py`` walks ``content/**/*.md``
+   only, and lychee globs ``.md``, so the 29 ``<a href>`` targets across ``layouts/``
+   are validated by no gate at all. Two of them are in ``footer.html`` itself, and
+   one of those points at ``/legal/privacy/`` -- the same target the consent label
+   links to. This script already parses built HTML, so it is the cheapest correct
+   home for the assertion (#56 AC 4.6c).
 
 "Rendered through baseof" is detected by the presence of the ``<footer`` element,
 which baseof emits unconditionally. Measured on the pinned Hugo 0.160.0, the built
@@ -34,6 +42,7 @@ Usage: ``python3 scripts/check_subscribe_placement.py --built public``
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -93,8 +102,41 @@ CATEGORY_LANDINGS = frozenset(
 )
 
 
+# The rendered form runs from its marker to the closing form tag. Bounding the
+# scan this way keeps assertion (4) about THIS form: the footer sitting beside it
+# carries its own links, and crediting or blaming those here would make the check
+# report on markup the form does not own.
+FORM_END = "</form>"
+
+HREF_RE = re.compile(r'href="([^"]+)"')
+
+
 def is_suppressed(rel: str) -> bool:
     return rel in SUPPRESSED_EXACT or rel.startswith(SUPPRESSED_PREFIXES)
+
+
+def form_block(text: str) -> str | None:
+    """The rendered subscribe form, marker to closing tag, or None if absent."""
+    start = text.find(MARKER)
+    if start == -1:
+        return None
+    end = text.find(FORM_END, start)
+    return None if end == -1 else text[start:end]
+
+
+def served_file(built: Path, href: str) -> Path:
+    """The file Cloudflare Pages serves for an internal href.
+
+    Pretty URLs are directories with an ``index.html`` inside, which is what Hugo
+    emits and what the host resolves. A href carrying a real file extension is
+    taken at face value; anything else is treated as a pretty URL, because that is
+    what every internal link in this repo is.
+    """
+    rel = href.split("#", 1)[0].split("?", 1)[0].lstrip("/")
+    if rel == "" or rel.endswith("/"):
+        return built / rel / "index.html"
+    candidate = built / rel
+    return candidate if candidate.suffix else built / rel / "index.html"
 
 
 def pick_sample_post(built: Path) -> str | None:
@@ -161,6 +203,37 @@ def main() -> int:
             continue
         if MARKER not in path.read_text(encoding="utf-8", errors="replace"):
             failures.append(f"[present-but-absent] {rel} must carry '{MARKER}' and does not")
+
+    # (4) LINK TARGETS. Run over the named PRESENT set rather than the whole tree:
+    #     one partial renders on every page, so 340 identical scans would buy
+    #     nothing over these.
+    links_checked = 0
+    for rel in present_paths:
+        path = built / rel
+        if not path.is_file():
+            continue  # already reported by (2)
+        block = form_block(path.read_text(encoding="utf-8", errors="replace"))
+        if block is None:
+            continue  # already reported by (2)
+        for href in HREF_RE.findall(block):
+            if not href.startswith("/"):
+                continue  # external or in-page; lychee owns those
+            links_checked += 1
+            target = served_file(built, href)
+            if not target.exists():
+                failures.append(
+                    f"[dead-form-link] {rel} renders a form link to {href} but "
+                    f"{target.relative_to(built)} does not exist under {built}/"
+                )
+    # A block that stopped matching, or a form that lost its link, would make the
+    # loop above iterate zero times and pass. That is the same silent-pass shape
+    # assertion (1) guards against, so say so rather than report a clean run.
+    if links_checked == 0:
+        failures.append(
+            "[no-form-links-checked] the rendered form emitted no internal link, so "
+            "this gate proved nothing. Either the consent label lost its Privacy "
+            "Notice link, or the form block no longer parses."
+        )
 
     # (3) WHOLE-TREE. The assertion that survives someone forgetting to update (2).
     for path in pages:
