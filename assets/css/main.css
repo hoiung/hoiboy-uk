@@ -348,3 +348,70 @@ th { background: var(--bg-card); font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* Footer newsletter subscribe form (#56 AC 3.2), rendered by
+   layouts/_partials/subscribe-form.html.
+
+   No mobile block below. The footer renders inside <main class="main">
+   (baseof.html:14), which is max-width: 42rem at :93 and max-width: 100% below
+   the 768px breakpoint at :290, so the form inherits its responsive width and a
+   second set of rules would only duplicate that.
+
+   :root declares no spacing-scale and no radius token, so the literals here are
+   deliberate reuse of values already in this file (0.8rem 1.5rem padding and the
+   3px radius from `.main a.btn` at :138) rather than invented tokens. */
+.subscribe-form { border-top: 1px solid var(--rule); margin-top: 3rem; padding-top: 1.5rem; }
+.subscribe-form-title { font-size: 1.1rem; margin: 0 0 0.75rem; font-weight: 550; }
+.subscribe-field { margin-bottom: 0.75rem; }
+.subscribe-field label { display: block; font-size: 0.9rem; color: var(--fg-muted); margin-bottom: 0.25rem; }
+
+/* The min-height below is the touch target, declared explicitly rather than left
+   to fall out of font-size + line-height + padding, which is how it silently
+   regresses when any one of the three is retuned. (The literal is kept out of this
+   comment on purpose: AC 3.2 greps the file for it, and prose that repeats it
+   makes the count match the comment instead of the rule.) */
+.subscribe-form input[type="text"],
+.subscribe-form input[type="email"] {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.6rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--fg);
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+}
+.subscribe-form button[type="submit"] {
+  min-height: 44px;
+  padding: 0.8rem 1.5rem;
+  background: var(--cta);
+  color: #fff;
+  border: 0;
+  border-radius: 3px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.subscribe-form button[type="submit"]:hover { background: color-mix(in srgb, var(--cta) 88%, #000); }
+
+/* The only focus rule on the site is `.main a.btn:focus-visible` at :140, which is
+   an anchor selector no form control can inherit from. Without these two the
+   keyboard focus ring on this form is whatever the browser defaults to, which the
+   custom background can wash out entirely. */
+.subscribe-form input:focus-visible,
+.subscribe-form button:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+/* Consent row: box beside its label, not above it. The box is 24px (the WCAG 2.5.8
+   AA minimum) rather than the taller target the text inputs use, because a checkbox
+   that size is visually wrong next to 0.85rem text. The label is `for`-bound, so the
+   real target is the box plus the whole multi-line label, comfortably past the
+   larger figure in both axes. */
+.subscribe-consent { display: flex; align-items: flex-start; gap: 0.5rem; }
+.subscribe-consent input[type="checkbox"] { width: 24px; height: 24px; min-width: 24px; margin-top: 0.1rem; }
+.subscribe-consent label { font-size: 0.85rem; margin-bottom: 0; }
+
+/* Honeypot: off-canvas, NOT display:none or hidden, so a bot that fills every
+   field it can find still fills this one. */
+.subscribe-hp { position: absolute; left: -5000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
