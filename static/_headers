@@ -13,6 +13,16 @@
 /community/asians-gingers-in-tech/thanks/*
   X-Robots-Tag: noindex, nofollow
 
+# Newsletter double opt-in (issue #56): the whole section. Two thin confirmation
+# pages plus the auto-generated section list, none of which belongs in an index.
+# The glob covers /newsletter/ itself as well as its children, because fnmatch
+# lets the `*` match empty, and scripts/check_social_cards.py reads these rules as
+# its exemption source: without this, the two bundles fail Check B (a singular page
+# falling back to the default card) and /newsletter/ fails Check D (an indexable
+# auto-section with no card).
+/newsletter/*
+  X-Robots-Tag: noindex, nofollow
+
 # The 404 template (blog-priv#64) is also reachable as an ordinary page:
 # Cloudflare serves it at /404.html, which 308-redirects to /404 and answers
 # HTTP 200 with the full "Page not found" HTML. Left alone that is an indexable
