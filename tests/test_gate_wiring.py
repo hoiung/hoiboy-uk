@@ -577,43 +577,236 @@ def test_neutering_a_real_ci_step_is_caught_by_the_wiring_guard():
             module.CI = original
 
 
-def test_every_js_test_file_is_actually_run_by_node_test_in_ci():
-    """The JS lane needs the same invariant the Python lane already has.
+# ---------------------------------------------------------------------------
+# The same invariant, for the JS half of the suite (#56 AC 4.2).
+#
+# `test_every_test_file_is_actually_run_by_pytest_in_ci` above closes the hole
+# for Python only. The JS suite has the identical hole and no guard at all:
+# `package.json` names its test files EXPLICITLY, exactly the way ci.yml names
+# its pytest files, so a `*.test.js` omitted from that line never runs while the
+# suite reports green. That is the same defect one runtime over, and #56 would
+# have walked straight into it -- `tests/subscribe.test.js` is the third JS test
+# file in the repo and the first added since the script was written.
+#
+# Two assertions, because either alone fails open:
+#   1. every JS test file on disk is named by `npm test`, and
+#   2. ci.yml actually RUNS `npm test` in a step that can turn the build red.
+# Without (2), (1) proves only that a file is listed in a script nobody invokes.
+# ---------------------------------------------------------------------------
 
-    The check above globs `test_*.py` only. It discovers 43 Python files and
-    ZERO JavaScript ones, so the repo's "no test file can exist without CI
-    running it" rule has never covered the JS lane at all.
+PACKAGE_JSON = ROOT / "package.json"
 
-    `npm test` is a hardcoded file list, not a glob -- `node --test` takes the
-    files it is given and collects nothing on its own -- so a new .test.js sits
-    on disk, is never run, and every gate stays green. hoiboy-uk#57 lived that:
-    it added tests/agit-form.test.js and had to remember to hand-add it to
-    package.json in a separate commit (9e3ef4b), which is exactly the manual
-    step the Python invariant exists to remove. Nothing anywhere reads
-    package.json's test script; a synonym sweep across yml/sh/md/py/json/toml
-    found only `npm ci` and `npm test` in ci.yml.
+# Where JS test files live. Both directories are already in use.
+JS_TEST_DIRS = ("tests", "static/js")
 
-    Two directory conventions are globbed because the repo already uses both:
-    static/js/ for the tool suites that sit beside their subject, tests/ for
-    the ones that do not.
+JS_TEST_PATH = re.compile(r"(?:tests|static/js)/[a-z0-9_.-]+\.test\.js")
+
+
+def _node_run_files(command: str) -> set[str]:
+    """Every *.test.js the node runner is actually handed by this command.
+
+    Mirrors `_pytest_covered`'s three narrowings rather than matching the
+    filename anywhere: quoted spans are blanked so a name inside an `echo`
+    string is not credited, chained commands are split so a sibling command
+    cannot lend its credit, and only text AFTER the `node` token counts as an
+    argument to it.
     """
-    package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
-    script = package.get("scripts", {}).get("test", "")
-    # Same two anti-vacuity guards the Python check uses: an empty glob or an
-    # empty script would make the subtraction below trivially pass.
-    assert script, "package.json has no scripts.test - nothing runs the JS suites"
+    bare_command = _unquoted(command)
+    # A swallowed failure runs the tests and discards the verdict. An `||` BEFORE
+    # the node token is the opposite case, so position decides -- same rule, and
+    # same rationale, as the pytest half.
+    if "node" in bare_command and "||" in bare_command:
+        if bare_command.index("||") > bare_command.index("node"):
+            return set()
 
+    covered: set[str] = set()
+    for segment in _split_commands(command):
+        bare = _unquoted(segment)
+        if not re.search(r"(?:^|\s|/)node(?:\s|$)", bare):
+            continue
+        covered.update(JS_TEST_PATH.findall(bare.split("node", 1)[1]))
+    return covered
+
+
+def _npm_test_files(package_json_text: str) -> set[str]:
+    """Every JS test file `npm test` runs, parsed from the script it shells."""
+    document = json.loads(package_json_text)
+    script = (document.get("scripts") or {}).get("test")
+    if not isinstance(script, str):
+        return set()
+    return _node_run_files(_strip_comment(script))
+
+
+def _npm_test_is_gated_in_ci(workflow_text: str) -> bool:
+    """True when ci.yml runs `npm test` somewhere it can fail the build.
+
+    Reuses `_neutered` so a step parked behind `if: false` or waved through with
+    `continue-on-error: true` is not counted, which is the same fail-open shape
+    `test_a_step_that_cannot_fail_the_build_is_not_coverage` pins for pytest.
+    """
+    document = yaml.safe_load(workflow_text)
+    if not isinstance(document, dict):
+        return False
+    for job in (document.get("jobs") or {}).values():
+        if not isinstance(job, dict) or _neutered(job):
+            continue
+        for step in job.get("steps") or []:
+            if not isinstance(step, dict) or _neutered(step):
+                continue
+            run = step.get("run")
+            if not isinstance(run, str):
+                continue
+            for line in run.splitlines():
+                stripped = _strip_comment(line)
+                bare_line = _unquoted(stripped)
+                if "npm" in bare_line and "||" in bare_line:
+                    if bare_line.index("||") > bare_line.index("npm"):
+                        continue
+                for segment in _split_commands(stripped):
+                    tokens = _unquoted(segment).split()
+                    if len(tokens) >= 2 and tokens[0] == "npm" and tokens[1] == "test":
+                        return True
+    return False
+
+
+def test_every_js_test_file_is_actually_run_by_npm_test():
+    """No JS test file can exist without `npm test` RUNNING it (#56 AC 4.2).
+
+    `package.json`'s test script names its files explicitly, so this is the same
+    failure mode the pytest guard above exists to stop: a file that passes
+    locally when someone runs it by hand, and that CI never executes. It is
+    worse than having no test, because the file count implies coverage the
+    pipeline does not enforce.
+    """
     on_disk = {
-        str(p.relative_to(ROOT))
-        for pattern in ("tests/*.test.js", "static/js/*.test.js")
-        for p in sorted(ROOT.glob(pattern))
+        f"{directory}/{path.name}"
+        for directory in JS_TEST_DIRS
+        for path in sorted((ROOT / directory).glob("*.test.js"))
     }
+    # A glob that matched nothing would make the subtraction below empty and this
+    # assertion vacuous, which is the silent pass being guarded against.
     assert on_disk, "found no *.test.js under tests/ or static/js/ - the glob is wrong"
 
-    unlisted = sorted(f for f in on_disk if f not in script)
-    assert not unlisted, (
-        f"{len(unlisted)} JS test file(s) exist but are named in no `npm test` "
-        f"invocation, so CI never runs them: {unlisted}. `node --test` takes an "
-        f"explicit file list and collects nothing by itself, so an unlisted file "
-        f"is silently dead. Add each to scripts.test in package.json."
+    covered = _npm_test_files(PACKAGE_JSON.read_text(encoding="utf-8"))
+    assert covered, (
+        "package.json's test script runs no JS test file at all - the script was "
+        "emptied or rewritten, not merely missing one entry."
     )
+
+    unlisted = sorted(on_disk - covered)
+    assert not unlisted, (
+        f"{len(unlisted)} JS test file(s) exist but are named by no `npm test` "
+        f"invocation, so neither CI nor a local `npm test` runs them: {unlisted}. "
+        f"Add each to the `test` script in package.json."
+    )
+
+
+def test_ci_runs_the_js_suite_at_all():
+    """Wiring a file into `npm test` is worthless if CI never runs `npm test`.
+
+    This is the level-up check the pytest guard learned the hard way: asking
+    whether a file is NAMED, without asking how the naming is invoked, credits a
+    gate that cannot fail. Here the whole JS suite is one step, so deleting it
+    would silently drop all three files at once.
+    """
+    assert _npm_test_is_gated_in_ci(CI.read_text(encoding="utf-8")), (
+        "ci.yml has no `npm test` step that can fail the build, so every JS test "
+        "file is unrun in CI however faithfully package.json lists it."
+    )
+
+
+def test_node_run_files_credits_only_real_runner_arguments():
+    """Unit-test the JS guard's own parser, for the reason the pytest one is.
+
+    Each case is a way a filename appears without the runner collecting it.
+    """
+    real = "node --test static/js/a.test.js tests/b.test.js"
+    assert _node_run_files(real) == {"static/js/a.test.js", "tests/b.test.js"}
+
+    # A name inside a string is prose, not an argument.
+    assert _node_run_files('echo "node tests/b.test.js"') == set()
+
+    # A sibling command cannot lend its credit across a chain.
+    assert _node_run_files("node --test tests/b.test.js && echo tests/c.test.js") == {
+        "tests/b.test.js"
+    }
+
+    # A name BEFORE the node token is not an argument to it.
+    assert _node_run_files("ls tests/a.test.js && node --test tests/b.test.js") == {
+        "tests/b.test.js"
+    }
+
+    # Swallowing the exit code runs the tests and discards the verdict.
+    assert _node_run_files("node --test tests/b.test.js || true") == set()
+
+    # ...but `||` BEFORE node keeps node as the fallback whose failure still fails.
+    assert _node_run_files("test -f x || node --test tests/b.test.js") == {
+        "tests/b.test.js"
+    }
+
+
+def test_dropping_a_js_test_file_from_package_json_is_caught():
+    """Mutation, driving the GUARD rather than only its helper.
+
+    Asserting on `_npm_test_files` alone would prove the parser works and say
+    nothing about whether the guard calls it. The pytest half of this file was
+    written that way first and stayed green when the guard was swapped back to a
+    weaker check, so this points the module's PACKAGE_JSON at a mutated copy and
+    requires the guard itself to go red.
+    """
+    import sys as _sys
+    import tempfile
+
+    real = PACKAGE_JSON.read_text(encoding="utf-8")
+    document = json.loads(real)
+    script = document["scripts"]["test"]
+
+    victim = "tests/subscribe.test.js"
+    assert victim in script, "package.json no longer runs the file this mutation drops"
+    document["scripts"]["test"] = script.replace(f" {victim}", "")
+
+    module = _sys.modules[__name__]
+    with tempfile.TemporaryDirectory() as tmp:
+        mutated = Path(tmp) / "package.json"
+        mutated.write_text(json.dumps(document, indent=2), encoding="utf-8")
+        original = module.PACKAGE_JSON
+        module.PACKAGE_JSON = mutated
+        try:
+            with pytest.raises(AssertionError):
+                test_every_js_test_file_is_actually_run_by_npm_test()
+        finally:
+            module.PACKAGE_JSON = original
+
+
+def test_neutering_the_npm_test_step_is_caught_by_the_js_wiring_guard():
+    """The same mutation one level up: a step that cannot fail is not coverage."""
+    import sys as _sys
+    import tempfile
+
+    real = CI.read_text(encoding="utf-8")
+    assert _npm_test_is_gated_in_ci(real), "ci.yml does not run npm test as expected"
+
+    marker = "run: npm test"
+    assert marker in real, "ci.yml no longer runs the JS suite the expected way"
+    line_start = real.rfind("\n", 0, real.index(marker)) + 1
+    indent = " " * (len(real[line_start:]) - len(real[line_start:].lstrip()))
+    mutated = real.replace(
+        real[line_start:real.index(marker) + len(marker)],
+        f"{indent}continue-on-error: true\n{indent}{marker}", 1)
+
+    assert not _npm_test_is_gated_in_ci(mutated), (
+        "a neutered npm test step still counted as coverage; the guard is "
+        "measuring the text and not the wiring."
+    )
+
+    module = _sys.modules[__name__]
+    with tempfile.TemporaryDirectory() as tmp:
+        neutered = Path(tmp) / "ci.yml"
+        neutered.write_text(mutated, encoding="utf-8")
+        original = module.CI
+        module.CI = neutered
+        try:
+            with pytest.raises(AssertionError):
+                test_ci_runs_the_js_suite_at_all()
+        finally:
+            module.CI = original
