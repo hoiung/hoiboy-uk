@@ -15,6 +15,14 @@ Is there a good variety? Is it actually Zoukable (music you can genuinely dance 
 
 There have been times where I stood there listening and thought... wtf.
 
+Last night is what finally inspired me to finish this blog. A terrible set of music that went on for an hour and a half.
+
+I got there late, with only that hour and a half left of the party, and it was bad from the moment I walked in right through to the end. I have no idea if it had been going on before I arrived.
+
+It played some weird mashups of some good commercial and mainstream music, but slapped on some out-of-sync, overbearing and overly noisy thing I can't call rhythm, because there wasn't any. Finding the timing was impossible, like a needle in a haystack.
+
+I tried to ask around whose playlist this was, but the people I asked didn't know. I danced a few songs only, sat about waiting for better music which wasn't coming, and ended up spending the last 30 minutes dancing Zoukchata in the Bachata room. (Zoukchata is basically what I call dancing Zouk fundamentals and steps to Bachata music haha, obviously trying to stay on time. Challenge accepted!)
+
 ## "But nobody dances on time anyway"
 
 Fair shout. Look around a social and plenty of people on that floor are dancing off time, not to the music at all. So it does not really matter what gets played, right?
@@ -64,6 +72,8 @@ Imagine having a thousand things to think about already. Your frame, your timing
 It becomes stressful trying to figure out where the timing is.
 
 Ears bleeding from the music. Eyes bleeding from watching people dancing off time. Brain fried from processing all of this trauma. Then puking to try and exhume all that stress, and probably followed up with diarrhoea as a longer term after effect.
+
+{{< zoom-image src="music-reaction.webp" alt="A cartoon of Hoi at the edge of a dance floor wearing a look of dread, with comic red drips running from both ears and from under both eyes, being sick behind a bright pixelated censor block surrounded by sparkles, while mismatched sound waves and bent musical notes collide above his head and the dancers behind him carry on completely unbothered." title="Bad music. Live reaction." >}}
 
 (Dramatic? A bit. But you have felt at least the first two of those, and you know it.)
 
