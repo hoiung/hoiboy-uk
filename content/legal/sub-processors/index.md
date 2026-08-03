@@ -1,10 +1,10 @@
 ---
 title: Sub-processors
 date: 2026-05-09
-lastmod: 2026-07-28
+lastmod: 2026-08-03
 description: HOIBOY AI LTD sub-processor list - vendor names, services, data categories, locations, transfer mechanisms, DPA references.
 hideDate: true
-version: 1.3.0
+version: 1.4.0
 ---
 
 <!-- iamhoi-exempt -->
@@ -66,6 +66,22 @@ The Google services in this section are a **different deployment** from the Goog
 **GitHub** (GitHub, Inc., a Microsoft company) processes in the **US**. Transfer mechanism: DPF + UK Extension (verify at https://www.dataprivacyframework.gov/list), with SCCs + UK IDTA as fallback. Privacy statement: https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement.
 
 The operator's own workstation is in the **UK**, so the local copy described above is not an international transfer.
+
+## Newsletter subscription (public site feature)
+
+This section is **separate from the consultancy sub-processor list above**. The subscribe form in the site footer is a public site feature, not part of any client engagement, MSA, SOW, or the DPA Annex, so it carries its own disclosure and is not subject to the client change-notification mechanism above. It collects a name and an email address and nothing else, and it is double opt-in: nobody joins the list until they click the confirmation link sent to that address. Intake and spam protection use **Cloudflare**, already the site's infrastructure provider. List storage and email delivery use **Brevo**, which for this feature holds the subscriber list itself rather than relaying a single message.
+
+<div class="sub-processor-table">
+
+| Service | Role for the form | Data processed | Retention |
+|---|---|---|---|
+| **Brevo** (Sendinblue SAS) | Holds the newsletter contact list, sends the double opt-in confirmation email, and sends the posts themselves | Subscriber name and email address, the consent record (submission time and consent-wording version), and Brevo's own double opt-in confirmation timestamp | Held while the subscriber stays subscribed. On unsubscribe the contact is removed and only the evidence of withdrawal is kept |
+| **Cloudflare Turnstile** | Bot / spam protection on the subscribe form | Visitor IP address + a challenge token (verified server-side) | Transient (verification only) |
+| **Cloudflare Pages Functions** | Runs the endpoint the form posts to, which validates the submission and calls Brevo | The submitted name, email and consent fields, in transit only | None; the request is not persisted |
+
+</div>
+
+Brevo's DPA link, processing location (EU, Brevo France) and UK-to-EU transfer mechanism are the same as the Brevo row in the consultancy table above. What differs is the role: there Brevo is a transient SMTP relay, here it additionally stores the subscriber list. Cloudflare's DPA, processing location and transfer mechanism are as stated in the Community submission form section above.
 
 ## Cross-references
 
