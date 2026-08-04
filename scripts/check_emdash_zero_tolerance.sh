@@ -23,6 +23,24 @@
 #                            it is voice prose that merely happens to live in a .js
 #                            file. That is the distinction from scripts/, which is
 #                            never user-facing (#56 AC 4.6b).
+#   static/ IS in scope    : same test as functions/, applied consistently. #56
+#                            wrote the "emits strings a READER sees" rule and then
+#                            applied it to one of the two sibling directories that
+#                            meet it. static/js/meet-recorder.js emits failLoud()
+#                            text straight into the page, and it was carrying 23
+#                            em dashes while this guard printed OK -- against a rule
+#                            CLAUDE.md states as ZERO in tracked files. Found by the
+#                            #56 Ralph escalation class sweep; the JS was cleaned in
+#                            the same pass rather than exempted.
+#
+# ...with one exclusion inside static/, by filename glob:
+#   maturity_combo_*.html  : GENERATED backtest chart exports (2639 and 696 em
+#                            dashes), committed as static assets and never
+#                            hand-authored. They are program output, not voice
+#                            prose, so the voice rule does not apply and rewriting
+#                            them would be undone by the next export. This is an
+#                            exclusion by PROVENANCE, which is the same reason
+#                            content/posts is excluded, not a convenience waiver.
 #
 # ...with ONE carve-out from the content/posts exclusion: content/posts/_index.md.
 # It is the /blogs/ hub landing (blog-priv#62 AC 4.1), not a legacy post. Hugo
@@ -47,18 +65,18 @@
 set -euo pipefail
 
 EMDASH=$'—'
-SCAN_PATHS=(content layouts assets config docs functions README.md content/posts/_index.md)
+SCAN_PATHS=(content layouts assets config docs functions static README.md content/posts/_index.md)
 
 # -I skips binary files: the em-dash byte sequence (E2 80 94) can occur by chance
 # inside compressed image data (e.g. a committed JPEG render), which is never voice
 # prose. Without -I, grep -r reports "Binary file X matches" as a false positive.
-matches=$(grep -rlnI --exclude-dir=posts --exclude-dir=meet-recorder "$EMDASH" "${SCAN_PATHS[@]}" 2>/dev/null || true)
+matches=$(grep -rlnI --exclude-dir=posts --exclude-dir=meet-recorder --exclude=maturity_combo_'*'.html "$EMDASH" "${SCAN_PATHS[@]}" 2>/dev/null || true)
 
 if [ -n "$matches" ]; then
   echo "::error::Em dashes (U+2014) found in tracked voice files (zero-tolerance voice rule):" >&2
   echo "$matches" >&2
   echo "--- offending lines ---" >&2
-  grep -rnI --exclude-dir=posts --exclude-dir=meet-recorder "$EMDASH" "${SCAN_PATHS[@]}" 2>/dev/null || true
+  grep -rnI --exclude-dir=posts --exclude-dir=meet-recorder --exclude=maturity_combo_'*'.html "$EMDASH" "${SCAN_PATHS[@]}" 2>/dev/null || true
   echo "Replace each em dash with a comma, colon, parentheses, ellipsis, or two sentences." >&2
   exit 1
 fi
