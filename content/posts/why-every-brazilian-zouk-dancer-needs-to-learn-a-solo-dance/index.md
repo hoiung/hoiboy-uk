@@ -49,14 +49,18 @@ It doesn't matter what solo dance you choose, you should pick one. Whether it's 
 
 Oh, here is the video of my performance at the NJHH Xmas party!
 
-[Watch: our Level 1 performance at Not Just Party Vol. 4](https://www.youtube.com/watch?v=NnJwIBtoK60)
+{{< youtube-short id="NnJwIBtoK60" title="Our Level 1 performance at Not Just Party Vol. 4" ratio="wide" >}}
+
+[Watch on YouTube](https://www.youtube.com/watch?v=NnJwIBtoK60)
 
 And here at the studio, when we had to perform in our smaller groups (our group starts at 2:10):
 
-[Watch: the studio performance, our group at 2:10](https://youtu.be/0Ex5cEPMhPE?t=130)
+{{< youtube-short id="0Ex5cEPMhPE" title="The studio performance, our group at 2:10" ratio="wide" start="130" >}}
+
+[Watch on YouTube (our group at 2:10)](https://youtu.be/0Ex5cEPMhPE?t=130)
 
 And 12:57 in the same video is where I was made to do my performance solo!
 
-[Watch: my solo moment at 12:57](https://youtu.be/0Ex5cEPMhPE?t=777)
+[Jump to my solo moment at 12:57](https://youtu.be/0Ex5cEPMhPE?t=777)
 
 <!-- iamhoiend -->
