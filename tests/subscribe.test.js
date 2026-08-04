@@ -830,6 +830,17 @@ test('a crafted name cannot turn a duplicate into a distinguishable response', a
   }
 });
 
+// The success line carries only {fn,event,ok,duplicate,status,consentVersion},
+// so driving ONLY that branch leaves four of the five crafted names touching no
+// key at all and asserting nothing. Each branch is therefore exercised
+// separately: the upstream-error line is the one carrying `code`, `reason` and
+// `detail`, and `message` only ever appears inside an echoed body.
+const LOG_BRANCHES = [
+  ['success', undefined],
+  ['upstream-error', () => jsonResponse(400, { code: 'invalid_parameter', message: 'Attribute is invalid' })],
+  ['rate-limit', () => jsonResponse(429, { code: 'too_many_requests', message: 'Slow down' })],
+];
+
 test('a crafted name cannot corrupt the structure of a log line', async () => {
   // Differential, not a fixed expectation: the log line's KEY SET must be the
   // same whatever the visitor typed. Asserting only that a couple of named
@@ -839,31 +850,132 @@ test('a crafted name cannot corrupt the structure of a log line', async () => {
   const keysFor = (logs) =>
     logs.map((line) => Object.keys(JSON.parse(line)).sort().join(','));
 
-  const baseline = await submit({ fields: { name: 'A Reader', email: VALID_EMAIL } });
-  const expected = keysFor(baseline.logs);
-  assert.ok(expected.length > 0, 'the baseline submission emitted no log line');
+  for (const [label, brevo] of LOG_BRANCHES) {
+    const baseline = await submit({
+      fields: { name: 'A Reader', email: VALID_EMAIL },
+      brevo,
+    });
+    const expected = keysFor(baseline.logs);
+    assert.ok(expected.length > 0, `the ${label} branch emitted no baseline log line`);
 
-  for (const name of STRUCTURAL_NAMES) {
-    const { logs } = await submit({ fields: { name, email: VALID_EMAIL } });
-    assert.ok(logs.length > 0, `no log line was emitted for name=${JSON.stringify(name)}`);
+    for (const name of STRUCTURAL_NAMES) {
+      const { logs } = await submit({ fields: { name, email: VALID_EMAIL }, brevo });
+      assert.ok(
+        logs.length > 0,
+        `no log line was emitted on the ${label} branch for name=${JSON.stringify(name)}`
+      );
 
-    for (const line of logs) {
-      assert.doesNotThrow(
-        () => JSON.parse(line),
-        `name=${JSON.stringify(name)} produced a log line that is not valid JSON. ` +
-          `A blind literal replace over the serialised line rewrote its own ` +
-          `structure:\n${line}`
+      for (const line of logs) {
+        assert.doesNotThrow(
+          () => JSON.parse(line),
+          `name=${JSON.stringify(name)} produced a log line that is not valid JSON ` +
+            `on the ${label} branch. A blind literal replace over the serialised ` +
+            `line rewrote its own structure:\n${line}`
+        );
+      }
+
+      assert.deepEqual(
+        keysFor(logs),
+        expected,
+        `name=${JSON.stringify(name)} changed the KEY SET of a ${label} log line. A ` +
+          `held value was replaced inside the finished JSON, so a visitor renamed ` +
+          `or deleted a structural field:\n${logs.join('\n')}`
       );
     }
-
-    assert.deepEqual(
-      keysFor(logs),
-      expected,
-      `name=${JSON.stringify(name)} changed the KEY SET of a log line. A held value ` +
-        `was replaced inside the finished JSON, so a visitor renamed or deleted a ` +
-        `structural field:\n${logs.join('\n')}`
-    );
   }
+});
+
+// An upstream is free to normalise the case of an address before quoting it
+// back. The literal we hold is what the visitor typed, so a case-sensitive
+// compare misses the echo -- and for an address the SHAPE pass also cannot
+// match, nothing redacts it at all. Both halves are needed for this to bite,
+// which is why the fixture carries a quote (shape pass blind) AND differs in
+// case (literal pass blind unless it folds case).
+const MIXED_CASE_EMAIL = `${String.fromCharCode(34)}PatRiley${String.fromCharCode(34)}@Example.net`;
+const LOWERCASED_ECHO = MIXED_CASE_EMAIL.toLowerCase();
+
+test('an address echoed back in a different case is still redacted', async () => {
+  const harnessProbe = loadEndpoint();
+  assert.equal(
+    harnessProbe.mod.EMAIL_RE.test(MIXED_CASE_EMAIL),
+    true,
+    'the probe address must be ACCEPTED by the endpoint, or this test proves nothing'
+  );
+  // Premise: the shape pass must be unable to rescue this, or the test would
+  // pass through redactPii and never exercise the literal compare at all.
+  assert.ok(
+    harnessProbe.mod.redactPii(LOWERCASED_ECHO).includes('patriley'),
+    'redactPii now matches the echoed form, so this test no longer covers the ' +
+      'case-folding literal compare it exists for. Re-point it at a shape it misses.'
+  );
+  assert.notEqual(
+    LOWERCASED_ECHO,
+    MIXED_CASE_EMAIL,
+    'the echo must differ in case from what was submitted, or nothing is proven'
+  );
+
+  const body = {
+    code: 'invalid_parameter',
+    message: `Attribute is invalid for contact ${LOWERCASED_ECHO}`,
+  };
+  const { logs } = await submit({
+    fields: { email: MIXED_CASE_EMAIL },
+    brevo: () => jsonResponse(400, body),
+  });
+  const joined = logs.join('\n');
+
+  assert.ok(
+    !joined.toLowerCase().includes('patriley'),
+    `the address survived because the upstream echoed it in a different case ` +
+      `than the visitor typed, and the literal compare is case-sensitive:\n${joined}`
+  );
+  assert.ok(
+    joined.includes(body.code),
+    'the upstream code must still survive; it is the diagnostic that remains'
+  );
+});
+
+test('an address nested two JSON levels deep in an echo is still redacted', async () => {
+  // Escaping COMPOUNDS. An upstream that quotes a rejected payload embeds JSON
+  // inside a JSON string, so by the time we read the wire text the address is
+  // escaped twice. Generating a fixed number of escaped spellings is the same
+  // guess-the-symptom mistake as widening a character class: whatever depth is
+  // hard-coded, one more level reopens the gap. The fixture is deliberately
+  // deeper than the two levels that were once hard-coded.
+  const nested = JSON.stringify({ email: QUOTED_EMAIL });
+  const body = {
+    code: 'invalid_parameter',
+    message: `rejected payload: ${nested}`,
+  };
+
+  // Premise: the address must really be doubly escaped on the wire, or this is
+  // just the single-level case wearing a different fixture.
+  const wire = JSON.stringify(body);
+  assert.ok(
+    !wire.includes(QUOTED_EMAIL),
+    'the fixture is not escaped at all on the wire; it cannot prove a deep walk'
+  );
+  assert.ok(
+    !wire.includes(JSON.stringify(QUOTED_EMAIL).slice(1, -1)),
+    'the fixture is only SINGLY escaped on the wire, which the old fixed-depth ' +
+      'matcher already handled. Nest it deeper or this test proves nothing.'
+  );
+
+  const { logs } = await submit({
+    fields: { email: QUOTED_EMAIL },
+    brevo: () => jsonResponse(400, body),
+  });
+  const joined = logs.join('\n');
+
+  assert.ok(
+    !joined.includes('patriley'),
+    `the address survived at a nesting depth the escaped-form generator does ` +
+      `not reach. Escaping compounds; the walk must go to a fixpoint:\n${joined}`
+  );
+  assert.ok(
+    joined.includes(body.code),
+    'the upstream code must still survive; it is the diagnostic that remains'
+  );
 });
 
 // A quote in the name is the sharpest form of the structural case: it does not
