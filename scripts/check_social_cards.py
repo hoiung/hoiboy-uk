@@ -538,7 +538,7 @@ def check(content_root: Path, headers_path: Path,
 
 
 def check_built(content_root: Path, headers_path: Path, public: Path,
-                strict: bool = False) -> list[str]:
+                strict: bool = False, require_trails: bool = False) -> list[str]:
     """Ground-truth backstop: assert each singular indexable page's RENDERED og:image
     is not the site default. Catches head.html/hero-pick template regressions.
 
@@ -579,11 +579,40 @@ def check_built(content_root: Path, headers_path: Path, public: Path,
         ]
     url_index = load_url_index(public)
 
-    # A real Hugo build writes a trail.json beside every page. If ANY were loaded,
-    # this is a real build and the CONTENT tree is the authority on what it should
-    # contain; if none were, --built is pointing at a synthetic fixture with no
-    # Hugo output, and only --strict should speak.
+    # Is this a real Hugo build? Decided by RENDERED PAGES, not by the sidecars.
+    #
+    # This used to read `real_build = bool(url_index)` -- the trail.json index
+    # deciding whether trail.json was expected. Circular, and it failed in the
+    # one direction that matters: a real build whose sidecars were missing or
+    # stale scored as a synthetic fixture, which silently disarmed the rendered
+    # tier below. Five injected og:image regressions were caught with trails
+    # present and none without, so the tier that exists to catch them stopped
+    # existing exactly when the build was in the state most likely to have them.
+    #
+    # `real_build` keeps sniffing the sidecars, because that is what separates a
+    # real build from a synthetic fixture and scripts/test_card_build_order.py
+    # depends on the lenient tier staying armed for a partially-stale REAL build.
+    # Sniffing index.html instead was tried and is wrong: the fixtures write it
+    # too, so every one of them tripped.
+    #
+    # What the sniff cannot decide is the case it is itself the victim of -- a
+    # real build whose sidecars are absent, where `bool(url_index)` is False and
+    # the whole rendered tier silently downgrades to source-only. An artefact
+    # cannot be the authority on its own presence, so the CALLER declares it:
+    # --require-trails says "I built this tree, sidecars are expected". Both live
+    # callers (ci.yml, scripts/pre-publish.sh) now pass it; a fixture stays
+    # silent and keeps the documented degraded path.
     real_build = bool(url_index)
+    if require_trails and not url_index:
+        # Returned as a violation, not printed-and-exited: this function's
+        # contract is a list of violation strings, and an int here would land in
+        # the caller's `violations += ...` as a TypeError.
+        return [
+            f"[vacuous-gate] {public} contains rendered pages but no trail.json "
+            f"sidecar, so every rendered check below would silently downgrade to "
+            f"a source-only run. Rebuild with `hugo --gc --minify -e production` "
+            f"(the trails output writes them)."
+        ]
 
     def verify_rendered(url: str) -> None:
         rendered = public / url.strip("/") / "index.html"
@@ -657,6 +686,10 @@ def main() -> int:
     ap.add_argument("--headers", default="static/_headers", help="path to static/_headers")
     ap.add_argument("--built", metavar="PUBLIC_DIR",
                     help="also verify rendered og:image in this Hugo build output dir")
+    ap.add_argument("--require-trails", action="store_true",
+                    help="with --built: assert it is a REAL Hugo build, so missing "
+                         "trail.json sidecars FAIL instead of silently downgrading "
+                         "the rendered checks to a source-only run")
     ap.add_argument("--strict", action="store_true",
                     help="with --built: a page whose rendered HTML is not found is a "
                          "FAILURE, not a silent skip")
@@ -684,7 +717,9 @@ def main() -> int:
         violations = check(content_root, headers_path,
                            load_url_index(public) if public else None)
         if public:
-            violations += check_built(content_root, headers_path, public, strict=args.strict)
+            violations += check_built(content_root, headers_path, public,
+                                      strict=args.strict,
+                                      require_trails=args.require_trails)
     except OSError as e:
         print(f"error: {e}", file=sys.stderr)
         return 2

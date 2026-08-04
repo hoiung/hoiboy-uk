@@ -244,7 +244,10 @@ run_check "hugo-build" hugo_build
 # 7a. Rendered social-card backstop: assert each singular indexable page's RENDERED
 #     og:image is its own card, not the site default. Catches a head.html/hero-pick
 #     template regression the source-only guard (check #4b) cannot see (#52 Stage 5).
-run_check "social-cards-rendered" python3 scripts/check_social_cards.py --built public
+# --require-trails: step 7 rebuilds immediately above, so absent sidecars mean a
+# stale build rather than a synthetic fixture, and the rendered tier must not
+# quietly downgrade to source-only.
+run_check "social-cards-rendered" python3 scripts/check_social_cards.py --built public --require-trails
 
 # 7a2. Subscribe-form placement, as the BUILT tree shows it. The suppression
 #      predicate in footer.html reaches every page kind through the one shared
