@@ -182,6 +182,17 @@ jobs:
       - name: CTA button cascade + contrast unit tests
         run: python3 -m pytest scripts/test_cta_button.py scripts/test_check_cta_rendered.py -q
 
+      # The AGIT story counter says "keep writing" in red and "long enough" in
+      # green, so those colours carry meaning and have to be legible on both
+      # themes. No single hex can be: AA needs relative luminance <= 0.173550 on
+      # the light background and >= 0.206479 on the dark, an empty set. This
+      # scores every colour in the page's inline <style> against the background
+      # it is actually painted on. It caught .agit-notice already failing at
+      # 2.82:1 before the counter existed. Source-only, so it runs here rather
+      # than in the Chromium lane. hoiboy-uk#57.
+      - name: AGIT form colour contrast unit tests
+        run: python3 -m pytest scripts/test_agit_counter_contrast.py -q
+
       # test_gen_card and test_check_svg_dimensions are source-only (no built tree)
       # and were in NO pytest invocation until blog-priv#62 -- the same "a file nobody
       # lists never runs" class documented below at the frontmatter step. blog-priv#62
