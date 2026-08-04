@@ -810,3 +810,99 @@ def test_neutering_the_npm_test_step_is_caught_by_the_js_wiring_guard():
                 test_ci_runs_the_js_suite_at_all()
         finally:
             module.CI = original
+
+
+# --- Built-output secret scan (hoiboy-uk#56, escalation 2 defect 7) ----------
+#
+# The source scan cannot see the rendered tree. That was measured, not assumed:
+# planting an address in `public/` and re-running the source scan prints
+# "PASS: No secrets detected". So a leak reachable only through a template, a
+# data file, a shortcode or a partial had no gate anywhere between a clean
+# source file and the HTML actually served.
+#
+# Two properties are pinned here, because either one alone is satisfiable by a
+# step that protects nothing: the scan must run against the BUILT path, and it
+# must carry --include-ignored. Without the flag `public/` (gitignored, being a
+# build artefact) is filtered to zero files, and the scanner's coverage floor
+# exits 2 -- loud, but it means the tree is never actually scanned.
+
+BUILD_SCAN_PATH = "public"
+BUILD_SCAN_FLAG = "--include-ignored"
+SECRET_SCANNER = "scripts/check-public-repo-secrets.py"
+
+
+def _build_output_scan_is_gated_in_ci(workflow_text: str) -> bool:
+    """True when ci.yml scans the BUILT tree somewhere it can fail the build.
+
+    Reuses `_neutered` so a step parked behind `if: false` or waved through
+    with `continue-on-error: true` does not count as coverage -- the same
+    fail-open shape the npm-test guard above pins.
+    """
+    document = yaml.safe_load(workflow_text)
+    if not isinstance(document, dict):
+        return False
+    for job in (document.get("jobs") or {}).values():
+        if not isinstance(job, dict) or _neutered(job):
+            continue
+        for step in job.get("steps") or []:
+            if not isinstance(step, dict) or _neutered(step):
+                continue
+            run = step.get("run")
+            if not isinstance(run, str):
+                continue
+            for line in run.splitlines():
+                bare = _unquoted(_strip_comment(line))
+                if SECRET_SCANNER not in bare:
+                    continue
+                fields = bare.split()
+                # The path argument, not a substring: `--allowlist public.txt`
+                # must not be mistaken for scanning `public`.
+                if BUILD_SCAN_PATH in fields and BUILD_SCAN_FLAG in fields:
+                    return True
+    return False
+
+
+def test_ci_scans_the_built_output_for_secrets():
+    assert _build_output_scan_is_gated_in_ci(CI.read_text(encoding="utf-8")), (
+        f"ci.yml no longer runs {SECRET_SCANNER} against `{BUILD_SCAN_PATH}` "
+        f"with {BUILD_SCAN_FLAG} in a step that can fail the build. The source "
+        f"scan does NOT cover the rendered tree -- a planted address in "
+        f"public/ leaves the source scan reporting PASS -- so dropping this "
+        f"step reopens the gap with CI still green."
+    )
+
+
+def test_the_built_output_scan_must_carry_include_ignored():
+    """Without the flag the step scans nothing, so its presence is not coverage.
+
+    `public/` is gitignored. The scanner drops git-ignored files by default, so
+    the step would collect zero files. Pinning only "the step exists" would
+    accept exactly that.
+    """
+    real = CI.read_text(encoding="utf-8")
+    assert _build_output_scan_is_gated_in_ci(real)
+
+    mutated = real.replace(f" {BUILD_SCAN_PATH} {BUILD_SCAN_FLAG}", f" {BUILD_SCAN_PATH}")
+    assert mutated != real, "the expected invocation shape was not found to mutate"
+    assert not _build_output_scan_is_gated_in_ci(mutated), (
+        "a built-output scan WITHOUT --include-ignored still counted as "
+        "coverage; the guard is matching the path and ignoring whether the "
+        "scan can see any file at all."
+    )
+
+
+def test_a_neutered_built_output_scan_is_not_coverage():
+    """Prove the guard measures wiring, not text (mirrors the npm-test guard)."""
+    real = CI.read_text(encoding="utf-8")
+    marker = f"run: python3 {SECRET_SCANNER} {BUILD_SCAN_PATH} {BUILD_SCAN_FLAG}"
+    assert marker in real, "ci.yml no longer runs the built-output scan as expected"
+
+    line_start = real.rfind("\n", 0, real.index(marker)) + 1
+    indent = " " * (len(real[line_start:]) - len(real[line_start:].lstrip()))
+    mutated = real.replace(
+        real[line_start:real.index(marker) + len(marker)],
+        f"{indent}continue-on-error: true\n{indent}{marker}", 1)
+
+    assert not _build_output_scan_is_gated_in_ci(mutated), (
+        "a step that cannot fail the build still counted as coverage."
+    )

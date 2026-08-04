@@ -325,6 +325,21 @@ jobs:
             exit 1
           fi
 
+      - name: Secret detection — BUILT OUTPUT (blocking)
+        # The source scan above cannot see this tree, and that gap was real, not
+        # theoretical: planting an address in public/ and re-running the source
+        # scan reports "PASS: No secrets detected". Everything between a clean
+        # source file and the HTML actually served was ungated.
+        #
+        # --include-ignored is REQUIRED here. public/ is gitignored (it is a
+        # build artefact), so the default filter drops all of it, and the
+        # coverage floor then exits 2 rather than reporting a false clean.
+        #
+        # Runs AFTER the Hugo build step above, against the same tree that is
+        # deployed. A leak reachable only through a template, a data file, a
+        # shortcode or a partial shows up here and nowhere else.
+        run: python3 scripts/check-public-repo-secrets.py public --include-ignored --require-public
+
       - name: Social-card guard (rendered og:image — template-regression backstop)
         # --require-trails: this job built the tree in an earlier step, so a
         # missing trail.json means the build is stale, not that this is a
