@@ -56,6 +56,37 @@ const KNOWN_CONSENT_VERSIONS = ["2026-08-03"];
 // Pragmatic email shape check (not full RFC 5322): non-space local@domain.tld.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Read a request body, refusing to buffer more than `cap` bytes. Returns the
+// bytes, or null if the body is over the cap. The stream is cancelled on the
+// first chunk that crosses the line, so a sender cannot force us to hold an
+// arbitrarily large body just by withholding a content-length header.
+async function readCapped(request, cap) {
+  if (!request.body) return new Uint8Array(0);
+
+  const reader = request.body.getReader();
+  const chunks = [];
+  let total = 0;
+
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > cap) {
+      await reader.cancel();
+      return null;
+    }
+    chunks.push(value);
+  }
+
+  const joined = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    joined.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return joined;
+}
+
 function log(event, detail) {
   // Structured observability line (repo AP #12). One per decision branch.
   try {
@@ -118,16 +149,38 @@ export async function onRequestPost(context) {
     return textResponse(500, "The subscribe form is not fully configured yet. Please try again later.");
   }
 
-  // 1. Cheap up-front guard: reject an oversized body before buffering/parsing it.
-  const declaredLength = Number(request.headers.get("content-length") || 0);
-  if (declaredLength > MAX_BODY_BYTES) {
-    log("size-reject", { declaredLength });
+  // 1. Size ceiling.
+  //
+  // content-length is a CLIENT-SUPPLIED hint, not a fact. A chunked request
+  // carries none at all, and reading an absent header as 0 puts it under every
+  // ceiling, so trusting it alone made this guard optional: omit the header and
+  // an unbounded body reached formData() while the log line claiming a reject
+  // never emitted. The header is therefore only a cheap fast-path reject. When
+  // it is absent the body is read directly with a hard cap, and the stream is
+  // cancelled the moment the cap is passed so nothing larger is ever buffered.
+  const declaredLength = request.headers.get("content-length");
+  if (declaredLength !== null && Number(declaredLength) > MAX_BODY_BYTES) {
+    log("size-reject", { source: "header", declaredLength: Number(declaredLength) });
     return textResponse(413, "That submission is too large.");
+  }
+
+  let bodySource = request;
+  if (declaredLength === null) {
+    const capped = await readCapped(request, MAX_BODY_BYTES);
+    if (capped === null) {
+      log("size-reject", { source: "stream", declaredLength: null });
+      return textResponse(413, "That submission is too large.");
+    }
+    // Re-wrap the bytes we read so formData() still has a body to parse. The
+    // content type carries the multipart boundary, so it has to come across.
+    bodySource = new Response(capped, {
+      headers: { "content-type": request.headers.get("content-type") || "" },
+    });
   }
 
   let form;
   try {
-    form = await request.formData();
+    form = await bodySource.formData();
   } catch (_) {
     log("bad-request", { reason: "formData parse failed" });
     return textResponse(400, "Could not read the form.");

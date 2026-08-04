@@ -417,6 +417,104 @@ test('an oversized declared body is refused before it is parsed', async () => {
   const response = await harness.mod.onRequestPost({ request, env: DEFAULT_ENV });
   assert.equal(response.status, 413);
   assertNoBrevoWrite(harness.calls);
+  const entry = harness.logs.map((l) => JSON.parse(l)).find((e) => e.event === 'size-reject');
+  assert.equal(entry.source, 'header', 'the header fast-path should be what rejected this');
+});
+
+// A body delivered as a stream, which is the shape a chunked sender produces.
+//
+// Worth being precise about what is and is not special here, because the
+// distinction is easy to get backwards: Node does not set content-length on a
+// Request at all (fetch computes it at send time), so EVERY request this file
+// builds already omits the header, and the test below pins that. What a streamed
+// body adds is a body whose length genuinely is not knowable up front, so the
+// capped read is doing real work rather than measuring an in-memory buffer.
+function streamedRequest(bytes, contentType) {
+  const stream = new ReadableStream({
+    start(controller) {
+      controller.enqueue(bytes);
+      controller.close();
+    },
+  });
+  return new Request('https://hoiboy.uk/api/subscribe', {
+    method: 'POST',
+    headers: { 'content-type': contentType },
+    body: stream,
+    duplex: 'half',
+  });
+}
+
+// Re-emit a normal multipart form as a streamed body, preserving the boundary.
+async function streamedFormRequest(fields = {}) {
+  const seed = buildRequest(fields);
+  const contentType = seed.headers.get('content-type');
+  const bytes = new Uint8Array(await seed.arrayBuffer());
+  return streamedRequest(bytes, contentType);
+}
+
+test('every request this harness builds omits content-length', () => {
+  // Pinned because it is the reason the size ceiling went unexercised for so
+  // long. If a future Node starts populating the header here, the two
+  // header-absent tests below would quietly start taking the fast path and stop
+  // testing the capped read, while still passing. This fails first instead.
+  assert.equal(buildRequest().headers.get('content-length'), null);
+});
+
+test('a real browser POST, which does declare its length, is not made worse', async () => {
+  // The counterpart to the streamed cases: an accurate content-length under the
+  // ceiling must take the fast path and skip the capped read entirely. Without
+  // this, the whole suite would only ever prove the header-absent branch.
+  const harness = loadEndpoint();
+  arrangeFetch(harness, {});
+  const seed = buildRequest();
+  const bytes = new Uint8Array(await seed.arrayBuffer());
+  const request = new Request('https://hoiboy.uk/api/subscribe', {
+    method: 'POST',
+    headers: {
+      'content-type': seed.headers.get('content-type'),
+      'content-length': String(bytes.byteLength),
+    },
+    body: bytes,
+  });
+
+  const response = await harness.mod.onRequestPost({ request, env: DEFAULT_ENV });
+  assert.equal(response.status, 303);
+  assert.ok(
+    harness.calls.find((c) => String(c.url).includes('brevo.com')),
+    'a normally-declared submission must still reach Brevo'
+  );
+  assert.ok(
+    !harness.logs.map((l) => JSON.parse(l)).some((e) => e.event === 'size-reject'),
+    'a correctly-sized declared body must not trip the ceiling'
+  );
+});
+
+test('a streamed body with no content-length still reaches the handler intact', async () => {
+  const harness = loadEndpoint();
+  arrangeFetch(harness, {});
+  const request = await streamedFormRequest();
+  const response = await harness.mod.onRequestPost({ request, env: DEFAULT_ENV });
+
+  // The point is not merely that it was allowed through: the capped read has to
+  // hand formData() a body it can still parse, boundary and all. A 303 plus a
+  // real Brevo write is the only outcome that proves the re-wrap is lossless.
+  assert.equal(response.status, 303);
+  const write = harness.calls.find((c) => String(c.url).includes('brevo.com'));
+  assert.ok(write, 'the streamed submission never reached Brevo, so the body was mangled');
+});
+
+test('an oversized streamed body is refused even though it declares no length', async () => {
+  const harness = loadEndpoint();
+  arrangeFetch(harness, {});
+  const oversized = new Uint8Array(harness.mod.MAX_BODY_BYTES + 1);
+  const request = streamedRequest(oversized, 'multipart/form-data; boundary=x');
+  const response = await harness.mod.onRequestPost({ request, env: DEFAULT_ENV });
+
+  assert.equal(response.status, 413);
+  assertNoBrevoWrite(harness.calls);
+  const entry = harness.logs.map((l) => JSON.parse(l)).find((e) => e.event === 'size-reject');
+  assert.ok(entry, 'an oversized streamed body must be visible in the logs, not silently dropped');
+  assert.equal(entry.source, 'stream', 'the header path cannot have caught this one');
 });
 
 test('a missing name is rejected even when every other field is valid', async () => {
