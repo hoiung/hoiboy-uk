@@ -16,6 +16,12 @@ build:
   render: always
 ---
 
+<!-- iamhoi-exempt -->
+<!-- Not Hoi-voice prose: this page is the operator-only recorder UI, and its
+     body is embedded HTML (control labels, runbook steps, jurisdiction option
+     text, the verbatim consent script). The em dashes in it are UI and legal
+     strings, not authored prose, so voice rules do not apply. Exempt rather
+     than wrapped, so the guard records a decision instead of never looking. -->
 <noscript>This tool requires JavaScript and a Chromium browser. Open in Chrome / Edge / Brave.</noscript>
 
 <div id="fail-loud-banner" hidden role="alert"></div>
