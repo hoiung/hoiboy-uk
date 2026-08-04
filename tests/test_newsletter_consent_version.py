@@ -170,3 +170,47 @@ def test_the_privacy_notice_quotes_the_version_the_form_renders():
         f"{rendered!r}. Every code-side gate stays green here: the drift is "
         "entirely between the published claim and what is actually stored."
     )
+
+
+def test_the_version_check_is_membership_over_the_whole_allowlist():
+    """The endpoint must accept ANY listed version, not merely the newest one.
+
+    `KNOWN_CONSENT_VERSIONS` is an ARRAY on purpose. Its stated reason is
+    backwards compatibility: when the wording changes, a reader whose browser
+    cached the old form page still has the previous version string in the hidden
+    input, and their in-flight submission must validate rather than 400 -- and a
+    rejected submission here is a lost subscriber, not a retryable error.
+
+    That property is invisible to a behavioural test today, because the array
+    holds exactly one entry: a latest-only comparison
+    (`v !== KNOWN[KNOWN.length - 1]`) and a membership test produce identical
+    results for every possible input, so the JS suite passes either way (Ralph
+    round 17 Tier 2). It only becomes observable on the day a second entry is
+    added, which is precisely the day the mistake would ship.
+
+    So the check is pinned STRUCTURALLY. This is the honest instrument: it
+    asserts the shape that makes the documented behaviour possible, and says so,
+    rather than a behavioural test that would pass for the wrong reason.
+    """
+    source = ENDPOINT.read_text(encoding="utf-8")
+
+    checks = re.findall(r"^\s*if \(!?KNOWN_CONSENT_VERSIONS.*$", source, re.M)
+    assert len(checks) == 1, (
+        f"expected exactly one KNOWN_CONSENT_VERSIONS guard in "
+        f"{ENDPOINT.relative_to(REPO)}, found {len(checks)}: {checks!r}. If the "
+        f"guard moved or was duplicated, this gate is asserting the wrong line."
+    )
+    check = checks[0]
+
+    assert "KNOWN_CONSENT_VERSIONS.includes(" in check, (
+        f"the consent-version guard is not a membership test: {check.strip()!r}. "
+        f"An index-based comparison accepts only ONE version, so a reader "
+        f"submitting from a cached page carrying a previous version string is "
+        f"rejected with a 400 they cannot act on. The array exists so that "
+        f"every listed version stays valid; use .includes()."
+    )
+    assert not re.search(r"KNOWN_CONSENT_VERSIONS\s*\[", check), (
+        f"the consent-version guard indexes into the allowlist: "
+        f"{check.strip()!r}. Indexing pins acceptance to one position in the "
+        f"array, which is the latest-only behaviour this array exists to avoid."
+    )

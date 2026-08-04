@@ -81,7 +81,7 @@ function loadEndpoint() {
   const EXPOSE =
     '\n;({ onRequestPost, clean, EMAIL_RE, isDuplicateCode, KNOWN_CONSENT_VERSIONS,' +
     ' FIELD_CAPS, MAX_BODY_BYTES, CHECK_INBOX_PATH, CONFIRMED_PATH, BREVO_DOI_ENDPOINT,' +
-    ' redactPii })';
+    ' redactPii, literalForms, MAX_ESCAPE_LEVELS })';
 
   const mod = vm.runInContext(raw.replace(EXPORT_RE, '') + EXPOSE, context, {
     filename: ENDPOINT_PATH,
@@ -935,13 +935,70 @@ test('an address echoed back in a different case is still redacted', async () =>
   );
 });
 
+// The behavioural fixture below reaches ONE escaping level beyond what the old
+// generator produced, which pins the historical regression but not the property.
+// It cannot: a body nested deeply enough to need level 3 is not something a
+// realistic upstream sends, so driving the endpoint can never distinguish "walks
+// to a fixpoint" from "hard-coded one level deeper". The generator is therefore
+// asserted DIRECTLY here, which is the only place the property is observable.
+//
+// Correcting this file's own earlier wording: the shipped generator returned
+// `[escaped, value]` -- two FORMS at ONE escaping level, not two levels. A
+// regression to a hard-coded depth of 2 would satisfy the behavioural fixture
+// while still being the same guess-the-symptom mistake, and is what this test
+// exists to catch.
+test('unit: literalForms keeps escaping to a fixpoint, not to a fixed depth', () => {
+  const { literalForms, MAX_ESCAPE_LEVELS } = loadEndpoint().mod;
+  const escapeOnce = (s) => JSON.stringify(s).slice(1, -1);
+
+  const value = QUOTED_EMAIL;
+  const level1 = escapeOnce(value);
+  const level2 = escapeOnce(level1);
+  const level3 = escapeOnce(level2);
+
+  assert.notEqual(level1, value, 'the probe value must actually require escaping');
+  assert.notEqual(level3, level2, 'the probe value must keep growing under escaping');
+
+  const forms = literalForms(value);
+  assert.ok(forms.includes(value), 'the raw spelling must be matched');
+  assert.ok(forms.includes(level1), 'one escaping level must be matched');
+  assert.ok(
+    forms.includes(level2),
+    'two escaping levels must be matched: an upstream that quotes a rejected ' +
+      'payload nests JSON inside a JSON string'
+  );
+  assert.ok(
+    forms.includes(level3),
+    'THREE escaping levels are not matched, so the generator is capped at a ' +
+      'fixed depth rather than walking to a fixpoint. Whatever depth is ' +
+      'hard-coded, one more level reopens the gap -- the same guess-the-symptom ' +
+      'mistake as widening a character class.'
+  );
+
+  // Termination, so "walks to a fixpoint" cannot mean "walks forever": a value
+  // that never stops growing under escaping is bounded, and one that DOES reach
+  // a fixpoint stops early rather than padding out to the bound.
+  assert.ok(
+    forms.length <= MAX_ESCAPE_LEVELS,
+    `the walk produced ${forms.length} forms, above the ${MAX_ESCAPE_LEVELS} bound`
+  );
+  // Spread into a host array first: the value comes from the vm context, so its
+  // Array prototype is a different realm's and deepEqual compares prototypes.
+  const settled = [...literalForms('plain-reader')];
+  assert.deepEqual(
+    settled,
+    ['plain-reader'],
+    'a value that needs no escaping must yield exactly one form; anything more ' +
+      'means the walk is padding rather than stopping at its fixpoint'
+  );
+});
+
 test('an address nested two JSON levels deep in an echo is still redacted', async () => {
   // Escaping COMPOUNDS. An upstream that quotes a rejected payload embeds JSON
   // inside a JSON string, so by the time we read the wire text the address is
-  // escaped twice. Generating a fixed number of escaped spellings is the same
-  // guess-the-symptom mistake as widening a character class: whatever depth is
-  // hard-coded, one more level reopens the gap. The fixture is deliberately
-  // deeper than the two levels that were once hard-coded.
+  // escaped twice, and the generator that shipped reached only one level. This
+  // is the historical regression; the fixpoint PROPERTY is pinned by the unit
+  // test above, which is the only place a depth-2 hard-code is distinguishable.
   const nested = JSON.stringify({ email: QUOTED_EMAIL });
   const body = {
     code: 'invalid_parameter',
@@ -1064,6 +1121,65 @@ test('an oversized streamed body is refused even though it declares no length', 
   assert.ok(entry, 'an oversized streamed body must be visible in the logs, not silently dropped');
   assert.equal(entry.source, 'stream', 'the header path cannot have caught this one');
 });
+
+// Every other ceiling test submits `MAX_BODY_BYTES + 1`, which proves only that
+// something ABOVE the cap is refused -- an off-by-one that refuses the cap
+// itself satisfies all of them. The boundary is documented as inclusive
+// (`total > cap` rejects), so a body of exactly MAX_BODY_BYTES is a legitimate
+// submission and must not be size-rejected. Asserted on BOTH the streamed and
+// the declared-length path, because they reject at different points.
+//
+// The assertion is "not a size rejection", not "accepted": a raw padded buffer
+// is not parseable multipart, so the request rightly fails LATER at the form
+// parse. Demanding 200 here would pin the wrong thing.
+for (const [label, makeRequest] of [
+  ['streamed', (bytes) => streamedRequest(bytes, 'multipart/form-data; boundary=x')],
+  [
+    'declared-length',
+    (bytes) =>
+      new Request('https://hoiboy.uk/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'content-type': 'multipart/form-data; boundary=x',
+          'content-length': String(bytes.length),
+        },
+        body: bytes,
+      }),
+  ],
+]) {
+  test(`a body of exactly MAX_BODY_BYTES is not size-rejected (${label})`, async () => {
+    const harness = loadEndpoint();
+    arrangeFetch(harness, {});
+    const exact = new Uint8Array(harness.mod.MAX_BODY_BYTES);
+    assert.equal(
+      exact.length,
+      harness.mod.MAX_BODY_BYTES,
+      'the fixture must be exactly at the cap, or the boundary is not under test'
+    );
+
+    const response = await harness.mod.onRequestPost({
+      request: makeRequest(exact),
+      env: DEFAULT_ENV,
+    });
+
+    const sizeReject = harness.logs
+      .map((l) => JSON.parse(l))
+      .find((e) => e.event === 'size-reject');
+    assert.equal(
+      sizeReject,
+      undefined,
+      `a body of exactly MAX_BODY_BYTES was size-rejected on the ${label} path. ` +
+        `The cap is inclusive: only a body STRICTLY larger may be refused, so ` +
+        `this is an off-by-one that silently rejects a legitimate maximal ` +
+        `submission:\n${JSON.stringify(sizeReject)}`
+    );
+    assert.notEqual(
+      response.status,
+      413,
+      `a body of exactly MAX_BODY_BYTES returned 413 on the ${label} path`
+    );
+  });
+}
 
 test('a missing name is rejected even when every other field is valid', async () => {
   const { response, calls } = await submit({ fields: { name: null } });
