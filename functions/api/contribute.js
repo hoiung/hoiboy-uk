@@ -325,12 +325,17 @@ function createLogger(fn) {
 
   // For text captured OUTSIDE a log call (the upstream error body, which is
   // parsed for its `code` before it is ever logged). ORDER IS THE POINT:
-  // redactLine runs the by-value pass FIRST, on the pristine text, then the
+  // redactText runs the by-value pass FIRST, on the pristine text, then the
   // shape pass. The shipped inversion -- redactPii at capture, by-value later
   // -- leaked, because on an address with an excluded character MID-local-part
   // the shape pass rewrites the suffix, destroys the exact literal the
   // by-value pass was holding, and the prefix survives every later pass. The
   // two redactors only stack in this order.
+  // NOT redactLine: that one is deliberately shape-only and takes no `known`
+  // set. Handing it the known values lets a submitted field literal-replace
+  // its way through the SERIALISED line and rewrite the line's own structure,
+  // which is what produced the subscribe-status oracle. Values are redacted
+  // one level down by redactDeep, where they cannot collide with structure.
   function redact(text) {
     return redactText(text, known);
   }
