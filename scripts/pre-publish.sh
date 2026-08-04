@@ -45,6 +45,14 @@
 #                         discovery-call button, in both colour schemes. This is
 #                         the only lane with Chromium, which is why the gate lives
 #                         here and not in CI. blog-priv#63.)
+#   7d.AGIT counter      (check_agit_form_counter.py --built public: the story
+#                         counter on the real rendered form, in both colour
+#                         schemes. Types 1199, 1200, then 1199 plus Enter and
+#                         asserts the number, its computed colour and which
+#                         complaint the submit produces. The trailing-Enter case
+#                         is the one that discriminates: a counter reading raw
+#                         .value.length shows a green 1200 there for a story the
+#                         server would refuse. hoiboy-uk#57.)
 #   8. Rendered links    (lychee on rendered HTML NOT raw .md — catches broken
 #                         cross-section links + missing assets that markdown-only
 #                         lychee cannot see. This is the ONLY tier that checks a
@@ -254,6 +262,16 @@ run_check "404-gate" python3 scripts/test_404.py --built public
 #     from source in CI, which stays green for a stylesheet that is correct and
 #     a page that is not. blog-priv#63.
 run_check "cta-rendered" python3 scripts/check_cta_rendered.py --built public
+
+# 7d. The AGIT story counter, driven in a real browser. Same reasoning as 7c:
+#     tests/agit-form.test.js drives the shipped module under jsdom in CI, which
+#     cannot see whether the built page actually references /js/agit-form.js,
+#     whether the CSP lets it run, or whether the counter element survived a
+#     template edit. Any of those leaves the JS suite green and the form broken.
+#     It also closes the one derived claim this feature rested on: that LF
+#     expands to CRLF in form serialisation, so the server always counts at
+#     least what the browser counts. hoiboy-uk#57.
+run_check "agit-counter" python3 scripts/check_agit_form_counter.py --built public
 
 # 8. Lychee on rendered HTML — catches broken cross-section links + missing
 #    assets that markdown-only lychee misses (e.g. a `[link](../other-section/)`
