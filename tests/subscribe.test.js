@@ -572,6 +572,46 @@ for (const [label, brevoBody] of [
   });
 }
 
+// Both fixtures above are one-line objects well under 500 characters, so the
+// `.slice(0, 500)` on the log path is a no-op for them and they held while the
+// shipped code still truncated BEFORE redacting. That order leaked: an address
+// cut mid-token stopped matching the redactor and its local part went into the
+// log verbatim (Ralph Tier 3).
+//
+// This is a SEPARATE test rather than another row in the loop above, because the
+// loop's "redaction is not deletion" assertion cannot hold here and pretending
+// otherwise would be the fixture lying. The offsets that leak under the old
+// order are exactly those where the address STARTS before 500 and ENDS after it,
+// and at every one of them the 17-character `[email-redacted]` marker also
+// crosses the cut and is itself truncated. Demanding the whole marker would make
+// the straddle case unconstructible.
+//
+// Padding 442 is computed, not guessed: it puts the address at offset 489, so it
+// starts inside the window and ends outside it.
+test('an address straddling the 500-char log cut is still not leaked', async () => {
+  const body = {
+    code: 'invalid_parameter',
+    message: `${'x'.repeat(442)} contact ${VALID_EMAIL} rejected`,
+  };
+  const { logs } = await submit({ brevo: () => jsonResponse(400, body) });
+  const joined = logs.join('\n');
+
+  const localPart = VALID_EMAIL.split('@')[0];
+  assert.ok(
+    !joined.includes(VALID_EMAIL),
+    `the address appeared verbatim in a log line:\n${joined}`
+  );
+  assert.ok(
+    !joined.includes(localPart),
+    `the address was cut mid-token and its local part "${localPart}" survived ` +
+      `into a log line, which is the exact defect redact-before-truncate fixes:\n${joined}`
+  );
+  assert.ok(
+    joined.includes(body.code),
+    'the upstream code must still survive; it is the diagnostic that remains'
+  );
+});
+
 test('the encoding a real browser actually sends is handled', async () => {
   // subscribe-form.html declares no enctype, so a browser posts
   // application/x-www-form-urlencoded. Every other test in this file builds a

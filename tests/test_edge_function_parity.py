@@ -199,6 +199,38 @@ def test_every_upstream_response_body_is_redacted_at_capture():
         )
 
         for capture in text_captures:
+            # `.startswith("redactPii(")` alone was satisfied by
+            # `redactPii((await resp.text()).slice(0, 500))` -- redaction wrapping
+            # a value that had ALREADY been truncated. The gate certified
+            # redaction-at-capture while blind to a lossy transform inside the
+            # call, and 8 of 31 padding offsets leaked the local part because the
+            # cut landed mid-address and the regex no longer matched (Ralph Tier 3).
+            # So the body read must be the DIRECT argument: nothing may alter the
+            # text between reading it and redacting it.
+            inner = capture
+            if capture.startswith("redactPii("):
+                # Balanced-paren scan, not a naive strip: the capture INCLUDES
+                # everything chained after the call, so `capture[10:-1]` on
+                # `redactPii(await resp.text()).slice(0, 500)` leaves the trailing
+                # `.slice(` in the string and the check fires on the CORRECT form.
+                # Only the redactor's own argument is under test here.
+                depth, start = 0, len("redactPii(") - 1
+                for idx in range(start, len(capture)):
+                    if capture[idx] == "(":
+                        depth += 1
+                    elif capture[idx] == ")":
+                        depth -= 1
+                        if depth == 0:
+                            inner = capture[start + 1:idx]
+                            break
+            assert not any(
+                op in inner for op in (".slice(", ".substring(", ".substr(", ".split(")
+            ), (
+                f"{path.name} transforms the body BEFORE redacting it: "
+                f"{capture!r}. Truncating first lets an address straddling the cut "
+                f"survive as a fragment the redactor cannot match. Redact the full "
+                f"text, then bound it: redactPii(await resp.text()).slice(0, N)."
+            )
             assert capture.startswith("redactPii("), (
                 f"{path.name} captures a response body without redacting it: "
                 f"{capture!r}. An upstream can echo the submitted email back in "

@@ -307,7 +307,14 @@ export async function onRequestPost(context) {
 
   if (!resp.ok) {
     // Redacted HERE, at capture, so every use below is safe by construction.
-    const detail = redactPii((await resp.text()).slice(0, 500));
+    // REDACT BEFORE TRUNCATING. The reverse order leaked: an address straddling
+    // offset 500 was cut mid-token, the regex no longer matched what was left,
+    // and the local part landed verbatim in a structured log. Measured on the
+    // real helper, 8 of the 31 padding offsets from 470 to 500 leaked
+    // "harry.ng1982" into the log line; redact-then-slice leaks none of them.
+    // The slice still bounds what we store, it just no longer decides what the
+    // redactor can see.
+    const detail = redactPii(await resp.text()).slice(0, 500);
     let code = null;
     try {
       code = JSON.parse(detail).code;
