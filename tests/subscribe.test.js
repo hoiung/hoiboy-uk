@@ -543,6 +543,35 @@ for (const [label, header] of [
   });
 }
 
+// Brevo is free to quote the value it rejected. content/legal/sub-processors
+// publishes that this Function handles the submitted fields in transit only and
+// does not persist the request, so an upstream error body that echoes the
+// address must not carry it into a structured log line.
+for (const [label, brevoBody] of [
+  ['a validation error quoting the address', { code: 'invalid_parameter', message: `Attribute is invalid for contact ${VALID_EMAIL}` }],
+  ['a duplicate error quoting the address', { code: 'unknown_thing', message: `Contact ${VALID_EMAIL} already exists` }],
+]) {
+  test(`the subscriber address never reaches a log line via ${label}`, async () => {
+    const { logs } = await submit({ brevo: () => jsonResponse(400, brevoBody) });
+    const joined = logs.join('\n');
+
+    assert.ok(
+      !joined.includes(VALID_EMAIL),
+      `the submitted address appeared verbatim in a log line:\n${joined}`
+    );
+    // The error must still be diagnosable: redaction is not deletion.
+    assert.ok(
+      joined.includes('[email-redacted]'),
+      'the upstream detail was dropped entirely rather than redacted; an ' +
+        'operator needs the error text to diagnose a non-JSON upstream failure'
+    );
+    assert.ok(
+      joined.includes(brevoBody.code),
+      'the upstream code must survive redaction, it is the diagnostic'
+    );
+  });
+}
+
 test('an oversized streamed body is refused even though it declares no length', async () => {
   const harness = loadEndpoint();
   arrangeFetch(harness, {});

@@ -33,7 +33,7 @@ SUBSCRIBE = REPO / "functions" / "api" / "subscribe.js"
 CONTRIBUTE = REPO / "functions" / "api" / "contribute.js"
 
 # Helpers that MUST be byte-identical in both Functions.
-LOCKSTEP_HELPERS = ("readCapped", "textResponse", "clean")
+LOCKSTEP_HELPERS = ("readCapped", "redactPii", "textResponse", "clean")
 
 
 def function_body(path: Path, name: str) -> str | None:
@@ -137,6 +137,45 @@ def test_the_capped_read_is_unconditional_in_both_functions():
             f"every comparison against it is false, so the fast-reject silently "
             f"never fires."
         )
+
+
+def test_every_upstream_response_body_is_redacted_at_capture():
+    """Upstream text must be redacted where it is READ, not where it is logged.
+
+    `content/legal/sub-processors/index.md` publishes, for the Pages Functions
+    row of both forms, that the submitted fields are handled in transit only and
+    "the request is not persisted". An upstream is free to quote the value it
+    rejected, so echoing its raw error body into a structured log put a
+    submitter's email address on a persisted log surface and made that published
+    claim false.
+
+    Redacting at each log call would leave the claim one forgotten call site away
+    from being false again, which is the same shape as the bug. So the invariant
+    is at the capture point: every `await resp.text()` is wrapped in redactPii().
+
+    Asserted over ALL capture sites, not a known list, so a newly added upstream
+    call cannot quietly introduce an unredacted one.
+    """
+    for path in (SUBSCRIBE, CONTRIBUTE):
+        source = path.read_text(encoding="utf-8")
+
+        captures = re.findall(r"^\s*(?:const|let)\s+\w+\s*=\s*(.+?);$", source, re.M)
+        text_captures = [c for c in captures if ".text()" in c]
+
+        assert text_captures, (
+            f"{path.name} has no `await resp.text()` capture at all. If the "
+            f"upstream error path was restructured, this gate is now asserting "
+            f"nothing and must be rewritten to match the new shape."
+        )
+
+        for capture in text_captures:
+            assert capture.startswith("redactPii("), (
+                f"{path.name} captures an upstream response body without "
+                f"redacting it: {capture!r}. Wrap it in redactPii() at the "
+                f"capture point. An upstream can echo the submitted email back "
+                f"in its error text, and this Function publishes that it does "
+                f"not persist the request."
+            )
 
 
 def test_log_is_excluded_because_it_genuinely_differs():

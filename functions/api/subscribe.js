@@ -56,6 +56,26 @@ const KNOWN_CONSENT_VERSIONS = ["2026-08-03"];
 // Pragmatic email shape check (not full RFC 5322): non-space local@domain.tld.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Strip address-shaped tokens out of text before it reaches a log.
+//
+// Upstream error bodies get echoed into our logs so a failure is diagnosable,
+// and an upstream is free to quote back the value it rejected. That would put a
+// subscriber's email address into a log line, which contradicts what
+// content/legal/sub-processors/index.md publishes about this Function: that the
+// submitted fields are handled in transit only and the request is not persisted.
+//
+// Applied at the point the text is CAPTURED, not at each log call. Redacting per
+// call site is the same "remember it everywhere" shape that put the address in a
+// log in the first place; doing it once at the boundary means a future log line
+// cannot reintroduce the leak by forgetting.
+//
+// The error stays diagnosable: the shape, the status and the upstream code all
+// survive, only the address does not.
+function redactPii(text) {
+  if (typeof text !== "string") return text;
+  return text.replace(/[^\s"'<>@,;:()]+@[^\s"'<>@,;:()]+\.[^\s"'<>@,;:()]+/g, "[email-redacted]");
+}
+
 // Read a request body, refusing to buffer more than `cap` bytes. Returns the
 // bytes, or null if the body is over the cap. The stream is cancelled on the
 // first chunk that crosses the line, so a sender cannot force us to hold an
@@ -286,7 +306,8 @@ export async function onRequestPost(context) {
   }
 
   if (!resp.ok) {
-    const detail = (await resp.text()).slice(0, 500);
+    // Redacted HERE, at capture, so every use below is safe by construction.
+    const detail = redactPii((await resp.text()).slice(0, 500));
     let code = null;
     try {
       code = JSON.parse(detail).code;
