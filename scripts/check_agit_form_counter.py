@@ -288,6 +288,17 @@ def main(argv: list[str] | None = None) -> int:
                         page.fill(STORY, value)
                         page.wait_for_timeout(50)
 
+                        # Visibility is checked, not just text. The counter ships
+                        # `hidden` so a member whose JS never loaded is not shown a
+                        # frozen 0, and the script clears that on first render.
+                        # text_content() returns the text of a hidden element quite
+                        # happily, so without this assertion a broken unhide would
+                        # leave every check below green against an invisible chip.
+                        if not page.locator(COUNTER).first.is_visible():
+                            failures.append(f"[{scheme}] {label}: the counter is not visible. "
+                                            f"It ships hidden and the script must clear that "
+                                            f"on the first render.")
+
                         shown = page.locator(COUNTER).first.text_content().strip()
                         if shown != str(expected_count):
                             failures.append(f"[{scheme}] {label}: counter reads {shown!r}, "
