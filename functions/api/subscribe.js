@@ -49,8 +49,10 @@ const FIELD_CAPS = { name: 100, email: 254 };
 // An unknown or absent version is REJECTED rather than defaulted: a silent default
 // would relabel a submission as consenting to wording it never saw. Newest first;
 // keep older entries so an in-flight submission from a cached page still validates.
-// MUST match the hidden input in layouts/_partials/subscribe-form.html and the mirror
-// in tests/subscribe.test.js. Gate: tests/test_newsletter_consent_version.py
+// MUST match the hidden input in layouts/_partials/subscribe-form.html, the mirror
+// in tests/subscribe.test.js, AND the version quoted in prose in
+// content/legal/privacy/index.md -- FOUR surfaces, all four gated.
+// Gate: tests/test_newsletter_consent_version.py
 const KNOWN_CONSENT_VERSIONS = ["2026-08-03"];
 
 // Pragmatic email shape check (not full RFC 5322): non-space local@domain.tld.
@@ -356,9 +358,15 @@ async function verifyTurnstile(secret, response, remoteip) {
 // Brevo signals "this contact is already on the list" with a 4xx carrying a `code`
 // field. The exact spelling is matched loosely, and the raw code is logged on every
 // non-2xx, because the precise string is UNVERIFIED until AC 0.5's live probe runs
-// against the real account. A loose match plus a logged raw value fails safe in both
-// directions: an unrecognised duplicate spelling degrades to a 502 the operator can
-// see in the logs, rather than a silent wrong answer.
+// against the real account.
+//
+// The loose match is safe in ONE direction for free: an unrecognised duplicate
+// spelling degrades to a 502 the operator can see in the logs. The OTHER direction
+// is not free, and the caller is what makes it safe -- a loose substring would
+// otherwise match a 429 or 5xx whose code merely CONTAINS "duplicate", answering
+// 303 "check your inbox" to someone who will never receive an email. So the caller
+// consults this only on a 4xx that is not 429; the status class, not this function,
+// is what rules out the retryable failures (Ralph round 22 Tier 3).
 function isDuplicateCode(code) {
   return typeof code === "string" && code.toLowerCase().includes("duplicate");
 }
@@ -373,10 +381,16 @@ export async function onRequestPost(context) {
 
   // 0. Fail loud on a missing binding. Checked per name, not by one alternation, so
   //    a deploy carrying two of the three cannot pass this guard.
+  //    The two id bindings are additionally checked to be POSITIVE INTEGERS, not
+  //    merely present. Truthiness alone let `BREVO_LIST_ID = "   "` through, and
+  //    `Number("   ")` is 0, so the request went out as `includeListIds: [0]` --
+  //    fail-closed at Brevo, but not the loud-on-first-request behaviour the
+  //    header comment promises (Ralph round 22 Tier 3).
+  const isPositiveId = (v) => Number.isInteger(Number(v)) && Number(v) > 0 && String(v).trim() !== "";
   const missingBindings = [];
   if (!env.BREVO_API_KEY) missingBindings.push("BREVO_API_KEY");
-  if (!env.BREVO_LIST_ID) missingBindings.push("BREVO_LIST_ID");
-  if (!env.BREVO_DOI_TEMPLATE_ID) missingBindings.push("BREVO_DOI_TEMPLATE_ID");
+  if (!isPositiveId(env.BREVO_LIST_ID)) missingBindings.push("BREVO_LIST_ID");
+  if (!isPositiveId(env.BREVO_DOI_TEMPLATE_ID)) missingBindings.push("BREVO_DOI_TEMPLATE_ID");
   if (missingBindings.length > 0) {
     log("config-missing", { missing: missingBindings });
     return textResponse(500, "The subscribe form is not fully configured yet. Please try again later.");
@@ -557,7 +571,11 @@ export async function onRequestPost(context) {
 
     // Already on the list: answer exactly as a fresh success does. A distinct
     // status here would let anyone test whether a given address is subscribed.
-    if (isDuplicateCode(code)) {
+    // 4xx-and-not-429 only: a 429 or 5xx whose code happens to contain
+    // "duplicate" is a RETRYABLE failure, and answering it as a duplicate would
+    // tell the visitor to check an inbox no email is coming to.
+    const isClientError = resp.status >= 400 && resp.status < 500 && resp.status !== 429;
+    if (isClientError && isDuplicateCode(code)) {
       log("brevo-doi", { ok: true, duplicate: true, status: resp.status, code });
       return Response.redirect(new URL(CHECK_INBOX_PATH, request.url), 303);
     }

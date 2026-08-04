@@ -15,8 +15,9 @@
 //
 // One deliberate exception to "nothing is duplicated": KNOWN_CONSENT_VERSIONS is
 // ALSO declared here as an explicit mirror, because tests/test_newsletter_consent_version.py
-// asserts the three consent surfaces agree (form hidden input / endpoint / this
-// mirror) and needs a literal to read. The mirror cannot drift silently: the
+// asserts the consent surfaces agree (form hidden input / endpoint / this
+// mirror, plus the version quoted in prose in content/legal/privacy/index.md --
+// four in total) and needs a literal to read. The mirror cannot drift silently: the
 // `mirror` test below asserts it equals the value actually loaded from the endpoint.
 'use strict';
 
@@ -301,6 +302,30 @@ test('honeypot: a filled hidden field looks successful to the bot but writes not
   assert.equal(calls.length, 0);
 });
 
+test('honeypot: an EMPTY hidden field is what every real browser posts, and must not drop', async () => {
+  // The shipped input (layouts/_partials/subscribe-form.html) carries no
+  // `disabled`, so a browser submits `website=` on EVERY legitimate signup.
+  // The predicate is `if (form.get("website"))`, correct only because "" is
+  // falsy -- and the filled-field test above cannot see that. Ralph round 22
+  // Tier 3 proved the gap: changing the predicate to `!== null` dropped 100%
+  // of real subscriptions, returned a success-looking 303, and left all 114
+  // JS tests and all 693 Python tests green. This asserts the empty case
+  // explicitly, so the truthiness semantics are pinned rather than assumed.
+  // Premise guard FIRST: the fixture must actually post the field, or this
+  // test passes for the wrong reason -- an ABSENT field is also falsy, so an
+  // omitted `website` would satisfy the assertions below while proving
+  // nothing about the empty-string case that real traffic sends.
+  const posted = await buildRequest({ website: '' }).formData();
+  assert.ok(posted.has('website'), 'fixture must POST website, not omit it');
+  assert.equal(posted.get('website'), '', 'fixture must post website EMPTY');
+
+  const { response, calls } = await submit({ fields: { website: '' } });
+  assert.equal(response.status, 303);
+  // A real Brevo double opt-in write happened: the honeypot did NOT fire.
+  const brevo = calls.find((c) => String(c.url).includes('/v3/contacts/doubleOptinConfirmation'));
+  assert.ok(brevo, 'an empty honeypot must reach Brevo, not be silently dropped');
+});
+
 test('turnstile-absent: a submission with no Turnstile token is refused', async () => {
   // No token posted, so siteverify sees an empty response value and fails it.
   const { response, calls } = await submit({
@@ -362,6 +387,34 @@ test('duplicate: an address already on the list answers exactly as a fresh succe
   assert.equal(response.status, 303);
   assert.equal(response.headers.get('location'), 'https://hoiboy.uk/newsletter/check-inbox/');
   assert.equal(brevoCalls(calls).length, 1, 'the duplicate is detected from a real attempt');
+});
+
+test('duplicate: a RETRYABLE failure whose code contains "duplicate" is not answered as one', async () => {
+  // Ralph round 22 Tier 3. isDuplicateCode is a loose substring match, so a 429
+  // or 5xx merely CONTAINING "duplicate" used to short-circuit to 303 "check
+  // your inbox" -- to someone who will never receive an email, and who cannot
+  // retry because we told them it worked. The status class is what rules this
+  // out, so both retryable classes are asserted here.
+  const rateLimited = await submit({
+    brevo: () => jsonResponse(429, { code: 'duplicate_request_throttled' }),
+  });
+  assert.equal(rateLimited.response.status, 503, 'a 429 stays retryable, never a 303');
+
+  const serverError = await submit({
+    brevo: () => jsonResponse(500, { code: 'a duplicate was detected downstream' }),
+  });
+  assert.equal(serverError.response.status, 502, 'a 5xx stays an error, never a 303');
+});
+
+test('config: a whitespace-only id binding is refused as loudly as an absent one', async () => {
+  // Ralph round 22 Tier 3. The guard was truthiness-only, so "   " passed it and
+  // Number("   ") is 0 -- the request went out as includeListIds: [0]. Fail-closed
+  // at Brevo, but not the loud-on-the-first-request behaviour the header promises.
+  for (const bad of ['   ', 'not-a-number', '0', '-1']) {
+    const { response, calls } = await submit({ env: { BREVO_LIST_ID: bad } });
+    assert.equal(response.status, 500, `BREVO_LIST_ID=${JSON.stringify(bad)} must be refused`);
+    assertNoBrevoWrite(calls);
+  }
 });
 
 test('rate-limit: a Brevo 429 becomes a 503 rather than a retry storm', async () => {
