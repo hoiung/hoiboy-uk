@@ -1,0 +1,49 @@
+{{- /*
+  A <script> tag whose URL changes when the script's contents change.
+
+  Site JS lives in static/ and is served unfingerprinted, so its filename never
+  moves when the file does. Page HTML is served `max-age=0, must-revalidate`
+  and JS gets Cloudflare Pages' asset default of `max-age=14400`, so for up to
+  four hours after a deploy a returning member gets FRESH markup against a
+  STALE script. hoiboy-uk#57 made that concrete: the story label promises
+  "minimum 1200 characters" and the counter ships in the HTML, while four-hour-
+  old agit-form.js has neither the counter nor the submit guard. The member
+  types, sees nothing count, hits Send, and collects a server 400 the page
+  never warned them about.
+
+  The obvious fix does not work, and this is measured, not assumed. A
+  `/js/*` block in static/_headers setting `Cache-Control: public, max-age=0,
+  must-revalidate` was deployed and the live response came back
+  `public, max-age=14400, must-revalidate`: Cloudflare Pages JOINS same-name
+  headers rather than replacing them, the asset default's max-age won the
+  merge, and only the inert `must-revalidate` survived. `must-revalidate`
+  governs what happens once a response is STALE, so against a response that is
+  still fresh for four hours it never fires.
+
+  Changing the URL sidesteps the merge entirely, because a different URL is a
+  different cache key. The version is the file's own content hash, so it moves
+  if and only if the script does, and an unchanged script keeps its four-hour
+  cache. assets/-based `| fingerprint` is the same idea and is what
+  layouts/_partials/head.html already does for main.css; this keeps the file in
+  static/ so that `require('../static/js/agit-form.js')` in the Node suites goes
+  on resolving.
+
+  Fails the build on a missing file rather than emitting a 404 script tag.
+
+  Usage: call it as a shortcode with one static-relative path argument, e.g.
+  versioned-script "js/agit-form.js" (written without an escaped example here,
+  because a Go template comment ends at the first close-comment delimiter and
+  the usual escaped form contains one).
+  Asserted by scripts/test_agit_counter_contrast.py and, on the built page, by
+  scripts/check_agit_form_counter.py.
+*/ -}}
+{{- $path := .Get 0 -}}
+{{- if not $path -}}
+  {{- errorf "versioned-script: needs a static-relative path, e.g. {{< versioned-script \"js/agit-form.js\" >}} (called from %s)" .Page.Path -}}
+{{- end -}}
+{{- $file := printf "static/%s" $path -}}
+{{- if not (fileExists $file) -}}
+  {{- errorf "versioned-script: no file at %s (called from %s)" $file .Page.Path -}}
+{{- end -}}
+{{- $version := substr (crypto.SHA256 (os.ReadFile $file)) 0 12 -}}
+<script src="/{{ $path }}?v={{ $version }}" defer></script>
