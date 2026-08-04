@@ -25,7 +25,13 @@ Usage:
   python3 scripts/check-exif.py                 # scan all tracked content raster images
   python3 scripts/check-exif.py <img> [img...]  # scan explicit files (pre-commit / fixtures)
 
-Exit codes: 0 = clean, 1 = at least one offender, 2 = usage / lib error.
+Exit codes:
+  0 = looked, and no image carries identifying EXIF
+  1 = looked, and at least one does
+  2 = could NOT look: the gate's own coverage failed (nothing collected, a
+      declared input absent, or a surface it could not read). Distinct from 0
+      on purpose -- "no violations" and "no evidence" are opposite outcomes an
+      exit-code check alone cannot tell apart (#56). Taxonomy: scripts/gate_coverage.py.
 """
 from __future__ import annotations
 

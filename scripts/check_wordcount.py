@@ -16,7 +16,13 @@ and URLs inflate naive wc counts on long technical posts. Counting only the
 prose readers actually read is the point of the ceiling.
 
 Issue: hoiung/hoiboy-uk#10
-Exit codes: 0 = pass (silent), 1 = fail (block commit / fail CI)
+Exit codes, the repo-wide taxonomy defined in scripts/gate_coverage.py:
+  0 = looked, and every post is under the ceiling (silent)
+  1 = looked, and a post is over the ceiling (block commit / fail CI)
+  2 = could NOT look: no files were given, so the ceiling was enforced against
+      nothing. Distinct from 0 on purpose, because "no violations" and "no
+      evidence" are opposite outcomes an exit-code check alone cannot tell
+      apart (#56 finding N7).
 """
 
 from __future__ import annotations

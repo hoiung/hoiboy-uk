@@ -17,7 +17,13 @@ Usage:
   python3 scripts/check_emdash_newposts.py                 # scan all new posts
   python3 scripts/check_emdash_newposts.py <file> [file…]  # scan explicit files
 
-Exit codes: 0 = clean, 1 = a new post has a bare em-dash in unmarked prose.
+Exit codes:
+  0 = looked, and no new post has a bare em-dash in unmarked prose
+  1 = looked, and one does
+  2 = could NOT look: the gate's own coverage failed (nothing collected, a
+      declared input absent, or a surface it could not read). Distinct from 0
+      on purpose -- "no violations" and "no evidence" are opposite outcomes an
+      exit-code check alone cannot tell apart (#56). Taxonomy: scripts/gate_coverage.py.
 """
 from __future__ import annotations
 

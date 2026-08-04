@@ -29,7 +29,13 @@ First-person detection:
     without first-person is generic professional vocabulary.
 
 Tracker: private bake-off teaser issue (Phase 1 infra)
-Exit codes: 0 = pass, 1 = wrapping missing, 2 = config / read error
+Exit codes:
+  0 = looked, and every prose file is wrapped
+  1 = looked, and wrapping is missing
+  2 = could NOT look: the gate's own coverage failed (no files collected, a
+      declared input absent, or a surface it could not read). Distinct from 0
+      on purpose -- "no violations" and "no evidence" are opposite outcomes
+      an exit-code check alone cannot tell apart (hoiboy-uk#56).
 """
 
 from __future__ import annotations

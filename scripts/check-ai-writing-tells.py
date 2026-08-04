@@ -19,7 +19,13 @@ Human-readable companion: dotfiles/voice/base/VOICE_PROFILE.md Section 8 / 19.
 Issue: hoiung/dotfiles#404 (canonical) + hoiung/hoiboy-uk#3 (mirror, since
        merged via hoiung/dotfiles#460 --mode unification, which also fixes
        the voice-staging research-file silent-skip bug).
-Exit codes: 0 = clean, 1 = findings (block commit / fail CI)
+Exit codes:
+  0 = looked, and the scanned regions are clean
+  1 = looked, and found tells (block commit / fail CI)
+  2 = could NOT look: the gate's own coverage failed (no files collected, a
+      declared input absent, or a surface it could not read). Distinct from 0
+      on purpose -- "no violations" and "no evidence" are opposite outcomes
+      an exit-code check alone cannot tell apart (hoiboy-uk#56).
 """
 
 from __future__ import annotations

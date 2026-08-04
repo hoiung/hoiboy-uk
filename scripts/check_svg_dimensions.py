@@ -21,6 +21,14 @@ Three structural assertions on each SVG under content/ (exit 1 + offender list o
 This is a STRUCTURAL gate (presence/shape), not a visual one — always also RENDER and eyeball
 (overlap, arrow endpoints, watermark corner) per ../dotfiles/docs/guides/diagram-annotation-qa.md.
 Wired into scripts/pre-publish.sh; runnable standalone: python3 scripts/check_svg_dimensions.py [path ...]
+
+Exit codes:
+  0 = looked, and every SVG is house-compliant
+  1 = looked, and one is not
+  2 = could NOT look: the gate's own coverage failed (nothing collected, a
+      declared input absent, or a surface it could not read). Distinct from 0
+      on purpose -- "no violations" and "no evidence" are opposite outcomes an
+      exit-code check alone cannot tell apart (#56). Taxonomy: scripts/gate_coverage.py.
 """
 import sys
 import re
