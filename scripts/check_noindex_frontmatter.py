@@ -45,6 +45,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import re
+import xml.etree.ElementTree as ET
 import sys
 from pathlib import Path
 
@@ -121,6 +122,41 @@ def urls_in(path: Path, tag: str) -> list[str]:
     return [re.sub(r"^https?://[^/]+", "", u).strip() for u in raw]
 
 
+def feed_item_urls(path: Path) -> list[str]:
+    """Every URL published as a feed ITEM, ignoring channel metadata.
+
+    A feed's `<channel>` carries its OWN `<link>` — a self-reference to the
+    section, not a published page. Collecting every `<link>` in the document
+    therefore reports the section itself as leaking into its own feed. The
+    root feed hid this because its channel link is `/`, which matches no
+    noindex glob; the moment per-section feeds were read, `/newsletter/`
+    flagged against `/newsletter/*` while that feed had ZERO items.
+
+    What actually publishes a body is an `<item>`, so only item links count.
+    """
+    if not path.exists():
+        return []
+    try:
+        root = ET.parse(path).getroot()
+    except ET.ParseError as exc:
+        # A feed we cannot parse is not a feed we can clear. Fail loud rather
+        # than returning [] , which would read as "nothing leaked".
+        raise SystemExit(
+            f"[FAIL] [unparseable-feed] {path}: {exc}. This gate cannot assert "
+            f"an absence in a file it could not read."
+        )
+    # `root.iter` rather than `channel.findall`: a feed whose items are not
+    # under a <channel> would otherwise yield [] , and an empty result from this
+    # function is indistinguishable from "nothing leaked" — a silent skip, which
+    # is the exact class this gate exists to close.
+    out = []
+    for item in root.iter("item"):
+        link = item.findtext("link")
+        if link:
+            out.append(re.sub(r"^https?://[^/]+", "", link).strip())
+    return out
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--built", default="public", help="built site directory")
@@ -128,13 +164,23 @@ def main() -> int:
 
     built = (REPO / args.built) if not Path(args.built).is_absolute() else Path(args.built)
     sitemap = built / "sitemap.xml"
-    feed = built / "index.xml"
+    # EVERY feed, not just the site-wide one. `config/_default/hugo.toml` sets
+    # `section = ["HTML", "RSS", "trails"]`, so Hugo emits a per-section
+    # index.xml alongside the root one -- 18 of them at the time this was
+    # written, including public/newsletter/index.xml. Reading only the root feed
+    # reopened the exact defect this gate exists to prevent: round 6 shipped the
+    # newsletter pages into RSS with full body text, and the fix asserted the
+    # outcome in the root feed while stopping one output format short. A page
+    # excluded from the root feed can still be published in full by its section
+    # feed, and the gate reported [OK].
+    feeds = sorted(built.rglob("index.xml"))
 
-    if not sitemap.exists() or not feed.exists():
+    if not sitemap.exists() or not feeds:
         print(
-            f"[FAIL] [no-built-tree] {sitemap} or {feed} missing. This gate reads "
-            f"the GENERATED output; run `hugo --gc --minify -e production` first. "
-            f"Passing without them would prove nothing.",
+            f"[FAIL] [no-built-tree] {sitemap} missing, or no index.xml feed under "
+            f"{built}. This gate reads the GENERATED output; run "
+            f"`hugo --gc --minify -e production` first. Passing without them would "
+            f"prove nothing.",
             file=sys.stderr,
         )
         return 2
@@ -149,7 +195,14 @@ def main() -> int:
         return 1
 
     sitemap_urls = urls_in(sitemap, "loc")
-    feed_urls = urls_in(feed, "link")
+    # Union across every feed, each labelled, so a violation names the feed that
+    # actually published the page rather than a generic "the RSS feed".
+    feed_urls: list[str] = []
+    feed_of: dict[str, str] = {}
+    for f in feeds:
+        for u in feed_item_urls(f):
+            feed_urls.append(u)
+            feed_of.setdefault(u, f.relative_to(built).as_posix())
     if not sitemap_urls:
         print(
             "[FAIL] [empty-sitemap] the built sitemap lists no URLs, so this gate "
@@ -208,7 +261,7 @@ def main() -> int:
             if pattern.match(url):
                 failures.append(
                     f"  [feed] {url} is noindex via '{glob}' but its FULL BODY is "
-                    f"published in index.xml, the RSS feed every page advertises. "
+                    f"published in {feed_of.get(url, 'index.xml')}. "
                     f"A noindex header does not cover the feed. Add "
                     f"`build: {{list: never, render: always}}` to its frontmatter. "
                     f"See content/private/tools/meet-recorder/index.md."
