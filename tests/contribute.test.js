@@ -231,3 +231,166 @@ test('consent version: surrounding whitespace and control chars do not smuggle a
   // ...but injected structure does not become a different accepted value.
   assert.equal(consentVersionAccepted('2026-07-28\nBcc:evil'), false);
 });
+
+// ----------------------------------------------------------------------
+// FIELD_FLOORS -- the story minimum, and the browser/server agreement (hoiboy-uk#57)
+// ----------------------------------------------------------------------
+
+// Mirror EXACTLY functions/api/contribute.js (lock-step, code review). Note the
+// asymmetry with the client half below: this file cannot import contribute.js
+// (ESM Pages Function in a CommonJS package), so the SERVER side is mirrored,
+// but the CLIENT side is the real exported helper. Only one of the two is a copy.
+const FIELD_FLOORS = { feature: 1200 };
+const FIELD_CAPS_FEATURE = 8000;
+
+// The shipped client helper -- imported, NOT mirrored, so a divergence between
+// what the browser counts and what these tests believe cannot hide here.
+const { storyLength, STORY_MIN } = require('../static/js/agit-form.js');
+
+/** What the server sees: the browser value after form serialisation, then clean(). */
+function serverLength(browserValue) {
+  // WHATWG form serialisation normalises every newline in a textarea to CRLF on
+  // the wire, so an interior LF arrives as two characters. That is why the
+  // server count is always >= the client count and never the other way round.
+  const onTheWire = String(browserValue).replace(/\r\n?|\n/g, '\r\n');
+  return clean(onTheWire, FIELD_CAPS_FEATURE).length;
+}
+
+const serverAccepts = (browserValue) => serverLength(browserValue) >= FIELD_FLOORS.feature;
+const clientAccepts = (browserValue) => storyLength(browserValue) >= STORY_MIN;
+
+test('the floor mirrors the shipped client threshold, so the two cannot drift apart', () => {
+  assert.equal(FIELD_FLOORS.feature, STORY_MIN);
+});
+
+test('shape A: 1200 plain characters, no trailing newline -- both accept', () => {
+  const value = 'x'.repeat(1200);
+  assert.equal(storyLength(value), 1200);
+  assert.equal(serverLength(value), 1200);
+  assert.equal(serverAccepts(value), clientAccepts(value));
+  assert.equal(serverAccepts(value), true);
+});
+
+test('shape B: 1199 characters plus Enter -- both reject, no silent server rejection', () => {
+  // The discriminating shape. A client counting raw .value.length would show
+  // 1200 and let this through, and the server would then reject it: the member
+  // sees green and is refused anyway. Both sides must say no here.
+  const value = 'x'.repeat(1199) + '\n';
+  assert.equal(storyLength(value), 1199);
+  assert.equal(serverLength(value), 1199);
+  assert.equal(serverAccepts(value), clientAccepts(value));
+  assert.equal(serverAccepts(value), false);
+});
+
+test('shape C: one astral emoji among 1200 UTF-16 units -- both accept', () => {
+  // Both sides measure .length on a JS string, so one astral character is two
+  // units on both. What matters is that they agree, not which unit they use.
+  const value = '\u{1F600}' + 'x'.repeat(1198);
+  assert.equal(storyLength(value), 1200);
+  assert.equal(serverLength(value), 1200);
+  assert.equal(serverAccepts(value), clientAccepts(value));
+  assert.equal(serverAccepts(value), true);
+});
+
+test('shape D: 12 interior newlines -- server counts 1212, both still accept', () => {
+  // LF expands to CRLF on the wire, so the server counts 12 higher. It reads as
+  // a discrepancy but it is the safe direction: the server can only ever count
+  // MORE than the browser, never less.
+  // 1200 browser units exactly: 1188 ordinary characters plus 12 INTERIOR
+  // newlines (13 blocks joined by 12 separators, so none is leading or trailing
+  // and trim() cannot absorb one).
+  const value = Array.from({ length: 13 }, (_, i) => 'x'.repeat(i < 12 ? 91 : 96)).join('\n');
+  assert.equal(storyLength(value), 1200);
+  assert.equal(serverLength(value), 1212);
+  assert.equal(serverAccepts(value), clientAccepts(value));
+  assert.equal(serverAccepts(value), true);
+});
+
+test('the server is never the stricter of the two, across the whole boundary region', () => {
+  // The invariant behind "a green counter is a guarantee", swept rather than
+  // spot-checked: for every shape and every length around the threshold, the
+  // client must never accept something the server would refuse.
+  const shapes = {
+    plain: (n) => 'x'.repeat(n),
+    trailingNewline: (n) => 'x'.repeat(Math.max(0, n - 1)) + '\n',
+    interiorNewlines: (n) => 'x\n'.repeat(Math.floor(n / 2)) + 'x'.repeat(n % 2),
+    leadingWhitespace: (n) => '  \n' + 'x'.repeat(n),
+    tabs: (n) => 'x\t'.repeat(Math.floor(n / 2)) + 'x'.repeat(n % 2),
+  };
+  for (const [name, build] of Object.entries(shapes)) {
+    for (let n = 1190; n <= 1210; n += 1) {
+      const value = build(n);
+      assert.ok(
+        serverLength(value) >= storyLength(value),
+        `${name} at n=${n}: server counted ${serverLength(value)} but client counted ${storyLength(value)}`
+      );
+      if (clientAccepts(value)) {
+        assert.equal(serverAccepts(value), true, `${name} at n=${n}: counter said green, server refused`);
+      }
+    }
+  }
+});
+
+test('a story one character under the floor is refused by the server', () => {
+  assert.equal(serverAccepts('x'.repeat(1199)), false);
+  assert.equal(serverAccepts('x'.repeat(1200)), true);
+});
+
+test('the floor is measured after clean(), so whitespace padding cannot fake it', () => {
+  // A bot padding with spaces or control characters gets nothing: clean() trims
+  // the ends, and interior padding is still only as long as it looks.
+  assert.equal(serverAccepts('   ' + 'x'.repeat(1199) + '   '), false);
+  assert.equal(serverAccepts(' '.repeat(5000)), false);
+  assert.equal(serverAccepts(' '.repeat(1200)), false);
+});
+
+// ----------------------------------------------------------------------
+// Lock-step: the mirror above vs the shipped Pages Function (hoiboy-uk#57)
+// ----------------------------------------------------------------------
+//
+// Every mirrored helper in this file is kept in step with contribute.js BY CODE
+// REVIEW, with no automated check -- which means a mirror can drift and this
+// whole suite keeps passing while asserting things about a function that no
+// longer exists as written. contribute.js is ESM in a CommonJS package so it
+// cannot be required, but its SOURCE can still be read, and a constant can be
+// compared without executing anything. These two close that gap for the floor.
+
+const CONTRIBUTE_SRC = require('node:fs').readFileSync(
+  require('node:path').join(__dirname, '..', 'functions', 'api', 'contribute.js'),
+  'utf8'
+);
+
+test('lock-step: the mirrored floor equals the one contribute.js actually ships', () => {
+  const match = CONTRIBUTE_SRC.match(/FIELD_FLOORS\s*=\s*\{[^}]*feature:\s*(\d+)/);
+  assert.ok(match, 'FIELD_FLOORS.feature not found in functions/api/contribute.js');
+  assert.equal(
+    Number(match[1]),
+    FIELD_FLOORS.feature,
+    'the mirror in this file has drifted from the shipped Pages Function'
+  );
+});
+
+test('the server floor is checked after the presence check and before the email format check', () => {
+  // Placement is behaviour here, not tidiness. Before the presence check, an
+  // empty story would be reported as "too short" instead of "please fill this
+  // in". After the email check, a member with both problems gets told about the
+  // wrong one. Asserted on the handler body so an unrelated earlier mention
+  // cannot satisfy it.
+  const presence = CONTRIBUTE_SRC.indexOf('Please fill in your name, email, and your story.');
+  const floor = CONTRIBUTE_SRC.indexOf('feature.length < FIELD_FLOORS.feature');
+  const emailFormat = CONTRIBUTE_SRC.indexOf('!EMAIL_RE.test(email)');
+
+  assert.ok(presence > -1 && floor > -1 && emailFormat > -1, 'all three checks must be present');
+  assert.ok(presence < floor, 'the floor must come after the presence check');
+  assert.ok(floor < emailFormat, 'the floor must come before the email format check');
+});
+
+test('the server floor rejects loudly, with a structured log line and a 400', () => {
+  // AP #12: the client-side block sends no request and so is uncountable. This
+  // rejection is the only one that leaves a trace, which makes its log line the
+  // single measurable signal that the floor is doing anything at all.
+  const floorAt = CONTRIBUTE_SRC.indexOf('feature.length < FIELD_FLOORS.feature');
+  const block = CONTRIBUTE_SRC.slice(floorAt, floorAt + 600);
+  assert.match(block, /log\("validation-reject", \{ reason: "story too short", length: feature\.length \}\)/);
+  assert.match(block, /textResponse\(\s*400/);
+});
