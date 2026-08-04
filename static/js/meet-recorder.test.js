@@ -49,7 +49,7 @@ test('slugify: empty input throws', () => {
   assert.throws(() => slugify('', 15), /slugify: empty input/);
 });
 
-// #9 Stage 5 follow-up — spec mirrors of ymdHm + ymdHms must stay in
+// #9 Stage 5 follow-up -- spec mirrors of ymdHm + ymdHms must stay in
 // lock-step with meet-recorder.js lines 393-403. Personal-mode filenames
 // use second-precision (ymdHms) and drop the session_id; compliance keeps
 // minute-precision (ymdHm) + session_id.
@@ -77,7 +77,7 @@ test('#9 Stage 5 follow-up: unified filename schema (second-precision + session_
                '20260511-114532_singerandsteel_audit-kickoff_S000001');
 });
 
-// #9 Stage 5 follow-up — ropa_close_out audit fields branch by mode.
+// #9 Stage 5 follow-up -- ropa_close_out audit fields branch by mode.
 // Personal mode writes null for the 4 compliance-only fields so the JSON
 // does not over-claim user-confirmed audit answers (the underlying form
 // dropdowns/radios have default first-option selected values that would
@@ -344,7 +344,7 @@ function makeMeetRecorderDom() {
     </section>`);
 }
 
-// section-engagement intentionally NOT in the hide list — it carries the
+// section-engagement intentionally NOT in the hide list -- it carries the
 // one-line engagement-letter-signed self-attestation that #9 AC 2.5 requires
 // in both modes (engagementSignedAttested() stays required to gate Record).
 const PERSONAL_HIDE_SECTIONS = [
@@ -489,7 +489,7 @@ test('#9 AC 2.10: banner-cal-com-never-recorded visible in personal mode with th
   assert.match(banner.textContent, /Pre-engagement Cal\.com discovery calls are NEVER recorded/);
 });
 
-// nextSessionId spec mirror — production lives at meet-recorder.js (post
+// nextSessionId spec mirror -- production lives at meet-recorder.js (post
 // #9 Stage 5 follow-up). Both personal AND compliance modes auto-generate
 // the session_id from a single browser-local localStorage counter. The
 // manual field-session-id input has been removed. peekNextSessionId is
