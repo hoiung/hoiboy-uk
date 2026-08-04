@@ -94,8 +94,25 @@ def test_section_count_and_engagement_gate(frontmatter_and_body):
 
 
 def test_meet_recorder_js_referenced_exactly_once(frontmatter_and_body):
+    """Loaded once, and through the shortcode that versions its URL.
+
+    The reference used to be a hard-coded <script src>. hoiboy-uk#57 moved both
+    site scripts onto layouts/_shortcodes/versioned-script.html, which appends
+    the file's own content hash, because site JS is unfingerprinted and was
+    being served up to four hours staler than the page that loads it. A
+    hard-coded src is therefore counted as a MISS here rather than a hit: it
+    would load the script with a URL that never changes when the file does.
+    """
     _fm, body = frontmatter_and_body
-    matches = re.findall(r'<script\s+src="[^"]*meet-recorder\.js"', body)
-    assert len(matches) == 1, (
-        f"meet-recorder.js script tag must appear exactly once; got {len(matches)}: {matches}"
+    versioned = re.findall(
+        r'\{\{<\s*versioned-script\s+"[^"]*meet-recorder\.js"\s*>\}\}', body)
+    assert len(versioned) == 1, (
+        f"meet-recorder.js must be loaded exactly once, through the "
+        f"versioned-script shortcode; got {len(versioned)}: {versioned}"
+    )
+    hardcoded = re.findall(r'<script\s[^>]*src="[^"]*meet-recorder\.js"', body)
+    assert not hardcoded, (
+        f"meet-recorder.js is hard-coded at {hardcoded}, bypassing the shortcode "
+        f"that puts its content hash in the URL, so the browser keeps serving "
+        f"whatever it cached under that unchanging address."
     )
