@@ -1,6 +1,6 @@
 ---
 title: "The Fast Food Mentality. What Happened to Patience?"
-date: 2026-07-22T20:30:00+01:00
+date: 2026-07-23T20:30:00+01:00
 draft: false
 slug: the-fast-food-mentality
 categories: [life, dance, tech-ai, trading, entrepreneurship]
