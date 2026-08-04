@@ -33,6 +33,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from gate_coverage import require_examined, require_readable  # noqa: E402
+
 try:
     import piexif
 except ImportError:  # fail loud — no silent skip (Fail Fast)
@@ -112,12 +115,16 @@ def _load_png_exif(path: Path) -> dict | None:
                 return piexif.load(b"Exif\x00\x00" + payload)
             except Exception as e:
                 # A PNG carrying an eXIf chunk we cannot parse could hide
-                # identifying data — surface it rather than silently passing.
-                sys.stderr.write(
-                    f"WARN: {path}: PNG eXIf chunk present but unparseable "
-                    f"({e}); cannot scan for identifying tags\n"
+                # identifying data. This used to warn and return None, which
+                # scan_image() cannot tell apart from "this PNG has no EXIF at
+                # all" -- so the image scored clean and the warning scrolled past
+                # in a green run. An unreadable surface is a coverage failure,
+                # not a clean one.
+                raise require_readable(
+                    "check-exif", path, e,
+                    remedy="Re-export the PNG, or strip it with "
+                           "`bash scripts/strip-exif.sh <file>` and re-run.",
                 )
-                return None
         if ctype == b"IEND":
             break  # last chunk in the stream; nothing valid follows
         pos = data_end + 4  # skip the 4-byte CRC
@@ -135,11 +142,15 @@ def scan_image(path: Path) -> list[str]:
         exif = piexif.load(str(path))
     except Exception as e:
         # piexif raises "doesnot have exif" for a clean JPEG/WebP — the normal
-        # clean case, kept silent. Any OTHER failure means the image is
-        # unparseable; surface it so a corrupt file is not silently passed.
+        # clean case, and the only one that may return an empty list. Any OTHER
+        # failure means the file could not be parsed, and the previous
+        # "treated as clean" said so out loud while doing the opposite of what a
+        # privacy gate on a public repo should do with an image it cannot read.
         if "doesnot have exif" not in str(e):
-            sys.stderr.write(
-                f"WARN: {path}: EXIF unparseable ({e}); treated as clean\n"
+            raise require_readable(
+                "check-exif", path, e,
+                remedy="The file is corrupt or not the raster its extension "
+                       "claims. Re-export it, or drop it from the repo.",
             )
         return []
     return _identifying_tags(exif)
@@ -166,6 +177,20 @@ def main(argv: list[str]) -> int:
         targets = [Path(a) for a in argv]
     else:
         targets = tracked_content_images()
+
+    # `tracked_content_images()` shells out to `git ls-files`, which returns
+    # nothing for a path that was renamed, for a tree checked out without
+    # content/, and for a non-repo. Each of those used to end at
+    # "OK: no identifying EXIF in 0 scanned image(s)" and exit 0 -- a privacy
+    # gate on a PUBLIC repo reporting clean over a set it never built.
+    require_examined(
+        "check-exif",
+        "tracked image",
+        targets,
+        hint="`git ls-files content scripts/social-cards` returned no raster. "
+             "Either a scan root moved (fix the list in tracked_content_images) "
+             "or this is not a checkout of this repo.",
+    )
 
     offenders: list[tuple[Path, list[str]]] = []
     for path in targets:
