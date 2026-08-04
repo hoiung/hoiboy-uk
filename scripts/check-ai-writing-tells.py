@@ -822,6 +822,15 @@ def main() -> int:
                 # hand-written or agent-written invocation, which is exactly the
                 # case that must not come back green.
                 unscannable.append(f"{arg} (suffix {p.suffix or 'none'!r})")
+            else:
+                # The branch this if/elif/elif was missing. A path that does not
+                # exist matched NONE of the three tests above and fell out of the
+                # loop entirely: not scanned, not reported, not counted. The run
+                # then printed "[OK] No files to scan" and exited 0 -- the exact
+                # symptom the comment above quotes, reproduced one branch below
+                # its own fix, because that fix enumerated the shapes a file can
+                # have and not the case where there is no file.
+                unscannable.append(f"{arg} (does not exist)")
     else:
         if args.mode == "cv":
             for glob_pattern in (*WHOLE_FILE_SCAN_GLOBS_CV, *REGION_SCAN_GLOBS_CV):
@@ -846,6 +855,25 @@ def main() -> int:
         )
         return 2
 
+    # COVERAGE FLOOR, applied to the COLLECTED set, before the cutoff filter.
+    # The two emptiness cases are not the same and must not share an exit code:
+    # collecting nothing means the scan roots are wrong or the tree is not
+    # checked out, while a collected set the cutoff filter then empties means
+    # every candidate was legacy prose, which is this guard working as designed.
+    # Reporting both as "[OK] No files to scan" is what let a whole run examine
+    # zero files and call it a pass.
+    if not files_to_scan:
+        print(
+            f"[FAIL] [vacuous-gate] check-ai-writing-tells: collected 0 files from "
+            f"{'the given paths' if args.paths else 'the default scan roots'} under "
+            f"{repo_root}, so every voice assertion below held vacuously. Check the "
+            f"path arguments, or that this is a checkout of the repo you meant.",
+            file=sys.stderr,
+        )
+        return 2
+
+    collected = len(files_to_scan)
+
     # Cutoff-date filter (blog mode + check_only_new only).
     if args.mode == "blog" and args.check_only_new:
         kept: list[Path] = []
@@ -866,7 +894,13 @@ def main() -> int:
         files_to_scan = kept
 
     if not files_to_scan:
-        print("[OK] No files to scan")
+        # Legitimate: candidates existed, and the cutoff ruled every one of them
+        # out as legacy. Named as such, with the count, so it cannot be misread
+        # as the collection having failed.
+        print(
+            f"[OK] {collected} file(s) collected, all dated before the "
+            f"{HOIBOY_CUTOFF_DATE} cutoff; nothing in scope to scan."
+        )
         return 0
 
     all_findings: list[Finding] = []

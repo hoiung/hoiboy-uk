@@ -281,10 +281,31 @@ def gather_files(args: list[str], check_only_new: bool) -> list[Path]:
                 files.extend(sorted(p.rglob("*.md")))
             elif p.exists() and p.suffix == ".md":
                 files.append(p)
+            else:
+                # A named path that does not exist, or is not .md, matched
+                # neither branch above and left no trace: the caller asked
+                # "is this file wrapped?" and got exit 0 without an answer.
+                # Refusing to judge is a different outcome from judging clean,
+                # and only one of them may exit 0.
+                raise SystemExit(
+                    f"[FAIL] [vacuous-gate] check-iamhoi-wrapping: cannot scan "
+                    f"{arg} ({'not a .md file' if p.exists() else 'does not exist'}). "
+                    f"Passing it silently would report OK for a file that was "
+                    f"never opened."
+                )
     else:
         content = repo_root / "content"
-        if content.exists():
-            files.extend(sorted(content.rglob("*.md")))
+        if not content.exists():
+            # `if content.exists()` used to fall through to `return []`, and the
+            # caller's `if not files: return 0` turned a missing content tree
+            # into a clean bill of health for the whole voice surface.
+            raise SystemExit(
+                f"[FAIL] [vacuous-gate] check-iamhoi-wrapping: {content} does not "
+                f"exist, so the default scan collected nothing. Either this is not "
+                f"a checkout of the repo, or the content root moved and this "
+                f"default is stale."
+            )
+        files.extend(sorted(content.rglob("*.md")))
     return files
 
 
@@ -328,7 +349,15 @@ def main() -> int:
 
     files = gather_files(args.paths, args.check_only_new)
     if not files:
-        return 0
+        # gather_files now fails loudly on a missing root or an unresolvable
+        # argument, so reaching here means the roots existed and held no .md at
+        # all. That is still a scan of nothing, and still may not exit 0.
+        print(
+            "[FAIL] [vacuous-gate] check-iamhoi-wrapping: collected 0 markdown "
+            "files, so every wrapping assertion held vacuously.",
+            file=sys.stderr,
+        )
+        return 2
 
     failures: list[str] = []
     for f in files:
