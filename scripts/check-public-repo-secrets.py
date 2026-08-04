@@ -923,6 +923,17 @@ def main() -> int:
         help="Starting commit SHA for --scan-commit-messages mode (exclusive).",
     )
     parser.add_argument(
+        "--require-public",
+        action="store_true",
+        help=(
+            "Assert the target repo IS public: a missing .public-repo marker becomes "
+            "a hard failure (exit 2) instead of a silent no-op. Use it from every "
+            "caller that scans a known-public repo (its CI job, its pre-commit hook), "
+            "so deleting or renaming the marker fails loudly rather than retiring the "
+            "leak scan while CI stays green."
+        ),
+    )
+    parser.add_argument(
         "--enforce-on-private",
         action="store_true",
         help=(
@@ -962,7 +973,30 @@ def main() -> int:
     if not is_public_repo(repo_root):
         if args.enforce_on_private and not (args.scan_commit_messages or args.scan_issue_body):
             pass  # fall through to the full scan_file scan (all categories)
+        elif args.require_public:
+            # The caller asserted this repo IS public. A missing marker then means
+            # the marker was deleted, renamed, or never checked out -- and the
+            # silent `return 0` below would retire the leak scan on a public repo
+            # while every CI run stayed green. The caller knows the repo's status;
+            # the gate cannot. So the caller declares it and this enforces it.
+            print(
+                f"[FAIL] [vacuous-gate] check-public-repo-secrets: --require-public "
+                f"was passed but {repo_root}/.public-repo does not exist, so this "
+                f"scan would have exited 0 without opening a single file. Restore "
+                f"the marker, or drop --require-public from the caller if the repo "
+                f"is genuinely private now.",
+                file=sys.stderr,
+            )
+            return 2
         else:
+            # Announce the no-op. Exiting 0 in silence is indistinguishable in a
+            # CI log from a completed clean scan, which is how a gate that stopped
+            # running goes unnoticed.
+            print(
+                f"[SKIP] check-public-repo-secrets: {repo_root} has no .public-repo "
+                f"marker; nothing scanned. Pass --enforce-on-private for "
+                f"defence-in-depth blocklist scanning on a private repo."
+            )
             return 0
 
     # Load blocklist and allowlist. Expand opaque hashed tokens against the
@@ -1122,7 +1156,25 @@ def main() -> int:
         )
         return 1
 
-    print("PASS: No secrets detected")
+    # COVERAGE FLOOR. Everything above asserts an absence, and an absence over an
+    # empty file set is true for free. A whole-repo scan that collected nothing
+    # means the walk broke -- wrong scan_path, a rename that emptied the tree, an
+    # over-broad ignore rule -- not that the repo is clean.
+    #
+    # --staged-only is deliberately exempt: a commit touching only files this gate
+    # does not scan (an image, a lockfile) legitimately stages zero candidates, and
+    # failing there would train people to bypass the hook, which costs more than it
+    # buys. The count is still printed so the zero is visible rather than implied.
+    if not files_to_scan and not args.staged_only:
+        print(
+            f"[FAIL] [vacuous-gate] check-public-repo-secrets: collected 0 scannable "
+            f"files under {scan_path.resolve()}, so 'no secrets detected' was true of "
+            f"nothing. Check the path argument and that the tree is fully checked out.",
+            file=sys.stderr,
+        )
+        return 2
+
+    print(f"PASS: No secrets detected ({len(files_to_scan)} file(s) scanned)")
     return 0
 
 

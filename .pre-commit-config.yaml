@@ -145,7 +145,7 @@ repos:
 
       - id: check-public-repo-secrets
         name: Check for secrets in public repo
-        entry: python3 scripts/check-public-repo-secrets.py . --staged-only
+        entry: python3 scripts/check-public-repo-secrets.py . --staged-only --require-public
         language: system
         pass_filenames: false
         always_run: true
