@@ -25,6 +25,10 @@ Wired into scripts/pre-publish.sh; runnable standalone: python3 scripts/check_sv
 import sys
 import re
 import glob
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from gate_coverage import require_examined  # noqa: E402
 
 ROOT_SVG = re.compile(r"<svg\b[^>]*>", re.IGNORECASE)
 HAS_W = re.compile(r"\bwidth\s*=", re.IGNORECASE)
@@ -95,7 +99,22 @@ def main(argv):
     else:
         paths = glob.glob("content/**/*.svg", recursive=True)
 
-    bad = offenders(sorted(set(paths)))
+    # A glob that matches nothing used to print "PASS: all 0 content SVG(s)
+    # house-compliant" and exit 0. Every compliance claim in that sentence is
+    # true of the empty set, which is why it reads as a healthy run of a small
+    # tree rather than as a gate that never opened a file. See
+    # scripts/gate_coverage.py for the class and tests/test_gate_vacuity.py for
+    # the enforcement.
+    paths = sorted(set(paths))
+    require_examined(
+        "check_svg_dimensions",
+        "SVG file",
+        paths,
+        hint="Either content/ has no SVG yet (remove this gate from the caller "
+             "rather than run it blind), or the argument matched nothing.",
+    )
+
+    bad = offenders(paths)
     if bad:
         print("FAIL: SVG(s) not house-compliant (dimensions / watermark / canonical class block):")
         for p, reasons in bad:

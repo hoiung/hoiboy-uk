@@ -28,6 +28,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from voice_rules import HOIBOY_CUTOFF_DATE  # single source of the voice cutoff
+from gate_coverage import require_examined
 
 EM_DASH = "—"
 SKIP_OPEN = "<!-- iamhoi-skip -->"
@@ -70,6 +71,18 @@ def new_post_files() -> list[Path]:
 
 def main(argv: list[str]) -> int:
     targets = [Path(a) for a in argv] if argv else new_post_files()
+    # Floor on TARGETS, deliberately not on `scanned`. A target that turns out to
+    # be a legacy post is an in-scope file correctly ruled out by the cutoff, so
+    # `scanned == 0` can be a legitimate result. `targets == []` cannot: it means
+    # the enumeration itself came back empty and the "OK: no em dashes in 0
+    # new-post file(s)" below would be true of nothing.
+    require_examined(
+        "check_emdash_newposts",
+        "candidate post file",
+        targets,
+        hint="Either content/posts/ is missing (a stale or partial checkout), or "
+             "the argument list resolved to nothing.",
+    )
     failed = False
     scanned = 0
     for path in targets:
