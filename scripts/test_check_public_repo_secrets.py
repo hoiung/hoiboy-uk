@@ -98,7 +98,18 @@ class TestPlantedSecretsAreFound:
         found = {
             p.name for p in tmp_path.rglob("*")
             if p.is_file() and sec.should_scan_file(p)
-            and sec.scan_file(p, blocklist=set(), allowlist=set())
+            # Every allowlist passed EXPLICITLY and empty. None of them has a
+            # default, on purpose: a caller that forgets one is a TypeError
+            # here rather than a scan that quietly suppresses a category. This
+            # call site went stale twice when the signature grew, so it names
+            # each argument rather than relying on position.
+            and sec.scan_file(
+                p,
+                blocklist=set(),
+                allowlist=set(),
+                pii_allowlist=set(),
+                public_values=set(),
+            )
         }
         assert found == {".npmrc", "Dockerfile", ".env.local", "visible.py"}, (
             f"expected all four planted secrets, got {sorted(found)}"

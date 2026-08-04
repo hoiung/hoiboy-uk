@@ -897,6 +897,31 @@ def extract_generic_secret_value(line: str) -> Optional[str]:
     return None
 
 
+def is_public_value(text: str, public_values: Set[str]) -> bool:
+    """True when a matched literal is one this repo publishes ON PURPOSE.
+
+    Value-scoped, not file-scoped, and that is the whole point. A value that
+    legitimately ships in the rendered artefact -- an analytics beacon token, a
+    public site identifier -- appears in EVERY built page. Suppressing it with
+    `file:line` entries would need one entry per page, and every one of them
+    would go stale the next time the build renumbers a line. Worse, the natural
+    shortcut (a bare whole-file entry) switches off every category for that file.
+
+    So the suppression is attached to the value instead. It stays correct across
+    a rebuild, it cannot silently widen to cover a different secret in the same
+    file, and it fails in the safe direction: a value nobody listed is still a
+    finding. The PII lane already works this way (.secret-pii-allowlist); this
+    is the same primitive for the credential categories.
+
+    Substring rather than equality because a pattern's match often carries
+    surrounding syntax (`"token": "abc123`), so the listed literal is the token
+    itself, not whatever quoting the renderer happened to emit around it.
+    """
+    if not public_values or not text:
+        return False
+    return any(value and value in text for value in public_values)
+
+
 def scan_line(
     line: str,
     line_num: int,
@@ -904,6 +929,7 @@ def scan_line(
     blocklist: Set[str],
     allowlist: Set[str],
     pii_allowlist: Set[str],
+    public_values: Set[str],
 ) -> List[Finding]:
     """Scan a single line for all secret patterns. Returns findings.
 
@@ -937,7 +963,10 @@ def scan_line(
 
     # PLATFORM_TOKEN — highest confidence, check first
     for pat in [] if "PLATFORM_TOKEN" in suppressed else PLATFORM_TOKEN_PATTERNS:
-        if pat["pattern"].search(line):
+        match = pat["pattern"].search(line)
+        if match:
+            if is_public_value(match.group(0), public_values):
+                continue
             findings.append(Finding(
                 line_num=line_num,
                 line=stripped,
@@ -949,7 +978,10 @@ def scan_line(
 
     # PRIVATE_KEY
     for pat in [] if "PRIVATE_KEY" in suppressed else PRIVATE_KEY_PATTERNS:
-        if pat["pattern"].search(line):
+        match = pat["pattern"].search(line)
+        if match:
+            if is_public_value(match.group(0), public_values):
+                continue
             findings.append(Finding(
                 line_num=line_num,
                 line=stripped,
@@ -965,6 +997,7 @@ def scan_line(
             value = extract_generic_secret_value(line)
             if value and is_placeholder_value(value): continue
             if value and is_likely_prose_value(line, value): continue
+            if value and is_public_value(value, public_values): continue
             findings.append(Finding(
                 line_num=line_num,
                 line=stripped,
@@ -976,7 +1009,10 @@ def scan_line(
 
     # PRIVATE_PATH
     for pat in [] if "PRIVATE_PATH" in suppressed else PRIVATE_PATH_PATTERNS:
-        if pat["pattern"].search(line):
+        match = pat["pattern"].search(line)
+        if match:
+            if is_public_value(match.group(0), public_values):
+                continue
             findings.append(Finding(
                 line_num=line_num,
                 line=stripped,
@@ -1028,6 +1064,7 @@ def scan_file(
     blocklist: Set[str],
     allowlist: Set[str],
     pii_allowlist: Set[str],
+    public_values: Set[str],
 ) -> List[Finding]:
     """Scan a single file for secrets. Returns all findings."""
     findings: List[Finding] = []
@@ -1042,7 +1079,8 @@ def scan_file(
         with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
             for line_num, line in enumerate(f, start=1):
                 line_findings = scan_line(
-                    line, line_num, file_path, blocklist, allowlist, pii_allowlist
+                    line, line_num, file_path, blocklist, allowlist, pii_allowlist,
+                    public_values
                 )
                 findings.extend(line_findings)
     except OSError as e:
@@ -1139,13 +1177,15 @@ def scan_text_content(
     blocklist: Set[str],
     allowlist: Set[str],
     pii_allowlist: Set[str],
+    public_values: Set[str],
 ) -> List[Finding]:
     """Scan arbitrary text content (issue body, commit message, etc.) line-by-line."""
     findings: List[Finding] = []
     synthetic_path = Path(source_label)
     for line_num, line in enumerate(text.splitlines(), start=1):
         line_findings = scan_line(
-            line, line_num, synthetic_path, blocklist, allowlist, pii_allowlist
+            line, line_num, synthetic_path, blocklist, allowlist, pii_allowlist,
+            public_values
         )
         findings.extend(line_findings)
     return findings
@@ -1285,6 +1325,20 @@ def main() -> int:
         ),
     )
     parser.add_argument(
+        "--include-ignored",
+        action="store_true",
+        help=(
+            "Scan files git ignores, instead of dropping them. Required to scan a "
+            "BUILD OUTPUT: a generated tree (`public/`, `dist/`, `_site/`) is "
+            "gitignored by definition, so the default filter drops every file in "
+            "it and the coverage floor then fails the run rather than reporting a "
+            "false clean. Use it ONLY with an explicit path argument naming the "
+            "build directory. Do NOT combine it with a whole-repo scan on a "
+            "developer clone, where it would reach the real `.env` the filter "
+            "exists to skip."
+        ),
+    )
+    parser.add_argument(
         "--enforce-on-private",
         action="store_true",
         help=(
@@ -1391,6 +1445,11 @@ def main() -> int:
     allowlist_path = Path(args.allowlist) if args.allowlist else repo_root / ".secret-allowlist"
     allowlist = load_file_set(allowlist_path)
     pii_allowlist = load_file_set(repo_root / ".secret-pii-allowlist")
+    # Literals this repo publishes on purpose, suppressed WHEREVER they appear.
+    # Needed for a build-output scan: a public identifier is rendered into every
+    # page, so file:line suppression would need hundreds of entries and would go
+    # stale on the next build. See is_public_value.
+    public_values = load_file_set(repo_root / ".secret-public-values")
 
     # --scan-issue-body mode: fetch issue body + comments, scan text content.
     # Design rule: NEVER print matched content to stdout (would amplify leak
@@ -1442,7 +1501,8 @@ def main() -> int:
             print(f"Error: gh CLI not available, cannot scan issue #{args.issue_number}: {e}", file=sys.stderr)
             return 1
         findings = scan_text_content(
-            body_text, f"{repo}#{args.issue_number}", blocklist, allowlist, pii_allowlist
+            body_text, f"{repo}#{args.issue_number}", blocklist, allowlist, pii_allowlist,
+            public_values
         )
         if findings:
             # Print line numbers + categories ONLY; never echo the matched content.
@@ -1466,7 +1526,9 @@ def main() -> int:
             return 1
         total_findings = 0
         for sha, message in commits:
-            findings = scan_text_content(message, sha, blocklist, allowlist, pii_allowlist)
+            findings = scan_text_content(
+                message, sha, blocklist, allowlist, pii_allowlist, public_values
+            )
             if findings:
                 total_findings += len(findings)
                 print(f"FAIL: {len(findings)} secret-blocklist match(es) in commit {sha[:12]}")
@@ -1510,7 +1572,15 @@ def main() -> int:
         # fresh checkout where none exist, so this narrows nothing there.
         # Not a git repo, or no git: keep every candidate. Over-reporting is the
         # safe direction for a secret scanner; silently scanning less is not.
-        files_to_scan = _drop_git_ignored(scan_path, files_to_scan)
+        #
+        # --include-ignored turns the filter off for the one case where it is
+        # wrong: a BUILD OUTPUT. A generated tree is gitignored by definition, so
+        # the filter drops all of it and the coverage floor below then fails the
+        # run. That failure is correct -- it refuses to call an empty scan clean --
+        # but it also means the rendered artefact, the thing actually served to
+        # the public, cannot be scanned at all without this flag.
+        if not args.include_ignored:
+            files_to_scan = _drop_git_ignored(scan_path, files_to_scan)
 
     # Scan. The directory-walk branch above already applied should_ignore_path
     # inline; the staged-only and single-file paths did not, so they need it here.
@@ -1519,7 +1589,7 @@ def main() -> int:
     for file_path in files_to_scan:
         if needs_ignore_check and should_ignore_path(file_path, IGNORE_PATTERNS):
             continue
-        findings = scan_file(file_path, blocklist, allowlist, pii_allowlist)
+        findings = scan_file(file_path, blocklist, allowlist, pii_allowlist, public_values)
         if findings:
             all_findings[file_path] = findings
 
