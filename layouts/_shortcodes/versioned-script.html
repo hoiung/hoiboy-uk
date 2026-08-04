@@ -11,14 +11,15 @@
   types, sees nothing count, hits Send, and collects a server 400 the page
   never warned them about.
 
-  The obvious fix does not work, and this is measured, not assumed. A
-  `/js/*` block in static/_headers setting `Cache-Control: public, max-age=0,
-  must-revalidate` was deployed and the live response came back
-  `public, max-age=14400, must-revalidate`: Cloudflare Pages JOINS same-name
-  headers rather than replacing them, the asset default's max-age won the
-  merge, and only the inert `must-revalidate` survived. `must-revalidate`
-  governs what happens once a response is STALE, so against a response that is
-  still fresh for four hours it never fires.
+  The obvious fix does not work, and this is measured, not assumed. A `/js/*`
+  block in static/_headers setting `Cache-Control: public, max-age=0,
+  must-revalidate` was deployed, and the live response was
+  `public, max-age=14400, must-revalidate`, identical to what the same URL
+  returned with the rule removed, and identical to /css/main.min.<hash>.css
+  and /favicon.ico, neither of which carries a rule at all. The rule changed
+  nothing: that value is Cloudflare Pages' asset default, and a per-path
+  Cache-Control does not displace it, because Pages JOINS same-name headers
+  rather than replacing them.
 
   Changing the URL sidesteps the merge entirely, because a different URL is a
   different cache key. The version is the file's own content hash, so it moves

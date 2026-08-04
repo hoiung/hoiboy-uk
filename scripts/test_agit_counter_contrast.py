@@ -514,13 +514,14 @@ def test_the_form_script_is_not_served_stale_against_its_own_markup():
     page never warned them about.
 
     This originally asserted a Cache-Control rule in static/_headers, and that
-    was a gate on the wrong thing. The rule was deployed and MEASURED live:
-    the response came back `public, max-age=14400, must-revalidate`, because
-    Cloudflare Pages joins same-name headers and the asset default's max-age
-    won. The gate was green the whole time, because it asserted what the source
-    file SAID rather than what the edge DID. It now asserts the mechanism that
-    was measured to work: the version lives in the URL, where no header merge
-    can reach it.
+    was a gate on the wrong thing. The rule was deployed and MEASURED live: the
+    response was `public, max-age=14400, must-revalidate`, identical to the
+    same URL with the rule removed and identical to assets carrying no rule at
+    all. It had changed nothing -- Cloudflare Pages joins same-name headers
+    rather than replacing them, so the asset default stands. The gate was green
+    throughout, because it asserted what the source file SAID rather than what
+    the edge DID. It now asserts the mechanism that was measured to work: the
+    version lives in the URL, where no header merge can reach it.
 
     The hash itself is checked against the built page by
     scripts/check_agit_form_counter.py. What this holds is the half a source
