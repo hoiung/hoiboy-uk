@@ -42,6 +42,14 @@ const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 // field name -> max length (server-side length caps; a valid-token bot can still POST garbage)
 const FIELD_CAPS = { name: 100, email: 254, email_confirm: 254, role: 150, superpowers: 300, feature: 8000 };
 
+// field name -> minimum length. The floor the browser cannot be trusted to hold:
+// it still applies with JavaScript disabled or when the POST is made directly.
+// Measured on the CLEANED value, and static/js/agit-form.js counts the same way,
+// so the browser is never the more lenient of the two and nobody is shown a green
+// counter and then rejected here. Keep in step with STORY_MIN in that file and
+// with the stated minimum in content/community/asians-gingers-in-tech/index.md.
+const FIELD_FLOORS = { feature: 1200 };
+
 // Consent-label versions this endpoint accepts. The form posts the version of the
 // label it rendered, so the emailed record shows which wording the member actually
 // agreed to -- an Article 9(2)(a) explicit-consent surface, so "they ticked a box"
@@ -220,6 +228,14 @@ export async function onRequestPost(context) {
   if (!name || !email || !feature) {
     log("validation-reject", { name: !!name, email: !!email, feature: !!feature });
     return textResponse(400, "Please fill in your name, email, and your story.");
+  }
+  if (feature.length < FIELD_FLOORS.feature) {
+    log("validation-reject", { reason: "story too short", length: feature.length });
+    return textResponse(
+      400,
+      `Your story needs at least ${FIELD_FLOORS.feature} characters so there is enough to work with. ` +
+        `Yours came to ${feature.length}. Please go back and add a bit more.`
+    );
   }
   if (!EMAIL_RE.test(email)) {
     log("validation-reject", { reason: "bad email format" });
