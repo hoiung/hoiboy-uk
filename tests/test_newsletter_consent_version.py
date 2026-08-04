@@ -5,7 +5,9 @@ surface in this repo. Recording THAT someone consented is not enough under
 Article 7(1); the record has to show WHICH wording they agreed to, or a later
 export cannot tell a pre-amendment subscriber from a post-amendment one.
 
-Three surfaces have to agree and nothing at runtime couples them:
+FOUR surfaces have to agree and nothing at runtime couples them. Bumping a
+version means editing all four; the first three are the machine-readable
+triple, the fourth is the prose claim made to the reader:
 
   1. the hidden input in layouts/_partials/subscribe-form.html
      (the version actually rendered to the reader),
@@ -14,7 +16,15 @@ Three surfaces have to agree and nothing at runtime couples them:
   3. KNOWN_CONSENT_VERSIONS_MIRROR in tests/subscribe.test.js
      (a literal the JS suite declares so this gate has something to read;
      that suite asserts its own mirror against the loaded endpoint value, so
-     the mirror cannot drift silently in the other direction either).
+     the mirror cannot drift silently in the other direction either),
+  4. the version QUOTED IN PROSE at content/legal/privacy/index.md
+     (read via PRIVACY below, asserted by the last two tests). Ralph round 22
+     Tier 3 found this one missing from every bump instruction in the repo --
+     this docstring said "three surfaces" and six emit-site comments repeated
+     it -- while the gate has always read four. Following the documented set
+     verbatim reddened the build on
+     test_the_privacy_notice_quotes_the_version_the_form_renders. Enrolment
+     was complete; only its documentation was wrong.
 
 A wording change that bumps one and not the others fails silently in the worst
 way: the form would post a version the endpoint rejects, and every submission

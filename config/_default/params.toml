@@ -73,8 +73,9 @@ footerText = "Senh Hoi Ung. CC BY-SA."
 #
 # Only genuinely configurable values live here. The consent label, its "No spam"
 # note and the consent_version string are NOT params: AC 1.1 pins that wording
-# across three surfaces (the form markup, KNOWN_CONSENT_VERSIONS in
-# functions/api/subscribe.js, and the mirror in tests/subscribe.test.js), and a
+# across four surfaces (the form markup, KNOWN_CONSENT_VERSIONS in
+# functions/api/subscribe.js, the mirror in tests/subscribe.test.js, and the
+# version quoted in prose in content/legal/privacy/index.md), and a
 # versioned legal string is not a parameter. No-Hardcoded-Settings governs
 # parameters, not legally versioned copy.
 #

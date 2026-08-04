@@ -46,8 +46,11 @@
       {{- /* Version of the consent label below. Posted with the form so the stored
              record shows which wording was accepted. MUST stay in the
              KNOWN_CONSENT_VERSIONS list in functions/api/subscribe.js and in the
-             mirror in tests/subscribe.test.js; bump all three together whenever the
-             label text changes. Gate: tests/test_newsletter_consent_version.py */ -}}
+             mirror in tests/subscribe.test.js, AND match the version quoted in
+             prose at content/legal/privacy/index.md; bump all FOUR together
+             whenever the label text changes. The privacy-notice one is easy to
+             miss and the gate does check it.
+             Gate: tests/test_newsletter_consent_version.py */ -}}
       <input type="hidden" name="consent_version" value="2026-08-03">
       <input type="checkbox" id="subscribe-consent" name="consent" required>
       {{- /* Explicit for/id pairing, not a wrapping label: the label contains an

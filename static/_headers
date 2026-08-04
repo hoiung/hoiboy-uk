@@ -14,12 +14,21 @@
   X-Robots-Tag: noindex, nofollow
 
 # Newsletter double opt-in (issue #56): the whole section. Two thin confirmation
-# pages plus the auto-generated section list, none of which belongs in an index.
+# pages plus the section landing, none of which belongs in an index.
 # The glob covers /newsletter/ itself as well as its children, because fnmatch
-# lets the `*` match empty, and scripts/check_social_cards.py reads these rules as
-# its exemption source: without this, the two bundles fail Check B (a singular page
-# falling back to the default card) and /newsletter/ fails Check D (an indexable
-# auto-section with no card).
+# lets the `*` match empty.
+#
+# What this rule does and does NOT do (corrected at Ralph round 22 Tier 3, which
+# found the previous wording wrong in three separate ways):
+# It is the noindex directive Cloudflare serves. It is NOT what exempts these
+# pages from the social-card guard -- their own `sitemap: disable: true`
+# frontmatter already does that, because check_social_cards.py short-circuits on
+# it several lines BEFORE it ever consults these rules. So do not "simplify" by
+# deleting that frontmatter on the theory this rule covers it; removing it
+# reopens the round-6 sitemap/feed leak.
+# Also: /newsletter/ has its own content/newsletter/_index.md, so it is a
+# declared section (social-card Check C), not an auto-generated one (Check D).
+# That _index.md exists precisely to stop auto-generation.
 /newsletter/*
   X-Robots-Tag: noindex, nofollow
 

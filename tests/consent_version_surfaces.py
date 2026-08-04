@@ -1,8 +1,12 @@
 """Shared extraction for the consent-version traceability gates.
 
-Two consent surfaces now exist in this repo and both need the same three reads:
-the version a form renders in its hidden input, the list an endpoint accepts,
-and the list a JS test mirrors by hand. They are:
+Two consent surfaces now exist in this repo and both need the same three reads
+FROM THIS MODULE: the version a form renders in its hidden input, the list an
+endpoint accepts, and the list a JS test mirrors by hand. Note that the parsing
+shared here is three reads, but the newsletter GATE asserts a fourth surface on
+top of them (the version quoted in prose in content/legal/privacy/index.md, via
+prose_versions below); do not read "three" here as the full bump set for the
+newsletter. The two surfaces are:
 
   1. the AGIT community form (agit-ops#3) -- an Article 9(2)(a) explicit-consent
      surface, whose evidence is an emailed record, and

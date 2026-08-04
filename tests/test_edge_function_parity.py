@@ -218,8 +218,21 @@ def test_every_upstream_response_body_is_redacted_at_capture():
     destroying the exact literal the by-value pass was holding, so the prefix
     survived every later pass (Ralph round 14 Tier 3, reproduced end-to-end).
 
-    Asserted over ALL capture sites, not a known list, so a newly added upstream
-    call cannot quietly introduce an unredacted one.
+    SCOPE, stated precisely (Ralph round 22 Tier 3 corrected an overclaim here).
+    This asserts over every capture BOUND TO A NAME -- `const`/`let NAME = ...`
+    draining a response body. Each Function has three body drains; this shape
+    catches the one that matters today and any new one written the same way.
+
+    It does NOT cover a drain whose result is returned directly rather than
+    bound, which is why `verifyTurnstile`'s `return await resp.json();` is
+    outside it. That is safe now (a siteverify verdict carries no submitted
+    address), but it is NOT a guarantee that any future upstream call is
+    covered. The reviewer demonstrated the gap concretely: a second upstream
+    call written in the shape AC 3.7 specifies, truncating before redacting,
+    leaked a local part verbatim while this gate still passed 10/10.
+
+    So: if you add an upstream call, bind its body to a name and redact before
+    truncating. Do not read this gate as proving you did.
     """
     for path in (SUBSCRIBE, CONTRIBUTE):
         source = path.read_text(encoding="utf-8")
