@@ -560,9 +560,14 @@ for (const [label, brevoBody] of [
       !joined.includes(VALID_EMAIL),
       `the submitted address appeared verbatim in a log line:\n${joined}`
     );
-    // The error must still be diagnosable: redaction is not deletion.
+    // The error must still be diagnosable: redaction is not deletion. The
+    // marker pinned here is [redacted], the BY-VALUE one: the submitted
+    // address is held via protect(), and the value pass runs FIRST at capture
+    // (running the shape pass first destroyed the held literal and leaked the
+    // local-part prefix -- Ralph round 14 Tier 3). [email-redacted] would mean
+    // the weaker shape pass got there first, which is the defective order.
     assert.ok(
-      joined.includes('[email-redacted]'),
+      joined.includes('[redacted]'),
       'the upstream detail was dropped entirely rather than redacted; an ' +
         'operator needs the error text to diagnose a non-JSON upstream failure'
     );
@@ -717,6 +722,66 @@ test('the submitted address is stripped from EVERY log line, not just the captur
     !joined.includes('patriley'),
     `a request-derived field carried the address into a log line that never ` +
       `passes through the capture-point redactor:\n${joined}`
+  );
+});
+
+// The position of the excluded character decides which failure mode fires.
+// At the local-part BOUNDARY (QUOTED_EMAIL above) the shape pattern cannot
+// reach the `@` at all, so it is INERT and the held literal survives intact
+// for the by-value pass. MID-local-part, the pattern matches the SUFFIX
+// (`x@example.net`), rewrites it to `[email-redacted]`, and in doing so
+// DESTROYS the exact literal the by-value pass was holding -- the two
+// defences cannibalise instead of stacking, and the prefix leaks. Found by
+// Ralph round 14 Tier 3 with the shipped capture order
+// `redactPii(text).slice(...)`; the fix runs the by-value pass FIRST, on the
+// pristine text, via the logger's redact() (value, then shape, then slice).
+const MID_LOCAL_EMAIL = 'patriley,x@example.net';
+
+test('an excluded character MID-local-part cannot cannibalise the held literal', async () => {
+  const harnessProbe = loadEndpoint();
+  assert.equal(
+    harnessProbe.mod.EMAIL_RE.test(MID_LOCAL_EMAIL),
+    true,
+    'the probe address must be ACCEPTED by the endpoint, or this test proves nothing'
+  );
+
+  // Prove the premise: on this address the shape redactor is DESTRUCTIVE, not
+  // inert. It must rewrite part of the address (so a shape-first capture no
+  // longer contains the held literal) while leaving the local-part prefix
+  // behind. If either half stops holding, the fixture no longer exercises the
+  // cannibalisation order and must be re-pointed, not left as a passing no-op.
+  const shapeApplied = harnessProbe.mod.redactPii(MID_LOCAL_EMAIL);
+  assert.notEqual(
+    shapeApplied,
+    MID_LOCAL_EMAIL,
+    'redactPii is now inert on this address; that is the QUOTED_EMAIL case, ' +
+      'already covered above. Re-point this fixture at a shape it rewrites.'
+  );
+  assert.ok(
+    shapeApplied.includes('patriley'),
+    'redactPii now fully matches this address, so this test no longer ' +
+      'exercises the partial-rewrite path it exists to cover. Re-point it.'
+  );
+
+  const body = {
+    code: 'invalid_parameter',
+    message: `Attribute is invalid for contact ${MID_LOCAL_EMAIL}`,
+  };
+  const { logs } = await submit({
+    fields: { email: MID_LOCAL_EMAIL },
+    brevo: () => jsonResponse(400, body),
+  });
+  const joined = logs.join('\n');
+
+  assert.ok(
+    !joined.includes('patriley'),
+    `the local part survived into a log line. The shape pass ran BEFORE the ` +
+      `by-value pass, rewrote the address's suffix, and destroyed the held ` +
+      `literal the by-value pass would have matched:\n${joined}`
+  );
+  assert.ok(
+    joined.includes(body.code),
+    'the upstream code must still survive; it is the diagnostic that remains'
   );
 });
 

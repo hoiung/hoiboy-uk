@@ -201,7 +201,13 @@ def test_every_upstream_response_body_is_redacted_at_capture():
 
     Redacting at each log call would leave the claim one forgotten call site away
     from being false again, which is the same shape as the bug. So the invariant
-    is at the capture point: every `await resp.text()` is wrapped in redactPii().
+    is at the capture point: every `await resp.text()` is wrapped in the
+    logger's redact() -- the by-value pass FIRST, on the pristine text, then the
+    shape pass. Bare redactPii() at capture is REJECTED outright: it once
+    shipped, and it leaked. On an address with an excluded character
+    MID-local-part the shape pass rewrites the suffix to [email-redacted],
+    destroying the exact literal the by-value pass was holding, so the prefix
+    survived every later pass (Ralph round 14 Tier 3, reproduced end-to-end).
 
     Asserted over ALL capture sites, not a known list, so a newly added upstream
     call cannot quietly introduce an unredacted one.
@@ -224,7 +230,20 @@ def test_every_upstream_response_body_is_redacted_at_capture():
         )
 
         for capture in text_captures:
-            # `.startswith("redactPii(")` alone was satisfied by
+            # The SHAPE-ONLY wrapper is rejected by name, not merely by the
+            # startswith below failing to match: it is the exact form that
+            # shipped and leaked, and a future reader reverting to it deserves
+            # the reason, not a generic "not redacted" message.
+            assert not capture.startswith("redactPii("), (
+                f"{path.name} runs the shape redactor ALONE at capture: "
+                f"{capture!r}. That order cannibalises the by-value pass: on an "
+                f"address with an excluded character mid-local-part, redactPii "
+                f"rewrites the suffix and destroys the held literal, so the "
+                f"local-part prefix survives every later pass. Use the logger's "
+                f"redact() (value first, then shape): "
+                f"redact(await resp.text()).slice(0, N)."
+            )
+            # A `.startswith(...)` check alone was once satisfied by
             # `redactPii((await resp.text()).slice(0, 500))` -- redaction wrapping
             # a value that had ALREADY been truncated. The gate certified
             # redaction-at-capture while blind to a lossy transform inside the
@@ -233,13 +252,14 @@ def test_every_upstream_response_body_is_redacted_at_capture():
             # So the body read must be the DIRECT argument: nothing may alter the
             # text between reading it and redacting it.
             inner = capture
-            if capture.startswith("redactPii("):
+            if capture.startswith("redact("):
                 # Balanced-paren scan, not a naive strip: the capture INCLUDES
-                # everything chained after the call, so `capture[10:-1]` on
-                # `redactPii(await resp.text()).slice(0, 500)` leaves the trailing
-                # `.slice(` in the string and the check fires on the CORRECT form.
-                # Only the redactor's own argument is under test here.
-                depth, start = 0, len("redactPii(") - 1
+                # everything chained after the call, so a fixed-offset strip on
+                # `redact(await resp.text()).slice(0, 500)` would leave the
+                # trailing `.slice(` in the string and the check would fire on
+                # the CORRECT form. Only the redactor's own argument is under
+                # test here.
+                depth, start = 0, len("redact(") - 1
                 for idx in range(start, len(capture)):
                     if capture[idx] == "(":
                         depth += 1
@@ -253,19 +273,19 @@ def test_every_upstream_response_body_is_redacted_at_capture():
             ), (
                 f"{path.name} transforms the body BEFORE redacting it: "
                 f"{capture!r}. Truncating first lets an address straddling the cut "
-                f"survive as a fragment the redactor cannot match. Redact the full "
-                f"text, then bound it: redactPii(await resp.text()).slice(0, N)."
+                f"survive as a fragment neither redactor can match. Redact the "
+                f"full text, then bound it: redact(await resp.text()).slice(0, N)."
             )
-            assert capture.startswith("redactPii("), (
+            assert capture.startswith("redact("), (
                 f"{path.name} captures a response body without redacting it: "
                 f"{capture!r}. An upstream can echo the submitted email back in "
                 f"its error text, and this Function publishes that it does not "
-                f"persist the request, so wrap it in redactPii() at the capture "
-                f"point. This gate is deliberately fail-closed on EVERY body "
-                f"read: if the value is binary or never reaches a log (an image "
-                f"buffer, say), that is fine, but say so by excluding it here "
-                f"with a reason rather than by letting the check quietly not "
-                f"apply."
+                f"persist the request, so wrap it in the logger's redact() at "
+                f"the capture point. This gate is deliberately fail-closed on "
+                f"EVERY body read: if the value is binary or never reaches a log "
+                f"(an image buffer, say), that is fine, but say so by excluding "
+                f"it here with a reason rather than by letting the check quietly "
+                f"not apply."
             )
 
 
