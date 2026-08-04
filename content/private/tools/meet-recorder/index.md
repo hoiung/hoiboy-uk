@@ -192,4 +192,4 @@ build:
   </p>
 </section>
 
-<script src="/js/meet-recorder.js" defer></script>
+{{< versioned-script "js/meet-recorder.js" >}}
