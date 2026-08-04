@@ -498,40 +498,49 @@ def test_every_stated_maximum_equals_the_server_cap():
     )
 
 
+BARE_SCRIPT_TAG = re.compile(r'<script\b[^>]*\bsrc="/js/[^"]*"')
+VERSIONED_SHORTCODE = re.compile(
+    r'\{\{<\s*versioned-script\s+"(?P<path>js/[^"]+)"\s*>\}\}')
+
+
 def test_the_form_script_is_not_served_stale_against_its_own_markup():
     """The JS enforcing the minimum cannot outlive the HTML promising it.
 
-    /js/ is unfingerprinted, so a filename never changes when its contents do.
-    The page HTML revalidates every time; if the script is allowed a long
-    max-age then for that whole window a member gets fresh markup promising
-    "minimum 1200 characters" against a cached script carrying neither the
-    counter nor the submit guard -- and collects a server 400 the page never
-    warned them about. An ETag is served, so max-age=0 costs a 304, not a
-    re-download.
+    Site JS is served unfingerprinted, so its filename never moves when the
+    file does. The page revalidates every load; the script gets Cloudflare
+    Pages' asset default of max-age=14400. For that window a member gets fresh
+    markup promising "minimum 1200 characters" against a cached script carrying
+    neither the counter nor the submit guard, and collects a server 400 the
+    page never warned them about.
+
+    This originally asserted a Cache-Control rule in static/_headers, and that
+    was a gate on the wrong thing. The rule was deployed and MEASURED live:
+    the response came back `public, max-age=14400, must-revalidate`, because
+    Cloudflare Pages joins same-name headers and the asset default's max-age
+    won. The gate was green the whole time, because it asserted what the source
+    file SAID rather than what the edge DID. It now asserts the mechanism that
+    was measured to work: the version lives in the URL, where no header merge
+    can reach it.
+
+    The hash itself is checked against the built page by
+    scripts/check_agit_form_counter.py. What this holds is the half a source
+    tree can hold: that the page goes through the shortcode at all.
     """
-    import importlib.util
-    import sys
+    markup = PAGE.read_text(encoding="utf-8")
 
-    spec = importlib.util.spec_from_file_location(
-        "check_social_cards", REPO / "scripts" / "check_social_cards.py")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-
-    rules = [
-        (glob, directives["cache-control"])
-        for glob, directives in module.parse_header_blocks(HEADERS)
-        if glob.startswith("/js") and "cache-control" in directives
-    ]
-    assert rules, (
-        "static/_headers has no Cache-Control rule for /js/*, so the "
-        "unfingerprinted form script inherits the default asset max-age and can "
-        "be served stale against markup that already promises the minimum."
+    versioned = VERSIONED_SHORTCODE.findall(markup)
+    assert "js/agit-form.js" in versioned, (
+        "the page does not load js/agit-form.js through the versioned-script "
+        "shortcode, so the URL carries no content hash and the script can be "
+        "served up to four hours staler than the markup that promises the "
+        "minimum. static/_headers cannot fix this: a Cache-Control rule there "
+        "is joined with the asset default rather than replacing it, measured "
+        "live on this exact file."
     )
-    for glob, value in rules:
-        ages = [int(n) for n in re.findall(r"max-age=(\d+)", value)]
-        assert ages, f"{glob} sets Cache-Control {value!r} with no max-age"
-        assert max(ages) == 0, (
-            f"{glob} allows max-age={max(ages)}; the form script must revalidate "
-            "so it can never be older than the markup that promises the minimum"
-        )
+
+    bare = BARE_SCRIPT_TAG.findall(markup)
+    assert not bare, (
+        f"the page hard-codes {bare}, bypassing the shortcode that puts the "
+        f"script's content hash in its URL. A hard-coded /js/ src never changes "
+        f"when the file does, which is the whole staleness window."
+    )
