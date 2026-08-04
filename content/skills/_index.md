@@ -3,6 +3,7 @@ title: "Skills"
 description: "SST3-AI-Harness skills, packaged up as installable Claude Code plugins. Free, MIT-licensed, dogfooded."
 ---
 
+<!-- iamhoi -->
 A small, growing collection of the workflows that run inside [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness), packaged as installable Claude Code plugins. Free. MIT-licensed. Dogfooded on the same code that produced them.
 
 One pack ships live today. The rest follow if this one finds an audience.
@@ -41,3 +42,4 @@ Two more packs sit drafted privately.
 - **Subagent Swarm Patterns**: layered cross-checking, RESULT schema, frozen scope snippets.
 
 Both ship if Ralph Review Trio gets traction. Ninety-day kill date. No stars, no installs, no signups, no inbound leads at the end of that window and the project comes home. No ego in the kill.
+<!-- iamhoiend -->

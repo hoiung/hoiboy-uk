@@ -25,6 +25,7 @@ build:
   render: always
 ---
 
+<!-- iamhoi -->
 Thanks, your story is in.
 
 I read every submission myself, so give me a little time. If it is a good fit for the feature series, I will be in touch by email.
@@ -51,3 +52,4 @@ Have a look around the site and the blog. Since you are into tech, you might lik
 And if you want to work with me, here is what I do: [Work with Hoi](/hire-hoi/ai-consultancy/work-with-hoi/) ⭐
 
 Or head back to the [community page](/community/asians-gingers-in-tech/).
+<!-- iamhoiend -->
