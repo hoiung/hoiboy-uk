@@ -131,6 +131,20 @@ def test_the_capped_read_is_unconditional_in_both_functions():
             f"exact defect shipped twice on this endpoint pair."
         )
 
+        # Calling readCapped is not the invariant; ACTING on its refusal is.
+        # Ralph Tier 3 showed this gate was ceremonial without the next
+        # assertion: `if (capped === null && declaredLength > 0)` still calls
+        # readCapped at the right indent, so the check above passes, while a
+        # chunked request (declaredLength 0) skips the 413 entirely. That is the
+        # round-1 bypass reopened, and it survived every other delivered gate.
+        acted_on = re.findall(r"^  if \(capped === null\) \{$", source, re.M)
+        assert len(acted_on) == 1, (
+            f"{path.name} does not reject unconditionally on readCapped()'s null "
+            f"return (found {len(acted_on)} bare `if (capped === null) {{` at "
+            f"handler top level). Any extra condition on that branch is a way for "
+            f"a client to reach the unbounded path while this gate stays green."
+        )
+
         assert "Number.isFinite(declaredLength)" in source, (
             f"{path.name} no longer guards the declared length with "
             f"Number.isFinite. Without it, a non-numeric header yields NaN and "
@@ -160,7 +174,12 @@ def test_every_upstream_response_body_is_redacted_at_capture():
         source = path.read_text(encoding="utf-8")
 
         captures = re.findall(r"^\s*(?:const|let)\s+\w+\s*=\s*(.+?);$", source, re.M)
-        text_captures = [c for c in captures if ".text()" in c]
+        # Every way of draining an upstream response body, not just .text().
+        # The docstring above claims ALL capture sites are covered, and a filter
+        # that only knew about .text() would have made that claim false the first
+        # time someone reached for .json() (Ralph Tier 3).
+        body_readers = (".text()", ".json()", ".arrayBuffer()", ".blob()", ".formData()")
+        text_captures = [c for c in captures if any(r in c for r in body_readers)]
 
         assert text_captures, (
             f"{path.name} has no `await resp.text()` capture at all. If the "
@@ -170,11 +189,15 @@ def test_every_upstream_response_body_is_redacted_at_capture():
 
         for capture in text_captures:
             assert capture.startswith("redactPii("), (
-                f"{path.name} captures an upstream response body without "
-                f"redacting it: {capture!r}. Wrap it in redactPii() at the "
-                f"capture point. An upstream can echo the submitted email back "
-                f"in its error text, and this Function publishes that it does "
-                f"not persist the request."
+                f"{path.name} captures a response body without redacting it: "
+                f"{capture!r}. An upstream can echo the submitted email back in "
+                f"its error text, and this Function publishes that it does not "
+                f"persist the request, so wrap it in redactPii() at the capture "
+                f"point. This gate is deliberately fail-closed on EVERY body "
+                f"read: if the value is binary or never reaches a log (an image "
+                f"buffer, say), that is fine, but say so by excluding it here "
+                f"with a reason rather than by letting the check quietly not "
+                f"apply."
             )
 
 

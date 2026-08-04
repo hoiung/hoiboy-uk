@@ -24,7 +24,10 @@ Thumbs.db
 .vscode/
 
 # Node (only if any tooling needs it)
-node_modules/
+# No trailing slash: a directory-only pattern does not match the node_modules
+# SYMLINK that scripts/setup-worktree-deps.sh creates in a worktree, so it showed
+# as untracked in a public repo whose symlink target is a private absolute path.
+node_modules
 
 # Python (import scripts)
 __pycache__/
