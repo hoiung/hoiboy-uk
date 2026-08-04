@@ -33,6 +33,11 @@ _HIDDEN_RE = re.compile(
     r"""<input\s+type=["']hidden["']\s+name=["']consent_version["']\s+value=["']([^"']+)["']"""
 )
 
+# A version string quoted to the reader in prose. Backticks are what makes this
+# unambiguous: the versions are code-formatted where they appear, so an ordinary
+# date written in a sentence cannot match.
+_PROSE_VERSION_RE = re.compile(r"`(\d{4}-\d{2}-\d{2})`")
+
 
 def js_string_list(path: Path, symbol: str = "KNOWN_CONSENT_VERSIONS") -> list[str]:
     """Extract the JS array-literal of strings assigned to ``symbol``.
@@ -56,6 +61,27 @@ def hidden_input_version(path: Path) -> str:
     match = _HIDDEN_RE.search(path.read_text(encoding="utf-8"))
     assert match, f"{path.name} has no hidden consent_version input"
     return match.group(1)
+
+
+def prose_versions(path: Path) -> list[str]:
+    """Consent versions a published page quotes to the reader, in body prose.
+
+    A legal page that tells a reader WHICH wording was recorded against them is
+    a consent surface too, even though nothing at runtime reads it. Bump the
+    version and the code-side surfaces move together while the page keeps naming
+    the old one: a published claim about what was stored, silently false, with
+    every other gate green.
+
+    Frontmatter is stripped first. A `lastmod:` date is an edit date, not a
+    consent version, and the two collide whenever a legal page is edited on the
+    day a label is frozen -- which is exactly what happened here.
+    """
+    text = path.read_text(encoding="utf-8")
+    if text.startswith("---"):
+        end = text.find("\n---", 3)
+        if end != -1:
+            text = text[end + 4 :]
+    return _PROSE_VERSION_RE.findall(text)
 
 
 def assignment_expression(source: str, name: str) -> str:

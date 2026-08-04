@@ -41,11 +41,13 @@ from consent_version_surfaces import (  # noqa: E402
     assignment_expression,
     hidden_input_version,
     js_string_list,
+    prose_versions,
 )
 
 FORM = REPO / "layouts" / "_partials" / "subscribe-form.html"
 ENDPOINT = REPO / "functions" / "api" / "subscribe.js"
 JS_TEST = REPO / "tests" / "subscribe.test.js"
+PRIVACY = REPO / "content" / "legal" / "privacy" / "index.md"
 
 JS_MIRROR_SYMBOL = "KNOWN_CONSENT_VERSIONS_MIRROR"
 
@@ -136,4 +138,35 @@ def test_the_accepted_version_reaches_the_stored_consent_record():
     assert "CONSENT_TIMESTAMP" in source, (
         "no submission timestamp is stored; the Privacy Notice states that the "
         "consent record carries both the wording and when it was accepted"
+    )
+
+
+def test_the_privacy_notice_quotes_the_version_the_form_renders():
+    """The published claim about WHICH wording was recorded must stay true.
+
+    A fourth surface, found by the AP #24 emit-site reconciliation at Gate 1
+    rather than at authoring time. content/legal/privacy/index.md tells the
+    reader their consent record stores "the version string of the exact consent
+    wording you agreed to (currently `<version>`)". Nothing at runtime reads
+    that sentence, so the three assertions above can all stay green while it
+    names a version the form stopped rendering months ago.
+
+    That failure is worse than the silent-400 case those assertions catch,
+    because it is not visible at all: the form keeps working, and the only thing
+    that breaks is a published statement about what was legally recorded.
+    """
+    quoted = prose_versions(PRIVACY)
+    assert quoted, (
+        f"{PRIVACY.relative_to(REPO)} quotes no consent version at all. It is "
+        "required to state which wording the consent record stores, and the "
+        "endpoint test above asserts that pair is written to Brevo on the "
+        "strength of that published claim."
+    )
+
+    rendered = hidden_input_version(FORM)
+    assert set(quoted) == {rendered}, (
+        f"{PRIVACY.relative_to(REPO)} tells readers their consent is recorded "
+        f"against {sorted(set(quoted))!r}, but subscribe-form.html renders "
+        f"{rendered!r}. Every code-side gate stays green here: the drift is "
+        "entirely between the published claim and what is actually stored."
     )
