@@ -54,8 +54,10 @@ LOCKSTEP_HELPERS = (
     # chain exists to close, on one endpoint only) drifted the files while
     # every enrolled helper still compared equal.
     "literalForms",
+    "replaceLiteral",
     "redactString",
     "redactDeep",
+    "redactText",
     "redactLine",
     "createLogger",
 )
@@ -215,51 +217,47 @@ def test_every_upstream_response_body_is_redacted_at_capture():
     for path in (SUBSCRIBE, CONTRIBUTE):
         source = path.read_text(encoding="utf-8")
 
-        captures = re.findall(r"^\s*(?:const|let)\s+\w+\s*=\s*(.+?);$", source, re.M)
+        captures = re.findall(
+            r"^\s*(?:const|let)\s+(\w+)\s*=\s*(.+?);$", source, re.M
+        )
         # Every way of draining an upstream response body, not just .text().
         # The docstring above claims ALL capture sites are covered, and a filter
         # that only knew about .text() would have made that claim false the first
         # time someone reached for .json() (Ralph Tier 3).
         body_readers = (".text()", ".json()", ".arrayBuffer()", ".blob()", ".formData()")
-        text_captures = [c for c in captures if any(r in c for r in body_readers)]
+        text_captures = [(n, c) for n, c in captures if any(r in c for r in body_readers)]
 
         assert text_captures, (
-            f"{path.name} has no `await resp.text()` capture at all. If the "
-            f"upstream error path was restructured, this gate is now asserting "
-            f"nothing and must be rewritten to match the new shape."
+            f"{path.name} has no upstream body capture at all. If the upstream "
+            f"error path was restructured, this gate is now asserting nothing "
+            f"and must be rewritten to match the new shape."
         )
 
-        for capture in text_captures:
-            # The SHAPE-ONLY wrapper is rejected by name, not merely by the
-            # startswith below failing to match: it is the exact form that
-            # shipped and leaked, and a future reader reverting to it deserves
-            # the reason, not a generic "not redacted" message.
+        # Every `log(...)` call's arguments, so a raw capture can be checked
+        # against them by name.
+        log_calls = re.findall(r"\blog\((?:[^()]|\([^()]*\))*\)", source)
+
+        for name, capture in text_captures:
+            # The SHAPE-ONLY wrapper is rejected by name, not merely by a later
+            # check failing to match: it is the exact form that shipped and
+            # leaked, and a future reader reverting to it deserves the reason.
             assert not capture.startswith("redactPii("), (
                 f"{path.name} runs the shape redactor ALONE at capture: "
                 f"{capture!r}. That order cannibalises the by-value pass: on an "
                 f"address with an excluded character mid-local-part, redactPii "
                 f"rewrites the suffix and destroys the held literal, so the "
                 f"local-part prefix survives every later pass. Use the logger's "
-                f"redact() (value first, then shape): "
-                f"redact(await resp.text()).slice(0, N)."
+                f"redact() (value first, then shape)."
             )
-            # A `.startswith(...)` check alone was once satisfied by
-            # `redactPii((await resp.text()).slice(0, 500))` -- redaction wrapping
-            # a value that had ALREADY been truncated. The gate certified
-            # redaction-at-capture while blind to a lossy transform inside the
-            # call, and 8 of 31 padding offsets leaked the local part because the
-            # cut landed mid-address and the regex no longer matched (Ralph Tier 3).
-            # So the body read must be the DIRECT argument: nothing may alter the
-            # text between reading it and redacting it.
-            inner = capture
+
             if capture.startswith("redact("):
-                # Balanced-paren scan, not a naive strip: the capture INCLUDES
-                # everything chained after the call, so a fixed-offset strip on
+                # Redacted AT capture. Nothing may alter the text between
+                # reading it and redacting it: a fixed-offset strip on
                 # `redact(await resp.text()).slice(0, 500)` would leave the
-                # trailing `.slice(` in the string and the check would fire on
-                # the CORRECT form. Only the redactor's own argument is under
-                # test here.
+                # trailing `.slice(` in the string and fire on the CORRECT form,
+                # so scan balanced parens and test only the redactor's argument.
                 depth, start = 0, len("redact(") - 1
+                inner = capture
                 for idx in range(start, len(capture)):
                     if capture[idx] == "(":
                         depth += 1
@@ -268,25 +266,38 @@ def test_every_upstream_response_body_is_redacted_at_capture():
                         if depth == 0:
                             inner = capture[start + 1:idx]
                             break
-            assert not any(
-                op in inner for op in (".slice(", ".substring(", ".substr(", ".split(")
-            ), (
-                f"{path.name} transforms the body BEFORE redacting it: "
-                f"{capture!r}. Truncating first lets an address straddling the cut "
-                f"survive as a fragment neither redactor can match. Redact the "
-                f"full text, then bound it: redact(await resp.text()).slice(0, N)."
+                assert not any(
+                    op in inner
+                    for op in (".slice(", ".substring(", ".substr(", ".split(")
+                ), (
+                    f"{path.name} transforms the body BEFORE redacting it: "
+                    f"{capture!r}. Truncating first lets an address straddling "
+                    f"the cut survive as a fragment neither redactor can match. "
+                    f"Redact the full text, then bound it."
+                )
+                continue
+
+            # NOT redacted at capture. That is allowed for exactly one reason:
+            # control flow must parse the PRISTINE body, because redaction is a
+            # lossy transform over visitor-supplied literals and parsing the
+            # redacted copy let a submitted name delete the key a branch reads
+            # (Ralph round 15 Tier 3). The price is that the raw binding must
+            # never reach a log line, and a redacted copy must exist.
+            assert re.search(rf"\bredact\(\s*{re.escape(name)}\s*\)", source), (
+                f"{path.name} captures an upstream body into `{name}` and never "
+                f"redacts it: {capture!r}. An upstream can echo the submitted "
+                f"address back in its error text, and this Function publishes "
+                f"that it does not persist the request. Either wrap the capture "
+                f"in redact(), or keep the raw binding for control flow ONLY and "
+                f"log redact({name}) instead."
             )
-            assert capture.startswith("redact("), (
-                f"{path.name} captures a response body without redacting it: "
-                f"{capture!r}. An upstream can echo the submitted email back in "
-                f"its error text, and this Function publishes that it does not "
-                f"persist the request, so wrap it in the logger's redact() at "
-                f"the capture point. This gate is deliberately fail-closed on "
-                f"EVERY body read: if the value is binary or never reaches a log "
-                f"(an image buffer, say), that is fine, but say so by excluding "
-                f"it here with a reason rather than by letting the check quietly "
-                f"not apply."
-            )
+            for call in log_calls:
+                assert not re.search(rf"\b{re.escape(name)}\b", call), (
+                    f"{path.name} logs the PRISTINE upstream body `{name}`: "
+                    f"{call!r}. That binding exists so control flow can parse "
+                    f"unredacted text; it must never reach a log line. Log the "
+                    f"redacted copy instead."
+                )
 
 
 def test_the_redacted_value_set_is_per_request_not_module_level():
@@ -346,3 +357,69 @@ def test_the_logger_is_built_per_request_in_both_handlers():
             f"an address whose shape redactPii cannot match reaches the log "
             f"verbatim."
         )
+
+
+def test_the_serialised_line_is_redacted_by_shape_only():
+    """`redactLine` must not run a by-value replace over the finished line.
+
+    A held value is arbitrary visitor text and `replaceLiteral` is blind, so
+    applying it to the SERIALISED line let a submitted name rewrite the line's
+    own structure: a name of `duplicate` renamed that key, and a name carrying a
+    double quote terminated a JSON string early and produced an unparseable
+    line. Values are already redacted one level down by `redactDeep`, where each
+    is still a plain string and cannot collide with structure.
+
+    So the invariant is a level rule, not a call-site list: `redactLine` takes
+    the line ALONE, and the only redactor it may apply is the shape pass.
+    Behavioural cover is `tests/subscribe.test.js`; this pins the shape in both
+    files so the endpoint that has no such suite cannot drift (Ralph round 15).
+    """
+    for path in (SUBSCRIBE, CONTRIBUTE):
+        source = path.read_text(encoding="utf-8")
+        body = function_body(path, "redactLine")
+        assert body is not None, (
+            f"{path.name} has no top-level redactLine declaration. If the log "
+            f"write boundary was restructured, this gate is asserting nothing "
+            f"and must be rewritten to match the new shape."
+        )
+        assert "redactString" not in body, (
+            f"{path.name}'s redactLine runs a by-value replace over the "
+            f"serialised line: {body!r}. That lets a visitor-supplied value "
+            f"rewrite the line's own keys. Redact values in redactDeep, before "
+            f"serialisation; keep this pass shape-only."
+        )
+        assert re.search(r"^function redactLine\(line\)", body, re.M), (
+            f"{path.name}'s redactLine takes more than the line: {body!r}. It "
+            f"must not receive the known-value set at all -- having it in scope "
+            f"is what made the by-value replace reachable here."
+        )
+        assert "redactPii" in body, (
+            f"{path.name}'s redactLine no longer applies the shape pass, so an "
+            f"address the request never held reaches the log verbatim: {body!r}"
+        )
+
+
+def test_control_flow_reads_the_pristine_upstream_body():
+    """`JSON.parse` for control flow must not read the REDACTED copy.
+
+    Redaction is a lossy transform over visitor-supplied literals. Parsing the
+    redacted text let a submitted name of `code` delete the very key the
+    duplicate branch reads, so a duplicate fell through to 502 while a fresh
+    signup returned 303 -- a subscribe-status oracle, defeating the property
+    that branch exists to provide (Ralph round 15 Tier 3).
+
+    Only subscribe.js parses an upstream body for control flow; contribute.js
+    captures one but never branches on it. The gate is therefore written as
+    "no parse of a redacted value ANYWHERE", which holds vacuously for
+    contribute.js today and starts biting the moment it grows such a branch.
+    """
+    for path in (SUBSCRIBE, CONTRIBUTE):
+        source = path.read_text(encoding="utf-8")
+        parses = re.findall(r"JSON\.parse\(([^)]*)\)", source)
+        for target in parses:
+            assert target.strip() != "detail", (
+                f"{path.name} parses the redacted copy for control flow: "
+                f"JSON.parse({target}). Parse the pristine body and redact only "
+                f"what is logged, or a visitor-supplied literal can delete the "
+                f"key the branch depends on."
+            )

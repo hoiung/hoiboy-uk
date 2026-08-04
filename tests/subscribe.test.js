@@ -785,6 +785,102 @@ test('an excluded character MID-local-part cannot cannibalise the held literal',
   );
 });
 
+// A held value is arbitrary visitor text and the literal replace is blind, so
+// the level it runs at decides whether it can collide with STRUCTURE. Two
+// levels were wrong and are pinned here (Ralph round 15 Tier 3):
+//
+//   1. It ran over the raw upstream body BEFORE JSON.parse read `code` for
+//      control flow. A name of `code` deleted that key, so a duplicate fell
+//      through to the 502 branch while a fresh signup still got 303 -- a
+//      subscribe-status oracle, the exact thing the duplicate branch exists to
+//      prevent. Control flow now parses the pristine body.
+//   2. It ran over the finished JSON line, where a name of `name`/`reason`
+//      rewrote a structural key and a name containing a quote emitted invalid
+//      JSON. redactDeep already redacts values one level down, where they
+//      cannot collide with structure, so the line pass is shape-only now.
+//
+// These names are ordinary strings a real visitor can type; the form sets no
+// pattern and its maxlength is client-side only.
+const STRUCTURAL_NAMES = ['code', 'duplicate', 'name', 'reason', 'message'];
+
+test('a crafted name cannot turn a duplicate into a distinguishable response', async () => {
+  // The duplicate and success paths must stay indistinguishable to the caller
+  // whatever the name is, or the form answers "is this address subscribed?".
+  const duplicateBody = { code: 'duplicate_parameter', message: 'Contact already exist' };
+  const seen = new Map();
+
+  for (const name of ['A Reader', ...STRUCTURAL_NAMES]) {
+    const { response } = await submit({
+      fields: { name, email: VALID_EMAIL },
+      brevo: () => jsonResponse(400, duplicateBody),
+    });
+    seen.set(name, `${response.status} ${response.headers.get('location') || ''}`.trim());
+  }
+
+  const baseline = seen.get('A Reader');
+  for (const name of STRUCTURAL_NAMES) {
+    assert.equal(
+      seen.get(name),
+      baseline,
+      `submitting name=${JSON.stringify(name)} changed the duplicate response to ` +
+        `"${seen.get(name)}" while a plain name gives "${baseline}". That difference ` +
+        `is a subscribe-status oracle: anyone could test whether an address is ` +
+        `already on the list.`
+    );
+  }
+});
+
+test('a crafted name cannot corrupt the structure of a log line', async () => {
+  // Differential, not a fixed expectation: the log line's KEY SET must be the
+  // same whatever the visitor typed. Asserting only that a couple of named
+  // keys survive is too weak -- `duplicate` is itself a key on the success
+  // line, so a blind replace renames it while `fn` and `event` sit untouched
+  // and a narrower check passes with the corruption live.
+  const keysFor = (logs) =>
+    logs.map((line) => Object.keys(JSON.parse(line)).sort().join(','));
+
+  const baseline = await submit({ fields: { name: 'A Reader', email: VALID_EMAIL } });
+  const expected = keysFor(baseline.logs);
+  assert.ok(expected.length > 0, 'the baseline submission emitted no log line');
+
+  for (const name of STRUCTURAL_NAMES) {
+    const { logs } = await submit({ fields: { name, email: VALID_EMAIL } });
+    assert.ok(logs.length > 0, `no log line was emitted for name=${JSON.stringify(name)}`);
+
+    for (const line of logs) {
+      assert.doesNotThrow(
+        () => JSON.parse(line),
+        `name=${JSON.stringify(name)} produced a log line that is not valid JSON. ` +
+          `A blind literal replace over the serialised line rewrote its own ` +
+          `structure:\n${line}`
+      );
+    }
+
+    assert.deepEqual(
+      keysFor(logs),
+      expected,
+      `name=${JSON.stringify(name)} changed the KEY SET of a log line. A held value ` +
+        `was replaced inside the finished JSON, so a visitor renamed or deleted a ` +
+        `structural field:\n${logs.join('\n')}`
+    );
+  }
+});
+
+// A quote in the name is the sharpest form of the structural case: it does not
+// merely rename a key, it terminates a JSON string early.
+test('a name containing a quote cannot emit an unparseable log line', async () => {
+  const { logs } = await submit({
+    fields: { name: `${String.fromCharCode(34)},${String.fromCharCode(34)}ok${String.fromCharCode(34)}:`, email: VALID_EMAIL },
+  });
+  assert.ok(logs.length > 0, 'no log line was emitted');
+  for (const line of logs) {
+    assert.doesNotThrow(
+      () => JSON.parse(line),
+      `a name carrying a quote broke the log line's own JSON:\n${line}`
+    );
+  }
+});
+
 test('an address straddling the 500-char log cut is still not leaked', async () => {
   const body = {
     code: 'invalid_parameter',
