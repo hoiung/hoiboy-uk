@@ -217,6 +217,52 @@ def fill_the_rest_of_the_form(page) -> None:
     page.check('[name="consent"]')
 
 
+def text_hidden_under_the_counter(page) -> int:
+    """Pixels of story text the counter is sitting on top of, at the end of it.
+
+    The counter is an opaque chip inside a scrolling box, so wherever it
+    overlaps a line it hides that line. The story field reserves a gutter for
+    it, and this is what proves the gutter is really there: it is a rendered
+    property of the built page, and reading the CSS cannot tell you whether
+    padding, box-sizing, line-height and the chip's own offset actually add up.
+
+    Scoped to the BOTTOM of the story deliberately. That is where a member is
+    while they write, watching the number climb. Scrolled back up to re-read,
+    the chip still covers a line; that is inherent to an opaque overlay in a
+    scrolling box and is the accepted trade for keeping the number in the
+    corner of the field, so it is not asserted here.
+
+    Measured by hiding the chip and looking at what was behind it, against the
+    field's own background sampled from the same image rather than assumed, so
+    the reading holds in both colour schemes.
+    """
+    from collections import Counter
+    import io
+
+    from PIL import Image
+
+    page.locator(STORY).evaluate("el => { el.scrollTop = el.scrollHeight; }")
+    page.wait_for_timeout(60)
+
+    chip = page.locator(COUNTER).first.bounding_box()
+    if not chip:
+        die("the counter has no box to measure, so the story gutter cannot be checked", 1)
+
+    counter_el = page.locator(COUNTER).first
+    counter_el.evaluate("el => el.style.visibility = 'hidden'")
+    shot = page.screenshot(clip=chip)
+    counter_el.evaluate("el => el.style.visibility = ''")
+
+    # tobytes() rather than getdata(): getdata() is deprecated for removal in
+    # Pillow 14, and the replacement does not exist on older versions, so the
+    # raw buffer is the one route that works on both.
+    raw = Image.open(io.BytesIO(shot)).convert("RGB").tobytes()
+    pixels = [tuple(raw[i:i + 3]) for i in range(0, len(raw), 3)]
+    field_bg = Counter(pixels).most_common(1)[0][0]
+    return sum(1 for p in pixels
+               if max(abs(p[i] - field_bg[i]) for i in range(3)) > 40)
+
+
 def submit_and_read_notice(page) -> str | None:
     page.click('button[type="submit"]')
     page.wait_for_timeout(150)
@@ -324,6 +370,27 @@ def main(argv: list[str] | None = None) -> int:
                                 + (" (the length gate did not fire)" if expect == "length"
                                    else " (the length gate fired on a long-enough story)"))
 
+                    # The gutter that keeps the counter off the story text.
+                    # Several lengths, because whether a glyph lands under the
+                    # chip depends on how full the LAST line happens to be, and
+                    # one story length only ever samples one phase of that.
+                    for length in range(1200, 1320, 20):
+                        page.goto(base + PAGE_URL, wait_until="load")
+                        page.route("**/api/contribute", lambda route: route.abort())
+                        # An unbroken run wraps at the character, so every line
+                        # runs the full width of the field, last one included.
+                        page.fill(STORY, "abcdefghij" * (length // 10))
+                        page.wait_for_timeout(50)
+                        covered = text_hidden_under_the_counter(page)
+                        if covered:
+                            failures.append(
+                                f"[{scheme}] a {length}-character story ends with "
+                                f"{covered} pixels of its own text behind the counter. "
+                                f"The story field reserves a gutter so the chip has "
+                                f"somewhere to sit at the end of the text; that gutter "
+                                f"is gone or is now too small for the chip.")
+                            break
+
                     if args.screenshots:
                         out = Path(args.screenshots).expanduser()
                         out.mkdir(parents=True, exist_ok=True)
@@ -340,7 +407,8 @@ def main(argv: list[str] | None = None) -> int:
             print(f"AGIT COUNTER GATE: {f}", file=sys.stderr)
         return 1
 
-    print(f"AGIT counter OK: 3 cases x {len(SCHEMES)} colour schemes on {PAGE_URL}")
+    print(f"AGIT counter OK: 3 cases + 6 story lengths clear of the counter, "
+          f"x {len(SCHEMES)} colour schemes, on {PAGE_URL}")
     return 0
 
 
