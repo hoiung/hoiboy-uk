@@ -579,10 +579,44 @@ def check_built(content_root: Path, headers_path: Path, public: Path,
         ]
     url_index = load_url_index(public)
 
+    # A real Hugo build writes a trail.json beside every page. If ANY were loaded,
+    # this is a real build and the CONTENT tree is the authority on what it should
+    # contain; if none were, --built is pointing at a synthetic fixture with no
+    # Hugo output, and only --strict should speak.
+    real_build = bool(url_index)
+
     def verify_rendered(url: str) -> None:
         rendered = public / url.strip("/") / "index.html"
         if not rendered.exists():
-            if strict:
+            # The whole-tree floor above catches an EMPTY --built directory, but a
+            # PARTIAL or STALE one walked straight through: every missing page took
+            # this silent return, and neither live --built caller passes --strict
+            # (.github/workflows/ci.yml, scripts/pre-publish.sh), so the silent path
+            # is the one that always runs. A build predating a new bundle therefore
+            # reported OK over exactly the pages that bundle added.
+            #
+            # The caller loop enumerates the CONTENT tree, which is what makes this
+            # decidable: content says the page exists, is_excluded() has already
+            # removed every documented reason it would not render (draft, noindex,
+            # headless, render:never, a _headers noindex glob), and the build says
+            # nothing is there. On a real build that is a stale tree, not an alias
+            # edge, so it fails without needing --strict.
+            #
+            # A first draft of this keyed the decision on whether the URL came from
+            # the page's own trail.json. That does not work and the failure is
+            # instructive: url_index is read from the SAME built tree, so deleting a
+            # page deletes its trail with it and the check silently downgraded on
+            # exactly the input it was written to catch. An artefact cannot be the
+            # independent authority on its own staleness.
+            if real_build:
+                violations.append(
+                    f"[rendered-stale] {url}: the content tree has this page and the "
+                    f"build does not ({rendered} missing), so its og:image was never "
+                    f"checked. Nothing in its frontmatter or in static/_headers "
+                    f"exempts it, so the built tree is out of date: run "
+                    f"`hugo --gc --minify -e production`."
+                )
+            elif strict:
                 violations.append(
                     f"[rendered-missing] {url}: no rendered page at {rendered}, so its "
                     f"og:image was never checked (page_url() derived a URL the build does "
