@@ -88,6 +88,14 @@ def _load_png_exif(path: Path) -> dict | None:
 
     The PNG ``eXIf`` chunk payload is a raw TIFF/EXIF stream (no ``Exif\\x00\\x00``
     prefix); piexif.load decodes such a stream when the prefix is restored.
+
+    The walk used to stop at the first ``IDAT`` on the reasoning that ``eXIf``
+    must precede image data. The PNG spec does not say that: ``eXIf`` is an
+    ancillary chunk and may appear either before or after ``IDAT``, and AFTER is
+    what a naive "append the metadata" tool produces. So an image carrying an
+    identifying tag written that way scored clean, which is worse than not
+    scanning it at all -- the gate reported it safe. Only ``IEND`` stops the walk
+    now, because nothing valid follows it.
     """
     raw = path.read_bytes()
     if raw[:8] != b"\x89PNG\r\n\x1a\n":
@@ -110,8 +118,8 @@ def _load_png_exif(path: Path) -> dict | None:
                     f"({e}); cannot scan for identifying tags\n"
                 )
                 return None
-        if ctype == b"IDAT" or ctype == b"IEND":
-            break  # eXIf must precede image data; stop early
+        if ctype == b"IEND":
+            break  # last chunk in the stream; nothing valid follows
         pos = data_end + 4  # skip the 4-byte CRC
     return None
 
