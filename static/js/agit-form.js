@@ -74,6 +74,24 @@
       return;
     }
 
+    // Catch a too-short story BEFORE the Turnstile check, so nobody is asked to
+    // solve a verification puzzle for a submission that cannot succeed anyway.
+    // Counted the server's way (storyLength), so this agrees with the floor in
+    // functions/api/contribute.js rather than racing it.
+    var featureField = form.querySelector('[name="feature"]');
+    if (featureField) {
+      var written = storyLength(featureField.value);
+      if (written < STORY_MIN) {
+        e.preventDefault();
+        showNotice(
+          "Your story needs at least " + STORY_MIN + " characters so there is enough to work with. " +
+          "You have written " + written + " so far, so keep going."
+        );
+        featureField.focus();
+        return;
+      }
+    }
+
     // Require the Turnstile token client-side so the user gets an inline nudge
     // instead of a server-side 403 after a long wait.
     var tsField = form.querySelector('[name="cf-turnstile-response"]');
@@ -98,6 +116,34 @@
       btn.appendChild(document.createTextNode("Sending your story..."));
     }
   });
+
+  // Live character counter for the story. ONE number, red below the minimum and
+  // green at or above it. Never a fraction: "412 / 1200" reads as an exact
+  // target rather than a floor. Bound to the story textarea specifically rather
+  // than to the form, and on three events rather than keypresses, so it stays
+  // correct on paste, autofill, drag-dropped text and undo.
+  var story = form.querySelector('[name="feature"]');
+  var counter = form.querySelector(".agit-count");
+  if (story && counter) {
+    var renderCount = function () {
+      var n = storyLength(story.value);
+      counter.textContent = String(n);
+      counter.classList.toggle("is-met", n >= STORY_MIN);
+      counter.classList.toggle("is-short", n < STORY_MIN);
+    };
+    ["input", "change", "paste"].forEach(function (ev) {
+      story.addEventListener(ev, function () {
+        renderCount();
+        // paste fires BEFORE the textarea value updates, so read it again on the
+        // next tick. The input event that follows would also correct it; this
+        // keeps the number right even where that event is suppressed.
+        if (ev === "paste") setTimeout(renderCount, 0);
+      });
+    });
+    // Reflect whatever the field already holds (browser-restored form state on
+    // a back-navigation), rather than leaving the server-rendered 0 stale.
+    renderCount();
+  }
 
   // Drag-and-drop photo drop zone. The <label class="agit-drop"> already opens
   // the native picker on click/tap (so mobile "choose from Photos" still works);
