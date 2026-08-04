@@ -268,9 +268,9 @@ run_check "cta-rendered" python3 scripts/check_cta_rendered.py --built public
 #     cannot see whether the built page actually references /js/agit-form.js,
 #     whether the CSP lets it run, or whether the counter element survived a
 #     template edit. Any of those leaves the JS suite green and the form broken.
-#     It also closes the one derived claim this feature rested on: that LF
-#     expands to CRLF in form serialisation, so the server always counts at
-#     least what the browser counts. hoiboy-uk#57.
+#     It aborts the POST, so it proves the CLIENT half only. It does not observe
+#     wire serialisation or the server's count, and the gate's own docstring is
+#     explicit about that rather than claiming the stronger thing. hoiboy-uk#57.
 run_check "agit-counter" python3 scripts/check_agit_form_counter.py --built public
 
 # 8. Lychee on rendered HTML — catches broken cross-section links + missing
