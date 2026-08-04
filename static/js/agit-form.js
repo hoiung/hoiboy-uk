@@ -124,12 +124,33 @@
   // correct on paste, autofill, drag-dropped text and undo.
   var story = form.querySelector('[name="feature"]');
   var counter = form.querySelector(".agit-count");
+  // Screen readers get their own region rather than the visible number. The
+  // number alone announces as a bare "412" with nothing saying what it counts,
+  // and re-announcing it on every keystroke of a 1200-character minimum queues
+  // up a thousand interruptions. So the visible chip is aria-hidden and this
+  // region carries a worded state, settled after a pause in typing. One number
+  // and a word, never a fraction - the same rule the visible counter follows.
+  var status = form.querySelector("#agit-count-status");
+  var announce;
   if (story && counter) {
     var renderCount = function () {
       var n = storyLength(story.value);
       counter.textContent = String(n);
+      // Hidden until this runs, so a member whose JS never loaded sees nothing
+      // rather than a 0 frozen at the moment the page was served, sitting there
+      // while they type. The element still ships in the markup.
+      counter.hidden = false;
       counter.classList.toggle("is-met", n >= STORY_MIN);
       counter.classList.toggle("is-short", n < STORY_MIN);
+      if (status) {
+        clearTimeout(announce);
+        announce = setTimeout(function () {
+          status.textContent =
+            n >= STORY_MIN
+              ? n + " characters. Long enough."
+              : n + " characters. Keep writing.";
+        }, 700);
+      }
     };
     ["input", "change", "paste"].forEach(function (ev) {
       story.addEventListener(ev, function () {
