@@ -315,6 +315,14 @@ jobs:
       - name: Subscribe-form placement (suppressed on five classes, present elsewhere)
         run: python3 scripts/check_subscribe_placement.py --built public
 
+      # An X-Robots-Tag noindex stops indexing, not publishing. Without the
+      # companion frontmatter Hugo puts a noindex page's FULL BODY into
+      # public/index.xml, the feed every page advertises, so it arrives in
+      # subscribers' readers as a post. Third occurrence in this repo, which is
+      # why it is now a gate rather than a comment. Needs the built tree.
+      - name: Noindex pages stay out of the sitemap and the RSS feed
+        run: python3 scripts/check_noindex_frontmatter.py --built public
+
       # Reads the BUILT tree: asserts Hugo emitted public/404.html, that the
       # template's content block actually rendered, and that every navigation
       # link ON the 404 page resolves. Without a root 404.html Cloudflare Pages

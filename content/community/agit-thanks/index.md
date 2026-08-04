@@ -9,6 +9,20 @@ url: "/community/asians-gingers-in-tech/thanks/"
 # Sit under the AGIT page in breadcrumbs (its real home), not the bare community
 # section, since Hugo files this sibling bundle directly under /community/.
 breadcrumbParent: "/community/asians-gingers-in-tech"
+sitemap:
+  disable: true
+# Keep this page OUT of every list page and out of the RSS feed, while still
+# rendering it so the form's redirect can land on it. The X-Robots-Tag noindex in
+# static/_headers covers neither surface: without this block Hugo publishes the
+# full rendered body into public/index.xml, so everyone subscribed to the feed
+# receives "Thanks for your story" as a post. Same fix and same reason as
+# content/private/tools/meet-recorder/index.md. Missed here when that one was
+# fixed, and found by the #56 Ralph review, which is why
+# scripts/check_noindex_frontmatter.py now asserts the pairing mechanically
+# instead of relying on someone remembering.
+build:
+  list: never
+  render: always
 ---
 
 Thanks, your story is in.

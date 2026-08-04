@@ -280,6 +280,14 @@ repos:
       # stays close enough to the id line for a short grep window to reach it.
       #
       # Bypass: SKIP=check-subscribe-placement git push
+      - id: check-noindex-frontmatter
+        name: Noindex pages stay out of the sitemap and the RSS feed
+        entry: python3 scripts/check_noindex_frontmatter.py --built public
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+
       - id: check-subscribe-placement
         name: Subscribe-form placement (built tree; suppression predicate)
         entry: python3 scripts/check_subscribe_placement.py --built public

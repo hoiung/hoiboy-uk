@@ -572,6 +572,40 @@ for (const [label, brevoBody] of [
   });
 }
 
+test('the encoding a real browser actually sends is handled', async () => {
+  // subscribe-form.html declares no enctype, so a browser posts
+  // application/x-www-form-urlencoded. Every other test in this file builds a
+  // FormData body, which is multipart. So the whole suite was exercising an
+  // encoding the shipped form never sends: the same shape as the round-1
+  // content-length lesson, where the tests all took a path real traffic does not.
+  const harness = loadEndpoint();
+  arrangeFetch(harness, {});
+  const body = new URLSearchParams({
+    name: 'A Reader',
+    email: VALID_EMAIL,
+    consent: 'on',
+    consent_version: KNOWN_CONSENT_VERSIONS_MIRROR[0],
+    'cf-turnstile-response': 'turnstile-token',
+  });
+  const request = new Request('https://hoiboy.uk/api/subscribe', {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: body.toString(),
+  });
+
+  const response = await harness.mod.onRequestPost({ request, env: DEFAULT_ENV });
+
+  assert.equal(response.status, 303);
+  const write = harness.calls.find((c) => String(c.url).includes('brevo.com'));
+  assert.ok(write, 'a urlencoded submission never reached Brevo');
+  // And the payload has to be right, not merely present: the capped read plus
+  // re-wrap must preserve urlencoded bodies as faithfully as multipart ones.
+  const sent = JSON.parse(write.init.body);
+  assert.equal(sent.email, VALID_EMAIL);
+  assert.equal(sent.attributes.FIRSTNAME, 'A Reader');
+  assert.equal(sent.attributes.CONSENT_VERSION, KNOWN_CONSENT_VERSIONS_MIRROR[0]);
+});
+
 test('an oversized streamed body is refused even though it declares no length', async () => {
   const harness = loadEndpoint();
   arrangeFetch(harness, {});
