@@ -49,14 +49,19 @@ def test_extract_keys_ignores_assignments_inside_a_multiline_string():
     reference. Parsed with tomllib it simply is not a key.
     """
     toml = 'bio = """\n  notAKey = prose inside a multi-line string\n"""\naccent = "#c0533a"\n'
-    assert sorted(cct.extract_keys(toml)) == ["accent", "bio"]
+    assert sorted(k for k, _parent in cct.extract_keys(toml)) == ["accent", "bio"]
 
 
 def test_extract_keys_finds_nested_table_keys():
     """A key inside a table is still a declared key, and must be traced."""
     toml = '[social]\ngithub = "hoiung"\n\n[build]\nstamp = true\n'
     keys = cct.extract_keys(toml)
-    assert set(keys) >= {"social", "github", "build", "stamp"}
+    # extract_keys yields (key, parent) so the parent table survives the walk:
+    # without it a nested key is searched for by its BARE name against the whole
+    # layouts text, and a dead [social] title passes the moment any unrelated
+    # template mentions title.
+    assert set(keys) >= {("social", None), ("github", "social"),
+                         ("build", None), ("stamp", "build")}
 
 
 def test_extract_keys_fails_loudly_on_invalid_toml():
@@ -65,3 +70,20 @@ def test_extract_keys_fails_loudly_on_invalid_toml():
 
     with pytest.raises(SystemExit):
         cct.extract_keys('this is = not [valid toml\n"')
+
+
+def test_nested_key_needs_its_parent_table_not_just_a_bare_token():
+    """Identifier boundaries are not table scoping (#56 escalation sweep, Tier B).
+
+    A key nested under [social] used to be searched for by its bare name against
+    the whole concatenated layouts text, so a genuinely dead `[social] title`
+    read as referenced the moment any unrelated template mentioned `title`.
+    """
+    unrelated = '<h1>{{ .Title }}</h1>{{ $x := "title" }}'
+    assert cct.is_key_referenced("title", unrelated, "social") is False
+    # Both real Hugo idioms still count.
+    assert cct.is_key_referenced("title", "{{ site.Params.social.title }}", "social") is True
+    assert cct.is_key_referenced(
+        "title", "{{ with site.Params.social }}{{ .title }}{{ end }}", "social") is True
+    # A top-level key is unaffected: no parent, so no scoping requirement.
+    assert cct.is_key_referenced("title", unrelated, None) is True
