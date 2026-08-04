@@ -169,6 +169,76 @@ MUTATIONS = [
         "tests/test_taxonomy_terms_match_build.py",
         id="live-list-page-missing-from-the-allow-list",
     ),
+    # #57 Stage 5. Same omission the #55 note above records, one issue later: the
+    # AGIT story counter arrived with two gates and registered neither here. The
+    # first four mutate the decision logic that says what "correct" means for the
+    # counter; the fifth removes the only line that opens a browser at all; the
+    # last three break a promise the form makes to a member, which is the class
+    # the binding tests exist for.
+    pytest.param(
+        "scripts/check_agit_form_counter.py",
+        'return "met" if count >= minimum else "short"',
+        'return "met" if count > minimum else "short"',
+        "scripts/test_check_agit_form_counter.py",
+        id="counter-tells-a-member-at-the-minimum-to-keep-writing",
+    ),
+    pytest.param(
+        "scripts/check_agit_form_counter.py",
+        '    return "length" if str(minimum) in text else "other"',
+        '    return "length"',
+        "scripts/test_check_agit_form_counter.py",
+        id="turnstile-complaint-stands-in-for-the-length-complaint",
+    ),
+    pytest.param(
+        "scripts/check_agit_form_counter.py",
+        "        if missing:",
+        "        if False:",
+        "scripts/test_check_agit_form_counter.py",
+        id="a-theme-with-no-counter-colour-runs-half-a-gate",
+    ),
+    pytest.param(
+        "scripts/check_agit_form_counter.py",
+        "    if not HEX6.match(h):",
+        "    if False:",
+        "scripts/test_check_agit_form_counter.py",
+        id="unresolvable-counter-colour-crashes-instead-of-dying-actionably",
+    ),
+    # The whole browser half hangs off this one line. Everything else in its
+    # suite is pure decision logic and stays green with Chromium never opened.
+    pytest.param(
+        "scripts/pre-publish.sh",
+        'run_check "agit-counter" python3 scripts/check_agit_form_counter.py --built public',
+        "",
+        "scripts/test_check_agit_form_counter.py",
+        id="agit-browser-gate-named-in-prose-and-invoked-nowhere",
+    ),
+    # /js/ is unfingerprinted, so a long max-age serves the pre-#57 script --
+    # no counter, no submit guard -- against markup already promising the
+    # minimum. This is the state the file was in before #57 Stage 5.
+    pytest.param(
+        "static/_headers",
+        "/js/*\n  Cache-Control: public, max-age=0, must-revalidate",
+        "/js/*\n  Cache-Control: public, max-age=14400",
+        "scripts/test_agit_counter_contrast.py",
+        id="form-script-served-stale-against-the-markup-that-promises-it",
+    ),
+    pytest.param(
+        "content/community/asians-gingers-in-tech/index.md",
+        'maxlength="8000"',
+        'maxlength="4000"',
+        "scripts/test_agit_counter_contrast.py",
+        id="story-field-advertises-a-ceiling-the-server-does-not-hold",
+    ),
+    # socials is routed through cleanLines() and is deliberately absent from
+    # FIELD_CAPS, so a binding built only from FIELD_CAPS reports full coverage
+    # with this pair unguarded.
+    pytest.param(
+        "functions/api/contribute.js",
+        "const SOCIALS_MAX_TOTAL = 1000;",
+        "const SOCIALS_MAX_TOTAL = 500;",
+        "scripts/test_agit_counter_contrast.py",
+        id="socials-cap-drifts-outside-the-field-caps-table",
+    ),
     pytest.param(
         "scripts/check_wordcount.py",
         '_HTML_COMMENT_RE = re.compile(r"<!--(?:(?!<!--)[\\s\\S])*?-->")',
