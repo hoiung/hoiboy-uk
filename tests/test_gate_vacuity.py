@@ -64,6 +64,18 @@ EXEMPT: dict[str, str] = {
     # Network gate: resolves live robots.txt over HTTP. Running it in the
     # skeleton would assert the network, not the coverage floor.
     "check-ai-crawler-access.sh": "network gate; empty-tree run asserts DNS, not coverage",
+    # Takes ONE mandatory positional argument and has no scan-and-collect step at
+    # all (scripts/check_future_date.py:77-80), so `run_gate` -- which always
+    # invokes with no arguments -- gets `usage: ...` and exit 2 identically
+    # whether the tree is empty or fully populated. That is a usage error wearing
+    # a compliant exit code, and counting it as a coverage floor is the accidental
+    # pass this suite exists to reject. The vacuous scan-and-clear shape cannot
+    # occur for a single-mandatory-arg CLI: with no argument it does nothing, and
+    # with one it examines exactly that file.
+    "check_future_date.py": (
+        "single mandatory positional arg, no enumeration step; its no-arg exit is "
+        "a usage error, identical on an empty and a populated tree"
+    ),
     # The one gate whose empty tree this harness structurally cannot build: the
     # skeleton must copy scripts/ for imports to resolve, and scripts/ IS this
     # gate's scan surface, so the tree is never empty from where it stands.
@@ -207,31 +219,62 @@ def test_gate_refuses_to_clear_an_empty_tree(tmp_path, name):
     assert_refuses_to_clear(name, run_gate(root, name))
 
 
+def _synthetic(root: Path, name: str, body: str) -> None:
+    (root / "scripts" / name).write_text("#!/usr/bin/env python3\n" + body, encoding="utf-8")
+
+
 def test_harness_catches_a_vacuous_gate(tmp_path):
-    """Positive control: the assertion above must be able to FAIL.
+    """Positive control 1 of 3: the exit-0 branch must be able to FAIL.
 
-    Every check in this file is an absence, which is precisely the shape that
-    passes for free once it stops discriminating. Three tests written during
-    this Issue passed with their own subject disabled and were caught only by
-    mutating it, so the mutant lives in the suite permanently rather than in a
-    session someone has to repeat.
-
-    A gate that prints a confident OK and exits 0 over the empty skeleton is
-    the defect in one file. If the harness ever stops failing it, the harness
-    has stopped testing.
+    Every check in this file is an absence, which is the shape that passes for
+    free once it stops discriminating. Three tests written during this Issue
+    passed with their own subject disabled and were caught only by mutating it,
+    so the mutants live in the suite permanently rather than in a session
+    someone has to repeat.
     """
     root = skeleton(tmp_path)
-    (root / "scripts" / "check_synthetic_vacuous.py").write_text(
-        "#!/usr/bin/env python3\n"
-        "print('OK: 0 files scanned, no problems found.')\n"
-        "raise SystemExit(0)\n",
-        encoding="utf-8",
-    )
+    _synthetic(root, "check_synthetic_vacuous.py",
+               "print('OK: 0 files scanned, no problems found.')\nraise SystemExit(0)\n")
     result = run_gate(root, "check_synthetic_vacuous.py")
 
     assert result.returncode == 0, "fixture must model the defect: exit 0 on an empty tree"
     with pytest.raises(AssertionError, match="exited 0 against a tree"):
         assert_refuses_to_clear("check_synthetic_vacuous.py", result)
+
+
+def test_harness_catches_a_crashing_gate(tmp_path):
+    """Positive control 2 of 3: the no-traceback branch must be able to FAIL.
+
+    This is the branch that closes the harness's OWN original defect. Before it
+    existed, `returncode != 0` alone scored a crashing gate as compliant, and two
+    gates passed that way while their real empty-surface path still returned 0.
+    An unpinned fix for a false-pass mechanism is itself a false-pass waiting to
+    return, which is exactly what Ralph Tier 2 pointed out about this assertion.
+    """
+    root = skeleton(tmp_path)
+    _synthetic(root, "check_synthetic_crash.py",
+               "open('/nonexistent/definitely-not-here').read()\n")
+    result = run_gate(root, "check_synthetic_crash.py")
+
+    assert result.returncode != 0, "fixture must crash, so exit!=0 alone would pass it"
+    assert "Traceback (most recent call last)" in result.stderr
+    with pytest.raises(AssertionError, match="CRASHED against the empty skeleton"):
+        assert_refuses_to_clear("check_synthetic_crash.py", result)
+
+
+def test_harness_catches_a_silent_refusal(tmp_path):
+    """Positive control 3 of 3: the non-empty-output branch must be able to FAIL.
+
+    A gate that exits 2 and says nothing satisfies both assertions above while
+    being unreadable in a CI log and indistinguishable from a crash.
+    """
+    root = skeleton(tmp_path)
+    _synthetic(root, "check_synthetic_silent.py", "raise SystemExit(2)\n")
+    result = run_gate(root, "check_synthetic_silent.py")
+
+    assert result.returncode == 2 and not (result.stdout + result.stderr).strip()
+    with pytest.raises(AssertionError, match="said NOTHING"):
+        assert_refuses_to_clear("check_synthetic_silent.py", result)
 
 
 def test_no_stale_exemptions():
