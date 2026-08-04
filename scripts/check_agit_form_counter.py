@@ -64,6 +64,7 @@ Exit 0 = pass. 1 = a named failure against the built page. 2 = cannot run.
 
 import argparse
 import functools
+import hashlib
 import http.server
 import re
 import socketserver
@@ -89,6 +90,7 @@ CSS_COMMENT = re.compile(r"/\*.*?\*/", re.S)
 DARK_QUERY = re.compile(r"@media\s*\(\s*prefers-color-scheme\s*:\s*dark\s*\)\s*\{")
 COUNTER_RULE = re.compile(r"\.agit-count\.is-(short|met)\s*\{[^}]*?color\s*:\s*(#[0-9a-fA-F]{6})", re.S)
 HEX6 = re.compile(r"\A#[0-9a-fA-F]{6}\Z")
+SCRIPT_SRC = re.compile(r'<script\b[^>]*\bsrc="/js/agit-form\.js\?v=(?P<version>[0-9a-f]+)"')
 
 
 def die(msg: str, code: int = 2) -> None:
@@ -290,6 +292,24 @@ def main(argv: list[str] | None = None) -> int:
         die(f"the built page does not state the {MINIMUM}-character minimum in words. "
             f"The counter is a colour, and colour alone is not an accessible signal "
             f"(WCAG 2.1 SC 1.4.1) nor a readable instruction.", 1)
+
+    # The script's URL has to carry the script's OWN current hash. The source
+    # tree can only show that the page goes through the shortcode; whether the
+    # value it emitted matches the file that shipped beside it is a property of
+    # the build, and a stale one would restore the whole staleness window while
+    # every source-level check stayed green.
+    referenced = SCRIPT_SRC.search(html)
+    if not referenced:
+        die("the built page loads no versioned /js/agit-form.js. Without the "
+            "content hash in its URL the script is cached for four hours "
+            "independently of the markup that promises the minimum.", 1)
+    shipped = (ROOT / "static" / "js" / "agit-form.js").read_bytes()
+    expected = hashlib.sha256(shipped).hexdigest()[:12]
+    if referenced.group("version") != expected:
+        die(f"the built page loads agit-form.js?v={referenced.group('version')} "
+            f"but the shipped file hashes to {expected}. The URL is pinned to a "
+            f"version of the script that is not the one being deployed, so the "
+            f"browser keeps serving whatever it cached under that URL.", 1)
 
     colours = counter_colours(html)
 
