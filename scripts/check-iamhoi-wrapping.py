@@ -258,7 +258,20 @@ def check_file(
 
 
 def gather_files(args: list[str], check_only_new: bool) -> list[Path]:
-    """Resolve CLI args to a list of .md files. Default: content/posts/**/*.md."""
+    """Resolve CLI args to a list of .md files. Default: content/**/*.md.
+
+    The default used to be `content/posts` alone, while the pre-commit hook
+    that runs this same script selects files with `pass_filenames` over a
+    WIDER pattern. So the CI step calling itself the "CI mirror of pre-commit
+    hook" scanned a strictly smaller set: `content/hire-hoi/**/*.md` is
+    covered by pre-commit and was examined by NO CI step. A green CI run
+    therefore asserted a property of pages nothing had opened.
+
+    `content/` is the honest default: it is the whole voice surface, and it
+    matches the sibling `check-ai-writing-tells.py` CI step, which already
+    scans `content/ docs/ layouts/` explicitly. Legacy pages stay exempt via
+    the date filter, and a non-voice page opts out with `<!-- iamhoi-exempt -->`.
+    """
     repo_root = Path(__file__).resolve().parents[1]
     files: list[Path] = []
     if args:
@@ -269,9 +282,9 @@ def gather_files(args: list[str], check_only_new: bool) -> list[Path]:
             elif p.exists() and p.suffix == ".md":
                 files.append(p)
     else:
-        posts = repo_root / "content" / "posts"
-        if posts.exists():
-            files.extend(sorted(posts.rglob("*.md")))
+        content = repo_root / "content"
+        if content.exists():
+            files.extend(sorted(content.rglob("*.md")))
     return files
 
 
@@ -279,13 +292,13 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description=(
             "Enforce iamhoi-marker wrapping on new Hoi-voice posts. "
-            "Default scope: content/posts/**/*.md."
+            "Default scope: content/**/*.md."
         )
     )
     parser.add_argument(
         "paths",
         nargs="*",
-        help="Files or directories to check. Default: content/posts/.",
+        help="Files or directories to check. Default: content/.",
     )
     parser.add_argument(
         "--check-only-new",
