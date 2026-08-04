@@ -284,6 +284,27 @@ MUTATIONS = [
         "scripts/test_check_exif.py",
         id="png-exif-after-idat-scores-clean",
     ),
+    pytest.param(
+        "scripts/check_wordcount.py",
+        '    r"^(?P<fence>`{3,}|~{3,})[^\\n]*\\n"',
+        '    r"(?P<fence>`{3,}|~{3,})[^\\n]*\\n"',
+        "scripts/test_check_wordcount.py",
+        id="wordcount-unanchored-fence-eats-prose-before-counting",
+    ),
+    pytest.param(
+        "scripts/check-iamhoi-wrapping.py",
+        '        content = repo_root / "content"',
+        '        content = repo_root / "content" / "posts"',
+        "scripts/test_check_iamhoi_wrapping.py",
+        id="iamhoi-ci-default-scans-less-than-the-hook-it-mirrors",
+    ),
+    pytest.param(
+        "scripts/check-public-repo-secrets.py",
+        "    if name in SCAN_FILENAMES:",
+        "    if False:",
+        "scripts/test_check_public_repo_secrets.py",
+        id="secrets-extensionless-config-file-never-opened",
+    ),
 ]
 
 

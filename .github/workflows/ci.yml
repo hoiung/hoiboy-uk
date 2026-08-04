@@ -159,6 +159,14 @@ jobs:
       - name: Config-traceability + iamhoi-wrapping unit tests
         run: python3 -m pytest scripts/test_check_config_traceability.py scripts/test_check_iamhoi_wrapping.py -q
 
+      # The secret scan at the top of this job is blocking, but until #56 nothing
+      # tested the guard itself in this repo. Its two collection paths asked
+      # "should I open this file?" two different ways and neither opened an
+      # extensionless config, so a token in .npmrc scored clean. Source-only, so
+      # it runs before the Hugo build.
+      - name: Public-repo secret guard unit tests
+        run: python3 -m pytest scripts/test_check_public_repo_secrets.py -q
+
       # The 404 gate's noindex helpers, source-only so they run before the build.
       # SEPARATE from the `python3 scripts/test_404.py --built public` step further
       # down: that one invokes the file as a CLI, and a CLI run executes no test
