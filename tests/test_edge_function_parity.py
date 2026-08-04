@@ -60,6 +60,13 @@ LOCKSTEP_HELPERS = (
     "redactText",
     "redactLine",
     "createLogger",
+    # The bot-defence call. #56 duplicated it into subscribe.js, and Ralph
+    # round 21 Tier 3 found it ALREADY drifted at HEAD (a trailing comma in the
+    # fetch options) with every delivered test still green -- which is the
+    # proof that "both endpoints verify Turnstile the same way" was an
+    # assumption, not an invariant. Cosmetic that time; nothing would have
+    # caught a changed endpoint, a dropped `remoteip`, or an inverted result.
+    "verifyTurnstile",
 )
 
 
@@ -439,6 +446,13 @@ LOCKSTEP_CONSTANTS = (
     "REDACTED_VALUE",
     "MIN_PROTECTED_LENGTH",
     "MAX_ESCAPE_LEVELS",
+    # The address-validation regex, duplicated into subscribe.js by #56. It is
+    # the pattern `redactPii`'s character class is deliberately narrower than
+    # (see the "alphabet gap" comment in both Functions), so the two are read
+    # together as one contract. Widening it on one endpoint alone would admit
+    # addresses that endpoint's redactor cannot then match -- the leak class
+    # rounds 11-15 kept reopening -- with nothing to show for it.
+    "EMAIL_RE",
 )
 
 

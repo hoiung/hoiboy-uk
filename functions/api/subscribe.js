@@ -348,7 +348,7 @@ async function verifyTurnstile(secret, response, remoteip) {
   if (remoteip) body.append("remoteip", remoteip);
   const resp = await fetch(
     "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-    { method: "POST", body },
+    { method: "POST", body }
   );
   return await resp.json();
 }
