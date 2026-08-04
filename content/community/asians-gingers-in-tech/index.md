@@ -221,8 +221,9 @@ Before you fill it in, have a quick read of the <a href="/legal/agit-story-guide
 
   <div class="agit-field">
     <label for="agit-feature">Your story <span class="agit-hint">(the quiet, brilliant work you never shout about, minimum 1200 characters)</span></label>
-    <textarea id="agit-feature" name="feature" maxlength="8000" required></textarea>
-    <p class="agit-count is-short" aria-live="polite">0</p>
+    <textarea id="agit-feature" name="feature" maxlength="8000" required aria-describedby="agit-count-status"></textarea>
+    <p class="agit-count is-short" aria-hidden="true" hidden>0</p>
+    <span id="agit-count-status" class="agit-visually-hidden" role="status" aria-live="polite"></span>
   </div>
 
   <div class="agit-field">
