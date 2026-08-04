@@ -48,7 +48,14 @@ LOCKSTEP_HELPERS = (
     "clean",
     # The value-redaction path. `createLogger` takes the function name as a
     # parameter precisely so these can be lock-stepped rather than excluded.
+    # Every function in the chain is enrolled: Ralph round 13 proved that with
+    # `redactString` and `redactDeep` missing, deleting `redactDeep`'s
+    # array-handling branch in one file (reopening the exact leak class the
+    # chain exists to close, on one endpoint only) drifted the files while
+    # every enrolled helper still compared equal.
     "literalForms",
+    "redactString",
+    "redactDeep",
     "redactLine",
     "createLogger",
 )
