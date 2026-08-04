@@ -35,3 +35,4 @@
 /blogs/coping-with-an-addictive-personality/
 /blogs/bad-music-destroys-the-dance-community/
 /blogs/why-every-brazilian-zouk-dancer-needs-to-learn-a-solo-dance/
+/blogs/dunning-kruger-syndrome-in-ai/
