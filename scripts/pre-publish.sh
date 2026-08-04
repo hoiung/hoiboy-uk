@@ -1,7 +1,7 @@
 #!/bin/bash
 # Pre-publish gate aggregator for hoiboy.uk new blog posts.
 #
-# Runs 17 sequential gates fail-fast on first non-zero exit:
+# Runs 18 sequential gates fail-fast on first non-zero exit:
 #   1. Consulting YAML   (data/consulting.yaml MUST NOT contain OPERATOR_TODO
 #                         substring — global gate, blocks publish whenever a
 #                         placeholder URL is unreplaced. consulting-ops#2 AC 0.2.)
