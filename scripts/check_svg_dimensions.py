@@ -93,6 +93,52 @@ def offenders(paths):
     return bad
 
 
+def scope_problem(arg):
+    """Why this scope cannot be ENUMERATED, or None if it can.
+
+    The predicate is enumerability, not existence, and the difference is the
+    whole point. `os.path.exists` proves only that a path RESOLVES; it says
+    nothing about whether its contents can be listed. `glob.glob` swallows a
+    PermissionError and returns [], so a directory that exists but cannot be
+    read looked byte-for-byte identical to an empty one -- the gate printed a
+    clean PASS while a real SVG sat unexamined inside it. A glob argument had
+    the same hole from the other direction: it was exempted from the existence
+    check entirely, so a mistyped path under a directory that does not exist
+    also passed clean. Both are the report-success-for-an-unexamined-surface
+    shape this floor exists to stop, reintroduced by the floor itself
+    (Ralph round 20 Tier 2).
+    """
+    base = arg
+    if any(c in arg for c in "*?["):
+        # Enumerability is a property of the directory being walked, not of the
+        # pattern. Take the longest leading run of components with no glob
+        # metacharacter -- that is the part that must exist and be readable.
+        kept = []
+        for part in arg.split(os.sep):
+            if any(c in part for c in "*?["):
+                break
+            kept.append(part)
+        base = os.sep.join(kept) or "."
+
+    if not os.path.exists(base):
+        return f"scope not found: {arg}"
+
+    if os.path.isdir(base):
+        # os.walk swallows errors by default, which is exactly the failure mode
+        # under repair; onerror surfaces them instead.
+        failures = []
+        for _ in os.walk(base, onerror=failures.append):
+            pass
+        if failures:
+            err = failures[0]
+            return (
+                f"scope not readable: {err.filename} ({err.strerror}). The "
+                f"directory exists but its contents cannot be listed, so any "
+                f"SVG inside it would be silently skipped"
+            )
+    return None
+
+
 def main(argv):
     args = argv[1:]
     if args:
@@ -129,17 +175,17 @@ def main(argv):
     # compliance for files it never saw.
     paths = sorted(set(paths))
     if args:
-        missing = [a for a in args if not any(c in a for c in "*?[") and not os.path.exists(a)]
-        if missing:
-            print(
-                f"[vacuous-gate] check_svg_dimensions: scope not found: "
-                f"{', '.join(missing)}. Nothing was opened, so no compliance claim "
-                f"can be made. Check the path.",
-                file=sys.stderr,
-            )
-            return 2
+        for a in args:
+            problem = scope_problem(a)
+            if problem:
+                print(
+                    f"[vacuous-gate] check_svg_dimensions: {problem}. Nothing was "
+                    f"enumerated, so no compliance claim can be made.",
+                    file=sys.stderr,
+                )
+                return 2
         if not paths:
-            print(f"PASS: no SVG in {', '.join(args)} (scope opened, nothing to check)")
+            print(f"PASS: no SVG in {', '.join(args)} (scope enumerated, nothing to check)")
             return 0
     else:
         require_examined(

@@ -6,12 +6,13 @@ Covers all three assertions (root width/height + #87ceeb watermark + canonical c
 and the documented exemption for the fixed-dark inline form (no <style>).
 """
 from __future__ import annotations
+import os
 import sys
 import pytest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from check_svg_dimensions import offenders, main
+from check_svg_dimensions import offenders, main, scope_problem
 
 # A fully house-compliant dual-mode SVG: root width/height + canonical <style> block + watermark.
 COMPLIANT = (
@@ -141,9 +142,9 @@ def test_an_existing_scope_with_no_svg_is_a_clean_pass(monkeypatch, tmp_path, ca
         "a page bundle that legitimately contains no SVG must PASS. Failing it "
         "stops pre-publish.sh before every gate that runs after this one."
     )
-    assert "no SVG" in out and "scope opened" in out, (
-        f"the clean pass must say the scope was opened and held nothing, not "
-        f"claim compliance for files it never saw: {out!r}"
+    assert "no SVG" in out and "scope enumerated" in out, (
+        f"the clean pass must say the scope was enumerated and held nothing, "
+        f"not claim compliance for files it never saw: {out!r}"
     )
 
 
@@ -182,3 +183,72 @@ def test_a_whole_tree_run_with_no_svg_anywhere_is_still_vacuous(
         f"the whole-tree floor must announce itself as a coverage refusal, not "
         f"merely exit non-zero: {captured.err + captured.out!r}"
     )
+
+
+# The floor's predicate is ENUMERABILITY, not existence. `os.path.exists` proves
+# a path resolves; it says nothing about whether the contents can be listed, and
+# glob.glob swallows a PermissionError and returns []. Both gaps below were
+# false PASSES in the first version of this floor -- the very shape it exists to
+# stop, reintroduced by the fix (Ralph round 20 Tier 2).
+
+
+def test_an_unreadable_directory_is_vacuous_not_clean(monkeypatch, tmp_path, capsys):
+    if os.geteuid() == 0:
+        pytest.skip("running as root: mode 000 does not deny access")
+    hidden = tmp_path / "content" / "locked" / "sub"
+    hidden.mkdir(parents=True)
+    (hidden / "hidden.svg").write_text("<svg/>", encoding="utf-8")
+    (tmp_path / "content" / "locked").chmod(0o000)
+    try:
+        rc = _run(monkeypatch, tmp_path, "content/locked")
+        err = capsys.readouterr().err
+    finally:
+        (tmp_path / "content" / "locked").chmod(0o755)
+
+    assert rc == 2, (
+        "a directory that exists but cannot be listed hides every file inside "
+        "it. glob returns [] silently, so reporting PASS claims compliance for "
+        "an SVG that was never opened."
+    )
+    assert "not readable" in err, (
+        f"the refusal must say the scope could not be listed, not that it was "
+        f"absent: {err!r}"
+    )
+
+
+def test_a_glob_under_a_missing_directory_is_vacuous(monkeypatch, tmp_path, capsys):
+    (tmp_path / "content").mkdir()
+    rc = _run(monkeypatch, tmp_path, "content/typo-dir/**/*.svg")
+    err = capsys.readouterr().err
+
+    assert rc == 2, (
+        "a glob was exempted from the scope check entirely, so a pattern under "
+        "a directory that does not exist matched nothing and reported clean."
+    )
+    assert "scope not found" in err, f"the refusal must name the cause: {err!r}"
+
+
+def test_a_glob_under_a_real_directory_matching_nothing_still_passes(
+    monkeypatch, tmp_path, capsys
+):
+    # The contrast case that keeps the fix honest: enumerability is about the
+    # directory being walked, not about the pattern matching something. A real
+    # directory with no SVG is a complete answer, glob or not.
+    (tmp_path / "content" / "posts").mkdir(parents=True)
+    rc = _run(monkeypatch, tmp_path, "content/posts/**/*.svg")
+    out = capsys.readouterr().out
+
+    assert rc == 0, (
+        "a readable directory that genuinely holds no SVG must PASS whether it "
+        "was named directly or by pattern; failing it would stop pre-publish.sh "
+        "for no reason."
+    )
+    assert "nothing to check" in out, f"the clean pass must say why: {out!r}"
+
+
+def test_scope_problem_names_the_two_causes_apart():
+    # The messages are the diagnostic; a single generic string would make an
+    # unreadable scope indistinguishable from a typo at the call site.
+    assert scope_problem("definitely/not/here") is not None
+    assert "not found" in scope_problem("definitely/not/here")
+    assert scope_problem(".") is None, "the repo root must be enumerable"
