@@ -24,8 +24,11 @@ tested here too.
 from __future__ import annotations
 
 import importlib.util
+import subprocess
 import sys
 from pathlib import Path
+
+from unittest.mock import patch
 
 import pytest
 
@@ -115,3 +118,53 @@ class TestGitIgnoredFilesAreDropped:
         direction for a secret scanner."""
         cand = [tmp_path / ".npmrc"]
         assert sec._drop_git_ignored(tmp_path, cand) == cand
+
+    def test_git_cannot_answer_keeps_every_candidate(self, tmp_path):
+        """The fallback branch, exercised so that breaking it is observable.
+
+        `test_non_repo_keeps_every_candidate` above reaches this branch but
+        cannot DISCRIMINATE on it: git prints nothing for a non-repo, and the
+        "no paths matched" branch also returns every candidate, so removing the
+        exit-status check leaves that assertion still passing. Verified by
+        mutation. Here the stubbed stdout NAMES the candidate, so skipping the
+        check drops it and the test bites.
+        """
+        (tmp_path / "secrets.conf").write_text("x = 1\n", encoding="utf-8")
+        cand = [tmp_path / "secrets.conf"]
+
+        class _Result:
+            returncode = 128
+            stdout = str((tmp_path / "secrets.conf").resolve()) + "\n"
+            stderr = "fatal: pathspec is beyond a symbolic link"
+
+        with patch.object(sec.subprocess, "run", return_value=_Result()):
+            assert sec._drop_git_ignored(tmp_path, cand) == cand, (
+                "git did not answer, so nothing may be removed from the scan"
+            )
+
+    def test_tracked_file_matching_an_ignore_rule_is_still_kept(self, tmp_path):
+        """The property that makes this filter safe to have at all.
+
+        `git check-ignore` never reports a TRACKED file, even when a rule
+        matches its name, so a COMMITTED secret can never be dropped by this
+        filter -- only an untracked one. Paired with the untracked contrast
+        case so neither can pass vacuously.
+        """
+        subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+        (tmp_path / ".gitignore").write_text("secrets.conf\n", encoding="utf-8")
+        (tmp_path / "secrets.conf").write_text("password=trackedsecret1\n", encoding="utf-8")  # secret-allow (synthetic fixture)
+        subprocess.run(["git", "-C", str(tmp_path), "add", "-f", "secrets.conf"], check=True)
+        subprocess.run(
+            ["git", "-C", str(tmp_path), "-c", "user.email=t@t", "-c", "user.name=t",
+             "commit", "-qm", "track it"], check=True)
+        cand = [tmp_path / "secrets.conf"]
+        assert sec._drop_git_ignored(tmp_path, cand) == cand, (
+            "a TRACKED file matching an ignore rule was dropped; a committed "
+            "secret would then never be scanned"
+        )
+
+    def test_untracked_matching_file_is_dropped(self, tmp_path):
+        subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+        (tmp_path / ".gitignore").write_text("secrets.conf\n", encoding="utf-8")
+        (tmp_path / "secrets.conf").write_text("password=untrackedsecret1\n", encoding="utf-8")  # secret-allow (synthetic fixture)
+        assert sec._drop_git_ignored(tmp_path, [tmp_path / "secrets.conf"]) == []
