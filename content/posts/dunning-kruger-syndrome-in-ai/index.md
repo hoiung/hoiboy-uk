@@ -44,6 +44,8 @@ Even people I would respect as professionals are getting bitten and turned into 
 
 I do not know why. Why does this happen? Some people are so smart, and yet they seem to lack something in certain areas that leaves them wide open to it.
 
+Just remember, influencers are not your friends, they are not engineers, they are influencers, their goal is clickbaiting and your attention which is what they are being paid for. They are not out to solve your problems, they are out to solve theirs.
+
 ## Why the clever ones get caught too
 
 I finally remembered where I read about this. A book called Thinking in Bets by Annie Duke. I'm not saying she's got it right, that's just where I came across it.
