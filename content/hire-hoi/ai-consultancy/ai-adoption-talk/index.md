@@ -11,8 +11,6 @@ I give this talk away for free. No charge, no catch, no strings attached.
 
 It is 45 minutes of talk plus 15 minutes of Q&A, in person at your London office. You can invite anyone who is available and free to join the session. Your whole team, one department, whoever wants to sit in.
 
-{{< zoom-image src="/img/talk-brief.png" alt="One-page brief of the talk: 45 minutes plus 15 of Q&A at your office, free with no strings, not a pitch. Five parts: the demo trap, what AI really is, what I built and what broke, the harness, and what actually works." title="The whole talk on one page" >}}
-
 I built it in the same style as the talk I gave to the London Investors and Traders Group, re-cut for an office instead of a room of traders. It is my own experience of using AI, told honestly. What I use it for across the different businesses I run, what did not work, and the handful of habits that made the difference. I built it for entry level AI users: people who are not deep in IT but who know their own work inside out, and people still early in their professional life who are learning as they go.
 
 I run it as a conversation, not a lecture. I want the room talking. How are your people using AI right now, what frustrates them, what breaks, what have they quietly given up on? That part matters as much as my slides. AI is moving fast and everyone uses it differently, so I learn from the room as much as the room learns from me.
@@ -20,6 +18,8 @@ I run it as a conversation, not a lecture. I want the room talking. How are your
 > **Before we start.** This is a talk and a discussion, not advisory work. Everything I share comes from my own experience in IT and AI, and it is not professional advice. I hold back from telling you what to do in your own specific situation, because that would be advice, and I would be liable for it even though the session is free. You share your experience, I share mine, and what you do with it is your call.
 
 I am not there to sell you my services. This session is focused on sharing some of my learnings of using AI and what I felt made me an effective user. I am happy for you to borrow some of these ideas and concepts for your own workflow.
+
+{{< zoom-image src="/img/talk-brief.png" alt="One-page brief of the talk: 45 minutes plus 15 of Q&A at your office, free with no strings, not a pitch. Five parts: the demo trap, what AI really is, what I built and what broke, the harness, and what actually works." title="The whole talk on one page" >}}
 
 ## How it works
 
