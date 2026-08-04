@@ -50,7 +50,22 @@ def function_body(path: Path, name: str) -> str | None:
         source,
         re.S | re.M,
     )
-    return match.group(0) if match else None
+    if match is None:
+        return None
+
+    body = match.group(0)
+    # The non-greedy match stops at the FIRST `}` in column 0, which is the real
+    # end of the declaration only while nothing inside the function closes a
+    # brace at column 0. That holds for every helper here today, but a truncated
+    # match would silently compare two identical PREFIXES of code that differs
+    # later, and the comparison would pass. Braces have to balance, or the span
+    # is not a whole function and this must not be used as evidence.
+    assert body.count("{") == body.count("}"), (
+        f"the extracted `{name}` from {path.name} has unbalanced braces "
+        f"({body.count('{')} open, {body.count('}')} close), so the regex matched "
+        f"a partial function. Comparing partial spans would pass on drifted code."
+    )
+    return body
 
 
 def test_the_lockstep_helpers_are_present_in_both_functions():
@@ -76,6 +91,51 @@ def test_duplicated_helpers_have_not_drifted_between_the_two_functions():
             f"has to land in the other. Copy the change across, or if they must "
             f"genuinely differ now, remove {name!r} from LOCKSTEP_HELPERS and say "
             f"why in this module's docstring."
+        )
+
+
+def test_the_capped_read_is_unconditional_in_both_functions():
+    """The body must ALWAYS be read through the cap, never on a header's say-so.
+
+    This is the structural invariant behind two separate bypasses found in review,
+    and it is here because fixing the instances twice did not stop the class.
+
+    Round 1: the ceiling read `Number(header || 0)`, so an ABSENT header became 0
+    and passed. The fix branched on `declaredLength === null` to decide whether to
+    do a bounded read. Round 2: a header that is PRESENT but unparseable made
+    `NaN > cap` false (no fast-reject) while `=== null` was also false (no bounded
+    read), so an over-cap body sailed through to a real upstream write.
+
+    Both bugs were the same shape: a branch that asked a client-controlled header
+    whether to enforce the bound. The invariant is that no such branch exists. The
+    header may only trigger an EARLIER reject; it may never gate the cap.
+
+    Checked by indentation, which is the honest structural signal available to a
+    source scan: at two spaces the call sits directly in the handler body, so it
+    runs on every request. Wrap it in any `if` and a formatter indents it to four,
+    and this fails.
+    """
+    for path in (SUBSCRIBE, CONTRIBUTE):
+        source = path.read_text(encoding="utf-8")
+
+        unconditional = re.findall(
+            r"^  const capped = await readCapped\(request, MAX_BODY_BYTES\);$",
+            source,
+            re.M,
+        )
+        assert len(unconditional) == 1, (
+            f"{path.name} does not call readCapped() unconditionally at handler "
+            f"top level (found {len(unconditional)} such calls). If the capped read "
+            f"has been moved inside a branch, a client can choose a header value "
+            f"that takes the other path and the size ceiling stops applying. That "
+            f"exact defect shipped twice on this endpoint pair."
+        )
+
+        assert "Number.isFinite(declaredLength)" in source, (
+            f"{path.name} no longer guards the declared length with "
+            f"Number.isFinite. Without it, a non-numeric header yields NaN and "
+            f"every comparison against it is false, so the fast-reject silently "
+            f"never fires."
         )
 
 

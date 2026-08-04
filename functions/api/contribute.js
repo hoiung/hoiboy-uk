@@ -230,29 +230,32 @@ export async function onRequestPost(context) {
   // Found by the #56 Ralph review on functions/api/subscribe.js, which carried
   // the identical guard. Swept here in the same pass rather than left as a
   // known-identical hole one file away.
-  const declaredLength = request.headers.get("content-length");
-  if (declaredLength !== null && Number(declaredLength) > MAX_BODY_BYTES) {
-    log("size-type-reject", {
-      reason: "body too large",
-      source: "header",
-      declaredLength: Number(declaredLength),
-    });
+  // The header is a HINT and nothing more. It is client-supplied, so it can be
+  // absent (chunked), or present and unparseable, or present and a lie. Any
+  // branch that decides whether to bound the read BY consulting the header is
+  // therefore bypassable by choosing the right header value. Two versions of
+  // this guard shipped with exactly that shape and both were bypassable: first
+  // by omitting the header, then by sending one that is not a number.
+  //
+  // So the header no longer selects anything. The body is ALWAYS read through
+  // the cap. A credible declared length can only make us reject EARLIER, before
+  // reading anything at all; it can never make us skip the bound.
+  const declaredLength = Number(request.headers.get("content-length"));
+  if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
+    log("size-type-reject", { reason: "body too large", source: "header", declaredLength });
     return textResponse(413, "That submission is too large. Please upload a smaller photo.");
   }
 
-  let bodySource = request;
-  if (declaredLength === null) {
-    const capped = await readCapped(request, MAX_BODY_BYTES);
-    if (capped === null) {
-      log("size-type-reject", { reason: "body too large", source: "stream", declaredLength: null });
-      return textResponse(413, "That submission is too large. Please upload a smaller photo.");
-    }
-    // Re-wrap the bytes we read so formData() still has a body to parse. The
-    // content type carries the multipart boundary, so it has to come across.
-    bodySource = new Response(capped, {
-      headers: { "content-type": request.headers.get("content-type") || "" },
-    });
+  const capped = await readCapped(request, MAX_BODY_BYTES);
+  if (capped === null) {
+    log("size-type-reject", { reason: "body too large", source: "stream", declaredLength });
+    return textResponse(413, "That submission is too large. Please upload a smaller photo.");
   }
+  // Re-wrap the bytes we read so formData() still has a body to parse. The
+  // content type carries the multipart boundary, so it has to come across.
+  const bodySource = new Response(capped, {
+    headers: { "content-type": request.headers.get("content-type") || "" },
+  });
 
   let form;
   try {

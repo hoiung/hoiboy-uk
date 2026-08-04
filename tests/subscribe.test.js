@@ -503,6 +503,46 @@ test('a streamed body with no content-length still reaches the handler intact', 
   assert.ok(write, 'the streamed submission never reached Brevo, so the body was mangled');
 });
 
+// The header-value space, not just the two values a previous fix happened to
+// handle. Round 1 of review found an ABSENT header bypassed the ceiling; the fix
+// for it branched on `=== null`, and round 2 found that a header which is present
+// but does not parse to a number bypasses it just as completely: `NaN > cap` is
+// false so the fast-reject misses, and `!== null` is true so the bounded read was
+// skipped. Both bugs lived in the same place, a branch that asked the header
+// whether to bound the read. The cap no longer consults the header at all, and
+// these cases pin that: every one of them sends a body OVER the cap.
+for (const [label, header] of [
+  ['not a number', 'notanumber'],
+  ['empty string', ''],
+  ['negative', '-1'],
+  ['a lie, far under the true size', '10'],
+  ['whitespace', '   '],
+  ['hex-looking', '0x1'],
+]) {
+  test(`an oversized body is refused when content-length is ${label}`, async () => {
+    const harness = loadEndpoint();
+    arrangeFetch(harness, {});
+    const oversized = new Uint8Array(harness.mod.MAX_BODY_BYTES + 1);
+    const request = new Request('https://hoiboy.uk/api/subscribe', {
+      method: 'POST',
+      headers: { 'content-type': 'multipart/form-data; boundary=x', 'content-length': header },
+      body: oversized,
+    });
+
+    const response = await harness.mod.onRequestPost({ request, env: DEFAULT_ENV });
+    assert.equal(
+      response.status,
+      413,
+      `an over-cap body was accepted with content-length ${JSON.stringify(header)}`
+    );
+    assertNoBrevoWrite(harness.calls);
+    assert.ok(
+      harness.logs.map((l) => JSON.parse(l)).some((e) => e.event === 'size-reject'),
+      'an over-cap body must always be visible in the logs, whatever the header claimed'
+    );
+  });
+}
+
 test('an oversized streamed body is refused even though it declares no length', async () => {
   const harness = loadEndpoint();
   arrangeFetch(harness, {});
