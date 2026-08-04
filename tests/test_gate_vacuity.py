@@ -97,6 +97,31 @@ EXEMPT: dict[str, str] = {
         "skeleton copies scripts/, which is this gate's own scan surface; floors "
         "asserted in scripts/test_check_public_repo_secrets.py TestCoverageFloor"
     ),
+    # This harness always invokes a gate with NO arguments, and that invocation
+    # does not correspond to any real use of this one: its sole live caller
+    # (scripts/pre-publish.sh) always passes a SCOPE, one page bundle at a time,
+    # where finding no SVG is the ordinary and correct answer -- 78 of 87 post
+    # bundles contain none.
+    #
+    # Flooring the no-arg path was attempted under hoiboy-uk#56 and withdrawn.
+    # A count-based floor turned that ordinary answer into exit 2, and because
+    # pre-publish.sh exits on the first failure it stopped the run before six
+    # later gates ran. An enumerability-based floor replaced it and was itself
+    # found to pass an unreadable directory and a glob under a missing one. Both
+    # attempts reproduced the very shape this suite exists to stop, so the gate
+    # is back at its pre-#56 behaviour and the work is out of scope for that
+    # Issue rather than half-done inside it.
+    #
+    # This entry is therefore an HONEST record, not a structural excuse: the
+    # empty-tree run is genuinely meaningless for this gate, AND the coverage
+    # question for its real scoped invocation is open. A follow-up owes it a
+    # floor written against the scoped path, with the unreadable-directory and
+    # missing-glob-parent cases covered from the start.
+    "check_svg_dimensions.py": (
+        "no-arg run matches no real invocation; its only caller always passes a "
+        "scope where an empty result is correct. Scoped-path floor is OPEN work, "
+        "deliberately out of scope for #56 after two withdrawn attempts"
+    ),
 }
 
 

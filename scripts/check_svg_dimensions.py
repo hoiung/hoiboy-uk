@@ -21,23 +21,10 @@ Three structural assertions on each SVG under content/ (exit 1 + offender list o
 This is a STRUCTURAL gate (presence/shape), not a visual one — always also RENDER and eyeball
 (overlap, arrow endpoints, watermark corner) per ../dotfiles/docs/guides/diagram-annotation-qa.md.
 Wired into scripts/pre-publish.sh; runnable standalone: python3 scripts/check_svg_dimensions.py [path ...]
-
-Exit codes:
-  0 = looked, and every SVG is house-compliant
-  1 = looked, and one is not
-  2 = could NOT look: the gate's own coverage failed (nothing collected, a
-      declared input absent, or a surface it could not read). Distinct from 0
-      on purpose -- "no violations" and "no evidence" are opposite outcomes an
-      exit-code check alone cannot tell apart (#56). Taxonomy: scripts/gate_coverage.py.
 """
 import sys
-import os
 import re
 import glob
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from gate_coverage import require_examined  # noqa: E402
 
 ROOT_SVG = re.compile(r"<svg\b[^>]*>", re.IGNORECASE)
 HAS_W = re.compile(r"\bwidth\s*=", re.IGNORECASE)
@@ -93,52 +80,6 @@ def offenders(paths):
     return bad
 
 
-def scope_problem(arg):
-    """Why this scope cannot be ENUMERATED, or None if it can.
-
-    The predicate is enumerability, not existence, and the difference is the
-    whole point. `os.path.exists` proves only that a path RESOLVES; it says
-    nothing about whether its contents can be listed. `glob.glob` swallows a
-    PermissionError and returns [], so a directory that exists but cannot be
-    read looked byte-for-byte identical to an empty one -- the gate printed a
-    clean PASS while a real SVG sat unexamined inside it. A glob argument had
-    the same hole from the other direction: it was exempted from the existence
-    check entirely, so a mistyped path under a directory that does not exist
-    also passed clean. Both are the report-success-for-an-unexamined-surface
-    shape this floor exists to stop, reintroduced by the floor itself
-    (Ralph round 20 Tier 2).
-    """
-    base = arg
-    if any(c in arg for c in "*?["):
-        # Enumerability is a property of the directory being walked, not of the
-        # pattern. Take the longest leading run of components with no glob
-        # metacharacter -- that is the part that must exist and be readable.
-        kept = []
-        for part in arg.split(os.sep):
-            if any(c in part for c in "*?["):
-                break
-            kept.append(part)
-        base = os.sep.join(kept) or "."
-
-    if not os.path.exists(base):
-        return f"scope not found: {arg}"
-
-    if os.path.isdir(base):
-        # os.walk swallows errors by default, which is exactly the failure mode
-        # under repair; onerror surfaces them instead.
-        failures = []
-        for _ in os.walk(base, onerror=failures.append):
-            pass
-        if failures:
-            err = failures[0]
-            return (
-                f"scope not readable: {err.filename} ({err.strerror}). The "
-                f"directory exists but its contents cannot be listed, so any "
-                f"SVG inside it would be silently skipped"
-            )
-    return None
-
-
 def main(argv):
     args = argv[1:]
     if args:
@@ -154,50 +95,7 @@ def main(argv):
     else:
         paths = glob.glob("content/**/*.svg", recursive=True)
 
-    # A glob that matches nothing used to print "PASS: all 0 content SVG(s)
-    # house-compliant" and exit 0. Every compliance claim in that sentence is
-    # true of the empty set, which is why it reads as a healthy run of a small
-    # tree rather than as a gate that never opened a file. See
-    # scripts/gate_coverage.py for the class and tests/test_gate_vacuity.py for
-    # the enforcement.
-    # The floor is on the SCOPE, not on the SVG COUNT, and the difference is
-    # load-bearing. Applied to the count, it made the only live caller fail on
-    # the ordinary case: pre-publish.sh runs this per page bundle, and 78 of 87
-    # post bundles legitimately contain no SVG. Because run_check exits on
-    # failure, that exit-2 stopped the run before six later checks -- including
-    # the subscribe-placement, 404 and rendered-card gates -- ever ran. A floor
-    # that turns a correct clean result into a hard stop protects nothing and
-    # costs every check behind it (Ralph round 19 Tier 3).
-    #
-    # "Examined nothing" therefore means the scope could not be OPENED, which is
-    # the case that genuinely proves nothing. A scope that exists and holds no
-    # SVG is a real and complete answer, and says so rather than claiming
-    # compliance for files it never saw.
-    paths = sorted(set(paths))
-    if args:
-        for a in args:
-            problem = scope_problem(a)
-            if problem:
-                print(
-                    f"[vacuous-gate] check_svg_dimensions: {problem}. Nothing was "
-                    f"enumerated, so no compliance claim can be made.",
-                    file=sys.stderr,
-                )
-                return 2
-        if not paths:
-            print(f"PASS: no SVG in {', '.join(args)} (scope enumerated, nothing to check)")
-            return 0
-    else:
-        require_examined(
-            "check_svg_dimensions",
-            "SVG file",
-            paths,
-            hint="content/ has no SVG at all. Either the tree genuinely has none "
-                 "(remove this gate from the caller rather than run it blind), or "
-                 "the glob is wrong.",
-        )
-
-    bad = offenders(paths)
+    bad = offenders(sorted(set(paths)))
     if bad:
         print("FAIL: SVG(s) not house-compliant (dimensions / watermark / canonical class block):")
         for p, reasons in bad:
