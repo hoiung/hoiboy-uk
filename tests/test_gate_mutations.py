@@ -259,6 +259,24 @@ MUTATIONS = [
         "scripts/test_check_wordcount.py",
         id="unterminated-html-comment-undercounts-a-post",
     ),
+    # #56 Ralph escalation, class sweep. Same story as the #55 entry above: the
+    # Issue added two gate behaviours and registered neither here, and the sweep
+    # then found both of them reporting success over surfaces they never
+    # examined. Registered now so the fixes cannot rot the way the gates did.
+    pytest.param(
+        "scripts/check_noindex_frontmatter.py",
+        "        if not matched_pages:",
+        "        if False:",
+        "scripts/test_check_noindex_frontmatter.py",
+        id="noindex-gate-passes-over-a-stale-tree",
+    ),
+    pytest.param(
+        "scripts/check_subscribe_placement.py",
+        "    for cls, seen in sorted(per_class.items()):",
+        "    for cls, seen in []:",
+        "scripts/test_check_subscribe_placement.py",
+        id="suppression-floor-is-aggregate-not-per-class",
+    ),
 ]
 
 
