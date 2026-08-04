@@ -15,11 +15,19 @@ uploads and therefore has the larger ceiling.
 So the duplication is allowed, and this gate is the price of allowing it. A change
 to any helper below must be made in both files or this fails.
 
-`log` is excluded ON PURPOSE. It is duplicated too, but the two copies legitimately
-differ: each stamps its own function name into the structured line (`"fn":
-"subscribe"` vs `"fn": "contribute"`), which is the whole point of the field. It is
-asserted to differ, so this exclusion cannot silently widen into "log drifted and
-nobody noticed".
+`log` USED to be excluded, because each copy stamped its own function name into
+the structured line (`"fn": "subscribe"` vs `"fn": "contribute"`) and so the two
+bodies legitimately differed. That exclusion is gone: the logger is now built by
+`createLogger(fn)`, which takes the name as a parameter, so the body is identical
+in both files and only the call site differs. `createLogger` is therefore in
+LOCKSTEP_HELPERS below and the stale "log genuinely differs" test is deleted --
+which is precisely the migration that test's own docstring asked for when it
+fired.
+
+That change is load-bearing, not cosmetic. The redaction it carries (`redactLine`
++ `literalForms`) is what closes the alphabet gap between `EMAIL_RE` and
+`redactPii`, and it is exactly the kind of security helper that must not be
+allowed to drift between a newsletter endpoint and a photo-upload endpoint.
 """
 
 from __future__ import annotations
@@ -33,7 +41,17 @@ SUBSCRIBE = REPO / "functions" / "api" / "subscribe.js"
 CONTRIBUTE = REPO / "functions" / "api" / "contribute.js"
 
 # Helpers that MUST be byte-identical in both Functions.
-LOCKSTEP_HELPERS = ("readCapped", "redactPii", "textResponse", "clean")
+LOCKSTEP_HELPERS = (
+    "readCapped",
+    "redactPii",
+    "textResponse",
+    "clean",
+    # The value-redaction path. `createLogger` takes the function name as a
+    # parameter precisely so these can be lock-stepped rather than excluded.
+    "literalForms",
+    "redactLine",
+    "createLogger",
+)
 
 
 def function_body(path: Path, name: str) -> str | None:
@@ -244,20 +262,60 @@ def test_every_upstream_response_body_is_redacted_at_capture():
             )
 
 
-def test_log_is_excluded_because_it_genuinely_differs():
-    """The exclusion is asserted, not assumed.
+def test_the_redacted_value_set_is_per_request_not_module_level():
+    """The set of values to redact must live INSIDE `createLogger`.
 
-    If someone later makes the two `log` helpers identical, that is fine, but it
-    means this exclusion is stale and `log` should join LOCKSTEP_HELPERS. Failing
-    here is how that gets noticed instead of quietly leaving a helper ungated.
+    A Workers isolate serves concurrent requests off one module instance. A
+    module-level mutable set would therefore be shared across visitors, and one
+    subscriber's address registered mid-flight would be stripped out of a
+    DIFFERENT visitor's log line -- or, far worse, retained after their request
+    ended and matched against someone else's. That is a cross-request PII leak,
+    strictly worse than the single-request leak this redactor was added to fix.
+
+    So the declaration is asserted to be nested, not top-level. This is the one
+    property of the design that cannot be checked by reading either function
+    body in isolation.
     """
-    mine = function_body(SUBSCRIBE, "log")
-    theirs = function_body(CONTRIBUTE, "log")
-    assert mine is not None and theirs is not None
-    assert mine != theirs, (
-        "the two `log` helpers are now identical, so the documented reason for "
-        "excluding `log` from LOCKSTEP_HELPERS no longer holds. Add it to the "
-        "tuple and delete this test."
-    )
-    assert '"fn": "subscribe"' in mine or '"subscribe"' in mine
-    assert '"contribute"' in theirs
+    for path in (SUBSCRIBE, CONTRIBUTE):
+        source = path.read_text(encoding="utf-8")
+
+        body = function_body(path, "createLogger")
+        assert body is not None, f"{path.name} no longer declares `createLogger`"
+        assert "const known = new Set()" in body, (
+            f"{path.name}'s createLogger no longer creates its own known-value "
+            f"set. Every value registered by protect() would then have nowhere "
+            f"request-scoped to live."
+        )
+
+        # Nothing may construct a Set at column 0: that is what "module-level"
+        # looks like in these files, and it is the shape being forbidden.
+        top_level_sets = re.findall(r"^(?:const|let|var)\s+\w+\s*=\s*new Set\(", source, re.M)
+        assert not top_level_sets, (
+            f"{path.name} declares a module-level Set ({top_level_sets}). In a "
+            f"Workers isolate that is shared across concurrent requests, so a "
+            f"value registered for redaction by one visitor outlives their "
+            f"request and applies to another's."
+        )
+
+
+def test_the_logger_is_built_per_request_in_both_handlers():
+    """`createLogger` must actually be CALLED, once, inside each handler.
+
+    The helper being present and lock-stepped proves nothing on its own: if a
+    handler never builds a logger, `protect` is never wired and every log line
+    falls back to shape-only redaction -- the exact gap that let
+    `"patriley"@example.net` through verbatim.
+    """
+    for path, expected_name in ((SUBSCRIBE, "subscribe"), (CONTRIBUTE, "contribute")):
+        source = path.read_text(encoding="utf-8")
+        calls = re.findall(r'createLogger\("([^"]+)"\)', source)
+        assert calls == [expected_name], (
+            f"{path.name} should build exactly one logger stamped "
+            f'"{expected_name}"; found {calls}. A handler with no createLogger '
+            f"call has no per-request redaction at all."
+        )
+        assert "protect(email)" in source, (
+            f"{path.name} never registers the submitted email for redaction, so "
+            f"an address whose shape redactPii cannot match reaches the log "
+            f"verbatim."
+        )

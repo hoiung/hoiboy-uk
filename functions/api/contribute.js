@@ -68,7 +68,24 @@ const SOCIALS_MAX_TOTAL = 1000;
 // Pragmatic email shape check (not full RFC 5322): non-space local@domain.tld.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Strip address-shaped tokens out of text before it reaches a log.
+// Marker for a value redacted because we HELD it (see redactString). Distinct
+// from redactPii's `[email-redacted]`, which means "this merely looked like an
+// address". The two are worth telling apart when reading a log: the first is a
+// guarantee, the second is a pattern match.
+const REDACTED_VALUE = "[redacted]";
+
+// Shortest value worth redacting by literal match. A submitted email always
+// clears this -- the shortest address anyone can type is six characters -- so
+// the defect this exists to fix is fully covered. A very short NAME does not
+// clear it, and that is deliberate: value redaction is a blind substring
+// replace over the serialised line, so a 2-character name like `on` would
+// rewrite `"reason"` and every other structural key containing it, destroying
+// the diagnostic the log exists to provide. Under-redacting a 1-3 character
+// name is the lesser harm and is recorded here as a known limit rather than
+// silently traded away.
+const MIN_PROTECTED_LENGTH = 4;
+
+// Strip address-SHAPED tokens out of text before it reaches a log.
 //
 // Upstream error bodies get echoed into our logs so a failure is diagnosable,
 // and an upstream is free to quote back the value it rejected. That would put a
@@ -76,10 +93,14 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // content/legal/sub-processors/index.md publishes about this Function: that the
 // submitted fields are handled in transit only and the request is not persisted.
 //
-// Applied at the point the text is CAPTURED, not at each log call. Redacting per
-// call site is the same "remember it everywhere" shape that put the address in a
-// log in the first place; doing it once at the boundary means a future log line
-// cannot reintroduce the leak by forgetting.
+// This is the SECOND of two redaction passes, and the weaker one. It catches an
+// address we never held -- one an upstream quoted at us that no visitor of ours
+// submitted -- which is the only case a literal match cannot cover. It runs at
+// the capture point AND again over the serialised log line (see redactLine).
+//
+// It is deliberately NOT the primary defence, because it can only match what its
+// character class admits, and that class is strictly narrower than EMAIL_RE's:
+// see redactString for the gap and why widening this pattern is the wrong fix.
 //
 // The error stays diagnosable: the shape, the status and the upstream code all
 // survive, only the address does not.
@@ -134,13 +155,107 @@ async function readCapped(request, cap) {
   return joined;
 }
 
-function log(event, detail) {
-  // Structured observability line (repo AP #12). One per decision branch.
-  try {
-    console.log(JSON.stringify({ fn: "contribute", event, ...detail }));
-  } catch (_) {
-    console.log(`contribute ${event}`);
+// Every spelling a value can take inside an ALREADY-SERIALISED JSON line. The
+// line is built by JSON.stringify, so `"pat"@example.net` appears in it as
+// `\"pat\"@example.net`. Matching only the raw form would miss precisely the
+// shapes this redactor exists to catch, because the characters that force the
+// escaping are the same ones the shape pattern cannot handle.
+function literalForms(value) {
+  const escaped = JSON.stringify(value).slice(1, -1);
+  return escaped === value ? [value] : [escaped, value];
+}
+
+// Strip every known value out of one string, in each of its spellings.
+//
+// This is what closes the alphabet gap. EMAIL_RE accepts `"` `<` `>` `,` `;`
+// `:` `(` `)` in a local part; redactPii's character class excludes exactly
+// those. When one sits immediately before the `@`, the shape pattern cannot
+// reach the `@` at all, nothing matches, and the FULL address is logged --
+// `"patriley"@example.net` is the executed reproduction. Holding the literal
+// removes the dependency on shape entirely: an accepted address is redactable
+// because we have it, whatever it looks like.
+//
+// Widening the character class was tried twice -- the apostrophe fix, then the
+// truncation fix -- and each widening left a narrower gap rather than closing
+// the class. There is no third widening; the class is not the mechanism.
+//
+// Replacement is `split`/`join`, not a regex: the value is visitor-supplied and
+// would otherwise need escaping before it could be used as a pattern.
+function redactString(text, known) {
+  let out = text;
+  for (const value of known) {
+    for (const form of literalForms(value)) {
+      out = out.split(form).join(REDACTED_VALUE);
+    }
   }
+  return out;
+}
+
+// Redact every string ANYWHERE in a log detail, before it is serialised.
+//
+// Redacting only the finished line is not enough, because escaping compounds
+// with nesting. An upstream error body is itself JSON, so an address inside it
+// is already escaped once by the time we hold it as a string, and serialising
+// that string into our own line escapes it a second time. Matching a fixed
+// number of escaping levels would be the same guess-the-symptom mistake as
+// widening the character class: the next nesting level reopens the hole.
+//
+// Walking the structure removes the guess. Each string is redacted while it is
+// still a plain value, at whatever depth it sits, so no amount of subsequent
+// serialisation can hide it.
+function redactDeep(value, known) {
+  if (typeof value === "string") return redactString(value, known);
+  if (Array.isArray(value)) return value.map((item) => redactDeep(item, known));
+  if (value && typeof value === "object") {
+    const out = {};
+    for (const [key, item] of Object.entries(value)) {
+      out[key] = redactDeep(item, known);
+    }
+    return out;
+  }
+  return value;
+}
+
+// Final pass over the serialised line: by value again (a backstop for anything
+// the walk could not reach), then by SHAPE for an address we never held.
+function redactLine(line, known) {
+  return redactPii(redactString(line, known));
+}
+
+// Build a per-request logger, plus the `protect` handle that registers a value
+// for redaction.
+//
+// The known-value set is created HERE, once per invocation, and MUST NOT be
+// module-level: a Worker isolate serves concurrent requests off a single module
+// instance, so a shared mutable set would leak one visitor's address into
+// another visitor's log line -- a worse bug than the one this fixes.
+//
+// Redaction happens where the line is WRITTEN, not at each capture point. The
+// previous design redacted at capture and claimed that meant "a future log line
+// cannot reintroduce the leak by forgetting", but it was wired at exactly one
+// capture point, so every other request-derived field bypassed it. Redacting at
+// the write boundary is the only placement a new log call cannot opt out of.
+function createLogger(fn) {
+  const known = new Set();
+
+  function protect(value) {
+    if (typeof value !== "string") return;
+    if (value.length < MIN_PROTECTED_LENGTH) return;
+    known.add(value);
+  }
+
+  function log(event, detail) {
+    // Structured observability line (repo AP #12). One per decision branch.
+    let line;
+    try {
+      line = JSON.stringify({ fn, event, ...redactDeep(detail, known) });
+    } catch (_) {
+      line = `${fn} ${event}`;
+    }
+    console.log(redactLine(line, known));
+  }
+
+  return { log, protect };
 }
 
 // Strip CR/LF/control characters so no field can inject email headers or
@@ -246,6 +361,11 @@ async function verifyTurnstile(secret, response, remoteip) {
 export async function onRequestPost(context) {
   const { request, env } = context;
 
+  // Per-request logger. `protect` registers a value so that every subsequent
+  // log line has it stripped, whatever field it travels in and whoever quotes
+  // it back at us. Created per invocation on purpose -- see createLogger.
+  const { log, protect } = createLogger("contribute");
+
   // 1. Size ceiling.
   //
   // content-length is a CLIENT-SUPPLIED hint, not a fact. A chunked request
@@ -323,6 +443,15 @@ export async function onRequestPost(context) {
   const superpowers = clean(form.get("superpowers"), FIELD_CAPS.superpowers);
   const socials = cleanLines(form.get("socials"), SOCIALS_MAX_LINES, SOCIALS_MAX_LINE_LEN, SOCIALS_MAX_TOTAL);
   const feature = clean(form.get("feature"), FIELD_CAPS.feature);
+
+  // Register the personal fields BEFORE the first log call that could carry any
+  // of them. Both address fields are registered, not just the primary: a typo in
+  // the confirm field is a real address too, and it is the one the mismatch
+  // branch below is about.
+  protect(email);
+  protect(emailConfirm);
+  protect(name);
+
   if (!name || !email || !feature) {
     log("validation-reject", { name: !!name, email: !!email, feature: !!feature });
     return textResponse(400, "Please fill in your name, email, and your story.");
