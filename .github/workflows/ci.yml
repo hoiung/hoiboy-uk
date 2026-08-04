@@ -193,6 +193,14 @@ jobs:
       - name: AGIT form colour contrast unit tests
         run: python3 -m pytest scripts/test_agit_counter_contrast.py -q
 
+      # The pure decision logic of the browser gate: what counts as red, green
+      # and blocked. The browser half stays in pre-publish.sh, the only lane
+      # with Chromium, which is exactly how the CTA gate ended up with its
+      # helpers reachable only through a manual run until Ralph Tier 2 flagged
+      # the missing companion. Not re-creating that gap here. hoiboy-uk#57.
+      - name: AGIT counter gate helper unit tests
+        run: python3 -m pytest scripts/test_check_agit_form_counter.py -q
+
       # test_gen_card and test_check_svg_dimensions are source-only (no built tree)
       # and were in NO pytest invocation until blog-priv#62 -- the same "a file nobody
       # lists never runs" class documented below at the frontmatter step. blog-priv#62
