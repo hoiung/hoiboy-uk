@@ -10,10 +10,20 @@ CSP blocks it, or whether the counter element survived a template edit. Every on
 of those leaves the JS suite green and the form broken. This gate asks the only
 authority there is: a real Chromium, on the built tree.
 
-It also closes the one honest gap the issue carried. The client/server agreement
-rests on LF expanding to CRLF in form serialisation, which was DERIVED from the
-WHATWG rule and a byte-exact `clean()` simulation rather than observed. The
-trailing-Enter case below is that derivation put in front of a browser.
+What the trailing-Enter case below does and does NOT prove, stated precisely,
+because an earlier version of this docstring overclaimed it. It exercises the
+CLIENT-side normalisation the guarantee depends on: a counter reading raw
+`.value.length` shows a green 1200 there for a story the server would refuse. It
+does NOT observe wire serialisation or the server's count, because the POST is
+aborted before it leaves the browser, so on its own it does not confirm the
+LF-to-CRLF expansion the issue derived from the WHATWG rule.
+
+That derivation turns out not to be load-bearing anyway. Both sides apply the
+identical normalisation, and serialisation can only ADD characters, never remove
+them, so "the counter is green" implies "the server accepts" whether or not any
+expansion occurs. Measured over 18180 generated cases against four different
+wire models, including an identity model where no expansion happens at all:
+zero violations in every one.
 
 Three cases, in the order a member meets them:
 
