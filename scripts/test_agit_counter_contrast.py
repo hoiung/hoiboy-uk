@@ -15,6 +15,16 @@ empty, and the best simultaneous ratio any one colour can reach is 4.193:1. So
 needs a light value and a dark value. That is why this gate checks each colour
 against the background it is actually painted on rather than against one.
 
+"Actually painted on" is meant literally, and the counter is why. It carries a
+backdrop of its own -- the page background with the same grey wash the field
+uses -- added so the number stays legible where it overlaps the story text. So
+its two colours sit on rgba(128,128,128,.08) over --bg, while .agit-notice
+sits on bare --bg, and scoring both against --bg reports the counter about half
+a point more headroom than a reader gets. Measured: #6e6e6e clears the light
+page background at 4.885:1 and fails the counter's real surface at 4.484:1,
+which is a colour the old reading would have passed. The surfaces are read out
+of the page's own CSS per selector, not restated here.
+
 It also caught a live failure on the way in: `.agit-notice` was #e5766a, which
 measures 2.82:1 on the light background and was already failing AA before this
 issue existed. The new blocked-submit message routes through that same colour,
@@ -41,6 +51,7 @@ fail against re-opens this assertion instead of sailing past a stale constant.
 
 import re
 from pathlib import Path
+from typing import NamedTuple
 
 import pytest
 
@@ -58,23 +69,48 @@ DARK_QUERY = re.compile(r"@media\s*\(\s*prefers-color-scheme\s*:\s*dark\s*\)\s*\
 COLOUR_DECL = re.compile(r"(?<![-\w])color\s*:\s*(#[0-9a-fA-F]{6})\b")
 BG_DECL = re.compile(r"--bg\s*:\s*(#[0-9a-fA-F]{6})\b")
 
+RULE = re.compile(r"(?P<selector>[^{}]+)\{(?P<decls>[^{}]*)\}")
+STATE_CLASS = re.compile(r"(?:\.is-[\w-]+)+$")
+BG_COLOUR_DECL = re.compile(r"(?<![-\w])background-color\s*:\s*([^;}]+)")
+OVERLAY_DECL = re.compile(
+    r"linear-gradient\(\s*rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)"
+)
 
-def _linear(channel_byte: int) -> float:
+Rgb = tuple[float, float, float]
+
+
+def _linear(channel: float) -> float:
     """One sRGB channel, gamma-expanded to linear light (WCAG 2.1 relative luminance)."""
-    c = channel_byte / 255.0
+    c = channel / 255.0
     return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
 
 
-def luminance(hex_colour: str) -> float:
+def rgb(hex_colour: str) -> Rgb:
     h = hex_colour.lstrip("#")
-    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
+    return tuple(float(int(h[i:i + 2], 16)) for i in (0, 2, 4))
+
+
+def luminance(colour: str | Rgb) -> float:
+    r, g, b = rgb(colour) if isinstance(colour, str) else colour
     return 0.2126 * _linear(r) + 0.7152 * _linear(g) + 0.0722 * _linear(b)
 
 
-def contrast(fg: str, bg: str) -> float:
+def contrast(fg: str | Rgb, bg: str | Rgb) -> float:
     a, b = luminance(fg), luminance(bg)
     lighter, darker = max(a, b), min(a, b)
     return (lighter + 0.05) / (darker + 0.05)
+
+
+def composite(overlay: Rgb, alpha: float, base: Rgb) -> Rgb:
+    """A translucent wash over an opaque surface, in sRGB, unquantised.
+
+    Left as floats rather than rounded back to bytes. Rounding first is a
+    second model of what the compositor does on top of the one this file
+    already makes, and it moves the answer (5.736 vs 5.748 for the light
+    'short' red) without moving the verdict. The unrounded value is the one the
+    maths actually produces.
+    """
+    return tuple(overlay[i] * alpha + base[i] * (1 - alpha) for i in range(3))
 
 
 def _split_on_dark_query(css: str) -> tuple[str, str]:
@@ -116,11 +152,83 @@ def _backgrounds() -> tuple[str, str]:
     return light.group(1), dark.group(1)
 
 
-LIGHT_CSS, DARK_CSS = _split_on_dark_query(_page_style())
+class Painted(NamedTuple):
+    """One text colour, and the surface it is actually painted on."""
+    selector: str
+    colour: str
+    backdrop: Rgb
+    surface: str          # human-readable, for the failure message
+
+
+def _rules(css: str) -> list[tuple[str, str]]:
+    return [(" ".join(m["selector"].split()), m["decls"]) for m in RULE.finditer(css)]
+
+
+def _base_selector(selector: str) -> str:
+    """`.agit-count.is-short` -> `.agit-count`: the component under its state.
+
+    A state class changes what the component says, not what it sits on. The
+    surface is declared once on the base rule, so that is where a state's
+    backdrop has to be looked up.
+    """
+    return STATE_CLASS.sub("", selector).strip()
+
+
+def _surface_for(selector: str, whole_css: str, theme_bg: str) -> tuple[Rgb, str]:
+    """The real backdrop under `selector`, read off the page's own CSS.
+
+    Searched across the WHOLE page style rather than the current theme half:
+    the counter declares its backdrop once, outside the dark media query, and
+    both themes' state colours sit on it.
+    """
+    base = _base_selector(selector)
+    backdrop, surface = rgb(theme_bg), theme_bg
+
+    for rule_selector, decls in _rules(whole_css):
+        if rule_selector != base:
+            continue
+
+        declared = BG_COLOUR_DECL.search(decls)
+        if declared:
+            value = declared.group(1).strip()
+            if re.fullmatch(r"#[0-9a-fA-F]{6}", value):
+                backdrop, surface = rgb(value), value
+            else:
+                assert value == "var(--bg)", (
+                    f"{base} sets background-color: {value!r}, which this gate "
+                    f"cannot resolve to a surface. It scores text against what it "
+                    f"is painted on, so an unresolvable background means it cannot "
+                    f"state what it is measuring."
+                )
+
+        wash = OVERLAY_DECL.search(decls)
+        if wash:
+            r, g, b, alpha = wash.groups()
+            over = (float(r), float(g), float(b))
+            backdrop = composite(over, float(alpha), backdrop)
+            surface = f"rgba({r},{g},{b},{alpha}) over {surface}"
+
+    return backdrop, surface
+
+
+def _painted(half_css: str, whole_css: str, theme_bg: str) -> list[Painted]:
+    out = []
+    for selector, decls in _rules(half_css):
+        for colour in COLOUR_DECL.findall(decls):
+            backdrop, surface = _surface_for(selector, whole_css, theme_bg)
+            out.append(Painted(selector, colour, backdrop, surface))
+    return out
+
+
+PAGE_CSS = _page_style()
+LIGHT_CSS, DARK_CSS = _split_on_dark_query(PAGE_CSS)
 LIGHT_BG, DARK_BG = _backgrounds()
 
-LIGHT_COLOURS = COLOUR_DECL.findall(LIGHT_CSS)
-DARK_COLOURS = COLOUR_DECL.findall(DARK_CSS)
+LIGHT_PAINTED = _painted(LIGHT_CSS, PAGE_CSS, LIGHT_BG)
+DARK_PAINTED = _painted(DARK_CSS, PAGE_CSS, DARK_BG)
+
+LIGHT_COLOURS = [p.colour for p in LIGHT_PAINTED]
+DARK_COLOURS = [p.colour for p in DARK_PAINTED]
 
 
 def test_backgrounds_are_the_two_theme_values():
@@ -129,22 +237,57 @@ def test_backgrounds_are_the_two_theme_values():
     assert luminance(LIGHT_BG) > luminance(DARK_BG), "light --bg must be the lighter one"
 
 
-@pytest.mark.parametrize("colour", LIGHT_COLOURS or [pytest.param(None, marks=pytest.mark.skip)])
-def test_light_theme_colour_clears_wcag_aa(colour):
-    ratio = contrast(colour, LIGHT_BG)
+def _ids(painted: list[Painted]) -> list[str]:
+    return [f"{p.selector} {p.colour}" for p in painted]
+
+
+@pytest.mark.parametrize(
+    "painted",
+    LIGHT_PAINTED or [pytest.param(None, marks=pytest.mark.skip)],
+    ids=_ids(LIGHT_PAINTED) or None,
+)
+def test_light_theme_colour_clears_wcag_aa(painted):
+    ratio = contrast(painted.colour, painted.backdrop)
     assert ratio >= WCAG_AA, (
-        f"{colour} on the light background {LIGHT_BG} measures {ratio:.2f}:1, "
-        f"below the {WCAG_AA}:1 WCAG AA floor"
+        f"{painted.colour} on {painted.surface} measures {ratio:.2f}:1, "
+        f"below the {WCAG_AA}:1 WCAG AA floor ({painted.selector})"
     )
 
 
-@pytest.mark.parametrize("colour", DARK_COLOURS or [pytest.param(None, marks=pytest.mark.skip)])
-def test_dark_theme_colour_clears_wcag_aa(colour):
-    ratio = contrast(colour, DARK_BG)
+@pytest.mark.parametrize(
+    "painted",
+    DARK_PAINTED or [pytest.param(None, marks=pytest.mark.skip)],
+    ids=_ids(DARK_PAINTED) or None,
+)
+def test_dark_theme_colour_clears_wcag_aa(painted):
+    ratio = contrast(painted.colour, painted.backdrop)
     assert ratio >= WCAG_AA, (
-        f"{colour} on the dark background {DARK_BG} measures {ratio:.2f}:1, "
-        f"below the {WCAG_AA}:1 WCAG AA floor"
+        f"{painted.colour} on {painted.surface} measures {ratio:.2f}:1, "
+        f"below the {WCAG_AA}:1 WCAG AA floor ({painted.selector})"
     )
+
+
+def test_the_counter_is_scored_on_its_own_backdrop_not_the_page():
+    """The counter sits on a wash of its own, so the page colour is the wrong one.
+
+    Without this, dropping the overlay resolution above leaves every ratio
+    passing -- they are all comfortably clear either way today -- while the
+    gate quietly goes back to scoring against a surface the counter is not
+    painted on. The headroom it reports would then be about half a point more
+    than the counter actually has, and a future darkening would be waved
+    through against the wrong background. That silence is the whole defect;
+    this is what breaks it.
+    """
+    for painted, theme_bg in ((LIGHT_PAINTED, LIGHT_BG), (DARK_PAINTED, DARK_BG)):
+        counter = [p for p in painted if ".agit-count" in p.selector]
+        assert counter, "no .agit-count colour found to check the backdrop of"
+        for p in counter:
+            assert p.backdrop != rgb(theme_bg), (
+                f"{p.selector} is being scored against the bare page background "
+                f"{theme_bg}, but the counter declares its own backdrop over that "
+                f"background. The ratio reported for {p.colour} is therefore not "
+                f"the ratio a reader gets."
+            )
 
 
 def test_every_light_colour_has_a_dark_counterpart():
@@ -233,7 +376,6 @@ def test_the_stated_minimum_equals_the_server_floor():
 # AGIT form's stated contract against its enforced one.
 # ---------------------------------------------------------------------------
 
-CONTRIBUTE_JS = REPO / "functions" / "api" / "contribute.js"
 HEADERS = REPO / "static" / "_headers"
 
 FIELD_TAG = re.compile(
