@@ -70,8 +70,16 @@ jobs:
           # Pass --enforce-on-private so the scan runs even on private repos
           # (the canonical script defaults to no-op on private; commit-message
           # scanning is a defence-in-depth use case worth running everywhere).
+          # --allow-degraded-blocklist: this PUBLIC repo cannot hold the blocklist
+          # hashes manifest (it maps opaque tokens to the literals they cover, so
+          # publishing it defeats the point). Without the flag the scanner exits 2
+          # rather than report a clean it cannot back -- correct, and how this was
+          # caught. The flag records the choice: token coverage degrades to
+          # verbatim-reference matching and prints a [DEGRADED] line, while every
+          # other category (credentials, PII, business identifiers) still scans.
           python3 scripts/check-public-repo-secrets.py \
             --scan-commit-messages \
             --since "$BEFORE" \
             --enforce-on-private \
-            --require-public
+            --require-public \
+            --allow-degraded-blocklist
