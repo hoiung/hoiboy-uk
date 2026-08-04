@@ -17,6 +17,7 @@ build:
   render: always
 ---
 
+<!-- iamhoi -->
 Almost there. I have sent you an email with a confirmation link.
 
 Click that link and you are on the list. If it has not turned up in a few minutes, have a look in your spam folder.
@@ -30,3 +31,4 @@ Nothing gets sent until you confirm, and every email after that has an unsubscri
 - [Adventure](/blogs/adventure/)
 
 Or head back to the [blog](/blogs/).
+<!-- iamhoiend -->
