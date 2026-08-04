@@ -31,6 +31,7 @@ Exit codes:
       exit-code check alone cannot tell apart (#56). Taxonomy: scripts/gate_coverage.py.
 """
 import sys
+import os
 import re
 import glob
 from pathlib import Path
@@ -113,14 +114,42 @@ def main(argv):
     # tree rather than as a gate that never opened a file. See
     # scripts/gate_coverage.py for the class and tests/test_gate_vacuity.py for
     # the enforcement.
+    # The floor is on the SCOPE, not on the SVG COUNT, and the difference is
+    # load-bearing. Applied to the count, it made the only live caller fail on
+    # the ordinary case: pre-publish.sh runs this per page bundle, and 78 of 87
+    # post bundles legitimately contain no SVG. Because run_check exits on
+    # failure, that exit-2 stopped the run before six later checks -- including
+    # the subscribe-placement, 404 and rendered-card gates -- ever ran. A floor
+    # that turns a correct clean result into a hard stop protects nothing and
+    # costs every check behind it (Ralph round 19 Tier 3).
+    #
+    # "Examined nothing" therefore means the scope could not be OPENED, which is
+    # the case that genuinely proves nothing. A scope that exists and holds no
+    # SVG is a real and complete answer, and says so rather than claiming
+    # compliance for files it never saw.
     paths = sorted(set(paths))
-    require_examined(
-        "check_svg_dimensions",
-        "SVG file",
-        paths,
-        hint="Either content/ has no SVG yet (remove this gate from the caller "
-             "rather than run it blind), or the argument matched nothing.",
-    )
+    if args:
+        missing = [a for a in args if not any(c in a for c in "*?[") and not os.path.exists(a)]
+        if missing:
+            print(
+                f"[vacuous-gate] check_svg_dimensions: scope not found: "
+                f"{', '.join(missing)}. Nothing was opened, so no compliance claim "
+                f"can be made. Check the path.",
+                file=sys.stderr,
+            )
+            return 2
+        if not paths:
+            print(f"PASS: no SVG in {', '.join(args)} (scope opened, nothing to check)")
+            return 0
+    else:
+        require_examined(
+            "check_svg_dimensions",
+            "SVG file",
+            paths,
+            hint="content/ has no SVG at all. Either the tree genuinely has none "
+                 "(remove this gate from the caller rather than run it blind), or "
+                 "the glob is wrong.",
+        )
 
     bad = offenders(paths)
     if bad:
