@@ -16,8 +16,15 @@ Four assertions:
   3. A generator run against a build with ONE trail.json removed exits non-zero and
      NAMES the page. This is the fail-loud clause: no default eyebrow, no silent
      skip. Asserted by executing it, not by reading the source.
-  4. check_social_cards.py --strict actually turns a missing rendered page into a
-     failure (the lenient default is what let a wrong url-derivation skip 87 pages
+  4. Two cases, since hoiboy-uk#56 narrowed what --strict is for. On a REAL build
+     a missing rendered page now fails WITHOUT --strict, because the content tree
+     says the page exists and every documented reason it would not render has
+     already been excluded: that is a stale tree, not an alias edge. --strict is
+     left owning the case where no trail.json sidecar exists at all, so every URL
+     came from the non-permalink-aware fallback and the guard may have invented
+     the URL it is complaining about. Both halves are asserted, because only the
+     second one discriminates
+     (the lenient default is what let a wrong url-derivation skip 87 pages
      while CI stayed green).
 
 Usage:  python3 scripts/test_card_build_order.py [--built public]
@@ -183,33 +190,77 @@ def check_fail_loud(built: Path, failures: list[str]) -> None:
 def check_strict_bites(built: Path, failures: list[str]) -> None:
     """AC 3.0 assertion 4 — --strict turns a missing rendered page into a failure.
 
-    Run against a copy of the built tree with one rendered page removed: lenient must
-    pass (that is the documented alias/permalink tolerance) and strict must fail.
-    Without both halves this would not discriminate.
+    This assertion used to run ONE case: remove a rendered page from a real build,
+    require lenient to pass and strict to fail. hoiboy-uk#56's escalation class
+    sweep showed that "lenient must pass" was the fail-open itself. On a real
+    build the content tree says the page exists and every documented reason it
+    would not render has already been excluded, so a missing rendered page is a
+    stale tree, not an alias edge, and lenient now fails too. Neither live
+    --built caller passes --strict, so the lenient path is the one that runs.
+
+    So the two cases are now split, and BOTH are asserted:
+
+      A. Real build, page removed  -> lenient FAILS (the #56 improvement).
+      B. No trail.json anywhere, page removed -> lenient passes, strict FAILS.
+
+    B is what keeps this assertion discriminating. With no sidecars there is no
+    Hugo output to read, every URL comes from the non-permalink-aware fallback,
+    and the guard genuinely may have invented the URL it is complaining about —
+    which is the one remaining case where silence is the right default and
+    --strict is the way to break it.
     """
     victim = "legal/privacy"
-    tmp = Path(tempfile.mkdtemp(prefix="card-strict-"))
+    check = [sys.executable, str(ROOT / "scripts" / "check_social_cards.py")]
+
+    # --- Case A: a real build missing a page must fail WITHOUT --strict.
+    tmp_a = Path(tempfile.mkdtemp(prefix="card-stale-"))
     try:
-        shutil.copytree(built, tmp / "public", symlinks=True,
+        shutil.copytree(built, tmp_a / "public", symlinks=True,
                         ignore=shutil.ignore_patterns("*.png", "*.jpg", "*.webp"))
-        page = tmp / "public" / victim / "index.html"
+        page = tmp_a / "public" / victim / "index.html"
         if not page.exists():
-            failures.append(f"AC 3.0: cannot run the --strict check — no rendered page at {page}")
+            failures.append(f"AC 3.0: cannot run the stale-tree check — no rendered page at {page}")
             return
         page.unlink()
-        base = [sys.executable, str(ROOT / "scripts" / "check_social_cards.py"),
-                "--built", str(tmp / "public")]
+        lenient = subprocess.run(check + ["--built", str(tmp_a / "public")],
+                                 cwd=ROOT, capture_output=True, text=True)
+        if lenient.returncode == 0:
+            failures.append(f"AC 3.0: the lenient check exited 0 on a real build missing "
+                            f"{victim} — a partially stale tree must not pass the rendered tier")
+        elif "rendered-stale" not in (lenient.stdout + lenient.stderr):
+            failures.append(f"AC 3.0: the lenient check failed on a stale tree but not with "
+                            f"[rendered-stale]; it may be red for an unrelated reason. Output: "
+                            f"{(lenient.stdout + lenient.stderr)[-300:]!r}")
+    finally:
+        shutil.rmtree(tmp_a, ignore_errors=True)
+
+    # --- Case B: with no sidecars, only --strict speaks.
+    tmp_b = Path(tempfile.mkdtemp(prefix="card-strict-"))
+    try:
+        shutil.copytree(built, tmp_b / "public", symlinks=True,
+                        ignore=shutil.ignore_patterns("*.png", "*.jpg", "*.webp"))
+        page = tmp_b / "public" / victim / "index.html"
+        if page.exists():
+            page.unlink()
+        trails = list((tmp_b / "public").rglob("trail.json"))
+        if not trails:
+            failures.append("AC 3.0: cannot run the --strict check — the build has no trail.json "
+                            "sidecars, so case B cannot be distinguished from case A")
+            return
+        for t in trails:
+            t.unlink()
+        base = check + ["--built", str(tmp_b / "public")]
         lenient = subprocess.run(base, cwd=ROOT, capture_output=True, text=True)
         strict = subprocess.run(base + ["--strict"], cwd=ROOT, capture_output=True, text=True)
         if lenient.returncode != 0:
-            failures.append(f"AC 3.0: the lenient check failed on a removed rendered page "
+            failures.append(f"AC 3.0: the lenient check failed with no sidecars present "
                             f"({(lenient.stdout + lenient.stderr)[-300:]!r}); the two modes no "
                             f"longer differ, so --strict proves nothing")
         if strict.returncode == 0:
             failures.append(f"AC 3.0: check_social_cards.py --strict exited 0 with {victim}'s "
-                            f"rendered page removed — --strict does not bite")
+                            f"rendered page removed and no sidecars — --strict does not bite")
     finally:
-        shutil.rmtree(tmp, ignore_errors=True)
+        shutil.rmtree(tmp_b, ignore_errors=True)
 
 
 def main(argv: list[str] | None = None) -> int:
