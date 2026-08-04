@@ -1,3 +1,5 @@
+
+<!-- iamhoi -->
 # Social posts - Hoi aka Hoiboy
 
 Paste-ready social copy for this feature, one labelled block per channel. This file
@@ -251,3 +253,4 @@ Full story: https://hoiboy.uk/community/agit-featured/1-hoi-aka-hoiboy-ai-produc
 
 #AsiansInTech #GingersInTech #AGIT #DataCentre #Automation
 ```
+<!-- iamhoiend -->
