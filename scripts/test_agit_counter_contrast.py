@@ -169,3 +169,55 @@ def test_counter_states_are_visually_distinct():
             f"the {label} theme paints every state the same colour, "
             "so the counter cannot signal met vs short"
         )
+
+
+# --------------------------------------------------------------------------
+# The stated minimum and the enforced minimum are the same number
+# --------------------------------------------------------------------------
+#
+# Added after Ralph Tier 3 pointed out the gap. Three surfaces carry the 1200:
+# the prose a member reads, the client gate, and the server floor. Two of the
+# three pairings were already bound in CI (the server floor to its test mirror,
+# and the browser gate's own constant to STORY_MIN). The member-facing PROSE was
+# bound only in the pre-publish Chromium lane, so CI would have gone green on a
+# form that promised one number and enforced another. That is this issue's own
+# defect class -- the whole point of the change is that the form STATES the
+# minimum -- so it is closed here rather than deferred.
+
+STATED_MINIMUM = re.compile(r"minimum (\d+) characters")
+STORY_MIN_DECL = re.compile(r"var STORY_MIN = (\d+);")
+FLOOR_DECL = re.compile(r"FIELD_FLOORS\s*=\s*\{[^}]*feature:\s*(\d+)")
+
+AGIT_FORM_JS = REPO / "static" / "js" / "agit-form.js"
+CONTRIBUTE_JS = REPO / "functions" / "api" / "contribute.js"
+
+
+def _one(pattern, path, what):
+    matches = pattern.findall(path.read_text(encoding="utf-8"))
+    assert matches, f"{what} not found in {path.name}"
+    assert len(set(matches)) == 1, (
+        f"{what} appears in {path.name} with conflicting values {sorted(set(matches))}"
+    )
+    return int(matches[0])
+
+
+def test_the_stated_minimum_equals_the_client_gate():
+    """The number the member reads is the number the counter turns green on."""
+    stated = _one(STATED_MINIMUM, PAGE, "the stated minimum")
+    enforced = _one(STORY_MIN_DECL, AGIT_FORM_JS, "STORY_MIN")
+    assert stated == enforced, (
+        f"the form promises {stated} characters but the counter turns green at "
+        f"{enforced}. A member who writes exactly what was asked for would be "
+        f"told to keep going, or told they are done too early."
+    )
+
+
+def test_the_stated_minimum_equals_the_server_floor():
+    """And the number the server actually enforces on the submitted story."""
+    stated = _one(STATED_MINIMUM, PAGE, "the stated minimum")
+    floor = _one(FLOOR_DECL, CONTRIBUTE_JS, "FIELD_FLOORS.feature")
+    assert stated == floor, (
+        f"the form promises {stated} characters but the server rejects below "
+        f"{floor}. Whichever is higher, somebody writes to the stated number and "
+        f"is refused."
+    )
