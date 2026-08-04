@@ -19,7 +19,12 @@ ASSETS = ROOT / "assets"
 EXEMPT: set[str] = set()
 
 
-def is_key_referenced(key: str, text: str) -> bool:
+def _token(key: str) -> str:
+    """Identifier-bounded pattern for one key name."""
+    return r"(?<![A-Za-z0-9_-])" + re.escape(key) + r"(?![A-Za-z0-9_-])"
+
+
+def is_key_referenced(key: str, text: str, parent: str | None = None) -> bool:
     """True if `key` appears in `text` as a standalone identifier token.
 
     A plain substring test is toothless: a dead key that is a substring of an
@@ -27,12 +32,38 @@ def is_key_referenced(key: str, text: str) -> bool:
     or `author` inside `authorSameAs`). Require an identifier boundary on both
     sides — treating `-` as part of a token — so `accent` does NOT match
     `accent-color` but `site.Params.accentColor` still matches `accentColor`.
+
+    PARENT-TABLE SCOPING. Identifier boundaries are not table scoping, and the
+    two were being conflated: a key nested under `[social]` was searched for by
+    its BARE name against the whole concatenated layouts text, so a genuinely
+    dead `[social] title` passed as referenced the moment any unrelated template
+    mentioned `title`. Boundary matching only rules out substrings of one token;
+    it says nothing about which table the token belongs to.
+
+    For a nested key both real Hugo idioms count, and nothing else:
+      site.Params.social.title   the dotted path
+      with site.Params.social    ... .title   a scoped block
+    A bare `title` with no `social` anywhere does not.
+
+    Measured when this landed: params.toml has no nested tables at all, so this
+    changes no verdict today. It closes the class before the first nested table
+    introduces it, which is the same reason extract_keys moved to tomllib.
     """
-    pattern = r"(?<![A-Za-z0-9_-])" + re.escape(key) + r"(?![A-Za-z0-9_-])"
-    return re.search(pattern, text) is not None
+    if re.search(_token(key), text) is None:
+        return False
+    if parent is None:
+        return True
+    dotted = re.search(_token(parent) + r"\." + re.escape(key)
+                       + r"(?![A-Za-z0-9_-])", text)
+    if dotted:
+        return True
+    # A `with`/`range` block names the parent once, then reads `.child`.
+    scoped = re.search(_token(parent), text) and re.search(
+        r"\." + re.escape(key) + r"(?![A-Za-z0-9_-])", text)
+    return bool(scoped)
 
 
-def extract_keys(toml: str) -> list[str]:
+def extract_keys(toml: str) -> list[tuple[str, str | None]]:
     """Every param key declared in params.toml, nested tables included.
 
     Parsed with `tomllib` (Python 3.11+ stdlib, no dependency) rather than
@@ -52,13 +83,13 @@ def extract_keys(toml: str) -> list[str]:
         print(f"FAIL: {PARAMS} is not valid TOML: {exc}", file=sys.stderr)
         raise SystemExit(1)
 
-    keys: list[str] = []
+    keys: list[tuple[str, str | None]] = []
 
-    def walk(table: dict) -> None:
+    def walk(table: dict, parent: str | None = None) -> None:
         for key, value in table.items():
-            keys.append(key)
+            keys.append((key, parent))
             if isinstance(value, dict):
-                walk(value)
+                walk(value, key)
 
     walk(data)
     return keys
@@ -82,11 +113,11 @@ def main() -> int:
             layout_text += f.read_text(encoding="utf-8")
 
     dead: list[str] = []
-    for k in keys:
+    for k, parent in keys:
         if k in EXEMPT:
             continue
-        if not is_key_referenced(k, layout_text):
-            dead.append(k)
+        if not is_key_referenced(k, layout_text, parent):
+            dead.append(f"{parent}.{k}" if parent else k)
 
     if dead:
         print("CONFIG TRACEABILITY FAILED:", file=sys.stderr)
