@@ -88,7 +88,7 @@ jobs:
           fi
 
       - name: Hugo cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: |
             resources/_gen
