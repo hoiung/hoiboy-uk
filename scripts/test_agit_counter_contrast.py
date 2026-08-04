@@ -267,6 +267,66 @@ def test_dark_theme_colour_clears_wcag_aa(painted):
     )
 
 
+PADDING_BOTTOM = re.compile(r"(?<![-\w])padding-bottom\s*:\s*([\d.]+)rem")
+SHORTHAND_PADDING = re.compile(r"(?<![-\w])padding\s*:\s*([\d.]+)rem\s+([\d.]+)rem")
+FONT_SIZE = re.compile(r"(?<![-\w])font-size\s*:\s*([\d.]+)em")
+LINE_HEIGHT = re.compile(r"(?<![-\w])line-height\s*:\s*([\d.]+)")
+
+
+def _decls_for(selector: str) -> str:
+    return "\n".join(d for s, d in _rules(PAGE_CSS) if s == selector)
+
+
+def test_the_story_field_reserves_a_gutter_for_the_counter():
+    """The counter is opaque, so it needs somewhere of its own to sit.
+
+    Without a gutter it lands on the last line of the story at exactly the
+    moment a member is looking at it: at the end of what they have written,
+    watching the number climb. Measured in Chromium before the gutter went in,
+    80 pixels of a 1240-character story were behind the chip.
+
+    This is the CI half, and it is deliberately a weak claim: that the gutter is
+    declared and is at least as tall as the counter it has to hold. Whether the
+    padding, the box-sizing, the line-height and the chip's offset actually add
+    up to a clear strip is a rendered property, and scripts/check_agit_form_counter.py
+    is what asserts that, in a real browser, in the pre-publish lane. What this
+    catches is the gutter being deleted or shrunk in a lane with no Chromium,
+    which is every lane a change normally passes through.
+    """
+    story_field = _decls_for('.agit-form-wrap textarea[name="feature"]')
+    assert story_field, (
+        "no rule for the story textarea in the page's inline <style>. The "
+        "counter sits inside that field and needs a gutter reserved for it."
+    )
+
+    gutter = PADDING_BOTTOM.search(story_field)
+    assert gutter, (
+        "the story field declares no padding-bottom, so nothing is reserving "
+        "space for the counter and it paints straight onto the last line."
+    )
+    gutter_rem = float(gutter.group(1))
+
+    counter = _decls_for(".agit-form-wrap .agit-count")
+    assert counter, "no .agit-count rule to size the gutter against"
+    size = FONT_SIZE.search(counter)
+    leading = LINE_HEIGHT.search(counter)
+    padding = SHORTHAND_PADDING.search(counter)
+    assert size and leading and padding, (
+        "the counter's own font-size, line-height and padding are what decide "
+        "how tall the gutter has to be; one of them is no longer declared here, "
+        "so this gate cannot state what it is checking."
+    )
+    # The field sets `font: inherit`, so the counter's em resolves against the
+    # same 1rem base as the gutter it has to fit inside.
+    chip_rem = float(size.group(1)) * float(leading.group(1)) + 2 * float(padding.group(1))
+
+    assert gutter_rem >= chip_rem, (
+        f"the story field reserves {gutter_rem}rem but the counter is "
+        f"{chip_rem:.2f}rem tall, so the chip cannot fit in its own gutter and "
+        f"overlaps the story text at the end of it."
+    )
+
+
 def test_the_counter_is_scored_on_its_own_backdrop_not_the_page():
     """The counter sits on a wash of its own, so the page colour is the wrong one.
 
