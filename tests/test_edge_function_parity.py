@@ -423,3 +423,58 @@ def test_control_flow_reads_the_pristine_upstream_body():
                 f"what is logged, or a visitor-supplied literal can delete the "
                 f"key the branch depends on."
             )
+
+
+# Constants the lock-stepped helpers READ. Enrolling the functions alone is not
+# enough: every one of these is a bare `const X = <literal>;` that the functions
+# consult, so drifting the VALUE in one file changes that endpoint's behaviour
+# while every function body still compares byte-identical.
+#
+# Ralph round 19 Tier 3 proved it: setting MIN_PROTECTED_LENGTH to 400 in
+# contribute.js alone reopens escalation-2 defect 6 on that endpoint -- no
+# submitted value is long enough to be registered, so by-value redaction stops
+# happening entirely -- and it survived all 8 parity tests and both contribute
+# suites.
+LOCKSTEP_CONSTANTS = (
+    "REDACTED_VALUE",
+    "MIN_PROTECTED_LENGTH",
+    "MAX_ESCAPE_LEVELS",
+)
+
+
+def constant_declaration(path: Path, name: str) -> str | None:
+    """The whole `const <name> = <literal>;` line, or None if absent."""
+    source = path.read_text(encoding="utf-8")
+    match = re.search(rf"^const {re.escape(name)}\s*=\s*(.+);$", source, re.M)
+    return match.group(1) if match else None
+
+
+def test_the_lockstep_constants_are_present_in_both_functions():
+    """Guard the guard: a renamed constant must not silently empty the check."""
+    for name in LOCKSTEP_CONSTANTS:
+        for path in (SUBSCRIBE, CONTRIBUTE):
+            assert constant_declaration(path, name) is not None, (
+                f"{path.name} no longer declares a top-level `const {name}`. "
+                f"Either it was renamed or its shape changed; the value "
+                f"comparison below would otherwise pass by comparing nothing."
+            )
+
+
+def test_lockstep_constants_have_not_drifted_between_the_two_functions():
+    """Same constant, same VALUE, both files.
+
+    The helpers are byte-identical by the gate above, which is exactly why a
+    drifted constant is invisible there: identical code reading a different
+    number behaves differently. This is the value half of the same invariant.
+    """
+    for name in LOCKSTEP_CONSTANTS:
+        mine = constant_declaration(SUBSCRIBE, name)
+        theirs = constant_declaration(CONTRIBUTE, name)
+        assert mine == theirs, (
+            f"`{name}` has drifted: subscribe.js has {mine!r}, contribute.js has "
+            f"{theirs!r}. The helpers that read it are byte-identical, so this "
+            f"changes one endpoint's behaviour with nothing else to show for it. "
+            f"Copy the change across, or if they must genuinely differ now, "
+            f"remove {name!r} from LOCKSTEP_CONSTANTS and say why in this "
+            f"module's docstring."
+        )
