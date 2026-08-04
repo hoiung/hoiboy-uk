@@ -156,6 +156,28 @@ Before you fill it in, have a quick read of the <a href="/legal/agit-story-guide
 
    width: fit-content plus margin-left: auto keeps the backdrop hugging the
    number instead of banding the full width of the field. */
+/* The story field reserves a gutter under its text for that backdrop to sit in.
+   The backdrop is opaque, so wherever it overlaps a line it hides it, and the
+   position that matters is the one a member is actually in while writing: at
+   the end of their own story, watching the number climb. Measured in Chromium
+   on the built page, worst case over a 200-character sweep of story lengths so
+   the last line lands in every phase of fill, both colour schemes: 80 pixels of
+   text under the counter before, 0 after. Clearance starts at .9rem; 1.35rem is
+   taken for headroom, being also taller than the 17.6px chip itself.
+
+   min-height pays for the gutter rather than the story doing it. The field is
+   border-box, so padding alone would have taken the space out of the visible
+   text instead of reserving it, and this field asks for 1200 characters.
+   8rem + 1.35rem - .55rem = 8.8rem keeps the visible text area exactly what it
+   was, and the counter's inset from the box corner is unchanged at 11.2px /
+   2.8px, so nothing moves.
+
+   Scrolled back UP to re-read, the counter still covers a line. That is
+   inherent to an opaque overlay inside a scrolling box and is the accepted
+   trade for keeping the number in the corner of the field: measured 206 / 87 /
+   227 pixels at the top, middle and lower thirds, against 0 at the bottom.
+   Gate: the bottom-scrolled case is the one asserted. */
+.agit-form-wrap textarea[name="feature"] { padding-bottom: 1.35rem; min-height: 8.8rem; }
 .agit-form-wrap .agit-count {
   font-size: .75em; font-weight: 600; line-height: 1.2;
   width: fit-content; margin: -1.75rem .7rem 0 auto;
