@@ -83,3 +83,11 @@ jobs:
             --enforce-on-private \
             --require-public \
             --allow-degraded-blocklist
+
+# GOTCHA, learned the hard way (#56): do NOT quote a flagged literal in the
+# commit message that removes it. This scan reads commit MESSAGES, so a message
+# explaining "changed <address> to an example.com one" re-introduces the exact
+# string the commit deletes, and the scan fails on the fix itself. Commit
+# messages are immutable and force-push is forbidden here, so the only remedy is
+# to correct forward: the next push's window starts after the offending commit.
+# Describe the change without reproducing the value.
