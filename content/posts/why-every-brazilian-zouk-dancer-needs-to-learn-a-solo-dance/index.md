@@ -61,6 +61,8 @@ And here at the studio, when we had to perform in our smaller groups (our group 
 
 And 12:57 in the same video is where I was made to do my performance solo!
 
-[Jump to my solo moment at 12:57](https://youtu.be/0Ex5cEPMhPE?t=777)
+{{< youtube-short id="0Ex5cEPMhPE" title="My solo moment at 12:57" ratio="wide" start="777" >}}
+
+[Watch on YouTube (my solo at 12:57)](https://youtu.be/0Ex5cEPMhPE?t=777)
 
 <!-- iamhoiend -->
