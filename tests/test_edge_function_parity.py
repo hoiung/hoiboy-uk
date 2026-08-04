@@ -137,12 +137,23 @@ def test_the_capped_read_is_unconditional_in_both_functions():
         # readCapped at the right indent, so the check above passes, while a
         # chunked request (declaredLength 0) skips the 413 entirely. That is the
         # round-1 bypass reopened, and it survived every other delivered gate.
+        #
+        # Be clear about what this can and cannot do. It is a cheap TRIPWIRE for
+        # the exact one-token shape that shipped, not a proof of control flow: a
+        # regex cannot establish that a line executes. Ralph Tier 2 duly defeated
+        # it twice, with a nested `if` and by moving the pair into a dead helper.
+        # Both of those are caught by the BEHAVIOURAL suites
+        # (tests/contribute-handler.test.js, tests/subscribe.test.js), which
+        # execute the handler and are the real guarantee here. This assertion
+        # earns its place by failing fast and naming the defect, not by being
+        # exhaustive. Do not add shapes to it and call the class closed; add a
+        # behavioural test instead.
         acted_on = re.findall(r"^  if \(capped === null\) \{$", source, re.M)
         assert len(acted_on) == 1, (
             f"{path.name} does not reject unconditionally on readCapped()'s null "
             f"return (found {len(acted_on)} bare `if (capped === null) {{` at "
-            f"handler top level). Any extra condition on that branch is a way for "
-            f"a client to reach the unbounded path while this gate stays green."
+            f"handler top level). Adding a condition to that branch is how the "
+            f"round-1 bypass was reopened."
         )
 
         assert "Number.isFinite(declaredLength)" in source, (
