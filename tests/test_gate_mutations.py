@@ -212,15 +212,18 @@ MUTATIONS = [
         "scripts/test_check_agit_form_counter.py",
         id="agit-browser-gate-named-in-prose-and-invoked-nowhere",
     ),
-    # /js/ is unfingerprinted, so a long max-age serves the pre-#57 script --
-    # no counter, no submit guard -- against markup already promising the
-    # minimum. This is the state the file was in before #57 Stage 5.
+    # Site JS is unfingerprinted, so a hard-coded src never changes when the
+    # file does and the pre-#57 script -- no counter, no submit guard -- is
+    # served for hours against markup already promising the minimum. The
+    # Cache-Control route to fixing this was tried and MEASURED not to work
+    # (Cloudflare Pages joins same-name headers; the asset default's max-age
+    # won), so the version lives in the URL instead.
     pytest.param(
-        "static/_headers",
-        "/js/*\n  Cache-Control: public, max-age=0, must-revalidate",
-        "/js/*\n  Cache-Control: public, max-age=14400",
+        "content/community/asians-gingers-in-tech/index.md",
+        '{{< versioned-script "js/agit-form.js" >}}',
+        '<script src="/js/agit-form.js" defer></script>',
         "scripts/test_agit_counter_contrast.py",
-        id="form-script-served-stale-against-the-markup-that-promises-it",
+        id="form-script-url-carries-no-version-so-it-outlives-its-markup",
     ),
     pytest.param(
         "content/community/asians-gingers-in-tech/index.md",
