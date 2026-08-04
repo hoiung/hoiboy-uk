@@ -10,8 +10,10 @@ the gate is not toothless (empty Artist / GPSVersionID-only do NOT flag).
 from __future__ import annotations
 
 import base64
+import struct
 import subprocess
 import sys
+import zlib
 from pathlib import Path
 
 import piexif
@@ -100,3 +102,56 @@ def test_gps_versionid_only_not_flagged(tmp_path):
         {"GPS": {piexif.GPSIFD.GPSVersionID: (2, 3, 0, 0)}},
     )
     assert _run(clean) == 0
+
+
+# --------------------------------------------------------------------------
+# PNG eXIf chunk placement (#56 Ralph escalation class sweep, Tier B).
+# --------------------------------------------------------------------------
+
+def _write_png(path: Path, exif: dict | None, *, exif_after_idat: bool) -> Path:
+    """A minimal 1x1 PNG, with the optional eXIf chunk before or after IDAT."""
+    def chunk(ctype: bytes, data: bytes) -> bytes:
+        return (struct.pack(">I", len(data)) + ctype + data
+                + struct.pack(">I", zlib.crc32(ctype + data) & 0xFFFFFFFF))
+
+    ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0)
+    idat = zlib.compress(b"\x00\xff\xff\xff")
+    parts = [b"\x89PNG\r\n\x1a\n", chunk(b"IHDR", ihdr)]
+    exif_chunk = b""
+    if exif is not None:
+        raw = piexif.dump(exif)
+        payload = raw[6:] if raw.startswith(b"Exif\x00\x00") else raw
+        exif_chunk = chunk(b"eXIf", payload)
+    if exif_chunk and not exif_after_idat:
+        parts.append(exif_chunk)
+    parts.append(chunk(b"IDAT", idat))
+    if exif_chunk and exif_after_idat:
+        parts.append(exif_chunk)
+    parts.append(chunk(b"IEND", b""))
+    path.write_bytes(b"".join(parts))
+    return path
+
+
+def test_clean_png_passes(tmp_path):
+    assert _run(_write_png(tmp_path / "clean.png", None, exif_after_idat=False)) == 0
+
+
+def test_png_exif_before_idat_fails(tmp_path):
+    """The placement that always worked, kept as the control for the one below."""
+    leaky = _write_png(tmp_path / "before.png",
+                       {"0th": {piexif.ImageIFD.Artist: b"Senh Hoi Ung"}},
+                       exif_after_idat=False)
+    assert _run(leaky) == 1
+
+
+def test_png_exif_after_idat_fails(tmp_path):
+    """eXIf AFTER IDAT is legal PNG and is what naive append tools emit.
+
+    The chunk walker used to break at the first IDAT, so this image scored
+    clean while carrying an identifying tag: the gate reported it safe, which
+    is worse than not scanning it. Found by the #56 escalation class sweep.
+    """
+    leaky = _write_png(tmp_path / "after.png",
+                       {"0th": {piexif.ImageIFD.Artist: b"Senh Hoi Ung"}},
+                       exif_after_idat=True)
+    assert _run(leaky) == 1
