@@ -460,6 +460,14 @@ jobs:
       - name: Newsletter consent-version traceability
         run: python3 -m pytest tests/test_newsletter_consent_version.py -q
 
+      # The two Pages Functions are self-contained edge modules with no shared
+      # import, so several helpers exist twice on purpose. This is what stops the
+      # copies drifting. The #56 review found both files trusting a client-supplied
+      # content-length as a size bound; fixing one and not the other is precisely
+      # the outcome this gate now prevents. Source-only, runs before the build.
+      - name: Edge-function helper parity (duplicated helpers stay in lock-step)
+        run: python3 -m pytest tests/test_edge_function_parity.py -q
+
       # Mutation tests: put each defect back and require its own test to go red.
       # Ralph ran nine rounds on blog-priv#63/#64 and could not terminate, because
       # the acceptance criterion looked BACKWARDS - a corpus of mutations each

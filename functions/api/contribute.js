@@ -68,6 +68,44 @@ const SOCIALS_MAX_TOTAL = 1000;
 // Pragmatic email shape check (not full RFC 5322): non-space local@domain.tld.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Read a request body, refusing to buffer more than `cap` bytes. Returns the
+// bytes, or null if the body is over the cap. The stream is cancelled on the
+// first chunk that crosses the line, so a sender cannot force us to hold an
+// arbitrarily large body just by withholding a content-length header.
+//
+// Deliberately duplicated from functions/api/subscribe.js rather than shared.
+// Pages Functions are self-contained edge modules here by design: `log`,
+// `textResponse` and `clean` are already defined in both files, there is no
+// shared module under functions/, and introducing an import would break the
+// real-source test loading in tests/subscribe.test.js, which evaluates the
+// module body directly. Keep the two copies in lock-step.
+async function readCapped(request, cap) {
+  if (!request.body) return new Uint8Array(0);
+
+  const reader = request.body.getReader();
+  const chunks = [];
+  let total = 0;
+
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > cap) {
+      await reader.cancel();
+      return null;
+    }
+    chunks.push(value);
+  }
+
+  const joined = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    joined.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return joined;
+}
+
 function log(event, detail) {
   // Structured observability line (repo AP #12). One per decision branch.
   try {
@@ -180,16 +218,45 @@ async function verifyTurnstile(secret, response, remoteip) {
 export async function onRequestPost(context) {
   const { request, env } = context;
 
-  // 1. Cheap up-front guard: reject an oversized body before buffering/parsing it.
-  const declaredLength = Number(request.headers.get("content-length") || 0);
-  if (declaredLength > MAX_BODY_BYTES) {
-    log("size-type-reject", { reason: "body too large", declaredLength });
+  // 1. Size ceiling.
+  //
+  // content-length is a CLIENT-SUPPLIED hint, not a fact. A chunked request
+  // carries none at all, and reading an absent header as 0 puts it under every
+  // ceiling, so trusting it alone made this guard optional: omit the header and
+  // an unbounded body reached formData() while the reject line never emitted.
+  // That matters more here than on the sibling endpoint, because this one
+  // accepts a photo and its ceiling is megabytes rather than kilobytes.
+  //
+  // Found by the #56 Ralph review on functions/api/subscribe.js, which carried
+  // the identical guard. Swept here in the same pass rather than left as a
+  // known-identical hole one file away.
+  const declaredLength = request.headers.get("content-length");
+  if (declaredLength !== null && Number(declaredLength) > MAX_BODY_BYTES) {
+    log("size-type-reject", {
+      reason: "body too large",
+      source: "header",
+      declaredLength: Number(declaredLength),
+    });
     return textResponse(413, "That submission is too large. Please upload a smaller photo.");
+  }
+
+  let bodySource = request;
+  if (declaredLength === null) {
+    const capped = await readCapped(request, MAX_BODY_BYTES);
+    if (capped === null) {
+      log("size-type-reject", { reason: "body too large", source: "stream", declaredLength: null });
+      return textResponse(413, "That submission is too large. Please upload a smaller photo.");
+    }
+    // Re-wrap the bytes we read so formData() still has a body to parse. The
+    // content type carries the multipart boundary, so it has to come across.
+    bodySource = new Response(capped, {
+      headers: { "content-type": request.headers.get("content-type") || "" },
+    });
   }
 
   let form;
   try {
-    form = await request.formData();
+    form = await bodySource.formData();
   } catch (_) {
     log("bad-request", { reason: "formData parse failed" });
     return textResponse(400, "Could not read the form.");
