@@ -175,18 +175,31 @@ def main() -> int:
     # (1) SUPPRESSED. Enumerated from the tree rather than hardcoded, so a new legal
     #     page or a new /private/ tool is covered the day it is added.
     suppressed_seen = 0
+    # Per-CLASS, not aggregate. The floor below used to ask only whether the
+    # suppressed set as a WHOLE matched something, and it never fired: a tree
+    # predating /newsletter/ still counts the legal, private and AGIT pages, so
+    # the total stayed healthy while the one rule this Issue exists to enforce
+    # was never exercised. An aggregate floor answers a question nobody asked.
+    per_class: dict[str, int] = {c: 0 for c in SUPPRESSED_PREFIXES + SUPPRESSED_EXACT}
     for path in pages:
         rel = str(path.relative_to(built))
         if not is_suppressed(rel):
             continue
         suppressed_seen += 1
+        for cls in per_class:
+            if rel == cls or rel.startswith(cls):
+                per_class[cls] += 1
         if MARKER in path.read_text(encoding="utf-8", errors="replace"):
             failures.append(f"[suppressed-but-present] {rel} carries '{MARKER}' and must not")
-    if suppressed_seen == 0:
-        failures.append(
-            "[no-suppressed-pages-found] the suppressed set matched nothing, so this "
-            "gate proved nothing. Check SUPPRESSED_PREFIXES against the built tree."
-        )
+    for cls, seen in sorted(per_class.items()):
+        if seen == 0:
+            failures.append(
+                f"[unexercised-suppression-class] '{cls}' matched no page in {built}/, "
+                f"so its suppression rule was never tested and this gate proved "
+                f"nothing about it. Either the built tree is STALE (rebuild with "
+                f"`hugo --gc --minify -e production`), or that class no longer exists "
+                f"and belongs out of SUPPRESSED_PREFIXES/SUPPRESSED_EXACT."
+            )
 
     # (2) PRESENT, including the sampled post.
     present_paths = list(PRESENT_PATHS)
@@ -262,10 +275,12 @@ def main() -> int:
         if BASEOF_MARKER in p.read_text(encoding="utf-8", errors="replace")
         and not is_suppressed(str(p.relative_to(built)))
     )
+    classes = ", ".join(f"{c} -> {per_class[c]}" for c in sorted(per_class))
     print(
         f"[OK] subscribe-form placement: {suppressed_seen} suppressed page(s) clean, "
         f"{len(present_paths)} named page(s) carry the marker, "
-        f"{guarded} footer-bearing page(s) checked tree-wide."
+        f"{guarded} footer-bearing page(s) checked tree-wide. "
+        f"Suppression classes exercised: {classes}."
     )
     return 0
 
