@@ -90,8 +90,8 @@ const STORY_FIELD = (() => {
 const PAGE = `<!doctype html><html><body>
   <div class="agit-form-wrap">
     <form method="POST" action="/api/contribute">
-      <div class="agit-field"><input type="email" name="email" value="a@b.co"></div>
-      <div class="agit-field"><input type="email" name="email_confirm" value="a@b.co"></div>
+      <div class="agit-field"><input type="email" name="email" value="a@example.com"></div>
+      <div class="agit-field"><input type="email" name="email_confirm" value="a@example.com"></div>
       ${STORY_FIELD}
       <input type="hidden" name="cf-turnstile-response" value="turnstile-token">
       <div class="agit-field"><button type="submit">Send</button></div>

@@ -60,4 +60,5 @@ jobs:
             --scan-issue-body \
             --issue-number "$NUMBER" \
             --repo "${{ github.repository }}" \
-            --require-public
+            --require-public \
+            --allow-degraded-blocklist

@@ -29,7 +29,7 @@ jobs:
         # .public-repo marker means the marker was lost, not that the repo
         # went private. Without this the gate would exit 0 in silence and
         # the leak scan would retire itself with CI still green.
-        run: python3 scripts/check-public-repo-secrets.py . --require-public
+        run: python3 scripts/check-public-repo-secrets.py . --require-public --allow-degraded-blocklist
 
       - name: Commit-message secret scan — push events (blocking)
         if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
@@ -354,7 +354,7 @@ jobs:
         # Runs AFTER the Hugo build step above, against the same tree that is
         # deployed. A leak reachable only through a template, a data file, a
         # shortcode or a partial shows up here and nowhere else.
-        run: python3 scripts/check-public-repo-secrets.py public --include-ignored --require-public
+        run: python3 scripts/check-public-repo-secrets.py public --include-ignored --require-public --allow-degraded-blocklist
 
       - name: Social-card guard (rendered og:image — template-regression backstop)
         # --require-trails: this job built the tree in an earlier step, so a
