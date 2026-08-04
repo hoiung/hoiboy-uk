@@ -283,4 +283,4 @@ Before you fill it in, have a quick read of the <a href="/legal/agit-story-guide
 </div>
 
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<script src="/js/agit-form.js" defer></script>
+{{< versioned-script "js/agit-form.js" >}}
