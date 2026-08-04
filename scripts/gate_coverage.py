@@ -47,16 +47,18 @@ Exit codes, repo-wide:
 2 is deliberately distinct from 1. "No violations" and "no evidence" are
 opposite outcomes that an exit-code check alone cannot tell apart, and reading
 the second as the first is this whole class in one sentence.
+
+Only 2 gets a named constant, because only 2 is raised from here. 0 and 1 are
+each gate's own `return`, and naming them here would have been API written for
+a caller that does not exist.
 """
 
 from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Iterable, Sized
+from typing import Sized
 
-EXIT_OK = 0
-EXIT_VIOLATION = 1
 EXIT_VACUOUS = 2
 
 
@@ -114,24 +116,6 @@ def require_examined(
     return count
 
 
-def require_input(gate: str, path: Path | str, *, why: str) -> Path:
-    """Assert a declared input exists. A missing one is a FAIL, not a skip.
-
-    The silent-skip shape this replaces: a gate iterates a hardcoded list of
-    scan roots, one is renamed or removed, the iteration quietly covers fewer
-    surfaces than the list claims, and the gate still exits 0. Absence of a
-    declared input is a fact about the GATE, not about the tree.
-    """
-    resolved = Path(path)
-    if not resolved.exists():
-        raise fail(
-            gate,
-            f"declared input {resolved} does not exist ({why}). Either the path "
-            f"moved and this gate's list is stale, or the tree is incomplete. "
-            f"Skipping it would clear a surface that was never opened.",
-        )
-    return resolved
-
 
 def require_readable(gate: str, path: Path | str, exc: Exception, *, remedy: str) -> "VacuousGate":
     """Convert an unreadable surface into a coverage failure.
@@ -148,36 +132,3 @@ def require_readable(gate: str, path: Path | str, exc: Exception, *, remedy: str
         f"surface it failed to parse, and an empty result here is "
         f"indistinguishable from a clean one. {remedy}",
     )
-
-
-def coverage(gate: str, **counts: int) -> str:
-    """The evidence line a passing gate prints.
-
-    The counts ARE the proof that each absence was measured against something,
-    which is why they belong in the success message and not only in the failure
-    path. A reader who cannot see WHAT was examined cannot tell a real pass
-    from a vacuous one, and neither could this repo for eleven rounds.
-    """
-    detail = ", ".join(f"{n} {kind.replace('_', ' ')}" for kind, n in sorted(counts.items()))
-    return f"[OK] {gate}: examined {detail}."
-
-
-def declared_paths(gate: str, paths: Iterable[Path | str], *, why: str) -> list[Path]:
-    """`require_input` over a list, reporting EVERY missing entry at once.
-
-    Reporting only the first turns one stale scan root into as many edit-run
-    cycles as there are stale roots, which is how a partially-correct list
-    survives: each run fixes one and still passes the rest by never reaching
-    them.
-    """
-    resolved = [Path(p) for p in paths]
-    missing = [p for p in resolved if not p.exists()]
-    if missing:
-        listed = ", ".join(str(p) for p in missing)
-        raise fail(
-            gate,
-            f"{len(missing)} declared input(s) do not exist: {listed} ({why}). "
-            f"A scan list naming a path the tree does not have covers fewer "
-            f"surfaces than it claims.",
-        )
-    return resolved

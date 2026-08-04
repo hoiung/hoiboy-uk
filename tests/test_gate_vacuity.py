@@ -144,9 +144,9 @@ def assert_refuses_to_clear(name: str, result: subprocess.CompletedProcess) -> N
     assert result.returncode != 0, (
         f"{name} exited 0 against a tree containing none of the surfaces it "
         f"checks. Its assertions held vacuously and it reported that as a pass. "
-        f"Give it a coverage floor from scripts/gate_coverage.py -- "
-        f"require_examined() on whatever it enumerates, require_input() on "
-        f"whatever it declares.\n--- gate output ---\n{output}"
+        f"Give it a coverage floor: require_examined() from "
+        f"scripts/gate_coverage.py on whatever it enumerates, or a fail-loud "
+        f"branch of its own.\n--- gate output ---\n{output}"
     )
 
 
