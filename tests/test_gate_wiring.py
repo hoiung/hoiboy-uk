@@ -22,6 +22,7 @@ tests/test_meet_recorder_content.py.
 """
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -574,3 +575,45 @@ def test_neutering_a_real_ci_step_is_caught_by_the_wiring_guard():
                 test_every_test_file_is_actually_run_by_pytest_in_ci()
         finally:
             module.CI = original
+
+
+def test_every_js_test_file_is_actually_run_by_node_test_in_ci():
+    """The JS lane needs the same invariant the Python lane already has.
+
+    The check above globs `test_*.py` only. It discovers 43 Python files and
+    ZERO JavaScript ones, so the repo's "no test file can exist without CI
+    running it" rule has never covered the JS lane at all.
+
+    `npm test` is a hardcoded file list, not a glob -- `node --test` takes the
+    files it is given and collects nothing on its own -- so a new .test.js sits
+    on disk, is never run, and every gate stays green. hoiboy-uk#57 lived that:
+    it added tests/agit-form.test.js and had to remember to hand-add it to
+    package.json in a separate commit (9e3ef4b), which is exactly the manual
+    step the Python invariant exists to remove. Nothing anywhere reads
+    package.json's test script; a synonym sweep across yml/sh/md/py/json/toml
+    found only `npm ci` and `npm test` in ci.yml.
+
+    Two directory conventions are globbed because the repo already uses both:
+    static/js/ for the tool suites that sit beside their subject, tests/ for
+    the ones that do not.
+    """
+    package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
+    script = package.get("scripts", {}).get("test", "")
+    # Same two anti-vacuity guards the Python check uses: an empty glob or an
+    # empty script would make the subtraction below trivially pass.
+    assert script, "package.json has no scripts.test - nothing runs the JS suites"
+
+    on_disk = {
+        str(p.relative_to(ROOT))
+        for pattern in ("tests/*.test.js", "static/js/*.test.js")
+        for p in sorted(ROOT.glob(pattern))
+    }
+    assert on_disk, "found no *.test.js under tests/ or static/js/ - the glob is wrong"
+
+    unlisted = sorted(f for f in on_disk if f not in script)
+    assert not unlisted, (
+        f"{len(unlisted)} JS test file(s) exist but are named in no `npm test` "
+        f"invocation, so CI never runs them: {unlisted}. `node --test` takes an "
+        f"explicit file list and collects nothing by itself, so an unlisted file "
+        f"is silently dead. Add each to scripts.test in package.json."
+    )
