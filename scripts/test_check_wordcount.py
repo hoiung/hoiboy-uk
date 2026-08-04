@@ -162,13 +162,34 @@ class TestGrandfather:
 
 
 class TestMain:
-    def test_empty_argv_returns_zero(self):
+    def test_empty_argv_is_a_coverage_failure(self):
+        """N7: an empty argument list is the caller's glob breaking, not a pass.
+
+        This test previously asserted the opposite -- that a bare invocation
+        returns 0 -- which pinned the defect as intended behaviour and is why
+        tests/test_gate_vacuity.py exempted this gate on a justification that
+        was not true. Both are corrected together.
+        """
         proc = subprocess.run(
             [sys.executable, str(HERE / "check_wordcount.py")],
             capture_output=True,
             text=True,
         )
-        assert proc.returncode == 0
+        assert proc.returncode == 2, (
+            f"a bare run enforced the ceiling against nothing and reported "
+            f"{proc.returncode}: {proc.stdout}{proc.stderr}"
+        )
+        assert "vacuous-gate" in proc.stderr
+
+    def test_a_real_file_still_passes(self, tmp_path):
+        """Contrast case, so the assertion above cannot pass by failing everything."""
+        f = tmp_path / "index.md"
+        f.write_text("---\ndate: 2026-08-01\n---\n\nshort post.\n", encoding="utf-8")
+        proc = subprocess.run(
+            [sys.executable, str(HERE / "check_wordcount.py"), str(f)],
+            capture_output=True, text=True,
+        )
+        assert proc.returncode == 0, f"{proc.stdout}{proc.stderr}"
 
 
 class TestConstants:

@@ -176,7 +176,24 @@ def check_file(path: Path) -> int:
 
 def main(argv: list[str]) -> int:
     if not argv:
-        return 0
+        # Finding N7. The CI step is
+        #   python3 scripts/check_wordcount.py $(git ls-files 'content/posts/*/index.md')
+        # so if that glob ever stops matching -- a renamed directory, a changed
+        # bundle layout -- argv arrives empty, this returned 0, and the word-count
+        # ceiling silently stopped being enforced with CI green. An empty argument
+        # list is a fact about the CALLER, not a clean result.
+        #
+        # The pre-commit hook cannot reach this: it is `pass_filenames: true` with
+        # a `files:` filter and `always_run: false`, so pre-commit SKIPS it when
+        # nothing matches rather than invoking it with no arguments. Verified in
+        # .pre-commit-config.yaml before changing this.
+        print(
+            "[FAIL] [vacuous-gate] check_wordcount: no files given, so the ceiling "
+            "was enforced against nothing. The caller's glob matched no post; "
+            "check it before trusting this gate's silence.",
+            file=sys.stderr,
+        )
+        return 2
     rc = 0
     for arg in argv:
         rc |= check_file(Path(arg))

@@ -52,10 +52,6 @@ GATE_EXTRA = ("test_404.py",)
 # one must still be non-vacuous by its own test, and `test_no_stale_exemptions`
 # fails the build when an entry stops naming a real file.
 EXEMPT: dict[str, str] = {
-    # Takes its surface entirely from argv (pre-commit passes staged files) and
-    # has no repo-wide mode to run vacuously. Its zero-surface floor is asserted
-    # directly in scripts/test_check_wordcount.py.
-    "check_wordcount.py": "argv-only surface; floor asserted in its own suite",
     # Compares this repo against the dotfiles canonical clone, which does not
     # exist inside a tmp skeleton. Absence of the canonical is itself a hard
     # failure in that gate, so the empty-tree run proves nothing new.
