@@ -439,7 +439,7 @@ export async function onRequestPost(context) {
       // offset 500 was cut mid-token, the regex no longer matched what was left,
       // and the local part landed verbatim in a structured log. Measured on the
       // real helper, 8 of the 31 padding offsets from 470 to 500 leaked
-      // "harry.ng1982" into the log line; redact-then-slice leaks none of them.
+      // the local part into the log line; redact-then-slice leaks none of them.
       // The slice still bounds what we store, it just no longer decides what the
       // redactor can see.
       const detail = redactPii(await resp.text()).slice(0, 500);
