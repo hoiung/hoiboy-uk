@@ -229,6 +229,16 @@ MUTATIONS = [
         "scripts/test_agit_counter_contrast.py",
         id="story-field-advertises-a-ceiling-the-server-does-not-hold",
     ),
+    # Shrunk below the height of the chip it exists to hold, so the counter
+    # paints onto the last line of the story. The rendered proof lives in the
+    # pre-publish Chromium lane; this is the half that runs everywhere else.
+    pytest.param(
+        "content/community/asians-gingers-in-tech/index.md",
+        'textarea[name="feature"] { padding-bottom: 1.35rem;',
+        'textarea[name="feature"] { padding-bottom: .7rem;',
+        "scripts/test_agit_counter_contrast.py",
+        id="story-gutter-too-small-for-the-counter-it-holds",
+    ),
     # socials is routed through cleanLines() and is deliberately absent from
     # FIELD_CAPS, so a binding built only from FIELD_CAPS reports full coverage
     # with this pair unguarded.
