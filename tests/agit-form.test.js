@@ -68,15 +68,31 @@ test('storyLength: an astral emoji counts as its UTF-16 units, matching the serv
 // The shipped browser path, under jsdom (AC 1.2, AC 1.4, AC 1.6)
 // ----------------------------------------------------------------------
 
+// The story field is LIFTED from the shipped page rather than retyped here.
+// AC 1.0 removed this exact failure class for the helper - a hand-mirrored copy
+// lets the real markup and the tested markup drift apart while every test stays
+// green - and a hand-written fixture put it straight back for the markup half.
+// Stage 5 found it: the counter gained `hidden`, `aria-hidden` and a sibling
+// status region, and a retyped fixture would have carried none of them while
+// still reporting the counter fully covered.
+const STORY_FIELD = (() => {
+  const page = fs.readFileSync(
+    path.join(__dirname, '..', 'content', 'community', 'asians-gingers-in-tech', 'index.md'),
+    'utf8',
+  );
+  const block = page.match(
+    /<div class="agit-field">(?:(?!<\/div>)[\s\S])*id="agit-feature"[\s\S]*?<\/div>/,
+  );
+  assert.ok(block, 'the story field was not found in the shipped page markup');
+  return block[0];
+})();
+
 const PAGE = `<!doctype html><html><body>
   <div class="agit-form-wrap">
     <form method="POST" action="/api/contribute">
       <div class="agit-field"><input type="email" name="email" value="a@b.co"></div>
       <div class="agit-field"><input type="email" name="email_confirm" value="a@b.co"></div>
-      <div class="agit-field">
-        <textarea id="agit-feature" name="feature"></textarea>
-        <p class="agit-count is-short" aria-live="polite">0</p>
-      </div>
+      ${STORY_FIELD}
       <input type="hidden" name="cf-turnstile-response" value="turnstile-token">
       <div class="agit-field"><button type="submit">Send</button></div>
     </form>
@@ -220,4 +236,51 @@ test('the counter counts the way the submit gate does, on the same value', () =>
   assert.equal(ctx.counter.textContent, '1200');
   assert.ok(ctx.counter.classList.contains('is-met'), 'the counter says green');
   assert.equal(submit(ctx).defaultPrevented, false, 'so the submit must go through');
+});
+
+test('the counter ships hidden and only appears once the script has run', async () => {
+  // With JS dead the member would otherwise sit looking at a 0 that never moves
+  // while they type - a number that is wrong the moment they start. The element
+  // still ships in the markup (AC 1.3 needs it there); it is the script that
+  // makes it visible, so a stale or missing script shows nothing at all.
+  const dom = new JSDOM(PAGE, { runScripts: 'outside-only' });
+  const before = dom.window.document.querySelector('.agit-count');
+  assert.equal(before.hidden, true, 'the served markup must hide the counter');
+  assert.equal(before.textContent, '0', 'the 0 stays in the markup for AC 1.3');
+
+  dom.window.eval(SRC);
+  assert.equal(before.hidden, false, 'the script must reveal it on first render');
+});
+
+test('the counter itself is hidden from assistive tech, which reads the status region', async () => {
+  // A bare "412" announced with nothing saying what it counts is not a usable
+  // cue, and re-announcing it on every keystroke of a 1200-character minimum is
+  // a thousand interruptions. The visible chip is decorative; the words live in
+  // a separate region that settles after a pause.
+  const ctx = mount('');
+  assert.equal(ctx.counter.getAttribute('aria-hidden'), 'true');
+
+  const status = ctx.window.document.querySelector('#agit-count-status');
+  assert.ok(status, 'the status region must exist');
+  assert.equal(ctx.textarea.getAttribute('aria-describedby'), 'agit-count-status',
+    'the field must point at the region so the association is programmatic');
+
+  ctx.textarea.value = 'y'.repeat(412);
+  ctx.textarea.dispatchEvent(new ctx.window.Event('input', { bubbles: true }));
+  assert.equal(status.textContent, '', 'nothing is announced mid-keystroke');
+
+  await new Promise((resolve) => setTimeout(resolve, 900));
+  assert.match(status.textContent, /412 characters/);
+  assert.match(status.textContent, /Keep writing/);
+  assert.doesNotMatch(status.textContent, /\//, 'never a fraction, here either');
+  assert.doesNotMatch(status.textContent, /1200/, 'and never the target as a second number');
+});
+
+test('the status region says long enough once the minimum is met', async () => {
+  const ctx = mount('');
+  ctx.textarea.value = 'q'.repeat(STORY_MIN);
+  ctx.textarea.dispatchEvent(new ctx.window.Event('input', { bubbles: true }));
+  await new Promise((resolve) => setTimeout(resolve, 900));
+  assert.match(ctx.window.document.querySelector('#agit-count-status').textContent,
+    /1200 characters\. Long enough\./);
 });
