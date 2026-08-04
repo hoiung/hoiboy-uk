@@ -8,6 +8,31 @@
 (function () {
   "use strict";
 
+  // Minimum story length, in normalised characters. Three surfaces carry this
+  // number and must move together: the hint the member reads (index.md), this
+  // counter/submit gate, and the server floor (contribute.js FIELD_FLOORS.feature).
+  var STORY_MIN = 1200;
+
+  // Count the story the way the SERVER will, not the way the textarea does.
+  // Mirrors clean() in functions/api/contribute.js (control characters become a
+  // space, then trim). That mirroring is what makes a green counter a guarantee
+  // instead of a hint: the browser can never be the more lenient of the two, so
+  // nobody is told they are long enough and then rejected on submit.
+  function storyLength(value) {
+    return String(value == null ? "" : value)
+      .replace(/[\r\n\t\f\v\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/g, " ")
+      .trim().length;
+  }
+
+  // Test surface, declared BEFORE any DOM access so `require()` from node --test
+  // works in bare Node with no document. Under jsdom the module wrapper is
+  // absent, so the browser path below runs and the DOM tests drive shipped code
+  // rather than a hand-mirrored copy of it.
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = { storyLength: storyLength, STORY_MIN: STORY_MIN };
+  }
+  if (typeof document === "undefined") return;
+
   var form = document.querySelector(".agit-form-wrap form");
   if (!form) return;
 
