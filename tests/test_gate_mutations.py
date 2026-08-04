@@ -277,6 +277,13 @@ MUTATIONS = [
         "scripts/test_check_subscribe_placement.py",
         id="suppression-floor-is-aggregate-not-per-class",
     ),
+    pytest.param(
+        "scripts/check-exif.py",
+        '        if ctype == b"IEND":',
+        '        if ctype == b"IDAT" or ctype == b"IEND":',
+        "scripts/test_check_exif.py",
+        id="png-exif-after-idat-scores-clean",
+    ),
 ]
 
 
