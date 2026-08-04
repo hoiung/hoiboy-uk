@@ -150,6 +150,25 @@ EXEMPT_PATHS_CV: tuple[str, ...] = (
 # default-SKIP: it reads only inside <!-- iamhoi --> regions, so an ordinary
 # template is collected and then scanned for nothing. Measured on the first
 # consumer to wire a template root: 35 files collected, 0 scanned, 0 flagged.
+# WHY .js IS NOT HERE, recorded because it was proposed and rejected on evidence
+# (hoiboy-uk#56 Ralph escalation class sweep). The sweep observed correctly that
+# the em-dash guard covers functions/*.js on the stated ground that a Pages
+# Function "emits strings a READER sees", while this guard does not see the same
+# strings, and called the two guards inconsistent.
+#
+# Adding ".js" would NOT close that gap; it would open a new one. This guard is
+# marker-driven and default-SKIP: it reads only inside <!-- iamhoi --> regions,
+# and BOTH marker syntaxes are detected as a STANDALONE line (line.strip() == m,
+# see voice_rules.py). Neither `<!-- iamhoi -->` nor `# iamhoi` is valid
+# JavaScript on a line of its own, so no .js file can carry a region. Collecting
+# .js would therefore scan every one of them for nothing and report OK whatever
+# the copy said -- a gate that cannot fail, which is the exact defect class the
+# sweep was convened to remove.
+#
+# The coverage that DOES apply to those strings is the em-dash zero-tolerance
+# guard, which is whole-file and already scans functions/. Closing the rest of
+# the gap needs a JS-comment marker syntax in voice_rules.py, which is a change
+# to the marker model across every consumer, not a suffix edit here.
 SCAN_SUFFIXES: tuple[str, ...] = (".md", ".html")
 
 # Blog mode: default file selection (run by CI on the whole content/
@@ -778,6 +797,7 @@ def main() -> int:
     repo_root = detect_repo_root(Path(__file__).resolve())
     files_to_scan: list[Path] = []
 
+    unscannable: list[str] = []
     if args.paths:
         for arg in args.paths:
             p = Path(arg).resolve()
@@ -785,6 +805,23 @@ def main() -> int:
                 files_to_scan.extend(collect_scannable(p))
             elif p.exists() and p.suffix in SCAN_SUFFIXES:
                 files_to_scan.append(p)
+            elif p.exists():
+                # An explicitly-named file this guard cannot open used to be
+                # dropped in silence, and the run then printed "[OK] No files to
+                # scan" and exited 0. Asking "is this file voice-clean?" and
+                # being told OK, when the answer is "I did not look", is the same
+                # fail-open shape as a gate that skips what it cannot resolve.
+                #
+                # A caller passing a DIRECTORY is unaffected: an unscannable file
+                # inside it was never selected in the first place, which is the
+                # collector working as designed rather than a refusal.
+                #
+                # No hook can reach this: every consumer's check-voice-tells
+                # `files:` filter is .md (hoiboy-uk adds .html), surveyed across
+                # all five mirrors at the time of the change. It fires only on a
+                # hand-written or agent-written invocation, which is exactly the
+                # case that must not come back green.
+                unscannable.append(f"{arg} (suffix {p.suffix or 'none'!r})")
     else:
         if args.mode == "cv":
             for glob_pattern in (*WHOLE_FILE_SCAN_GLOBS_CV, *REGION_SCAN_GLOBS_CV):
@@ -798,6 +835,16 @@ def main() -> int:
                     files_to_scan.extend(collect_scannable(p))
                 elif p.exists():
                     files_to_scan.append(p)
+
+    if unscannable:
+        print(
+            "[ERROR] asked to scan file(s) this guard cannot read, so no verdict "
+            "was reached for them:\n  " + "\n  ".join(unscannable) +
+            f"\nScannable suffixes: {', '.join(SCAN_SUFFIXES)}. Passing them "
+            "silently would report OK for a file that was never opened.",
+            file=sys.stderr,
+        )
+        return 2
 
     # Cutoff-date filter (blog mode + check_only_new only).
     if args.mode == "blog" and args.check_only_new:
