@@ -80,7 +80,8 @@ function loadEndpoint() {
 
   const EXPOSE =
     '\n;({ onRequestPost, clean, EMAIL_RE, isDuplicateCode, KNOWN_CONSENT_VERSIONS,' +
-    ' FIELD_CAPS, MAX_BODY_BYTES, CHECK_INBOX_PATH, CONFIRMED_PATH, BREVO_DOI_ENDPOINT })';
+    ' FIELD_CAPS, MAX_BODY_BYTES, CHECK_INBOX_PATH, CONFIRMED_PATH, BREVO_DOI_ENDPOINT,' +
+    ' redactPii })';
 
   const mod = vm.runInContext(raw.replace(EXPORT_RE, '') + EXPOSE, context, {
     filename: ENDPOINT_PATH,
@@ -619,6 +620,103 @@ test('an address whose local part contains an apostrophe is fully redacted', asy
   assert.ok(
     joined.includes('[email-redacted]'),
     'the address must be redacted, not merely absent'
+  );
+});
+
+// The apostrophe fix above widened redactPii's local character class by one
+// character. The straddle fix before it reordered redact-and-truncate. Both
+// treated a SYMPTOM, and a third symptom was waiting: the class is still
+// strictly narrower than the class EMAIL_RE admits.
+//
+// EMAIL_RE is `/^[^\s@]+@[^\s@]+\.[^\s@]+$/` -- anything without a space or an
+// `@`. redactPii's local class is `[^\s"<>@,;:()]+`, which additionally excludes
+// `"` `<` `>` `,` `;` `:` `(` `)`. Every one of those is therefore ACCEPTED by
+// the endpoint and INVISIBLE to the redactor. When one sits immediately before
+// the `@`, the pattern cannot reach the `@` at all, so nothing matches and the
+// whole address is logged verbatim -- no truncation and no partial redaction
+// involved, which is why neither earlier fix caught it.
+//
+// A quoted local part is the shape a real user can actually produce, and it is
+// valid per RFC 5321 section 4.1.2. The address below is synthetic and uses an
+// RFC 2606 reserved domain.
+//
+// The fix is NOT a fourth widening. `protect(email)` registers the literal that
+// was accepted, and redactLine strips that literal from the serialised line, so
+// redaction no longer depends on the address matching any pattern at all.
+const QUOTED_EMAIL = `${String.fromCharCode(34)}patriley${String.fromCharCode(34)}@example.net`;
+
+test('an address the shape redactor cannot match is redacted by value', async () => {
+  // Guard the fixture: if EMAIL_RE ever stops accepting this, the endpoint would
+  // reject it at validation and the log assertions below would pass vacuously.
+  const harnessProbe = loadEndpoint();
+  assert.equal(
+    harnessProbe.mod.EMAIL_RE.test(QUOTED_EMAIL),
+    true,
+    'the probe address must be ACCEPTED by the endpoint, or this test proves nothing'
+  );
+
+  // ...and prove the shape redactor genuinely cannot handle it, which is the
+  // whole premise. If a future change makes redactPii match this, that is fine,
+  // but this test would no longer be covering the value-redaction path and must
+  // be re-pointed rather than left as a passing no-op.
+  assert.ok(
+    harnessProbe.mod.redactPii(QUOTED_EMAIL).includes('patriley'),
+    'redactPii now matches this address, so this test no longer exercises the ' +
+      'by-value path it exists to cover. Re-point it at a shape it still misses.'
+  );
+
+  const body = {
+    code: 'invalid_parameter',
+    message: `Attribute is invalid for contact ${QUOTED_EMAIL}`,
+  };
+  const { logs } = await submit({
+    fields: { email: QUOTED_EMAIL },
+    brevo: () => jsonResponse(400, body),
+  });
+  const joined = logs.join('\n');
+
+  assert.ok(
+    !joined.includes(QUOTED_EMAIL),
+    `the address appeared verbatim in a log line:\n${joined}`
+  );
+  assert.ok(
+    !joined.includes('patriley'),
+    `the local part survived into a log line. This is the leak: EMAIL_RE ` +
+      `accepted a character redactPii's class excludes, so the shape pattern ` +
+      `never matched and nothing was replaced:\n${joined}`
+  );
+  assert.ok(
+    joined.includes('[redacted]'),
+    'the address must be redacted by value, not merely absent'
+  );
+  assert.ok(
+    joined.includes(body.code),
+    'the upstream code must still survive; it is the diagnostic that remains'
+  );
+});
+
+test('the submitted address is stripped from EVERY log line, not just the captured body', async () => {
+  // redactPii was wired at exactly one capture point (the upstream error body),
+  // so any OTHER log line carrying a request-derived value bypassed it entirely.
+  // Redaction now happens where the line is written, so a log call that never
+  // touches an upstream response is covered too.
+  //
+  // `consent_version` is the vehicle: it is request-derived, it is logged by
+  // value on the unknown-version branch, and it never passes through redactPii.
+  const { logs } = await submit({
+    fields: { email: QUOTED_EMAIL, consent_version: QUOTED_EMAIL },
+  });
+  const joined = logs.join('\n');
+
+  assert.ok(
+    joined.includes('unknown consent version'),
+    `the unknown-consent-version branch must be the one that fired, or this ` +
+      `test is not exercising the bypass path:\n${joined}`
+  );
+  assert.ok(
+    !joined.includes('patriley'),
+    `a request-derived field carried the address into a log line that never ` +
+      `passes through the capture-point redactor:\n${joined}`
   );
 });
 
