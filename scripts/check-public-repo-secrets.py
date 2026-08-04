@@ -24,6 +24,7 @@ Usage:
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -239,6 +240,152 @@ PRIVATE_PATH_PATTERNS: List[Dict] = [
     _private_path(rf"OneDrive{_SEP}", "OneDrive path detected"),
 ]
 
+# ---------------------------------------------------------------------------
+# PII patterns (hoiboy-uk#56 escalation 2)
+#
+# Every category above this one is CREDENTIAL-shaped: a token prefix, a PEM
+# header, a `keyword=value` assignment, a filesystem path. Personal data was
+# never in the threat model, and the omission was not theoretical. On this repo
+# the operator's own email local-part was committed into two source comments,
+# and a full-tree `--require-public` scan of all 327 files printed
+# `PASS: No secrets detected`. A red-team sweep then injected a synthetic
+# address, phone number and postal address into seven registers (JS comment,
+# Python docstring, Markdown prose, JS string literal, TOML value, YAML value,
+# doc prose) across both scan modes: 14 of 14 injections passed clean, while a
+# `ghp_` token in the same file was caught — so the scanner was live, just
+# blind to this whole class.
+#
+# Detection is by SHAPE, suppression is by ALLOWLIST, and the default is BLOCK.
+# That ordering is the point: an address is structurally indistinguishable from
+# a permitted one (`hoiboyuk@gmail.com` and a personal gmail differ in no way a
+# regex can see), so the only thing that can separate them is an explicit,
+# reviewable per-repo list. Detect-then-allow fails closed on an address nobody
+# has vouched for, which is exactly the shape of the incident.
+_EMAIL_RE = re.compile(
+    r"(?<![A-Za-z0-9._%+'-])"
+    r"[A-Za-z0-9](?:[A-Za-z0-9._%+'-]*[A-Za-z0-9])?"
+    r"@"
+    r"(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+"
+    r"[A-Za-z]{2,}"
+    r"(?![A-Za-z0-9-])"
+)
+
+# Deliberately narrow, and narrowed AGAIN after measurement. A permissive
+# digit-run pattern flags version strings, ports, timestamps, row counts and
+# truncated hashes, and a gate that cries wolf gets switched off — which
+# protects nothing. The first draft of this pattern produced 1411 hits on this
+# repo, 1402 of them signed decimals like `+123.45` inside two generated chart
+# HTML files. The shape alone cannot separate those from a phone number, so the
+# length constraint is enforced in `_valid_phone` below rather than by piling
+# more alternation into the regex.
+_PHONE_RE = re.compile(
+    r"(?<![\w+])"
+    r"(?:"
+    r"\+\d[\d\s.()-]{8,18}\d"      # international, digit count checked below
+    r"|"
+    r"0(?:7|1|2)\d[\d\s.()-]{6,14}\d"  # UK mobile / geographic, ditto
+    r")"
+    r"(?![\w])"
+)
+
+
+def _valid_phone(value: str) -> bool:
+    """Is this digit run actually phone-shaped, by length and prefix?
+
+    E.164 caps a full number at 15 digits and no national plan is shorter than
+    10 with its country or trunk code. `+123.45` has four digits and is a
+    decimal; `+44 7700 900123` has twelve and is a phone number. Nothing about
+    the surrounding characters distinguishes them, so the digit count does.
+    """
+    digits = re.sub(r"\D", "", value)
+    if not 10 <= len(digits) <= 15:
+        return False
+    if value.lstrip().startswith("+"):
+        return True
+    # UK national form must be a real trunk prefix and exactly 11 digits.
+    return len(digits) == 11 and digits.startswith(("07", "01", "02"))
+
+# UK postcode, full form only (outward + inward). The outward-only form (`NW1`)
+# is too collision-prone to gate on.
+_POSTCODE_RE = re.compile(
+    r"(?<![A-Za-z0-9])"
+    r"[A-Z]{1,2}[0-9][A-Z0-9]?[ ]?[0-9][A-Z]{2}"
+    r"(?![A-Za-z0-9])"
+)
+
+# RFC 2606 / RFC 6761 reserved-for-documentation names. These exist precisely so
+# examples need no allowlist entry, and every SST3 test fixture already uses
+# them. Allowed in every repo, unconditionally.
+RESERVED_EMAIL_DOMAINS: frozenset = frozenset({
+    "example.com", "example.net", "example.org",
+})
+RESERVED_EMAIL_SUFFIXES: tuple = (
+    ".example", ".invalid", ".test", ".localhost",
+)
+
+PII_PATTERNS: List[Dict] = [
+    {
+        "kind": "email",
+        "pattern": _EMAIL_RE,
+        "message": "Email address detected",
+        "fix": (
+            "If this address is meant to be public, add it (or its domain as "
+            "`@domain.tld`) to .secret-pii-allowlist. If it is personal data, "
+            "remove it. Use an example.com/.net/.org address in tests and comments."
+        ),
+    },
+    {
+        "kind": "phone",
+        "pattern": _PHONE_RE,
+        "validate": _valid_phone,
+        "message": "Phone number detected",
+        "fix": (
+            "Remove it, or add the literal to .secret-pii-allowlist if it is a "
+            "published business number. Use the Ofcom drama range "
+            "(+44 7700 900xxx) in examples."
+        ),
+    },
+    {
+        "kind": "postcode",
+        "pattern": _POSTCODE_RE,
+        "message": "UK postcode detected",
+        "fix": (
+            "Remove it, or add the literal to .secret-pii-allowlist if it is a "
+            "published business address."
+        ),
+    },
+]
+
+
+def is_pii_allowlisted(value: str, kind: str, pii_allowlist: Set[str]) -> bool:
+    """Is this matched PII value explicitly permitted in this repo?
+
+    Email entries may be a whole domain (`@hoiboy.uk`) or an exact address.
+    Phone and postcode entries are exact literals, compared with separators
+    stripped so `+44 7700 900123` and `+447700900123` are the same entry.
+    """
+    lowered = value.lower()
+    if kind == "email":
+        domain = lowered.rpartition("@")[2]
+        if domain in RESERVED_EMAIL_DOMAINS:
+            return True
+        if domain.endswith(RESERVED_EMAIL_SUFFIXES):
+            return True
+        for entry in pii_allowlist:
+            entry = entry.lower()
+            if entry.startswith("@"):
+                if domain == entry[1:]:
+                    return True
+            elif entry == lowered:
+                return True
+        return False
+    normalised = re.sub(r"[\s.()-]", "", lowered)
+    for entry in pii_allowlist:
+        if re.sub(r"[\s.()-]", "", entry.lower()) == normalised:
+            return True
+    return False
+
+
 # Placeholder values that should NOT trigger GENERIC_SECRET findings
 PLACEHOLDER_PATTERNS: List[re.Pattern] = [
     re.compile(r"^your[-_]?\w+", re.IGNORECASE),
@@ -317,6 +464,11 @@ SCAN_EXTENSIONS: List[str] = [
     # Matching is case-folded at every consumer -- KEY.PEM is key.pem on the
     # case-insensitive filesystems this gate guards (Issue #561).
     ".pem", ".key", ".asc", ".p8", ".pk8",
+    # Tab-separated copy decks. On hoiboy-uk the five tracked `.tsv` files under
+    # scripts/social-cards/ are the literal text burned onto publicly-served
+    # 1200x630 PNGs, so anything pasted into a row ships as an image on the
+    # site. Without this suffix the guard never opened them (hoiboy-uk#56).
+    ".tsv",
 ]
 
 # Credential-bearing config files that carry NO scannable extension. A suffix
@@ -332,6 +484,11 @@ SCAN_FILENAMES: Set[str] = {
     ".htpasswd", ".gitconfig", ".terraformrc",
     ".bashrc", ".zshrc", ".profile", ".bash_profile",
     "dockerfile", "makefile", "procfile",
+    # Cloudflare Pages / Netlify conventions: extensionless, tracked, and copied
+    # BYTE-FOR-BYTE to the public site root at deploy. `should_scan_file` is a
+    # closed allowlist, so with no extension and no entry here they were skipped
+    # before any pattern ran -- not even the blocklist (hoiboy-uk#56).
+    "_headers", "_redirects",
 }
 
 # Families written as `<base>.<variant>`: `.env.local`, `.env.production`,
@@ -439,6 +596,45 @@ def _drop_git_ignored(scan_path: Path, candidates: List[Path]) -> List[Path]:
 def is_public_repo(repo_root: Path) -> bool:
     """Check if repo has a .public-repo marker file."""
     return (repo_root / ".public-repo").exists()
+
+
+_TOKEN_PREFIX = "sha256:"
+
+
+def _token_lines(lines: Set[str]) -> Set[str]:
+    """The opaque-token entries in a blocklist set."""
+    return {ln for ln in lines if ln.startswith(_TOKEN_PREFIX)}
+
+
+def _blocklist_has_tokens(lines: Set[str]) -> bool:
+    return bool(_token_lines(lines))
+
+
+def _resolve_hashes_path(repo_root: Path) -> Optional[Path]:
+    """Locate the canonical-only token->literal manifest, or None.
+
+    The original single candidate was `<repo_root>/SST3/scripts/`, which only
+    ever resolves inside the dotfiles clone itself. Every mirror -- including
+    the ones running this gate on the operator's dev machine, one directory
+    away from a dotfiles clone that HAS the manifest -- fell straight through
+    to degraded mode. The probe order below is explicit rather than clever:
+    an env override first (CI and unusual layouts), then the canonical
+    in-repo location, then the conventional sibling clone.
+    """
+    env = os.environ.get("SST3_BLOCKLIST_HASHES")
+    if env:
+        candidate = Path(env).expanduser()
+        return candidate if candidate.exists() else None
+    rel = Path("SST3") / "scripts" / ".secret-blocklist-hashes.json"
+    candidates = [
+        repo_root / rel,
+        repo_root.parent / "dotfiles" / rel,
+        Path.home() / "DevProjects" / "dotfiles" / rel,
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return None
 
 
 def _expand_hashed_tokens(lines: Set[str], hashes_path: Optional[Path]) -> Set[str]:
@@ -616,20 +812,73 @@ def is_file_exempt(file_path: Path) -> bool:
     return file_path.name in EXEMPT_FILENAMES
 
 
+def _path_matches_entry(file_str: str, allowed_file: str) -> bool:
+    """Does this scanned path correspond to this allowlist path entry?
+
+    Matching is on whole path SEGMENTS, anchored at the end. The old test was
+    `file_str.endswith(entry) or entry in file_str`, and the `in` half let an
+    entry travel: `scripts/import_aam_sql.py` also suppressed
+    `vendor/scripts/import_aam_sql.py.bak`, and any entry that happened to be a
+    substring of an unrelated path silenced that path too. An allowlist that
+    silently covers files nobody listed is indistinguishable from a shorter
+    allowlist plus a blind spot.
+    """
+    allowed = allowed_file.replace("\\", "/").strip("/")
+    if not allowed:
+        return False
+    scanned = file_str.replace("\\", "/").strip("/")
+    if scanned == allowed:
+        return True
+    return scanned.endswith("/" + allowed)
+
+
 def is_line_allowlisted(
     file_path: Path, line_num: int, allowlist: Set[str]
 ) -> bool:
-    """Check if a specific file or file:line is in the allowlist."""
+    """Check if a specific file, file:line, or file::CATEGORY is allowlisted.
+
+    Three entry forms:
+      path/to/file.py:128        one line of one file (preferred -- narrowest)
+      path/to/file.py::PII       one category, whole file
+      path/to/file.py            whole file, every category (widest -- avoid)
+
+    The `::CATEGORY` form exists because a bare path is a blunt instrument: the
+    four bare entries on this repo were each added to silence ONE self-reference
+    (a pattern string inside the scanner, a documented example path), and each
+    silently disabled all five categories for that whole file as a side effect.
+    A live token in such a file was reported clean.
+    """
     file_str = str(file_path).replace("\\", "/")
     for entry in allowlist:
+        if "::" in entry:
+            # Category-scoped; resolved per-finding by is_category_allowlisted,
+            # not here. Returning True at this point would widen it back to the
+            # whole-file suppression this form exists to avoid.
+            continue
         if ":" in entry:
             allowed_file, allowed_line = entry.rsplit(":", 1)
-            if (file_str.endswith(allowed_file) or allowed_file in file_str):
-                if allowed_line.isdigit() and int(allowed_line) == line_num:
+            if allowed_line.isdigit() and int(allowed_line) == line_num:
+                if _path_matches_entry(file_str, allowed_file):
                     return True
         else:
-            if file_str.endswith(entry) or entry in file_str:
+            if _path_matches_entry(file_str, entry):
                 return True
+    return False
+
+
+def is_category_allowlisted(
+    file_path: Path, category: str, allowlist: Set[str]
+) -> bool:
+    """Whole-file suppression scoped to a single finding category."""
+    file_str = str(file_path).replace("\\", "/")
+    for entry in allowlist:
+        if "::" not in entry:
+            continue
+        allowed_file, _, allowed_category = entry.partition("::")
+        if allowed_category.strip().upper() != category.upper():
+            continue
+        if _path_matches_entry(file_str, allowed_file):
+            return True
     return False
 
 
@@ -654,8 +903,17 @@ def scan_line(
     file_path: Path,
     blocklist: Set[str],
     allowlist: Set[str],
+    pii_allowlist: Set[str],
 ) -> List[Finding]:
-    """Scan a single line for all secret patterns. Returns findings."""
+    """Scan a single line for all secret patterns. Returns findings.
+
+    `pii_allowlist` is REQUIRED and has no default on purpose. A default would
+    let a caller that forgot to thread it through silently scan with an empty
+    allowlist (noisy but safe) or, worse, a future default of "allow all"
+    (silent and unsafe). Making it positional forces every call site to state
+    what it is scanning against, and a missed site is a TypeError at import
+    time rather than a gate that quietly stops covering a category.
+    """
     findings: List[Finding] = []
     stripped = line.strip()
 
@@ -668,8 +926,17 @@ def scan_line(
     if is_line_allowlisted(file_path, line_num, allowlist):
         return findings
 
+    # Categories switched off for this whole file by a `path::CATEGORY` entry.
+    # Computed once rather than per-pattern: the allowlist is small, but this
+    # runs per line of every scanned file.
+    suppressed = {
+        cat for cat in ("PLATFORM_TOKEN", "PRIVATE_KEY", "GENERIC_SECRET",
+                        "PRIVATE_PATH", "PII", "BLOCKLIST")
+        if is_category_allowlisted(file_path, cat, allowlist)
+    }
+
     # PLATFORM_TOKEN — highest confidence, check first
-    for pat in PLATFORM_TOKEN_PATTERNS:
+    for pat in [] if "PLATFORM_TOKEN" in suppressed else PLATFORM_TOKEN_PATTERNS:
         if pat["pattern"].search(line):
             findings.append(Finding(
                 line_num=line_num,
@@ -681,7 +948,7 @@ def scan_line(
             return findings  # One finding per line
 
     # PRIVATE_KEY
-    for pat in PRIVATE_KEY_PATTERNS:
+    for pat in [] if "PRIVATE_KEY" in suppressed else PRIVATE_KEY_PATTERNS:
         if pat["pattern"].search(line):
             findings.append(Finding(
                 line_num=line_num,
@@ -693,7 +960,7 @@ def scan_line(
             return findings
 
     # GENERIC_SECRET — with placeholder filtering + prose discriminator
-    for pat in GENERIC_SECRET_PATTERNS:
+    for pat in [] if "GENERIC_SECRET" in suppressed else GENERIC_SECRET_PATTERNS:
         if pat["pattern"].search(line):
             value = extract_generic_secret_value(line)
             if value and is_placeholder_value(value): continue
@@ -708,7 +975,7 @@ def scan_line(
             return findings
 
     # PRIVATE_PATH
-    for pat in PRIVATE_PATH_PATTERNS:
+    for pat in [] if "PRIVATE_PATH" in suppressed else PRIVATE_PATH_PATTERNS:
         if pat["pattern"].search(line):
             findings.append(Finding(
                 line_num=line_num,
@@ -719,9 +986,30 @@ def scan_line(
             ))
             return findings
 
+    # PII — shape-detected, allowlist-suppressed, default BLOCK.
+    # Runs after the credential categories (a line carrying both is reported as
+    # the higher-confidence credential finding) and before BLOCKLIST, whose
+    # curated literals are a strict subset of what shape detection covers.
+    for pat in [] if "PII" in suppressed else PII_PATTERNS:
+        for match in pat["pattern"].finditer(line):
+            value = match.group(0)
+            validate = pat.get("validate")
+            if validate and not validate(value):
+                continue
+            if is_pii_allowlisted(value, pat["kind"], pii_allowlist):
+                continue
+            findings.append(Finding(
+                line_num=line_num,
+                line=stripped,
+                category="PII",
+                message=pat["message"],
+                fix=pat["fix"],
+            ))
+            return findings
+
     # BLOCKLIST — case-insensitive substring match
     line_lower = line.lower()
-    for term in blocklist:
+    for term in [] if "BLOCKLIST" in suppressed else blocklist:
         if term.lower() in line_lower:
             findings.append(Finding(
                 line_num=line_num,
@@ -739,6 +1027,7 @@ def scan_file(
     file_path: Path,
     blocklist: Set[str],
     allowlist: Set[str],
+    pii_allowlist: Set[str],
 ) -> List[Finding]:
     """Scan a single file for secrets. Returns all findings."""
     findings: List[Finding] = []
@@ -752,7 +1041,9 @@ def scan_file(
     try:
         with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
             for line_num, line in enumerate(f, start=1):
-                line_findings = scan_line(line, line_num, file_path, blocklist, allowlist)
+                line_findings = scan_line(
+                    line, line_num, file_path, blocklist, allowlist, pii_allowlist
+                )
                 findings.extend(line_findings)
     except OSError as e:
         print(f"Warning: Could not read {file_path}: {e}", file=sys.stderr)
@@ -772,8 +1063,22 @@ def get_staged_files_filtered() -> List[str]:
 def report_findings(
     all_findings: Dict[Path, List[Finding]],
     scan_root: Path,
+    show_evidence: bool = False,
 ) -> int:
-    """Print findings report and return total count."""
+    """Print findings report and return total count.
+
+    Evidence is WITHHELD by default. The two text-scanning lanes
+    (--scan-issue-body, --scan-commit-messages) were written under an explicit
+    rule -- never echo matched content, because a GitHub Actions log on a public
+    repo is world-readable and printing the match amplifies the very leak the
+    gate just caught. That rule was never extended to this lane, which is the
+    one `ci.yml` actually runs on every push. So at the exact moment the gate
+    worked, it republished the secret to a public log.
+
+    Category, file and line NUMBER are always printed -- enough to find and fix
+    the line locally. `--show-evidence` restores the excerpt for a local
+    terminal; CI must never pass it.
+    """
     total = sum(len(f) for f in all_findings.values())
 
     print()
@@ -790,12 +1095,28 @@ def report_findings(
             rel_path = file_path
 
         for finding in findings:
-            display_line = finding.line[:80] + ("..." if len(finding.line) > 80 else "")
-            print(f"[{finding.category}] {finding.message}")
+            # `message` interpolates the blocked term for BLOCKLIST findings, so
+            # it is withheld alongside the line excerpt -- printing "Blocked term
+            # from .secret-blocklist: <term>" leaks the term just as surely as
+            # printing the source line does.
+            headline = finding.message if show_evidence else finding.category
+            print(f"[{finding.category}] {headline}")
             print(f"  File: {rel_path}")
-            print(f"  Line {finding.line_num}: {display_line}")
+            if show_evidence:
+                display_line = finding.line[:80] + ("..." if len(finding.line) > 80 else "")
+                print(f"  Line {finding.line_num}: {display_line}")
+            else:
+                print(f"  Line {finding.line_num}: [evidence withheld]")
             print(f"  Fix: {finding.fix}")
             print()
+
+    if not show_evidence:
+        print(
+            "  Matched content withheld: this report may be written to a "
+            "world-readable CI log. Re-run locally with --show-evidence to see "
+            "the matched lines."
+        )
+        print()
 
     print("-" * 65)
     print(f"  {total} violation(s) found. Commit blocked.")
@@ -817,12 +1138,15 @@ def scan_text_content(
     source_label: str,
     blocklist: Set[str],
     allowlist: Set[str],
+    pii_allowlist: Set[str],
 ) -> List[Finding]:
     """Scan arbitrary text content (issue body, commit message, etc.) line-by-line."""
     findings: List[Finding] = []
     synthetic_path = Path(source_label)
     for line_num, line in enumerate(text.splitlines(), start=1):
-        line_findings = scan_line(line, line_num, synthetic_path, blocklist, allowlist)
+        line_findings = scan_line(
+            line, line_num, synthetic_path, blocklist, allowlist, pii_allowlist
+        )
         findings.extend(line_findings)
     return findings
 
@@ -930,6 +1254,26 @@ def main() -> int:
         help="Starting commit SHA for --scan-commit-messages mode (exclusive).",
     )
     parser.add_argument(
+        "--allow-degraded-blocklist",
+        action="store_true",
+        help=(
+            "Permit opaque .secret-blocklist tokens to go unexpanded when the "
+            "hashes manifest is unreachable. Only correct in a published public "
+            "mirror, which cannot hold the operator-private mapping by design. "
+            "Anywhere else this hides a total collapse of token coverage."
+        ),
+    )
+    parser.add_argument(
+        "--show-evidence",
+        action="store_true",
+        help=(
+            "Print the matched line excerpt and the matched term in the findings "
+            "report. Safe in a local terminal; NEVER pass it in CI on a public "
+            "repo, where the Actions log is world-readable and the report would "
+            "republish the very content it just blocked."
+        ),
+    )
+    parser.add_argument(
         "--require-public",
         action="store_true",
         help=(
@@ -1013,11 +1357,40 @@ def main() -> int:
     # business identifiers in mirror content. In the public-mirror clone where
     # the mapping is absent, the scanner falls back to verbatim token matching.
     blocklist = load_file_set(repo_root / ".secret-blocklist")
-    hashes_path = repo_root / "SST3" / "scripts" / ".secret-blocklist-hashes.json"
+    hashes_path = _resolve_hashes_path(repo_root)
+    if _blocklist_has_tokens(blocklist) and hashes_path is None:
+        # Degraded mode used to be silent: tokens stayed unexpanded, every
+        # literal they cover went unmatched, and the run still printed
+        # `PASS: No secrets detected`. On this repo that was not a corner case
+        # but the ONLY mode -- the manifest was looked for at
+        # `<repo>/SST3/scripts/`, a directory that exists in dotfiles and in no
+        # mirror -- so the whole token section of .secret-blocklist had been
+        # inert since the day it was written. A gate whose coverage silently
+        # collapses to zero is the exact class this Issue exists to close.
+        if not args.allow_degraded_blocklist:
+            print(
+                "[FAIL] [vacuous-gate] check-public-repo-secrets: "
+                f"{len(_token_lines(blocklist))} opaque token(s) in "
+                f"{repo_root}/.secret-blocklist could not be expanded because the "
+                "hashes manifest was not found. Every literal those tokens cover "
+                "is therefore UNSCANNED and a clean result here would not be "
+                "evidence. Set SST3_BLOCKLIST_HASHES to the manifest path, or "
+                "pass --allow-degraded-blocklist if this clone genuinely cannot "
+                "hold the mapping (a published public mirror), which downgrades "
+                "token coverage to verbatim-reference matching only.",
+                file=sys.stderr,
+            )
+            return 2
+        print(
+            f"[DEGRADED] check-public-repo-secrets: {len(_token_lines(blocklist))} "
+            "opaque token(s) unexpanded (no hashes manifest); token coverage is "
+            "verbatim-reference matching only."
+        )
     blocklist = _expand_hashed_tokens(blocklist, hashes_path)
 
     allowlist_path = Path(args.allowlist) if args.allowlist else repo_root / ".secret-allowlist"
     allowlist = load_file_set(allowlist_path)
+    pii_allowlist = load_file_set(repo_root / ".secret-pii-allowlist")
 
     # --scan-issue-body mode: fetch issue body + comments, scan text content.
     # Design rule: NEVER print matched content to stdout (would amplify leak
@@ -1068,7 +1441,9 @@ def main() -> int:
             # transferred issue. Fail loud (Fail Fast); do NOT skip.
             print(f"Error: gh CLI not available, cannot scan issue #{args.issue_number}: {e}", file=sys.stderr)
             return 1
-        findings = scan_text_content(body_text, f"{repo}#{args.issue_number}", blocklist, allowlist)
+        findings = scan_text_content(
+            body_text, f"{repo}#{args.issue_number}", blocklist, allowlist, pii_allowlist
+        )
         if findings:
             # Print line numbers + categories ONLY; never echo the matched content.
             print(f"FAIL: {len(findings)} secret-blocklist match(es) in {repo}#{args.issue_number}")
@@ -1091,7 +1466,7 @@ def main() -> int:
             return 1
         total_findings = 0
         for sha, message in commits:
-            findings = scan_text_content(message, sha, blocklist, allowlist)
+            findings = scan_text_content(message, sha, blocklist, allowlist, pii_allowlist)
             if findings:
                 total_findings += len(findings)
                 print(f"FAIL: {len(findings)} secret-blocklist match(es) in commit {sha[:12]}")
@@ -1144,7 +1519,7 @@ def main() -> int:
     for file_path in files_to_scan:
         if needs_ignore_check and should_ignore_path(file_path, IGNORE_PATTERNS):
             continue
-        findings = scan_file(file_path, blocklist, allowlist)
+        findings = scan_file(file_path, blocklist, allowlist, pii_allowlist)
         if findings:
             all_findings[file_path] = findings
 
@@ -1152,7 +1527,7 @@ def main() -> int:
 
     # Report
     if all_findings:
-        total = report_findings(all_findings, scan_path.resolve())
+        total = report_findings(all_findings, scan_path.resolve(), args.show_evidence)
         log_event(
             "check-public-repo-secrets",
             "violations_found",
