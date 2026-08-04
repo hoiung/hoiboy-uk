@@ -19,6 +19,8 @@ I run it as a conversation, not a lecture. I want the room talking. How are your
 
 I am not there to sell you my services. This session is focused on sharing some of my learnings of using AI and what I felt made me an effective user. I am happy for you to borrow some of these ideas and concepts for your own workflow.
 
+{{< zoom-image src="talk-brief.png" alt="One-page brief of the talk: 45 minutes plus 15 of Q&A at your office, free with no strings, not a pitch. Five parts: the demo trap, what AI really is, what I built and what broke, the harness, and what actually works." title="The whole talk on one page" >}}
+
 ## How it works
 
 1. **Book a 20-minute call.** That is the only step. We agree some dates and where your office is in London.
