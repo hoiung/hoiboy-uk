@@ -163,30 +163,49 @@ def _is_noindex_value(value: str) -> bool:
     return False
 
 
-def parse_noindex_globs(headers_path: Path) -> list[str]:
-    """Path globs that static/_headers marks noindex (X-Robots-Tag: noindex|none)."""
+def parse_header_blocks(headers_path: Path) -> list[tuple[str, dict[str, str]]]:
+    """static/_headers as [(path-glob, {lowercased header: value})], in file order.
+
+    The block-scanning primitive every consumer of this file shares. It exists
+    because test_404.py's docstring records what happens otherwise: a second,
+    hand-rolled regex parser that required the directive to sit IMMEDIATELY
+    after the path line, which is not how Cloudflare's `_headers` works and
+    would have false-FAILED on a pure reordering. One file, one parser -- so
+    when hoiboy-uk#57 needed to read Cache-Control rather than X-Robots-Tag,
+    the block loop was generalised here instead of being written a third time.
+
+    Blocks are returned rather than merged into a dict because Cloudflare
+    permits the same glob more than once and JOINS same-name headers across
+    matching rules; collapsing them here would quietly hide that.
+
+    utf-8-sig, not utf-8: a leading BOM makes the first line start with U+FEFF
+    rather than "/", so the first block's path line is not recognised and its
+    rule is dropped silently. The reachable path is mundane - alphabetise the
+    blocks in this file (`/404*` sorts first) and save from any BOM-emitting
+    editor on Windows - and it costs the 404 page its noindex with every gate
+    still green (blog-priv#64, Ralph round 6).
+    """
     if not headers_path.exists():
         return []
-    globs: list[str] = []
-    current: str | None = None
-    # utf-8-sig, not utf-8: a leading BOM makes the first line start with U+FEFF
-    # rather than "/", so the first block's path line is not recognised and its
-    # rule is dropped silently. The reachable path is mundane - alphabetise the
-    # blocks in this file (`/404*` sorts first) and save from any BOM-emitting
-    # editor on Windows - and it costs the 404 page its noindex with every gate
-    # still green (blog-priv#64, Ralph round 6).
+    blocks: list[tuple[str, dict[str, str]]] = []
     for raw in headers_path.read_text(encoding="utf-8-sig").splitlines():
         if not raw.strip() or raw.lstrip().startswith("#"):
             continue
         if raw.startswith("/"):                      # a path-glob line
-            current = raw.strip()
+            blocks.append((raw.strip(), {}))
             continue
         header, sep, value = raw.partition(":")
-        if current and sep and header.strip().lower() == "x-robots-tag" \
-                and _is_noindex_value(value):
-            globs.append(current)
-            current = None                           # one match per block is enough
-    return globs
+        if blocks and sep:
+            blocks[-1][1][header.strip().lower()] = value.strip()
+    return blocks
+
+
+def parse_noindex_globs(headers_path: Path) -> list[str]:
+    """Path globs that static/_headers marks noindex (X-Robots-Tag: noindex|none)."""
+    return [
+        glob for glob, directives in parse_header_blocks(headers_path)
+        if _is_noindex_value(directives.get("x-robots-tag", ""))
+    ]
 
 
 def _url_matches(url: str, glob: str) -> bool:
