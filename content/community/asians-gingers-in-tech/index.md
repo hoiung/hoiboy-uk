@@ -142,7 +142,28 @@ Before you fill it in, have a quick read of the <a href="/legal/agit-story-guide
    #141414 needs >= 0.206479, so the feasible set is empty and the best any one
    colour reaches is 4.193:1. Backgrounds are assets/css/main.css --bg.
    Gate: scripts/test_agit_counter_contrast.py (parses every colour below). */
-.agit-form-wrap .agit-count { font-size: .9em; font-weight: 600; margin: .35rem 0 0; text-align: right; }
+/* The counter sits INSIDE the story box's bottom-right corner rather than on a
+   line of its own beneath it.
+
+   It carries its own backdrop rather than relying on the textarea's padding to
+   keep clear of the text. Bottom padding only reserves space at the END of the
+   content, so once a long story scrolls, the line showing at the bottom edge is
+   mid-text and the number lands on top of it. Rendered and caught: a 1250
+   character story put the green count straight through a row of characters. The
+   backdrop composites the page background with the same grey wash the field
+   uses, so it reads as part of the box at any scroll position, and
+   pointer-events stay off so the resize grip underneath still works.
+
+   width: fit-content plus margin-left: auto keeps the backdrop hugging the
+   number instead of banding the full width of the field. */
+.agit-form-wrap .agit-count {
+  font-size: .75em; font-weight: 600; line-height: 1.2;
+  width: fit-content; margin: -1.75rem .7rem 0 auto;
+  padding: .1rem .35rem; border-radius: 4px;
+  position: relative; pointer-events: none;
+  background-color: var(--bg);
+  background-image: linear-gradient(rgba(128,128,128,.08), rgba(128,128,128,.08));
+}
 .agit-form-wrap .agit-count.is-short { color: #b3261e; }
 .agit-form-wrap .agit-count.is-met { color: #166534; }
 .agit-form-wrap .agit-notice { color: #b3261e; font-weight: 600; margin: 0 0 1rem; }
