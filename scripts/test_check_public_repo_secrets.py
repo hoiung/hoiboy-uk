@@ -105,6 +105,85 @@ class TestPlantedSecretsAreFound:
         )
 
 
+class TestCoverageFloor:
+    """A scan that opened no file may not report "no secrets detected".
+
+    Named in tests/test_gate_vacuity.py's EXEMPT entry, which is why the class
+    name is load-bearing: that harness cannot build an empty tree for this gate
+    (its skeleton copies scripts/, which is this gate's own scan surface), so
+    these stand in its place and drive the real main() instead.
+    """
+
+    def _repo(self, tmp_path, public: bool):
+        """A real git repo, because the gate resolves its root from one.
+
+        `main()` takes repo_root from `get_repo_root()` -- the git toplevel of
+        the CWD -- and only the SCAN path from argv. An in-process call from
+        the test session therefore reads THIS repo's `.public-repo` no matter
+        what path is passed, and the first version of these tests did exactly
+        that: `public=False` still resolved to a public repo and the assertions
+        measured the wrong tree. Initialising a git repo and running inside it
+        is what makes the marker under test the one the gate actually reads.
+        """
+        subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+        if public:
+            (tmp_path / ".public-repo").write_text("", encoding="utf-8")
+        return tmp_path
+
+    @staticmethod
+    def _run(tmp_path, *argv: str) -> subprocess.CompletedProcess:
+        """Drive the real entry point as a real process, from inside the repo.
+
+        A subprocess rather than an in-process call so CWD (and therefore
+        `get_repo_root()`) is genuinely the tree under test, and so the exit
+        code asserted is the one a caller actually receives.
+        """
+        return subprocess.run(
+            [sys.executable, str(SCRIPTS / "check-public-repo-secrets.py"), *argv],
+            cwd=tmp_path, capture_output=True, text=True, timeout=120,
+        )
+
+    def test_empty_public_repo_fails_rather_than_passing_clean(self, tmp_path):
+        """The defect: 'PASS: No secrets detected' over zero collected files."""
+        self._repo(tmp_path, public=True)
+        r = self._run(tmp_path, ".")
+        assert r.returncode == 2, (
+            f"a public repo with no scannable file scored {r.returncode}; "
+            f"'no secrets' was true of nothing scanned:\n{r.stdout}{r.stderr}"
+        )
+        assert "vacuous-gate" in r.stderr
+
+    def test_scan_with_files_still_passes(self, tmp_path):
+        """Contrast case, so the floor above cannot pass by failing everything."""
+        self._repo(tmp_path, public=True)
+        (tmp_path / "clean.py").write_text("x = 1\n", encoding="utf-8")
+        r = self._run(tmp_path, ".")
+        assert r.returncode == 0, f"a clean public repo must pass: {r.stderr}"
+        assert "1 file(s) scanned" in r.stdout, (
+            "the passing message must carry the count; a bare PASS is what made "
+            "the empty-scan case unreadable in a green log"
+        )
+
+    def test_require_public_fails_when_marker_missing(self, tmp_path):
+        """Deleting .public-repo must not silently retire the scan."""
+        self._repo(tmp_path, public=False)
+        (tmp_path / "clean.py").write_text("x = 1\n", encoding="utf-8")
+        r = self._run(tmp_path, ".", "--require-public")
+        assert r.returncode == 2, (
+            f"missing marker under --require-public must fail, got "
+            f"{r.returncode}:\n{r.stdout}{r.stderr}")
+        assert ".public-repo does not exist" in r.stderr
+
+    def test_private_repo_skip_is_announced(self, tmp_path):
+        """A silent exit 0 is indistinguishable from a completed clean scan."""
+        self._repo(tmp_path, public=False)
+        r = self._run(tmp_path, ".")
+        assert r.returncode == 0, f"a private repo is a no-op, not a failure: {r.stderr}"
+        assert "[SKIP]" in r.stdout and "nothing scanned" in r.stdout, (
+            f"the no-op must say so; got stdout={r.stdout!r}"
+        )
+
+
 class TestGitIgnoredFilesAreDropped:
     """A directory scan walks the filesystem, so it reaches gitignored files.
 

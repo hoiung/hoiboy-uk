@@ -25,7 +25,11 @@ jobs:
           submodules: false
 
       - name: Secret detection (blocking)
-        run: python3 scripts/check-public-repo-secrets.py .
+        # --require-public: hoiboy-uk IS a public repo, so a missing
+        # .public-repo marker means the marker was lost, not that the repo
+        # went private. Without this the gate would exit 0 in silence and
+        # the leak scan would retire itself with CI still green.
+        run: python3 scripts/check-public-repo-secrets.py . --require-public
 
       - name: Commit-message secret scan — push events (blocking)
         if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
@@ -313,7 +317,11 @@ jobs:
           fi
 
       - name: Social-card guard (rendered og:image — template-regression backstop)
-        run: python3 scripts/check_social_cards.py --built public
+        # --require-trails: this job built the tree in an earlier step, so a
+        # missing trail.json means the build is stale, not that this is a
+        # fixture. Without it the rendered og:image tier silently downgrades
+        # to a source-only run and injected template regressions walk through.
+        run: python3 scripts/check_social_cards.py --built public --require-trails
 
       # Reads the BUILT tree. The suppression predicate in footer.html reaches
       # every page kind through the single shared shell in baseof.html, so a
@@ -515,6 +523,16 @@ jobs:
       # ephemeral CI checkout and is asserted clean by its own last test.
       - name: Gate mutation tests (guards must fail when their defect returns)
         run: python3 -m pytest tests/test_gate_mutations.py -q
+
+      # The companion to the step above, asking the opposite question. Mutation
+      # tests prove a guard fires when its defect RETURNS; this proves a guard
+      # cannot report success when it examined NOTHING. #56 shipped eleven
+      # instances of the second class -- a gate printing a confident OK over a
+      # surface set that had silently shrunk to zero -- and each individual fix
+      # left the class alive on a surface it had not enumerated. Enrolment is by
+      # existence, so a gate added later is covered without anyone remembering.
+      - name: Gate vacuity tests (guards must fail when they examined nothing)
+        run: python3 -m pytest tests/test_gate_vacuity.py -q
 
       - name: Markdown lint
         uses: DavidAnson/markdownlint-cli2-action@v23
