@@ -14,13 +14,19 @@ existed. The instances differ only in HOW the set shrank:
   enumeration returned nothing   `if not argv: return 0` (check_wordcount)
                                  `git ls-files` in a tree with no images (check-exif)
                                  an empty params.toml (check_config_traceability)
-  a declared input was absent    a missing SCAN_PATHS directory swallowed by
-                                 `2>/dev/null || true` (check_emdash_zero_tolerance)
-                                 a nonexistent path matching no if/elif branch
-                                 (check-ai-writing-tells)
+  a declared input was absent    a nonexistent path matching no if/elif branch
+                                 (check-ai-writing-tells, check-iamhoi-wrapping)
   a surface was never opened     1 of 18 RSS feeds (check_noindex_frontmatter)
   a precondition disarmed a tier absent trail.json (check_social_cards)
   an error path returned clean   an unparseable image (check-exif)
+
+This list describes the CLASS, not a closure report. Two entries were still live
+when it was first written and were closed later, after Ralph Tier 2 caught the
+docstring claiming otherwise: the empty-params.toml case
+(check_config_traceability) and a missing SCAN_PATHS directory swallowed by
+`2>/dev/null || true` (check_emdash_zero_tolerance.sh, which the .py-only
+enrolment glob did not even reach). A module that documents a defect class is
+the worst place to overstate which instances are shut.
 
 Each was fixed on its own terms, at its own granularity -- per rule, per class,
 per tree, per format. None of those floors is the surface that matters, which

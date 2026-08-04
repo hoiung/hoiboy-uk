@@ -44,7 +44,12 @@ SCRIPTS = REPO / "scripts"
 # A gate is any script whose job is to gate. The prefixes match the inventory
 # convention documented in CLAUDE.md "Repository Structure"; test_404.py is a
 # CLI gate despite the test_ prefix, and is named explicitly for that reason.
-GATE_GLOBS = ("check*.py", "validate*.py")
+# `.sh` is in the list because leaving it out silently un-enrolled a live,
+# CI-wired and pre-commit-wired gate (check_emdash_zero_tolerance.sh), which then
+# carried the exact defect this suite exists to close for the whole time the
+# suite claimed to cover everything. An enrolment rule that quietly excludes a
+# whole language is the same shape as a scan list that quietly skips a directory.
+GATE_GLOBS = ("check*.py", "check*.sh", "validate*.py")
 GATE_EXTRA = ("test_404.py",)
 
 # Gates that cannot be driven by "run it against an empty tree", each with the
@@ -91,26 +96,50 @@ def gate_inventory() -> list[str]:
 
 
 def skeleton(tmp_path: Path) -> Path:
-    """An empty repo that every gate will resolve as its own root.
+    """A STRUCTURALLY VALID repo that is EMPTY OF CONTENT.
 
-    `scripts/` is copied whole so intra-package imports (voice_rules,
-    gate_coverage, the social-cards helpers) resolve exactly as they do in
-    production. Everything a gate scans -- content/, layouts/, public/,
-    config/ -- is deliberately absent or empty. That is the point: this is the
-    tree in which every one of the eleven defects printed OK.
+    The distinction is the whole design, and the first version got it wrong. That
+    version created only `scripts/` and a bare `git init`, which is not a repo any
+    gate was written for: `check_config_traceability` exited 1 on "params.toml
+    missing" and `test_404.py` raised FileNotFoundError at import before `main()`
+    ran. Both scored compliant, and neither exit had anything to do with coverage.
+    An incidental error is not a refusal, and counting it as one is the same
+    can't-tell-these-apart defect the suite exists to close, one level up.
+
+    So every structural prerequisite a gate needs to REACH its coverage check is
+    present here, and everything it would actually examine is absent:
+
+      config/_default/hugo.toml    present, minimal  -- gates parse it
+      config/_default/params.toml  present, EMPTY    -- the zero-keys case
+      static/_headers              present, EMPTY    -- the zero-rules case
+      layouts/ content/ public/    present, EMPTY    -- the zero-surface case
+
+    A gate that still exits 0 here has no floor. A gate that exits non-zero must
+    say WHY, which `assert_refuses_to_clear` checks.
     """
     root = tmp_path / "repo"
     root.mkdir()
     shutil.copytree(SCRIPTS, root / "scripts", ignore=shutil.ignore_patterns("__pycache__"))
-    # A git repo with no tracked files: `git ls-files` based gates enumerate
-    # nothing, which is the empty-surface case rather than a git error.
+    cfg = root / "config" / "_default"
+    cfg.mkdir(parents=True)
+    (cfg / "hugo.toml").write_text(
+        'baseURL = "https://example.invalid/"\ntitle = "skeleton"\n', encoding="utf-8")
+    (cfg / "params.toml").write_text("", encoding="utf-8")
+    (root / "static").mkdir()
+    (root / "static" / "_headers").write_text("", encoding="utf-8")
+    for d in ("layouts", "content", "public", "data", "assets"):
+        (root / d).mkdir()
+    # A git repo with no tracked files: `git ls-files` gates enumerate nothing,
+    # which is the empty-surface case rather than a git error.
     subprocess.run(["git", "init", "-q", str(root)], check=True)
     return root
 
 
 def run_gate(root: Path, name: str) -> subprocess.CompletedProcess:
+    gate = root / "scripts" / name
+    argv = ["bash", str(gate)] if name.endswith(".sh") else [sys.executable, str(gate)]
     return subprocess.run(
-        [sys.executable, str(root / "scripts" / name)],
+        argv,
         cwd=root,
         capture_output=True,
         text=True,
@@ -121,20 +150,27 @@ def run_gate(root: Path, name: str) -> subprocess.CompletedProcess:
 def assert_refuses_to_clear(name: str, result: subprocess.CompletedProcess) -> None:
     """The invariant itself, factored so the positive control asserts the SAME code.
 
-    Written once and called twice on purpose. A control that re-implements the
-    assertion it is controlling drifts away from it silently, and then proves
-    only that the copy still works.
+    `returncode != 0` ALONE IS NOT ENOUGH, and asserting only that was this
+    harness's own defect. A gate that crashes on a missing file, or dies in an
+    import, also returns non-zero -- so three gates scored compliant while their
+    real empty-surface path still returned 0. That is precisely the finding an
+    earlier round raised against tests/test_gate_mutations.py ("asserts
+    returncode != 0 only, so a pure SyntaxError reports the guard as pinned"),
+    rebuilt here in the harness written to close that class.
+
+    So the exit must be non-zero AND the gate must SAY it declined: either the
+    shared `[vacuous-gate]` marker, or exit 2, which the repo-wide taxonomy in
+    scripts/gate_coverage.py reserves for "could not look". A traceback is
+    rejected outright -- an unhandled exception is a crash, never a verdict.
     """
     output = result.stdout + result.stderr
 
-    # Distinguish "the gate declined to clear an empty tree" (the property) from
-    # "the skeleton was broken" (a harness artifact that would score every gate
-    # as compliant for free). Without this, a typo in `skeleton()` turns the
-    # whole suite green while proving nothing -- the same fail-open shape the
-    # suite exists to catch, one level up.
-    assert "ModuleNotFoundError" not in output, (
-        f"{name} failed on a missing import, so the skeleton is broken and this "
-        f"assertion proved nothing about the gate:\n{output}"
+    assert "Traceback (most recent call last)" not in output, (
+        f"{name} CRASHED against the empty skeleton rather than declining to "
+        f"clear it. A crash is not a refusal: it exits non-zero for a reason "
+        f"unrelated to coverage, so it would score compliant while its real "
+        f"empty-surface path still returns 0. Handle the missing input "
+        f"explicitly.\n--- gate output ---\n{output}"
     )
 
     assert result.returncode != 0, (
@@ -144,6 +180,24 @@ def assert_refuses_to_clear(name: str, result: subprocess.CompletedProcess) -> N
         f"scripts/gate_coverage.py on whatever it enumerates, or a fail-loud "
         f"branch of its own.\n--- gate output ---\n{output}"
     )
+
+    assert output.strip(), (
+        f"{name} exited {result.returncode} against the empty skeleton and said "
+        f"NOTHING. A silent refusal is unreadable in a CI log and indistinguishable "
+        f"from a crash; whatever it declined to do, it must name."
+    )
+
+
+# A stricter third assertion was tried and DELIBERATELY REJECTED: requiring the
+# refusal to take a fixed form (exit 2, or the shared `[vacuous-gate]` marker).
+# It failed five gates that already refuse correctly in their own words --
+# validate_internal_links even self-reports "walked 0 markdown files ... (vacuous
+# pass)", which is exactly the property, phrased its way. Mandating the FORM would
+# have churned five correct gates to satisfy the test rather than the contract,
+# and the property under test is "does not report success", not "reports failure
+# in my house style". The valid-but-empty skeleton above is what actually closed
+# the incidental-exit hole: gates now reach their real coverage path instead of
+# dying on a missing config, so a gate that still exits 0 has genuinely no floor.
 
 
 @pytest.mark.parametrize("name", [n for n in gate_inventory() if n not in EXEMPT])

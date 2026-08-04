@@ -67,6 +67,25 @@ set -euo pipefail
 EMDASH=$'—'
 SCAN_PATHS=(content layouts assets config docs functions static README.md content/posts/_index.md)
 
+# COVERAGE FLOOR (#56 finding F2). Every path above is a DECLARED input, and the
+# grep below ends in `2>/dev/null || true` so that a legitimately em-dash-free run
+# is not treated as an error. That same swallow hid a missing directory: with a
+# scan root renamed or absent, grep errored, the error went to /dev/null, `matches`
+# came back empty, and this printed "OK: no em dashes in tracked voice files" and
+# exited 0 having opened nothing.
+#
+# A scan list naming a path the tree does not have covers fewer surfaces than it
+# claims, so an absent declared input is a fact about this GATE, not a clean tree.
+missing=()
+for p in "${SCAN_PATHS[@]}"; do
+  [ -e "$p" ] || missing+=("$p")
+done
+if [ ${#missing[@]} -gt 0 ]; then
+  echo "[FAIL] [vacuous-gate] check_emdash_zero_tolerance: ${#missing[@]} declared scan path(s) do not exist: ${missing[*]}." >&2
+  echo "Either a path moved and SCAN_PATHS is stale, or this is not a checkout of this repo. Skipping them would clear surfaces that were never opened." >&2
+  exit 2
+fi
+
 # -I skips binary files: the em-dash byte sequence (E2 80 94) can occur by chance
 # inside compressed image data (e.g. a committed JPEG render), which is never voice
 # prose. Without -I, grep -r reports "Binary file X matches" as a false positive.

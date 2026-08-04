@@ -112,6 +112,21 @@ def main() -> int:
         for f in ASSETS.rglob("*.css"):
             layout_text += f.read_text(encoding="utf-8")
 
+    # COVERAGE FLOOR (#56 finding F1). A params.toml that parses to zero keys made
+    # every traceability assertion below hold vacuously, and the gate printed
+    # "Config traceability OK (0 keys, 0 exempt)" and exited 0. The count in that
+    # message is what made it survive review: it reads as a small config, not as a
+    # gate that examined nothing. A BOM, a truncated write, or a file replaced by
+    # an empty placeholder all reach here.
+    if not keys:
+        print(
+            f"[FAIL] [vacuous-gate] check_config_traceability: {PARAMS} declares 0 "
+            f"keys, so 'every key is referenced' was true of nothing. This site's "
+            f"params.toml is never legitimately empty -- check the file parsed.",
+            file=sys.stderr,
+        )
+        return 2
+
     dead: list[str] = []
     for k, parent in keys:
         if k in EXEMPT:
