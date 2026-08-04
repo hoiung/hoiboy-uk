@@ -338,6 +338,42 @@ def test_built_excluded_page_not_checked(tmp_path):
     assert csc.check_built(content, _headers(tmp_path, ""), public) == []
 
 
+# ---- --require-trails: the caller declares the tree is a real build (#56 F4) --
+
+def test_require_trails_fires_when_a_real_build_has_no_sidecar(tmp_path):
+    """N4: trail.json deciding whether trail.json was expected.
+
+    `real_build` is inferred from the sidecar index, so a REAL build whose
+    sidecars are missing scores as a synthetic fixture and the whole rendered
+    tier silently downgrades to a source-only run. --require-trails is the
+    caller saying "I built this tree", which is knowledge the gate cannot have.
+    """
+    content = tmp_path / "content"
+    _bundle(content, "legal/privacy", card="share-card.png")
+    public = tmp_path / "public"
+    _render(public, "/legal/privacy/", "https://x/legal/privacy/share-card_hu_1.jpg")
+
+    violations = csc.check_built(content, _headers(tmp_path, ""), public,
+                                 require_trails=True)
+    assert violations, "a trail-less tree declared a real build must not pass"
+    assert any("vacuous-gate" in v for v in violations), violations
+    assert any("trail.json" in v for v in violations), violations
+
+
+def test_require_trails_default_leaves_fixtures_alone(tmp_path):
+    """The contrast case, and the reason the flag exists rather than a sniff.
+
+    Sniffing the tree was tried and reverted: the fixtures write index.html too,
+    so every one of them tripped. Omitting the flag must keep the documented
+    degraded path exactly as it was.
+    """
+    content = tmp_path / "content"
+    _bundle(content, "legal/privacy", card="share-card.png")
+    public = tmp_path / "public"
+    _render(public, "/legal/privacy/", "https://x/legal/privacy/share-card_hu_1.jpg")
+    assert csc.check_built(content, _headers(tmp_path, ""), public) == []
+
+
 # ---- Check C: section + home landing card presence (blog-priv#61) -------------
 
 def test_landing_with_card_passes(tmp_path):

@@ -171,6 +171,13 @@ jobs:
       - name: Public-repo secret guard unit tests
         run: python3 -m pytest scripts/test_check_public_repo_secrets.py -q
 
+      # The shared coverage-floor module every gate's fail-loud path is built
+      # on. It had no direct test until Ralph Tier 2 pointed out that a helper
+      # whose job is to fail loudly is exactly the kind that stops doing so
+      # silently. Source-only, so it runs before the Hugo build.
+      - name: Gate-coverage helper unit tests
+        run: python3 -m pytest scripts/test_gate_coverage.py -q
+
       # The 404 gate's noindex helpers, source-only so they run before the build.
       # SEPARATE from the `python3 scripts/test_404.py --built public` step further
       # down: that one invokes the file as a CLI, and a CLI run executes no test

@@ -6,8 +6,15 @@ Scans codebase for secrets, business identifiers, and private paths
 that must never be committed to public repositories.
 
 Exit codes:
-  0: No violations found, or not a public repo (PASS)
-  1: Violations detected or script error (FAIL)
+  0: looked, and found no violation -- or declined to look because this is not a
+     public repo, which is announced on stdout as [SKIP] rather than passing in
+     silence (a silent 0 is indistinguishable from a completed clean scan)
+  1: looked, and found violations (FAIL)
+  2: could NOT look, so the result is not evidence: --require-public was passed
+     but the .public-repo marker is absent, or a whole-repo scan collected zero
+     scannable files. Distinct from 0 on purpose -- "no violations" and "no
+     evidence" are opposite outcomes an exit-code check alone cannot tell apart
+     (hoiboy-uk#56; taxonomy in that repo's scripts/gate_coverage.py).
 
 Usage:
   python check-public-repo-secrets.py <path>
