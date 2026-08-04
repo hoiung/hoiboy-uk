@@ -26,6 +26,7 @@ Run:  python3 -m pytest scripts/test_check_agit_form_counter.py -q
 from __future__ import annotations
 
 import importlib.util
+import re
 import sys
 from pathlib import Path
 
@@ -33,6 +34,8 @@ import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 GATE = ROOT / "scripts" / "check_agit_form_counter.py"
+PRE_PUBLISH = ROOT / "scripts" / "pre-publish.sh"
+BROWSER_GATE = "scripts/check_agit_form_counter.py"
 
 _spec = importlib.util.spec_from_file_location("check_agit_form_counter", GATE)
 gate = importlib.util.module_from_spec(_spec)
@@ -205,7 +208,55 @@ def test_the_gate_minimum_matches_the_shipped_client_threshold():
     # a browser or a build. That copy has to be checked against the source of
     # truth, or the gate can drift into asserting the wrong number confidently.
     shipped = (ROOT / "static" / "js" / "agit-form.js").read_text(encoding="utf-8")
-    import re
     match = re.search(r"var STORY_MIN = (\d+);", shipped)
     assert match, "STORY_MIN not found in static/js/agit-form.js"
     assert int(match.group(1)) == gate.MINIMUM
+
+
+# --------------------------------------------------------------------------
+# The browser half runs at all
+# --------------------------------------------------------------------------
+
+
+def test_the_browser_counter_gate_is_wired():
+    """The helpers above are a model. Chromium is the authority, so it must run.
+
+    Everything else in this file tests decision logic that needs no browser,
+    which is exactly why it can all stay green while the half that looks at a
+    real render never executes. Gate 7d is that half's only invocation: one
+    line in scripts/pre-publish.sh. Delete it and nothing anywhere notices --
+    no CI job runs the gate, and this suite is happy either way.
+
+    That is not a hypothetical shape in this repo. The same omission was found
+    twice before (tests/test_gate_wiring.py, scripts/test_gen_card.py), and 7c
+    -- the CTA gate 7d was modelled on -- carries this same guard for the same
+    reason (scripts/test_cta_button.py).
+
+    It asserts the INVOCATION SHAPE, not that the filename occurs somewhere.
+    A bare substring check is defeated in one line by echoing the path or
+    parking it in an unused variable, and pre-publish.sh documents each of its
+    gates in prose above the call, so the name is present whether or not the
+    program runs. Comment lines are stripped first for that reason.
+
+    Scope, stated so nobody reads more into a green here than it carries:
+    pre-publish.sh is the MANUAL publish lane, deliberately not wired into CI
+    or pre-commit, because it is the only lane with Chromium. This proves the
+    counter is checked in a real browser when a human publishes -- not on every
+    commit.
+    """
+    code = "\n".join(
+        line for line in PRE_PUBLISH.read_text(encoding="utf-8").splitlines()
+        if not line.strip().startswith("#")
+    )
+    invocation = re.compile(
+        rf"^\s*run_check\s+\S+\s+python3\s+{re.escape(BROWSER_GATE)}(?![\w./-])",
+        re.M,
+    )
+    assert invocation.search(code), (
+        f"{BROWSER_GATE} is not INVOKED by scripts/pre-publish.sh in the "
+        f"`run_check <name> python3 {BROWSER_GATE} ...` shape every other gate "
+        f"in that file uses. The counter's colours, its visibility, its refusal "
+        f"to read as a fraction and the submit block behind it are all asserted "
+        f"only by that run. Naming the file without calling it means the browser "
+        f"never opens and this suite still reports green."
+    )
