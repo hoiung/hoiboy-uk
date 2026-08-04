@@ -77,13 +77,26 @@ const REDACTED_VALUE = "[redacted]";
 // Shortest value worth redacting by literal match. A submitted email always
 // clears this -- the shortest address anyone can type is six characters -- so
 // the defect this exists to fix is fully covered. A very short NAME does not
-// clear it, and that is deliberate: value redaction is a blind substring
-// replace over the serialised line, so a 2-character name like `on` would
-// rewrite `"reason"` and every other structural key containing it, destroying
-// the diagnostic the log exists to provide. Under-redacting a 1-3 character
+// clear it, and that is deliberate: literal redaction is a blind substring
+// replace, so a 2-character name like `on` would rewrite every ordinary word
+// containing it in an upstream error body, garbling the diagnostic the log
+// exists to provide while protecting nothing. Under-redacting a 1-3 character
 // name is the lesser harm and is recorded here as a known limit rather than
 // silently traded away.
+//
+// This threshold is NOT what keeps a held value away from a log line's own
+// STRUCTURE. It cannot be: `name`, `code` and `size` all clear it, and a name
+// of `code` once deleted that key from the finished line. Structure is
+// protected by redactLine being shape-only -- see there.
 const MIN_PROTECTED_LENGTH = 4;
+
+// How many nested JSON escapings of a held value to generate when matching.
+// Escaping compounds with nesting: an upstream body escapes a value once, our
+// own serialisation escapes it again, and a JSON-in-JSON body escapes it twice.
+// Exactly two levels were hard-coded here, which is the fixed-depth guess
+// redactDeep's own docstring rejects one level down. Levels are generated to a
+// fixpoint now; this only bounds the walk so a pathological value cannot spin.
+const MAX_ESCAPE_LEVELS = 6;
 
 // Strip address-SHAPED tokens out of text before it reaches a log.
 //
@@ -161,8 +174,47 @@ async function readCapped(request, cap) {
 // shapes this redactor exists to catch, because the characters that force the
 // escaping are the same ones the shape pattern cannot handle.
 function literalForms(value) {
-  const escaped = JSON.stringify(value).slice(1, -1);
-  return escaped === value ? [value] : [escaped, value];
+  const forms = [];
+  let form = value;
+  for (let level = 0; level < MAX_ESCAPE_LEVELS; level += 1) {
+    if (!forms.includes(form)) forms.push(form);
+    const next = JSON.stringify(form).slice(1, -1);
+    if (next === form) break;
+    form = next;
+  }
+  // Longest first, so a deeper escaping is replaced before a shallower form
+  // whose characters it contains.
+  return forms.sort((a, b) => b.length - a.length);
+}
+
+// Replace every occurrence of one literal, ignoring case where that is safe.
+//
+// Not a regex: the needle is visitor-supplied and would have to be escaped
+// before it could be used as a pattern. Case-insensitive because an upstream is
+// free to normalise the case of an address it echoes back, and a local part can
+// carry characters the shape pass cannot match, so a case-sensitive compare left
+// `"Pat"@Example.net` leaking when it came back lowercased.
+//
+// Case folding can change a string's LENGTH (Unicode special-casing), which
+// would misalign the index arithmetic below. Where that happens this falls back
+// to an exact compare rather than risk a wrong offset: missing a case variant is
+// a smaller harm than corrupting the text, and the fallback is precise.
+function replaceLiteral(text, needle, replacement) {
+  if (!needle) return text;
+  const hay = text.toLowerCase();
+  const pin = needle.toLowerCase();
+  if (hay.length !== text.length || pin.length !== needle.length) {
+    return text.split(needle).join(replacement);
+  }
+  let out = "";
+  let from = 0;
+  for (;;) {
+    const at = hay.indexOf(pin, from);
+    if (at === -1) break;
+    out += text.slice(from, at) + replacement;
+    from = at + needle.length;
+  }
+  return out + text.slice(from);
 }
 
 // Strip every known value out of one string, in each of its spellings.
@@ -185,7 +237,7 @@ function redactString(text, known) {
   let out = text;
   for (const value of known) {
     for (const form of literalForms(value)) {
-      out = out.split(form).join(REDACTED_VALUE);
+      out = replaceLiteral(out, form, REDACTED_VALUE);
     }
   }
   return out;
@@ -216,10 +268,26 @@ function redactDeep(value, known) {
   return value;
 }
 
-// Final pass over the serialised line: by value again (a backstop for anything
-// the walk could not reach), then by SHAPE for an address we never held.
-function redactLine(line, known) {
-  return redactPii(redactString(line, known));
+// Value pass then shape pass, over RAW text we have read but not yet serialised
+// -- an upstream error body at its capture point. The order is load-bearing:
+// the shape pass rewrites part of an address whose local part carries a
+// character its class excludes, which destroys the literal the value pass is
+// holding, so the value pass must go first.
+function redactText(text, known) {
+  return redactPii(redactString(text, known));
+}
+
+// Final pass over the SERIALISED line: by SHAPE only.
+//
+// By-value redaction must NOT run here. A held value is arbitrary visitor text
+// and the literal replace is blind, so a name of `code` or `reason` rewrote a
+// structural KEY of the finished line -- deleting the diagnostic field, or
+// emitting invalid JSON when the name carried a quote. Values are already
+// redacted one level down by redactDeep, where each is still a plain string and
+// cannot collide with structure. That is the only level at which a blind
+// replace is safe; this level catches an address we never held.
+function redactLine(line) {
+  return redactPii(line);
 }
 
 // Build a per-request logger, plus the `protect` handle that registers a value
@@ -252,7 +320,7 @@ function createLogger(fn) {
     } catch (_) {
       line = `${fn} ${event}`;
     }
-    console.log(redactLine(line, known));
+    console.log(redactLine(line));
   }
 
   // For text captured OUTSIDE a log call (the upstream error body, which is
@@ -264,7 +332,7 @@ function createLogger(fn) {
   // by-value pass was holding, and the prefix survives every later pass. The
   // two redactors only stack in this order.
   function redact(text) {
-    return redactLine(text, known);
+    return redactText(text, known);
   }
 
   return { log, protect, redact };
