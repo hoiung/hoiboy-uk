@@ -221,3 +221,115 @@ def test_the_stated_minimum_equals_the_server_floor():
         f"{floor}. Whichever is higher, somebody writes to the stated number and "
         f"is refused."
     )
+
+
+# ---------------------------------------------------------------------------
+# The form's other promises, bound the same way (Stage 5, hoiboy-uk#57).
+#
+# The two tests above bind the STATED minimum to the two places that enforce
+# it. Stage 5 found the same binding missing in two neighbouring places, both
+# of which can break the same promise in the same way, so they are bound here
+# rather than tracked for later: this file is already the one that holds the
+# AGIT form's stated contract against its enforced one.
+# ---------------------------------------------------------------------------
+
+CONTRIBUTE_JS = REPO / "functions" / "api" / "contribute.js"
+HEADERS = REPO / "static" / "_headers"
+
+FIELD_TAG = re.compile(
+    r'<(?:input|textarea)\b[^>]*\bname="(?P<name>[a-z_]+)"[^>]*\bmaxlength="(?P<cap>\d+)"',
+)
+CAPS_DECL = re.compile(r"FIELD_CAPS\s*=\s*\{(?P<body>[^}]*)\}")
+CAP_ENTRY = re.compile(r"(?P<key>[a-z_]+)\s*:\s*(?P<value>\d+)")
+SOCIALS_TOTAL_DECL = re.compile(r"SOCIALS_MAX_TOTAL\s*=\s*(\d+)")
+
+
+def _server_caps() -> dict[str, int]:
+    """Every server-side length ceiling, keyed by the form field it governs.
+
+    `socials` is deliberately NOT in FIELD_CAPS -- it is routed through
+    cleanLines() with its own SOCIALS_MAX_TOTAL rather than through clean()
+    -- so a gate built only from FIELD_CAPS would leave that one pair
+    unguarded while reporting full coverage.
+    """
+    source = CONTRIBUTE_JS.read_text(encoding="utf-8")
+    body = CAPS_DECL.search(source)
+    assert body, "FIELD_CAPS not found in contribute.js"
+    caps = {m["key"]: int(m["value"]) for m in CAP_ENTRY.finditer(body["body"])}
+    socials = SOCIALS_TOTAL_DECL.search(source)
+    assert socials, "SOCIALS_MAX_TOTAL not found in contribute.js"
+    caps["socials"] = int(socials.group(1))
+    return caps
+
+
+def test_every_stated_maximum_equals_the_server_cap():
+    """No field may advertise a ceiling the server does not actually hold.
+
+    `maxlength` stops typing at N; the server truncates or rejects at its own
+    constant. If they disagree the member either loses the tail of what they
+    wrote with no warning, or is stopped short of what the server would have
+    accepted. Same defect shape as a stated minimum that does not match the
+    enforced one, on the other end of the range.
+    """
+    markup = PAGE.read_text(encoding="utf-8")
+    stated = {m["name"]: int(m["cap"]) for m in FIELD_TAG.finditer(markup)}
+    assert stated, "no maxlength-bearing fields found - the markup regex is wrong"
+
+    caps = _server_caps()
+    mismatched = {
+        name: (cap, caps[name])
+        for name, cap in stated.items()
+        if name in caps and cap != caps[name]
+    }
+    assert not mismatched, (
+        "the form advertises a maximum the server does not enforce: "
+        + "; ".join(
+            f"{name} maxlength={stated_cap} but server cap {server_cap}"
+            for name, (stated_cap, server_cap) in sorted(mismatched.items())
+        )
+    )
+
+    ungoverned = sorted(set(stated) - set(caps))
+    assert not ungoverned, (
+        f"{ungoverned} advertise a maxlength with no server-side ceiling behind "
+        "it, so the browser is the only thing holding the limit"
+    )
+
+
+def test_the_form_script_is_not_served_stale_against_its_own_markup():
+    """The JS enforcing the minimum cannot outlive the HTML promising it.
+
+    /js/ is unfingerprinted, so a filename never changes when its contents do.
+    The page HTML revalidates every time; if the script is allowed a long
+    max-age then for that whole window a member gets fresh markup promising
+    "minimum 1200 characters" against a cached script carrying neither the
+    counter nor the submit guard -- and collects a server 400 the page never
+    warned them about. An ETag is served, so max-age=0 costs a 304, not a
+    re-download.
+    """
+    import importlib.util
+    import sys
+
+    spec = importlib.util.spec_from_file_location(
+        "check_social_cards", REPO / "scripts" / "check_social_cards.py")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+
+    rules = [
+        (glob, directives["cache-control"])
+        for glob, directives in module.parse_header_blocks(HEADERS)
+        if glob.startswith("/js") and "cache-control" in directives
+    ]
+    assert rules, (
+        "static/_headers has no Cache-Control rule for /js/*, so the "
+        "unfingerprinted form script inherits the default asset max-age and can "
+        "be served stale against markup that already promises the minimum."
+    )
+    for glob, value in rules:
+        ages = [int(n) for n in re.findall(r"max-age=(\d+)", value)]
+        assert ages, f"{glob} sets Cache-Control {value!r} with no max-age"
+        assert max(ages) == 0, (
+            f"{glob} allows max-age={max(ages)}; the form script must revalidate "
+            "so it can never be older than the markup that promises the minimum"
+        )
