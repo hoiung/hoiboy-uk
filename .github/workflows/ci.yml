@@ -315,6 +315,14 @@ jobs:
       - name: Subscribe-form placement (suppressed on five classes, present elsewhere)
         run: python3 scripts/check_subscribe_placement.py --built public
 
+      # Its own tests. The gate's "did this prove anything" floor was AGGREGATE
+      # across all suppressed classes, so a tree predating /newsletter/ still
+      # counted the legal, private and AGIT pages and the newsletter suppression
+      # rule -- the one this Issue exists to enforce -- was never exercised while
+      # the gate reported clean. Found by the #56 Ralph escalation class sweep.
+      - name: Placement gate's own tests (per-class suppression floor)
+        run: python3 -m pytest scripts/test_check_subscribe_placement.py -q
+
       # An X-Robots-Tag noindex stops indexing, not publishing. Without the
       # companion frontmatter Hugo puts a noindex page's FULL BODY into
       # public/index.xml, the feed every page advertises, so it arrives in
@@ -322,6 +330,18 @@ jobs:
       # why it is now a gate rather than a comment. Needs the built tree.
       - name: Noindex pages stay out of the sitemap and the RSS feed
         run: python3 scripts/check_noindex_frontmatter.py --built public
+
+      # The gate above shipped with no test of any kind, was wired into three
+      # surfaces, and was reviewed six times before the #56 Ralph escalation
+      # class sweep found two defects in it that no green run could have
+      # surfaced: a second, divergent static/_headers parser, and no
+      # build-freshness floor (it reported "4 rules enforced ... no leaks"
+      # against a tree that predated a whole noindex route). Both are the same
+      # shape -- a gate reporting success for a surface it did not examine --
+      # and neither was reachable by inspection. Reads the built tree, so it
+      # sits after the Hugo build with the other built-tree suites.
+      - name: Noindex gate's own tests (parser reuse + build-freshness floor)
+        run: python3 -m pytest scripts/test_check_noindex_frontmatter.py -q
 
       # Reads the BUILT tree: asserts Hugo emitted public/404.html, that the
       # template's content block actually rendered, and that every navigation
