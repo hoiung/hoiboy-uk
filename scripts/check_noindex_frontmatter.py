@@ -43,6 +43,7 @@ Needs a built tree: run `hugo --gc --minify -e production` first.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import re
 import sys
 from pathlib import Path
@@ -58,22 +59,57 @@ EXEMPT = {
 }
 
 
-def noindex_globs(text: str) -> list[str]:
-    """Path globs in static/_headers carrying an X-Robots-Tag noindex."""
-    found: list[str] = []
-    current: str | None = None
-    for line in text.splitlines():
-        if line.startswith("/"):
-            current = line.strip()
-        elif current and re.search(r"X-Robots-Tag:.*noindex", line, re.I):
-            if current not in found:
-                found.append(current)
-    return found
+def noindex_globs() -> list[str]:
+    """Path globs `static/_headers` marks noindex, via the repo's existing parser.
+
+    Reused rather than re-implemented, following the precedent `test_404.py` set
+    for this same file. The first version of this gate hand-rolled
+    `re.search(r"X-Robots-Tag:.*noindex", line)` over `read_text(encoding="utf-8")`,
+    and that copy disagreed with the canonical parser in two ways, both reachable:
+
+      BOM          `utf-8` leaves a leading U+FEFF on the first line, so it does
+                   not start with "/", the first block's path line is not
+                   recognised, and that block's rule is dropped silently. Save
+                   this file from any BOM-emitting editor and the first rule stops
+                   being enforced with every gate still green. The canonical
+                   parser reads `utf-8-sig` for exactly this reason, and names the
+                   defect by issue number at check_social_cards.py:172.
+      `none`       `X-Robots-Tag: none` is the documented equivalent of
+                   `noindex, nofollow`. A literal "noindex" matcher misses it
+                   entirely, so a page protected only by `none` was invisible to
+                   this gate, which then reported OK over it.
+
+    Two parsers for one file will always drift, and the drift is silent in the
+    passing direction. `check_social_cards.py` already scans this file correctly
+    for exactly this purpose, and its parser is also what `test_404.py` asserts
+    the 404 rule through. One file, one parser.
+    """
+    spec = importlib.util.spec_from_file_location(
+        "check_social_cards", REPO / "scripts" / "check_social_cards.py")
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = mod
+    spec.loader.exec_module(mod)
+    return mod.parse_noindex_globs(HEADERS)
 
 
 def glob_to_regex(glob: str) -> re.Pattern[str]:
     """Cloudflare `_headers` path glob -> regex over a URL path."""
     return re.compile("^" + re.escape(glob).replace(r"\*", ".*") + "$")
+
+
+def built_urls(built: Path) -> list[str]:
+    """Every page URL the build actually emitted, read from the rendered tree.
+
+    Hugo writes a pretty URL as `<dir>/index.html`, so the set of directories
+    containing one IS the set of served pages, with `url:` overrides, aliases and
+    section indexes already resolved. That is the same reason the leak assertions
+    below read generated output rather than frontmatter.
+    """
+    urls: list[str] = []
+    for path in built.rglob("index.html"):
+        rel = path.parent.relative_to(built).as_posix()
+        urls.append("/" if rel == "." else f"/{rel}/")
+    return urls
 
 
 def urls_in(path: Path, tag: str) -> list[str]:
@@ -103,7 +139,7 @@ def main() -> int:
         )
         return 2
 
-    globs = [g for g in noindex_globs(HEADERS.read_text(encoding="utf-8"))]
+    globs = noindex_globs()
     if not globs:
         print(
             "[FAIL] [no-noindex-rules-found] static/_headers declares no "
@@ -122,14 +158,45 @@ def main() -> int:
         )
         return 1
 
+    # BUILD-FRESHNESS FLOOR. Every assertion below is an ABSENCE: this URL is not
+    # in the sitemap, that one is not in the feed. An absence only means the rule
+    # is working if the page was actually built. Against a tree that predates a
+    # whole noindex route, every one of those absences held vacuously and the gate
+    # printed "[OK] ... 4 noindex rule(s) enforced ... no leaks" having examined
+    # zero of the pages it exists to protect -- with a plausible-looking URL count
+    # in the message, which is what made it dangerous rather than merely useless.
+    #
+    # CI never ran that path (.github/workflows/ci.yml builds at :271 and checks at
+    # :305, same job), but the local pre-push hook has no build step anywhere in
+    # .pre-commit-config.yaml, and pre-publish.sh -- which does rebuild -- never
+    # invokes this gate at all. So the stale-tree path was the LOCAL one.
+    #
+    # The floor is per-RULE, not aggregate: a tree carrying /private/ but not yet
+    # /newsletter/ still yields a healthy total, so a total proves nothing about
+    # the rule that matters.
+    pages = built_urls(built)
     failures: list[str] = []
     enforced = 0
+    covered: dict[str, int] = {}
 
     for glob in globs:
         if glob in EXEMPT:
             continue
         enforced += 1
         pattern = glob_to_regex(glob)
+
+        matched_pages = [u for u in pages if pattern.match(u)]
+        covered[glob] = len(matched_pages)
+        if not matched_pages:
+            failures.append(
+                f"  [unbuilt-rule] '{glob}' matched no page in {built}, so its "
+                f"absence from the sitemap and the feed proves nothing -- the "
+                f"rule was never exercised. Either the built tree is STALE "
+                f"(rebuild: `hugo --gc --minify -e production`), or the rule "
+                f"names a route this site no longer serves and belongs in EXEMPT "
+                f"with a stated reason."
+            )
+            continue
 
         for url in sitemap_urls:
             if pattern.match(url):
@@ -165,10 +232,13 @@ def main() -> int:
             print(line, file=sys.stderr)
         return 1
 
+    # Report the per-rule built-page counts, not just a total. The counts ARE the
+    # evidence that each absence was measured against something.
+    detail = ", ".join(f"{g} -> {covered[g]} built page(s)" for g in sorted(covered))
     print(
         f"[OK] noindex exclusion: {enforced} noindex rule(s) enforced against "
         f"{len(sitemap_urls)} sitemap URL(s) and {len(feed_urls)} feed item(s); "
-        f"no leaks."
+        f"no leaks. Rules exercised: {detail}."
     )
     return 0
 
