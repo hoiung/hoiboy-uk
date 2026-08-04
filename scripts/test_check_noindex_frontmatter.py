@@ -72,7 +72,13 @@ def _tree(root: Path, urls: list[str], sitemap: list[str] | None = None,
     (root / "sitemap.xml").write_text(f"<urlset>{body}</urlset>", encoding="utf-8")
     items = urls if feed is None else feed
     entries = "".join(f"<item><link>https://hoiboy.uk{u}</link></item>" for u in items)
-    (root / "index.xml").write_text(f"<rss>{entries}</rss>", encoding="utf-8")
+    # Shaped like real Hugo output: <rss><channel>, a channel self-link, then
+    # items. The channel <link> is deliberately present — the gate must ignore
+    # it (it is the feed's own address, not a published page) while still
+    # catching every <item>.
+    (root / "index.xml").write_text(
+        f"<rss><channel><link>https://hoiboy.uk/</link>{entries}</channel></rss>",
+        encoding="utf-8")
     return root
 
 
@@ -266,3 +272,39 @@ def test_a_real_feed_leak_is_still_caught(tmp_path, monkeypatch, capsys):
                   sitemap=_ORDINARY, feed=_ORDINARY + ["/newsletter/confirmed/"])
     assert _run(built, monkeypatch) == 1
     assert "[feed] /newsletter/confirmed/" in capsys.readouterr().err
+
+
+def test_channel_self_link_is_not_reported_as_a_leak(tmp_path, monkeypatch, capsys):
+    """A section feed's own <link> is metadata, not a published page.
+
+    When this gate was widened from the root feed to every per-section feed, it
+    collected every <link> in the document. A section's <channel><link> points
+    at the section itself, so `/newsletter/` was reported as leaking into its
+    own feed while that feed had ZERO items. The root feed had hidden the flaw:
+    its channel link is `/`, which matches no noindex glob.
+    """
+    built = _tree(tmp_path / "public", _COVERED + _ORDINARY,
+                  sitemap=_ORDINARY, feed=_ORDINARY)
+    # A section feed for a noindex section, carrying only its self-link.
+    sec = built / "newsletter"
+    sec.mkdir(parents=True, exist_ok=True)
+    (sec / "index.xml").write_text(
+        "<rss><channel><link>https://hoiboy.uk/newsletter/</link></channel></rss>",
+        encoding="utf-8")
+    assert _run(built, monkeypatch) == 0, capsys.readouterr().err
+
+
+def test_item_in_a_section_feed_is_caught(tmp_path, monkeypatch, capsys):
+    """The leak the single-feed version could not see at all."""
+    built = _tree(tmp_path / "public", _COVERED + _ORDINARY,
+                  sitemap=_ORDINARY, feed=_ORDINARY)
+    sec = built / "newsletter"
+    sec.mkdir(parents=True, exist_ok=True)
+    (sec / "index.xml").write_text(
+        "<rss><channel><link>https://hoiboy.uk/newsletter/</link>"
+        "<item><link>https://hoiboy.uk/newsletter/confirmed/</link></item>"
+        "</channel></rss>", encoding="utf-8")
+    assert _run(built, monkeypatch) == 1
+    err = capsys.readouterr().err
+    assert "[feed] /newsletter/confirmed/" in err
+    assert "newsletter/index.xml" in err, "the violation must name the feed that published it"
