@@ -23,6 +23,21 @@
 /404*
   X-Robots-Tag: noindex, nofollow
 
+# Site JS is served from /js/ unfingerprinted, so a filename never changes when
+# its contents do. The page HTML is already `max-age=0, must-revalidate`, but the
+# default asset rule gives JS `max-age=14400` — so for up to four hours after a
+# deploy a returning member gets FRESH markup against STALE script. hoiboy-uk#57
+# made that concrete: the story label promises "minimum 1200 characters" and the
+# counter element ships in the HTML, while four-hour-old agit-form.js has neither
+# the counter code nor the submit guard. The member types, sees nothing counting,
+# hits Send, and collects a server 400 that the page never warned them about.
+# max-age=0 does not mean "download every time" — an ETag is already served, so a
+# revalidation is a 304 with no body. Applied to /js/* rather than to the one
+# file, because every script under it is unfingerprinted and carries the same
+# skew. Asserted by scripts/test_404.py.
+/js/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 # Turnstile (challenges.cloudflare.com) is allowed site-wide in the /* CSP below,
 # for the widget on the community "Get featured" form. Cloudflare Pages JOINS
 # same-name headers across path rules rather than replacing them, so a per-path
