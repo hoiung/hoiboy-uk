@@ -588,6 +588,40 @@ for (const [label, brevoBody] of [
 //
 // Padding 442 is computed, not guessed: it puts the address at offset 489, so it
 // starts inside the window and ends outside it.
+// An address the redactor's own character class cannot match leaks with no
+// truncation involved at all -- the same surviving-local-part outcome as the
+// straddle case, reached by a different route. The local class excluded the
+// apostrophe, which RFC 5322 permits unquoted and which EMAIL_RE above accepts,
+// so `o'brien@example.com` logged as `o'[email-redacted]` (Ralph Tier 2). Real
+// subscribers have these names; this is not a theoretical address.
+const APOSTROPHE_EMAIL = `o${String.fromCharCode(39)}brien@example.com`;
+
+test('an address whose local part contains an apostrophe is fully redacted', async () => {
+  // A NON-duplicate code on purpose: isDuplicateCode() routes a duplicate to a
+  // branch that logs no `detail` at all, so the address would be absent rather
+  // than redacted and the last assertion below would be testing nothing.
+  const body = {
+    code: 'invalid_parameter',
+    message: `Attribute is invalid for contact ${APOSTROPHE_EMAIL}`,
+  };
+  const { logs } = await submit({ brevo: () => jsonResponse(400, body) });
+  const joined = logs.join('\n');
+
+  assert.ok(
+    !joined.includes(APOSTROPHE_EMAIL),
+    `the address appeared verbatim in a log line:\n${joined}`
+  );
+  assert.ok(
+    !joined.includes(`o${String.fromCharCode(39)}`),
+    `the local-part fragment before the apostrophe survived redaction, which is ` +
+      `the defect the character class caused:\n${joined}`
+  );
+  assert.ok(
+    joined.includes('[email-redacted]'),
+    'the address must be redacted, not merely absent'
+  );
+});
+
 test('an address straddling the 500-char log cut is still not leaked', async () => {
   const body = {
     code: 'invalid_parameter',

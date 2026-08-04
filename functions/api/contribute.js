@@ -85,7 +85,15 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // survive, only the address does not.
 function redactPii(text) {
   if (typeof text !== "string") return text;
-  return text.replace(/[^\s"'<>@,;:()]+@[^\s"'<>@,;:()]+\.[^\s"'<>@,;:()]+/g, "[email-redacted]");
+  // The LOCAL part deliberately allows an apostrophe; the domain does not.
+  // RFC 5322 atext permits it unquoted, EMAIL_RE above accepts it, and real
+  // subscribers have it (O'Brien, D'Angelo). Excluding it from the local class
+  // meant `o'brien@example.com` redacted only from the apostrophe onward and
+  // logged `o'[email-redacted]` -- a surviving local-part fragment, the same
+  // defect as the truncation leak, reached by a different route (Ralph Tier 2).
+  // A domain cannot contain one, so it stays excluded there and the pattern
+  // still cannot run across a quoted JSON boundary.
+  return text.replace(/[^\s"<>@,;:()]+@[^\s"'<>@,;:()]+\.[^\s"'<>@,;:()]+/g, "[email-redacted]");
 }
 
 // Read a request body, refusing to buffer more than `cap` bytes. Returns the

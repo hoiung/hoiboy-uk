@@ -110,3 +110,43 @@ class TestDefaultScopeCoversWholeContentTree:
             capture_output=True, text=True,
         )
         assert r.returncode == 0, f"argless gate failed:\n{r.stdout}\n{r.stderr}"
+
+    def test_a_coverage_failure_exits_2_not_1(self, tmp_path):
+        """Ralph Tier 2 round 12: this fix had zero regression coverage anywhere.
+
+        Both "could not look" paths used `raise SystemExit("<string>")`, whose
+        string form writes to stderr and exits ONE -- the code this gate's own
+        docstring reserves for "looked, and found a violation". Reverting to
+        that form broke no test in this repo, in the dotfiles canonical, or in
+        any of the five mirrors, so the fix was real and its claim unproven.
+
+        The vacuity harness cannot pin this: it accepts any non-zero with a
+        message, which the buggy form also satisfies. Only asserting the VALUE
+        discriminates, which is the whole point of keeping 1 and 2 apart.
+        """
+        r = subprocess.run(
+            [sys.executable, str(GATE), str(tmp_path / "definitely-absent.md")],
+            capture_output=True, text=True,
+        )
+        assert r.returncode == 2, (
+            f"a declared input that does not exist is a COVERAGE failure (2), not "
+            f"a violation (1); got {r.returncode}: {r.stdout}{r.stderr}"
+        )
+        assert "vacuous-gate" in r.stderr
+
+    def test_a_real_violation_still_exits_1(self, tmp_path):
+        """Contrast case: without it, `return 2` everywhere would also pass."""
+        f = tmp_path / "index.md"
+        f.write_text(
+            "---\ntitle: t\ndate: 2026-05-01\n---\n\n"
+            "I built this thing myself and I am pleased with how it turned out.\n",
+            encoding="utf-8",
+        )
+        r = subprocess.run(
+            [sys.executable, str(GATE), "--no-check-only-new", str(f)],
+            capture_output=True, text=True,
+        )
+        assert r.returncode == 1, (
+            f"unwrapped first-person prose is a VIOLATION (1), not a coverage "
+            f"failure (2); got {r.returncode}: {r.stdout}{r.stderr}"
+        )
