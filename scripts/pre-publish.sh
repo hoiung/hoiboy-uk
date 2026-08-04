@@ -218,7 +218,7 @@ case "$POST_FILE" in
 esac
 
 # 6. Private blocklist + secrets (PLATFORM_TOKEN + PRIVATE_PATH + BLOCKLIST).
-run_check "secrets" python3 scripts/check-public-repo-secrets.py "$TARGET"
+run_check "secrets" python3 scripts/check-public-repo-secrets.py "$TARGET" --require-public
 
 # 6b. SVG dimensions: every page-bundle SVG needs root width/height or it renders
 #     tiny in the glightbox lightbox (zoom-image shortcode). See check_svg_dimensions.py.

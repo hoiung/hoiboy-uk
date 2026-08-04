@@ -59,4 +59,5 @@ jobs:
           python3 scripts/check-public-repo-secrets.py \
             --scan-issue-body \
             --issue-number "$NUMBER" \
-            --repo "${{ github.repository }}"
+            --repo "${{ github.repository }}" \
+            --require-public

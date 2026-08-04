@@ -51,7 +51,8 @@ jobs:
           fi
           python3 scripts/check-public-repo-secrets.py \
             --scan-commit-messages \
-            --since "$SINCE"
+            --since "$SINCE" \
+            --require-public
 
       - name: Commit-message secret scan — PR events (blocking)
         if: github.event_name == 'pull_request'
@@ -60,7 +61,8 @@ jobs:
         run: |
           python3 scripts/check-public-repo-secrets.py \
             --scan-commit-messages \
-            --since ${{ github.event.pull_request.base.sha }}
+            --since ${{ github.event.pull_request.base.sha }} \
+            --require-public
 
       - name: Read pinned Hugo version
         id: hugo_version

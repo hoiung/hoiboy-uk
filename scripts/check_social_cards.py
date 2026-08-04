@@ -600,7 +600,9 @@ def check_built(content_root: Path, headers_path: Path, public: Path,
     # the whole rendered tier silently downgrades to source-only. An artefact
     # cannot be the authority on its own presence, so the CALLER declares it:
     # --require-trails says "I built this tree, sidecars are expected". Both live
-    # callers (ci.yml, scripts/pre-publish.sh) now pass it; a fixture stays
+    # callers now pass it -- .github/workflows/ci.yml, scripts/pre-publish.sh AND
+    # scripts/gen-social-cards.sh, which an earlier version of this comment
+    # omitted while claiming to enumerate them (Ralph Tier 3). A fixture stays
     # silent and keeps the documented degraded path.
     real_build = bool(url_index)
     if require_trails and not url_index:

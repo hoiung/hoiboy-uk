@@ -293,24 +293,33 @@ def gather_files(args: list[str], check_only_new: bool) -> list[Path]:
                 # "is this file wrapped?" and got exit 0 without an answer.
                 # Refusing to judge is a different outcome from judging clean,
                 # and only one of them may exit 0.
-                raise SystemExit(
+                # print + SystemExit(2), NOT SystemExit("<string>"): the string
+                # form writes the message to stderr and exits 1 -- the code this
+                # file's own docstring reserves for "looked, and found a
+                # violation". A coverage failure that reports the violation code
+                # is the 0-vs-2 confusion one step over (Ralph Tier 3).
+                print(
                     f"[FAIL] [vacuous-gate] check-iamhoi-wrapping: cannot scan "
                     f"{arg} ({'not a .md file' if p.exists() else 'does not exist'}). "
                     f"Passing it silently would report OK for a file that was "
-                    f"never opened."
+                    f"never opened.",
+                    file=sys.stderr,
                 )
+                raise SystemExit(2)
     else:
         content = repo_root / "content"
         if not content.exists():
             # `if content.exists()` used to fall through to `return []`, and the
             # caller's `if not files: return 0` turned a missing content tree
             # into a clean bill of health for the whole voice surface.
-            raise SystemExit(
+            print(
                 f"[FAIL] [vacuous-gate] check-iamhoi-wrapping: {content} does not "
                 f"exist, so the default scan collected nothing. Either this is not "
                 f"a checkout of the repo, or the content root moved and this "
-                f"default is stale."
+                f"default is stale.",
+                file=sys.stderr,
             )
+            raise SystemExit(2)
         files.extend(sorted(content.rglob("*.md")))
     return files
 

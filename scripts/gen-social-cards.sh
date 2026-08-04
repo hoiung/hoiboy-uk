@@ -44,6 +44,6 @@ step "3/4 rebuild (copy the regenerated PNGs into $PUBLIC)"
 hugo --minify --destination "$PUBLIC"
 
 step "4/4 verify every indexable page owns its rendered card"
-python3 scripts/check_social_cards.py --built "$PUBLIC" --strict
+python3 scripts/check_social_cards.py --built "$PUBLIC" --strict --require-trails
 
 printf '\nOK: social cards regenerated from the page trails and verified.\n'

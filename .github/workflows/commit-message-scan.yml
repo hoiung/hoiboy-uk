@@ -73,4 +73,5 @@ jobs:
           python3 scripts/check-public-repo-secrets.py \
             --scan-commit-messages \
             --since "$BEFORE" \
-            --enforce-on-private
+            --enforce-on-private \
+            --require-public

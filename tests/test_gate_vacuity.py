@@ -52,6 +52,16 @@ SCRIPTS = REPO / "scripts"
 GATE_GLOBS = ("check*.py", "check*.sh", "validate*.py")
 GATE_EXTRA = ("test_404.py",)
 
+# NOT enrolled, deliberately, and recorded here because two reviewers disagreed
+# about it: scripts/pre-publish.sh and scripts/run-blogs-ia-suite.sh. They are
+# AGGREGATORS -- they take a mandatory target argument and invoke gates that are
+# themselves enrolled above, so their coverage is the union of what they call and
+# they own no scan of their own to floor. Run with no argument they exit 2 on a
+# usage error identically on any tree, which is the accidental-pass shape this
+# suite rejects (the same reason check_future_date.py is EXEMPT). Enrolling them
+# would add two green cases that assert nothing. They are not in EXEMPT because
+# EXEMPT is for gates the inventory DOES reach; these match no glob.
+
 # Gates that cannot be driven by "run it against an empty tree", each with the
 # reason. An entry here is a claim about the GATE, not a licence to skip: every
 # one must still be non-vacuous by its own test, and `test_no_stale_exemptions`
@@ -324,33 +334,93 @@ def test_exemption_reasons_that_name_a_test_still_have_one():
 
 
 # Floors a gate cannot enforce alone, because only the CALLER knows the claim:
-# whether this repo is public, whether this --built tree is a real build. Each is
-# a flag, and a flag is one careless edit from being dropped -- at which point the
-# gate silently returns to the behaviour the flag exists to prevent, with CI
-# green. So the wiring is asserted, not assumed.
-CALLER_DECLARED = [
-    (".github/workflows/ci.yml", "check-public-repo-secrets.py . --require-public",
-     "the blocking public-repo secret scan"),
-    (".pre-commit-config.yaml", "check-public-repo-secrets.py . --staged-only --require-public",
-     "the pre-commit secret hook"),
-    (".github/workflows/ci.yml", "check_social_cards.py --built public --require-trails",
-     "the rendered og:image tier in CI"),
-    ("scripts/pre-publish.sh", "check_social_cards.py --built public --require-trails",
-     "the rendered og:image tier in pre-publish"),
+# whether this repo is public, whether this --built tree is a real build.
+#
+# This was a HARDCODED list of four known invocations, and Ralph Tier 3 showed why
+# that is the wrong shape: five OTHER live invocations of the secret guard carried
+# no flag at all, and a hardcoded list pins only what someone remembered to add.
+# It now DERIVES the call sites by scanning the wiring, so a caller added next
+# month is pinned by existing -- the same enrolment-by-existence rule the gate
+# inventory above uses, for the same reason.
+
+
+REQUIRED_FLAGS = [
+    # (gate invoked, substring that must also appear, why)
+    ("check-public-repo-secrets.py", "--require-public",
+     "a missing .public-repo marker silently retires the leak scan on a public repo"),
 ]
 
 
-@pytest.mark.parametrize("path,invocation,what", CALLER_DECLARED)
-def test_caller_declares_its_coverage_claim(path, invocation, what):
-    """A caller that stops declaring silently un-arms the floor it depends on."""
-    text = (REPO / path).read_text(encoding="utf-8")
-    assert invocation in text, (
-        f"{path} no longer invokes {what} as `{invocation}`. Without that flag "
-        f"the gate reverts to a silent no-op on the exact failure it guards: a "
-        f"missing .public-repo marker retires the leak scan, and a missing "
-        f"trail.json downgrades the rendered card checks to source-only. Both "
-        f"stay green while checking less."
+def _wiring_files() -> list[Path]:
+    """Every file that can invoke a gate: workflows, hooks, shell drivers."""
+    files = sorted((REPO / ".github" / "workflows").glob("*.yml"))
+    files.append(REPO / ".pre-commit-config.yaml")
+    files.extend(sorted((REPO / "scripts").glob("*.sh")))
+    return [f for f in files if f.is_file()]
+
+
+def _invocations(text: str, gate: str) -> list[str]:
+    """Each invocation of `gate`, with backslash continuations joined.
+
+    A multi-line YAML `run:` block is one command; reading it line-by-line would
+    report the flag missing whenever it sat on a continuation line, and four of
+    the five call sites this check exists for are written that way.
+    """
+    joined, buf = [], None
+    for line in text.split("\n"):
+        stripped = line.strip()
+        if buf is not None:
+            buf += " " + stripped.rstrip("\\").strip()
+            if not stripped.endswith("\\"):
+                joined.append(buf); buf = None
+            continue
+        if gate in stripped and not stripped.startswith("#"):
+            if stripped.endswith("\\"):
+                buf = stripped.rstrip("\\").strip()
+            else:
+                joined.append(stripped)
+    if buf is not None:
+        joined.append(buf)
+    return joined
+
+
+@pytest.mark.parametrize("gate,flag,why", REQUIRED_FLAGS)
+def test_every_caller_declares_its_coverage_claim(gate, flag, why):
+    """Every live invocation must carry the flag, not just the ones we listed."""
+    missing = []
+    for f in _wiring_files():
+        for call in _invocations(f.read_text(encoding="utf-8"), gate):
+            # Documentation lines and the gate's own --help text are not calls.
+            if not ("python3 " in call or "python " in call):
+                continue
+            if flag not in call:
+                missing.append(f"{f.relative_to(REPO)}: {call[:120]}")
+
+    assert not missing, (
+        f"{len(missing)} invocation(s) of {gate} do not pass {flag}, so {why}. "
+        f"The gate cannot know this; the caller must declare it:\n  "
+        + "\n  ".join(missing)
     )
+
+
+def test_the_caller_scan_finds_the_calls_it_claims_to_check():
+    """The scan itself must not be vacuous.
+
+    If `_invocations` stopped matching -- a renamed gate, a changed quoting style
+    -- the test above would find zero call sites and pass having checked nothing.
+    That is this suite's own subject matter, so it is asserted rather than assumed.
+    """
+    for gate, _flag, _why in REQUIRED_FLAGS:
+        found = sum(
+            len([c for c in _invocations(f.read_text(encoding="utf-8"), gate)
+                 if "python3 " in c or "python " in c])
+            for f in _wiring_files()
+        )
+        assert found >= 5, (
+            f"the caller scan found only {found} invocation(s) of {gate}; there "
+            f"are at least 5 in the wiring, so the scan is broken and the flag "
+            f"check above proved nothing."
+        )
 
 
 def test_inventory_is_not_empty():
