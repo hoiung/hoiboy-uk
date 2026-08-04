@@ -1,4 +1,4 @@
-/* meet-recorder.js — local-only browser recorder for Google Meet calls.
+/* meet-recorder.js -- local-only browser recorder for Google Meet calls.
  * Captures tab audio + mic, writes opus/webm via File System Access API to the
  * operator-picked directory on the master's encrypted volume, and writes a sidecar
  * .meta.json. Runs entirely client-side. Solo-operator scope.
@@ -15,7 +15,7 @@
     return;
   }
   if (!isSecureContext) {
-    failLoud('Insecure context — recorder refuses to start. Open via https:// only.');
+    failLoud('Insecure context: recorder refuses to start. Open via https:// only.');
     return;
   }
 
@@ -143,8 +143,8 @@
 
   // ---------- Top-level flow ----------
   document.addEventListener('DOMContentLoaded', async () => {
-    wireModeToggle();            // #9 AC 2.1 — personal/compliance mode
-    wireRunbookChecklist();      // AC 1.3 — 10-item runbook step UI
+    wireModeToggle();            // #9 AC 2.1 -- personal/compliance mode
+    wireRunbookChecklist();      // AC 1.3 -- 10-item runbook step UI
     wireJurisdictionScreen();    // AC 1.5
     wireVulnerableAssessment();  // AC 1.6
     wireDPFReverification();     // AC 1.7
@@ -155,7 +155,7 @@
     wireConsentDeclineAbort();   // AC 1.17
     wireArticle9Attestations();  // AC 1.19
     await wireSessionPersistence();  // #9 AC 2.6 / 2.6b / 2.7
-    refreshSessionIdDisplay();       // #9 Stage 5 follow-up — show NEXT auto S-id
+    refreshSessionIdDisplay();       // #9 Stage 5 follow-up -- show NEXT auto S-id
 
     document.getElementById('btn-pick-inbox')?.addEventListener('click', pickInboxDir);
     document.getElementById('btn-record')?.addEventListener('click', startRecording);
@@ -171,7 +171,7 @@
     }
 
     document.addEventListener('visibilitychange', () => {
-      // AC 1.2 — background-throttle warning
+      // AC 1.2 -- background-throttle warning
       const warn = document.getElementById('background-throttle-warning');
       if (warn) warn.hidden = document.visibilityState !== 'hidden';
     });
@@ -179,7 +179,7 @@
     refreshRecordButtonState();
   });
 
-  // ---------- AC 1.15 — FSA persisted-permission pattern ----------
+  // ---------- AC 1.15 -- FSA persisted-permission pattern ----------
   async function queryPermission(handle) {
     if (handle && typeof handle.queryPermission === 'function') {
       return await handle.queryPermission({ mode: 'readwrite' });
@@ -202,7 +202,7 @@
         startIn: 'documents',
       });
       if ((await requestPermission(handle)) !== 'granted') {
-        failLoud('FSA permission denied — recorder cannot write to that directory.');
+        failLoud('FSA permission denied: recorder cannot write to that directory.');
         return;
       }
       state.fsaDirHandle = handle;
@@ -221,7 +221,7 @@
     const expected = (document.getElementById('whisper-inbox-config')?.value || '').trim();
     el.textContent = handle.name;
     state.inboxRoot = expected;
-    // AC 2.7 — coupling check: dirHandle name should match operator-configured WHISPER_INBOX leaf.
+    // AC 2.7 -- coupling check: dirHandle name should match operator-configured WHISPER_INBOX leaf.
     const warn = document.getElementById('inbox-path-warning');
     if (warn) {
       const mismatch = expected && !expected.endsWith(handle.name);
@@ -239,7 +239,7 @@
       if (!attestationsAllChecked())   { failLoud('Tick all required attestations first.'); return; }
       if (!engagementSignedAttested()) { failLoud('Tick the "engagement letter signed" attestation first.'); return; }
 
-      // AC 1.18 — encrypted-volume write-time probe (1 byte)
+      // AC 1.18 -- encrypted-volume write-time probe (1 byte)
       await writeProbe(state.fsaDirHandle);
 
       // Filename + slug schema (AC 1.12). Personal mode (#9 AC 2.2) hides the
@@ -255,7 +255,7 @@
       state.sessionId = sessionId;
       state.startedAt = new Date();
 
-      // #9 AC 2.6 — persist session state to IndexedDB on Record-start.
+      // #9 AC 2.6 -- persist session state to IndexedDB on Record-start.
       try {
         await sessionStore.save({
           engagementId:       engagementIdRaw,
@@ -264,9 +264,9 @@
           lastUsedAtIso:      state.startedAt.toISOString(),
         });
         appendEngagementIdHistory(engagementIdRaw);
-      } catch (e) { /* persistence is non-fatal — keep recording */ }
+      } catch (e) { /* persistence is non-fatal -- keep recording */ }
 
-      // #9 Stage 5 follow-up — unified filename schema for both modes now that
+      // #9 Stage 5 follow-up -- unified filename schema for both modes now that
       // session_id is auto-generated + visible to the operator (the read-only
       // session-id-display element drives this). Second-precision stamp
       // (ymdHms) makes intra-minute collision physically impossible and
@@ -280,7 +280,7 @@
       state.tabStream = await navigator.mediaDevices.getDisplayMedia({
         audio: true, video: true,   // video requested (Chromium quirk) then track-stopped
       });
-      if (state.tabStream.getAudioTracks().length === 0) { stopAllStreams(); failLoud('Tab audio not granted — recorder refused to start.'); return; }
+      if (state.tabStream.getAudioTracks().length === 0) { stopAllStreams(); failLoud('Tab audio not granted: recorder refused to start.'); return; }
       state.tabStream.getVideoTracks().forEach(videoTrack => videoTrack.stop());
 
       state.micStream = await navigator.mediaDevices.getUserMedia({
@@ -307,7 +307,7 @@
       });
       // Serialise chunk writes through a single promise chain. Each
       // ondataavailable handler awaits its OWN write, but separate events are
-      // not ordered relative to each other — under a slow disk a later event
+      // not ordered relative to each other -- under a slow disk a later event
       // could call write() while an earlier write() is still pending, letting
       // chunks interleave on the shared WritableStream. Chaining guarantees
       // each chunk is written only after the previous one resolves.
@@ -329,7 +329,7 @@
   }
 
   async function writeProbe(dirHandle) {
-    // 1-byte probe — fails loud if encrypted volume dismounted (AC 1.18)
+    // 1-byte probe -- fails loud if encrypted volume dismounted (AC 1.18)
     const probeName = '.meet-recorder-probe';
     const fh = await dirHandle.getFileHandle(probeName, { create: true });
     const ws = await fh.createWritable();
@@ -363,7 +363,7 @@
       if (state.writeChain) { await state.writeChain; state.writeChain = null; }
       if (state.writableStream) { await state.writableStream.close(); state.writableStream = null; }
       stopAllStreams();
-      // AC 1.13 — write sidecar .meta.json
+      // AC 1.13 -- write sidecar .meta.json
       const metaWS = await state.metaHandle.createWritable();
       await metaWS.write(JSON.stringify(buildMeta(), null, 2));
       await metaWS.close();
@@ -380,12 +380,12 @@
     state.tabStream = state.micStream = state.audioContext = state.mixerDest = state.recorder = null;
   }
 
-  // ---------- AC 1.17 — verbal-consent decline mid-call abort ----------
+  // ---------- AC 1.17 -- verbal-consent decline mid-call abort ----------
   async function abortAndDelete() {
     try {
       if (state.recorder) state.recorder.stop();
       if (state.writableStream) { try { await state.writableStream.close(); } catch (_) {} state.writableStream = null; }
-      // Use removeEntry on the directory — fileHandle.remove is older spec
+      // Use removeEntry on the directory -- fileHandle.remove is older spec
       const wholeName = state.fileHandle && state.fileHandle.name;
       if (state.fsaDirHandle && wholeName) {
         await state.fsaDirHandle.removeEntry(wholeName);
@@ -427,7 +427,7 @@
   async function nextSessionId() {
     // #9 Stage 5 follow-up: session_id is now ALWAYS auto-generated from the
     // browser-local counter, in both personal and compliance modes. The
-    // manual field-session-id input has been removed — there is no
+    // manual field-session-id input has been removed -- there is no
     // operator-typed override path. Display element session-id-display
     // shows the value pre-record (refreshSessionIdDisplay) and refreshes
     // after each increment so the operator always sees the NEXT S-id.
@@ -444,7 +444,7 @@
   }
   function attestationsAllChecked() {
     const mode = currentMode();
-    if (mode === 'personal') return true;  // #9 AC 2.5 — short-circuit in personal mode (no 13-section gate)
+    if (mode === 'personal') return true;  // #9 AC 2.5 -- short-circuit in personal mode (no 13-section gate)
     const required = ['attestation-claude-art9', 'attestation-meet-art9'];   // AC 1.19 (2 boxes)
     return required.every(name => document.querySelector(`input[name="${name}"]`)?.checked);
   }
@@ -481,7 +481,7 @@
       // #9 Stage 5 follow-up: in personal mode the 4 audit fields below get
       // null because the user never interacted with the (hidden) compliance
       // radios/dropdowns. Default first-option selected values were leaking
-      // through as if the user had confirmed them — small but real over-
+      // through as if the user had confirmed them -- small but real over-
       // claim. Schema declares these as nullable (Phase 1 AC 1.1). In
       // compliance mode buildMeta reads from the actual user-confirmed values.
       ropa_close_out: currentMode() === 'personal'
@@ -520,7 +520,7 @@
 
   // ---------- Wiring stubs (referenced by ACs but UI elements live in index.md) ----------
   function wireRunbookChecklist() {
-    // AC 1.3 — Step 6 mini-recording interactive gate.
+    // AC 1.3 -- Step 6 mini-recording interactive gate.
     const btn = document.getElementById('runbook-step-6-mini-record');
     if (!btn) return;
     btn.addEventListener('click', async () => {
