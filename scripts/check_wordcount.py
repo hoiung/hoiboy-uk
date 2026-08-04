@@ -54,7 +54,24 @@ _FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
 # deleted before counting. That is fail-OPEN on a word-count ceiling: the post
 # is measured as shorter than it is, so an over-3000-word post passes.
 _HTML_COMMENT_RE = re.compile(r"<!--(?:(?!<!--)[\s\S])*?-->")
-_FENCED_CODE_RE = re.compile(r"```.*?```", re.DOTALL)
+# Same fail-OPEN class as _HTML_COMMENT_RE above, and the asymmetry with the
+# correctly-anchored _FRONTMATTER_RE was the tell. The old pattern was
+# ```` ```.*?``` ```` with re.DOTALL: no line anchor and no fence-length rule, so
+# it paired ANY two backtick runs. One stray ``` mentioned in prose (`type ``` to
+# open a block`) shifts the pairing by one, and every word between that mention
+# and the next real fence is deleted before counting. Measured on a 400-word
+# fixture with one stray fence: 400 words counted as 10. The post is measured as
+# shorter than it is, so one over the ceiling passes the gate.
+# Now: a fence must START a line, be 3+ backticks or tildes, and be closed by a
+# run of the same character at line start. An UNTERMINATED fence deliberately
+# matches nothing, leaving its text counted as prose -- over-counting is the safe
+# direction for a ceiling.
+_FENCED_CODE_RE = re.compile(
+    r"^(?P<fence>`{3,}|~{3,})[^\n]*\n"
+    r"[\s\S]*?"
+    r"^(?P=fence)`*~*[ \t]*$",
+    re.MULTILINE,
+)
 _INLINE_CODE_RE = re.compile(r"`[^`]*`")
 _SHORTCODE_ANGLE_RE = re.compile(r"\{\{<.*?>\}\}", re.DOTALL)
 _SHORTCODE_PERCENT_RE = re.compile(r"\{\{%.*?%\}\}", re.DOTALL)
