@@ -48,13 +48,20 @@
 # layouts/_shortcodes/versioned-script.html appends the script's own content
 # hash, and a different URL is a different cache key.
 
-# Turnstile (challenges.cloudflare.com) is allowed site-wide in the /* CSP below,
-# for the widget on the community "Get featured" form. Cloudflare Pages JOINS
-# same-name headers across path rules rather than replacing them, so a per-path
-# CSP block cannot ADD a source the root policy lacks: the two policies are sent
-# as two CSP headers and the browser enforces their intersection, dropping the
-# wider source. The root policy therefore carries challenges.cloudflare.com; it is
-# inert on pages with no cf-turnstile widget.
+# Turnstile (challenges.cloudflare.com) is allowed site-wide in the /* CSP below.
+# TWO forms depend on this allowance, so check both before narrowing or removing it:
+#   1. the community "Get featured" form, on one page, and
+#   2. the newsletter subscribe form in layouts/_partials/footer.html, which renders
+#      on nearly every page (everything except legal, private, 404 and the AGIT
+#      funnel pages, per that partial's suppression predicate).
+# The second one is why "inert on pages with no cf-turnstile widget" is now the
+# exception rather than the rule.
+#
+# Cloudflare Pages JOINS same-name headers across path rules rather than replacing
+# them, so a per-path CSP block cannot ADD a source the root policy lacks: the two
+# policies are sent as two CSP headers and the browser enforces their intersection,
+# dropping the wider source. The root policy therefore carries
+# challenges.cloudflare.com.
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-Frame-Options: DENY
