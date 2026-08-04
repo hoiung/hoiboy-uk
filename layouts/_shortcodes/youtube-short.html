@@ -10,13 +10,15 @@
     id    = YouTube video / Short ID (e.g. "5-ZH21Xd2es")
     title = iframe title for accessibility (also screen-reader label)
     ratio = "vertical" (default, 9:16 Shorts) | "wide" (16:9)
+    start = optional playback offset in whole seconds (e.g. "130" for 2:10)
 */ -}}
 {{- $id := .Get "id" -}}
 {{- $title := .Get "title" | default "YouTube video" -}}
 {{- $ratio := .Get "ratio" | default "vertical" -}}
+{{- $start := .Get "start" -}}
 <div class="video-embed video-embed--{{ $ratio }}">
   <iframe
-    src="https://www.youtube-nocookie.com/embed/{{ $id }}"
+    src="https://www.youtube-nocookie.com/embed/{{ $id }}{{ with $start }}?start={{ . }}{{ end }}"
     title="{{ $title }}"
     loading="lazy"
     referrerpolicy="strict-origin-when-cross-origin"
