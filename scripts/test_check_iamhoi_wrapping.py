@@ -78,3 +78,35 @@ def test_gate_fails_backtick_bypass(tmp_path):
         NEW + "\nI opt in with the `<!-- iamhoi -->` token, honest.\n",
     )
     assert _run(p) == 1
+
+
+class TestDefaultScopeCoversWholeContentTree:
+    """The CI step calls itself the "CI mirror of pre-commit hook" (#56 esc. B4).
+
+    Its default scope was content/posts alone while the pre-commit hook selects
+    ^content/(posts|hire-hoi)/.*\\.md$ via pass_filenames, so content/hire-hoi
+    was examined by NO CI step and a green run asserted a property of pages
+    nothing had opened. The default is now the whole content/ tree.
+    """
+
+    def test_hire_hoi_is_in_the_argless_default(self, tmp_path, monkeypatch):
+        for rel in ("content/posts/p/index.md", "content/hire-hoi/h/index.md",
+                    "content/legal/l/index.md"):
+            f = tmp_path / rel
+            f.parent.mkdir(parents=True, exist_ok=True)
+            f.write_text("---\ntitle: t\ndate: 2026-05-01\n---\nbody\n", encoding="utf-8")
+        (tmp_path / "scripts").mkdir()
+        monkeypatch.setattr(ciw, "__file__", str(tmp_path / "scripts" / "x.py"))
+        found = {p.relative_to(tmp_path).as_posix() for p in ciw.gather_files([], True)}
+        assert "content/hire-hoi/h/index.md" in found, (
+            "hire-hoi is covered by pre-commit; the CI mirror must cover it too"
+        )
+        assert "content/posts/p/index.md" in found
+
+    def test_repo_tree_passes_the_argless_gate(self):
+        """The real tree, at the widened scope, with no unannotated page left."""
+        r = subprocess.run(
+            [sys.executable, str(GATE), "--check-only-new"],
+            capture_output=True, text=True,
+        )
+        assert r.returncode == 0, f"argless gate failed:\n{r.stdout}\n{r.stderr}"

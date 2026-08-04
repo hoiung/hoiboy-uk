@@ -205,3 +205,35 @@ def test_ordinary_comments_are_still_stripped():
     """Control: well-formed comments must not start surviving the strip."""
     assert cwc._HTML_COMMENT_RE.sub("", "a <!-- one --> b <!-- two --> c") == "a  b  c"
     assert cwc._HTML_COMMENT_RE.sub("", "a <!-- multi\nline\ncomment --> b") == "a  b"
+
+
+class TestFencedCodeAnchoring:
+    """A stray triple-tick in prose must not delete real words (#56 escalation B5).
+
+    _FENCED_CODE_RE used to be an unanchored lazy pair, so it matched ANY two
+    backtick runs. One stray fence mentioned in prose shifts the pairing by one
+    and every word between it and the next real fence vanishes before counting.
+    That is fail-OPEN on a ceiling: the post measures shorter than it is.
+    Mirrored guard, so this repo tests it too — its own CI runs scripts/test_*.py,
+    not the canonical suite in dotfiles.
+    """
+
+    _FM = "---\ntitle: t\ndate: 2026-05-01\n---\n"
+
+    def _count(self, doc: str) -> int:
+        return len(cwc._WORD_RE.findall(cwc.strip_markup(doc)))
+
+    def test_stray_fence_does_not_eat_prose(self):
+        prose = " ".join(f"word{i}" for i in range(400))
+        doc = (self._FM + "To open a code block you type ``` at the start.\n\n"
+               + prose + "\n\n```py\nx = 1\n```\n")
+        assert self._count(doc) >= 400
+
+    def test_real_code_block_still_stripped(self):
+        doc = self._FM + "alpha beta gamma\n\n```py\nzzz_one zzz_two\n```\n"
+        assert self._count(doc) == 3
+
+    def test_unterminated_fence_counts_as_prose(self):
+        """Fail-CLOSED; over-counting is the safe direction for a ceiling."""
+        doc = self._FM + "alpha\n\n```py\nleftover words here\n"
+        assert self._count(doc) >= 4
