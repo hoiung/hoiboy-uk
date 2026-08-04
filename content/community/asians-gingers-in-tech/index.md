@@ -136,7 +136,21 @@ Before you fill it in, have a quick read of the <a href="/legal/agit-story-guide
 }
 @keyframes agit-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .agit-spinner { animation: none; } }
-.agit-form-wrap .agit-notice { color: #e5766a; font-weight: 600; margin: 0 0 1rem; }
+/* Story counter and error notice. Both carry a light-theme and a dark-theme
+   hex because NO single colour clears WCAG AA (4.5:1) against both page
+   backgrounds: AA on #fafafa needs relative luminance <= 0.173550 and AA on
+   #141414 needs >= 0.206479, so the feasible set is empty and the best any one
+   colour reaches is 4.193:1. Backgrounds are assets/css/main.css --bg.
+   Gate: scripts/test_agit_counter_contrast.py (parses every colour below). */
+.agit-form-wrap .agit-count { font-size: .9em; font-weight: 600; margin: .35rem 0 0; text-align: right; }
+.agit-form-wrap .agit-count.is-short { color: #b3261e; }
+.agit-form-wrap .agit-count.is-met { color: #166534; }
+.agit-form-wrap .agit-notice { color: #b3261e; font-weight: 600; margin: 0 0 1rem; }
+@media (prefers-color-scheme: dark) {
+  .agit-form-wrap .agit-count.is-short { color: #f28b82; }
+  .agit-form-wrap .agit-count.is-met { color: #6fdd8b; }
+  .agit-form-wrap .agit-notice { color: #f28b82; }
+}
 .agit-form-wrap .agit-drop {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: .3rem; text-align: center; cursor: pointer; font-weight: 400;
@@ -185,8 +199,9 @@ Before you fill it in, have a quick read of the <a href="/legal/agit-story-guide
   </div>
 
   <div class="agit-field">
-    <label for="agit-feature">Your story <span class="agit-hint">(the quiet, brilliant work you never shout about)</span></label>
+    <label for="agit-feature">Your story <span class="agit-hint">(the quiet, brilliant work you never shout about, minimum 1200 characters)</span></label>
     <textarea id="agit-feature" name="feature" maxlength="8000" required></textarea>
+    <p class="agit-count is-short" aria-live="polite">0</p>
   </div>
 
   <div class="agit-field">
