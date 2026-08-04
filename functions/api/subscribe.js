@@ -236,7 +236,19 @@ function createLogger(fn) {
     console.log(redactLine(line, known));
   }
 
-  return { log, protect };
+  // For text captured OUTSIDE a log call (the upstream error body, which is
+  // parsed for its `code` before it is ever logged). ORDER IS THE POINT:
+  // redactLine runs the by-value pass FIRST, on the pristine text, then the
+  // shape pass. The shipped inversion -- redactPii at capture, by-value later
+  // -- leaked, because on an address with an excluded character MID-local-part
+  // the shape pass rewrites the suffix, destroys the exact literal the
+  // by-value pass was holding, and the prefix survives every later pass. The
+  // two redactors only stack in this order.
+  function redact(text) {
+    return redactLine(text, known);
+  }
+
+  return { log, protect, redact };
 }
 
 // Strip CR/LF/control characters and trim. Length is checked BEFORE this runs, so
@@ -284,7 +296,7 @@ export async function onRequestPost(context) {
   // Per-request logger. `protect` registers a value so that every subsequent
   // log line has it stripped, whatever field it travels in and whoever quotes
   // it back at us. Created per invocation on purpose -- see createLogger.
-  const { log, protect } = createLogger("subscribe");
+  const { log, protect, redact } = createLogger("subscribe");
 
   // 0. Fail loud on a missing binding. Checked per name, not by one alternation, so
   //    a deploy carrying two of the three cannot pass this guard.
@@ -442,14 +454,18 @@ export async function onRequestPost(context) {
 
   if (!resp.ok) {
     // Redacted HERE, at capture, so every use below is safe by construction.
-    // REDACT BEFORE TRUNCATING. The reverse order leaked: an address straddling
-    // offset 500 was cut mid-token, the regex no longer matched what was left,
-    // and the local part landed verbatim in a structured log. Measured on the
-    // real helper, 8 of the 31 padding offsets from 470 to 500 leaked
-    // the local part into the log line; redact-then-slice leaks none of them.
-    // The slice still bounds what we store, it just no longer decides what the
-    // redactor can see.
-    const detail = redactPii(await resp.text()).slice(0, 500);
+    // The ORDER inside redact() is load-bearing three times over:
+    //   1. BY VALUE FIRST, on the pristine text. Running the shape pass first
+    //      leaked: on an address with an excluded character MID-local-part it
+    //      rewrites the suffix to [email-redacted], destroying the exact
+    //      literal the by-value pass was holding, and the prefix survives.
+    //   2. Shape pass second, for an address we never held.
+    //   3. REDACT BEFORE TRUNCATING. The reverse order leaked: an address
+    //      straddling offset 500 was cut mid-token, no pattern matched what
+    //      was left, and the local part landed verbatim in a structured log.
+    // The slice still bounds what we store, it just no longer decides what
+    // the redactors can see.
+    const detail = redact(await resp.text()).slice(0, 500);
     let code = null;
     try {
       code = JSON.parse(detail).code;
