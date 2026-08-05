@@ -1,7 +1,7 @@
 {
   "name": "hoiboy-uk",
   "version": "0.1.0",
-  "description": "hoiboy.uk Hugo site — JS test deps for the meet-recorder tool and the AGIT form.",
+  "description": "hoiboy.uk Hugo site. JS test deps for the node --test suites: the meet-recorder tool, the AGIT form and its handler, and the newsletter subscribe form and its handler.",
   "private": true,
   "scripts": {
     "test": "node --test static/js/meet-recorder.test.js tests/contribute.test.js tests/agit-form.test.js tests/subscribe.test.js tests/contribute-handler.test.js"

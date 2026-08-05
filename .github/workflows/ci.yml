@@ -346,10 +346,12 @@ jobs:
         # Runs AFTER the Hugo build step above, against the same tree that is
         # deployed. A leak reachable only through a template, a data file, a
         # shortcode or a partial shows up here and nowhere else.
-        run: |
-          # shellcheck disable=SC2086  # flag list, must word-split
-          python3 scripts/check-public-repo-secrets.py public --include-ignored \
-            $(sed -e 's/#.*//' .github/secret-scan-flags | tr '\n' ' ')
+        # Kept on ONE line: tests/test_gate_wiring.py proves this step can fail
+        # the build by injecting `continue-on-error: true` at its indent, and that
+        # mutation only works while the command is a plain `run:` scalar. Inside a
+        # `run: |` block the injected line would be shell, not YAML, and the guard
+        # would stop measuring what it claims to.
+        run: python3 scripts/check-public-repo-secrets.py public --include-ignored $(sed -e 's/#.*//' .github/secret-scan-flags | tr '\n' ' ')
 
       - name: Social-card guard (rendered og:image — template-regression backstop)
         # --require-trails: this job built the tree in an earlier step, so a

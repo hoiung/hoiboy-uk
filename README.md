@@ -76,7 +76,7 @@ hugo server
 ## Quality checks
 
 - `pre-commit` runs file hygiene + markdownlint + frontmatter validator + config traceability + word-count ceiling + voice guard + iamhoi-marker enforcement + internal-link validator + social-card guard (every singular page owns its og:image card) + secrets scan + mirror drift checks
-- at **push** time it also runs the 10-file Blogs IA suite (URL contract, redirects, hub listing, taxonomy) via the `blogs-ia-suite` hook, so a broken URL contract fails in your terminal instead of on main. It needs a built `./public`; run `hugo --gc --minify -e production` first
+- at **push** time it also runs three built-tree gates, all of which need a built `./public` (run `hugo --gc --minify -e production` first): the 10-file Blogs IA suite (URL contract, redirects, hub listing, taxonomy) via `blogs-ia-suite`, `check-noindex-frontmatter` (no noindex page reaches the sitemap or the RSS feed) and `check-subscribe-placement` (the newsletter form's suppression predicate, as the built tree shows it). A broken URL contract fails in your terminal instead of on main
 - GitHub Actions builds Hugo, lints markdown, voice-guards em dashes, validates frontmatter and config traceability, and link-checks markdown outside `content/posts` (posts are excluded from that tier by design; their links are checked by the `rendered-link-liveness` gate in `scripts/pre-publish.sh`)
 - every test file is gated into a runner: `tests/test_gate_wiring.py` asserts each `test_*.py` appears in a `ci.yml` pytest step and each `*.test.js` appears in `package.json`'s `test` script, so a test nobody wired in fails the build instead of silently never running
 - Cloudflare Pages deploys ONLY on green CI via deploy hook (auto-build disabled, no race)

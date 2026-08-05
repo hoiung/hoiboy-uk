@@ -1,7 +1,8 @@
 #!/bin/bash
 # Pre-publish gate aggregator for hoiboy.uk new blog posts.
 #
-# Runs 18 sequential gates fail-fast on first non-zero exit:
+# Runs 20 sequential gates fail-fast on first non-zero exit (one of them, the
+# word-count ceiling, only when the target is a post bundle):
 #   1. Consulting YAML   (data/consulting.yaml MUST NOT contain OPERATOR_TODO
 #                         substring — global gate, blocks publish whenever a
 #                         placeholder URL is unreplaced. consulting-ops#2 AC 0.2.)
@@ -255,6 +256,15 @@ run_check "social-cards-rendered" python3 scripts/check_social_cards.py --built 
 #      marker is absent on the five suppressed classes, present on the named
 #      sample, and present on every other footer-bearing page tree-wide. #56.
 run_check "subscribe-placement" python3 scripts/check_subscribe_placement.py --built public
+
+# 7a3. Noindex pages must not be advertised in the sitemap or the RSS feed.
+#      Wired into ci.yml and the pre-push hook since blog-priv#55 but NOT here
+#      (found in #56 Stage 5), which is the one runner that REBUILDS first. Every
+#      other caller reads whatever public/ happened to be lying around, so this is
+#      the only place the gate sees the tree it is actually about to publish.
+#      A noindex header stops indexing; it does not stop Hugo listing the page,
+#      and a private page in index.xml is delivered to subscribers as a post.
+run_check "noindex-sitemap-feed" python3 scripts/check_noindex_frontmatter.py --built public
 
 # 7b. 404 gate: the build must emit a root 404.html, its content block must have
 #     actually rendered, and every navigation link ON that page must resolve.

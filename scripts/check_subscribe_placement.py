@@ -55,7 +55,10 @@ MARKER = "subscribe-form"
 # alias stub or a standalone bundle asset, not a page with a footer to guard.
 BASEOF_MARKER = "<footer"
 
-# The six suppressed classes, as BUILT paths.
+# The five suppressed classes, as BUILT paths. Five, not six: the AGIT signup and
+# thanks pages are two PAGES of one class (the prefix below covers both), and
+# counting them separately is what made this comment disagree with the docstring
+# above and with the tuples below (#56 Stage 5).
 #   /legal/*   operator instruction
 #   /private/* the per-path CSP at static/_headers:10 is narrower than the root
 #              policy and would break the Turnstile widget, so the form is removed

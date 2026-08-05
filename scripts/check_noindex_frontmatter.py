@@ -219,10 +219,15 @@ def main() -> int:
     # zero of the pages it exists to protect -- with a plausible-looking URL count
     # in the message, which is what made it dangerous rather than merely useless.
     #
-    # CI never ran that path (.github/workflows/ci.yml builds at :271 and checks at
-    # :305, same job), but the local pre-push hook has no build step anywhere in
-    # .pre-commit-config.yaml, and pre-publish.sh -- which does rebuild -- never
-    # invokes this gate at all. So the stale-tree path was the LOCAL one.
+    # CI never ran that path: .github/workflows/ci.yml builds and then checks in
+    # the SAME job, so the tree is always fresh there. (Line numbers deliberately
+    # not quoted -- the two cited here had already drifted by the time #56 Stage 5
+    # read them. Grep `check_noindex_frontmatter` in that file instead.)
+    #
+    # The stale-tree path was the LOCAL one: the pre-push hook has no build step
+    # anywhere in .pre-commit-config.yaml, so it reads whatever public/ happens to
+    # be on disk. #56 Stage 5 wired this gate into scripts/pre-publish.sh, which
+    # DOES rebuild first, so there is now one local caller that cannot go stale.
     #
     # The floor is per-RULE, not aggregate: a tree carrying /private/ but not yet
     # /newsletter/ still yields a healthy total, so a total proves nothing about

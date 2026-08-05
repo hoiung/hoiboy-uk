@@ -61,8 +61,10 @@
 # TWO forms depend on this allowance, so check both before narrowing or removing it:
 #   1. the community "Get featured" form, on one page, and
 #   2. the newsletter subscribe form in layouts/_partials/footer.html, which renders
-#      on nearly every page (everything except legal, private, 404 and the AGIT
-#      funnel pages, per that partial's suppression predicate).
+#      on nearly every page. Five classes are suppressed, per that partial's
+#      predicate: legal, private, 404, the AGIT funnel pages, and /newsletter/*
+#      (the form's own confirmation pages). The last was missing from this list
+#      while the gate had always enforced five -- #56 Stage 5.
 # The second one is why "inert on pages with no cf-turnstile widget" is now the
 # exception rather than the rule.
 #

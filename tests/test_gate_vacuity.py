@@ -409,17 +409,47 @@ def _invocations(text: str, gate: str) -> list[str]:
     return joined
 
 
+# A caller may declare its flags indirectly, in .github/secret-scan-flags, rather
+# than spelling them inline. #56 Stage 5 introduced that seam so the two VENDORED
+# scan workflows -- byte-identical across 17 repos -- could carry per-repo flags
+# that the next canonical propagation would otherwise strip.
+#
+# Reading the invocation TEXT alone stopped seeing those flags the moment they
+# moved behind `$(sed ... secret-scan-flags)` or `$EXTRA_FLAGS`, and this gate
+# went red. It was right to: a check that asserts a flag is passed cannot be
+# satisfied by a substitution it cannot follow. So it follows it -- and asserts
+# the file actually declares the flag, so emptying the file fails here rather
+# than silently retiring the claim at every call site at once.
+FLAGS_FILE = REPO / ".github" / "secret-scan-flags"
+_FLAGS_INDIRECTION = ("secret-scan-flags", "$EXTRA_FLAGS")
+
+
+def _declared_flags() -> list[str]:
+    """The flags .github/secret-scan-flags declares, comments stripped."""
+    if not FLAGS_FILE.is_file():
+        return []
+    out = []
+    for line in FLAGS_FILE.read_text(encoding="utf-8").splitlines():
+        out.extend(line.split("#", 1)[0].split())
+    return out
+
+
 @pytest.mark.parametrize("gate,flag,why", REQUIRED_FLAGS)
 def test_every_caller_declares_its_coverage_claim(gate, flag, why):
     """Every live invocation must carry the flag, not just the ones we listed."""
+    declared = _declared_flags()
     missing = []
     for f in _wiring_files():
         for call in _invocations(f.read_text(encoding="utf-8"), gate):
             # Documentation lines and the gate's own --help text are not calls.
             if not ("python3 " in call or "python " in call):
                 continue
-            if flag not in call:
-                missing.append(f"{f.relative_to(REPO)}: {call[:120]}")
+            if flag in call:
+                continue
+            # Indirect declaration counts only if the file really declares it.
+            if any(token in call for token in _FLAGS_INDIRECTION) and flag in declared:
+                continue
+            missing.append(f"{f.relative_to(REPO)}: {call[:120]}")
 
     assert not missing, (
         f"{len(missing)} invocation(s) of {gate} do not pass {flag}, so {why}. "
