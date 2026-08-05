@@ -20,9 +20,9 @@
        (verified: head.html:127 carries one and public/index.html does not). */ -}}
 <div class="subscribe-form">
   <!-- iamhoi -->
-  <h2 class="subscribe-form-title">Get new posts by email</h2>
+  <h2 class="subscribe-form-title">Get our newest posts in your inbox.</h2>
   <!-- iamhoiend -->
-  <form class="subscribe-form-body" method="POST" action="{{ site.Params.subscribeAction }}">
+  <form method="POST" action="{{ site.Params.subscribeAction }}">
 
     <div class="subscribe-field">
       <label for="subscribe-name">Your name</label>
@@ -82,3 +82,23 @@
        that count match the prose instead of the tag. Same defect this Issue already
        hit once, at AC 2.2a. */ -}}
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{{- /* Progressive enhancement (Stage 5). Without it every non-happy path returns
+       a bare text/plain page on ~346 pages: no nav, no way back, and the reader's
+       typed name and email gone. Reachable with no bot behaviour at all, because
+       the loader above is `async defer` and a submit before it resolves is a
+       guaranteed 403.
+
+       The URL carries the script's own content hash for the reason
+       layouts/_shortcodes/versioned-script.html documents at length: static/ JS
+       is served with Cloudflare Pages' four-hour asset default, a per-path
+       Cache-Control cannot displace it (Pages JOINS same-name headers), so fresh
+       markup would otherwise run against a stale script for up to four hours
+       after a deploy. Hashed inline rather than through that shortcode because a
+       shortcode needs a .Page and this is a footer partial. Kept in static/ so
+       `require('../static/js/subscribe-form.js')` still resolves in the Node
+       suite. errorf, not a silent 404 script tag, if the file moves. */ -}}
+{{- $js := "static/js/subscribe-form.js" -}}
+{{- if not (fileExists $js) -}}
+  {{- errorf "subscribe-form: no file at %s" $js -}}
+{{- end -}}
+<script src="/js/subscribe-form.js?v={{ substr (crypto.SHA256 (os.ReadFile $js)) 0 12 }}" defer></script>

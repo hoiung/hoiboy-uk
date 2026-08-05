@@ -4,7 +4,7 @@
   "description": "hoiboy.uk Hugo site. JS test deps for the node --test suites: the meet-recorder tool, the AGIT form and its handler, and the newsletter subscribe form and its handler.",
   "private": true,
   "scripts": {
-    "test": "node --test static/js/meet-recorder.test.js tests/contribute.test.js tests/agit-form.test.js tests/subscribe.test.js tests/contribute-handler.test.js"
+    "test": "node --test static/js/meet-recorder.test.js tests/contribute.test.js tests/agit-form.test.js tests/subscribe.test.js tests/contribute-handler.test.js tests/subscribe-form.test.js"
   },
   "devDependencies": {
     "ajv": "^8.12.0",
