@@ -339,7 +339,7 @@ that would make every submission fail.
 |---|---|
 | newsletter list id | `4` |
 | newsletter folder id | `3` |
-| DOI template id | `7` |
+| DOI template id | `OPERATOR_TODO` (dashboard-only, see below) |
 | Bitwarden item (API key) | `brevo-hoiboy-uk-pages-api` |
 
 The list is named `hoiboy.uk newsletter`. `POST /v3/contacts/lists` requires both
@@ -401,6 +401,32 @@ consent record accurate only to the day. Verify with a round trip, not with the 
 ```bash
 curl -sS "https://api.brevo.com/v3/contacts/<address>" -H "api-key: $BREVO_API_KEY" | jq .attributes
 ```
+
+### A DOI template cannot be created over the API
+
+`POST /v3/smtp/templates` creates a TRANSACTIONAL template. The DOI endpoint wants a
+different class: the spec documents `templateId` there as "Id of the Double opt-in
+(DOI) template", and nothing in the 206-path v3 spec exposes a DOI flag, type field
+or dedicated create endpoint. Passing a transactional template id fails:
+
+```
+POST /v3/contacts/doubleOptinConfirmation  ->  400
+{"code":"invalid_parameter","message":"An active DOI template does not exist"}
+```
+
+Measured 2026-08-05 against a freshly created, `isActive: true` transactional
+template carrying `{{ params.DOIurl }}`. So the DOI template is browser work, in the
+same bucket as the alert automation. **Build it in the Brevo dashboard, then record
+its id here and set `BREVO_DOI_TEMPLATE_ID`.**
+
+Template 7 on this account holds a ready body to paste in (the confirm button wired
+to `{{ params.DOIurl }}`, the plain-text URL fallback, and the HOIBOY AI LTD /
+17211412 footer). It is renamed to say it is NOT wired, precisely so nobody reads the
+template list and assumes this step is done.
+
+Leave `BREVO_DOI_TEMPLATE_ID` UNSET until the real id exists. Setting it to a
+transactional id moves the failure from a clear config precondition, which names the
+missing binding on the first request, to a `400` in the middle of a signup.
 
 **UNVERIFIED until the issue #56 AC 0.5 live probe**: the exact `code` string Brevo
 returns when the contact is already on the list. The Function matches it loosely and
