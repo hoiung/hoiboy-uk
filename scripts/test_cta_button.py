@@ -577,3 +577,79 @@ def test_blank_string_contents_preserves_offsets_and_quotes():
 def test_the_real_stylesheet_still_yields_exactly_one_stateless_btn_rule():
     """Regression pin: blanking must not disturb the real file's parse."""
     assert base_rule()[0] == ".main a.btn"
+
+
+# ---------------------------------------------------------------------------
+# Subscribe-button parity (#56 Stage 5)
+# ---------------------------------------------------------------------------
+#
+# The newsletter submit button is the SAME call to action in a different element.
+# Stage 5 reported it as duplication and the obvious remedy -- one shared
+# selector list -- was implemented and reverted, because it splits `.main a.btn`
+# into two order-dependent rules and `base_rule` above refuses exactly that, for
+# the reason recorded there.
+#
+# The two cannot share by inheritance either: `.main a.btn` is an anchor selector
+# and this is a <button>, so nothing cascades between them.
+#
+# So the duplication stays and the DRIFT is closed instead. That is the part
+# worth having: nobody minds two rules saying the same thing, they mind the day
+# one is retuned and the site quietly grows two different primary buttons.
+
+SUBSCRIBE_BTN_SELECTOR = '.subscribe-form button[type="submit"]'
+
+# Declarations both rules must agree on. Deliberately not "every declaration":
+# min-height, font-family, font-size, cursor and border are genuinely specific to
+# the <button>, and display/text-decoration to the <a>.
+SHARED_CTA_DECLS = ("background", "color", "padding", "font-weight", "border-radius")
+
+
+def _declarations(selector: str) -> dict[str, str]:
+    """The property -> value map of the stateless rule for `selector`."""
+    css = CSS.read_text(encoding="utf-8")
+    match = re.search(
+        rf"(?m)^\s*{re.escape(selector)}\s*\{{([^}}]*)\}}", css
+    )
+    assert match, f"no stateless rule found for {selector!r} in main.css"
+    out: dict[str, str] = {}
+    for decl in match.group(1).split(";"):
+        if ":" not in decl:
+            continue
+        prop, _, value = decl.partition(":")
+        out[prop.strip()] = value.strip()
+    return out
+
+
+def test_the_subscribe_button_matches_the_cta_recipe_declaration_by_declaration():
+    """Two rules, one appearance. Retune either alone and this fails."""
+    anchor = _declarations(".main a.btn")
+    button = _declarations(SUBSCRIBE_BTN_SELECTOR)
+
+    for prop in SHARED_CTA_DECLS:
+        assert prop in anchor, f".main a.btn no longer declares {prop!r}"
+        assert prop in button, (
+            f"{SUBSCRIBE_BTN_SELECTOR} no longer declares {prop!r}, so the two "
+            f"primary buttons have started to diverge."
+        )
+        assert anchor[prop] == button[prop], (
+            f"the two primary buttons disagree on {prop!r}: "
+            f".main a.btn has {anchor[prop]!r}, {SUBSCRIBE_BTN_SELECTOR} has "
+            f"{button[prop]!r}. They are the same control in different elements; "
+            f"retune both or neither."
+        )
+
+
+def test_the_subscribe_button_hover_tracks_the_same_token():
+    """The hover layer is derived from --cta on both, not declared twice."""
+    css = CSS.read_text(encoding="utf-8")
+    hovers = re.findall(
+        r"(?m)^\s*([^\n{]*btn[^\n{]*|[^\n{]*subscribe-form button[^\n{]*):hover\s*\{([^}]*)\}",
+        css,
+    )
+    assert hovers, "no hover rules found; this gate is asserting nothing"
+    for selector, body in hovers:
+        assert "color-mix(in srgb, var(--cta)" in body, (
+            f"{selector.strip()}:hover no longer derives its fill from --cta "
+            f"({body.strip()!r}). A second hard-coded hover colour is how the "
+            f"token stops being the single source of truth."
+        )

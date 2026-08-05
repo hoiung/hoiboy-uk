@@ -13,6 +13,14 @@
   --bg: #fafafa;
   --bg-card: #fff;
   --rule: #e0e0e0;
+  /* Newsletter box (#56). The logo's own sky blue, #87ceeb, held at low alpha so
+     it reads as brand rather than as a coloured box. Measured, not picked: that
+     value is 58.6% of the opaque pixels in assets/images/logo.png, the largest
+     share of any colour in it. Alpha rather than a flat tint so the panel sits on
+     whatever is behind it in either theme, and the green CTA still carries.
+     Operator chose this over five alternatives rendered side by side. */
+  --subscribe-bg: rgba(135, 206, 235, 0.16);
+  --subscribe-border: #7ab8d4;
   --max-w: 64rem;
   --sidebar-w: 14rem;
   --gutter: 2rem;
@@ -27,6 +35,10 @@
     --bg: #141414;
     --bg-card: #1c1c1c;
     --rule: #2a2a2a;
+    /* Same hue, lower alpha and a darker edge. A tint that works on #fafafa is
+       far too bright on #141414, so this is retuned rather than inherited. */
+    --subscribe-bg: rgba(135, 206, 235, 0.09);
+    --subscribe-border: #3f6f88;
   }
 }
 
@@ -135,6 +147,14 @@ strong, b { font-weight: 550; }
    second colour, so the token stays the single source of truth. Where
    color-mix is unsupported the declaration drops and hover simply does not
    change, which is a lost affordance and not a broken button. */
+/* KEEP THIS AS ONE STATELESS RULE. The newsletter submit button repeats these
+   same declarations at the bottom of this file, and merging the two into a
+   shared selector list was tried and reverted: it splits the button's
+   appearance across two rules whose ORDER then matters, which is what
+   scripts/test_cta_button.py refuses, and it refuses it for the reason the
+   comment above records. The duplication is deliberate; the drift it invites
+   is closed by a test that compares the two rules rather than by merging them
+   (test_cta_button.py, the subscribe-button parity case). #56 Stage 5. */
 .main a.btn { display: inline-block; background: var(--cta); color: #fff; padding: 0.8rem 1.5rem; text-decoration: none; font-weight: 600; border-radius: 3px; }
 .main a.btn:hover { background: color-mix(in srgb, var(--cta) 88%, #000); color: #fff; text-decoration: none; }
 .main a.btn:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
@@ -360,8 +380,20 @@ th { background: var(--bg-card); font-weight: 600; }
    :root declares no spacing-scale and no radius token, so the literals here are
    deliberate reuse of values already in this file (0.8rem 1.5rem padding and the
    3px radius from `.main a.btn` at :138) rather than invented tokens. */
-.subscribe-form { border-top: 1px solid var(--rule); margin-top: 3rem; padding-top: 1.5rem; }
-.subscribe-form-title { font-size: 1.1rem; margin: 0 0 0.75rem; font-weight: 550; }
+/* A panel, not a hairline rule. The original sat on the page background under a
+   1px top border, which is why it read as the end of the page rather than as
+   something to act on. Operator, having seen six treatments rendered in both
+   themes: "it's not inviting and just blends into the blogsite."
+   Radius 3px, matching every other boxed thing here rather than introducing a
+   second corner. */
+.subscribe-form {
+  margin-top: 3rem;
+  padding: 1.25rem;
+  background: var(--subscribe-bg);
+  border: 1px solid var(--subscribe-border);
+  border-radius: 3px;
+}
+.subscribe-form-title { font-size: 1.1rem; margin: 0 0 0.75rem; font-weight: 550; text-wrap: balance; }
 .subscribe-field { margin-bottom: 0.75rem; }
 .subscribe-field label { display: block; font-size: 0.9rem; color: var(--fg-muted); margin-bottom: 0.25rem; }
 
@@ -382,6 +414,13 @@ th { background: var(--bg-card); font-weight: 600; }
   border: 1px solid var(--rule);
   border-radius: 3px;
 }
+/* The same CTA as `.main a.btn`, in a different element. They cannot share by
+   inheritance (that one is an anchor selector, this is a <button>) and they must
+   not share a selector list either: doing so splits that button's appearance
+   across two order-dependent rules, which its own gate rejects. So the five
+   shared declarations are repeated here on purpose, and a test asserts the two
+   rules agree on every one of them -- drift fails the build instead of quietly
+   growing a second primary button. #56 Stage 5. */
 .subscribe-form button[type="submit"] {
   min-height: 44px;
   padding: 0.8rem 1.5rem;
@@ -411,6 +450,19 @@ th { background: var(--bg-card); font-weight: 600; }
 .subscribe-consent { display: flex; align-items: flex-start; gap: 0.5rem; }
 .subscribe-consent input[type="checkbox"] { width: 24px; height: 24px; min-width: 24px; margin-top: 0.1rem; }
 .subscribe-consent label { font-size: 0.85rem; margin-bottom: 0; }
+
+/* Inline failure notice, inserted by static/js/subscribe-form.js above the submit
+   button. Same red as the AGIT form's .agit-notice (defined in that page's own
+   style block) so the two forms report trouble identically, and retuned for dark
+   mode for the same reason that red is unreadable on #141414.
+
+   Empty until something goes wrong. `:empty` collapses the margin so a cleared
+   notice leaves no gap where a paragraph used to be. */
+.subscribe-notice { color: #b3261e; font-weight: 600; font-size: 0.9rem; margin: 0 0 0.75rem; }
+.subscribe-notice:empty { display: none; }
+@media (prefers-color-scheme: dark) {
+  .subscribe-notice { color: #f28b82; }
+}
 
 /* Honeypot: off-canvas, NOT display:none or hidden, so a bot that fills every
    field it can find still fills this one. */
