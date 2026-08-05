@@ -30,7 +30,15 @@ const ALERT_TO = "hoiboyuk@gmail.com";
 
 // Must match the registered webhook. Guards against a webhook that is later widened
 // to more events or more lists than this handler was written for.
-const WATCHED_EVENT = "listAddition";
+//
+// BOTH SPELLINGS, and this is not defensive padding. Brevo's SUBSCRIPTION enum on
+// POST /v3/webhooks is camelCase `listAddition`, but the payload it later DELIVERS
+// carries `"event":"list_addition"` in snake_case. Matching only the name you
+// subscribed with means every real delivery is silently ignored -- which is exactly
+// what happened on this Issue's first live signup: the contact confirmed, landed on
+// the list, and the operator got nothing, because this handler answered 200 Ignored.
+// The camelCase form is kept in case Brevo ever aligns the two.
+const WATCHED_EVENTS = ["list_addition", "listAddition"];
 
 function textResponse(status, message) {
   return new Response(message, {
@@ -105,7 +113,9 @@ export async function onRequestPost({ request, env }) {
   //    not the one we registered for, and say so with a 200: a non-2xx would make
   //    Brevo retry a delivery we deliberately do not want.
   const event = payload && payload.event;
-  if (event !== WATCHED_EVENT) {
+  if (!WATCHED_EVENTS.includes(event)) {
+    // The event name is logged so a future spelling change is diagnosable from the
+    // logs rather than from a silent absence of alerts.
     log("ignored-event", { event: typeof event === "string" ? event : null });
     return textResponse(200, "Ignored.");
   }

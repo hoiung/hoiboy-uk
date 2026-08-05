@@ -32,7 +32,7 @@ function harness({ fetchImpl } = {}) {
       return new Response('{}', { status: 201, headers: { 'content-type': 'application/json' } });
     },
   });
-  const EXPOSE = '\n;({ onRequestPost, tokensMatch, emailShape, escapeHtml, ALERT_TO, WATCHED_EVENT })';
+  const EXPOSE = '\n;({ onRequestPost, tokensMatch, emailShape, escapeHtml, ALERT_TO, WATCHED_EVENTS })';
   const mod = vm.runInContext(RAW.replace(EXPORT_RE, '') + EXPOSE, context, { filename: ENDPOINT_PATH });
   assert.equal(typeof mod.onRequestPost, 'function', 'onRequestPost did not load');
   return { mod, calls, logs };
@@ -49,7 +49,14 @@ function post({ auth = AUTH_FIXTURE, body = {}, raw } = {}) {
   });
 }
 
-const LIST_ADDITION = { event: 'listAddition', email: 'reader@example.com', list_id: [4] };
+// Brevo's documented DELIVERY payload for this event. Note `list_addition` in
+// snake_case: the subscription enum on POST /v3/webhooks is camelCase `listAddition`,
+// and matching only that spelling silently ignored the first real signup on this
+// Issue. This fixture is the shape Brevo actually sends.
+const LIST_ADDITION = {
+  id: 'xxxxxx', email: 'reader@example.com', event: 'list_addition',
+  key: 'k', list_id: [4], date: '2026-08-05 04:24:00', ts: 1604937111,
+};
 
 // ----------------------------------------------------------------------
 
@@ -86,7 +93,7 @@ test('auth: token compare is length-then-constant-time, not a shared-prefix ==='
   assert.equal(mod.tokensMatch(undefined, 'abc'), false);
 });
 
-test('a non-listAddition event is ignored with 200, so Brevo does not retry it', async () => {
+test('an unrelated event is ignored with 200, so Brevo does not retry it', async () => {
   const h = harness();
   for (const event of ['opened', 'click', 'unsubscribed', 'contactDeleted']) {
     const res = await h.mod.onRequestPost({ request: post({ body: { event, email: 'a@example.com' } }), env: DEFAULT_ENV });
@@ -122,7 +129,7 @@ test('the alert destination cannot be redirected by the payload', async () => {
 test('payload text is HTML-escaped into the alert body', async () => {
   const h = harness();
   await h.mod.onRequestPost({
-    request: post({ body: { event: 'listAddition', email: '<img src=x onerror=alert(1)>@example.com', list_id: [4] } }),
+    request: post({ body: { ...LIST_ADDITION, email: '<img src=x onerror=alert(1)>@example.com' } }),
     env: DEFAULT_ENV,
   });
   const sent = JSON.parse(h.calls[0].init.body);
@@ -168,4 +175,24 @@ test('emailShape reports lengths, never the address itself', () => {
   const { mod } = harness();
   assert.equal(mod.emailShape('abcd@example.com'), '4@11');
   assert.equal(mod.emailShape('nonsense'), 'invalid');
+});
+
+test('REGRESSION: the delivered snake_case event name is accepted', async () => {
+  // The defect this file exists to prevent. Brevo's subscription enum is camelCase
+  // `listAddition`; the payload it delivers says `list_addition`. Matching only the
+  // name you subscribed with makes every real delivery a silent 200 Ignored -- the
+  // contact confirms, lands on the list, and the operator is told nothing.
+  const h = harness();
+  const res = await h.mod.onRequestPost({
+    request: post({ body: { event: 'list_addition', email: 'r@example.com', list_id: [4] } }),
+    env: DEFAULT_ENV,
+  });
+  assert.equal(res.status, 200);
+  assert.equal(h.calls.length, 1, 'snake_case list_addition must raise an alert');
+});
+
+test('both spellings are watched, so a Brevo rename cannot silently kill alerts', () => {
+  const { mod } = harness();
+  assert.ok(mod.WATCHED_EVENTS.includes('list_addition'), 'delivered spelling missing');
+  assert.ok(mod.WATCHED_EVENTS.includes('listAddition'), 'subscription spelling missing');
 });
