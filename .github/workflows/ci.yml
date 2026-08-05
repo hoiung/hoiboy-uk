@@ -25,11 +25,15 @@ jobs:
           submodules: false
 
       - name: Secret detection (blocking)
-        # --require-public: hoiboy-uk IS a public repo, so a missing
-        # .public-repo marker means the marker was lost, not that the repo
-        # went private. Without this the gate would exit 0 in silence and
-        # the leak scan would retire itself with CI still green.
-        run: python3 scripts/check-public-repo-secrets.py . --require-public --allow-degraded-blocklist
+        # Flags come from .github/secret-scan-flags, the single place this repo
+        # declares them. That file is also what the two VENDORED workflows
+        # (commit-message-scan.yml, issue-body-scan.yml) read, so the reason for
+        # each flag is written once and cannot drift between four call sites --
+        # which is exactly how the earlier copies here came to describe the
+        # degraded mode incorrectly. Read that file for the rationale.
+        run: |
+          # shellcheck disable=SC2086  # flag list, must word-split
+          python3 scripts/check-public-repo-secrets.py . $(sed -e 's/#.*//' .github/secret-scan-flags | tr '\n' ' ')
 
       - name: Commit-message secret scan — push events (blocking)
         if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
@@ -49,36 +53,24 @@ jobs:
             echo "::notice::before SHA $BEFORE_SHA unreachable (force-push/rewrite) - scanning HEAD commit only"
             SINCE='HEAD~1'
           fi
-          # --allow-degraded-blocklist: this PUBLIC repo cannot hold the blocklist
-          # hashes manifest (it maps opaque tokens to the literals they cover, so
-          # publishing it defeats the point). Without the flag the scanner exits 2
-          # rather than report a clean it cannot back -- correct, and how this was
-          # caught. The flag records the choice: token coverage degrades to
-          # verbatim-reference matching and prints a [DEGRADED] line, while every
-          # other category (credentials, PII, business identifiers) still scans.
+          # Flags from .github/secret-scan-flags — see the first scan step above.
+          # shellcheck disable=SC2086  # flag list, must word-split
           python3 scripts/check-public-repo-secrets.py \
+            $(sed -e 's/#.*//' .github/secret-scan-flags | tr '\n' ' ') \
             --scan-commit-messages \
-            --since "$SINCE" \
-            --require-public \
-            --allow-degraded-blocklist
+            --since "$SINCE"
 
       - name: Commit-message secret scan — PR events (blocking)
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # --allow-degraded-blocklist: this PUBLIC repo cannot hold the blocklist
-          # hashes manifest (it maps opaque tokens to the literals they cover, so
-          # publishing it defeats the point). Without the flag the scanner exits 2
-          # rather than report a clean it cannot back -- correct, and how this was
-          # caught. The flag records the choice: token coverage degrades to
-          # verbatim-reference matching and prints a [DEGRADED] line, while every
-          # other category (credentials, PII, business identifiers) still scans.
+          # Flags from .github/secret-scan-flags — see the first scan step above.
+          # shellcheck disable=SC2086  # flag list, must word-split
           python3 scripts/check-public-repo-secrets.py \
+            $(sed -e 's/#.*//' .github/secret-scan-flags | tr '\n' ' ') \
             --scan-commit-messages \
-            --since ${{ github.event.pull_request.base.sha }} \
-            --require-public \
-            --allow-degraded-blocklist
+            --since ${{ github.event.pull_request.base.sha }}
 
       - name: Read pinned Hugo version
         id: hugo_version
@@ -354,7 +346,10 @@ jobs:
         # Runs AFTER the Hugo build step above, against the same tree that is
         # deployed. A leak reachable only through a template, a data file, a
         # shortcode or a partial shows up here and nowhere else.
-        run: python3 scripts/check-public-repo-secrets.py public --include-ignored --require-public --allow-degraded-blocklist
+        run: |
+          # shellcheck disable=SC2086  # flag list, must word-split
+          python3 scripts/check-public-repo-secrets.py public --include-ignored \
+            $(sed -e 's/#.*//' .github/secret-scan-flags | tr '\n' ' ')
 
       - name: Social-card guard (rendered og:image — template-regression backstop)
         # --require-trails: this job built the tree in an earlier step, so a
