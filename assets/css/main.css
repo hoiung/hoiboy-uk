@@ -412,14 +412,26 @@ th { background: var(--bg-card); font-weight: 600; }
 }
 /* Mobile only: "Get our newest posts in your inbox." wraps to two lines on a phone
    at 1.4rem, because the panel's own 1.25rem padding leaves less width than the
-   string needs. Nudged down just far enough to hold one line at 360px, the
-   narrowest viewport worth targeting. Desktop is untouched.
+   string needs. Desktop is untouched.
+
+   1.05rem is MEASURED, not chosen: it is the largest value that still holds one
+   line, rendered at four widths. Lines per viewport:
+
+     1.15rem  320:2  360:2  375:1  414:1
+     1.10rem  320:2  360:2  375:1  414:1
+     1.05rem  320:2  360:1  375:1  414:1   <- largest that clears 360
+     0.95rem  320:2  360:1  375:1  414:1
+
+   320px still wraps, and deliberately so: it wraps at every size down to 0.95rem,
+   so the constraint there is not the font size and shrinking further only makes the
+   heading weedy on every other phone for no gain. 360px is the floor worth holding,
+   which covers the common Android widths and up.
 
    Same two-class 0-2-0 specificity as the rule above, deliberately: a bare
    `.subscribe-form-title` here would score 0-1-0, lose to `.main h2` at 0-1-1, and
    be as inert as the rule this file already carries a comment about. */
 @media (max-width: 768px) {
-  .subscribe-form .subscribe-form-title { font-size: 1.15rem; }
+  .subscribe-form .subscribe-form-title { font-size: 1.05rem; }
 }
 .subscribe-field { margin-bottom: 0.75rem; }
 .subscribe-field label { display: block; font-size: 0.9rem; color: var(--fg-muted); margin-bottom: 0.25rem; }
