@@ -339,7 +339,7 @@ that would make every submission fail.
 |---|---|
 | newsletter list id | `4` |
 | newsletter folder id | `3` |
-| DOI template id | `OPERATOR_TODO` |
+| DOI template id | `7` |
 | Bitwarden item (API key) | `brevo-hoiboy-uk-pages-api` |
 
 The list is named `hoiboy.uk newsletter`. `POST /v3/contacts/lists` requires both
