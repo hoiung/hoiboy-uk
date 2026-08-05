@@ -339,7 +339,7 @@ that would make every submission fail.
 |---|---|
 | newsletter list id | `4` |
 | newsletter folder id | `3` |
-| DOI template id | `OPERATOR_TODO` (dashboard-only, see below) |
+| DOI template id | `7` |
 | Bitwarden item (API key) | `brevo-hoiboy-uk-pages-api` |
 
 The list is named `hoiboy.uk newsletter`. `POST /v3/contacts/lists` requires both
@@ -402,31 +402,42 @@ consent record accurate only to the day. Verify with a round trip, not with the 
 curl -sS "https://api.brevo.com/v3/contacts/<address>" -H "api-key: $BREVO_API_KEY" | jq .attributes
 ```
 
-### A DOI template cannot be created over the API
+### A DOI template needs TWO things the API docs never put side by side
 
-`POST /v3/smtp/templates` creates a TRANSACTIONAL template. The DOI endpoint wants a
-different class: the spec documents `templateId` there as "Id of the Double opt-in
-(DOI) template", and nothing in the 206-path v3 spec exposes a DOI flag, type field
-or dedicated create endpoint. Passing a transactional template id fails:
+`POST /v3/smtp/templates` creates the DOI template fine. What it will not tell you is
+that a DOI template is defined by two properties at once, and missing either one
+produces the same unhelpful error:
 
 ```
 POST /v3/contacts/doubleOptinConfirmation  ->  400
 {"code":"invalid_parameter","message":"An active DOI template does not exist"}
 ```
 
-Measured 2026-08-05 against a freshly created, `isActive: true` transactional
-template carrying `{{ params.DOIurl }}`. So the DOI template is browser work, in the
-same bucket as the alert automation. **Build it in the Brevo dashboard, then record
-its id here and set `BREVO_DOI_TEMPLATE_ID`.**
+The two properties:
 
-Template 7 on this account holds a ready body to paste in (the confirm button wired
-to `{{ params.DOIurl }}`, the plain-text URL fallback, and the HOIBOY AI LTD /
-17211412 footer). It is renamed to say it is NOT wired, precisely so nobody reads the
-template list and assumes this step is done.
+1. **`"tag": "optin"`** on the template. This is what registers it as the account's
+   DOI template. Nothing in the v3 spec's `createSmtpTemplate` body mentions it, and
+   the `tag` field's own description is the generic "Tag of the template".
+2. **`{{ doubleoptin }}`** as the confirmation link. Lowercase, one word, no `Url`
+   suffix, and NOT `{{ params.DOIurl }}`.
 
-Leave `BREVO_DOI_TEMPLATE_ID` UNSET until the real id exists. Setting it to a
-transactional id moves the failure from a clear config precondition, which names the
-missing binding on the first request, to a `400` in the middle of a signup.
+`{{ params.DOIurl }}` is a different tag for a different job: it is the page the
+reader lands on AFTER clicking, which the API call supplies as `redirectionUrl`.
+Using it as the button href produces a template that looks correct, that the API
+reports as `doiTemplate: true`, and that the DOI endpoint still rejects.
+
+Measured 2026-08-05, in this order:
+
+| Template state | `doiTemplate` | DOI call |
+|---|---|---|
+| `{{ params.DOIurl }}`, no tag | false | 400 |
+| `{{ doubleOptinUrl }}`, no tag | true | 400 |
+| created new with `{{ doubleOptinUrl }}`, no tag | true | 400 |
+| **`{{ doubleoptin }}` + `"tag": "optin"`** | **true** | **201** |
+
+The third row is the important one: `doiTemplate: true` is NOT sufficient, so that
+flag cannot be used to check your own work. The only trustworthy check is firing the
+call and getting a `201`.
 
 **UNVERIFIED until the issue #56 AC 0.5 live probe**: the exact `code` string Brevo
 returns when the contact is already on the list. The Function matches it loosely and
