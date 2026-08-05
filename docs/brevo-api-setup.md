@@ -444,6 +444,78 @@ returns when the contact is already on the list. The Function matches it loosely
 logs the raw code on every non-2xx, so the probe will show the real value in the
 Function logs. Record it here once observed.
 
+### The new-subscriber alert is a WEBHOOK, and Automations is a dead end
+
+The operator wanted an email whenever someone subscribes. Brevo's Automations product
+does that in the dashboard, but it has **no API at all**: the v3 spec mentions
+"automation" 37 times and "workflow" 27, and not one of them is an endpoint. They are
+all read-only account metadata (`marketingAutomation` status and tracker id). A
+dashboard workflow is also un-reviewable, un-testable, and cannot be handed to a
+client as a script, which is what this runbook exists to be.
+
+Webhooks DO have endpoints, so the alert is ordinary code:
+`functions/api/brevo-webhook.js`, registered with:
+
+```bash
+curl -sS -X POST "https://api.brevo.com/v3/webhooks" \
+  -H "api-key: $BREVO_API_KEY" -H 'content-type: application/json' \
+  -d '{"url":"https://hoiboy.uk/api/brevo-webhook?token=<BREVO_WEBHOOK_TOKEN>",
+       "description":"new-subscriber alert","events":["listAddition"],"type":"marketing"}'
+```
+
+It also fires on the right event. `listAddition` happens when Brevo ADDS the contact,
+which under double opt-in is the confirmation click, so form-spam bots that never open
+a mailbox raise nothing. Alerting from inside `subscribe.js` instead would fire at
+submission and count exactly those bots.
+
+#### The trap: the enum you subscribe with is not the name you receive
+
+`POST /v3/webhooks` takes camelCase **`listAddition`**. The payload Brevo then
+DELIVERS carries snake_case:
+
+```json
+{"id":"xxxxxx","email":"a@example.com","event":"list_addition",
+ "key":"xxxx","list_id":[4],"date":"2020-10-09 00:00:00","ts":1604937111}
+```
+
+Match only the name you subscribed with and every real delivery is silently ignored.
+That shipped here and swallowed the first live signup: the contact confirmed, landed
+on the list, and the operator got nothing, because the handler answered `200 Ignored`.
+Watch BOTH spellings, and log the event name on the ignore path so a future rename is
+diagnosable from the logs rather than from an absence of alerts.
+
+#### Authentication, and why the endpoint is deliberately boring
+
+Brevo does not sign webhook calls. There is no HMAC header, so the URL itself is the
+credential and carries a token checked against `BREVO_WEBHOOK_TOKEN` in
+length-then-constant-time. Anyone who learns the URL can forge an alert, which is why
+the endpoint does exactly one thing: send a fixed-shape email to one hard-coded
+address. It never writes, never reads contacts, and never echoes attacker-supplied
+text anywhere but into that email, HTML-escaped.
+
+#### The unsubscribe footgun, and the self-heal
+
+Brevo attaches an unsubscribe link to these alerts and Gmail renders it beside the
+sender name. One click puts the OPERATOR's address on the transactional blocklist and
+every future alert is refused. Since the endpoint answers `200` regardless (so Brevo
+does not retry against the shared cap), the alerts would just stop: no error, nothing
+to notice except an eventual suspicion that nobody has subscribed lately.
+
+On any non-2xx the handler now unblocks the operator address and retries once:
+
+```
+DELETE /v3/smtp/blockedContacts/{email}   # idempotent; 404 = was not blocked
+```
+
+Deliberately NOT gated on matching Brevo's blocked-recipient error string, because
+that string is unverified and pattern-matching an unverified message already cost this
+Issue an afternoon. A recovered send logs `alert-recover`, not `alert-send`.
+
+Root cause of the link itself is unfixed: `hoiboyuk@gmail.com` is Brevo contact id 1
+on list 2, a May onboarding artefact. Removing it from that list would probably stop
+the link, but that is operator data and it is UNVERIFIED that contact membership is
+what triggers it.
+
 ### The 300/day cap is shared, and this lane spends it two at a time
 
 The free tier's 300 outbound emails/day covers BOTH lanes. Each signup costs two
