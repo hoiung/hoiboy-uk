@@ -410,6 +410,17 @@ th { background: var(--bg-card); font-weight: 600; }
   font-weight: 550;
   text-wrap: balance;
 }
+/* Mobile only: "Get our newest posts in your inbox." wraps to two lines on a phone
+   at 1.4rem, because the panel's own 1.25rem padding leaves less width than the
+   string needs. Nudged down just far enough to hold one line at 360px, the
+   narrowest viewport worth targeting. Desktop is untouched.
+
+   Same two-class 0-2-0 specificity as the rule above, deliberately: a bare
+   `.subscribe-form-title` here would score 0-1-0, lose to `.main h2` at 0-1-1, and
+   be as inert as the rule this file already carries a comment about. */
+@media (max-width: 768px) {
+  .subscribe-form .subscribe-form-title { font-size: 1.15rem; }
+}
 .subscribe-field { margin-bottom: 0.75rem; }
 .subscribe-field label { display: block; font-size: 0.9rem; color: var(--fg-muted); margin-bottom: 0.25rem; }
 
