@@ -417,6 +417,26 @@ test('config: a whitespace-only id binding is refused as loudly as an absent one
   }
 });
 
+test('config: an absent TURNSTILE_SECRET_KEY fails loud, not as a bot rejection', async () => {
+  // Stage 5. The guard covered the three Brevo bindings and not this one, which
+  // is the binding whose absence stops EVERY subscription: siteverify is
+  // mandatory and fails closed, so each visitor saw a 403 reading as "you look
+  // like a bot" while the log said turnstile-fail. A misconfiguration wearing the
+  // costume of a working anti-bot gate is the worst kind to debug, because the
+  // system looks like it is doing its job.
+  const { response, calls, logs } = await submit({ env: { TURNSTILE_SECRET_KEY: undefined } });
+
+  assert.equal(response.status, 500, 'a missing binding is a config fault, not a 403');
+  assertNoBrevoWrite(calls);
+
+  const entry = logs.map((l) => JSON.parse(l)).find((e) => e.event === 'config-missing');
+  assert.ok(entry, `no config-missing log line; got:\n${logs.join('\n')}`);
+  assert.ok(
+    entry.missing.includes('TURNSTILE_SECRET_KEY'),
+    `the log must name the absent binding, got ${JSON.stringify(entry.missing)}`
+  );
+});
+
 test('rate-limit: a Brevo 429 becomes a 503 rather than a retry storm', async () => {
   const { response, logs } = await submit({
     brevo: () => jsonResponse(429, { code: 'too_many_requests' }),

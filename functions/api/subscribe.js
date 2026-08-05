@@ -1,7 +1,7 @@
 // Newsletter double opt-in subscribe handler (issue #56 Phase 3).
 //
 // Cloudflare Pages Function, route: POST /api/subscribe
-//   0. Fail loud if any of the three Brevo bindings is absent.
+//   0. Fail loud if any required binding is absent (three Brevo, plus Turnstile).
 //   1. Reject an oversized body up front (content-length ceiling) before parsing.
 //   2. Honeypot drop (silent redirect, no side effects).
 //   3. Mandatory Turnstile server-side siteverify (403 on failure).
@@ -439,15 +439,22 @@ export async function onRequestPost(context) {
   const { log, protect, redact } = createLogger("subscribe");
 
   // 0. Fail loud on a missing binding. Checked per name, not by one alternation, so
-  //    a deploy carrying two of the three cannot pass this guard.
+  //    a deploy carrying all but one cannot pass this guard.
   //    The two id bindings are additionally checked to be POSITIVE INTEGERS, not
   //    merely present. Truthiness alone let `BREVO_LIST_ID = "   "` through, and
   //    `Number("   ")` is 0, so the request went out as `includeListIds: [0]` --
   //    fail-closed at Brevo, but not the loud-on-first-request behaviour the
   //    header comment promises (Ralph round 22 Tier 3).
+  //    TURNSTILE_SECRET_KEY is checked here too, though it is not a Brevo binding
+  //    (Stage 5). It is the one whose absence stops EVERY subscription: siteverify
+  //    is mandatory and fails closed, so without it each visitor gets a 403 that
+  //    reads as "you look like a bot" while the log says turnstile-fail. That is a
+  //    misconfiguration wearing the costume of a working anti-bot gate, and it was
+  //    the only binding the fail-loud guard did not cover.
   const isPositiveId = (v) => Number.isInteger(Number(v)) && Number(v) > 0 && String(v).trim() !== "";
   const missingBindings = [];
   if (!env.BREVO_API_KEY) missingBindings.push("BREVO_API_KEY");
+  if (!env.TURNSTILE_SECRET_KEY) missingBindings.push("TURNSTILE_SECRET_KEY");
   if (!isPositiveId(env.BREVO_LIST_ID)) missingBindings.push("BREVO_LIST_ID");
   if (!isPositiveId(env.BREVO_DOI_TEMPLATE_ID)) missingBindings.push("BREVO_DOI_TEMPLATE_ID");
   if (missingBindings.length > 0) {
