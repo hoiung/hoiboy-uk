@@ -11,6 +11,8 @@ Every personal "I built / I shipped / I run / I designed" claim on this page is 
 (No URL-backed personal product claims remain on this page: the "Why me" credibility section, and the SST3 / Ralph Review Trio / ebay-seller-tool / trading-platform claims it carried, relocated to the Work with Hoi front-door page (content/hire-hoi/ai-consultancy/work-with-hoi/index.md) per issue #40. The claims-tally block moved with them.)
 -->
 
+{{< long-read-notice >}}
+
 <!-- iamhoi -->
 
 I help non-technical domain experts and subject matter experts (SME) adopt AI properly. Not by handing you a tool and saying "off you go". Not by writing a hand-wavy AI strategy deck either! My strength is people and moving parts: a serial entrepreneur who has run real businesses, a qualified project manager who was PMP certified (PMI, 2023), with donkey years of programme management on projects of scale.
@@ -45,19 +47,15 @@ Your decisions land in days, not quarters, which is exactly why this engagement 
 
 <!-- iamhoiend -->
 
-## What is an AI harness, in one diagram
+## What is an AI harness, and why do you need one?
 
 {{< zoom-image src="harness-layers.svg" alt="Two-layer harness diagram: an AI agent at the centre, an inner general-purpose harness that ships with Claude Code and similar tools, and an outer specialised harness divided into six segments (Decision Rules, Research Method, Data Sources, Source Reliability, Problem Detectors, Anti-Patterns) built for your experts. A human checkpoint sits outside the rings." title="What is an AI harness" >}}
 
 *(Click the diagram to enlarge for details.)*
 
-## What is an AI harness, and why do you need one?
-
 <!-- iamhoi -->
 
 Short version: a harness is a custom-built wrapper around your chosen AI tools (Claude, ChatGPT, Cursor, Copilot, whatever you use), shaped to your business's actual work. Without one, AI is a clever assistant that occasionally forgets things and occasionally (mostly) hallucinates. With one, AI becomes a consistent, audit-trailed colleague that does the routine work the way YOU need it done. The difference between "fun in demos" and "actually useful every day".
-
-*(See the diagram just above: two concentric layers, six labelled segments in the specialised outer ring, AI agent at the centre, your human checkpoint outside.)*
 
 The "why do you need one" answer in plain English: it turns your subject matter experts into amplified versions of themselves. A meaningful chunk of every SME's week goes on work that is repeatable, well-understood, and (honestly) a poor use of their hours. Recurring spreadsheets. Compliance checks. Listing formats. Brief-to-copy translations. Audit reconciliations. Necessary work, done a thousand times manually. The SME is the right person to DESIGN the workflow that handles it. Running it by hand a thousand times is what the harness takes off their plate.
 
@@ -65,7 +63,7 @@ The harness digitises and automates that bottom layer. It runs the repeatable pa
 
 A hero suit, basically. The harness is the suit. Your SME is still the one calling the shots. The suit amplifies. Same headcount, more output, less drained. Picture Iron Man: it is a suit that still needs the hero to wear it.
 
-Why not just go full automation and replace the human entirely? Android instead of cyborg? Good question if that is what you are thinking. Ask yourself: with the state of AI today, would you put 100% faith and trust in AI? (You have probably seen the stories of AI deleting a company's entire production database in 9 seconds. Not here to scaremonger. That was almost certainly poor architecture and giving AI full control over every layer. That is just poor engineering.) Right now a hero suit makes more sense. We still need the human in the loop. The human orchestrator. The subject matter expert who can sanity-check that the AI is doing it right, steer it through small errors and refinements, and make the calls that should not be made by AI and need the kind of complex thought only humans bring. In the not-so-distant future, yes, full human replacement is almost certainly coming. Just not where AI is right now.
+Why not just go full automation and replace the human entirely? Right now a hero suit makes more sense. We still need the human in the loop: the subject matter expert who can sanity-check that the AI is doing it right, steer it through small errors and refinements, and make the calls that should not be made by AI. In the not-so-distant future, yes, full human replacement is almost certainly coming. Just not where AI is right now.
 
 How does the harness actually pull that off? Two halves working together.
 
@@ -75,9 +73,9 @@ How does the harness actually pull that off? Two halves working together.
 
 Both halves matter. Automation without governance is a faster way to ship rubbish. Governance without automation is a thicker rule book nobody follows. Together they make the AI accountable AND the SME productive.
 
-Worth being precise about which harness we are talking about, because there are layers. Modern AI tools (Claude Code, Cursor, Copilot, ChatGPT, the lot) already ship with their own general-purpose harnesses underneath, which is what makes them roughly useful for everyone in roughly the same way. The harness I build for you sits ON TOP of that. It is the specialised layer for YOUR business: your workflows, your governance, your domain and subject matter expertise, your competitive edge.
+Worth being precise about which harness we are talking about, because there are layers. Modern AI tools already ship with their own general-purpose harnesses underneath. The harness I build for you sits ON TOP of that. It is the specialised layer for YOUR business: your workflows, your governance, your domain and subject matter expertise, your competitive edge.
 
-A common confusion: people see Anthropic's Skills (or similar plug-in spec files from other vendors) and think those ARE a harness. Skills are a PART of a harness. Useful on their own, inadequate alone. A full harness is workflow plus governance plus Skills plus feedback loops plus role-specific automation, all glued together. And here is the bit that matters for your edge: every company does things slightly differently, and the ones that PULL ahead do things differently on purpose. That "doing it differently" lives in the specialised harness. An off-the-shelf SKU cannot ship that for you, because it is built for everyone, not for you.
+A common confusion: people see Anthropic's Skills and think those ARE a harness. Skills are a PART of a harness. Useful on their own, inadequate alone. A full harness is workflow plus governance plus Skills plus feedback loops plus role-specific automation, all glued together. An off-the-shelf SKU cannot ship that for you, because it is built for everyone, not for you.
 
 Want to dig into the concept before booking a call? Three posts of mine that go deeper:
 
@@ -121,8 +119,6 @@ That is what I am betting my consultancy on. One tool, learned well, harnessed w
 
 Most tasks and workflows can be automated. Take an example I am working on right now: Blender and SketchUp 3D modelling for an architecture practice, to speed up building 3D concept designs that take 2D drawings and a collection of furniture-and-fitting ideas and transform them autonomously. The only thing you should be thinking and asking yourself: "What can we automate?" and "What can't be automated yet?" and "What shouldn't we automate for good reasons?"
 
-I also want to say that I picked what I judged the strongest tool at the time for coding, and Claude Code has since become even more of a beast at getting real work done, not just for coding but for other workloads too. I tried others a little, but they did not click for me. Also, focus is important. My harness took a long time and lots of refactoring to get right. Throwing in more variables (Codex, or whatever other CLI-based AI option) would have just burned both money and resources for little gain in value. I stuck with Claude Code because I know it works, and works really well.
-
 <!-- iamhoiend -->
 
 ## "What problem am I solving for you?"
@@ -131,15 +127,13 @@ I also want to say that I picked what I judged the strongest tool at the time fo
 
 Building a proper AI harness (with all the necessary workflows, guardrails, governance, enforcements, feedback loops, and the dozen other moving parts that make AI actually useful inside a business) requires more than a full-time job. It is a real specialism.
 
-I have been at it 12 to 15 hours a day every day for the last year, on top of two years of "normal" daily use before that. AI is fast-changing, the goalposts keep moving (new models, new tools, new best practices, every quarter), and keeping a working harness in shape requires staying on top of all of it.
+AI is fast-changing, the goalposts keep moving (new models, new tools, new best practices, every quarter), and keeping a working harness in shape requires staying on top of all of it.
 
 So: expecting a non-technical subject matter expert (whose actual expertise is marketing, sales, ops, design, finance, customer support, or whatever side of the business they sit on) to learn all of that on top of their day job? No wonder so many people are struggling with AI adoption. Your team are not engineers. They were not hired to spend their evenings on YouTube learning how to wrangle Claude.
 
-That is the problem I am solving for you. Your subject matter experts are there to do what they are good at, and they should stay focused on that. Leave the harness and the workflow design to people like me who have spent way too much of our spare time playing around with AI (because yeah it is fun, but also frustrating at times). I bring the harness pattern, the workflow design, the governance, and the ongoing maintenance into your business as a service, so your people can do their actual jobs.
+That is the problem I am solving for you. Your subject matter experts are there to do what they are good at, and they should stay focused on that. I bring the harness pattern, the workflow design, the governance, and the ongoing maintenance into your business as a service, so your people can do their actual jobs.
 
-One more thing worth knowing: the harness is more independent than you might think. Picture it as a wrapper, a piece of kit the AI agent wears, with the workflows, guardrails, governance, and feedback loops baked into the wrapper itself. Once it is shipped and working, it does not change much. New models come along (Claude Opus 4.6 to 4.7, and whatever comes after), and based on what I have seen so far those upgrades tend to make the harness work better, not break it. Some tweaks may be needed when a new model lands (the Monthly Maintenance Package handles that), but no wholesale rebuilds.
-
-So your domain expert's day-to-day with the harness in place: the routine work gets handled consistently (with the right enforcement and audit trail), and they spend their hours on the human-judgment work AI cannot replicate (the creative calls, the customer relationships, the strategic decisions). Faster output, higher quality, same headcount, same people doing what they are best at.
+One more thing worth knowing: the harness is more independent than you might think. Once it is shipped and working, it does not change much. New models come along (Claude Opus 4.6 to 4.7, and whatever comes after), and based on what I have seen so far those upgrades tend to make the harness work better, not break it. Some tweaks may be needed when a new model lands (the Monthly Maintenance Package handles that), but no wholesale rebuilds.
 
 <!-- iamhoiend -->
 
@@ -150,18 +144,16 @@ So your domain expert's day-to-day with the harness in place: the routine work g
 I deliver this sequentially, one step at a time, never parallel. Each step closes before the next opens. You can pull out at any handover.
 
 1. **Free 20-minute discovery call** (Cal.com booking, Mon to Fri, UK business hours). Tell me your business shape, your AI usage today, what you wish worked better, and how you imagine AI working for you in your head (the result you picture, the workflow you imagine, the daily-life-with-AI you would like to have). That last part lets me set honest expectations and surface any alignment or misalignment between what you imagine and what is realistic right now, well before any money or SOW lands. I tell you whether this is a fit, fast.
-2. **Company structure audit** (1 to 3 days, written report plus walkthrough call). £1,500 per day + VAT, the same day rate as every paid scoping step I sell. Typically 1 day for 5 to 10 employees, 2 to 3 days for 10 to 50 employees; at 50+ employees I scope the day count on the discovery call, so you get the quote before anything is billed. The audit produces an understanding of your company structure (layers, unique roles), whether we are trialing on a single department first (in which case the audit focuses there), the count of unique harnesses to build (one per distinct role or workflow), the best engagement contact on your side I will coordinate with through the build, and the SMEs I will be sitting with for each per-harness audit later. It also produces high-level enough understanding to structure the foundation that will support those harnesses. Plus a directional budget for the whole engagement, calculated as harness count multiplied by the medium of the per-harness £12K-£30K typical band, just a starting frame to set expectations. The number is also useful on your side for cost planning: deriving cost per head across your team, measuring performance improvement against the spend, or however else you frame cost-versus-value internally (which is your business, not my remit). I will not invent a "300% productivity boost" multiplier to dress the budget up. Performance gain is something you measure over time on your own terms, not a number I make up to close a deal. What I can confidently commit to: what I am building will drive productivity up over the long run and gap-fill the efficiency holes that exist in your day-to-day work today. **It is just a budget.** Some harnesses run more, some less; firm per-harness fees lock in at Phase 4 (Per-harness audit) once I sit with the SME and see the workflow detail. We drawdown from the budget as we build Phases 4 to 6 and adjust if reality skewers the medium. 1 to 3 days is not enough time for per-harness deep-dive; this is high-level structural understanding to set engagement direction. The audit is independent (it is not credited back against build work later, because that would compromise auditor independence).
-3. **Foundation setup** (£3,000 + VAT for 2 days fixed; overflow at £1,500/extra day, hard-capped at 4 days total). The scaffolding that every harness sits on top of: a clean home in your GitHub for each harness with proper version history, rollback, and audit trail, plus the security controls that keep your company information safe and contained. Future-improvement recommendations come naturally out of working with the harness in your day-to-day (those recommendations are out-of-scope as billable work, but I will surface them so you can decide what to act on).
-4. **Per-harness audit** (£750 + VAT, one SME-day, where SME means Subject Matter Expert; the consultancy-industry billing unit for one full day of an expert's time). Sequential, one per harness, before each build. What actually happens on the day: I shadow your SME, pick their brain, ask lots of questions. I want to understand three things at the core: what they want automating, what cannot be automated, and what should not be automated even if it technically could. I want to understand where their data comes from, how they crunch it, how they analyse it, how they make it useful, and how they want it presented. All in plain English. I am not going to dress it up with clever acronyms (RAG, LLM Wiki, vector embeddings, knowledge graphs, agentic this and that). I focus on what matters to the SME, not what sounds clever (or makes me sound clever). What they are designing, what they are building, what tools they use day-to-day, what is genuinely hard about their job. The goal is to learn enough that I could roughly play their role. If a particular role turns out more complicated than one SME-day allows, we discuss and agree an extension at the same SME-day rate (half-day minimum: any extension is charged in half-day chunks, not by the hour).
+2. **Company structure audit** (1 to 3 days, written report plus walkthrough call). £1,500 per day + VAT. The audit produces an understanding of your company structure (layers, unique roles), whether we are trialing on a single department first (in which case the audit focuses there), the count of unique harnesses to build (one per distinct role or workflow), the best engagement contact on your side I will coordinate with through the build, and the SMEs I will be sitting with for each per-harness audit later. It also produces high-level enough understanding to structure the foundation that will support those harnesses. Plus a directional budget for the whole engagement. **It is just a budget.** Some harnesses run more, some less; firm per-harness fees lock in at Phase 4 (Per-harness audit) once I sit with the SME and see the workflow detail.
+3. **Foundation setup** (£3,000 + VAT for 2 days fixed). The scaffolding that every harness sits on top of: a clean home in your GitHub for each harness with proper version history, rollback, and audit trail, plus the security controls that keep your company information safe and contained. Future-improvement recommendations come naturally out of working with the harness in your day-to-day (those recommendations are out-of-scope as billable work, but I will surface them so you can decide what to act on).
+4. **Per-harness audit** (£750 + VAT, one SME-day, where SME means Subject Matter Expert; the consultancy-industry billing unit for one full day of an expert's time). Sequential, one per harness, before each build. What actually happens on the day: I shadow your SME, pick their brain, ask lots of questions. I want to understand three things at the core: what they want automating, what cannot be automated, and what should not be automated even if it technically could. I want to understand where their data comes from, how they crunch it, how they analyse it, how they make it useful, and how they want it presented. All in plain English. I am not going to dress it up with clever acronyms (RAG, LLM Wiki, vector embeddings, knowledge graphs, agentic this and that). I focus on what matters to the SME, not what sounds clever (or makes me sound clever). What they are designing, what they are building, what tools they use day-to-day, what is genuinely hard about their job. The goal is to learn enough that I could roughly play their role.
 5. **Per-harness build and rollout**, custom-scoped per audit (the audit tells us what to build AND how many users we are rolling it out to; the build itself is shaped by the rollout shape, so building a harness for 1 user is a different job from the same harness rolled out across 20). I will not pre-quote it for that reason. Typical band £12K-£30K + VAT depending on harness complexity AND rollout footprint (number of users on your team running it).
 6. **SME harness manual and tutoring workshop**, per harness (£750 + VAT, one SME-day). Once the harness ships, your subject matter experts get a hands-on session so they can actually USE it confidently. I walk them through the harness, the workflows, the guardrails, the failure modes to watch for, and the bits where they should and should not push back. The manual is also baked INTO the harness itself, so anyone on your team can ask the harness "how do I use you for X?" and get an answer back rooted in your trade's actual rules. No 20-page PDF that nobody reads.
 7. **Tier 1 first-month support**, per harness (free, capped at 8 hours of my time across the first month post-workshop). Reactive help with anything that surfaces while your team gets used to the harness in their day-to-day. Not full-time on-call availability.
-8. **Ongoing Monthly Maintenance Package**, per harness, deliverable-anchored (NOT a retainer; you pay for closed drift events plus the monthly maintenance report, not for me being on standby). Priced low on purpose: £200/mo per harness + VAT month-to-month, or £170/mo per harness + VAT on a 12-month annual commit. Once the harness is shipped and working this is genuinely light-touch, so the price stays low and you decide every month whether it is still earning its place. Month-to-month, 14-day notice either way: keep it while it is worth it to you, drop it the moment it is not. Covers AI model drift (e.g. Claude Opus 4.6->4.7), dependency drift, configuration drift. Not feature work.
-9. **Anything outside the current SOW** (new features, enhancements, additional harnesses, mid-engagement scope changes). Treated as a new engagement. Anything significant goes through a fresh per-harness audit (£750 + VAT, one SME-day) to scope the change properly, then a custom-quoted build SOW. Smaller pieces of work (half-day to a couple of days, not big enough to warrant a fresh audit) can be billed pro-rata against the SME-day rate (£750 + VAT per SME-day, half-day minimum). Change-orders that qualify as maintenance can sometimes run under the Tier 2 hourly pack if you have one. Same audit-first discipline as the original engagement: I will not pre-quote work I have not scoped.
+8. **Ongoing Monthly Maintenance Package**, per harness, deliverable-anchored (NOT a retainer; you pay for closed drift events plus the monthly maintenance report, not for me being on standby). Priced low on purpose: £200/mo per harness + VAT month-to-month, or £170/mo per harness + VAT on a 12-month annual commit. Once the harness is shipped and working this is genuinely light-touch, so the price stays low and you decide every month whether it is still earning its place. Covers AI model drift (e.g. Claude Opus 4.6->4.7), dependency drift, configuration drift. Not feature work.
+9. **Anything outside the current SOW** (new features, enhancements, additional harnesses, mid-engagement scope changes). Treated as a new engagement. Anything significant goes through a fresh per-harness audit (£750 + VAT, one SME-day) to scope the change properly, then a custom-quoted build SOW. Same audit-first discipline as the original engagement: I will not pre-quote work I have not scoped.
 
-Need open-scope hours portfolio-wide instead of the monthly maintenance package? Tier 2 hourly pack: £1,500 / 10 hours + VAT. Existing clients only (you already have at least one harness shipped) and maintenance-only scope (drift events, support, troubleshooting). Feature work or new harness builds run as their own per-harness audit + build SOW, not under this pack.
-
-Per-harness builds and rollouts typically land between £12K and £30K + VAT depending on harness complexity AND rollout footprint (number of users on your team running the same harness; the build itself is shaped by how many users it needs to land on, so this is a single fee covering both dimensions, not a build fee plus a separate per-user rollout fee). The Phase 2 company audit gives you a directional engagement-level budget (harness count × the medium of this band, just a starting frame). Firm per-harness fees lock in at Phase 4 (Per-harness audit) once I sit with the SME and see the workflow detail. The build fee is a fixed-fee output of the per-harness audit, not an open hourly tab. Volume discounts may apply for multi-harness commitments at engagement open, discussed on the audit walkthrough call. The Monthly Maintenance Package and hourly pack ARE fully published; those are commodity-shaped.
+Volume discounts may apply for multi-harness commitments at engagement open, discussed on the audit walkthrough call. The Monthly Maintenance Package and hourly pack ARE fully published; those are commodity-shaped.
 
 <!-- iamhoiend -->
 
@@ -173,7 +165,9 @@ The numbers above (the audit day rate, foundation, the per-harness build band, t
 
 <!-- iamhoiend -->
 
-## What You Need to Get Started
+## What you need to get started
+
+<!-- iamhoi -->
 
 The short pre-flight checklist before we kick off. None of this is exotic; if you have shipped any modern software at your business, you almost certainly have it already.
 
@@ -183,12 +177,6 @@ The short pre-flight checklist before we kick off. None of this is exotic; if yo
 - **Existing infrastructure ownership stays your lane**. Machine procurement, backups for any data your existing apps generate, data-residency decisions for your existing tools. I build and run the harness inside your GitHub; everything else stays where it already lives.
 
 If any of these is a blocker, raise it on the discovery call and we work the path forward together (I have setup runbooks for each one).
-
-## Ready?
-
-<!-- iamhoi -->
-
-You've made it all the way to the bottom of this page. That is usually a good sign. Go ahead and book a call below.
 
 <!-- iamhoiend -->
 
