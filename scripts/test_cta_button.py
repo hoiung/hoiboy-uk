@@ -653,3 +653,64 @@ def test_the_subscribe_button_hover_tracks_the_same_token():
             f"({body.strip()!r}). A second hard-coded hover colour is how the "
             f"token stops being the single source of truth."
         )
+
+
+# ---------------------------------------------------------------------------
+# Subscribe-form heading specificity (#56 Stage 5, second round)
+# ---------------------------------------------------------------------------
+#
+# The same trap this file was created for, one element over. `.subscribe-form-
+# title` was written as a bare class at 0-1-0 and lost every declaration to
+# `.main h2` at 0-1-1, so the heading silently rendered at .main h2's size with
+# .main h2's 2rem top margin. The declared font-size never applied ONCE.
+#
+# It surfaced only because the operator looked at the rendered page and said the
+# gap above was huge and the gap below too tight -- the two numbers that give a
+# lost rule away. No test saw it, and the rule read as perfectly correct in
+# source. That is what makes this class worth a gate rather than a comment.
+
+SUBSCRIBE_TITLE_CLASS = "subscribe-form-title"
+SUBSCRIBE_TITLE_COMPETITOR = ".main h2"
+
+
+def _stateless_selectors_for(css_class: str) -> list[str]:
+    """Every stateless selector in main.css that targets `css_class`."""
+    css = CSS.read_text(encoding="utf-8")
+    out = []
+    for selectors, _body in re.findall(r"(?m)^([^\n@{}]+)\{([^}]*)\}", css):
+        for sel in selectors.split(","):
+            sel = sel.strip()
+            if css_class in sel and ":" not in sel:
+                out.append(sel)
+    return out
+
+
+def test_the_subscribe_heading_outranks_the_generic_h2_rule():
+    """A bare class here is 0-1-0 and loses to `.main h2` at 0-1-1."""
+    selectors = _stateless_selectors_for(SUBSCRIBE_TITLE_CLASS)
+    assert selectors, (
+        f"no stateless rule targets .{SUBSCRIBE_TITLE_CLASS} in main.css; this "
+        f"gate is asserting nothing."
+    )
+    beaten = specificity(SUBSCRIBE_TITLE_COMPETITOR)
+    for sel in selectors:
+        assert specificity(sel) > beaten, (
+            f"selector {sel!r} scores {specificity(sel)}, which does not beat "
+            f"{SUBSCRIBE_TITLE_COMPETITOR} at {beaten}. Every declaration in that "
+            f"rule is dead: the heading takes .main h2's font-size and its 2rem "
+            f"top margin instead. Scope it with the wrapper "
+            f"(.subscribe-form .{SUBSCRIBE_TITLE_CLASS}), do not 'tidy' it to a "
+            f"bare class."
+        )
+
+
+def test_the_subscribe_heading_is_larger_than_the_body_it_introduces():
+    """The size the rule declares has to be a size that actually wins."""
+    decls = _declarations(f".subscribe-form .{SUBSCRIBE_TITLE_CLASS}")
+    size = decls.get("font-size", "")
+    match = re.fullmatch(r"([\d.]+)rem", size)
+    assert match, f"the heading's font-size is {size!r}, not a rem value"
+    assert float(match.group(1)) > 1.0, (
+        f"the heading is {size}, no larger than body text. It is the line that "
+        f"has to earn the reader's attention inside the box."
+    )

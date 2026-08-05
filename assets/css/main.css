@@ -393,7 +393,23 @@ th { background: var(--bg-card); font-weight: 600; }
   border: 1px solid var(--subscribe-border);
   border-radius: 3px;
 }
-.subscribe-form-title { font-size: 1.1rem; margin: 0 0 0.75rem; font-weight: 550; text-wrap: balance; }
+/* SCOPED with the wrapper on purpose, exactly like `.main a.btn` above and for
+   the same reason. A bare `.subscribe-form-title` is specificity 0-1-0 and LOSES
+   to `.main h2` at 0-1-1, so this rule was inert from the day it was written:
+   the heading rendered at .main h2's 1.25rem with its 2rem top and 0.5rem bottom
+   margins, which is the "huge gap above, too close below" the operator saw. The
+   declared 1.1rem never applied. Two classes score 0-2-0 and win.
+
+   Spacing is deliberately asymmetric now: nothing above (the panel's own 1.25rem
+   padding is the gap) and a real gap below, so the heading sits with the form it
+   introduces rather than floating between the two. */
+.subscribe-form .subscribe-form-title {
+  font-size: 1.4rem;
+  line-height: 1.25;
+  margin: 0 0 1rem;
+  font-weight: 550;
+  text-wrap: balance;
+}
 .subscribe-field { margin-bottom: 0.75rem; }
 .subscribe-field label { display: block; font-size: 0.9rem; color: var(--fg-muted); margin-bottom: 0.25rem; }
 
