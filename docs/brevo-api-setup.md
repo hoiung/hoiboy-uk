@@ -337,8 +337,8 @@ that would make every submission fail.
 
 | Field | Value |
 |---|---|
-| newsletter list id | `OPERATOR_TODO` |
-| newsletter folder id | `OPERATOR_TODO` |
+| newsletter list id | `4` |
+| newsletter folder id | `3` |
 | DOI template id | `OPERATOR_TODO` |
 | Bitwarden item (API key) | `brevo-hoiboy-uk-pages-api` |
 
@@ -374,6 +374,33 @@ unverified.
 The Function also sends `CONSENT_VERSION` and `CONSENT_TIMESTAMP` as contact
 attributes. The Privacy Notice states that pair is stored, so they are what make the
 claim true and what discharges the Article 7(1) burden of proving consent.
+
+**Both attributes must be CREATED on the account before the first signup, or Brevo
+silently discards them.** Brevo does not reject a contact carrying an attribute the
+account has never defined. It accepts the write, answers `201`, and stores only the
+attributes it already knows. Measured on this account on 2026-08-05: posting
+`{FIRSTNAME, CONSENT_VERSION, CONSENT_TIMESTAMP}` returned `201` and read back as
+`{"FIRSTNAME":"Probe"}` alone. Nothing in the Function logs would have shown it, so
+every subscriber would have looked correctly recorded while the consent evidence the
+Privacy Notice promises went nowhere.
+
+Create them once, as `text`:
+
+```bash
+for a in CONSENT_VERSION CONSENT_TIMESTAMP; do
+  curl -sS -X POST "https://api.brevo.com/v3/contacts/attributes/normal/$a" \
+    -H "api-key: $BREVO_API_KEY" -H 'content-type: application/json' \
+    -d '{"type":"text"}'
+done
+```
+
+`text`, not `date`. Brevo's `date` type is `YYYY-MM-DD`, and `subscribe.js` sends a
+full `toISOString()` instant, so a `date` attribute would drop the time and leave the
+consent record accurate only to the day. Verify with a round trip, not with the `201`:
+
+```bash
+curl -sS "https://api.brevo.com/v3/contacts/<address>" -H "api-key: $BREVO_API_KEY" | jq .attributes
+```
 
 **UNVERIFIED until the issue #56 AC 0.5 live probe**: the exact `code` string Brevo
 returns when the contact is already on the list. The Function matches it loosely and
