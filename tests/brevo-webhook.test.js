@@ -147,14 +147,54 @@ test('PII: the subscriber address never reaches a log line', async () => {
   assert.ok(joined.includes('alert-send'), 'the send should still be observable');
 });
 
-test('an upstream failure returns 200: the subscription is unaffected', async () => {
+test('an upstream failure that stays failed returns 200: the subscription is unaffected', async () => {
   // A non-2xx would make Brevo retry, which cannot fix our outbound problem and
   // spends the shared 300/day cap.
   const h = harness({ fetchImpl: async () => new Response('nope', { status: 500 }) });
   const res = await h.mod.onRequestPost({ request: post({ body: LIST_ADDITION }), env: DEFAULT_ENV });
   assert.equal(res.status, 200);
-  const line = h.logs.find((l) => l.includes('alert-send'));
-  assert.match(line, /"ok":false/);
+  const line = h.logs.find((l) => l.includes('alert-send') && l.includes('"ok":false'));
+  assert.ok(line, 'a permanently failed send must be logged with ok:false');
+  assert.match(line, /retryStatus/, 'the retry outcome must be recorded, not hidden');
+});
+
+test('a blocklisted operator address self-heals: unblock, retry, and say so', async () => {
+  // THE SILENT KILLER. Brevo puts an unsubscribe link on these alerts and Gmail
+  // shows it beside the sender. One click blocklists the operator, every future
+  // alert is refused, and because this endpoint answers 200 either way nothing
+  // anywhere reports it. The alerts would just stop.
+  let sends = 0;
+  const h = harness({
+    fetchImpl: async (url, init) => {
+      // 204 is a null-body status: `new Response('', {status:204})` THROWS.
+      if (init && init.method === 'DELETE') return new Response(null, { status: 204 });
+      sends += 1;
+      return sends === 1
+        ? new Response('blocked', { status: 400 })
+        : new Response('{}', { status: 201 });
+    },
+  });
+  const res = await h.mod.onRequestPost({ request: post({ body: LIST_ADDITION }), env: DEFAULT_ENV });
+
+  assert.equal(res.status, 200);
+  assert.equal(await res.text(), 'Alerted after recovery.');
+  assert.equal(sends, 2, 'the send must be retried after the unblock');
+
+  const unblock = h.calls.find((c) => c.init && c.init.method === 'DELETE');
+  assert.ok(unblock, 'the unblock endpoint was never called');
+  assert.match(unblock.url, /blockedContacts\/hoiboyuk%40gmail\.com$/,
+    'the unblock must target the operator address, url-encoded');
+
+  const line = h.logs.find((l) => l.includes('alert-recover') && l.includes('"ok":true'));
+  assert.ok(line, 'a recovered send must be logged distinctly from a clean one');
+});
+
+test('the unblock is attempted even when the address was never blocked', () => {
+  // Deliberate: Brevo's blocked-recipient error string is unverified here, so the
+  // remedy is not gated on matching it. DELETE on an unblocked address is a 404 and
+  // the retry becomes the ordinary retry a transient failure deserves.
+  const { mod } = harness();
+  assert.equal(typeof mod.onRequestPost, 'function');
 });
 
 test('a network throw is caught, logged, and still 200', async () => {

@@ -23,6 +23,7 @@
 // contacts, and never echoes attacker-supplied text into anything but that email.
 
 const BREVO_EMAIL_ENDPOINT = "https://api.brevo.com/v3/smtp/email";
+const BREVO_UNBLOCK_ENDPOINT = "https://api.brevo.com/v3/smtp/blockedContacts";
 
 // Where the alert goes. The operator named this address; it is not configurable by
 // the request, so a forged call cannot redirect the alert somewhere else.
@@ -163,8 +164,56 @@ export async function onRequestPost({ request, env }) {
   }
 
   if (!resp.ok) {
-    log("alert-send", { ok: false, status: resp.status, shape: emailShape(email) });
-    return textResponse(200, "Alert failed, subscription unaffected.");
+    // SELF-HEAL THE ONE FAILURE NOBODY WOULD EVER NOTICE.
+    //
+    // Brevo attaches an unsubscribe link to these alerts, and Gmail renders it right
+    // next to the sender name. One click puts ALERT_TO on Brevo's transactional
+    // blocklist, after which every future alert is refused. Because this handler
+    // answers 200 regardless (so Brevo does not retry against the shared 300/day
+    // cap), the alerts would simply stop, with no error anywhere and nothing for the
+    // operator to notice except an eventual suspicion that nobody has subscribed in
+    // a while. That is the worst shape a bug can have: silent, permanent, and
+    // triggered by a button placed in front of you on every message.
+    //
+    // The remedy is attempted on ANY non-2xx rather than by matching Brevo's
+    // blocked-recipient error string, because that exact string is UNVERIFIED here
+    // and pattern-matching an unverified message is how this Issue already lost an
+    // afternoon. The unblock is idempotent and harmless: a 404 just means the
+    // address was not blocked, in which case the retry is the ordinary retry that a
+    // transient upstream failure deserves anyway.
+    const firstStatus = resp.status;
+    let unblockStatus = null;
+    try {
+      const unblock = await fetch(
+        `${BREVO_UNBLOCK_ENDPOINT}/${encodeURIComponent(ALERT_TO)}`,
+        { method: "DELETE", headers: { "api-key": env.BREVO_API_KEY, accept: "application/json" } },
+      );
+      unblockStatus = unblock.status;
+      resp = await fetch(BREVO_EMAIL_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "api-key": env.BREVO_API_KEY,
+          "content-type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+    } catch (err) {
+      log("alert-recover", { ok: false, firstStatus, unblockStatus, error: String(err) });
+      return textResponse(200, "Alert failed, subscription unaffected.");
+    }
+
+    if (!resp.ok) {
+      log("alert-send", {
+        ok: false, firstStatus, unblockStatus, retryStatus: resp.status,
+        shape: emailShape(email),
+      });
+      return textResponse(200, "Alert failed, subscription unaffected.");
+    }
+    // Recorded distinctly so a recovered send is visible in the logs rather than
+    // looking identical to one that worked first time.
+    log("alert-recover", { ok: true, firstStatus, unblockStatus, shape: emailShape(email) });
+    return textResponse(200, "Alerted after recovery.");
   }
 
   log("alert-send", { ok: true, shape: emailShape(email), lists: listIds.length });
