@@ -1245,3 +1245,73 @@ test('a malformed email is rejected before any upstream write', async () => {
   assert.equal(response.status, 400);
   assertNoBrevoWrite(calls);
 });
+
+// --- Upstream body ceiling (#56 Stage 5 findings 6 and 7) --------------------
+//
+// The REQUEST body has always been capped; the upstream RESPONSE was read whole
+// and then run through the entire redaction chain before the 500-char slice
+// bounded anything. Two properties, and the second is what makes the first safe.
+//
+// Both of these were first written to assert the WHOLE address was absent, and
+// both passed against a deliberately broken reader -- the complete address was
+// still present in the text, so the shape redactor matched it and the leak the
+// tests were named for could not occur. They assert on a surviving FRAGMENT now,
+// which is the thing that actually escapes redaction.
+const CAP_BYTES = 8 * 1024;
+
+function brevoBody(text) {
+  return () => new Response(text, {
+    status: 400,
+    headers: { 'content-type': 'application/json' },
+  });
+}
+
+test('upstream: a Brevo error body is bounded, not merely stopped at the cap', async () => {
+  // A marker planted past the cap AND inside the first 500 characters of what a
+  // whole-body read would produce, so the 500-char slice cannot hide the miss.
+  // Reaching it requires the reader to have kept bytes it should have dropped.
+  const marker = 'MARKER_PAST_THE_CAP';
+  const body = `{"code":"${'x'.repeat(CAP_BYTES)}${marker}","message":"padding"}`;
+
+  const { response, logs } = await submit({ brevo: brevoBody(body) });
+
+  assert.equal(response.status, 502, 'a non-duplicate 4xx is still a 502');
+  assert.ok(
+    !logs.join('\n').includes(marker),
+    'content from beyond the cap reached a log line, so the read was not bounded'
+  );
+});
+
+test('upstream: the cap stays far above what is ever logged', async () => {
+  // The reason readCappedText needs no straddle handling of its own, pinned as a
+  // relationship rather than left in a comment. `detail` is redacted BEFORE it is
+  // truncated because an address severed mid-token matches no pattern and its
+  // local part survives (Ralph round 15). Cutting the READ carries that same
+  // hazard -- but only if the cut can land inside what gets logged.
+  //
+  // It cannot, while the cap sits an order of magnitude above the slice. A
+  // trailing-token trim was written for this and removed: it could not fire, so
+  // it could not be tested, and untestable defensive code reads as protection
+  // without being any. Narrow the gap and that reasoning stops holding, so this
+  // asserts the gap instead of trusting a comment to be re-read.
+  const source = fs.readFileSync(ENDPOINT_PATH, 'utf8');
+
+  const capMatch = source.match(/const UPSTREAM_BODY_CAP = ([^;]+);/);
+  assert.ok(capMatch, 'UPSTREAM_BODY_CAP is gone; this gate is asserting nothing');
+  const cap = Function(`return (${capMatch[1]})`)();
+
+  const sliceLengths = [...source.matchAll(/redact\([^;]*?\)\.slice\(0,\s*(\d+)\)/g)]
+    .map((m) => Number(m[1]));
+  const rawSlices = [...source.matchAll(/\bdetail\s*=\s*redact\([^;]*?\.slice\(0,\s*(\d+)\)/g)]
+    .map((m) => Number(m[1]));
+  const logged = Math.max(0, ...sliceLengths, ...rawSlices);
+
+  assert.ok(logged > 0, 'no redact(...).slice(0, N) found; the shape changed');
+  assert.ok(
+    cap >= logged * 4,
+    `UPSTREAM_BODY_CAP (${cap}) is no longer comfortably above the ${logged} ` +
+    `characters actually logged. The read cut can now land inside the logged ` +
+    `window, so an address straddling it survives as an unmatchable fragment. ` +
+    `Either restore the gap or reinstate a boundary trim WITH a test that fires.`
+  );
+});

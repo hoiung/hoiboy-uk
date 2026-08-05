@@ -39,6 +39,7 @@ const BREVO_DOI_ENDPOINT = "https://api.brevo.com/v3/contacts/doubleOptinConfirm
 // The whole request is two short text fields plus a Turnstile token (~2 KB), so this
 // ceiling is generous. It exists to reject a junk body before it is buffered at all.
 const MAX_BODY_BYTES = 32 * 1024;
+const UPSTREAM_BODY_CAP = 8 * 1024;
 
 // field name -> max length. A valid-token bot can still POST garbage, so these are
 // enforced server-side regardless of the maxlength attributes on the form.
@@ -149,6 +150,64 @@ async function readCapped(request, cap) {
     offset += chunk.byteLength;
   }
   return joined;
+}
+
+// An UPSTREAM response body, read with a ceiling. The REQUEST body has always
+// been capped (readCapped above); the upstream reply was not, so a large or
+// malformed body was pulled whole into an isolate's memory and then run through
+// the entire redaction chain -- by-value forms times escape levels, each a
+// linear scan -- before the 500-char slice bounded anything at all. The slice
+// bounded what was STORED, never the work.
+//
+// Cutting a body raises the straddle hazard that `detail` is redacted BEFORE
+// truncation to avoid: an address severed mid-token matches no pattern, and its
+// local part lands verbatim in a structured log (Ralph round 15, reproduced end
+// to end). A trailing-token trim was written here to close that, then removed --
+// it could not be reached, let alone tested. UPSTREAM_BODY_CAP is 8 KB while
+// `detail` keeps only the first 500 characters, so the cut is always ~7.7 KB
+// past anything that can be logged. Defensive code that cannot fire is worse
+// than none: it reads as protection and is never exercised.
+//
+// That safety is a RELATIONSHIP between two numbers, not a property of this
+// function, so it is pinned by a test rather than by this comment. Raise the
+// slice above the cap and the hazard returns.
+async function readCappedText(response, cap) {
+  if (!response.body) return "";
+
+  const reader = response.body.getReader();
+  const chunks = [];
+  let total = 0;
+
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    total += value.byteLength;
+    if (total >= cap) {
+      await reader.cancel();
+      break;
+    }
+  }
+
+  // Trimmed to `cap`, NOT to `total`. Stopping the read is not the same as
+  // bounding it: a body delivered as ONE chunk is already in `chunks` by the
+  // time the check runs, so keeping `total` bytes would keep the entire body and
+  // the ceiling would be decorative. This is not hypothetical -- the first
+  // version did exactly that, and its two tests passed anyway because the
+  // 500-char slice hid the miss. Copy only what the cap allows.
+  const kept = Math.min(total, cap);
+  const joined = new Uint8Array(kept);
+  let offset = 0;
+  for (const chunk of chunks) {
+    if (offset >= kept) break;
+    const room = kept - offset;
+    joined.set(chunk.byteLength > room ? chunk.subarray(0, room) : chunk, offset);
+    offset += chunk.byteLength;
+  }
+  // Decoded through Response rather than TextDecoder: both exist in Workers, but
+  // Response is already the primitive this file builds every reply with, so the
+  // helper adds no new runtime global for a harness to have to provide.
+  return await new Response(joined).text();
 }
 
 // Every spelling a value can take inside an ALREADY-SERIALISED JSON line. The
@@ -552,7 +611,7 @@ export async function onRequestPost(context) {
     //      was left, and the local part landed verbatim in a structured log.
     // The slice still bounds what we store, it just no longer decides what
     // the redactors can see.
-    const raw = await resp.text();
+    const raw = await readCappedText(resp, UPSTREAM_BODY_CAP);
 
     // CONTROL FLOW READS THE PRISTINE BODY, never the redacted copy.
     // Redaction is a lossy transform over visitor-supplied literals, so parsing

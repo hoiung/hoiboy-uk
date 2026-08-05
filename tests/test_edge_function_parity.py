@@ -43,6 +43,11 @@ CONTRIBUTE = REPO / "functions" / "api" / "contribute.js"
 # Helpers that MUST be byte-identical in both Functions.
 LOCKSTEP_HELPERS = (
     "readCapped",
+    # The UPSTREAM-response counterpart, added by #56 Stage 5. Lockstepped for
+    # the same reason as readCapped: its boundary-trim is what stops a literal
+    # straddling the cut from surviving as an unmatchable fragment, and that
+    # property has to hold identically on both endpoints or one of them leaks.
+    "readCappedText",
     "redactPii",
     "textResponse",
     "clean",
@@ -244,7 +249,15 @@ def test_every_upstream_response_body_is_redacted_at_capture():
         # The docstring above claims ALL capture sites are covered, and a filter
         # that only knew about .text() would have made that claim false the first
         # time someone reached for .json() (Ralph Tier 3).
-        body_readers = (".text()", ".json()", ".arrayBuffer()", ".blob()", ".formData()")
+        # `readCappedText(` is listed because #56 Stage 5 replaced the bare
+        # `await resp.text()` upstream drains with it. Without this entry those
+        # captures stop matching, drop out of text_captures, and this gate goes
+        # quietly from covering them to covering nothing -- the assert below only
+        # checks that SOME capture matched, so it would still have passed.
+        body_readers = (
+            ".text()", ".json()", ".arrayBuffer()", ".blob()", ".formData()",
+            "readCappedText(",
+        )
         text_captures = [(n, c) for n, c in captures if any(r in c for r in body_readers)]
 
         assert text_captures, (
@@ -457,6 +470,10 @@ def test_control_flow_reads_the_pristine_upstream_body():
 # suites.
 LOCKSTEP_CONSTANTS = (
     "REDACTED_VALUE",
+    # The upstream-body ceiling (#56 Stage 5). Both endpoints call the same
+    # lockstepped reader, so a different ceiling on one of them would mean the
+    # boundary-trim fires at a different point per endpoint for no stated reason.
+    "UPSTREAM_BODY_CAP",
     "MIN_PROTECTED_LENGTH",
     "MAX_ESCAPE_LEVELS",
     # The address-validation regex, duplicated into subscribe.js by #56. It is
