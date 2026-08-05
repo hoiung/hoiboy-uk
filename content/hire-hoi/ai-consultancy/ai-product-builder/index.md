@@ -13,7 +13,7 @@ This is work I love. I am a founder at heart with an engineer's mind, most drawn
 
 As an entrepreneur, I know the importance of testing the water, which is what MVPs and working prototypes are for: getting something in front of real users and seeing how it goes. Either stop the ones there is no real want or market for, or refine and scale the ones users actually want. Perfection is not the goal.
 
-A demo or prototype is also a way to drive and guide a conversation. Sometimes it is not the final answer, but it is a good starting point when you or your stakeholders are not yet sure what you want. Having something you can hold and play with makes a big difference: people often learn what they want by learning what they don't. So the first thing I get clear on is the purpose, and the angle we are building for.
+A demo or prototype is also a way to drive and guide a conversation. Sometimes it is not the final answer, but it is a good starting point when you or your stakeholders are not yet sure what you want. Having something you can hold and play with (not hold and break!) makes a big difference: people often learn what they want by learning what they don't. So the first thing I get clear on is the purpose, and the angle we are building for.
 
 Hiring a permanent AI Product Engineer just to explore an idea is a big commitment: a salary, the search, the onboarding, all before you know if the idea is worth it. Contracting me for the build lets you test first and commit later, only if the thing earns it.
 
