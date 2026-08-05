@@ -24,6 +24,7 @@ tested here too.
 from __future__ import annotations
 
 import importlib.util
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -192,6 +193,119 @@ class TestCoverageFloor:
         assert r.returncode == 0, f"a private repo is a no-op, not a failure: {r.stderr}"
         assert "[SKIP]" in r.stdout and "nothing scanned" in r.stdout, (
             f"the no-op must say so; got stdout={r.stdout!r}"
+        )
+
+    # --- Token-expansion degradation ---------------------------------------
+    #
+    # The vacuity gate used to ask "was a manifest FILE found?", which is not the
+    # question. What matters is whether the opaque tokens actually expanded. Each
+    # case below reaches identical zero-coverage degradation while a file IS
+    # present, so every one of them scored a clean PASS before this was fixed.
+    # `manifest=None` is the original absent-file case, kept alongside so the
+    # four are asserted as one class rather than as a special case plus a rule.
+
+    # A fixture token, not a real one: the digest is the literal word
+    # deadbeefcafe and maps to nothing. `TOKEN = "..."` is the generic-secret
+    # assignment shape, so the scanner flags its own test data.
+    TOKEN = "sha256:deadbeefcafe:business-identifier"  # secret-allow
+
+    def _degraded_repo(self, tmp_path, manifest):
+        """A public repo whose blocklist holds one opaque token.
+
+        `manifest` is the JSON text to write, or None to write no file at all.
+        SST3_BLOCKLIST_HASHES pins the lookup so the operator's real sibling
+        dotfiles clone cannot satisfy it and mask the case under test.
+
+        The manifest is written OUTSIDE the repo on purpose. Inside, the scan of
+        `.` reads it as ordinary content and finds the very literals it maps, so
+        the expansion test would pass on a self-match and prove nothing about
+        whether expansion reached the scan.
+        """
+        self._repo(tmp_path, public=True)
+        (tmp_path / "clean.py").write_text("x = 1\n", encoding="utf-8")
+        (tmp_path / ".secret-blocklist").write_text(
+            f"{self.TOKEN}\n", encoding="utf-8"
+        )
+        path = tmp_path.parent / f"{tmp_path.name}-hashes.json"
+        if manifest is not None:
+            path.write_text(manifest, encoding="utf-8")
+        return path
+
+    @pytest.mark.parametrize(
+        "name,manifest",
+        [
+            ("absent", None),
+            ("invalid JSON", "{not json"),
+            ("no tokens key", '{"version": 1}'),
+            ("tokens not an object", '{"tokens": []}'),
+            ("token absent from map", '{"tokens": {"sha256:other:x": {"literals": ["q"]}}}'),
+            ("token maps to no literals", f'{{"tokens": {{"{TOKEN}": {{"literals": []}}}}}}'),
+        ],
+    )
+    def test_unexpanded_tokens_fail_loud(self, tmp_path, name, manifest):
+        """Every route to zero token coverage must refuse, not report clean."""
+        path = self._degraded_repo(tmp_path, manifest)
+        env = dict(os.environ, SST3_BLOCKLIST_HASHES=str(path))
+        r = subprocess.run(
+            [sys.executable, str(SCRIPTS / "check-public-repo-secrets.py"), "."],
+            cwd=tmp_path, capture_output=True, text=True, timeout=120, env=env,
+        )
+        assert r.returncode == 2, (
+            f"manifest case {name!r} left the token unexpanded, so every literal "
+            f"it covers was unscanned, yet the gate scored {r.returncode}:\n"
+            f"{r.stdout}{r.stderr}"
+        )
+        assert "vacuous-gate" in r.stderr and "could not be expanded" in r.stderr
+
+    def test_expanded_token_passes_and_its_literal_is_live(self, tmp_path):
+        """The contrast case: a working manifest both passes AND scans.
+
+        Without this the parametrised test above could be satisfied by a gate
+        that failed unconditionally. The planted literal is asserted to FIRE,
+        which is what proves expansion fed the scan rather than merely
+        silencing the floor.
+        """
+        path = self._degraded_repo(
+            tmp_path,
+            f'{{"tokens": {{"{self.TOKEN}": {{"literals": ["Zyzzyx-Holdings-Ltd"]}}}}}}',
+        )
+        env = dict(os.environ, SST3_BLOCKLIST_HASHES=str(path))
+
+        def run():
+            return subprocess.run(
+                [sys.executable, str(SCRIPTS / "check-public-repo-secrets.py"), "."],
+                cwd=tmp_path, capture_output=True, text=True, timeout=120, env=env,
+            )
+
+        clean = run()
+        assert clean.returncode == 0, (
+            f"a fully-expanded manifest must pass: {clean.stdout}{clean.stderr}"
+        )
+        assert "DEGRADED" not in clean.stdout
+
+        (tmp_path / "leak.md").write_text(
+            "Contract held by Zyzzyx-Holdings-Ltd.\n", encoding="utf-8"
+        )
+        caught = run()
+        assert caught.returncode == 1, (
+            "the literal behind the token must be live once expanded; scoring "
+            f"{caught.returncode} means expansion ran but never reached the scan:"
+            f"\n{caught.stdout}{caught.stderr}"
+        )
+
+    def test_allow_degraded_downgrades_to_a_warning(self, tmp_path):
+        """The public-mirror escape hatch still has to ANNOUNCE the degradation."""
+        path = self._degraded_repo(tmp_path, '{"version": 1}')
+        env = dict(os.environ, SST3_BLOCKLIST_HASHES=str(path))
+        r = subprocess.run(
+            [sys.executable, str(SCRIPTS / "check-public-repo-secrets.py"),
+             ".", "--allow-degraded-blocklist"],
+            cwd=tmp_path, capture_output=True, text=True, timeout=120, env=env,
+        )
+        assert r.returncode == 0, f"the flag must permit the run: {r.stderr}"
+        assert "[DEGRADED]" in r.stdout, (
+            "degrading silently is the defect; the flag records the choice, it "
+            f"does not hide it. stdout={r.stdout!r}"
         )
 
 

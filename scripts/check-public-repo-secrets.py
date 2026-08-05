@@ -637,7 +637,9 @@ def _resolve_hashes_path(repo_root: Path) -> Optional[Path]:
     return None
 
 
-def _expand_hashed_tokens(lines: Set[str], hashes_path: Optional[Path]) -> Set[str]:
+def _expand_hashed_tokens(
+    lines: Set[str], hashes_path: Optional[Path]
+) -> tuple[Set[str], Set[str]]:
     """Expand `sha256:<prefix>:<class>` opaque-token lines to their literal forms.
 
     Reads SST3/scripts/.secret-blocklist-hashes.json (canonical-only, unmirrored
@@ -646,26 +648,45 @@ def _expand_hashed_tokens(lines: Set[str], hashes_path: Optional[Path]) -> Set[s
     the output set (so the substring scan still flags any document that contains
     a literal token reference) and the literals they cover are added alongside.
 
-    When the hashes file is absent (e.g. running in a public-mirror clone that
-    does not have the operator-private mapping), tokens pass through unmodified
-    so the public-side scan still catches verbatim token references — degraded
-    mode, documented.
+    Returns (expanded_set, UNEXPANDED_TOKENS). The second element is what the
+    caller's vacuity gate reads, and it is the whole reason this returns a pair.
+
+    The gate used to be `hashes_path is None`, which asked the wrong question:
+    whether a FILE was found, not whether the expansion actually happened. Four
+    ways to reach identical zero-coverage degradation answered "found" and so
+    reported nothing -- the manifest existing but unreadable, holding invalid
+    JSON, carrying no `tokens` key, or carrying a `tokens` map that simply does
+    not cover the tokens THIS repo's blocklist uses (which is the one that
+    survives a rename on either side). Each left every literal behind those
+    tokens unscanned while the run printed a clean PASS. Reporting the
+    unexpanded tokens instead of the path makes all five cases -- including the
+    original absent-file one -- the same observable fact.
     """
+    tokens = _token_lines(lines)
     if not hashes_path or not hashes_path.exists():
-        return lines
+        return lines, tokens
     try:
         data = json.loads(hashes_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
-        return lines
-    token_map = data.get("tokens", {})
+        return lines, tokens
+    if not isinstance(data, dict):
+        return lines, tokens
+    token_map = data.get("tokens")
+    if not isinstance(token_map, dict):
+        return lines, tokens
     expanded: Set[str] = set(lines)
-    for line in lines:
-        entry = token_map.get(line)
-        if entry:
-            for literal in entry.get("literals", []):
-                if literal:
-                    expanded.add(literal)
-    return expanded
+    unexpanded: Set[str] = set()
+    for token in tokens:
+        entry = token_map.get(token)
+        literals = [lit for lit in (entry or {}).get("literals", []) if lit]
+        if not literals:
+            # Present-but-empty counts as unexpanded: a token whose literal list
+            # is missing or blank covers nothing, which is the same coverage hole
+            # as a token the manifest never mentions.
+            unexpanded.add(token)
+            continue
+        expanded.update(literals)
+    return expanded, unexpanded
 
 
 def load_file_set(file_path: Optional[Path]) -> Set[str]:
@@ -1412,7 +1433,11 @@ def main() -> int:
     # the mapping is absent, the scanner falls back to verbatim token matching.
     blocklist = load_file_set(repo_root / ".secret-blocklist")
     hashes_path = _resolve_hashes_path(repo_root)
-    if _blocklist_has_tokens(blocklist) and hashes_path is None:
+    # Expand FIRST, then gate on what the expansion actually achieved. The
+    # earlier order gated on `hashes_path is None` before expanding, which could
+    # only see a missing file and passed a manifest that was present but useless.
+    blocklist, unexpanded_tokens = _expand_hashed_tokens(blocklist, hashes_path)
+    if unexpanded_tokens:
         # Degraded mode used to be silent: tokens stayed unexpanded, every
         # literal they cover went unmatched, and the run still printed
         # `PASS: No secrets detected`. On this repo that was not a corner case
@@ -1421,26 +1446,31 @@ def main() -> int:
         # mirror -- so the whole token section of .secret-blocklist had been
         # inert since the day it was written. A gate whose coverage silently
         # collapses to zero is the exact class this Issue exists to close.
+        why = (
+            "the hashes manifest was not found"
+            if hashes_path is None
+            else f"{hashes_path} does not map them (unreadable, not valid JSON, "
+            "carrying no `tokens` object, or simply not covering these tokens)"
+        )
         if not args.allow_degraded_blocklist:
             print(
                 "[FAIL] [vacuous-gate] check-public-repo-secrets: "
-                f"{len(_token_lines(blocklist))} opaque token(s) in "
-                f"{repo_root}/.secret-blocklist could not be expanded because the "
-                "hashes manifest was not found. Every literal those tokens cover "
-                "is therefore UNSCANNED and a clean result here would not be "
-                "evidence. Set SST3_BLOCKLIST_HASHES to the manifest path, or "
-                "pass --allow-degraded-blocklist if this clone genuinely cannot "
-                "hold the mapping (a published public mirror), which downgrades "
-                "token coverage to verbatim-reference matching only.",
+                f"{len(unexpanded_tokens)} opaque token(s) in "
+                f"{repo_root}/.secret-blocklist could not be expanded because "
+                f"{why}. Every literal those tokens cover is therefore UNSCANNED "
+                "and a clean result here would not be evidence. Set "
+                "SST3_BLOCKLIST_HASHES to the manifest path, or pass "
+                "--allow-degraded-blocklist if this clone genuinely cannot hold "
+                "the mapping (a published public mirror), which downgrades token "
+                "coverage to verbatim-reference matching only.",
                 file=sys.stderr,
             )
             return 2
         print(
-            f"[DEGRADED] check-public-repo-secrets: {len(_token_lines(blocklist))} "
-            "opaque token(s) unexpanded (no hashes manifest); token coverage is "
+            f"[DEGRADED] check-public-repo-secrets: {len(unexpanded_tokens)} "
+            f"opaque token(s) unexpanded ({why}); token coverage for those is "
             "verbatim-reference matching only."
         )
-    blocklist = _expand_hashed_tokens(blocklist, hashes_path)
 
     allowlist_path = Path(args.allowlist) if args.allowlist else repo_root / ".secret-allowlist"
     allowlist = load_file_set(allowlist_path)
