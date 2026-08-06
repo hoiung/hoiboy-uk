@@ -47,7 +47,7 @@ Honestly, this is not the first time I have heard that. I have heard the same ar
 
 It is a fair argument. I can't argue against it!
 
-Last week I wrote that we cannot dumb it down any more than it already is. Then I sat with someone for an evening and left without a counter-argument [I wasn't there to argue, I was there to listen].
+Last week I wrote that we cannot dumb it down any more than it already is. Then I sat with someone for an evening. I wasn't there to argue, I was there to listen.
 
 ## Where my conscience sits
 
