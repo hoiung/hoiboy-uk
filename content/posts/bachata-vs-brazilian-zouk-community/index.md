@@ -73,9 +73,11 @@ Even though it does take 3 to 5 years if training 2-3 times per week for a non-e
 
 So how can Brazilian Zouk reduce this friction?
 
-Having fun, and not caring too much about techniques. That is the route where you just teach moves, and it takes much less to understand the dance and its rules and techniques. Not every teacher needs to be as knowledgeable either, so then you have more teachers who are able to teach the moves. And once there is enough mass, then you deal with the problems and refinements for those who want further training. The more knowledgeable teachers can focus on the further development offering additional technical deep dive classes, private classes, workshops, coaching & mentorship for anyone who wants to be better than mediocre.
+Having fun, and not caring too much about techniques. That is the route where you just teach moves, and it takes much less to understand the dance and its rules and techniques. Not every teacher needs to be as knowledgeable either, so then you have more teachers who are able to teach the moves. And once there is enough mass, then you deal with the problems and refinements for those who want further training how to control their bodies. The more knowledgeable teachers can focus on the further development offering additional technical deep dive classes, private classes, workshops, coaching & mentorship for anyone who wants to be better than mediocre.
 
 That is a possibility and makes logical sense to deal with the current scaling issues.
+
+> Being a nerd, here's a nerdy metaphor. It's a bit like AI slop, where you can create beautiful looking apps in one day that look great, but deep down inside, the backend, code structures, calculations, mechanics and workflow are just a complete mess, and engineers know it will break if used for production. haha
 
 ## Over to you
 
