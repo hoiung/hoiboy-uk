@@ -22,7 +22,7 @@ It's easy to remember which sections are more important to spend time on by brea
 3. Chest, Shoulders, Upper Spine, Arms & Hands.
 4. Head & Neck.
 
-**IMPORTANT:** The reason I've illustrated this as a pyramid is because you need to understand that each section of your body needs to be developed enough to support all the above sections otherwise it would affect how well you can dance and safely without the toppling effect. *(hoi to do: use the quote format for this paragraph on website)*
+> **IMPORTANT:** The reason I've illustrated this as a pyramid is because you need to understand that each section of your body needs to be developed enough to support all the above sections otherwise it would affect how well you can dance and safely without the toppling effect.
 
 If you are unsure how you should work on each section, please consult your dance teachers (they would likely offer this as a private class).
 
