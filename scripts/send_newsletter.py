@@ -278,6 +278,8 @@ class _PostExtractor(html.parser.HTMLParser):
         self.excerpt: str | None = None
         self.url: str | None = None
         self.published: str | None = None
+        self.hero: str | None = None
+        self.hero_alt: str | None = None
         self._article_depth = 0
         self._in_title = False
         self._title_parts: list[str] = []
@@ -291,6 +293,13 @@ class _PostExtractor(html.parser.HTMLParser):
                 self.excerpt = a.get("content", "").strip()
             if a.get("property") == "article:published_time" and self.published is None:
                 self.published = a.get("content", "").strip()
+            # The email hero is the og:image, NOT the on-page hero.webp: WebP is the
+            # one format the Outlook Word engine cannot render. og:image is a
+            # Hugo-processed JPEG at 1200x630, already absolute, already alt-texted.
+            if a.get("property") == "og:image" and self.hero is None:
+                self.hero = a.get("content", "").strip()
+            if a.get("property") == "og:image:alt" and self.hero_alt is None:
+                self.hero_alt = a.get("content", "").strip()
         elif tag == "link" and a.get("rel") == "canonical" and self.url is None:
             self.url = a.get("href", "").strip()
         elif tag == "h1" and self._article_depth > 0 and self.title is None:
@@ -360,6 +369,8 @@ def read_post(slug: str) -> dict[str, str]:
             ("excerpt", parser.excerpt),
             ("url", parser.url),
             ("published", parser.published),
+            ("hero (og:image)", parser.hero),
+            ("hero alt (og:image:alt)", parser.hero_alt),
         )
         if not value
     ]
@@ -370,11 +381,14 @@ def read_post(slug: str) -> dict[str, str]:
         )
 
     assert parser.title and parser.excerpt and parser.url and parser.published
+    assert parser.hero and parser.hero_alt
     return {
         "title": parser.title,
         "excerpt": parser.excerpt,
         "url": parser.url,
         "published": parser.published,
+        "hero": parser.hero,
+        "hero_alt": parser.hero_alt,
     }
 
 
@@ -442,6 +456,8 @@ def build_html(post: dict[str, str], template_text: str) -> str:
         "POST_DATE": human_date(post["published"]),
         "POST_EXCERPT": post["excerpt"],
         "POST_URL": post["url"],
+        "HERO_URL": post["hero"],
+        "HERO_ALT": post["hero_alt"],
         "UNSUBSCRIBE_URL": BREVO_UNSUBSCRIBE_TAG,
     }
     unknown = set(values) - set(PLACEHOLDERS)

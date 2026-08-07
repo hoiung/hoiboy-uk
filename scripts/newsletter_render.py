@@ -54,6 +54,8 @@ PLACEHOLDERS = frozenset(
         "POST_DATE",
         "POST_EXCERPT",
         "POST_URL",
+        "HERO_URL",
+        "HERO_ALT",
         "UNSUBSCRIBE_URL",
     }
 )
@@ -141,6 +143,8 @@ PREVIEW_VALUES = {
         "rather than one short line."
     ),
     "POST_URL": "https://hoiboy.uk/blogs/sample-post/",
+    "HERO_URL": "https://hoiboy.uk/blogs/sample-post/hero.jpg",
+    "HERO_ALT": "A sample post title, roughly the length a real one runs to",
     "UNSUBSCRIBE_URL": "https://hoiboy.uk/legal/privacy/",
 }
 
