@@ -428,6 +428,31 @@ def test_all_eight_branding_fields_reach_the_wire(isolated: Path) -> None:
     assert payload["inlineImageActivation"] is False
 
 
+def test_header_and_footer_are_non_empty_because_brevo_rejects_empty(
+    isolated: Path,
+) -> None:
+    """An empty string is not a quieter value here, it is a 400.
+
+    Measured against the live API with disposable drafts: `"header": ""` returns
+    400 missing_parameter "header is missing", and `"footer": ""` returns the
+    symmetric "footer is missing". Brevo reads empty as absent. Omitting the key
+    is accepted but then the provider default renders, which is the outcome AC 2.13
+    exists to prevent. So both carry a real value, and this test stops a future edit
+    reintroducing the empty string that cost a live 400 the first time.
+    """
+    transport = ok_transport()
+    prepare_then_confirmation(isolated, transport)
+    payload = [
+        c for c in transport.call_args_list if c.args[1] == "/v3/emailCampaigns"
+    ][0].kwargs["json"]
+    for field in ("header", "footer"):
+        assert isinstance(payload[field], str)
+        assert payload[field] != "", f"{field} empty is rejected 400 by the live API"
+    # And neither hands the block back to the provider.
+    assert "[DEFAULT_HEADER]" not in payload["header"]
+    assert "[DEFAULT_FOOTER]" not in payload["footer"]
+
+
 def test_the_unsubscribe_page_is_dropped_rather_than_sent_empty(
     isolated: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
