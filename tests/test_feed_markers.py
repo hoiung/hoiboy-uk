@@ -60,7 +60,22 @@ def test_the_build_actually_produced_feeds() -> None:
 
 
 def test_no_voice_markers_in_any_feed() -> None:
-    """The actual regression gate, scoped to XML only."""
+    """The actual regression gate, scoped to XML only.
+
+    The vacuity guard is asserted HERE as well as in its own test, not out of
+    duplication but because the two were uncoupled: pytest runs each test
+    independently, so this one passed on an absent `public/` (rglob returns []) even
+    while its sibling failed. Ralph tier 3 pointed out that the protection only
+    existed if you read the file as a whole. Now this assertion cannot pass without
+    a real build behind it.
+    """
+    feeds = _feeds()
+    assert len(feeds) >= MIN_FEEDS, (
+        f"only {len(feeds)} .xml files under {PUBLIC}: refusing to report a clean "
+        f"leak result over a tree that was never built, since zero feeds and zero "
+        f"leaks are the same answer. Run `hugo --gc --minify -e production` first."
+    )
+
     offenders = {}
     for feed in _feeds():
         text = feed.read_text(encoding="utf-8", errors="replace")

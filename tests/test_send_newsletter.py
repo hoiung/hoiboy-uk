@@ -91,7 +91,7 @@ def isolated(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 BACKEND: dict[str, Path] = {}
 
 
-def ok_transport(created_id: int = 42, drift: str = "") -> mock.Mock:
+def ok_transport(created_id: int = 42, drift: str = "", html_drift: str = "") -> mock.Mock:
     """A transport that answers every documented success status.
 
     It MODELS the provider rather than echoing the request, in two ways that both
@@ -107,7 +107,11 @@ def ok_transport(created_id: int = 42, drift: str = "") -> mock.Mock:
        hidden that, and the send-side comparison would have been written against two
        values that can never match in production.
 
-    `drift` overrides the stored subject, standing in for a dashboard edit after review.
+    `drift` overrides the stored subject and `html_drift` the stored body, each
+    standing in for a dashboard edit made after review. Both exist because
+    `content_fingerprint` hashes subject AND body, so a fixture that could only move
+    the subject left half the guard with no test able to kill it. Ralph tier 3 found
+    that gap by mutation rather than by reading.
     """
     store = BACKEND["path"]
 
@@ -138,6 +142,8 @@ def ok_transport(created_id: int = 42, drift: str = "") -> mock.Mock:
                 return 404, {"message": "not found"}
             if drift:
                 camp["subject"] = drift
+            if html_drift:
+                camp["htmlContent"] = html_drift
             return 200, camp
         return 204, {}
 
@@ -276,8 +282,22 @@ def test_a_services_page_is_refused_naming_the_privacy_promise(isolated: Path) -
     assert "privacy/index.md:77" in str(exc.value)
 
 
-def test_a_category_landing_is_not_a_post(isolated: Path) -> None:
-    """The seven category landings live under /blogs/ too, and are not sendable."""
+def test_a_category_landing_is_refused_by_the_metadata_guard_not_the_url_guard(
+    isolated: Path,
+) -> None:
+    """A landing is unsendable, and this pins WHICH guard does it.
+
+    The category landings really do live under /blogs/, next to the posts: `ls
+    public/blogs/` shows `adventure/` sitting beside `why-bpm-matters-...`. So the
+    canonical-URL check CANNOT tell them apart. Same prefix, same shape.
+
+    This test was named for the landing rule while asserting `read_post`'s "missing
+    title", which made the consent gate look like it was doing work it never did.
+    Ralph tier 3 measured the truth: `assert_is_blog_post` ACCEPTS
+    `https://hoiboy.uk/blogs/tech-ai/`. Both halves are asserted now, so the division
+    of labour is deliberate instead of incidental, and nobody later relaxes
+    `read_post`'s metadata requirement believing the URL check has it covered.
+    """
     path = isolated / "tech-ai" / "index.html"
     path.parent.mkdir(parents=True)
     path.write_text(
@@ -286,8 +306,66 @@ def test_a_category_landing_is_not_a_post(isolated: Path) -> None:
         "<body><main><h2>Tech</h2></main></body></html>",
         encoding="utf-8",
     )
+
+    # The guard that actually stops it: no title inside <article>, no publish date.
     with pytest.raises(sn.NewsletterError, match="missing title"):
         sn.read_post("tech-ai")
+
+    # And the guard that does NOT, stated rather than left implied. If this ever
+    # starts raising, the URL check has gained real post-vs-landing knowledge and
+    # assert_is_blog_post's docstring needs to change with it.
+    sn.assert_is_blog_post({
+        "url": "https://hoiboy.uk/blogs/tech-ai/",
+        "title": "Tech",
+        "excerpt": "e",
+        "published": PUBLISHED,
+    })
+
+
+def test_a_canonical_that_escapes_the_blogs_tree_is_refused() -> None:
+    """`.../blogs/../hire-hoi/` starts with the prefix and points somewhere else.
+
+    A bare `startswith` accepted it. That target is the services tree, which
+    `content/legal/privacy/index.md:77` puts off limits without fresh consent, so a
+    prefix check reaching the right verdict only by luck was not good enough.
+    """
+    with pytest.raises(sn.NewsletterError, match="traverses out of"):
+        sn.assert_is_blog_post({
+            "url": "https://hoiboy.uk/blogs/../hire-hoi/ai-consultancy/",
+            "title": "T", "excerpt": "e", "published": PUBLISHED,
+        })
+
+
+def test_the_blogs_index_itself_is_not_a_post() -> None:
+    with pytest.raises(sn.NewsletterError, match="blogs index itself"):
+        sn.assert_is_blog_post({
+            "url": sn.CANONICAL_PREFIX,
+            "title": "T", "excerpt": "e", "published": PUBLISHED,
+        })
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://hoiboy.uk/blogs/a-real-post/",                # downgraded scheme
+        "https://hoiboy.uk.example.com/blogs/x/",             # look-alike host
+        "https://example.com/blogs/x/",                       # wrong host entirely
+        "https://example.com/?u=https://hoiboy.uk/blogs/x/",  # prefix present, not leading
+        "//hoiboy.uk/blogs/x/",                               # scheme-relative
+        "",                                                   # empty
+    ],
+)
+def test_the_consent_gate_rejects_the_adversarial_url_band(url: str) -> None:
+    """Near-misses around the canonical prefix, not just the obvious services page.
+
+    Ralph tier 3's structural finding was that nearly every guard here had exactly
+    one test, each sitting comfortably inside or outside the boundary and none ON it.
+    A classifier is only as good as its worst near-miss.
+    """
+    with pytest.raises(sn.NewsletterError):
+        sn.assert_is_blog_post({
+            "url": url, "title": "T", "excerpt": "e", "published": PUBLISHED,
+        })
 
 
 def test_a_slug_cannot_escape_the_rendered_tree(isolated: Path) -> None:
@@ -784,9 +862,155 @@ def test_main_writes_state_where_the_module_currently_points(isolated: Path) -> 
         assert SLUG not in live.read_text(encoding="utf-8"), "leaked into real state"
 
 
-def test_send_requires_the_confirm_flag_through_main(isolated: Path) -> None:
-    write_page(isolated, SLUG)
+def test_send_requires_the_confirm_flag_through_main(
+    isolated: Path, capsys: pytest.CaptureFixture
+) -> None:
+    """`--send` without `--confirm` is refused BY THE FLAG GUARD, not by luck.
+
+    This test used to prove nothing. It never ran `--prepare`, so with the guard at
+    `main()` deleted the call fell through to `send(slug, None)`, hit "no prepared
+    campaign", and returned the same rc=1 having touched no API. The mutant survived
+    the whole suite. Ralph tier 3 caught it by deleting the guard and watching the
+    suite stay green.
+
+    Two changes make it discriminate: a campaign IS prepared first, so the
+    no-pending-campaign branch cannot be what answers, and the refusal message is
+    asserted, so only the flag guard can produce it.
+    """
+    transport = ok_transport()
+    prepare_then_confirmation(isolated, transport)
+
     guard = mock.Mock(side_effect=AssertionError("must not reach the API"))
     with mock.patch.object(sn, "_api_call", guard):
         assert sn.main(["--slug", SLUG, "--send"]) == 1
     guard.assert_not_called()
+
+    err = capsys.readouterr().err
+    assert "requires --confirm" in err, (
+        f"refused for the wrong reason, so this test cannot see the flag guard: {err!r}"
+    )
+
+
+# --------------------------------------------------------------------------
+# Guards that had no killing test until Ralph tier 3 mutated them
+#
+# Every test below was written because deleting the guard it covers left the whole
+# suite green. A guard no test can kill is decoration: it reads as protection, and
+# the day someone "simplifies" it nothing objects.
+# --------------------------------------------------------------------------
+
+
+def test_a_campaign_whose_BODY_drifted_after_review_is_refused(isolated: Path) -> None:
+    """The body half of the campaign fingerprint, which had no test.
+
+    `content_fingerprint` hashes subject AND html, and there was a drift test for the
+    subject only, because the fake transport could not move the body. So half of the
+    guard the author added specifically after being bitten was itself unprotected.
+
+    This is the more dangerous half, too: a subject edit is visible in any inbox list,
+    whereas a body edit is exactly the change an operator would never notice.
+    """
+    confirmation = prepare_then_confirmation(isolated, ok_transport())
+    drifted = ok_transport(html_drift="<html>not what was reviewed at all</html>")
+    with mock.patch.object(sn, "_api_call", drifted):
+        with pytest.raises(sn.NewsletterError, match="no longer matches the review copy"):
+            sn.send(SLUG, confirmation, sn.STATE_FILE)
+    assert not any(
+        c.args[1].endswith("/sendNow") for c in drifted.call_args_list
+    ), "a body-drifted campaign reached sendNow"
+
+
+def test_a_state_file_from_a_future_version_is_refused(isolated: Path) -> None:
+    """The state-version check, which no test exercised.
+
+    It exists so a state file written by a newer script is not silently
+    misinterpreted by an older one. Deleting it changed nothing observable, so it was
+    load-bearing only in intent.
+    """
+    sn.STATE_FILE.write_text(
+        json.dumps({"version": 99, "pending": {}, "sent": {}, "audit": []}),
+        encoding="utf-8",
+    )
+    with pytest.raises(sn.NewsletterError, match="version"):
+        sn.load_state(sn.STATE_FILE)
+
+
+def test_the_path_containment_check_holds_when_the_shape_rule_is_bypassed(
+    isolated: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The second half of the defence-in-depth pair, which was unreachable to test.
+
+    `rendered_path` validates the slug by SHAPE and then re-checks that the resolved
+    path is still inside the blogs root. The docstring says "either check alone is
+    insufficient", but the shape rule permits only `[a-z0-9-]`, so no input can ever
+    reach the containment check in practice, and deleting that check left the suite
+    green.
+
+    Rather than delete an honest defence-in-depth layer or leave the claim untested,
+    this relaxes the shape rule for the length of the test, which is precisely the
+    scenario the second layer exists for: someone widening the first one.
+    """
+    monkeypatch.setattr(sn, "_SLUG_SHAPE", re.compile(r".+", re.S))
+    with pytest.raises(sn.NewsletterError, match="resolves outside"):
+        sn.rendered_path("../../etc")
+
+
+def test_a_non_ascii_confirmation_is_refused_loudly_not_as_a_traceback(
+    isolated: Path, capsys: pytest.CaptureFixture
+) -> None:
+    """A non-ASCII token used to crash the approval gate with no audit record.
+
+    `hmac.compare_digest` RAISES on a non-ASCII str rather than returning False, and
+    `main()` catches only `NewsletterError`, so the operator got a raw traceback and
+    `_log` never fired. It always failed CLOSED, so nothing could leak; it failed
+    silently in the ledger, which is the half that matters when reconstructing who
+    tried to send what.
+    """
+    confirmation = prepare_then_confirmation(isolated, ok_transport())
+    assert confirmation.isascii(), "minted tokens are URL-safe base64"
+
+    guard = mock.Mock(side_effect=AssertionError("must not reach the API"))
+    with mock.patch.object(sn, "_api_call", guard):
+        assert sn.main(["--slug", SLUG, "--send", "--confirm", "tokèn"]) == 1
+    guard.assert_not_called()
+
+    out = capsys.readouterr()
+    assert "non-ASCII" in out.err
+    # counters() is the module's own purpose-built surface for this ("Read by the
+    # tests"), and it beats string-matching the log stream: it survives any change to
+    # the line format, and it is the thing that would actually be reconstructed from
+    # afterwards. The audit record is the whole point of this test.
+    assert sn.counters().get("confirm_rejected") == 1, (
+        f"a rejected approval left no audit record: {sn.counters()}"
+    )
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        "",                                    # empty
+        " ",                                   # whitespace only
+        "a",                                   # far too short
+        "x" * 32,                              # RIGHT LENGTH, wrong value
+        "  padded-token  ",                    # whitespace-padded
+        "tokèn",                          # non-ASCII, the crash case
+        "\n",                                  # newline
+    ],
+)
+def test_the_confirmation_gate_rejects_the_adversarial_token_band(
+    isolated: Path, bad: str
+) -> None:
+    """Near-miss tokens, including one of the exact right length.
+
+    The suite previously tested one wrong token, 11 to 13 characters long against a
+    real token of 32, so nothing sat near the boundary. A length-correct wrong value
+    is the case a sloppy comparison passes.
+    """
+    confirmation = prepare_then_confirmation(isolated, ok_transport())
+    assert bad != confirmation, "the adversarial band must not contain the real token"
+
+    transport = ok_transport()
+    with mock.patch.object(sn, "_api_call", transport):
+        with pytest.raises(sn.NewsletterError):
+            sn.send(SLUG, bad, sn.STATE_FILE)
+    assert not any(c.args[1].endswith("/sendNow") for c in transport.call_args_list)
