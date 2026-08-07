@@ -31,17 +31,39 @@
        %%POST_DATE%%        -> the post's publication date, human readable
        %%POST_EXCERPT%%     -> the post's frontmatter description (G-D: excerpt, not full text)
        %%POST_URL%%         -> the canonical https://hoiboy.uk/blogs/<slug>/ URL
+       %%HERO_URL%%         -> the post's own og:image, absolute (see THE HERO below)
+       %%HERO_ALT%%         -> that image's og:image:alt, so a blocked image still reads
        %%UNSUBSCRIBE_URL%%  -> Brevo's unsubscribe link for this contact
+
+     THE HERO, and why it is the og:image rather than the on-page hero. The post
+     page shows hero.webp, and WebP is the one format the Outlook Word engine
+     cannot render, so using it would leave Outlook readers with a broken box.
+     The og:image sitting beside it is a Hugo-processed JPEG at 1200x630, which
+     is exactly 2x the 600px column, carries its own alt text, and is already an
+     absolute URL. Measured across the whole corpus: 90 of 90 sendable posts have
+     one, all JPEG, all 1200x630, all absolute, all with non-empty alt, and none
+     falling back to the generic card. So this needs no new asset pipeline.
+
+     It is hot-linked, never embedded: inlineImageActivation stays off, because
+     embedding caps a campaign at 5000 contacts and 4MB for no gain when the
+     image is already on a CDN that the post itself serves.
+
+     GMAIL BLOCKS IMAGES BY DEFAULT, so the layout must read with the image off.
+     That is what the alt text and the bgcolor on the hero cell are for: a
+     blocked image degrades to a neutral grey block carrying the post title,
+     not a broken white gap. AC 1.6's alt-and-bgcolor requirement is exactly
+     this failure mode, and it is now the live branch rather than skip-clean.
 
      COLOURS are literal hex, not tokens (AC 1.4), for the same reason as the
      fonts: a CSS custom-property reference resolves to nothing in a mail
      client, so the accent would simply vanish. Terracotta #c0533a and the
      greys are copied from assets/css/main.css.
 
-     NO IMAGES. AC 1.6 takes its skip-clean branch deliberately. The only styled
-     prior art on this Brevo account, the double-opt-in template, carries none
-     either, and G-B settled the design as minimal and blog-first, so there is
-     no company wordmark to place.
+     NO COMPANY IMAGERY. There is still no wordmark, badge or stock art here:
+     G-B settled the design as minimal and blog-first, and the only styled prior
+     art on this account (the double-opt-in template) carries none either. The
+     single image is the post's OWN hero, which is blog content rather than
+     company branding, so it does not reopen G-B.
 -->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#fafafa" style="background-color:#fafafa;margin:0;padding:0;width:100%;">
   <tr>
@@ -65,6 +87,12 @@
         <tr>
           <td style="padding:8px 28px 0 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:16px;line-height:24px;color:#1a1a1a;">
             A new post is up on hoiboy.uk.
+          </td>
+        </tr>
+
+        <tr>
+          <td bgcolor="#e0e0e0" style="background-color:#e0e0e0;padding:0;line-height:0;font-size:0;">
+            <a href="%%POST_URL%%" style="display:block;line-height:0;font-size:0;text-decoration:none;"><img src="%%HERO_URL%%" alt="%%HERO_ALT%%" width="600" border="0" style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;text-decoration:none;"></a>
           </td>
         </tr>
 

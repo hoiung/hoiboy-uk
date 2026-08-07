@@ -15,6 +15,7 @@ format is wrong.
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -34,6 +35,8 @@ import send_newsletter as sn  # noqa: E402
 PAGE = """<!doctype html><html><head>
 <meta name="description" content="{excerpt}">
 <meta property="article:published_time" content="{published}">
+<meta property="og:image" content="{hero}">
+<meta property="og:image:alt" content="{hero_alt}">
 <link rel="canonical" href="{url}">
 </head><body>
 <aside><h1><a href="/" class="brand"><img src="/l.png" alt="logo">Life of O'Hoi</a></h1></aside>
@@ -57,6 +60,8 @@ def write_page(root: Path, slug: str, **over: str) -> Path:
         "excerpt": EXCERPT,
         "published": PUBLISHED,
         "url": f"https://hoiboy.uk/blogs/{slug}/",
+        "hero": f"https://hoiboy.uk/blogs/{slug}/hero_hu_deadbeef.jpg",
+        "hero_alt": TITLE,
     }
     fields.update(over)
     path = root / slug / "index.html"
@@ -269,6 +274,60 @@ def test_the_title_read_is_the_article_heading_not_the_masthead(isolated: Path) 
 # --------------------------------------------------------------------------
 # AC 2.9 -- exactly once
 # --------------------------------------------------------------------------
+
+
+def test_the_hero_is_the_og_image_not_the_on_page_webp(isolated: Path) -> None:
+    """WebP is the one format the Outlook Word engine cannot render.
+
+    The post PAGE shows hero.webp. The email must not: it takes the og:image
+    beside it, which Hugo emits as a JPEG at 1200x630 (exactly 2x the 600px
+    column), already absolute and already alt-texted. Measured across the corpus,
+    90 of 90 sendable posts satisfy that, so this needs no new asset pipeline.
+    """
+    path = write_page(isolated, SLUG)
+    path.write_text(
+        path.read_text(encoding="utf-8").replace(
+            "<main>",
+            '<main><img class="post-hero" src="/blogs/x/hero.webp" alt="on-page">',
+        ),
+        encoding="utf-8",
+    )
+    transport = ok_transport()
+    with mock.patch.object(sn, "_api_call", transport):
+        sn.prepare(SLUG, sn.STATE_FILE)
+    body = [
+        c for c in transport.call_args_list if c.args[1] == "/v3/emailCampaigns"
+    ][0].kwargs["json"]["htmlContent"]
+    assert ".webp" not in body, "a WebP hero would break Outlook"
+    assert "hero_hu_deadbeef.jpg" in body
+    assert body.count("<img") == 1
+    # Absolute, because a mail client has no base URL to resolve against.
+    assert 'src="https://' in body
+
+
+def test_a_blocked_hero_still_reads(isolated: Path) -> None:
+    """Gmail blocks images by default, so the image-off state is the common one."""
+    transport = ok_transport()
+    prepare_then_confirmation(isolated, transport)
+    body = [
+        c for c in transport.call_args_list if c.args[1] == "/v3/emailCampaigns"
+    ][0].kwargs["json"]["htmlContent"]
+    imgs = body.count("<img")
+    assert imgs == 1
+    # Alt text carries the meaning when the pixels never arrive, and the bgcolor
+    # makes the gap a deliberate neutral block rather than broken white space.
+    assert body.count('alt="') == imgs
+    assert body.count("bgcolor=") >= imgs
+    assert f'alt="{TITLE}"' in body
+
+
+def test_a_post_with_no_og_image_is_refused_not_sent_headless(isolated: Path) -> None:
+    """Fail loud rather than send an email with a hole where the hero goes."""
+    path = write_page(isolated, SLUG)
+    stripped = re.sub(r'<meta property="og:image"[^>]*>', "", path.read_text(encoding="utf-8"))
+    path.write_text(stripped, encoding="utf-8")
+    with pytest.raises(sn.NewsletterError, match="og:image"):
+        sn.read_post(SLUG)
 
 
 def test_second_send_is_refused(isolated: Path) -> None:
@@ -540,8 +599,16 @@ def test_main_writes_state_where_the_module_currently_points(isolated: Path) -> 
     with mock.patch.object(sn, "_api_call", ok_transport()):
         assert sn.main(["--slug", SLUG, "--prepare"]) == 0
     assert sn.STATE_FILE.is_file(), "state went somewhere other than the patched path"
-    assert not (REPO_ROOT / ".newsletter-state.json").exists()
     assert SLUG in json.loads(sn.STATE_FILE.read_text(encoding="utf-8"))["pending"]
+
+    # The repo-root file may legitimately exist: it is the operator's real state
+    # from a real --prepare. So the assertion is that THIS test's slug never
+    # reached it, not that the file is absent. An absence check passed for the
+    # wrong reason until a real run created that file, which is exactly the kind
+    # of environment-dependent assertion that rots into a false green.
+    live = REPO_ROOT / ".newsletter-state.json"
+    if live.exists():
+        assert SLUG not in live.read_text(encoding="utf-8"), "leaked into real state"
 
 
 def test_send_requires_the_confirm_flag_through_main(isolated: Path) -> None:
