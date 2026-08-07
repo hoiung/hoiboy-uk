@@ -122,9 +122,12 @@ def ok_transport(created_id: int = 42, drift: str = "") -> mock.Mock:
                 "id": created_id,
                 "status": "draft",
                 # The provider's own normalisation, modelled not assumed away.
-                "htmlContent": str(body.get("htmlContent", "")).replace(
-                    "<!doctype html>", ""
-                ).strip(),
+                # `.strip()` is the whole model, and that is deliberate. An earlier
+                # version also stripped a `<!doctype html>` prefix, which measured as
+                # pure decoration: the template carries no doctype (`grep -ci doctype`
+                # on it returns 0), so that clause changed zero bytes and only made the
+                # fixture look like it modelled more than it did.
+                "htmlContent": str(body.get("htmlContent", "")).strip(),
                 "subject": str(body.get("subject", "")),
             }
             store.write_text(json.dumps(data), encoding="utf-8")
