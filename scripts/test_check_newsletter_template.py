@@ -107,6 +107,22 @@ def test_too_few_font_declarations_are_caught(clean):
     assert any("at least 3" in p for p in problems), problems
 
 
+def test_missing_content_column_is_caught(clean):
+    """The last rule in this gate with no killing test.
+
+    Ralph round 6 tier 3 disabled it and the suite stayed green. That is the same
+    class round 4 found in the font-count rule one line above: this gate was tested
+    rule by rule, and the sweep that followed covered send_newsletter.py only, so its
+    siblings here went unexamined. Worth naming because it is exactly how a "class
+    exhausted" claim goes stale.
+
+    The 600px column is not decoration. It is the width every mail client's preview
+    pane is built around; without it the email renders full-bleed in Outlook.
+    """
+    problems = gate.failures(clean.replace("max-width:600px", "max-width:100%"))
+    assert any("600px content column" in p for p in problems), problems
+
+
 def test_missing_accent_is_caught(clean):
     problems = gate.failures(clean.replace("#c0533a", "#000000"))
     assert any("terracotta" in p for p in problems), problems

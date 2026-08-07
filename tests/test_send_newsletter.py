@@ -771,6 +771,53 @@ def test_a_hyphen_leading_token_really_would_break_the_cli() -> None:
     assert "expected one argument" in proc.stderr, proc.stderr
 
 
+def test_the_campaign_identity_constants_are_pinned_to_their_literals() -> None:
+    """Who gets the review copy, and who gets the send. Both were unpinned.
+
+    Ralph round 6 tier 3 changed REVIEW_ADDRESS, LIST_ID, SENDER_ID, REPLY_TO and
+    UNSUBSCRIBE_PAGE_ID one at a time and the suite stayed green through all five.
+    Every existing assertion is of the form `payload[...] == sn.<CONST>`, which
+    compares the value against itself: both sides move together, so the test proves a
+    field was populated and says nothing about what it was populated with.
+
+    REVIEW_ADDRESS is the one that matters most. The operator's requirement is that a
+    review copy reaches him BEFORE anything goes to subscribers. A silently retargeted
+    review address defeats that requirement completely while every test stays green,
+    and the failure would be invisible until a campaign nobody reviewed had already
+    gone out. LIST_ID is the same argument pointed at the audience.
+
+    Literals here, deliberately. That is the entire point.
+    """
+    assert sn.REVIEW_ADDRESS == "hoiboyuk@gmail.com"
+    assert sn.LIST_ID == 4
+    assert sn.SENDER_ID == 2
+    assert sn.REPLY_TO == "hello@hoiboy.uk"
+    assert sn.UNSUBSCRIBE_PAGE_ID == "69fde04c25095576dc311f46"
+    assert sn.CANONICAL_PREFIX == "https://hoiboy.uk/blogs/"
+
+
+def test_the_review_copy_goes_to_the_review_address_and_nowhere_else(
+    isolated: Path,
+) -> None:
+    """And the wire agrees with the constant, against a literal.
+
+    Pinning the constant is half the job; this asserts the value that actually
+    reaches the sendTest call, so a change that rewired the recipient without
+    touching the constant is caught too.
+    """
+    transport = ok_transport()
+    prepare_then_confirmation(isolated, transport)
+    test_send = [
+        c for c in transport.call_args_list if str(c.args[1]).endswith("/sendTest")
+    ][0]
+    emails = test_send.kwargs["json"]["emailTo"]
+
+    assert emails == ["hoiboyuk@gmail.com"], (
+        f"the review copy must go to the operator's review inbox and only there, "
+        f"got {emails}"
+    )
+
+
 def test_build_html_refuses_when_the_renderer_contract_drifts(monkeypatch) -> None:
     """Defence-in-depth, but bindable, so bind it.
 
