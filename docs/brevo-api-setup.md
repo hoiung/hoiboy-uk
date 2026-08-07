@@ -556,6 +556,28 @@ rest of the template's construction contract (table layout, 600px column, litera
 Go-template action, since Hugo parses this file and a raw double-curly Brevo merge tag in it
 fails the whole site build).
 
+### `sendNow` is assumed to have no recall path, and that assumption is deliberate
+
+`scripts/send_newsletter.py` treats `POST /v3/emailCampaigns/{id}/sendNow` as **irreversible**.
+**No recall path is assumed to exist.** Once that call returns 204 the campaign is gone to the
+list, and nothing in this repo will try to pull it back.
+
+A `cancel` value does exist in the `PUT /v3/emailCampaigns/{id}/status` enum, alongside
+`suspended`, `archive`, `sent`, `queued` and the rest. What the spec does not say anywhere is
+that it stops a send already in flight. It reads as a state transition for a campaign that is
+scheduled or queued, which is a different thing from one that has fired.
+
+The gap was left unmeasured on purpose. Establishing whether `cancel` intercepts a live send
+means firing the exact irreversible send the whole approval gate exists to prevent, at a real
+list, and then racing it. The cost of being wrong is subscribers receiving something the
+operator had not approved. Assuming there is no undo is both the safe reading and the cheap
+one, and it costs nothing: the recall mechanism is everything that happens *before* the call.
+The draft, the review copy, the confirmation value and the content fingerprint are the undo.
+
+Trigger to revisit: Brevo documenting the semantics explicitly, or a throwaway list built for
+the purpose (its own contacts, none of them real) where the experiment can be run without
+anyone receiving anything they did not ask for.
+
 ## Rotation cadence
 
 Brevo does **not** offer built-in TTL on API or SMTP keys (Cloudflare does; Brevo doesn't). Rotation is calendar-driven.
