@@ -666,6 +666,33 @@ writing a subject marker straight onto a draft through the API and watching the 
 raise no objection: the post still matched, so the post fingerprint still matched, and
 the campaign that would have gone out carried a subject nobody had approved.
 
+### Where the gate keeps its memory
+
+The sequence above spans three separate runs of the script, so something has to remember
+what happened between them. That something is `.newsletter-state.json` at the repo root
+(`scripts/send_newsletter.py:70`). It is gitignored (`.gitignore:68`), which is correct,
+because it holds a live confirmation value and a record of who has been mailed.
+
+It carries four keys: `version`, `pending`, `sent`, and `audit`. `pending` holds the
+minted confirmation and both fingerprints between `--prepare` and `--send`. `sent` is the
+send-once record, and it is checked twice, once in `prepare` (line 659) and again in
+`send` (line 730), so a post that has gone out cannot be queued or sent a second time.
+`audit` is the append-only trail of what the script did and when.
+
+Two consequences worth knowing before you rely on it.
+
+A version mismatch makes the script refuse rather than guess (line 267). The reasoning is
+in the code: the record of which posts have already gone out is the one thing you cannot
+reconstruct by looking at the repo, so a wrong guess mails somebody twice.
+
+More importantly, **send-once lives entirely in this one untracked file on one laptop**.
+Delete it and the script no longer knows that anything was ever sent. `--send` still fails
+safe after the loss, because the confirmation it needs is gone with it. `--prepare` does
+not: it will happily mint a fresh token for a post that already went out. Making
+send-once independent of a single machine needs a server-side check against the campaign
+names Brevo already holds, which is a recorded follow-up rather than something this lane
+does today. Until then, treat the file as the operational record it is.
+
 ### Two different meters, and neither is the one you would guess
 
 **Test sends are capped at 50 per day.** The spec states it in an easy place to miss,
