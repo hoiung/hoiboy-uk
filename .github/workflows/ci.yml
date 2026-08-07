@@ -493,6 +493,15 @@ jobs:
       - name: Blogs IA pre-push gate unit tests
         run: python3 -m pytest scripts/test_run_blogs_ia_suite.py -q
 
+      # blog-priv#81 AC 6.2. Keeps the voice-guard markers out of the XML feeds,
+      # where Hugo's embedded RSS template used to escape them into visible text.
+      # Needs the built ./public, so it sits after the Hugo build. Deliberately its
+      # OWN step rather than appended to the Blogs IA list above: that list is held
+      # set-equal to the pre-push runner's by scripts/test_run_blogs_ia_suite.py,
+      # and adding a file to one side only would fail that contract.
+      - name: Feed marker regression gate (built tree)
+        run: python3 -m pytest tests/test_feed_markers.py -q
+
       # #55 Phase 4, the root-cause gate. exclude_path is a list of unanchored
       # REGEXES, and an over-broad entry fails silently: lychee reports 0 Total
       # and "No files found for this input source", which reads like a missing
