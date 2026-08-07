@@ -392,6 +392,38 @@ def test_personalisation_uses_the_attribute_signup_actually_stores(
     assert "FNAME}" not in body
 
 
+def test_the_unsubscribe_merge_tag_is_the_one_brevo_actually_resolves(
+    isolated: Path,
+) -> None:
+    """The most legally load-bearing string in the message, pinned at both sites.
+
+    Ralph round 3 tier 3 misspelled BREVO_UNSUBSCRIBE_TAG, repointed it at a dead
+    URL, and blanked it to an empty string. All three SURVIVED a green 67-test
+    run, while the same mutation applied to the sibling FIRSTNAME tag was caught.
+    An unresolved tag ships mail whose only unsubscribe control is a dead link,
+    which is a PECR problem, not a cosmetic one.
+
+    The literal is written out here ON PURPOSE. Asserting
+    `sn.BREVO_UNSUBSCRIBE_TAG in body` would pass under every one of those three
+    mutations, because the constant and the rendered output move together: that
+    assertion tests that a substitution happened, not that the result is the
+    string Brevo resolves. This file's own history is the argument for the
+    distinction.
+    """
+    transport = ok_transport()
+    prepare_then_confirmation(isolated, transport)
+    create = [c for c in transport.call_args_list if c.args[1] == "/v3/emailCampaigns"][0]
+    payload = create.kwargs["json"]
+
+    assert "{{ unsubscribe }}" in payload["htmlContent"], (
+        "the campaign body must carry Brevo's own unsubscribe merge tag verbatim; "
+        "anything else reaches the reader unresolved"
+    )
+    assert "{{ unsubscribe }}" in payload["footer"], (
+        "the footer's Unsubscribe href is the one a mail client surfaces natively"
+    )
+
+
 def test_the_title_read_is_the_article_heading_not_the_masthead(isolated: Path) -> None:
     """Every page renders two h1 elements and the masthead comes first.
 
@@ -714,7 +746,14 @@ def test_the_body_is_the_rendered_pages_own_words(isolated: Path) -> None:
 
 
 def test_all_eight_branding_fields_reach_the_wire(isolated: Path) -> None:
-    """Set explicitly, not inherited. A grep of the source cannot prove this."""
+    """Set explicitly, not inherited. A grep of the source cannot prove this.
+
+    The name says eight and the loop ran seven until Ralph round 3 tier 3 counted
+    them: `unsubscriptionPageId` was the one missing, covered only by its own
+    value assertion further down. Both belong. This loop is the presence check
+    across the whole branding set named in `campaign_payload`'s docstring, and a
+    field can be present here yet carry the wrong value there.
+    """
     transport = ok_transport()
     prepare_then_confirmation(isolated, transport)
     payload = [
@@ -728,6 +767,7 @@ def test_all_eight_branding_fields_reach_the_wire(isolated: Path) -> None:
         "utmCampaign",
         "mirrorActive",
         "inlineImageActivation",
+        "unsubscriptionPageId",
     ):
         assert field in payload, f"{field} left to a Brevo default"
     assert payload["replyTo"] == sn.REPLY_TO
