@@ -1,0 +1,136 @@
+<!-- hoiboy.uk newsletter email template. blog-priv#81 Phase 1 (AC 1.1 to AC 1.8).
+
+     WHY THIS FILE LOOKS LIKE 1999 HTML. Mail clients are not browsers. Gmail
+     strips <style> blocks in some contexts, Outlook on Windows renders through
+     the Word engine, and Outlook.com rewrites CSS it does not recognise. So:
+     nested <table role="presentation">, a fixed 600px column, and every style
+     inline. No CSS variables, no flex, no grid (AC 1.2), because none of the
+     three survives the Word engine.
+
+     WHY NO WEBFONT. Gmail web, Gmail mobile, Outlook Windows and Outlook.com
+     all refuse webfonts, so a @font-face here would silently fall back anyway.
+     D-1 therefore reuses the site's own ladder from assets/css/main.css:27
+     verbatim, which makes the email and the site degrade to the SAME face
+     rather than to two different ones. Font names are SINGLE-quoted on purpose:
+     AC 1.3 extracts each declaration with a character class that stops dead at
+     a double quote, so a double-quoted face name would truncate the match
+     before it ever reached the generic family and the template would fail its
+     own acceptance check.
+
+     WHY NO BRACES. Hugo eagerly parses every file under layouts/, and it does
+     so INSIDE html comments too, so a raw Brevo merge tag (the double-curly
+     contact.FIRSTNAME form) written anywhere in this file makes `hugo` exit 1
+     and breaks the whole site build. Measured, not assumed. The template
+     therefore carries non-brace %%TOKEN%% placeholders and scripts/send_newsletter.py
+     substitutes them at build time, emitting the literal Brevo tag itself.
+     That is also why this paragraph spells the tag out in words.
+
+     PLACEHOLDER CONTRACT (the sender in Phase 2 substitutes exactly these):
+       %%FIRSTNAME%%        -> the Brevo contact merge tag for the first name
+       %%POST_TITLE%%       -> the post's frontmatter title, verbatim (D-6)
+       %%POST_DATE%%        -> the post's publication date, human readable
+       %%POST_EXCERPT%%     -> the post's frontmatter description (G-D: excerpt, not full text)
+       %%POST_URL%%         -> the canonical https://hoiboy.uk/blogs/<slug>/ URL
+       %%UNSUBSCRIBE_URL%%  -> Brevo's unsubscribe link for this contact
+
+     COLOURS are literal hex, not tokens (AC 1.4), for the same reason as the
+     fonts: a CSS custom-property reference resolves to nothing in a mail
+     client, so the accent would simply vanish. Terracotta #c0533a and the
+     greys are copied from assets/css/main.css.
+
+     NO IMAGES. AC 1.6 takes its skip-clean branch deliberately. The only styled
+     prior art on this Brevo account, the double-opt-in template, carries none
+     either, and G-B settled the design as minimal and blog-first, so there is
+     no company wordmark to place.
+-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#fafafa" style="background-color:#fafafa;margin:0;padding:0;width:100%;">
+  <tr>
+    <td align="center" style="padding:24px 12px;">
+
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" align="center" style="max-width:600px;width:100%;background-color:#ffffff;border:1px solid #e0e0e0;">
+
+        <tr>
+          <td style="padding:24px 28px 8px 28px;border-top:3px solid #c0533a;">
+            <a href="https://hoiboy.uk/" style="font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:20px;font-weight:700;color:#c0533a;text-decoration:none;">hoiboy.uk</a>
+          </td>
+        </tr>
+
+        <!-- iamhoi -->
+        <tr>
+          <td style="padding:16px 28px 0 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:16px;line-height:24px;color:#1a1a1a;">
+            Hi %%FIRSTNAME%%,
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:8px 28px 0 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:16px;line-height:24px;color:#1a1a1a;">
+            A new post is up on hoiboy.uk.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:20px 28px 0 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:24px;line-height:31px;font-weight:700;color:#1a1a1a;">
+            %%POST_TITLE%%
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:6px 28px 0 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:13px;line-height:20px;color:#555555;">
+            %%POST_DATE%%
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:16px 28px 0 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:16px;line-height:26px;color:#1a1a1a;">
+            %%POST_EXCERPT%%
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:24px 28px 4px 28px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td bgcolor="#c0533a" style="background-color:#c0533a;padding:12px 22px;">
+                  <a href="%%POST_URL%%" style="font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;display:inline-block;">Read the full post</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:12px 28px 24px 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:13px;line-height:20px;color:#555555;">
+            Or open it directly: <a href="%%POST_URL%%" style="color:#c0533a;">%%POST_URL%%</a>
+          </td>
+        </tr>
+        <!-- iamhoiend -->
+
+        <tr>
+          <td style="padding:0 28px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr><td height="1" bgcolor="#e0e0e0" style="background-color:#e0e0e0;line-height:1px;font-size:1px;">&nbsp;</td></tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- iamhoi -->
+        <tr>
+          <td style="padding:18px 28px 24px 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:12px;line-height:19px;color:#555555;">
+            You are getting this because you subscribed to new posts from hoiboy.uk.
+            That is the only thing this list is used for. We do not send anything about
+            our services, our consultancy or our products.
+            <br><br>
+            <a href="%%UNSUBSCRIBE_URL%%" style="color:#c0533a;">Unsubscribe</a>
+            in one click, or read the
+            <a href="https://hoiboy.uk/legal/privacy/" style="color:#c0533a;">privacy notice</a>.
+            <br><br>
+            Sent by HOIBOY AI LTD, registered in England and Wales.
+          </td>
+        </tr>
+        <!-- iamhoiend -->
+
+      </table>
+
+    </td>
+  </tr>
+</table>
