@@ -89,6 +89,24 @@ def test_unsupported_css_is_caught(clean, inject, needle):
     assert any(needle in p for p in problems), problems
 
 
+def test_too_few_font_declarations_are_caught(clean):
+    """The one contract rule with no test at all until round 4.
+
+    Ralph round 4 tier 2 relaxed the threshold from `< 3` to `< 0`, which disables
+    the rule outright, and the whole suite stayed green at 89 passed. Every other
+    rule in this gate had a killing test; this one was enforced by nothing.
+
+    It matters because the ladder is the point (D-1): the email mirrors the site's
+    font stack and ends in a generic family, so a template that lost most of its
+    declarations would still render, just not as the design.
+    """
+    stripped = gate._FONT_DECL.sub("color:#111", clean)
+    assert len(gate._FONT_DECL.findall(stripped)) == 0, "fixture must remove them all"
+    problems = gate.failures(stripped)
+    assert any("font-family declaration" in p for p in problems), problems
+    assert any("at least 3" in p for p in problems), problems
+
+
 def test_missing_accent_is_caught(clean):
     problems = gate.failures(clean.replace("#c0533a", "#000000"))
     assert any("terracotta" in p for p in problems), problems
