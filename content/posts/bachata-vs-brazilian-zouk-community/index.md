@@ -67,7 +67,7 @@ Alternatively, continue standing my ground on this, let them go wild and copy if
 
 ## The friction problem and scaling issues
 
-His continuing vision is to make learning the dance as frictionless as possible. Where beginners do not feel like they need 6 months to feel confident at the dance.
+His continuing vision is to make learning the Bachata dance as frictionless as possible. Where beginners do not feel like they need 6 months to feel confident at the dance.
 
 Even though it does take 3 to 5 years if training 2-3 times per week for a non-experienced dancer to be decent at Brazilian Zouk. For clarity, I'm talking about complete beginners with no previous dance or musical experience.
 
