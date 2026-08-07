@@ -1,0 +1,97 @@
+{{- /*
+Custom RSS template, added by blog-priv#81.
+
+WHY THIS FILE EXISTS AT ALL. The repo shipped no RSS template, so Hugo used its
+embedded default, which escapes `.Summary` straight into `<description>`. The voice
+guard's `iamhoi` markers are HTML COMMENTS: invisible on a rendered page and inert in
+the page's own HTML, but escaping turns them into visible text, so a reader's feed
+client showed a literal `<!-- iamhoi -->` above the first paragraph. Six of the
+nineteen generated feeds carried them. The fix had to be a new template rather than
+an edit, because there was nothing to edit.
+
+THIS IS THE EMBEDDED DEFAULT FOR THE PINNED HUGO (0.160.0), COPIED VERBATIM, WITH
+EXACTLY ONE CHANGE: the `replaceRE $marker ""` in `<description>` below.
+
+Copying rather than writing a fresh template is deliberate, and a hand-written one
+was tried first and rejected by evidence. Diffing all nineteen rendered feeds before
+and after caught three that differed beyond the markers, because the embedded default
+does several things that are not guessable: `pubDate` reads `.PublishDate` and not
+`.Date`; `lastBuildDate` is GATED on the page's own `.Date` but emits the most recent
+page's `.Lastmod`; `<language>` is `site.Language.Locale`; `<atom:link ... />` carries
+a space before the slash; and the author block guards with `reflect.IsMap`, which
+matters here because this site's `params.author` is a plain STRING, so the naive
+`.author.email` lookup is a hard build failure rather than an empty value.
+
+Upgrade note: this file now pins feed rendering to 0.160.0's default. On a Hugo
+upgrade, re-fetch the embedded template for the new version, re-apply the one-line
+strip, and re-run the before/after feed diff.
+*/ -}}
+{{- $authorEmail := "" }}
+{{- with site.Params.author }}
+  {{- if reflect.IsMap . }}
+    {{- with .email }}
+      {{- $authorEmail = . }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- $authorName := "" }}
+{{- with site.Params.author }}
+  {{- if reflect.IsMap . }}
+    {{- with .name }}
+      {{- $authorName = . }}
+    {{- end }}
+  {{- else }}
+    {{- $authorName  = . }}
+  {{- end }}
+{{- end }}
+
+{{- /* The one addition. `(?s)` so `.` spans newlines and `.*?` so it stops at the
+FIRST close, both load-bearing: the markers are not all bare `<!-- iamhoi -->`. The
+site also carries multi-line instruction blocks opening `<!-- iamhoi-claims` and
+running several lines before `-->`, and a pattern assuming a bare marker cleared only
+four of the six leaking feeds while looking, from the leak count alone, like real
+progress. Greedy `.*` would swallow up to the LAST `-->` on the page and take real
+content with it. Marker-shaped rather than "strip all comments", because eating an
+unrelated comment would be the same class of silent damage this fixes. */ -}}
+{{- $marker := `(?s)<!--\s*iamhoi.*?-->\s*` }}
+
+{{- $pctx := . }}
+{{- if .IsHome }}{{ $pctx = .Site }}{{ end }}
+{{- $pages := slice }}
+{{- if or $.IsHome $.IsSection }}
+{{- $pages = $pctx.RegularPages }}
+{{- else }}
+{{- $pages = $pctx.Pages }}
+{{- end }}
+{{- $limit := .Site.Config.Services.RSS.Limit }}
+{{- if ge $limit 1 }}
+{{- $pages = $pages | first $limit }}
+{{- end }}
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ if eq .Title .Site.Title }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{ . }} on {{ end }}{{ .Site.Title }}{{ end }}</title>
+    <link>{{ .Permalink }}</link>
+    <description>Recent content {{ if ne .Title .Site.Title }}{{ with .Title }}in {{ . }} {{ end }}{{ end }}on {{ .Site.Title }}</description>
+    <generator>Hugo</generator>
+    <language>{{ site.Language.Locale }}</language>{{ with $authorEmail }}
+    <managingEditor>{{.}}{{ with $authorName }} ({{ . }}){{ end }}</managingEditor>{{ end }}{{ with $authorEmail }}
+    <webMaster>{{ . }}{{ with $authorName }} ({{ . }}){{ end }}</webMaster>{{ end }}{{ with .Site.Copyright }}
+    <copyright>{{ . }}</copyright>{{ end }}{{ if not .Date.IsZero }}
+    <lastBuildDate>{{ (index $pages.ByLastmod.Reverse 0).Lastmod.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</lastBuildDate>{{ end }}
+    {{- with .OutputFormats.Get "RSS" }}
+    {{ printf "<atom:link href=%q rel=\"self\" type=%q />" .Permalink .MediaType | safeHTML }}
+    {{- end }}
+    {{- range $pages }}
+    <item>
+      <title>{{ .Title }}</title>
+      <link>{{ .Permalink }}</link>
+      <pubDate>{{ .PublishDate.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
+      {{- with $authorEmail }}<author>{{ . }}{{ with $authorName }} ({{ . }}){{ end }}</author>{{ end }}
+      <guid>{{ .Permalink }}</guid>
+      <description>{{ .Summary | replaceRE $marker "" | transform.XMLEscape | safeHTML }}</description>
+    </item>
+    {{- end }}
+  </channel>
+</rss>
