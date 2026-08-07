@@ -632,6 +632,78 @@ Trigger to revisit: Brevo documenting the semantics explicitly, or a throwaway l
 the purpose (its own contacts, none of them real) where the experiment can be run without
 anyone receiving anything they did not ask for.
 
+## Campaign lane (blog-priv#81)
+
+The lane that sends a published blog post to the newsletter list. Separate from the
+transactional lane above, and separate again from the double-opt-in lane, though all
+three spend the same daily allowance.
+
+### The key
+
+`scripts/send_newsletter.py` reads `BREVO_CAMPAIGN_API_KEY` from the environment and
+nowhere else. It lives in Bitwarden item `brevo-hoiboy-uk-campaign-api`. It never goes
+in a tracked file, a commit message, or `params.toml`: a Pages Function can read an env
+binding, but this script is run by hand from a laptop, so the environment is the whole
+story.
+
+The name is chosen, not incidental. `scripts/check-public-repo-secrets.py:181` matches
+on `password|passwd|secret|token|api_?key|auth_?key|credential|seller_id|account_id`, so
+a shorter `BREVO_CAMPAIGN_KEY` would match none of them and create a scanner blind spot
+in a public repo.
+
+### The sequence
+
+1. `--prepare` renders the post, creates the campaign as a **draft**, sends a review
+   copy to the review address only, and mints a one-time confirmation value.
+2. The operator reads that copy in a real mail client.
+3. `--send --confirm <value>` re-reads the live campaign, checks it is still a draft and
+   still matches what was reviewed, and only then calls `sendNow`.
+
+Two fingerprints guard the gap between review and send, because they catch different
+things. One compares the re-rendered post, catching an edited POST. The other compares
+what the provider stored, catching an edited CAMPAIGN. The second was added after
+writing a subject marker straight onto a draft through the API and watching the gate
+raise no objection: the post still matched, so the post fingerprint still matched, and
+the campaign that would have gone out carried a subject nobody had approved.
+
+### Two different meters, and neither is the one you would guess
+
+**Test sends are capped at 50 per day.** The spec states it in an easy place to miss,
+inside the `emailTo` field description of the `sendTestEmail` schema rather than on the
+endpoint: "You can not send more than 50 test emails per day".
+
+**A test send costs zero credits.** Measured across roughly a dozen of them on the free
+plan, `GET /v3/account` reported `credits: 300` immediately before and `300` immediately
+after, every time. So the two limits are genuinely independent: review copies are
+throttled by a daily count, not by the send allowance, and iterating on a template
+during one session costs nothing from the 300/day that real subscriber mail draws on.
+
+Worth pairing with the fact that `testSent` is **not** a delivery signal (it read `false`
+on campaigns that had demonstrably arrived), and campaign test sends do not appear in
+`/v3/smtp/statistics/events` at all. There is no API-side confirmation that a review copy
+landed. The inbox is the only oracle, which is why the acceptance criteria demand a real
+screenshot rather than a status code.
+
+### The free plan appends no footer at all
+
+Measured, not assumed, because the answer decided whether the registered postal address
+had to be published. A real `sendTest` on the free plan arrived carrying **no provider
+footer whatsoever**: no Brevo branding, no "sent with", no injected postal address. The
+only footer is the one the template sets explicitly.
+
+That matters twice. It means the campaign controls its own legal footer, and it means
+the earlier worry about a free-plan Brevo badge forcing an upgrade was unfounded.
+
+Note that an empty string is not the way to express "no footer". `"header": ""` is
+rejected with `400 missing_parameter`, symmetrically for `footer`. A zero-height `<div>`
+is what actually works.
+
+### `sendNow` cancellability
+
+Assumed to have no recall path, deliberately unmeasured. Full reasoning in "`sendNow` is
+assumed to have no recall path, and that assumption is deliberate" above; it is not
+repeated here.
+
 ## Rotation cadence
 
 Brevo does **not** offer built-in TTL on API or SMTP keys (Cloudflare does; Brevo doesn't). Rotation is calendar-driven.
