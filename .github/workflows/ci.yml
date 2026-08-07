@@ -173,6 +173,14 @@ jobs:
       - name: Config-traceability + iamhoi-wrapping unit tests
         run: python3 -m pytest scripts/test_check_config_traceability.py scripts/test_check_iamhoi_wrapping.py -q
 
+      # Guards the newsletter email template's construction contract, and in
+      # particular that its iamhoi markers are still present. The voice guard
+      # reads that file but is default-SKIP, so stripped markers make it scan
+      # nothing and report OK; this is the gate that turns red instead.
+      # Source-only, so it runs before the Hugo build.
+      - name: Newsletter email template gate + renderer unit tests
+        run: python3 -m pytest scripts/test_check_newsletter_template.py scripts/test_newsletter_render.py -q
+
       # The secret scan at the top of this job is blocking, but until #56 nothing
       # tested the guard itself in this repo. Its two collection paths asked
       # "should I open this file?" two different ways and neither opened an
