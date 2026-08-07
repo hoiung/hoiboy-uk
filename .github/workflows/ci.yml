@@ -181,6 +181,16 @@ jobs:
       - name: Newsletter email template gate + renderer unit tests
         run: python3 -m pytest scripts/test_check_newsletter_template.py scripts/test_newsletter_render.py -q
 
+      # The sender's unit tier. Drives the real --prepare and --send entry points
+      # against a mocked transport, asserting on the exact keyword arguments each
+      # Brevo call would receive: a mock that swallowed **kwargs would accept any
+      # payload and prove nothing about the wire format. Listed by name because CI
+      # runs pytest through explicit file lists, so a file nobody lists never runs
+      # (tests/test_gate_wiring.py fails the build for exactly that). Source-only
+      # and network-free, so it runs before the Hugo build.
+      - name: Newsletter sender unit tests
+        run: python3 -m pytest tests/test_send_newsletter.py -q
+
       # The secret scan at the top of this job is blocking, but until #56 nothing
       # tested the guard itself in this repo. Its two collection paths asked
       # "should I open this file?" two different ways and neither opened an
