@@ -656,11 +656,25 @@ def prepare(slug: str, state_path: Path | None = None) -> int:
     _expect(status, body, (204,), "send test")
     _log("send_test_ok", campaign_id=campaign_id, status=status)
 
+    # Fingerprint what BREVO STORED, not what we posted. Measured: the provider
+    # rewrites the html slightly on ingest (5461 bytes sent, 5459 read back), so
+    # comparing a locally computed digest against the live campaign would mismatch on
+    # every send and block the path permanently. Reading the stored version back at
+    # review time is what makes the send-side comparison meaningful rather than red.
+    status, stored = _api_call("GET", f"/v3/emailCampaigns/{campaign_id}", brevo_key=key)
+    _expect(status, stored, (200,), "campaign read-back")
+    campaign_fingerprint = content_fingerprint(
+        stored.get("htmlContent") or "", stored.get("subject") or ""
+    )
+
     confirmation = secrets.token_urlsafe(24)
     state["pending"][slug] = {
         "campaign_id": campaign_id,
         "confirmation": confirmation,
+        # Catches an edited POST between review and send.
         "fingerprint": content_fingerprint(body_html, post["title"]),
+        # Catches an edited CAMPAIGN between review and send.
+        "campaign_fingerprint": campaign_fingerprint,
         "prepared_at": datetime.now(timezone.utc).isoformat(),
     }
     _audit(state, "prepare", slug=slug, campaign_id=campaign_id)
@@ -710,6 +724,40 @@ def send(slug: str, confirm: str, state_path: Path | None = None) -> int:
 
     key = brevo_key_from_env()
     campaign_id = entry["campaign_id"]
+
+    # Re-read the campaign and check it still matches what was reviewed.
+    #
+    # The fingerprint above compares the POST against the review copy, which catches
+    # an edited post. It cannot catch an edited CAMPAIGN: anything with the API key
+    # (a dashboard edit, another script, a person) can change the subject or the body
+    # of a draft after --prepare, and the send path would happily fire it because the
+    # post it re-renders from is untouched.
+    #
+    # Found by walking into it. A test-round subject marker was written straight onto
+    # a draft through the API, and nothing in the gate objected: the post still
+    # matched, so the fingerprint still matched, and the campaign that would actually
+    # have gone out carried a subject the operator never saw. The gate's whole promise
+    # is that what ships is what was approved, so it has to verify the thing that
+    # ships, not only the thing it was built from.
+    status, live = _api_call("GET", f"/v3/emailCampaigns/{campaign_id}", brevo_key=key)
+    _expect(status, live, (200,), "campaign re-read")
+    if live.get("status") != "draft":
+        raise NewsletterError(
+            f"campaign {campaign_id} is {live.get('status')!r}, not a draft. Refusing: "
+            f"this campaign has already left the draft state, so sending again risks "
+            f"a duplicate to the list."
+        )
+    live_fingerprint = content_fingerprint(
+        live.get("htmlContent") or "", live.get("subject") or ""
+    )
+    if live_fingerprint != entry["campaign_fingerprint"]:
+        raise NewsletterError(
+            f"campaign {campaign_id} no longer matches the review copy. Its subject or "
+            f"body changed after --prepare, so what would go out is not what was "
+            f"approved. Re-run --prepare, read the new review copy, and confirm that "
+            f"one. (Reviewed {entry['campaign_fingerprint'][:12]}, "
+            f"live {live_fingerprint[:12]}.)"
+        )
 
     # sendNow is treated as irreversible. A cancel status exists on the API but
     # nothing in the spec says it stops a send already in flight, and the only way to

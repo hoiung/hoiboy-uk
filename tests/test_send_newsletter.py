@@ -84,15 +84,59 @@ def isolated(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv(sn.API_KEY_ENV, "test-key-not-a-real-credential")
     monkeypatch.delenv(sn.UNSUB_PAGE_ENV, raising=False)
     sn._COUNTERS.clear()
+    # The fake provider's persistence, fresh per test.
+    BACKEND["path"] = tmp_path / "fake-brevo.json"
     return rendered
 
 
-def ok_transport(created_id: int = 42) -> mock.Mock:
-    """A transport that answers every documented success status."""
+BACKEND: dict[str, Path] = {}
+
+
+def ok_transport(created_id: int = 42, drift: str = "") -> mock.Mock:
+    """A transport that answers every documented success status.
+
+    It MODELS the provider rather than echoing the request, in two ways that both
+    turned out to matter:
+
+    1. It PERSISTS. State is written to a file, so a campaign created by --prepare is
+       still there for a --send in a different transport instance, or a different
+       process. A per-instance dict looked fine and quietly made every cross-invocation
+       test compare against an empty campaign.
+    2. The stored html is deliberately NOT byte-identical to what was posted, because
+       Brevo really does rewrite it slightly on ingest (measured on the live API: 5461
+       bytes sent, 5459 read back). A mock that echoed the request perfectly would have
+       hidden that, and the send-side comparison would have been written against two
+       values that can never match in production.
+
+    `drift` overrides the stored subject, standing in for a dashboard edit after review.
+    """
+    store = BACKEND["path"]
+
+    def _load() -> dict:
+        return json.loads(store.read_text(encoding="utf-8")) if store.is_file() else {}
 
     def _call(method: str, path: str, **kw: object) -> tuple[int, dict]:
-        if path == "/v3/emailCampaigns":
+        if path == "/v3/emailCampaigns" and method == "POST":
+            body = dict(kw.get("json") or {})
+            data = _load()
+            data[str(created_id)] = {
+                "id": created_id,
+                "status": "draft",
+                # The provider's own normalisation, modelled not assumed away.
+                "htmlContent": str(body.get("htmlContent", "")).replace(
+                    "<!doctype html>", ""
+                ).strip(),
+                "subject": str(body.get("subject", "")),
+            }
+            store.write_text(json.dumps(data), encoding="utf-8")
             return 201, {"id": created_id}
+        if path == f"/v3/emailCampaigns/{created_id}" and method == "GET":
+            camp = dict(_load().get(str(created_id), {}))
+            if not camp:
+                return 404, {"message": "not found"}
+            if drift:
+                camp["subject"] = drift
+            return 200, camp
         return 204, {}
 
     return mock.Mock(side_effect=_call)
@@ -170,7 +214,17 @@ def test_the_token_survives_into_a_completely_fresh_process(
         "import send_newsletter as sn\n"
         f"sn.RENDERED_ROOT = {str(isolated)!r} and __import__('pathlib').Path({str(isolated)!r})\n"
         f"sn.STATE_FILE = __import__('pathlib').Path({str(sn.STATE_FILE)!r})\n"
-        "with mock.patch.object(sn, '_api_call', mock.Mock(return_value=(204, {}))) as m:\n"
+        # The fake provider is read from the SAME file the parent process wrote, so
+        # the campaign created by --prepare is still there. A blanket 204 mock would
+        # answer the send path's campaign re-read with the wrong shape entirely.
+        f"store = __import__('pathlib').Path({str(BACKEND['path'])!r})\n"
+        "def fake(method, path, **kw):\n"
+        "    data = json.loads(store.read_text()) if store.is_file() else {}\n"
+        "    if method == 'GET' and path.startswith('/v3/emailCampaigns/'):\n"
+        "        cid = path.rsplit('/', 1)[-1]\n"
+        "        return (200, data[cid]) if cid in data else (404, {})\n"
+        "    return (204, {})\n"
+        "with mock.patch.object(sn, '_api_call', mock.Mock(side_effect=fake)) as m:\n"
         f"    rc = sn.send({SLUG!r}, sys.argv[1], sn.STATE_FILE)\n"
         "    paths = [c.args[1] for c in m.call_args_list]\n"
         "print(json.dumps({'rc': rc, 'paths': paths}))\n",
@@ -404,14 +458,90 @@ def test_a_post_edited_after_review_is_refused(isolated: Path) -> None:
 # --------------------------------------------------------------------------
 
 
+def test_a_campaign_edited_after_review_is_refused(isolated: Path) -> None:
+    """The gate must verify the thing that SHIPS, not only the thing it was built from.
+
+    The post fingerprint catches an edited post. It cannot catch an edited campaign:
+    anything holding the API key can change a draft's subject or body after --prepare,
+    and the post it was rendered from stays untouched, so the send would fire happily.
+
+    Not hypothetical. A test-round subject marker was written straight onto a live
+    draft through the API and nothing objected, which is how this hole was found: the
+    campaign that would have gone out carried a subject the operator never saw.
+    """
+    write_page(isolated, SLUG)
+    transport = ok_transport()
+    with mock.patch.object(sn, "_api_call", transport):
+        sn.prepare(SLUG, sn.STATE_FILE)
+    state = json.loads(sn.STATE_FILE.read_text(encoding="utf-8"))
+    confirmation = state["pending"][SLUG]["confirmation"]
+
+    # Someone edits the draft's subject between review and send.
+    edited = ok_transport(drift="[TEST MARKER] a subject nobody reviewed")
+    with mock.patch.object(sn, "_api_call", edited):
+        with pytest.raises(sn.NewsletterError, match="no longer matches the review copy"):
+            sn.send(SLUG, confirmation, sn.STATE_FILE)
+    assert not [c for c in edited.call_args_list if c.args[1].endswith("/sendNow")]
+
+
+def test_the_campaign_fingerprint_survives_provider_normalisation(
+    isolated: Path,
+) -> None:
+    """The stored copy is NOT byte-identical to what was posted, and that is fine.
+
+    Brevo rewrites the html slightly on ingest. The fingerprint is therefore taken
+    from the PROVIDER's stored version at review time, not from what we generated.
+    Getting this wrong would not fail loudly: it would mismatch on every send and
+    block the path permanently, which is a worse bug than the one it guards against.
+    """
+    write_page(isolated, SLUG)
+    transport = ok_transport()
+    with mock.patch.object(sn, "_api_call", transport):
+        sn.prepare(SLUG, sn.STATE_FILE)
+    entry = json.loads(sn.STATE_FILE.read_text(encoding="utf-8"))["pending"][SLUG]
+    assert entry["campaign_fingerprint"] != entry["fingerprint"], (
+        "the two digests must differ, or the test transport is echoing the request "
+        "back unchanged and is not modelling the provider at all"
+    )
+
+    with mock.patch.object(sn, "_api_call", ok_transport()):
+        assert sn.send(SLUG, entry["confirmation"], sn.STATE_FILE) == 0
+
+
+def test_a_campaign_no_longer_in_draft_is_refused(isolated: Path) -> None:
+    """Already left draft means it may already have gone out. Do not send again."""
+    write_page(isolated, SLUG)
+    transport = ok_transport()
+    with mock.patch.object(sn, "_api_call", transport):
+        sn.prepare(SLUG, sn.STATE_FILE)
+    confirmation = json.loads(
+        sn.STATE_FILE.read_text(encoding="utf-8")
+    )["pending"][SLUG]["confirmation"]
+
+    def already_sent(method: str, path: str, **kw: object) -> tuple[int, dict]:
+        if path == "/v3/emailCampaigns/42" and method == "GET":
+            return 200, {"id": 42, "status": "sent", "htmlContent": "", "subject": ""}
+        return 204, {}
+
+    guard = mock.Mock(side_effect=already_sent)
+    with mock.patch.object(sn, "_api_call", guard):
+        with pytest.raises(sn.NewsletterError, match="not a draft"):
+            sn.send(SLUG, confirmation, sn.STATE_FILE)
+    assert not [c for c in guard.call_args_list if c.args[1].endswith("/sendNow")]
+
+
 def test_402_exits_nonzero(isolated: Path) -> None:
     """The free plan makes an out-of-credit sendNow genuinely reachable."""
     confirmation = prepare_then_confirmation(isolated, ok_transport())
 
+    healthy = ok_transport()
+
     def broke(method: str, path: str, **kw: object) -> tuple[int, dict]:
         if path.endswith("/sendNow"):
             return 402, {"code": "not_enough_credits", "message": "no credit"}
-        return 204, {}
+        # Everything up to the send behaves normally, including the campaign re-read,
+        # so the 402 is reached rather than the run failing earlier for another reason.
+        return healthy(method, path, **kw)
 
     with mock.patch.object(sn, "_api_call", mock.Mock(side_effect=broke)):
         with pytest.raises(sn.NewsletterError, match="402"):
