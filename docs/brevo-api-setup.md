@@ -341,6 +341,23 @@ that would make every submission fail.
 | newsletter folder id | `3` |
 | DOI template id | `7` |
 | Bitwarden item (API key) | `brevo-hoiboy-uk-pages-api` |
+| unsubscribe page id (blog-priv#81) | `69fde04c25095576dc311f46` |
+| Bitwarden item (campaign key, blog-priv#81) | `brevo-hoiboy-uk-campaign-api` |
+
+Unlike the rest of this table, the unsubscribe page id IS read by code:
+`scripts/send_newsletter.py` sets it on every campaign as `unsubscriptionPageId`. It
+is not a credential (it grants nothing without the API key) and it is validated by
+the API, so a page deleted in the dashboard fails the send loudly rather than
+reverting to a provider default. Measured: a real id returns 201, a well-formed but
+non-existent one returns 400 `invalid_parameter` "Unsubscription page id does not
+exist". Read it from the dashboard URL when editing the page.
+
+**Brevo's default unsubscribe page shipped with a duplicated merge field**, rendering
+the contact address twice as `<address><address>`. Its source read
+`<strong>{email}</strong>{email}`, with the tags showing as literal text. The page
+body is editable in the dashboard, so it was fixed there rather than worked around.
+Worth knowing that this is the page a leaving reader sees, and that it is content the
+operator owns rather than provider chrome that has to be tolerated.
 
 The list is named `hoiboy.uk newsletter`. `POST /v3/contacts/lists` requires both
 `name` and `folderId`, so the folder is created first.
