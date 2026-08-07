@@ -732,6 +732,61 @@ def test_redaction_survives_nesting(isolated: Path) -> None:
 # --------------------------------------------------------------------------
 
 
+def test_a_confirmation_token_never_starts_with_a_hyphen(monkeypatch) -> None:
+    """The printed --confirm command has to be runnable, every time.
+
+    token_urlsafe draws from base64url, whose 62nd character is `-`, so about 1
+    token in 64 began with one. argparse then reads the value as an option and the
+    exact command --prepare prints dies with "expected one argument" before any
+    approval logic runs. Measured at 1.52% over 100,000 draws.
+
+    Driven deterministically rather than by sampling: a probabilistic test would
+    pass ~98% of the time with the guard deleted, which is worse than no test.
+    """
+    draws = iter(["-leading-dash-token", "-another-one", "cleanToken_123"])
+    monkeypatch.setattr(sn.secrets, "token_urlsafe", lambda n: next(draws))
+
+    minted = sn.mint_confirmation()
+
+    assert minted == "cleanToken_123", "it must keep drawing until the token is usable"
+    assert not minted.startswith("-")
+
+
+def test_a_hyphen_leading_token_really_would_break_the_cli() -> None:
+    """Pins WHY the guard above exists, so nobody deletes it as paranoia.
+
+    If argparse ever stops treating a leading-dash value as an option, this goes
+    red and the redraw can be reconsidered. Until then it is load-bearing.
+    """
+    proc = subprocess.run(
+        [sys.executable, str(REPO_ROOT / "scripts" / "send_newsletter.py"),
+         "--slug", "some-post", "--send",
+         "--confirm", "-XWKGnfiTNyQ2eB2s_4Z7uDYEoGHDVxT"],
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 2, (
+        f"expected argparse's own usage failure, got rc={proc.returncode}"
+    )
+    assert "expected one argument" in proc.stderr, proc.stderr
+
+
+def test_the_utm_campaign_actually_varies_with_the_slug() -> None:
+    """Charset alone is not the contract.
+
+    The existing test regex-checks the value's characters, which stays green if
+    utm_campaign ignores its argument and returns a constant. Every post would then
+    collapse into one UTM bucket in Brevo's analytics, silently, with a green suite.
+    Ralph round 4 tier 2 mutated exactly that and watched it survive.
+    """
+    a = sn.utm_campaign("why-bpm-matters")
+    b = sn.utm_campaign("how-to-actually-build-communities")
+
+    assert a != b, "a constant here merges every post into one analytics bucket"
+    assert "why bpm matters" in a
+    assert "how to actually build communities" in b
+
+
 def test_the_rendered_root_is_hugos_own_output_directory() -> None:
     """D-8's source of truth, pinned to a value instead of to prose.
 
