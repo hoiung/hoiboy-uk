@@ -15,6 +15,8 @@ As I am building the new business model for the local dance community, I began t
 
 Last night I met up with a Bachata teacher. We talked about growing communities, dynamics, and shared our ideas. The good, the bad and the ugly, and the problems we have both seen and experienced.
 
+To be clear, none of this is word for word. It is my recollection and understanding of the conversation, written in my own words.
+
 Then the topic went where I wanted it to go. Why is Bachata growing so fast compared to Brazilian Zouk?
 
 ## What the Bachata community does
