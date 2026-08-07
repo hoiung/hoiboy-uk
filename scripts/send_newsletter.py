@@ -121,10 +121,17 @@ CAMPAIGN_FOOTER = (
     "</p>"
 )
 
-# Brevo prepends its own header block unless one is supplied. The template already
-# carries the hoiboy.uk masthead, so an empty string is the explicit "we supply our
-# own" choice rather than an unset field inheriting a provider default.
-CAMPAIGN_HEADER = ""
+# Brevo renders its own header block above the content unless one is supplied, and
+# the template already carries the hoiboy.uk masthead, so we want that block to be
+# nothing. An empty string cannot express that: MEASURED against the live API, both
+# `"header": ""` and `"footer": ""` are rejected 400 `missing_parameter` ("header is
+# missing" / "footer is missing"), symmetrically, because Brevo reads empty as absent.
+# Omitting the key instead is accepted, but then the provider default renders, which
+# is the outcome AC 2.13 exists to prevent. So the value is a real but empty element:
+# explicitly set, accepted by the API, and occupying no visual space. The
+# `[DEFAULT_HEADER]` sentinel the spec shows is deliberately NOT used, for the same
+# reason as the footer: it hands the block back to the provider.
+CAMPAIGN_HEADER = '<div style="font-size:0;line-height:0;height:0;"></div>'
 
 _EMAIL_SHAPE = re.compile(r"[^\s\"<>@,;:()]+@[^\s\"'<>@,;:()]+\.[^\s\"'<>@,;:()]+")
 _SLUG_SHAPE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
