@@ -771,6 +771,59 @@ def test_a_hyphen_leading_token_really_would_break_the_cli() -> None:
     assert "expected one argument" in proc.stderr, proc.stderr
 
 
+def test_build_html_refuses_when_the_renderer_contract_drifts(monkeypatch) -> None:
+    """Defence-in-depth, but bindable, so bind it.
+
+    Found by a class sweep after Ralph round 5, not by a reviewer: deleting this
+    guard left the suite green. It cannot fire while `values` and PLACEHOLDERS agree,
+    which is why an earlier tier reasonably called the mutation equivalent. Shrinking
+    PLACEHOLDERS reproduces the drift it guards against, so "unreachable today" and
+    "untestable" turn out to be different claims.
+
+    The message assertion is specific on purpose: newsletter_render.render() raises
+    its OWN unknown-placeholder error a few lines later, so a bare pytest.raises here
+    would pass while proving the wrong guard fired. That exact substitution has caught
+    this workstream twice.
+    """
+    monkeypatch.setattr(sn, "PLACEHOLDERS", frozenset({"FIRSTNAME"}))
+    post = {
+        "title": "A Title",
+        "published": "2026-08-04T09:30:00+00:00",
+        "excerpt": "An excerpt.",
+        "url": "https://hoiboy.uk/blogs/a-post/",
+        "hero": "https://hoiboy.uk/blogs/a-post/hero.jpg",
+        "hero_alt": "Alt text.",
+    }
+    with pytest.raises(sn.NewsletterError, match="renderer contract drifted"):
+        sn.build_html(post, "<p>%%FIRSTNAME%%</p>")
+
+
+def test_prepare_names_a_missing_template_rather_than_rendering_nothing(
+    isolated: Path, monkeypatch
+) -> None:
+    """The template-missing guard, which every test had made unreachable by having one."""
+    monkeypatch.setattr(sn, "TEMPLATE", isolated / "no" / "such" / "email.html")
+    write_page(isolated, SLUG)
+    with mock.patch.object(sn, "_api_call", ok_transport()):
+        with pytest.raises(sn.NewsletterError, match="template missing at"):
+            sn.prepare(SLUG, sn.STATE_FILE)
+
+
+def test_a_campaign_create_without_a_usable_id_is_refused(isolated: Path) -> None:
+    """A 201 carrying no integer id must not be treated as a created campaign.
+
+    Every fixture returned a real int, so the guard was unreachable in tests and
+    deleting it changed nothing. A string id would otherwise be written into the
+    state file and later interpolated into the campaign URL, failing much further
+    from the cause.
+    """
+    write_page(isolated, SLUG)
+    transport = ok_transport(created_id="42")  # a string, as a flaky provider might send
+    with mock.patch.object(sn, "_api_call", transport):
+        with pytest.raises(sn.NewsletterError, match="no usable id"):
+            sn.prepare(SLUG, sn.STATE_FILE)
+
+
 def test_human_date_reads_the_way_a_person_writes_a_date() -> None:
     """The one string in the email a subscriber reads that nothing asserted.
 
