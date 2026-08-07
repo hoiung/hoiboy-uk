@@ -751,16 +751,21 @@ def send(slug: str, confirm: str, state_path: Path | None = None) -> int:
     # is loud and carries why. It always failed closed, so nothing could leak; it just
     # failed silently in the ledger, which is the half that matters after the fact.
     # Found by Ralph tier 3 executing it with a non-ASCII token.
-    try:
-        matches = hmac.compare_digest(str(entry["confirmation"]), confirm)
-    except TypeError:
-        _log("confirm_rejected", slug=slug, reason="non_ascii_token")
+    # Validate the SHAPE first rather than catching TypeError and inferring why.
+    # An earlier fix here caught TypeError and reported "non-ASCII", which Ralph
+    # round 2 showed overclaims: compare_digest raises TypeError for at least four
+    # distinct reasons, measured -- non-ASCII str, None, int, and bytes-vs-str. Three
+    # of those would have been diagnosed as an accent in the token, sending the
+    # operator hunting for the wrong thing. Checking the input says what is actually
+    # true and needs no guess about the cause.
+    if not isinstance(confirm, str) or not confirm.isascii():
+        _log("confirm_rejected", slug=slug, reason="malformed_token")
         raise NewsletterError(
-            f"confirmation token for {slug} contains non-ASCII characters, so it "
-            f"cannot be one this script minted (they are URL-safe base64). Nothing "
-            f"was sent. Copy the token exactly as --prepare printed it."
-        ) from None
-    if not matches:
+            f"confirmation token for {slug} is not the shape this script mints "
+            f"(URL-safe ASCII text), so it cannot be one of ours. Nothing was sent. "
+            f"Copy the token exactly as --prepare printed it."
+        )
+    if not hmac.compare_digest(str(entry["confirmation"]), confirm):
         _log("confirm_rejected", slug=slug)
         raise NewsletterError(
             f"confirmation token does not match the one minted for {slug}. Nothing "
