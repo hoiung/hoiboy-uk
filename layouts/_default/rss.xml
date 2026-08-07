@@ -47,14 +47,27 @@ strip, and re-run the before/after feed diff.
 {{- end }}
 
 {{- /* The one addition. `(?s)` so `.` spans newlines and `.*?` so it stops at the
-FIRST close, both load-bearing: the markers are not all bare `<!-- iamhoi -->`. The
-site also carries multi-line instruction blocks opening `<!-- iamhoi-claims` and
-running several lines before `-->`, and a pattern assuming a bare marker cleared only
-four of the six leaking feeds while looking, from the leak count alone, like real
-progress. Greedy `.*` would swallow up to the LAST `-->` on the page and take real
-content with it. Marker-shaped rather than "strip all comments", because eating an
-unrelated comment would be the same class of silent damage this fixes. */ -}}
-{{- $marker := `(?s)<!--\s*iamhoi.*?-->\s*` }}
+FIRST close, both load-bearing: the blocks are not all bare `<!-- iamhoi -->`. The
+site also carries multi-line instruction blocks running several lines before `-->`,
+and a pattern assuming a bare marker cleared only four of the six leaking feeds while
+looking, from the leak count alone, like real progress. Greedy `.*` would swallow up
+to the LAST `-->` on the page and take real content with it.
+
+WHY EVERY COMMENT AND NOT JUST THE `iamhoi` ONES. This was `iamhoi`-shaped until
+Ralph round 6 tier 3, on the reasoning that "eating an unrelated comment would be the
+same class of silent damage". That reasoning does not survive measurement. A comment
+renders as NOTHING on the page, so removing one from the summary destroys nothing a
+reader can see; it makes the feed agree with the page. Keeping the narrow pattern, by
+contrast, was shipping real damage: an editorial WORDING directive in
+content/posts/how-to-actually-build-communities/index.md, naming the operator's SEO
+split and his CV and LinkedIn, was going out as the FIRST VISIBLE TEXT of that item
+in public/index.xml and public/blogs/index.xml. Measured at the time: 0 occurrences
+in the rendered HTML page, 1 in each of those two feeds.
+
+So the narrow pattern was not the safe choice, it was the one whose failure was
+invisible. Both AC 6.1's and AC 6.2's verify commands passed over the leak, because
+they counted `iamhoi` rather than the defect class. */ -}}
+{{- $marker := `(?s)<!--.*?-->\s*` }}
 
 {{- $pctx := . }}
 {{- if .IsHome }}{{ $pctx = .Site }}{{ end }}
