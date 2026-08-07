@@ -133,6 +133,19 @@ CAMPAIGN_FOOTER = (
 # reason as the footer: it hands the block back to the provider.
 CAMPAIGN_HEADER = '<div style="font-size:0;line-height:0;height:0;"></div>'
 
+# The site-wide og:image fallbacks (layouts/_partials/head.html:83). Resolving to one
+# of these means the page carries NO image of its own, so an email built from it would
+# show a generic branded card that says nothing about the thing being linked. Every
+# email gets a real image or no email gets sent: this is the loud-failure case.
+#
+# The site's own resolution order is share-card, then hero, then these
+# (`head.html:84`). Reading og:image rather than reimplementing that chain means the
+# email always shows whatever the page itself shows, and it keeps ONE source of truth
+# maintained by one existing CI gate (scripts/check_social_cards.py) rather than two
+# that can drift. It also generalises for free: a page with a generated share card and
+# no hero resolves correctly without a line of extra code here.
+GENERIC_CARD_MARKERS = ("default-card", "hoi-mug")
+
 _EMAIL_SHAPE = re.compile(r"[^\s\"<>@,;:()]+@[^\s\"'<>@,;:()]+\.[^\s\"'<>@,;:()]+")
 _SLUG_SHAPE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 _NON_UTM = re.compile(r"[^A-Za-z0-9 ]+")
@@ -382,6 +395,16 @@ def read_post(slug: str) -> dict[str, str]:
 
     assert parser.title and parser.excerpt and parser.url and parser.published
     assert parser.hero and parser.hero_alt
+
+    generic = next((m for m in GENERIC_CARD_MARKERS if m in parser.hero), None)
+    if generic:
+        raise NewsletterError(
+            f"{_display(path)} has no image of its own: og:image resolves to the "
+            f"site-wide {generic} fallback. Every email carries a real image, so this "
+            f"is refused rather than sent with a generic branded card that says nothing "
+            f"about what it links to. Fix by giving the page a hero.* or a share-card.* "
+            f"(see scripts/social-cards/README.md), rebuild, and try again."
+        )
     return {
         "title": parser.title,
         "excerpt": parser.excerpt,

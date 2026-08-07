@@ -330,6 +330,44 @@ def test_a_post_with_no_og_image_is_refused_not_sent_headless(isolated: Path) ->
         sn.read_post(SLUG)
 
 
+def test_a_generic_branded_card_is_refused_as_hard_as_no_image(isolated: Path) -> None:
+    """Operator rule: every email carries a real image, or no email is sent.
+
+    An absent og:image is not the realistic failure. The site always resolves one,
+    falling back to the branded default card, so the actual bad outcome is an email
+    whose picture says nothing about the thing it links to. That is refused just as
+    hard as nothing at all. Measured today across the corpus, 0 of 90 posts hit this,
+    and scripts/check_social_cards.py already fails the BUILD for a singular page that
+    would fall back, so this is the runtime twin of an existing gate rather than its
+    replacement.
+    """
+    for marker in sn.GENERIC_CARD_MARKERS:
+        write_page(
+            isolated,
+            SLUG,
+            hero=f"https://hoiboy.uk/{marker}_hu_abc123.jpg",
+        )
+        with pytest.raises(sn.NewsletterError, match="no image of its own"):
+            sn.read_post(SLUG)
+
+
+def test_a_page_whose_image_is_a_share_card_is_accepted(isolated: Path) -> None:
+    """The site resolves share-card BEFORE hero (head.html:84), so both must work.
+
+    Posts carry no share-card and resolve to their hero; a generated service or
+    landing page carries a share-card and no hero. Reading og:image inherits that
+    whole chain, so neither shape needs special handling here. This pins that the
+    share-card shape is genuinely accepted rather than accidentally excluded.
+    """
+    write_page(
+        isolated,
+        SLUG,
+        hero=f"https://hoiboy.uk/blogs/{SLUG}/share-card_hu_abc123.jpg",
+    )
+    post = sn.read_post(SLUG)
+    assert post["hero"].endswith("share-card_hu_abc123.jpg")
+
+
 def test_second_send_is_refused(isolated: Path) -> None:
     confirmation = prepare_then_confirmation(isolated, ok_transport())
     transport = ok_transport()
