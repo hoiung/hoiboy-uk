@@ -22,6 +22,34 @@ import newsletter_render as nr  # noqa: E402
 FULL = {k: f"<{k}>" for k in nr.PLACEHOLDERS}
 
 
+def test_preview_reports_a_missing_template_instead_of_writing_a_blank_png(
+    tmp_path, monkeypatch, capsys
+):
+    """`preview` was driven by no test at all.
+
+    Found by a class sweep after Ralph round 5: renaming the function out from under
+    its own CLI left the whole suite green. It is the operator's only look at the
+    email before a campaign exists, so a preview that fails quietly is worse than one
+    that fails loudly.
+
+    The rendering path itself needs Chromium and is exercised by the pre-publish lane,
+    not here. Its two refusals are pure logic and belong in this tier.
+    """
+    monkeypatch.setattr(nr, "TEMPLATE", tmp_path / "absent" / "email.html")
+    out = tmp_path / "preview.png"
+
+    rc = nr.preview(out)
+
+    assert rc == 2, "a missing template must be a non-zero exit, not a silent success"
+    assert not out.exists(), "nothing should be written when there is nothing to render"
+    # Assert WHICH refusal fired. preview() checks playwright BEFORE the template and
+    # returns 2 from that branch too, so on a machine without playwright this test
+    # would pass having never reached the guard it is named for. That substitution
+    # (right exit code, wrong guard) is the specific trap this workstream has hit
+    # twice, so the message is the assertion and the return code is the corroboration.
+    assert "template not found" in capsys.readouterr().err
+
+
 def test_the_shipped_template_renders_with_preview_values():
     """If this fails, the template and the placeholder contract have diverged."""
     assert nr.TEMPLATE.is_file(), f"template missing: {nr.TEMPLATE}"
