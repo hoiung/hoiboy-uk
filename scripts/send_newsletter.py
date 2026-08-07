@@ -86,14 +86,25 @@ CANONICAL_PREFIX = "https://hoiboy.uk/blogs/"
 # in a public repo (AC 2.2).
 API_KEY_ENV = "BREVO_CAMPAIGN_API_KEY"
 
-# Optional. A Brevo unsubscribe page id is a 24-character alphanumeric string taken
-# from the URL when editing that page in the dashboard, and the API exposes no way to
-# list or create one. When it is unset the campaign uses Brevo's own unsubscribe page,
-# which still unsubscribes the reader, so the promise at privacy/index.md:81 holds
-# either way. That fallback is announced in the logs rather than taken quietly,
-# because which page a reader lands on is a brand decision the operator should make
-# knowingly (AC 2.13).
-UNSUB_PAGE_ENV = "BREVO_UNSUBSCRIBE_PAGE_ID"
+# The unsubscribe page a leaving reader lands on. A constant for the same reason as
+# the list and sender ids above: G-J scopes this to one site, so there is exactly one
+# legal value and a config knob would be a surface with nothing to choose between.
+#
+# It is set EXPLICITLY rather than omitted, even though this happens to be the account
+# default, because omitting it means every campaign silently follows whatever the
+# account default becomes later. AC 2.13's point is that the branding surfaces are
+# chosen, not inherited.
+#
+# The API validates it, which is what makes this worth pinning rather than trusting:
+# measured, a real id returns 201 and a well-formed but non-existent one returns
+# 400 `invalid_parameter` "Unsubscription page id does not exist". So a page deleted
+# or replaced in the dashboard fails the send loudly instead of quietly reverting to
+# a provider default.
+#
+# The id is a 24-character string read from the dashboard URL when editing the page.
+# It is not a credential: it grants nothing without the API key, and it sits beside
+# the list / folder / template ids docs/brevo-api-setup.md already records.
+UNSUBSCRIBE_PAGE_ID = "69fde04c25095576dc311f46"
 
 # Brevo's own merge tags, emitted from here rather than from the template. The
 # template cannot carry them: Hugo parses every file under layouts/ as a Go template
@@ -497,7 +508,6 @@ def campaign_payload(post: dict[str, str], slug: str, body_html: str) -> dict[st
     defaults, which is how an email ends up looking like a provider template no matter
     what the HTML says (AC 2.13).
     """
-    unsub_page = os.environ.get(UNSUB_PAGE_ENV, "").strip()
     payload: dict[str, Any] = {
         "name": campaign_name(slug, post["published"]),
         "subject": post["title"],
@@ -511,25 +521,8 @@ def campaign_payload(post: dict[str, str], slug: str, body_html: str) -> dict[st
         "utmCampaign": utm_campaign(slug),
         "mirrorActive": False,
         "inlineImageActivation": False,
-        "unsubscriptionPageId": unsub_page,
+        "unsubscriptionPageId": UNSUBSCRIBE_PAGE_ID,
     }
-
-    if not unsub_page:
-        # Dropped rather than sent empty. The field wants a 24-character page id, so
-        # an empty string is not a weaker version of a real value, it is a malformed
-        # one. Dropping the key is what selects Brevo's own unsubscribe page, and the
-        # reader can still unsubscribe either way, so the promise at
-        # content/legal/privacy/index.md:81 holds. Announced rather than done quietly:
-        # which page a reader lands on is a brand decision worth the operator knowing
-        # he is currently leaving to the provider.
-        del payload["unsubscriptionPageId"]
-        _log(
-            "unsubscribe_page_default",
-            detail=(
-                f"{UNSUB_PAGE_ENV} is unset, so Brevo's own unsubscribe page is used. "
-                f"The reader can still unsubscribe; only the page's branding differs."
-            ),
-        )
     return payload
 
 

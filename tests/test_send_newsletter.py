@@ -82,7 +82,6 @@ def isolated(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setattr(sn, "RENDERED_ROOT", rendered)
     monkeypatch.setattr(sn, "STATE_FILE", tmp_path / ".newsletter-state.json")
     monkeypatch.setenv(sn.API_KEY_ENV, "test-key-not-a-real-credential")
-    monkeypatch.delenv(sn.UNSUB_PAGE_ENV, raising=False)
     sn._COUNTERS.clear()
     # The fake provider's persistence, fresh per test.
     BACKEND["path"] = tmp_path / "fake-brevo.json"
@@ -680,21 +679,24 @@ def test_header_and_footer_are_non_empty_because_brevo_rejects_empty(
     assert "[DEFAULT_FOOTER]" not in payload["footer"]
 
 
-def test_the_unsubscribe_page_is_dropped_rather_than_sent_empty(
-    isolated: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    """An empty string is a malformed page id, not a weaker one."""
+def test_the_unsubscribe_page_is_always_set_explicitly(isolated: Path) -> None:
+    """Set, not inherited, and shaped the way the API actually validates.
+
+    It happens to be the account default today, which is exactly why it is pinned:
+    omitting it means every campaign silently follows whatever that default becomes
+    later. Measured against the live API, a well-formed but non-existent id returns
+    400 `invalid_parameter` "Unsubscription page id does not exist", so a page deleted
+    in the dashboard fails the send loudly rather than reverting to a provider page
+    nobody chose.
+    """
     transport = ok_transport()
     prepare_then_confirmation(isolated, transport)
     payload = [
         c for c in transport.call_args_list if c.args[1] == "/v3/emailCampaigns"
     ][0].kwargs["json"]
-    assert "unsubscriptionPageId" not in payload
-
-    monkeypatch.setenv(sn.UNSUB_PAGE_ENV, "62cbb7fabbe85021021aac52")
-    post = sn.read_post(SLUG)
-    with_page = sn.campaign_payload(post, SLUG, "<p>body</p>")
-    assert with_page["unsubscriptionPageId"] == "62cbb7fabbe85021021aac52"
+    assert payload["unsubscriptionPageId"] == sn.UNSUBSCRIBE_PAGE_ID
+    assert len(sn.UNSUBSCRIBE_PAGE_ID) == 24, "the API documents a 24-character id"
+    assert sn.UNSUBSCRIBE_PAGE_ID.isalnum()
 
 
 def test_exactly_one_content_field_is_sent(isolated: Path) -> None:
