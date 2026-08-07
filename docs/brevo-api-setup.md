@@ -352,6 +352,14 @@ reverting to a provider default. Measured: a real id returns 201, a well-formed 
 non-existent one returns 400 `invalid_parameter` "Unsubscription page id does not
 exist". Read it from the dashboard URL when editing the page.
 
+`unsubscriptionPageId` is **request-only**: the live spec carries it in the POST and
+PUT `requestBody` and in no response schema at all, so `GET /v3/emailCampaigns/{id}`
+omits it for every campaign, set or unset. A read-back therefore cannot confirm the
+pin took, and a check written as `campaign["unsubscriptionPageId"] == PAGE_ID` fails
+permanently while looking like a genuine defect. The create-time 400 described above
+is what proves the id was accepted; the unsubscribe URL in a delivered email is the
+only end-to-end oracle.
+
 **Brevo's default unsubscribe page shipped with a duplicated merge field**, rendering
 the contact address twice as `<address><address>`. Its source read
 `<strong>{email}</strong>{email}`, with the tags showing as literal text. The page
