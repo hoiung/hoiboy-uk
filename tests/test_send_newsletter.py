@@ -992,6 +992,97 @@ def test_a_non_ascii_confirmation_is_refused_loudly_not_as_a_traceback(
     )
 
 
+def test_prepare_actually_CALLS_the_consent_gate(isolated: Path) -> None:
+    """The gate is WIRED into --prepare, not merely present in the module.
+
+    Round 2 hardened `assert_is_blog_post` itself and tested it thoroughly, but every
+    one of those tests called it directly. Ralph tier 3 then deleted the CALL from
+    both `prepare()` and `send()` and watched all 59 tests stay green. A guard nobody
+    invokes is not a guard, and testing the function while never testing its wiring is
+    the same mistake as a mock that swallows kwargs: the unit looks proven and the
+    system is unprotected.
+
+    This drives the real command over a page whose canonical is a services URL, with
+    every other field valid so `read_post` succeeds and the consent gate is
+    unambiguously what refuses.
+    """
+    write_page(isolated, SLUG, url="https://hoiboy.uk/hire-hoi/ai-consultancy/")
+    transport = mock.Mock(side_effect=AssertionError("must not reach the API"))
+    with mock.patch.object(sn, "_api_call", transport):
+        with pytest.raises(sn.NewsletterError, match="privacy/index.md:77"):
+            sn.prepare(SLUG, sn.STATE_FILE)
+    transport.assert_not_called()
+
+
+def test_send_actually_CALLS_the_consent_gate(isolated: Path) -> None:
+    """The same wiring check on the path that actually reaches subscribers.
+
+    `send()` re-reads the post from disk, so a page whose canonical moved out of the
+    blogs tree between review and send must be refused there too, not only at prepare.
+
+    The `match=` is load-bearing and was missing on the first attempt. Moving the
+    canonical also changes the content fingerprint, so with the consent-gate call
+    deleted the fingerprint check raises instead and a bare `pytest.raises` is
+    satisfied by the wrong guard. The mutation survived until this asserted the
+    consent gate's own message. That is the identical trap Ralph found in round 1,
+    walked into again while fixing round 2, and caught only by re-running the
+    mutation rather than trusting a green test.
+    """
+    confirmation = prepare_then_confirmation(isolated, ok_transport())
+    # The post's canonical moves out of the blogs tree after review.
+    write_page(isolated, SLUG, url="https://hoiboy.uk/hire-hoi/ai-consultancy/")
+
+    transport = ok_transport()
+    with mock.patch.object(sn, "_api_call", transport):
+        with pytest.raises(sn.NewsletterError, match="privacy/index.md:77"):
+            sn.send(SLUG, confirmation, sn.STATE_FILE)
+    assert not any(
+        c.args[1].endswith("/sendNow") for c in transport.call_args_list
+    ), "a non-blog page reached sendNow"
+
+
+def test_log_redacts_on_its_own_not_via_some_other_layer(
+    capsys: pytest.CaptureFixture,
+) -> None:
+    """`_log` redacts by itself, proven by calling `_log` and nothing else.
+
+    `test_no_recipient_in_logs` drives a whole flow and asserts no address appears in
+    the output, but `_expect` runs its own independent `_redact`, so that test passed
+    even with redaction removed from `_log`. The two-pass discipline the module claims
+    was, in evidence terms, one pass. Ralph tier 3 found it by deleting the `_log`
+    half and watching the suite stay green.
+    """
+    sn._log("probe", to="reader@example.com", nested={"cc": "other@example.org"})
+    err = capsys.readouterr().err
+    assert "reader@example.com" not in err, f"_log leaked an address: {err!r}"
+    assert "other@example.org" not in err, f"_log leaked a nested address: {err!r}"
+    assert "probe" in err, "the event itself should still be logged"
+
+
+def test_a_non_string_confirmation_is_refused_without_a_traceback(
+    isolated: Path,
+) -> None:
+    """The `isinstance` half of the token-shape guard.
+
+    `confirm.isascii()` alone covers a str with an accent but raises `AttributeError`
+    on `None`, and `str(confirm).isascii()` would quietly stringify it. Only the
+    isinstance check refuses a non-str cleanly, and until now nothing tested it, so
+    weakening the guard to the isascii half survived the suite.
+
+    `main()` gates a missing `--confirm`, so this is defence-in-depth for a direct
+    caller. That is exactly the situation the containment-check test already covers,
+    and it gets the same treatment rather than being waved through as unreachable.
+    """
+    confirmation = prepare_then_confirmation(isolated, ok_transport())
+    assert confirmation  # the real token exists, so we are past the pending check
+
+    transport = ok_transport()
+    with mock.patch.object(sn, "_api_call", transport):
+        with pytest.raises(sn.NewsletterError, match="not the shape this script mints"):
+            sn.send(SLUG, None, sn.STATE_FILE)  # type: ignore[arg-type]
+    assert not any(c.args[1].endswith("/sendNow") for c in transport.call_args_list)
+
+
 @pytest.mark.parametrize(
     "bad",
     [
