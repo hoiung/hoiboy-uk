@@ -965,6 +965,11 @@ def test_a_non_ascii_confirmation_is_refused_loudly_not_as_a_traceback(
     `_log` never fired. It always failed CLOSED, so nothing could leak; it failed
     silently in the ledger, which is the half that matters when reconstructing who
     tried to send what.
+
+    The guard validates the token's SHAPE rather than catching the TypeError, because
+    compare_digest raises that for at least four different reasons (non-ASCII, None,
+    int, bytes-vs-str) and a catch would have to guess which. This asserts the
+    shape-guard's own message, so it cannot be satisfied by some other refusal.
     """
     confirmation = prepare_then_confirmation(isolated, ok_transport())
     assert confirmation.isascii(), "minted tokens are URL-safe base64"
@@ -975,7 +980,9 @@ def test_a_non_ascii_confirmation_is_refused_loudly_not_as_a_traceback(
     guard.assert_not_called()
 
     out = capsys.readouterr()
-    assert "non-ASCII" in out.err
+    assert "not the shape this script mints" in out.err, (
+        f"refused, but not by the token-shape guard: {out.err!r}"
+    )
     # counters() is the module's own purpose-built surface for this ("Read by the
     # tests"), and it beats string-matching the log stream: it survives any change to
     # the line format, and it is the thing that would actually be reconstructed from
