@@ -97,6 +97,23 @@ repos:
         language: system
         pass_filenames: true
         files: ^content/(posts|hire-hoi)/.*\.md$
+      # iamhoi marker enforcement for the campaign template, which neither voice
+      # hook above can provide. check-iamhoi-wrapping accepts only .md and exits 2
+      # on anything else, and check-voice-tells DOES read the file but is
+      # marker-driven and default-SKIP, so deleting the markers makes it scan
+      # nothing and print OK rather than complain the copy is now unguarded.
+      # Proven by mutation both ways: a banned word inside a marker region exits 1,
+      # the same word outside one exits 0.
+      # The guarded path is layouts/_partials/newsletter/email.html, spelled out
+      # here in plain form deliberately: the files: regex below escapes the dot, so
+      # the regex does NOT contain that literal substring, and blog-priv#81 AC 1.8
+      # greps for the plain literal as its proof that this wiring exists.
+      - id: check-newsletter-template
+        name: Newsletter email template contract (iamhoi marker enforcement)
+        entry: python3 scripts/check_newsletter_template.py
+        language: system
+        pass_filenames: false
+        files: ^(layouts/_partials/newsletter/email\.html|scripts/check_newsletter_template\.py)$
       - id: check-emdash-zero-tolerance
         name: Em-dash zero-tolerance guard (CI parity; blocks docs/ em dashes locally)
         # CI parity for the ci.yml "Em-dash voice guard (zero tolerance)" step via the
