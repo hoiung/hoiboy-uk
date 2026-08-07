@@ -771,6 +771,35 @@ def test_a_hyphen_leading_token_really_would_break_the_cli() -> None:
     assert "expected one argument" in proc.stderr, proc.stderr
 
 
+def test_human_date_reads_the_way_a_person_writes_a_date() -> None:
+    """The one string in the email a subscriber reads that nothing asserted.
+
+    `human_date` feeds POST_DATE into every campaign (send_newsletter.py:562). Ralph
+    round 5 tier 2 rewrote its format from "4 August 2026" to "4/08/2026" and the
+    whole suite stayed green, byte-identical to baseline: the function had zero test
+    references anywhere. Not a weak guard, no guard.
+
+    The no-leading-zero detail is the reason the format is built by hand instead of
+    with a single strftime: `%d` renders "04 August 2026", which is not how anyone
+    writes it. That is exactly the kind of thing a reformat quietly reintroduces.
+    """
+    assert sn.human_date("2026-08-04T09:30:00+00:00") == "4 August 2026"
+    assert sn.human_date("2026-12-25T00:00:00+00:00") == "25 December 2026"
+    # A date-only value is what the frontmatter actually carries most of the time.
+    assert sn.human_date("2026-01-09") == "9 January 2026"
+
+
+def test_an_unparseable_date_is_named_rather_than_rendered() -> None:
+    """The error path was untested too, and it fires at --prepare.
+
+    campaign_name calls human_date purely for this rejection
+    (send_newsletter.py:537), so that a bad date fails while the operator is still
+    reading output, not silently at render time inside a campaign body.
+    """
+    with pytest.raises(sn.NewsletterError, match="unparseable publication date"):
+        sn.human_date("the fourth of August")
+
+
 def test_the_utm_campaign_actually_varies_with_the_slug() -> None:
     """Charset alone is not the contract.
 
