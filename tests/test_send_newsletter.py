@@ -14,6 +14,7 @@ format is wrong.
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import re
 import subprocess
@@ -729,6 +730,38 @@ def test_redaction_survives_nesting(isolated: Path) -> None:
 # --------------------------------------------------------------------------
 # AC 2.12 / AC 2.13 / AC 2.14 -- what actually goes on the wire
 # --------------------------------------------------------------------------
+
+
+def test_the_rendered_root_is_hugos_own_output_directory() -> None:
+    """D-8's source of truth, pinned to a value instead of to prose.
+
+    AC 2.12's recorded verify was `grep -c 'public/blogs' send_newsletter.py >= 1`.
+    Ralph round 3 tier 3 found the single hit is the MODULE DOCSTRING: RENDERED_ROOT
+    is a path join, so it structurally cannot contain that literal, and the grep
+    would stay green with the constant repointed anywhere.
+
+    Nothing else covered it either. Every other test in this file monkeypatches
+    RENDERED_ROOT onto a fixture directory, which is right for isolation and means
+    the real value was read by no assertion at all.
+
+    Hence the fresh module load. The autouse fixture at the top of this file patches
+    `sn.RENDERED_ROOT` for EVERY test here, so asserting on `sn` would read the
+    fixture's tmp_path and fail no matter what the source says. Loading the file
+    under its own name gets the constant the script actually runs with. The first
+    version of this test did assert on `sn` and went red immediately, which is the
+    only reason the fixture's reach was noticed.
+    """
+    spec = importlib.util.spec_from_file_location("_send_newsletter_unpatched", sn.__file__)
+    assert spec is not None and spec.loader is not None
+    fresh = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(fresh)
+
+    assert fresh.RENDERED_ROOT == fresh.REPO_ROOT / "public" / "blogs", (
+        "the email body must come from Hugo's own rendered output (D-8); repointing "
+        "this is how the campaign silently starts sourcing something else"
+    )
+    assert fresh.RENDERED_ROOT.name == "blogs"
+    assert fresh.RENDERED_ROOT.parent.name == "public"
 
 
 def test_the_body_is_the_rendered_pages_own_words(isolated: Path) -> None:
