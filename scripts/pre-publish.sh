@@ -174,7 +174,14 @@ em_dash_check() {
 run_check "em-dash-zero" em_dash_check
 
 # 3. Voice tells (marker-driven; default skip; exit 0 = clean).
-run_check "voice-tells" python3 scripts/check-ai-writing-tells.py --check-only-new "$TARGET"
+#    --mode blog is REQUIRED, not decorative: the flag defaults to `cv`, which
+#    turns the commercial-copy rules on for EVERY path. dotfiles#563 adds the
+#    effort-signalling rule to that set, so omitting the flag here fails the
+#    publish gate on personal blog posts (measured: 9 findings across 7 posts)
+#    once that lands -- the opposite of the rule's intent, and out of step with
+#    ci.yml which has always passed it. Service pages under content/hire-hoi/
+#    stay strict in blog mode, by path, so nothing is weakened by this.
+run_check "voice-tells" python3 scripts/check-ai-writing-tells.py --mode blog --check-only-new "$TARGET"
 
 # 4. Frontmatter validator, POSTS scope. Disjoint from 4a below; see the header.
 run_check "frontmatter" python3 scripts/validate_frontmatter.py --scope posts
