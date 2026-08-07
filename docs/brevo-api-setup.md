@@ -556,6 +556,35 @@ rest of the template's construction contract (table layout, 600px column, litera
 Go-template action, since Hugo parses this file and a raw double-curly Brevo merge tag in it
 fails the whole site build).
 
+### NEVER delete a campaign that has sent anything, including a test
+
+**Deleting a campaign breaks the unsubscribe link in every email already delivered from
+it.** The unsubscribe URL Brevo generates is bound to the campaign id. Delete the
+campaign and the link 404s on a "SendinBlue email error" page whose error text reads
+`campaign not found`.
+
+Learned the hard way during blog-priv#81, at zero cost because the only recipient was
+the operator. Four superseded DRAFTS (13 to 16) were deleted to keep the account tidy
+after each round of layout review. Every one of them had already test-sent a copy that
+was still sitting in the operator's inbox, and every one of those copies lost its
+unsubscribe link the moment its campaign went. Clicking one is how it surfaced.
+
+The mistake was reasoning about the drafts and forgetting the mail. A campaign is not
+just a record in the dashboard; it is the thing a delivered email keeps pointing back
+to, for as long as that email exists in someone's mailbox. "Superseded" describes the
+draft. It does not describe the mail.
+
+On a real send this is not tidiness, it is a compliance breach:
+`content/legal/privacy/index.md:81` promises subscribers an unsubscribe link, and UK
+PECR requires the mechanism to keep working. Deleting a sent campaign silently revokes
+it for every recipient at once, with nothing turning red.
+
+**The rule: a campaign that has sent anything is permanent.** Delete only a draft that
+has never had `sendTest` or `sendNow` called on it. When a review round supersedes a
+draft, leave the old one alone and let it accumulate; a stale draft costs nothing, and
+the API's own listing makes them easy to tell apart. `scripts/send_newsletter.py` never
+deletes a campaign and must not learn how.
+
 ### `sendNow` is assumed to have no recall path, and that assumption is deliberate
 
 `scripts/send_newsletter.py` treats `POST /v3/emailCampaigns/{id}/sendNow` as **irreversible**.
