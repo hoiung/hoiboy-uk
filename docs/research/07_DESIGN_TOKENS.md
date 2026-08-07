@@ -9,7 +9,7 @@
 | Accent colour | `#c0533a` (terracotta) | Warm, earthy, food/adventure friendly. WCAG AA on white (4.78:1) and on `#fafafa` (4.65:1). |
 | CTA button fill | `#188418` (green) | The discovery-call button only. White label at 4.82:1, clearing WCAG AA for body-size text. This is the logo green DARKENED, not the logo green: the logo's own `#228b22` (exactly CSS `forestgreen`) measures 4.39:1 against white and 3.97:1 against `--fg #1a1a1a`, so no label colour this theme uses clears AA on it. Deliberately not the accent, which is already every link on the site. Added blog-priv#63. |
 | Body text | `#1a1a1a` on `#fafafa` (light), `#e8e8e8` on `#141414` (dark) | AAA contrast in both modes |
-| Body font | Inter (Google Fonts) | Humanist sans, warm, reads at small sizes, voice-fit (not academic) |
+| Body font | Source Serif 4 (Google Fonts) | Warm text serif, reads long-form, voice-fit (not academic). Canonical ladder: `assets/css/main.css:27` |
 | Mono font | JetBrains Mono → SF Mono → Menlo system fallback | Tech posts |
 | Max content width | 64rem (1024px) outer, 42rem (672px) prose | ~70ch line length on prose body |
 | Sidebar width | 14rem | Constant size, never grows |
@@ -23,7 +23,7 @@
 ## Notes
 
 - Greyscale base for body text and chrome. Accent applied ONLY to links and active-nav indicator. One CTA green (`--cta`) on the discovery-call button. No other colour anywhere. (This line read "No other colour anywhere" with no CTA exception until blog-priv#63, which is worth knowing: as written it told a future reader the green should not exist, which is a direct route back to the unstyled-button defect that issue fixed.)
-- Inter loaded from Google Fonts (`?family=Inter:wght@400;600;700`). System fonts as fallback so first paint never blocks on font load.
+- Source Serif 4 loaded from Google Fonts (`layouts/_partials/head.html:51`, `?family=Source+Serif+4:ital,opsz,wght@...&display=swap`). A long system-serif ladder behind it so first paint never blocks on font load. (This row and the Body font row above both named the wrong face, a sans, until blog-priv#81. The mechanism was right and the face was wrong: a Google Font is loaded, just not that one. The SVG font stack quoted at the bottom of this file still carries that older name and is deliberately untouched, being baked into generated diagrams that `blog/SKILL.md:310` regenerates from this file. Changing it there would silently change generated artefacts, which is a different fix class.)
 - No custom dark-mode toggle in Phase 0. System preference rules. Revisit in a later phase if user demand exists.
 - Accent contrast checked manually via WebAIM Contrast Checker. Re-check if accent is changed.
 - CTA contrast is checked automatically, not manually: `scripts/test_cta_button.py` computes the ratio from the two colours in source and fails below 4.5:1, so a future fill change re-tests itself. If a brand colour cannot clear 4.5:1, that is a finding to surface, not a threshold to lower.
@@ -47,7 +47,7 @@ Hand-drawn schematic SVGs (data-flow diagrams, pipelines, layer diagrams) are th
 | OK / positive green | `.ok` | `#7aa869` | `#7aa869` | "logged / healthy / passing / automation" markers; same in both modes |
 | Brand watermark (sky blue) | `.watermark` | `#87ceeb` | `#87ceeb` | the `hoiboy.uk` signature, top-right corner; the logo's blue; same in both modes |
 
-Fonts: `font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"` on the root `<svg>` (matches the site body font). Boxes use `rx="10"` rounded corners; accent arrowheads via a shared `<marker>`.
+Fonts: `font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"` on the root `<svg>`. This intentionally does NOT match the site body font: it read "matches" until blog-priv#81, which was true when the body font was a sans and stopped being true when it became Source Serif 4. The value is left alone because it is baked into already-generated diagrams; whoever regenerates them decides whether the diagrams should follow the body font or stay sans. Boxes use `rx="10"` rounded corners; accent arrowheads via a shared `<marker>`.
 
 ### Canonical class block (copy-paste into a new diagram's `<defs>`)
 
