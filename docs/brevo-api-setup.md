@@ -530,6 +530,32 @@ they are waiting for is the one that does not send. The Function answers a Brevo
 with a 503 and no retry loop, deliberately, because retrying against a shared cap is
 the worse failure.
 
+### Campaign template voice guard, and the vacuity that made a gate necessary
+
+The campaign email template lives at `layouts/_partials/newsletter/email.html` (blog-priv#81
+D-3 puts it under `layouts/` so the em-dash sweep covers it). Its operator-facing copy is
+wrapped in `<!-- iamhoi -->` regions so the marker-driven voice guard reads it.
+
+That guard alone is not enough, and the reason is worth writing down because the failure is
+invisible. `check-ai-writing-tells.py` does open the file (`.pre-commit-config.yaml` selects
+`layouts/.*\.html`, and its scan suffixes include `.html`), but it is marker-driven and
+**default-SKIP**. Measured by mutation, both directions: a banned word placed inside a marker
+region exits 1, and the same word placed outside one exits 0. So deleting the markers does not
+make the guard object that the copy is now unprotected. It makes the guard scan nothing and
+print OK. The gate goes vacuous rather than absent, which is harder to notice, because the
+green tick still appears.
+
+`check-iamhoi-wrapping.py` cannot cover the gap either: it accepts only `.md` files and raises
+`SystemExit(2)` on anything else, and its pre-commit selector is scoped to `content/`.
+
+So **iamhoi marker enforcement** for this template is carried by its own gate,
+`scripts/check_newsletter_template.py`, wired as the `check-newsletter-template` pre-commit
+hook and unit-tested in CI. It asserts the markers are present and balanced, and floors the
+rest of the template's construction contract (table layout, 600px column, literal accent, every
+`font-family` ending in a generic family, no CSS custom properties or flex/grid, and no
+Go-template action, since Hugo parses this file and a raw double-curly Brevo merge tag in it
+fails the whole site build).
+
 ## Rotation cadence
 
 Brevo does **not** offer built-in TTL on API or SMTP keys (Cloudflare does; Brevo doesn't). Rotation is calendar-driven.
