@@ -27,9 +27,11 @@ They focus on expansion. On trying to make the dance accessible and fun from day
 
 ## Then I asked about Brazilian Zouk
 
-Most new Brazilian Zouk dancers want to learn head movements.
+Many new Brazilian Zouk dancers want to learn head movements and the other advanced moves.
 
 They saw it on YouTube, Instagram, Facebook, TikTok, wherever. It is the flow of the head movements that seems to captivate them, and that is what they want to learn.
+
+And there is a chicken and egg problem sitting in the middle of it. Leaders feel they need to learn head movements because Followers keep throwing them. Followers say it is the Leaders who keep forcing head movements on them. So which came first?
 
 So I asked him. How do you cope with students wanting to learn dangerous movements that require years of training, not days or weeks?
 
