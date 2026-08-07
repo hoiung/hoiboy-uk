@@ -58,3 +58,11 @@ __pycache__/
 # a belt-and-suspenders so member PII / credentials can never be committed here.
 .agit-records/
 .agit-secrets/
+
+# Newsletter send state (scripts/send_newsletter.py). Local operator state, not
+# source: it holds the confirmation token that stands between a draft campaign and
+# a real send, plus the record of which posts have already gone out. Committing it
+# would publish a live approval token in a public repo, and would also let a merge
+# hand one machine another machine's idea of what has already been sent, which is
+# the one thing the double-send guard must never be wrong about.
+.newsletter-state.json
