@@ -30,11 +30,12 @@ Markdown a second time, means the email can never say something different from t
 page it links to. It also makes "is this post actually published" structural: an
 unpublished or draft post renders no such file, so there is nothing to send.
 
-TWO VALUES HERE ARE UNVERIFIED UNTIL A REAL TEST SEND (AC 2.15). Brevo's
-personalisation and unsubscribe merge tags are emitted by THIS file, not by the
-template, and their exact spelling cannot be confirmed from the OpenAPI spec, which
-documents neither. See BREVO_FIRSTNAME_TAG and BREVO_UNSUBSCRIBE_TAG below. The
-first real test send is what confirms them. Do not treat them as settled before it.
+Both merge tags are now CONFIRMED against delivered mail (AC 2.15 / AC 2.16). They are
+emitted by THIS file rather than the template, and the OpenAPI spec documents neither,
+so a real send was the only way to settle their spelling: `{{ contact.FIRSTNAME }}`
+rendered as "Hi Senh Hoi," and `{{ unsubscribe }}` resolved to a live URL, verified in
+Gmail on web and mobile. This note read UNVERIFIED until the send happened; it is kept
+rather than deleted so the next reader knows the spelling was measured, not guessed.
 """
 
 from __future__ import annotations
@@ -111,19 +112,34 @@ UNSUBSCRIBE_PAGE_ID = "69fde04c25095576dc311f46"
 # (html comments included), so a double-curly tag written there fails the whole site
 # build. The template holds inert %%TOKEN%% placeholders and this file supplies the
 # real tags as their values, which keeps the personalisation syntax in one place.
-# UNVERIFIED against a delivered email until AC 2.15. The OpenAPI spec documents
-# neither tag, and the campaign toField example uses a different attribute spelling
-# than signup actually stores, which is the trap AC 2.8 exists to close: the contact
-# attribute this site writes is FIRSTNAME (functions/api/subscribe.js:583).
+# CONFIRMED against delivered email (AC 2.15 / AC 2.16): FIRSTNAME rendered as
+# "Hi Senh Hoi," and the unsubscribe tag resolved to a live URL, in Gmail web and
+# mobile. The OpenAPI spec documents neither tag, and the campaign toField example
+# uses a different attribute spelling than signup actually stores, which is the trap
+# AC 2.8 exists to close: the contact attribute this site writes is FIRSTNAME
+# (functions/api/subscribe.js:583).
 BREVO_FIRSTNAME_TAG = "{{ contact.FIRSTNAME }}"
 BREVO_UNSUBSCRIBE_TAG = "{{ unsubscribe }}"
 
 # Sender identity for the campaign footer. Deliberately NOT Brevo's [DEFAULT_FOOTER]
 # sentinel: that renders the postal address held on the Brevo account, and G-I is a
-# standing operator decision not to publish it. This footer carries the company
-# identity the site already publishes plus an unsubscribe link, so a reader can always
-# leave even if the in-template tag turns out to be spelled differently. Whether the
-# free plan appends its own footer on top of this is measured by AC 2.15.
+# standing operator decision not to publish it.
+#
+# WHAT THIS FIELD ACTUALLY DOES, measured rather than assumed: for an htmlContent
+# campaign it appears to be INERT. The delivered email (AC 2.16, Gmail web + mobile)
+# shows the "Sent by HOIBOY AI LTD" line exactly ONCE, and the template already emits
+# that line itself, so this value is not being rendered on top of the body.
+#
+# An earlier version of this comment claimed the footer let "a reader always leave
+# even if the in-template tag turns out to be spelled differently". That was wrong
+# twice over, and Ralph tier 3 caught both halves: it reuses the SAME
+# BREVO_UNSUBSCRIBE_TAG constant, so it was never an independent spelling, and it is
+# not rendered anyway. The real unsubscribe safety net is Brevo's own List-Unsubscribe
+# header, which Gmail surfaces as a native control next to the sender.
+#
+# It is still set explicitly, per AC 2.13's rule that no branding-bearing field is
+# left to a provider default: a field that is inert TODAY is exactly the kind that
+# starts rendering after a plan or template-type change.
 CAMPAIGN_FOOTER = (
     '<p style="font-family:Georgia,serif;font-size:12px;color:#555555;">'
     "Sent by HOIBOY AI LTD, registered in England and Wales "
@@ -435,6 +451,18 @@ def assert_is_blog_post(post: dict[str, str]) -> None:
     page reaching this list would breach it. The check is on the page's own canonical
     URL rather than on the slug, because the canonical is what the reader would land
     on and it is emitted by Hugo rather than typed at the command line.
+
+    SCOPE, stated honestly because it read as broader than it is. This decides "is
+    this URL inside the blogs tree", and nothing more. It does NOT separate a post
+    from a CATEGORY LANDING, because it cannot: `/blogs/adventure/` and
+    `/blogs/why-bpm-matters-in-brazilian-zouk/` are the same shape, and the category
+    landings really do live under this prefix, next to the posts.
+
+    What stops a landing is `read_post`, which requires a title inside `<article>`
+    plus a publication date, and a landing has neither. That backstop was incidental
+    until Ralph tier 3 noticed the test named for this rule was asserting `read_post`'s
+    error rather than this function's. It is now pinned deliberately, so the division
+    of labour survives someone giving a landing frontmatter.
     """
     url = post["url"]
     if not url.startswith(CANONICAL_PREFIX):
@@ -443,6 +471,22 @@ def assert_is_blog_post(post: dict[str, str]) -> None:
             f"{CANONICAL_PREFIX}. content/legal/privacy/index.md:77 restricts this "
             f"list to new posts from hoiboy.uk and requires fresh consent before any "
             f"services or consultancy email. Sending this would breach that promise."
+        )
+
+    # A prefix match alone accepted `.../blogs/../hire-hoi/`, which points OUT of the
+    # blogs tree while still starting with the prefix. Caught by Ralph tier 3 running
+    # the function rather than reading it.
+    rest = url[len(CANONICAL_PREFIX):]
+    if ".." in rest:
+        raise NewsletterError(
+            f"refusing to send: canonical URL {url!r} traverses out of "
+            f"{CANONICAL_PREFIX}. A URL that escapes the blogs tree is not a blog "
+            f"post, whatever it starts with."
+        )
+    if not rest.strip("/"):
+        raise NewsletterError(
+            f"refusing to send: canonical URL {url!r} is the blogs index itself, "
+            f"not a post."
         )
 
 
@@ -698,7 +742,25 @@ def send(slug: str, confirm: str, state_path: Path | None = None) -> int:
 
     # compare_digest rather than ==, so a wrong token cannot be narrowed down by
     # timing. Cheap, and the alternative is a guessable approval gate.
-    if not hmac.compare_digest(str(entry["confirmation"]), confirm):
+    #
+    # The TypeError branch is not defensive padding. compare_digest RAISES on a
+    # non-ASCII str, so a token with an accent or an emoji in it escaped main()'s
+    # `except NewsletterError` entirely: the operator got a raw traceback and, worse,
+    # `_log` never ran, so a rejected approval attempt left NO audit record. That
+    # contradicts this module's own promise at the top of the file that every failure
+    # is loud and carries why. It always failed closed, so nothing could leak; it just
+    # failed silently in the ledger, which is the half that matters after the fact.
+    # Found by Ralph tier 3 executing it with a non-ASCII token.
+    try:
+        matches = hmac.compare_digest(str(entry["confirmation"]), confirm)
+    except TypeError:
+        _log("confirm_rejected", slug=slug, reason="non_ascii_token")
+        raise NewsletterError(
+            f"confirmation token for {slug} contains non-ASCII characters, so it "
+            f"cannot be one this script minted (they are URL-safe base64). Nothing "
+            f"was sent. Copy the token exactly as --prepare printed it."
+        ) from None
+    if not matches:
         _log("confirm_rejected", slug=slug)
         raise NewsletterError(
             f"confirmation token does not match the one minted for {slug}. Nothing "
