@@ -221,17 +221,23 @@ hoiboy-uk/
 │                            #   package.json. Both lists are gated by test_gate_wiring.py,
 │                            #   so a test file nobody lists fails the build rather than
 │                            #   silently never running.
-├── scripts/                 # 24 gate/validator scripts (frontmatter, config-traceability,
+├── scripts/                 # 26 gate/validator scripts (frontmatter, config-traceability,
 │                            #   voice: iamhoi/tells/wordcount, EXIF, secret-scan, internal-links,
 │                            #   mirror-drift, lychee-expiry, social-cards, 404, pre-publish,
 │                            #   subscribe-form placement, noindex sitemap/feed exclusion,
-│                            #   blogs-IA pre-push runner)
-│                            #   + repo-authored tests + 7 helper modules (voice_rules,
-│                            #   sst3_*, redirects/readnext parsers, import_aam_sql)
-│                            #   + strip-exif/cloudflare-build (manual fixers). The 24 counts
+│                            #   newsletter-template contract, blogs-IA pre-push runner)
+│                            #   + repo-authored tests + 8 helper modules (voice_rules,
+│                            #   sst3_*, redirects/readnext parsers, import_aam_sql,
+│                            #   newsletter_render: shared by the preview and the sender)
+│                            #   + strip-exif/cloudflare-build (manual fixers). The 26 counts
 │                            #   gates only: helpers, tests and manual fixers are all excluded.
-│                            #   Derivation: 23 files matching check*/validate*/run-*/pre-publish
+│                            #   Derivation: 25 files matching check*/validate*/run-*/pre-publish
 │                            #   PLUS test_404.py (a CLI gate despite the test_ prefix).
+│                            #   Re-derive with:
+│                            #     ls scripts/{check*.py,check*.sh,validate*.py,run-*.sh,pre-publish*.sh} | wc -l
+│                            #   blog-priv#81 found this block reading 24/23 when the tree already
+│                            #   held 24 matching files, so it was one stale BEFORE the newsletter
+│                            #   gate landed. Re-derive rather than increment.
 ├── docs/research/           # Planning trail (numbered NN_TITLE.md, non-contiguous)
 ├── legacy/                  # Raw blog exports for Phase 1+ (gitignored)
 ├── .github/workflows/
