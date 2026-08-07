@@ -120,3 +120,46 @@ def test_gate_floors_when_the_template_is_absent(tmp_path):
         f"stdout={proc.stdout!r}"
     )
     assert "newsletter email template" in proc.stderr, proc.stderr
+
+
+def test_a_violating_template_exits_non_zero_through_the_real_entry_point(clean, tmp_path):
+    """The exit code is the ONLY thing pre-commit reads. Prove it moves.
+
+    Every other test here calls `failures()` and asserts its message. That proves
+    the contract logic and nothing about whether a violation actually stops a
+    commit: `.pre-commit-config.yaml:113` runs this file as a command and keys
+    solely on the return code, and `ci.yml` runs only the pytest, never the
+    binary. So `main()`'s `return 1` is the sole production signal, and the
+    sibling floor test above exercises the ABSENT-template branch instead, which
+    exits through `require_examined` long before that line.
+
+    Ralph round 3 tier 3 rewrote `return 1` to `return 0` and watched the gate
+    print "1 contract violation(s)" while exiting 0, with the suite still green.
+    That is round 2's finding on a new module: the guard was tested as a
+    function and never through the command that calls it.
+    """
+    skel = tmp_path / "scripts"
+    skel.mkdir()
+    for name in ("check_newsletter_template.py", "gate_coverage.py"):
+        (skel / name).write_text((SCRIPTS / name).read_text(encoding="utf-8"), encoding="utf-8")
+
+    template = tmp_path / "layouts" / "_partials" / "newsletter" / "email.html"
+    template.parent.mkdir(parents=True)
+    # Present but non-compliant, so the coverage floor is satisfied and the run
+    # reaches the contract check. Stripped markers are the violation this gate
+    # was built for.
+    template.write_text(
+        clean.replace(gate.MARKER_OPEN, "").replace(gate.MARKER_CLOSE, ""),
+        encoding="utf-8",
+    )
+
+    proc = subprocess.run(
+        [sys.executable, str(skel / "check_newsletter_template.py")],
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode != 0, (
+        f"a template that violates the contract must exit non-zero, or pre-commit "
+        f"lets it through: rc={proc.returncode} stderr={proc.stderr!r}"
+    )
+    assert "contract violation" in proc.stderr, proc.stderr

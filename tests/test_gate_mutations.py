@@ -134,6 +134,20 @@ MUTATIONS = [
         "scripts/test_check_social_cards.py",
         id="non-build-passes-the-rendered-og-image-tier",
     ),
+    # blog-priv#81, Ralph round 3 tier 3. The #55 comment above describes an Issue
+    # that added five gate behaviours and registered none of them here; this Issue
+    # added one and did the same. The gate's contract logic was tested five ways,
+    # all against failures(), and its exit code not at all -- yet
+    # .pre-commit-config.yaml runs it as a command and reads nothing else. Measured
+    # at the time: return 1 -> return 0 printed "1 contract violation(s)" and exited
+    # 0 with the suite at "62 passed".
+    pytest.param(
+        "scripts/check_newsletter_template.py",
+        "        return 1",
+        "        return 0",
+        "scripts/test_check_newsletter_template.py",
+        id="template-contract-violation-exits-clean",
+    ),
     # The two-segment prefixes were an unconditional allow-list for the whole life
     # of the validator, so the 15 root-relative /hire-hoi/, /legal/, /community/,
     # /tags/ and /series/ links in the repo were resolved by no tier at all. This
