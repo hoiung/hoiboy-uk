@@ -191,6 +191,15 @@ jobs:
       - name: Newsletter sender unit tests
         run: python3 -m pytest tests/test_send_newsletter.py -q
 
+      # The sender's E2E tier: render, create the draft, send the review copy, hand
+      # the token back, fire sendNow. It RUNS here on every push, because the default
+      # (BREVO_E2E unset) path drives that whole chain against a mocked transport with
+      # urlopen booby-trapped, so a call escaping the mock fails the build rather than
+      # mailing the operator. The live variant is opt-in and never touches list 4: it
+      # creates its own throwaway contact list and deletes it in teardown.
+      - name: Newsletter sender E2E tests
+        run: python3 -m pytest tests/test_send_newsletter_e2e.py -q
+
       # The secret scan at the top of this job is blocking, but until #56 nothing
       # tested the guard itself in this repo. Its two collection paths asked
       # "should I open this file?" two different ways and neither opened an
