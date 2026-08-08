@@ -40,11 +40,21 @@ TEMPLATE = REPO_ROOT / "layouts" / "_partials" / "newsletter" / "email.html"
 MARKER_OPEN = "<!-- iamhoi -->"
 MARKER_CLOSE = "<!-- iamhoiend -->"
 
-# The shipped template guards 4404 characters across its two marker regions. The
-# floor is set well below that so ordinary copy edits do not trip it, while still
-# catching the collapse-to-empty case that leaves the guard scanning nothing. A
-# bare "greater than zero" would accept a single stray character just as happily.
-MIN_GUARDED_CHARS = 500
+# THE MARKER RULE IS MEASURED IN PROSE, NOT IN CHARACTERS. Both numbers below come
+# off the same ruler -- `_visible_prose`, which is what the reader sees and what the
+# voice guard is there to police -- because two earlier versions of this rule were
+# defeated by counting the wrong substance.
+#
+# Measured on the shipped template: pair 0 encloses 3427 raw characters but only 148
+# characters of prose, and pair 1 encloses 977 raw for 334 prose. So a raw-character
+# floor of 500 is satisfied by TABLE SCAFFOLDING: a marker pair wrapped around 600
+# characters of <table> markup and no copy at all cleared it. Counting raw characters
+# measured the markup and called it protection.
+#
+# The floors: the shipped template carries 483 characters of guarded prose and leaves
+# 16 unguarded ("hoiboy.uk &nbsp;", the header wordmark and a spacer entity).
+MIN_GUARDED_PROSE = 300
+MAX_UNGUARDED_PROSE = 40
 
 # Matches how blog-priv#81 AC 1.3 extracts declarations. The character class stops
 # at a double quote as well as a semicolon, which is why the template quotes face
@@ -61,6 +71,31 @@ _UNSUPPORTED_CSS = re.compile(r"var\(--|display:\s*(?:flex|grid)")
 # exit 0 with it removed. The template carries %%TOKEN%% placeholders instead and
 # scripts/send_newsletter.py substitutes the real tags at build time.
 _GO_TEMPLATE_ACTION = re.compile(r"\{\{")
+
+_MARKER_PAIR = re.compile(re.escape(MARKER_OPEN) + r"(.*?)" + re.escape(MARKER_CLOSE), re.S)
+_TAGS = re.compile(r"<[^>]+>")
+
+
+def _visible_prose(text: str) -> str:
+    """The words a reader actually sees: comments gone, tags gone, space collapsed."""
+    return " ".join(_TAGS.sub(" ", strip_comments(text)).split())
+
+
+def _prose_split(text: str) -> tuple[str, str]:
+    """Split the template's prose into (inside the markers, outside them).
+
+    Spans are cut from the RAW text, because the markers are html comments and
+    `_visible_prose` deletes them. Both halves are then measured on the same
+    ruler, which is the whole point: the previous rule compared a raw-character
+    count against a floor and was answered by markup.
+    """
+    guarded, outside, last = [], [], 0
+    for m in _MARKER_PAIR.finditer(text):
+        outside.append(text[last : m.start()])
+        guarded.append(m.group(1))
+        last = m.end()
+    outside.append(text[last:])
+    return _visible_prose(" ".join(guarded)), _visible_prose(" ".join(outside))
 
 
 def failures(text: str) -> list[str]:
@@ -98,27 +133,40 @@ def failures(text: str) -> list[str]:
     elif opens != closes:
         out.append(f"unbalanced markers: {opens} {MARKER_OPEN} vs {closes} {MARKER_CLOSE}")
     else:
-        # PRESENT AND BALANCED IS NOT ENOUGH: a pair must ENCLOSE something.
+        # PRESENT AND BALANCED IS NOT ENOUGH, AND NEITHER IS "ENCLOSES SOMETHING".
         #
-        # Counting was the whole rule, so two markers sitting adjacent passed while
-        # protecting zero characters. Measured on the shipped template: collapsing
-        # both pairs to `<!-- iamhoi --><!-- iamhoiend -->` and leaving the copy
-        # below them keeps opens/closes at 2/2, keeps every other rule green, and
-        # takes the guarded region from 4404 characters to 0. The voice guard then
-        # scans nothing and reports OK, which is verbatim the outcome the message
-        # above says this rule exists to prevent. Found by Ralph round 7 tier 3.
-        guarded = sum(
-            len(m.group(1).strip())
-            for m in re.finditer(
-                re.escape(MARKER_OPEN) + r"(.*?)" + re.escape(MARKER_CLOSE), text, re.S
-            )
-        )
-        if guarded < MIN_GUARDED_CHARS:
+        # This rule has now been defeated twice, the same way both times: it was
+        # answered by something other than the thing it asks about.
+        #
+        #   1. Counting markers was the whole rule, so two adjacent markers passed
+        #      while protecting nothing (Ralph round 7 tier 3).
+        #   2. The repair counted RAW CHARACTERS and summed them ACROSS pairs, which
+        #      failed twice over (Ralph round 7 restart 2 tier 2, plus a second case
+        #      found re-deriving it). Summing meant either pair could be collapsed
+        #      on its own while the other alone cleared the floor -- including the
+        #      footer pair, which carries the operator's no-spam promise and the
+        #      unsubscribe control. And counting raw characters measured MARKUP:
+        #      pair 0 is 3427 raw characters of which 148 are prose, so a pair
+        #      wrapped around table scaffolding and no copy cleared a 500 floor.
+        #
+        # So the question is no longer "how much is inside the markers" but "is any
+        # of the reader-visible copy OUTSIDE them", which is the property the voice
+        # guard actually depends on. Collapsing a pair pushes that pair's copy into
+        # the unguarded half and fails; so does adding new copy outside the markers,
+        # which the old rule could never see at all.
+        guarded, unguarded = _prose_split(text)
+        if len(guarded) < MIN_GUARDED_PROSE:
             out.append(
-                f"the iamhoi markers enclose only {guarded} characters (expected at "
-                f"least {MIN_GUARDED_CHARS}). Balanced markers that wrap nothing leave "
-                f"the campaign copy outside the voice guard's scope while every count "
-                f"in this gate still passes."
+                f"the iamhoi markers enclose only {len(guarded)} characters of prose "
+                f"(expected at least {MIN_GUARDED_PROSE}). The voice guard is "
+                f"marker-driven and default-SKIP, so copy outside them ships "
+                f"unscanned while every count in this gate still passes."
+            )
+        if len(unguarded) > MAX_UNGUARDED_PROSE:
+            out.append(
+                f"{len(unguarded)} characters of reader-visible copy sit OUTSIDE the "
+                f"iamhoi markers (at most {MAX_UNGUARDED_PROSE} may): {unguarded[:120]!r}. "
+                f"The voice guard never reads it. Move it inside a marker pair."
             )
 
     if _GO_TEMPLATE_ACTION.search(text):

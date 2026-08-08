@@ -60,24 +60,37 @@ def test_unbalanced_markers_are_caught(clean):
     assert any("unbalanced" in p for p in problems), problems
 
 
+def _collapse(text: str, which: set[int]) -> str:
+    """Collapse the named marker pairs, leaving their copy in the file.
+
+    The copy moves to just after the now-empty pair, so every OTHER rule in the
+    gate still finds it. Only the voice guard's reach changes, which is the point:
+    an attack that also deleted the copy would be caught by the content rules and
+    would prove nothing about the marker rule.
+    """
+    out, last = [], 0
+    for i, m in enumerate(gate._MARKER_PAIR.finditer(text)):
+        out.append(text[last : m.start()])
+        out.append(
+            gate.MARKER_OPEN + gate.MARKER_CLOSE + m.group(1) if i in which else m.group(0)
+        )
+        last = m.end()
+    out.append(text[last:])
+    return "".join(out)
+
+
 def test_markers_that_enclose_nothing_are_caught(clean):
     """Present and balanced was the whole rule, and it protected nothing.
 
     Collapsing each pair to `<!-- iamhoi --><!-- iamhoiend -->` and leaving the copy
-    below it keeps opens/closes at 2/2 and every other rule green, while taking the
-    guarded region from 4404 characters to 0. The voice guard is marker-driven and
-    default-SKIP, so it then scans nothing and reports OK -- which is verbatim the
-    outcome this gate's own error message says the marker rule exists to prevent.
+    below it keeps opens/closes at 2/2 and every other rule green. The voice guard is
+    marker-driven and default-SKIP, so it then scans nothing and reports OK -- which
+    is verbatim the outcome this gate's own error message says the rule prevents.
 
     The gate was checking that the markers EXIST, not that they DO anything. Ralph
     round 7 tier 3 found it one round after the surrounding rules were hardened.
     """
-    collapsed = re.sub(
-        re.escape(gate.MARKER_OPEN) + r"(.*?)" + re.escape(gate.MARKER_CLOSE),
-        lambda m: f"{gate.MARKER_OPEN}{gate.MARKER_CLOSE}\n{m.group(1)}",
-        clean,
-        flags=re.S,
-    )
+    collapsed = _collapse(clean, {0, 1})
     assert collapsed != clean
     assert collapsed.count(gate.MARKER_OPEN) == clean.count(gate.MARKER_OPEN), (
         "the fixture must keep the markers balanced, or this passes via the "
@@ -88,7 +101,73 @@ def test_markers_that_enclose_nothing_are_caught(clean):
     )
 
     problems = gate.failures(collapsed)
-    assert any("enclose only 0 characters" in p for p in problems), problems
+    assert any("enclose only 0 characters of prose" in p for p in problems), problems
+
+
+@pytest.mark.parametrize("index", [0, 1])
+def test_collapsing_a_single_marker_pair_is_caught(clean, index):
+    """The repair for the above was itself defeated, and BOTH ways round.
+
+    It compared a floor against the SUM across pairs, so either pair could be
+    collapsed on its own while the other alone cleared 500. Measured before the
+    fix: pair 0 collapsed -> 0 problems, pair 1 collapsed -> 0 problems. Pair 1 is
+    the footer, carrying the operator's no-spam promise and the unsubscribe control,
+    so the smaller and more dangerous region was the cheaper one to strip.
+
+    Ralph round 7 restart 2 tier 2 reported the pair-1 case; re-deriving it found
+    pair 0 open too. Parametrised so neither can regress alone.
+    """
+    collapsed = _collapse(clean, {index})
+    assert collapsed != clean
+    assert collapsed.count(gate.MARKER_OPEN) == clean.count(gate.MARKER_OPEN)
+    assert "We do not send anything about" in collapsed
+
+    problems = gate.failures(collapsed)
+    assert any("OUTSIDE the iamhoi markers" in p for p in problems), (
+        f"collapsing pair {index} must be caught on its own, not only when both "
+        f"pairs go together: {problems}"
+    )
+
+
+def test_a_marker_pair_full_of_markup_but_no_copy_does_not_satisfy_the_floor(clean):
+    """The floor counted RAW CHARACTERS, so table scaffolding answered it.
+
+    Measured on the shipped template: pair 0 encloses 3427 raw characters of which
+    148 are prose. A pair wrapped round 600+ characters of `<table>` markup and no
+    words at all therefore cleared a 500-character floor while guarding no copy --
+    the same "answered by the wrong thing" shape as the gate being satisfied by its
+    own comments, and as the 600px rule being satisfied by the hero image.
+    """
+    scaffold = '<table role="presentation"><tr><td></td></tr></table>' * 12
+    assert len(scaffold) > gate.MIN_GUARDED_PROSE, (
+        "the scaffold must be longer than the floor, or this proves nothing about "
+        "which substance is being counted"
+    )
+    assert gate._visible_prose(scaffold) == "", "the scaffold must carry no prose"
+
+    attacked = _collapse(clean, {0, 1}).replace(
+        "<table", f"{gate.MARKER_OPEN}{scaffold}{gate.MARKER_CLOSE}<table", 1
+    )
+    problems = gate.failures(attacked)
+    assert any("characters of prose" in p for p in problems), problems
+
+
+def test_copy_added_outside_the_markers_is_caught(clean):
+    """The case the old rule could not see AT ALL.
+
+    Every previous version asked only how much sat inside the markers, so new copy
+    appended outside them left the answer unchanged and shipped unscanned. This is
+    the realistic regression: nobody collapses a marker pair on purpose, but adding
+    a line to the footer without noticing the markers end above it is one careless
+    edit away.
+    """
+    added = "<p>PS. we also run paid workshops, and will mail you when booking opens.</p>"
+    attacked = clean + "\n" + added
+    problems = gate.failures(attacked)
+    assert any("OUTSIDE the iamhoi markers" in p for p in problems), problems
+    assert any("paid workshops" in p for p in problems), (
+        f"the message must quote the offending copy so the fix is obvious: {problems}"
+    )
 
 
 def test_go_template_action_is_caught(clean):
