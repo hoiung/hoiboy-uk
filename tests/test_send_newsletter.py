@@ -21,6 +21,7 @@ import re
 import subprocess
 import sys
 import urllib.error
+from datetime import datetime
 from pathlib import Path
 from unittest import mock
 
@@ -2228,3 +2229,176 @@ def test_nothing_the_sender_reads_relies_on_the_locale_encoding(
         "a read without an explicit encoding reached production code:\n" + proc.stderr
     )
     assert "EncodingWarning" not in proc.stderr
+
+
+# --------------------------------------------------------------------------
+# The state shim and the observability surface (blog-priv#81 class sweep)
+#
+# `load_state`'s backfill loop is the compatibility shim for a state file written
+# by an older revision, hand-edited, or truncated by a crash mid-write. It is the
+# double-send guard's own record, so a shim that fails open is the one failure
+# that can put a second copy of a post in a subscriber's inbox. Every arm of it
+# was unpinned, as was every counter and every timestamp.
+# --------------------------------------------------------------------------
+
+
+def _write_state(path: Path, **keys: object) -> None:
+    path.write_text(json.dumps({"version": sn.STATE_VERSION, **keys}), encoding="utf-8")
+
+
+@pytest.mark.parametrize("absent", ["pending", "sent", "audit"])
+def test_a_state_file_missing_a_key_is_repaired_with_the_right_shape(
+    isolated: Path, absent: str
+) -> None:
+    """Three mutations at once, and the `sent` arm is the dangerous one.
+
+    Without the `sent` backfill, `prepare`'s very first line `if slug in
+    state["sent"]` raises KeyError -- so the double-send guard fails OPEN on
+    exactly the file it exists to consult. Backfilling `audit` as a dict instead of
+    a list breaks `.append` AFTER the campaign has been created and the review copy
+    sent, i.e. between the side effect and the record of it. And backfilling
+    pending/sent as LISTS is worse than either: `slug in state["sent"]` then
+    answers False for every slug forever, silently.
+    """
+    full = {"pending": {}, "sent": {}, "audit": []}
+    _write_state(sn.STATE_FILE, **{k: v for k, v in full.items() if k != absent})
+
+    state = sn.load_state(sn.STATE_FILE)
+    assert state["audit"] == [] and isinstance(state["audit"], list)
+    assert state["pending"] == {} and isinstance(state["pending"], dict)
+    assert state["sent"] == {} and isinstance(state["sent"], dict)
+
+
+def test_a_repaired_state_file_still_guards_against_a_double_send(
+    isolated: Path,
+) -> None:
+    """The shim's purpose, driven rather than inspected: a file with `sent`
+    missing must still refuse a post recorded elsewhere as sent, and must still
+    let a fresh one through."""
+    write_page(isolated, SLUG)
+    _write_state(sn.STATE_FILE, pending={}, audit=[])
+    with mock.patch.object(sn, "_api_call", ok_transport()):
+        assert sn.prepare(SLUG, sn.STATE_FILE) == 0
+
+
+def test_a_state_file_that_cannot_be_READ_is_refused_not_ignored(
+    isolated: Path,
+) -> None:
+    """`except (OSError, ValueError)` -> `except ValueError` drops the unreadable
+    half: permissions, an I/O error, a directory in place of the file. It escapes
+    as a raw OSError past main()'s handler, replacing the most safety-critical
+    message in the module -- "a send guard that cannot read its own record cannot
+    tell you whether this post has already gone out" -- with a traceback.
+
+    Raised through a patched `read_text` rather than by chmod, so the test does not
+    depend on not being run as root and behaves the same on every filesystem.
+    """
+    _write_state(sn.STATE_FILE, pending={}, sent={}, audit=[])
+    with mock.patch.object(Path, "read_text", side_effect=OSError("input/output error")):
+        with pytest.raises(sn.NewsletterError, match="unreadable"):
+            sn.load_state(sn.STATE_FILE)
+
+
+def test_the_state_file_is_written_sorted_and_indented(isolated: Path) -> None:
+    """This file is the append-only record of what reached real subscribers, and
+    the module's own error text tells the operator to inspect it by hand. Both
+    `sort_keys` and `indent` were unpinned, so it could silently become one long
+    line in arbitrary key order -- which makes "what changed" unanswerable by diff,
+    the only tool anyone will reach for."""
+    sn.save_state({"version": 1, "sent": {}, "pending": {}, "audit": []}, sn.STATE_FILE)
+    text = sn.STATE_FILE.read_text(encoding="utf-8")
+
+    assert "\n  " in text, "written as one line, so a diff cannot localise a change"
+    keys = [line.strip().split('"')[1] for line in text.splitlines() if line.startswith("  ")]
+    assert keys == sorted(keys), f"keys are not in a stable order: {keys}"
+
+
+def test_a_repeated_event_actually_increments_its_counter(
+    isolated: Path, capsys: pytest.CaptureFixture
+) -> None:
+    """`_COUNTERS[e] = _COUNTERS.get(e, 0) + 1` -> `setdefault(e, 1)` freezes every
+    counter at 1, so the metric half of the observability written at build time
+    (AP #12) silently stops counting. `counters()` is documented "Read by the
+    tests" and no test ever asserted a count above 1."""
+    sn._log("probe")
+    sn._log("probe")
+    sn._log("probe")
+    capsys.readouterr()
+    assert sn.counters()["probe"] == 3
+
+
+def test_counters_hands_out_a_copy_not_the_live_dict(isolated: Path) -> None:
+    """The defensive copy is deliberate: the returned mapping is derived from the
+    audit-relevant counts, and handing out the internal object lets any caller
+    edit them in place."""
+    sn._log("probe")
+    snapshot = sn.counters()
+    snapshot["probe"] = 999
+    snapshot["invented"] = 1
+    assert sn.counters() == {"probe": 1}
+
+
+def test_every_log_line_is_sorted_and_timezone_aware(
+    isolated: Path, capsys: pytest.CaptureFixture
+) -> None:
+    """A naive timestamp in a send ledger is ambiguous exactly when it is being
+    read: after the fact, reconstructing who approved what and when. All three
+    timestamp sites (the log line, the audit entry, prepared_at) dropped their
+    timezone with the suite green, and `sort_keys` went with them."""
+    sn._log("probe", detail="x")
+    line = json.loads(capsys.readouterr().err.strip().splitlines()[-1])
+
+    assert list(line) == sorted(line), "log keys must be in a stable order"
+    assert datetime.fromisoformat(line["ts"]).tzinfo is not None, (
+        "a naive timestamp cannot be compared against anything recorded elsewhere"
+    )
+
+
+def test_the_audit_trail_and_prepared_at_are_timezone_aware(isolated: Path) -> None:
+    confirmation = prepare_then_confirmation(isolated, ok_transport())
+    with mock.patch.object(sn, "_api_call", ok_transport()):
+        assert sn.send(SLUG, confirmation, sn.STATE_FILE) == 0
+
+    state = json.loads(sn.STATE_FILE.read_text(encoding="utf-8"))
+    stamps = [entry["ts"] for entry in state["audit"]]
+    stamps.append(state["sent"][SLUG]["sent_at"])
+    assert len(stamps) == 3, f"expected prepare, send and sent_at, got {stamps}"
+    for stamp in stamps:
+        assert datetime.fromisoformat(stamp).tzinfo is not None, stamp
+
+
+def test_prepared_at_is_timezone_aware(isolated: Path) -> None:
+    prepare_then_confirmation(isolated, ok_transport())
+    state = json.loads(sn.STATE_FILE.read_text(encoding="utf-8"))
+    prepared = state["pending"][SLUG]["prepared_at"]
+    assert datetime.fromisoformat(prepared).tzinfo is not None, prepared
+
+
+def test_the_approval_digest_cannot_be_walked_around_by_moving_a_character() -> None:
+    """`digest.update(b"\\0")` is the domain separator between subject and body.
+
+    Without it the digest is over the plain concatenation, so ('ab','c') and
+    ('a','bc') hash identically. This is the value the whole approval gate compares
+    on, so an edit moving N characters from the end of the subject to the start of
+    the body would fingerprint-match and pass as "unchanged". Also pins sha256: the
+    md5 mutation survived, and a 128-bit digest with known collisions is not what
+    you want guarding what reached a subscriber list.
+    """
+    assert sn.content_fingerprint("c", "ab") != sn.content_fingerprint("bc", "a")
+    assert len(sn.content_fingerprint("body", "subject")) == 64, "sha256 hex is 64 chars"
+
+
+def test_the_cli_contract_is_exactly_one_mode_and_always_a_slug() -> None:
+    """The two-invocation design IS the safety model, and the argparse constraints
+    enforcing it were pinned by nothing.
+
+    Without `required=True` on --slug, `prepare(None)` reaches
+    `_SLUG_SHAPE.fullmatch(None)` and raises TypeError, which is not a
+    NewsletterError: traceback, no fatal log. Without the mutually exclusive group,
+    `--prepare --send` is accepted, `if args.prepare:` wins, and the send is
+    silently ignored -- an operator who typed both would believe he had sent.
+    """
+    for argv in ([], ["--prepare"], ["--slug", SLUG], ["--slug", SLUG, "--prepare", "--send"]):
+        with pytest.raises(SystemExit) as exc:
+            sn.main(argv)
+        assert exc.value.code == 2, f"{argv} should be an argparse usage error"
