@@ -454,7 +454,28 @@ def test_personalisation_uses_the_attribute_signup_actually_stores(
     prepare_then_confirmation(isolated, transport)
     create = [c for c in transport.call_args_list if c.args[1] == "/v3/emailCampaigns"][0]
     body = create.kwargs["json"]["htmlContent"]
-    assert "FIRSTNAME" in body
+
+    # THE LITERAL IS WRITTEN OUT ON PURPOSE, for the reason the sibling
+    # unsubscribe test below spells out. `assert "FIRSTNAME" in body` was the
+    # whole rule here and it is a BARE SUBSTRING: it survives any mutation that
+    # keeps those nine letters somewhere in the output.
+    #
+    # Measured at the HEAD that shipped it (runtime rebind, no file edits, so the
+    # bytecode-cache hazard cannot apply; control mutation on the unsubscribe tag
+    # was CAUGHT in the same run):
+    #   BREVO_FIRSTNAME_TAG -> "{{ FIRSTNAME }}"  133 passed  SURVIVED
+    #   BREVO_FIRSTNAME_TAG -> "FIRSTNAME"        133 passed  SURVIVED
+    #   BREVO_FIRSTNAME_TAG -> "XXXX"             1 failed    caught
+    # Only the mutation that removes the substring died. The first drops the
+    # `contact.` path, which is verbatim the trap send_newsletter.py:117-120 says
+    # AC 2.8 exists to close; the second ships "Hi FIRSTNAME," to every reader.
+    #
+    # Found by Ralph round 7 restart 5 tier 3, one round after the sibling tag
+    # below was hardened against exactly this. See that docstring's correction.
+    assert "{{ contact.FIRSTNAME }}" in body, (
+        "the greeting must carry the merge tag Brevo resolves, spelled out in "
+        "full: a substring check passes while the contact. path is missing"
+    )
     # The spec's own toField example uses a different attribute spelling, which this
     # site never writes; copying it would render an empty greeting for every reader.
     assert "FNAME}" not in body
@@ -467,9 +488,17 @@ def test_the_unsubscribe_merge_tag_is_the_one_brevo_actually_resolves(
 
     Ralph round 3 tier 3 misspelled BREVO_UNSUBSCRIBE_TAG, repointed it at a dead
     URL, and blanked it to an empty string. All three SURVIVED a green 67-test
-    run, while the same mutation applied to the sibling FIRSTNAME tag was caught.
-    An unresolved tag ships mail whose only unsubscribe control is a dead link,
-    which is a PECR problem, not a cosmetic one.
+    run. An unresolved tag ships mail whose only unsubscribe control is a dead
+    link, which is a PECR problem, not a cosmetic one.
+
+    CORRECTION (Ralph round 7 restart 5). This docstring used to end that
+    sentence with "while the same mutation applied to the sibling FIRSTNAME tag
+    was caught." That was FALSE, and measurably so at every HEAD since it was
+    written: the round-3 fix was applied to ONE of two sibling tags and recorded
+    as applied to both, so the FIRSTNAME assertion stayed a bare substring for
+    four more rounds while this docstring asserted it was covered. A fix
+    documented more widely than it was applied is invisible to every later
+    reader, which is worse than no documentation at all.
 
     The literal is written out here ON PURPOSE. Asserting
     `sn.BREVO_UNSUBSCRIBE_TAG in body` would pass under every one of those three
@@ -551,8 +580,22 @@ def test_a_blocked_hero_still_reads(isolated: Path) -> None:
     # Alt text carries the meaning when the pixels never arrive, and the bgcolor
     # makes the gap a deliberate neutral block rather than broken white space.
     assert body.count('alt="') == imgs
-    assert body.count("bgcolor=") >= imgs
     assert f'alt="{TITLE}"' in body
+
+    # THE CELL, NOT THE FILE. `body.count("bgcolor=") >= imgs` was the rule, and
+    # it is answered by any bgcolor anywhere: the CTA button alone satisfied it.
+    # Measured at the HEAD that shipped it, with the hero's bgcolor and
+    # background-color both stripped -- the template gate returned clean, this
+    # AC's own recorded grep read imgs=1 bgs=3 so bgs>=imgs still PASSED, and no
+    # assertion in the suite fired. The one property AC 1.6 is about was the one
+    # nothing checked. Ralph round 7 restart 5 tier 3.
+    hero = re.search(r"<td[^>]*>\s*<a[^>]*>\s*<img", body)
+    assert hero is not None, "the hero image should sit in its own <td>"
+    hero_cell = hero.group(0)
+    assert re.search(r'bgcolor="#[0-9a-fA-F]{3,6}"', hero_cell), (
+        f"the hero cell needs its own bgcolor, or a blocked image renders as "
+        f"white space rather than a deliberate neutral block: {hero_cell[:120]}"
+    )
 
 
 def test_a_post_with_no_og_image_is_refused_not_sent_headless(isolated: Path) -> None:

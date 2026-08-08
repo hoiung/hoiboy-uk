@@ -336,6 +336,33 @@ def test_copy_added_outside_the_markers_is_caught(clean):
     )
 
 
+def test_the_hero_cell_losing_its_bgcolor_is_caught(clean):
+    """The cell, not the file. AC 1.6's one property was the one nothing checked.
+
+    Both the AC's recorded proof and the suite counted `bgcolor=` across the
+    whole file, which the CTA button satisfies by itself. Measured with the hero
+    cell's bgcolor and background-color stripped, before this rule existed: gate
+    clean, the AC grep reading imgs=1 bgs=3 and passing, no assertion firing.
+
+    Gmail blocks images by default, so this is the state most readers see.
+    """
+    hero = re.search(r'<td[^>]*bgcolor="#e0e0e0"[^>]*>', clean)
+    assert hero is not None, "the shipped hero cell should carry a bgcolor"
+
+    stripped = re.sub(
+        r'\s*(bgcolor="[^"]*"|background-color:\s*#[0-9a-fA-F]{3,6};?)', "", hero.group(0)
+    )
+    attacked = clean[: hero.start()] + stripped + clean[hero.end() :]
+    assert attacked != clean, "the fixture must actually remove the colour"
+    assert "bgcolor=" in attacked, (
+        "the CTA button's bgcolor must SURVIVE, or this passes via the button "
+        "rule and proves nothing about the hero"
+    )
+
+    problems = gate.failures(attacked)
+    assert any("hero cell carries no bgcolor" in p for p in problems), problems
+
+
 def test_go_template_action_is_caught(clean):
     """A raw Brevo merge tag here fails the site build, not just the email."""
     broken = clean.replace("%%FIRSTNAME%%", "{" + "{contact.FIRSTNAME}" + "}")

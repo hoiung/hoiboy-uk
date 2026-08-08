@@ -355,6 +355,24 @@ def failures(text: str) -> list[str]:
             f"accent #c0533a"
         )
 
+    # The hero cell, which is a DIFFERENT cell from the button above. Gmail blocks
+    # images by default, so the image-off state is the common one, and AC 1.6's
+    # whole point is that the blocked hero degrades to a deliberate neutral block
+    # rather than a white gap. Nothing gated it: the AC's recorded proof and the
+    # suite both counted `bgcolor=` across the WHOLE FILE, which the button above
+    # satisfies on its own. Measured with the hero's bgcolor stripped: this gate
+    # clean, the AC grep reading 3 >= 1 and passing, not one assertion firing.
+    # Ralph round 7 restart 5 tier 3.
+    hero_cell = re.search(r"<td([^>]*)>\s*<a[^>]*>\s*<img", body)
+    if hero_cell is None:
+        out.append("no <td> wrapping the hero image; the layout must be table-based")
+    elif not re.search(r'bgcolor="#[0-9a-fA-F]{3,6}"', hero_cell.group(1)):
+        out.append(
+            "the hero cell carries no bgcolor. Most clients block images by "
+            "default, and without it that blocked hero is a white gap rather "
+            "than a deliberate neutral block."
+        )
+
     return out
 
 
