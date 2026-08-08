@@ -193,6 +193,61 @@ def test_copy_smuggled_through_a_readable_attribute_is_caught(clean, channel, fr
     )
 
 
+@pytest.mark.parametrize("attr", ["data-alt", "data-title", "x-aria-label"])
+def test_a_hyphen_prefixed_attribute_is_not_mistaken_for_copy(attr):
+    """`\\b` sits between a hyphen and a letter, so `data-alt` matched `alt`.
+
+    Ralph round 7 restart 4 tier 1 found the over-match and read it as a
+    smuggling hole. It is the opposite: an over-matched attribute is COUNTED, so
+    the value is detected, not hidden. The real damage is that invisible text
+    then ANSWERS the rule -- see the floor test below. Pinned in both directions
+    because a future "simplification" back to `\\b` looks harmless.
+    """
+    payload = "sixty characters of prose that a cap of forty must not permit!"
+    assert payload not in gate._visible_prose(f'<div {attr}="{payload}"></div>')
+
+
+@pytest.mark.parametrize("attr", ["salt", "xtitle", "subtitle"])
+def test_an_attribute_merely_ending_in_a_readable_name_is_not_counted(attr):
+    """The opposite over-reach, pinned so the lookbehind is not widened.
+
+    `salt` ends in `alt` and is not copy. These never matched, and the fix for
+    the hyphen case must not make them match.
+    """
+    payload = "sixty characters of prose that a cap of forty must not permit!"
+    assert payload not in gate._visible_prose(f'<div {attr}="{payload}"></div>')
+
+
+def test_invisible_attribute_text_cannot_answer_the_guarded_prose_floor(clean):
+    """The false-PASS direction, which is the one that actually ships copy.
+
+    Over-counting is not merely untidy here. Gut a marker pair of its real copy,
+    pad it with `data-alt` text no reader can see, and the floor is satisfied by
+    the padding: measured before the fix, 400 characters of padding put guarded
+    prose at 562 against a floor of 300 with the gate green.
+    """
+    pairs = list(gate._MARKER_PAIR.finditer(clean))
+    assert len(pairs) == 2, f"the template should carry two marker pairs, found {len(pairs)}"
+    footer = pairs[1]
+    padding = "x" * 400
+    assert len(padding) > gate.MIN_GUARDED_PROSE
+
+    attacked = (
+        clean[: footer.start()]
+        + gate.MARKER_OPEN
+        + f'<div data-alt="{padding}"></div>'
+        + gate.MARKER_CLOSE
+        + clean[footer.end() :]
+    )
+    assert attacked != clean
+    assert attacked.count(gate.MARKER_OPEN) == clean.count(gate.MARKER_OPEN)
+
+    problems = gate.failures(attacked)
+    assert any("enclose only" in p for p in problems), (
+        f"invisible padding must not satisfy the guarded-prose floor: {problems}"
+    )
+
+
 def test_stylesheet_text_is_not_counted_as_copy(clean):
     """The inverse error: a rule that over-counts fails on ordinary edits.
 

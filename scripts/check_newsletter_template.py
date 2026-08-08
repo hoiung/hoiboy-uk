@@ -90,8 +90,20 @@ _TAGS = re.compile(r"<[^>]+>")
 # The list is closed deliberately. `href`/`src`/`style`/`class`/`role` are not
 # copy, and counting them would fail the gate on ordinary markup. Add a channel
 # here only if a reader can READ it, and add its test alongside.
+#
+# The lookbehind is `(?<![\w-])`, NOT `\b`. A word boundary sits between the
+# hyphen and the `a` of `data-alt`, so `\b` also matched `data-alt`,
+# `data-title` and `x-aria-label` -- attributes no reader can see. Ralph round 7
+# restart 4 tier 1 spotted the over-match but read it as a smuggling hole; it is
+# the opposite, and worse. Over-counting means invisible text ANSWERS the rule:
+# measured, 400 characters of `data-alt` padding inside a gutted marker pair put
+# guarded prose at 562 against a floor of 300 and the gate stayed green. A fifth
+# way for this rule to be answered by the wrong substance.
+#
+# A name that merely ENDS in one of the tokens was never matched and still is
+# not: `salt`, `xtitle` and `subtitle` are all correctly ignored.
 _VISIBLE_ATTRS = re.compile(
-    r"""\b(?:alt|title|aria-label)\s*=\s*(?:"([^"]*)"|'([^']*)')""", re.I
+    r"""(?<![\w-])(?:alt|title|aria-label)\s*=\s*(?:"([^"]*)"|'([^']*)')""", re.I
 )
 
 # Stylesheet and script bodies survive tag-stripping (the tags go, the text
