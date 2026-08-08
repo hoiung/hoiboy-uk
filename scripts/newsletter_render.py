@@ -163,7 +163,18 @@ def preview(out_path: Path, width: int = 700) -> int:
         print(f"template not found: {TEMPLATE}", file=sys.stderr)
         return 2
 
-    html = render(TEMPLATE.read_text(encoding="utf-8"), PREVIEW_VALUES)
+    # Caught rather than allowed to propagate, so this entry point answers the way
+    # its two guards above already do: a sentence and a status, not a traceback.
+    # The sender had the same hole in a worse place (a PlaceholderError escaped
+    # main()'s handler entirely, losing the fatal audit line), and there is no
+    # reason for the preview command to behave differently from the send command
+    # when the same template fails to render.
+    try:
+        html = render(TEMPLATE.read_text(encoding="utf-8"), PREVIEW_VALUES)
+    except PlaceholderError as exc:
+        print(f"the template did not render: {exc}", file=sys.stderr)
+        return 2
+
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     # A real inbox is not a bare fragment, so wrap it the way a client would and

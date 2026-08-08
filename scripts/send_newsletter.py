@@ -62,7 +62,7 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from newsletter_render import PLACEHOLDERS, render  # noqa: E402
+from newsletter_render import PLACEHOLDERS, PlaceholderError, render  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE = REPO_ROOT / "layouts" / "_partials" / "newsletter" / "email.html"
@@ -569,7 +569,22 @@ def build_html(post: dict[str, str], template_text: str) -> str:
     unknown = set(values) - set(PLACEHOLDERS)
     if unknown:
         raise NewsletterError(f"renderer contract drifted: {sorted(unknown)}")
-    return render(template_text, values)
+    try:
+        return render(template_text, values)
+    except PlaceholderError as exc:
+        # PlaceholderError is a SIBLING of NewsletterError, not a subclass: both
+        # derive from RuntimeError and neither derives from the other. So every one
+        # of render()'s three refusals escaped main()'s `except NewsletterError`
+        # untouched. Measured: adding a %%FIELD%% to email.html and running
+        # --prepare produced a raw traceback instead of `error: ...`, and
+        # `_log("fatal")` never ran, so the refusal left NO audit line. That
+        # contradicts this module's own promise that every failure is loud and
+        # carries why, and it is the same half-failure the non-ASCII token bug had.
+        #
+        # Translated here rather than by making PlaceholderError inherit from
+        # NewsletterError, because the renderer is imported BY this module: giving
+        # it the sender's exception type would invert that dependency for nothing.
+        raise NewsletterError(f"the email template did not render: {exc}") from exc
 
 
 def campaign_payload(post: dict[str, str], slug: str, body_html: str) -> dict[str, Any]:

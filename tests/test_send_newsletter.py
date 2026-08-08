@@ -1949,3 +1949,40 @@ def test_prepare_hands_the_operator_the_command_it_must_run(
     assert f"--slug {SLUG} --send --confirm {confirmation}" in out, (
         "the printed command must be runnable verbatim, token included"
     )
+
+
+def test_a_template_that_does_not_render_is_a_diagnostic_not_a_traceback(
+    isolated: Path, capsys: pytest.CaptureFixture
+) -> None:
+    """A shipped defect, not an evidence gap.
+
+    `PlaceholderError` and `NewsletterError` are SIBLINGS -- both derive from
+    RuntimeError, neither from the other -- so all three of the renderer's refusals
+    escaped main()'s `except NewsletterError` untouched. Reproduced before fixing:
+    adding a %%FIELD%% to the template and running --prepare gave a raw traceback
+    instead of `error: ...`, and `_log("fatal")` never ran, so the refusal left NO
+    audit line at all. Failing closed but silently in the ledger is the half that
+    matters afterwards, and it is the same shape as the non-ASCII token bug Ralph
+    round 2 found.
+
+    Driven through main(), because main() is what the operator runs and is the only
+    path that writes the fatal line.
+    """
+    write_page(isolated, SLUG)
+    template = isolated.parent.parent / "email.html"
+    template.write_text("<p>%%POST_TITLE%%</p><p>%%NOT_IN_THE_CONTRACT%%</p>", encoding="utf-8")
+
+    with mock.patch.object(sn, "TEMPLATE", template):
+        with mock.patch.object(sn, "_api_call", ok_transport()) as transport:
+            assert sn.main(["--slug", SLUG, "--prepare"]) == 1
+
+    err = capsys.readouterr().err
+    assert "error: the email template did not render" in err, (
+        "the operator must get a sentence, not a stack trace"
+    )
+    assert "NOT_IN_THE_CONTRACT" in err, "and it must name the offending token"
+    assert sn.counters().get("fatal") == 1, (
+        "every refusal writes one fatal log line; without it the attempt is invisible "
+        "to the audit trail (AP #12)"
+    )
+    assert not transport.call_args_list, "nothing may be created from a template that failed"
