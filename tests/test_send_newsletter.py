@@ -305,9 +305,31 @@ def test_the_token_survives_into_a_completely_fresh_process(
 
 
 def test_state_file_path_is_gitignored() -> None:
-    """The token is a live approval credential, and this repo is public."""
+    """The token is a live approval credential, and this repo is public.
+
+    Asserted against the module's OWN constant rather than a repeated literal. The
+    literal-only version left the constant and the ignore rule free to drift: the
+    module could be renamed to write `.newsletter-tokens.json`, which nothing
+    ignores, while this test went on happily confirming that a filename the code no
+    longer uses is still listed. Live approval tokens would then be sitting in the
+    working tree of a PUBLIC repo, one `git add -A` from being published.
+
+    The fresh module load is not ceremony, and writing it without one is how this
+    was nearly missed twice. The autouse fixture patches `sn.STATE_FILE` onto a
+    tmp_path for every test in this file, so `sn.STATE_FILE.name` reads
+    ".newsletter-state.json" from the FIXTURE whatever the source says -- the
+    rename mutation survived an assertion that looked exactly right. Same trap as
+    `test_the_rendered_root_is_hugos_own_output_directory` below.
+    """
+    spec = importlib.util.spec_from_file_location("_send_newsletter_state_path", sn.__file__)
+    assert spec is not None and spec.loader is not None
+    fresh = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(fresh)
+
     ignored = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8")
-    assert ".newsletter-state.json" in ignored
+    assert fresh.STATE_FILE.name == ".newsletter-state.json"
+    assert fresh.STATE_FILE.name in ignored
+    assert fresh.STATE_FILE.parent == fresh.REPO_ROOT
 
 
 # --------------------------------------------------------------------------
@@ -1824,3 +1846,106 @@ def test_the_inbox_preview_line_is_truncated_where_the_code_says(
     preview_text = created_payload(transport)["previewText"]
     assert len(preview_text) == 150
     assert preview_text == long_excerpt[:150]
+
+
+# --------------------------------------------------------------------------
+# The approval gate itself (blog-priv#81 class sweep)
+#
+# The confirmation token is the only thing standing between a draft and the
+# subscriber list, and three separate properties of it were unpinned: how much
+# entropy it is drawn with, how strictly it is compared, and whether the operator
+# is actually handed it.
+# --------------------------------------------------------------------------
+
+
+def test_the_confirmation_token_is_drawn_with_the_documented_entropy(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """`token_urlsafe(24)` -> `token_urlsafe(1)` survived the whole suite.
+
+    Nothing observed the draw size. `test_a_confirmation_token_never_starts_with_a
+    _hyphen` monkeypatches `secrets.token_urlsafe` with `lambda n: next(draws)`,
+    which DISCARDS its argument, so the byte count is invisible to the one test that
+    looks closest at this function. A 1-byte draw is a 2-character token with 256
+    possible values, guarding the send to a real subscriber list.
+
+    Both halves are asserted: the argument that goes in, and the shape that comes
+    out, so replacing the call with a short constant is caught too.
+    """
+    seen: list[int] = []
+    real = sn.secrets.token_urlsafe
+
+    def spy(n: int) -> str:
+        seen.append(n)
+        return real(n)
+
+    monkeypatch.setattr(sn.secrets, "token_urlsafe", spy)
+    minted = sn.mint_confirmation()
+
+    assert seen and set(seen) == {24}, (
+        f"every draw must ask for 24 bytes, saw {seen}"
+    )
+    assert len(minted) >= 32, (
+        "24 bytes base64url-encode to 32 characters; anything shorter means the "
+        "draw size was reduced somewhere this spy cannot see"
+    )
+
+
+def test_a_token_that_only_shares_a_prefix_is_refused(isolated: Path) -> None:
+    """Weakening the comparison to `[:4]` survived, including the adversarial band.
+
+    That band ('', ' ', 'a', 'x'*32, a padded token, a non-ASCII one, '\\n') was
+    written to sit ON the boundary and still could not see a prefix comparison,
+    because none of its entries happens to share the real token's first four
+    characters. This one is derived FROM the real token, so it always does.
+    """
+    confirmation = prepare_then_confirmation(isolated, ok_transport())
+    near_miss = confirmation[:4] + "x" * (len(confirmation) - 4)
+    assert near_miss != confirmation
+    assert near_miss[:4] == confirmation[:4]
+
+    transport = ok_transport()
+    with mock.patch.object(sn, "_api_call", transport):
+        with pytest.raises(sn.NewsletterError, match="does not match"):
+            sn.send(SLUG, near_miss, sn.STATE_FILE)
+    assert not any(endpoint_of(*c.args[:2]) == "send_now" for c in transport.call_args_list)
+
+
+def test_the_token_comparison_is_case_sensitive(isolated: Path) -> None:
+    """`.lower()` on both sides also survived. base64url is a case-SIGNIFICANT
+    alphabet, so folding case throws away roughly a bit per alphabetic character
+    and makes a transcription error read as a match."""
+    confirmation = prepare_then_confirmation(isolated, ok_transport())
+    swapped = confirmation.swapcase()
+    if swapped == confirmation:  # pragma: no cover - a token of pure digits
+        pytest.skip("this draw carried no cased characters")
+
+    transport = ok_transport()
+    with mock.patch.object(sn, "_api_call", transport):
+        with pytest.raises(sn.NewsletterError, match="does not match"):
+            sn.send(SLUG, swapped, sn.STATE_FILE)
+    assert not any(endpoint_of(*c.args[:2]) == "send_now" for c in transport.call_args_list)
+
+
+def test_prepare_hands_the_operator_the_command_it_must_run(
+    isolated: Path, capsys: pytest.CaptureFixture
+) -> None:
+    """The two-invocation design depends entirely on the token being PRINTED.
+
+    Every test reads the token out of the state FILE, never out of stdout, so
+    replacing the interpolated value with a literal `--confirm TOKEN` survived. The
+    operator would be handed an instruction that cannot work, on the one path that
+    must work when it matters, and the only way to recover would be to open a
+    gitignored JSON file nobody told him about.
+    """
+    write_page(isolated, SLUG)
+    with mock.patch.object(sn, "_api_call", ok_transport()):
+        assert sn.prepare(SLUG, sn.STATE_FILE) == 0
+
+    confirmation = json.loads(sn.STATE_FILE.read_text(encoding="utf-8"))[
+        "pending"
+    ][SLUG]["confirmation"]
+    out = capsys.readouterr().out
+    assert f"--slug {SLUG} --send --confirm {confirmation}" in out, (
+        "the printed command must be runnable verbatim, token included"
+    )
