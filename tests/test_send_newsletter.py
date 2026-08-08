@@ -1815,6 +1815,47 @@ def test_every_link_to_the_post_is_the_canonical_url_exactly(isolated: Path) -> 
     assert body.count(f'href="https://hoiboy.uk/blogs/{SLUG}/"') == 3
 
 
+def test_post_metadata_cannot_inject_markup_into_the_campaign(isolated: Path) -> None:
+    """The whole path, not just the renderer: Hugo's page -> extractor -> email.
+
+    The extractor runs with convert_charrefs=True, so `&quot;` in a rendered
+    og:image:alt arrives as a literal `"`. Before Ralph round 7 tier 2 that went
+    straight into `alt="..."` unescaped, closed the attribute, and put whatever
+    followed into the delivered campaign as markup.
+
+    Driven end to end because the escaping is in the renderer and the DECODING is
+    in the extractor, two files apart: testing either alone leaves the join
+    unproven, which is how this survived every earlier round.
+    """
+    write_page(
+        isolated,
+        SLUG,
+        title="Hen &amp; Chickens &quot;Pub&quot; Grill",
+        hero_alt="Alt with &quot;quotes&quot; and &lt;script&gt;alert(1)&lt;/script&gt;",
+    )
+
+    post = sn.read_post(SLUG)
+    assert '"' in post["hero_alt"], (
+        "the extractor must decode the entity, or this test proves nothing about "
+        "what the renderer receives"
+    )
+
+    transport = ok_transport()
+    with mock.patch.object(sn, "_api_call", transport):
+        assert sn.prepare(SLUG, sn.STATE_FILE) == 0
+    body = created_payload(transport)["htmlContent"]
+
+    assert "<script>" not in body, "post metadata put a live tag in the campaign HTML"
+    assert "&lt;script&gt;" in body
+    assert 'alt="Alt with &quot;quotes&quot;' in body, (
+        "the alt attribute must stay one attribute"
+    )
+    # The subject is a JSON string on the wire, NOT html, so it carries the decoded
+    # text. Pinned so nobody "fixes" it by escaping the subject too, which would
+    # show readers a literal &amp; in their inbox.
+    assert created_payload(transport)["subject"] == 'Hen & Chickens "Pub" Grill'
+
+
 def test_the_campaign_name_key_is_the_one_brevo_reads(isolated: Path) -> None:
     """`campaign_name` is thoroughly tested as a FUNCTION and its result reached
     no asserted key, so `"name"` could be renamed to `"campaignName"` or dropped

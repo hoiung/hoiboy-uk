@@ -9,6 +9,7 @@ the reader.
 
 from __future__ import annotations
 
+import html
 import sys
 from pathlib import Path
 
@@ -159,6 +160,60 @@ def test_a_token_assembled_from_two_values_is_refused():
     assert "HERO_ALT" in str(exc.value)
 
 
+def test_a_quote_in_a_value_cannot_break_out_of_an_attribute():
+    """Ralph round 7 tier 2, and the last shipped defect in this issue.
+
+    `email.html:102` is `alt="%%HERO_ALT%%"`, and `_PostExtractor` runs with
+    convert_charrefs=True, so an `og:image:alt` written as `&quot;` reaches the
+    renderer as a literal `"`. Unescaped, it closes the attribute and everything
+    after it becomes markup in the campaign that goes to subscribers.
+
+    Not hypothetical: three live posts already carry a bare `&` in their
+    og:image:alt ("Food & Booze", "Hen & Chickens Pub Grill", "Tech & AI"), which
+    is already invalid inside an attribute. One `"` in any alt text or title turns
+    that from invalid into injectable. No test in this file or the sender's
+    supplied a value containing `"`, `<`, `>` or `&`, which is why it survived
+    every round.
+    """
+    hostile = 'A "quoted" alt <script>alert(1)</script> & more'
+    out = nr.render(
+        '<img src="%%HERO_URL%%" alt="%%HERO_ALT%%" width="600">',
+        dict(FULL, HERO_ALT=hostile),
+    )
+
+    assert out.count('"') == 6, (
+        f"the attribute quoting is broken, so markup escaped into the email: {out}"
+    )
+    assert "<script>" not in out, "a tag from post metadata reached the delivered HTML"
+    assert "&lt;script&gt;" in out
+    assert "&quot;quoted&quot;" in out
+    assert "&amp; more" in out
+
+
+def test_an_ampersand_in_the_title_is_encoded_not_passed_through():
+    """The case the corpus already contains. A bare `&` in HTML text is invalid and
+    a mail client may render the following characters as a mangled entity."""
+    out = nr.render("<p>%%POST_TITLE%%</p>", dict(FULL, POST_TITLE="Hen & Chickens"))
+    assert out == "<p>Hen &amp; Chickens</p>"
+
+
+def test_the_brevo_merge_tags_survive_escaping_untouched():
+    """The two values that MUST reach Brevo byte-exact.
+
+    `{{ contact.FIRSTNAME }}` and `{{ unsubscribe }}` are resolved by the provider,
+    so an escaped brace or space would silently stop personalisation and, worse,
+    break the unsubscribe link. Neither contains a character html.escape touches,
+    but that is a property worth pinning rather than assuming, because it is the
+    one thing this change could have broken.
+    """
+    out = nr.render(
+        '<p>%%FIRSTNAME%%</p><a href="%%UNSUBSCRIBE_URL%%">out</a>',
+        dict(FULL, FIRSTNAME="{{ contact.FIRSTNAME }}", UNSUBSCRIBE_URL="{{ unsubscribe }}"),
+    )
+    assert "<p>{{ contact.FIRSTNAME }}</p>" in out
+    assert '<a href="{{ unsubscribe }}">' in out
+
+
 def test_a_token_inside_a_single_value_is_left_alone():
     """The other direction of the same block, and the one a last-wins bug breaks.
 
@@ -201,7 +256,15 @@ def test_every_preview_value_is_real_copy_and_reaches_the_output():
     assert set(nr.PREVIEW_VALUES) == set(nr.PLACEHOLDERS)
     for key, value in nr.PREVIEW_VALUES.items():
         assert value.strip(), f"{key} is blank, so the preview shows nothing for it"
-        assert value in out, f"{key}'s value never reached the rendered preview"
+        # Compared against the ESCAPED form, because that is what the renderer now
+        # emits. The sample excerpt contains an apostrophe, so a raw comparison
+        # fails here for the right reason: `quote=True` escapes it. Kept strict
+        # rather than narrowed to the four attribute-breaking characters, so the
+        # escaping stays correct if any placeholder is ever moved into a
+        # single-quoted attribute.
+        assert html.escape(value, quote=True) in out, (
+            f"{key}'s value never reached the rendered preview"
+        )
     assert nr.PREVIEW_VALUES["POST_URL"].startswith("https://hoiboy.uk/blogs/")
 
 

@@ -17,6 +17,7 @@ carries inert placeholders and the SENDER emits the real merge tag as the VALUE 
 from __future__ import annotations
 
 import argparse
+import html
 import re
 import sys
 from pathlib import Path
@@ -110,7 +111,24 @@ def render(template_text: str, values: dict[str, str]) -> str:
     # template. Re-expanding it would let post content reach into the placeholder
     # contract, so a title containing token-looking text is passed through as the
     # literal characters the author wrote.
-    out = _PLACEHOLDER_RE.sub(lambda m: values[m.group(1)], template_text)
+    #
+    # ESCAPED, because every value lands in HTML and some of them land inside a
+    # double-quoted ATTRIBUTE. email.html:102 is `alt="%%HERO_ALT%%"`, and
+    # `_PostExtractor` runs with convert_charrefs=True, so an og:image:alt written
+    # as `&quot;` arrives here as a literal `"` and closes the attribute early:
+    # everything after it becomes markup in the delivered campaign. Measured, not
+    # imagined -- the live corpus already carries a bare `&` in three og:image:alt
+    # values ("Food & Booze", "Hen & Chickens Pub Grill", "Tech & AI"), which is
+    # already invalid inside an attribute; a single `"` in any alt text or title
+    # turns that from invalid into injectable. Found by Ralph round 7 tier 2.
+    #
+    # quote=True so `"` becomes `&quot;`. Safe for all eight values: the two Brevo
+    # merge tags contain none of the escaped characters and pass through untouched,
+    # and `&` in a URL becoming `&amp;` is the CORRECT encoding for an href, which
+    # every client decodes back.
+    out = _PLACEHOLDER_RE.sub(
+        lambda m: html.escape(values[m.group(1)], quote=True), template_text
+    )
 
     # Defence in depth. The checks above already guarantee every TEMPLATE token had
     # a value, so anything surviving here must have arrived inside a value. That is
