@@ -1722,3 +1722,105 @@ def test_every_call_the_two_commands_make_is_the_endpoint_it_claims(
     assert [
         endpoint_of(*c.args[:2]) for c in send_transport.call_args_list
     ] == ["campaign_get", "send_now"]
+
+
+# --------------------------------------------------------------------------
+# What each value in the payload map actually IS (blog-priv#81 class sweep)
+#
+# `build_html`'s eight-entry value map and `campaign_payload`'s thirteen fields
+# were checked for PRESENCE and almost never for CONTENT, so five of the six
+# entries could be fed the wrong post field with the suite green. The recurring
+# shape: an assertion that a value is somewhere in the 5KB of htmlContent, which
+# a substring of the wrong field satisfies.
+# --------------------------------------------------------------------------
+
+
+def created_payload(transport: mock.Mock) -> dict:
+    return [
+        c for c in transport.call_args_list if endpoint_of(*c.args[:2]) == "create"
+    ][0].kwargs["json"]
+
+
+def test_the_email_body_carries_the_post_title(isolated: Path) -> None:
+    """Nothing asserted the title reached the BODY, only the subject line.
+
+    Feeding POST_TITLE the excerpt instead survived: `payload["subject"] == TITLE`
+    still held (a different field), and `EXCERPT in htmlContent` still held (now
+    twice over). The message would contradict itself, with the subject saying one
+    thing and the largest element in the email saying another.
+    """
+    transport = ok_transport()
+    prepare_then_confirmation(isolated, transport)
+    body = created_payload(transport)["htmlContent"]
+    assert TITLE in body, "the post title is the 24px headline, not just the subject"
+    assert body.count(TITLE) >= 2, (
+        "the title fills both POST_TITLE and HERO_ALT, so a single occurrence means "
+        "one of them is being fed something else"
+    )
+
+
+def test_the_email_body_carries_a_human_date_not_a_machine_one(isolated: Path) -> None:
+    """The exact tested-the-helper-not-the-wiring shape this workstream keeps hitting.
+
+    Ralph round 5 found `human_date` had no test at all and added two, both of which
+    still pass when the CALL is removed and POST_DATE is fed the raw ISO stamp
+    instead. The helper is proved; its use was not. A reader would see
+    "2026-06-04T12:00:00+01:00" where the design says "4 June 2026".
+    """
+    transport = ok_transport()
+    prepare_then_confirmation(isolated, transport)
+    body = created_payload(transport)["htmlContent"]
+    assert sn.human_date(PUBLISHED) in body
+    assert PUBLISHED not in body, "the raw ISO timestamp is not reader-facing copy"
+
+
+def test_every_link_to_the_post_is_the_canonical_url_exactly(isolated: Path) -> None:
+    """Why an `in` check could not catch POST_URL being fed the hero image.
+
+    The hero is `https://hoiboy.uk/blogs/<slug>/hero_hu_deadbeef.jpg`, which CONTAINS
+    the canonical `https://hoiboy.uk/blogs/<slug>/` as a prefix. So the existing
+    membership assertion stayed green while every link in the email pointed at a
+    .jpg and the reader had no way to the post at all.
+
+    Counted on the exact href, and pinned at three, because the template carries
+    three (hero image, CTA button, plain-text fallback) and repointing any ONE of
+    them leaves the other two matching.
+    """
+    transport = ok_transport()
+    prepare_then_confirmation(isolated, transport)
+    body = created_payload(transport)["htmlContent"]
+    assert body.count(f'href="https://hoiboy.uk/blogs/{SLUG}/"') == 3
+
+
+def test_the_campaign_name_key_is_the_one_brevo_reads(isolated: Path) -> None:
+    """`campaign_name` is thoroughly tested as a FUNCTION and its result reached
+    no asserted key, so `"name"` could be renamed to `"campaignName"` or dropped
+    entirely with the suite green. It is required by the create call, so the real
+    consequence is a 400 the tests cannot see."""
+    transport = ok_transport()
+    prepare_then_confirmation(isolated, transport)
+    assert created_payload(transport)["name"] == f"blog-{SLUG}-2026-06-04"
+
+
+def test_the_inbox_preview_line_is_truncated_where_the_code_says(
+    isolated: Path,
+) -> None:
+    """The cap was unobservable because the fixture made it unreachable.
+
+    Module EXCERPT is 68 characters, so `[:150]` was the identity on every existing
+    test and both directions of the bound survived. It is not theoretical: measured
+    on the real corpus, 39 of 97 post descriptions run past 150 characters, so this
+    truncation is live for 40% of what will actually be sent. previewText is the
+    line every mail client renders next to the subject.
+    """
+    long_excerpt = "Ten chars." * 30  # 300 characters
+    assert len(long_excerpt) == 300
+    write_page(isolated, "long-excerpt-post", excerpt=long_excerpt)
+
+    transport = ok_transport()
+    with mock.patch.object(sn, "_api_call", transport):
+        assert sn.prepare("long-excerpt-post", sn.STATE_FILE) == 0
+
+    preview_text = created_payload(transport)["previewText"]
+    assert len(preview_text) == 150
+    assert preview_text == long_excerpt[:150]
