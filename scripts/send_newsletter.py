@@ -626,7 +626,13 @@ def _api_call(
 
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
-            raw = response.read().decode("utf-8") or "{}"
+            # One emptiness guard, not two. This line carried `or "{}"` as well, and
+            # the pair made each other untestable: with both present, deleting either
+            # one changed no behaviour, so no test could fail on either and the sweep
+            # reported both as unpinned survivors. They are guarding the same thing --
+            # sendTest and sendNow both answer 204 with an EMPTY body -- so the
+            # redundant half is removed and the ternary now has a killing test.
+            raw = response.read().decode("utf-8")
             return response.status, _json.loads(raw) if raw.strip() else {}
     except urllib.error.HTTPError as exc:
         raw = exc.read().decode("utf-8", errors="replace")
