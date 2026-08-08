@@ -1127,6 +1127,46 @@ def test_header_and_footer_are_non_empty_because_brevo_rejects_empty(
     assert "[DEFAULT_FOOTER]" not in payload["footer"]
 
 
+def test_the_footer_carries_the_sender_identity_the_law_requires(
+    isolated: Path,
+) -> None:
+    """The footer was proven by everything EXCEPT the thing that matters.
+
+    Between them the footer tests asserted: the key is present, it is a non-empty
+    string, it is not Brevo's [DEFAULT_FOOTER] sentinel, and it carries the
+    unsubscribe merge tag. Four properties ADJACENT to the sender-identity
+    disclosure, and none of them it. Measured by runtime rebind, positive control
+    killed in the same batch:
+
+      legal text dropped, unsubscribe kept   133 passed   SURVIVED
+      company number changed to 99999999     133 passed   SURVIVED
+      company name dropped entirely          133 passed   SURVIVED
+      CONTROL unsubscribe href broken        1 failed     caught
+
+    Identifying the sender is a legal requirement on a marketing email, not
+    styling, and the operator's cite-or-cut check sourced this exact wording
+    against content/hire-hoi/ai-consultancy/work-with-hoi/index.md:177. A refactor
+    that reconstructed the footer could drop it with the whole suite and CI green.
+
+    Ralph round 7 restart 6 tier 2. Ninth instance of this round's one class: a
+    proof satisfied by something adjacent to the property it claims to check.
+
+    The literals are written out rather than referenced through the constant, for
+    the reason the FIRSTNAME and unsubscribe tests give: asserting
+    `sn.CAMPAIGN_FOOTER in payload["footer"]` passes under every mutation above,
+    because the constant and the payload move together.
+    """
+    transport = ok_transport()
+    prepare_then_confirmation(isolated, transport)
+    footer = [
+        c for c in transport.call_args_list if c.args[1] == "/v3/emailCampaigns"
+    ][0].kwargs["json"]["footer"]
+
+    assert "HOIBOY AI LTD" in footer, f"the sender must be named: {footer!r}"
+    assert "registered in England and Wales" in footer, footer
+    assert "17211412" in footer, f"the company number must be present: {footer!r}"
+
+
 def test_the_unsubscribe_page_is_always_set_explicitly(isolated: Path) -> None:
     """Set, not inherited, and shaped the way the API actually validates.
 
