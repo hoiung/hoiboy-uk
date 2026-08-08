@@ -63,7 +63,26 @@ PLACEHOLDERS = frozenset(
 
 
 class PlaceholderError(RuntimeError):
-    """Raised loudly rather than shipping a half-substituted email."""
+    """Raised loudly rather than shipping a half-substituted email.
+
+    THE BASE CLASS IS NOT LOAD-BEARING, and that is deliberate rather than an
+    oversight, so a mutation swapping `RuntimeError` for any other builtin is an
+    EQUIVALENT MUTANT no test can kill. Recorded here because Ralph round 7 tier 2
+    went looking for this reasoning, could not find it written down anywhere, and
+    had to re-derive it.
+
+    It used to matter, and wrongly: `NewsletterError` is also a RuntimeError, so
+    the two are SIBLINGS, and `send_newsletter.main()`'s `except NewsletterError`
+    did not catch this at all. Every refusal below escaped as a raw traceback with
+    no `_log("fatal")` audit line. The fix was to catch this type BY NAME at both
+    call sites (`send_newsletter.py` build_html, and `preview()` in this file), and
+    once both do that the base class stops carrying any behaviour.
+
+    Verified rather than assumed: `grep -rn "except RuntimeError" scripts/ tests/`
+    returns two hits, both unrelated (`test_404.py`, `check-public-repo-secrets.py`),
+    and neither touches the newsletter modules. Re-run that grep before relying on
+    this note.
+    """
 
 
 def tokens_in(text: str) -> set[str]:
