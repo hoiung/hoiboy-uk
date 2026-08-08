@@ -97,6 +97,74 @@ def failures(text: str) -> list[str]:
     if "#c0533a" not in text.lower():
         out.append("the terracotta accent #c0533a is absent; it must be a literal hex, not a token")
 
+    # ---------------------------------------------------------------------
+    # The template as DATA, not as construction (blog-priv#81, class sweep).
+    #
+    # Everything above checks how the email is BUILT. Nothing checked what it
+    # SAYS or where it POINTS, and a workflow sweep of the template as an
+    # artefact found fourteen mutations that survived the whole suite. The
+    # worst inverted the consent promise below; the rest silently broke the
+    # unsubscribe control, the call to action, and the privacy link.
+    # ---------------------------------------------------------------------
+
+    # The operator's requirement, in his own words: "you're making it sound like I
+    # will spam them with HOIBOY AI LTD services. it needs to be more about blog
+    # posts." The sentence below is what that turned into, and it is a PROMISE to
+    # every subscriber. Rewriting it to admit services mail survived every test.
+    if "We do not send anything about" not in text:
+        out.append(
+            "the footer no longer promises that this list is used ONLY for new posts. "
+            "That sentence is a commitment made to every subscriber and is not "
+            "editorial: widening it to admit services or product mail needs fresh "
+            "consent, per content/legal/privacy/index.md:77"
+        )
+    for admission in ("We may also send", "our latest offers", "news about our services"):
+        if admission in text:
+            out.append(
+                f"the footer now admits sending non-post mail ({admission!r}); the list "
+                f"was collected on a blog-posts-only promise"
+            )
+
+    # A reader must be able to SEE the way out. The href surviving is not enough:
+    # colouring the anchor white or shrinking it to 1px keeps every href assertion
+    # green while making the control invisible, which is a dark pattern and a PECR
+    # problem, not a styling choice.
+    unsub = re.search(r'<a href="%%UNSUBSCRIBE_URL%%"[^>]*>', text)
+    if unsub is None:
+        out.append("no <a> wrapping %%UNSUBSCRIBE_URL%%; the one-click control must be a link")
+    else:
+        attrs = unsub.group(0)
+        if "#c0533a" not in attrs.lower():
+            out.append("the unsubscribe link does not carry the accent colour; it must be visible")
+        if re.search(r"font-size:\s*[0-3]px", attrs) or "#ffffff" in attrs.lower():
+            out.append("the unsubscribe link is styled to be invisible; that is a dark pattern")
+
+    # Where the reader is sent. The CTA repointed at the site root, and the privacy
+    # link repointed at a path that 404s, both survived: no link checker reads
+    # layouts/ (lychee is scoped to ./**/*.md and validate_internal_links.py to
+    # content/), so these are the only assertion they get.
+    # Three separate anchors carry the reader to the post: the hero image, the CTA
+    # button, and the plain-text fallback. A presence check is NOT enough, because
+    # repointing any ONE of them leaves the other two matching. The sweep repointed
+    # the button at the site root and every assertion stayed green.
+    post_links = text.count('<a href="%%POST_URL%%"')
+    if post_links < 3:
+        out.append(
+            f"only {post_links} of the 3 post links point at %%POST_URL%% (hero image, "
+            f"'Read the full post' button, plain-text fallback); one has been repointed "
+            f"and readers land somewhere else"
+        )
+    cta = re.search(r'<a href="([^"]*)"[^>]*>Read the full post</a>', text)
+    if cta is None:
+        out.append("no 'Read the full post' call to action found")
+    elif cta.group(1) != "%%POST_URL%%":
+        out.append(
+            f"the call to action points at {cta.group(1)!r}, not %%POST_URL%%; every "
+            f"reader who clicks the button lands on the wrong page"
+        )
+    if "https://hoiboy.uk/legal/privacy/" not in text:
+        out.append("the privacy-notice link is not the published URL https://hoiboy.uk/legal/privacy/")
+
     return out
 
 

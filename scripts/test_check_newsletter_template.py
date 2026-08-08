@@ -14,6 +14,7 @@ makes it scan nothing and print OK.
 
 from __future__ import annotations
 
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -105,6 +106,101 @@ def test_too_few_font_declarations_are_caught(clean):
     problems = gate.failures(stripped)
     assert any("font-family declaration" in p for p in problems), problems
     assert any("at least 3" in p for p in problems), problems
+
+
+def test_inverting_the_consent_promise_is_caught(clean):
+    """The most serious thing the class sweep found, and it is not a construction bug.
+
+    The footer promises: "That is the only thing this list is used for. We do not
+    send anything about our services, our consultancy or our products." A workflow
+    sweep of the template AS DATA rewrote that into "We may also send occasional news
+    about our services, our consultancy and our products" and it SURVIVED the whole
+    suite, including the consent-version harness from #56.
+
+    This is the operator's requirement in his own words: "you're making it sound like
+    I will spam them with HOIBOY AI LTD services. it needs to be more about blog
+    posts." The list was collected on a posts-only promise, so widening it is a
+    consent question, not an editorial one (content/legal/privacy/index.md:77).
+
+    Both directions are checked, because deleting the promise and contradicting it
+    are different edits with the same effect on the reader.
+    """
+    dropped = clean.replace(
+        "We do not send anything about\n            our services, our consultancy or our products.",
+        "",
+    )
+    assert dropped != clean, "fixture must actually remove the promise"
+    assert any("used ONLY for new posts" in p for p in gate.failures(dropped))
+
+    inverted = clean.replace(
+        "We do not send anything about",
+        "We may also send occasional news about",
+    )
+    problems = gate.failures(inverted)
+    assert any("admits sending non-post mail" in p for p in problems), problems
+
+
+def test_an_invisible_unsubscribe_link_is_caught(clean):
+    """Keeping the href while hiding the control passes every href assertion.
+
+    The sweep coloured the anchor white and shrank it to 1px. %%UNSUBSCRIBE_URL%% was
+    still present, so the merge-tag test stayed green, and the reader had no visible
+    way out. That is a dark pattern and a PECR problem rather than a styling choice.
+    """
+    hidden = clean.replace(
+        '<a href="%%UNSUBSCRIBE_URL%%" style="color:#c0533a;">',
+        '<a href="%%UNSUBSCRIBE_URL%%" style="color:#ffffff;font-size:1px;">',
+    )
+    assert hidden != clean, "fixture must actually restyle the anchor"
+    problems = gate.failures(hidden)
+    assert any("invisible" in p or "visible" in p for p in problems), problems
+
+
+def test_repointing_the_call_to_action_is_caught(clean):
+    """%%POST_URL%% appears three times, so two of them survive a broken button.
+
+    That is why a presence check is not enough and this test targets the BUTTON.
+    Writing it the lazy way (replace the first occurrence) hits the hero image
+    instead and trips a different rule, which is how the too-weak version of this
+    gate rule was caught: the test failed for the right reason before the rule did.
+    """
+    button = re.search(r'<a href="%%POST_URL%%"[^>]*>Read the full post</a>', clean)
+    assert button is not None, "the CTA button is not in the shipped template"
+    broken = clean.replace(
+        button.group(0),
+        button.group(0).replace('href="%%POST_URL%%"', 'href="https://hoiboy.uk/"'),
+    )
+    assert broken != clean, "fixture must actually repoint the button"
+
+    problems = gate.failures(broken)
+    assert any("call to action points at" in p for p in problems), problems
+
+
+def test_repointing_any_one_of_the_three_post_links_is_caught(clean):
+    """The hero and the plain-text fallback matter too, not just the button."""
+    hero = clean.replace(
+        '<a href="%%POST_URL%%" style="display:block;',
+        '<a href="https://hoiboy.uk/" style="display:block;',
+        1,
+    )
+    assert hero != clean, "fixture must actually repoint the hero link"
+    problems = gate.failures(hero)
+    assert any("of the 3 post links" in p for p in problems), problems
+
+
+def test_a_privacy_link_that_404s_is_caught(clean):
+    """Nothing else reads layouts/.
+
+    lychee.toml is scoped to './**/*.md' and scripts/validate_internal_links.py to
+    content/, so a dead link in the email template is checked by no other gate in
+    this repo. The sweep repointed it at /legal/privacy-notice/ and nothing noticed.
+    """
+    broken = clean.replace(
+        "https://hoiboy.uk/legal/privacy/", "https://hoiboy.uk/legal/privacy-notice/"
+    )
+    assert broken != clean
+    problems = gate.failures(broken)
+    assert any("privacy-notice link" in p or "privacy" in p for p in problems), problems
 
 
 def test_missing_content_column_is_caught(clean):
