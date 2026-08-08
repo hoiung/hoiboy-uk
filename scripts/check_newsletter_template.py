@@ -31,7 +31,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from gate_coverage import require_examined
+from gate_coverage import require_examined, require_readable
+from newsletter_render import strip_comments
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE = REPO_ROOT / "layouts" / "_partials" / "newsletter" / "email.html"
@@ -57,8 +58,29 @@ _GO_TEMPLATE_ACTION = re.compile(r"\{\{")
 
 
 def failures(text: str) -> list[str]:
-    """Every contract violation in the template, so one run reports them all."""
+    """Every contract violation in the template, so one run reports them all.
+
+    TWO SURFACES, AND THE SPLIT IS THE WHOLE POINT OF THIS FUNCTION.
+
+    `text` is the file as written. `body` is the file with html comments removed,
+    which is the markup a mail client actually receives (the sender strips comments
+    before building an email, scripts/newsletter_render.py:87).
+
+    Every rule below that asks "does the EMAIL have property X" now reads `body`,
+    because the template DOCUMENTS ITSELF: ~50 lines of engineering notes at the
+    top quote the very literals these rules search for. Measured on the shipped
+    file: `role="presentation"` appears 5 times in the raw text and 4 in the markup,
+    `#c0533a` 10 times and 9. So a whole-file substring search was satisfied by the
+    prose before a single real table or link was read, and the class sweep confirmed
+    the consequence: every one of the four tables could become role="none", and
+    every one of the nine accent colours could go black, with this gate green.
+
+    The rules that ask about the FILE rather than the email keep reading `text`:
+    the iamhoi markers ARE comments, and the Go-template rule exists precisely
+    because Hugo parses inside comments too.
+    """
     out: list[str] = []
+    body = strip_comments(text)
 
     opens, closes = text.count(MARKER_OPEN), text.count(MARKER_CLOSE)
     if opens == 0:
@@ -77,7 +99,7 @@ def failures(text: str) -> list[str]:
             "and let the sender emit the real Brevo tag."
         )
 
-    decls = _FONT_DECL.findall(text)
+    decls = _FONT_DECL.findall(body)
     if len(decls) < 3:
         out.append(f"only {len(decls)} font-family declaration(s); the template should carry at least 3")
     bare = [d for d in decls if not _GENERIC_TAIL.search(d)]
@@ -87,14 +109,37 @@ def failures(text: str) -> list[str]:
             f"so the email has no fallback where the face is absent: {bare[:3]}"
         )
 
-    if _UNSUPPORTED_CSS.search(text):
+    if _UNSUPPORTED_CSS.search(body):
         out.append("uses a CSS custom property or flex/grid; none survives the Outlook Word engine")
 
-    if 'role="presentation"' not in text:
-        out.append('no <table role="presentation">; the layout must be table-based for mail clients')
-    if "max-width:600px" not in text:
-        out.append("no 600px content column")
-    if "#c0533a" not in text.lower():
+    # EVERY table, not "at least one somewhere in the file". A whole-file
+    # membership test passes while three of four tables carry role="none", and the
+    # outer table is the one that matters most: a screen reader announces the whole
+    # email as a data table if it is missing there.
+    tables = body.count("<table")
+    presentation = body.count('role="presentation"')
+    if presentation < tables:
+        out.append(
+            f'only {presentation} of {tables} <table> elements carry '
+            f'role="presentation"; every one must, or a screen reader announces the '
+            f"layout scaffolding as tabular data"
+        )
+    if tables == 0:
+        out.append("no <table> in the markup; the layout must be table-based for mail clients")
+
+    # Matched on a TABLE carrying the width, not on the string anywhere in the
+    # markup. `max-width:600px` occurs twice: once on the content column and once
+    # on the hero <img>, so a plain membership test was satisfied by the image
+    # while the column itself went full-bleed. Same vacuity as the comments, one
+    # level in -- the rule was being answered by something that is not the thing it
+    # asks about.
+    if not re.search(r"<table[^>]*max-width:600px", body):
+        out.append(
+            "no <table> carries max-width:600px; the content column is the width "
+            "every mail client's preview pane is built around, and without it the "
+            "email renders full-bleed in Outlook"
+        )
+    if "#c0533a" not in body.lower():
         out.append("the terracotta accent #c0533a is absent; it must be a literal hex, not a token")
 
     # ---------------------------------------------------------------------
@@ -111,7 +156,7 @@ def failures(text: str) -> list[str]:
     # will spam them with HOIBOY AI LTD services. it needs to be more about blog
     # posts." The sentence below is what that turned into, and it is a PROMISE to
     # every subscriber. Rewriting it to admit services mail survived every test.
-    if "We do not send anything about" not in text:
+    if "We do not send anything about" not in body:
         out.append(
             "the footer no longer promises that this list is used ONLY for new posts. "
             "That sentence is a commitment made to every subscriber and is not "
@@ -119,7 +164,7 @@ def failures(text: str) -> list[str]:
             "consent, per content/legal/privacy/index.md:77"
         )
     for admission in ("We may also send", "our latest offers", "news about our services"):
-        if admission in text:
+        if admission in body:
             out.append(
                 f"the footer now admits sending non-post mail ({admission!r}); the list "
                 f"was collected on a blog-posts-only promise"
@@ -129,7 +174,7 @@ def failures(text: str) -> list[str]:
     # colouring the anchor white or shrinking it to 1px keeps every href assertion
     # green while making the control invisible, which is a dark pattern and a PECR
     # problem, not a styling choice.
-    unsub = re.search(r'<a href="%%UNSUBSCRIBE_URL%%"[^>]*>', text)
+    unsub = re.search(r'<a href="%%UNSUBSCRIBE_URL%%"[^>]*>', body)
     if unsub is None:
         out.append("no <a> wrapping %%UNSUBSCRIBE_URL%%; the one-click control must be a link")
     else:
@@ -147,14 +192,14 @@ def failures(text: str) -> list[str]:
     # button, and the plain-text fallback. A presence check is NOT enough, because
     # repointing any ONE of them leaves the other two matching. The sweep repointed
     # the button at the site root and every assertion stayed green.
-    post_links = text.count('<a href="%%POST_URL%%"')
+    post_links = body.count('<a href="%%POST_URL%%"')
     if post_links < 3:
         out.append(
             f"only {post_links} of the 3 post links point at %%POST_URL%% (hero image, "
             f"'Read the full post' button, plain-text fallback); one has been repointed "
             f"and readers land somewhere else"
         )
-    cta = re.search(r'<a href="([^"]*)"[^>]*>Read the full post</a>', text)
+    cta = re.search(r'<a href="([^"]*)"[^>]*>Read the full post</a>', body)
     if cta is None:
         out.append("no 'Read the full post' call to action found")
     elif cta.group(1) != "%%POST_URL%%":
@@ -162,8 +207,20 @@ def failures(text: str) -> list[str]:
             f"the call to action points at {cta.group(1)!r}, not %%POST_URL%%; every "
             f"reader who clicks the button lands on the wrong page"
         )
-    if "https://hoiboy.uk/legal/privacy/" not in text:
+    if "https://hoiboy.uk/legal/privacy/" not in body:
         out.append("the privacy-notice link is not the published URL https://hoiboy.uk/legal/privacy/")
+
+    # The accent has to be on the thing the reader clicks, not merely somewhere in
+    # the file. Stripping comments above already stops the prose from satisfying
+    # the colour rule; this names the one element where losing it is most visible.
+    cta_cell = re.search(r'<td[^>]*bgcolor="([^"]*)"[^>]*>\s*<a[^>]*>Read the full post', body)
+    if cta_cell is None:
+        out.append("the call-to-action button has no bgcolor cell; it will render as bare text")
+    elif cta_cell.group(1).lower() != "#c0533a":
+        out.append(
+            f"the call-to-action button is {cta_cell.group(1)!r}, not the terracotta "
+            f"accent #c0533a"
+        )
 
     return out
 
@@ -180,7 +237,23 @@ def main() -> int:
         ),
     )
 
-    problems = failures(TEMPLATE.read_text(encoding="utf-8"))
+    try:
+        raw = TEMPLATE.read_text(encoding="utf-8")
+    except (OSError, ValueError) as exc:
+        # A template that cannot be decoded used to kill this gate with a raw
+        # UnicodeDecodeError traceback. gate_coverage ships require_readable for
+        # exactly this case, and its reasoning applies here in full: a gate cannot
+        # assert an absence in a surface it failed to parse, so an unreadable
+        # template is a COVERAGE failure with a remedy rather than a crash.
+        require_readable(
+            "check_newsletter_template",
+            TEMPLATE,
+            exc,
+            remedy="Re-save the template as UTF-8, or restore it from git.",
+        )
+        raise  # unreachable: require_readable always raises
+
+    problems = failures(raw)
     if problems:
         print(f"newsletter-template: {len(problems)} contract violation(s)", file=sys.stderr)
         for p in problems:
