@@ -25,3 +25,11 @@ pillow
 #   playwright install chromium
 # CI does not install either; the browser half runs in the pre-publish lane.
 playwright
+
+# scripts/check_feed_markers.py parses every generated feed to prove it is
+# well-formed XML, which is the only check that can see a dropped
+# transform.XMLEscape (a conformant reader rejects the whole document rather
+# than degrading). The files parsed are this repo's own build output, not
+# untrusted input, but the stdlib parser is exposed to entity expansion by
+# default and the hardened drop-in costs one import.
+defusedxml

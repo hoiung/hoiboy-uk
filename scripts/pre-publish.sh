@@ -266,6 +266,18 @@ run_check "subscribe-placement" python3 scripts/check_subscribe_placement.py --b
 #      and a private page in index.xml is delivered to subscribers as a post.
 run_check "noindex-sitemap-feed" python3 scripts/check_noindex_frontmatter.py --built public
 
+# 7a4. Nothing invisible on the page may arrive as visible text in a feed, and
+#      every feed must still parse. Hugo escapes .Summary into <description>, so
+#      an html comment surviving the strip in layouts/_default/rss.xml reaches a
+#      reader as text: blog-priv#81 found an editorial WORDING directive naming
+#      the operator's SEO split, CV and LinkedIn shipping as the first visible
+#      text of an item in two feeds. Belongs HERE for the same reason as 7a3:
+#      this is the only runner that rebuilds first, and a feed check is about the
+#      tree being published rather than whatever public/ was lying around. The
+#      XML parse is the half that catches a dropped transform.XMLEscape, which
+#      makes a conformant reader reject the whole document.
+run_check "feed-markers" python3 scripts/check_feed_markers.py
+
 # 7b. 404 gate: the build must emit a root 404.html, its content block must have
 #     actually rendered, and every navigation link ON that page must resolve.
 #     Cloudflare Pages returns a 404 status only when that file exists; without
