@@ -11,7 +11,7 @@ description: "A 3:45am question I have had for over 20 years. My body wants morn
 
 It is 3:45am and I am standing in my kitchen cooking a midnight snack.
 
-During these moments, my active brain ponders what is the meaning of life. sometimes... Then I start asking mysself, why do men feel like they need to prowl at night and try their luck.
+During these moments, my active brain ponders what is the meaning of life. sometimes... Then I start asking myself, why do men feel like they need to prowl at night and try their luck.
 
 It's been a long night. Good food earlier. Lots of drinking. Tons of karaoke. Dancing. Then a good cycle home to sober up, which is why I am now making something rich in every nutrient you can think of instead of sleeping like a sensible person. And while I am standing here waiting on the pan, I am thinking about the same thing I have been confused about for over 20 years.
 
@@ -49,7 +49,7 @@ A study published in the [Journal of Circadian Rhythms](https://doi.org/10.1186/
 
 Here is the part that made me sit up. I have pondered WHY for years, and they actually went and asked people that. The top answers were work and family schedule restrictions, and partner availability. Only about a quarter of people put their timing down to actually wanting sex at that hour. The author's conclusion was that the pattern comes from what he calls environmental forcing. Not biology. Logistics.
 
-Which is what I suspected all along. It is not that our bodies want it at night. It is that night is the only gap left in the diary. Thanks work 9 to 5, you fucked up our rhythem.
+Which is what I suspected all along. It is not that our bodies want it at night. It is that night is the only gap left in the diary. Thanks work 9 to 5, you fucked up our rhythm.
 
 Now don't get me wrong, I am not going to oversell this. It was a small study, a few dozen people, all students in steady relationships. That is a hint, not a settled fact. But it lines up exactly with what my body has been shouting at me since I was a teenager.
 
