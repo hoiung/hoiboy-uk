@@ -906,3 +906,101 @@ def test_a_neutered_built_output_scan_is_not_coverage():
     assert not _build_output_scan_is_gated_in_ci(mutated), (
         "a step that cannot fail the build still counted as coverage."
     )
+
+
+# --------------------------------------------------------------------------
+# .pre-commit-config.yaml as a wiring surface (blog-priv#81, Ralph round 7 tier 2)
+#
+# Every guard above covers ci.yml or pre-publish.sh. NOTHING covered
+# .pre-commit-config.yaml, and the newsletter template gate's only source-time
+# enforcement lives there. Measured: deleting that hook block outright left the
+# whole suite at "974 passed, 1 skipped".
+#
+# Worse, the AC recorded a grep for the literal path
+# `layouts/_partials/newsletter/email.html` as its proof the wiring exists. That
+# literal appears ONLY in a comment: the hook's real `files:` regex escapes the
+# dot, so it does not contain the plain string. The proof would still pass with
+# the hook deleted, as long as the comment survived. That is the "guard tested as
+# text, never as wiring" class this file exists to close, on the one config it
+# had never been pointed at.
+# --------------------------------------------------------------------------
+
+PRE_COMMIT = ROOT / ".pre-commit-config.yaml"
+
+# (hook id, the path its files: regex MUST match)
+PRE_COMMIT_WIRED = [
+    ("check-newsletter-template", "layouts/_partials/newsletter/email.html"),
+    ("check-newsletter-template", "scripts/check_newsletter_template.py"),
+]
+
+
+def _hooks(text: str) -> dict:
+    cfg = yaml.safe_load(text)
+    out = {}
+    for repo in cfg.get("repos", []):
+        for hook in repo.get("hooks", []):
+            out[hook.get("id")] = hook
+    return out
+
+
+@pytest.mark.parametrize("hook_id,must_match", PRE_COMMIT_WIRED)
+def test_a_pre_commit_gate_is_wired_to_the_path_it_claims(hook_id, must_match):
+    """Presence AND reach. A hook whose regex matches nothing is not wiring."""
+    hooks = _hooks(PRE_COMMIT.read_text(encoding="utf-8"))
+    assert hook_id in hooks, (
+        f"{hook_id} is absent from .pre-commit-config.yaml, so the gate has no "
+        f"source-time enforcement at all"
+    )
+    pattern = hooks[hook_id].get("files")
+    assert pattern, f"{hook_id} has no files: pattern, so it never selects anything"
+    assert re.search(pattern, must_match), (
+        f"{hook_id}'s files: regex {pattern!r} does not match {must_match!r}, so "
+        f"editing that file would not run the gate"
+    )
+    assert hooks[hook_id].get("entry"), f"{hook_id} has no entry command"
+
+
+def test_deleting_a_pre_commit_hook_is_caught_by_the_wiring_guard():
+    """Prove the guard above measures wiring rather than text.
+
+    This is the mutation that exposed the gap: with the hook block removed the
+    entire suite stayed green, so the only thing standing between a stripped-marker
+    template and a commit was unguarded.
+    """
+    real = PRE_COMMIT.read_text(encoding="utf-8")
+    hooks = _hooks(real)
+    assert "check-newsletter-template" in hooks
+
+    mutated = re.sub(
+        r"      - id: check-newsletter-template\n(?:        .*\n)+",
+        "",
+        real,
+    )
+    assert mutated != real, "the hook block shape was not found to mutate"
+    assert "check-newsletter-template" not in _hooks(mutated), (
+        "the fixture did not actually remove the hook, so this proves nothing"
+    )
+
+
+def test_the_ac_proof_for_the_template_hook_reads_the_wiring_not_a_comment():
+    """The recorded AC evidence was a grep for a literal that lives in a comment.
+
+    Keeping this assertion here rather than only fixing the AC text, because the
+    next person to audit will re-run the grep. The plain literal genuinely is
+    absent from the active config (the regex escapes the dot), so a proof that
+    depends on finding it is measuring the documentation.
+    """
+    text = PRE_COMMIT.read_text(encoding="utf-8")
+    active = [
+        ln for ln in text.splitlines()
+        if not ln.strip().startswith("#") and "layouts/_partials/newsletter/email.html" in ln
+    ]
+    assert not active, (
+        "the plain literal now appears in ACTIVE config, so the comment explaining "
+        "why it is spelled out separately is stale: re-check the AC proof"
+    )
+    hooks = _hooks(text)
+    assert re.search(
+        hooks["check-newsletter-template"]["files"],
+        "layouts/_partials/newsletter/email.html",
+    ), "the regex is the wiring, and it must match the template path"
