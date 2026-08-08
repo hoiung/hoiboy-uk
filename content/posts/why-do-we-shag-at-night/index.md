@@ -11,7 +11,9 @@ description: "A 3:45am question I have had for over 20 years. My body wants morn
 
 It is 3:45am and I am standing in my kitchen cooking a midnight snack.
 
-Good food earlier. Lots of drinking. Tons of karaoke. Dancing. Then a good cycle home to sober up, which is why I am now making something rich in every nutrient you can think of instead of sleeping like a sensible person. And while I am standing here waiting on the pan, I am thinking about the same thing I have been confused about for over 20 years.
+During these moments, my active brain ponders what is the meaning of life. sometimes... Then I start asking mysself, why do men feel like they need to prowl at night and try their luck.
+
+It's been a long night. Good food earlier. Lots of drinking. Tons of karaoke. Dancing. Then a good cycle home to sober up, which is why I am now making something rich in every nutrient you can think of instead of sleeping like a sensible person. And while I am standing here waiting on the pan, I am thinking about the same thing I have been confused about for over 20 years.
 
 Why does sex have to be at night?
 
@@ -41,7 +43,7 @@ Compare that to the evening version, where you have spent your whole day being d
 
 ## Turns out someone has actually studied this
 
-I have been chewing on this for two decades assuming it was just me being weird. It is not just me, and there is a real paper on it.
+I have been chewing on this for two decades assuming it was just me being weird. And there is a real paper on it.
 
 A study published in the [Journal of Circadian Rhythms](https://doi.org/10.1186/1740-3391-3-4) asked people when they usually had sex. Night came out at 65%. Morning 20%, evening 10%, afternoon 5%. So night wins, easily, no surprise there. But why!?!
 
@@ -73,11 +75,11 @@ That is it. That is the whole objection. Maybe we all need to brush our teeth be
 
 Have sex in the morning.
 
-Shag before the stressful morning meetings, not after the day has already flattened you. You are rested, you can go much longer, and you walk into whatever is coming recharged instead of running on fumes. Everything about that ordering makes more sense to me than the current arrangement.
+Shag before the stressful morning meetings, not after the day has already flattened you. You are rested, you can go much longer, and you walk into whatever is coming recharged instead of running on fumes.
 
 It's like [drinking wine](/blogs/for-the-love-of-wine/). You always drink the best bottle first, after that, it's downhill slide haha.
 
-I would love to hear what other people think on this one, both the male and the female perspective, because I suspect I am missing something obvious. (And for what it is worth, the night-time REM thing is not a men-only feature. The same response was documented in women back in 1970, and a follow-up found it happening in around 95% of REM phases, so whatever the body is doing overnight, it is doing it to everybody.)
+I would love to hear what other people think on this one, both the male and the female perspective, because I suspect I am missing something obvious. (And for what it is worth, that overnight REM response is not a men-only thing. It was documented in women back in 1970, in around 95% of REM phases.)
 
 So is it just me? Or have we all been doing this at the wrong end of the day for our entire adult lives because nobody could find a better slot in the calendar?
 
