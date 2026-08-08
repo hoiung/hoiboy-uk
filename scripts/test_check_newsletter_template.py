@@ -152,6 +152,65 @@ def test_a_marker_pair_full_of_markup_but_no_copy_does_not_satisfy_the_floor(cle
     assert any("characters of prose" in p for p in problems), problems
 
 
+@pytest.mark.parametrize(
+    "channel,fragment",
+    [
+        ("alt", '<img src="x.png" alt="{copy}">'),
+        ("title", '<a href="https://hoiboy.uk/" title="{copy}">x</a>'),
+        ("aria-label", '<span aria-label="{copy}">x</span>'),
+        ("single-quoted alt", "<img src='x.png' alt='{copy}'>"),
+    ],
+)
+def test_copy_smuggled_through_a_readable_attribute_is_caught(clean, channel, fragment):
+    """Deleting a tag deletes its attributes, and two of them carry copy.
+
+    `alt` is not decorative in email: most clients block images by default, so
+    alt text is what the reader actually reads -- and this template already puts
+    real copy there (`alt="%%HERO_ALT%%"`, substituted at send time from the
+    post's og:image:alt). `title` is a tooltip, `aria-label` is what a screen
+    reader announces.
+
+    Measured before the fix: 100 characters appended outside the markers through
+    any of these left the unguarded count at 16 and the gate green. Ralph round 7
+    restart 3 tier 2 reported `alt`; sweeping the class found `title` and the
+    single-quoted form open too, and found that `aria-label` only LOOKED closed
+    because the probe's fixture tripped an unrelated table rule. Hence the
+    assertion below names the marker message specifically -- passing because some
+    other rule fired is how that near-miss happened.
+    """
+    copy = (
+        "This sentence is well over forty characters of ordinary prose and a "
+        "reader can see every word of it."
+    )
+    assert len(copy) > gate.MAX_UNGUARDED_PROSE
+    attacked = clean.rstrip() + "\n" + fragment.format(copy=copy) + "\n"
+    assert attacked != clean, f"the {channel} fixture changed nothing"
+
+    problems = gate.failures(attacked)
+    assert any("OUTSIDE the iamhoi markers" in p for p in problems), (
+        f"copy carried in {channel} outside the markers must be caught by the "
+        f"MARKER rule, not incidentally by another one: {problems}"
+    )
+
+
+def test_stylesheet_text_is_not_counted_as_copy(clean):
+    """The inverse error: a rule that over-counts fails on ordinary edits.
+
+    Tag-stripping removes `<style>` but leaves the CSS between the tags, which
+    would land in the unguarded bucket and fail the gate on a stylesheet nobody
+    reads. The shipped template has no real <style> block, so this guards a
+    future edit rather than a present one.
+    """
+    css = "<style>.wrap{padding:24px}.btn{background:#c0533a;border-radius:2px}</style>"
+    assert len(gate._visible_prose(css)) == 0, gate._visible_prose(css)
+
+    attacked = clean.rstrip() + "\n" + css + "\n"
+    assert attacked != clean
+    assert gate.failures(attacked) == [], (
+        "adding a stylesheet must not fail the marker rule; CSS is not copy"
+    )
+
+
 def test_copy_added_outside_the_markers_is_caught(clean):
     """The case the old rule could not see AT ALL.
 

@@ -75,10 +75,43 @@ _GO_TEMPLATE_ACTION = re.compile(r"\{\{")
 _MARKER_PAIR = re.compile(re.escape(MARKER_OPEN) + r"(.*?)" + re.escape(MARKER_CLOSE), re.S)
 _TAGS = re.compile(r"<[^>]+>")
 
+# Copy reaches the reader through THREE channels, not one, and deleting a tag
+# deletes two of them. `alt` is not decorative in email: most clients block
+# images by default, so alt text is what the reader actually reads. `title` is a
+# tooltip and `aria-label` is what a screen reader announces.
+#
+# Ralph round 7 restart 3 tier 2: an <img alt="..."> of 100 characters appended
+# outside the markers left the unguarded count at 16 and the gate green, because
+# `_TAGS` had already eaten the whole tag. Sweeping the class rather than the one
+# reported channel: `title` and single-quoted `alt` were open the same way, and
+# `aria-label` LOOKED closed only because the probe's fixture happened to trip an
+# unrelated table rule.
+#
+# The list is closed deliberately. `href`/`src`/`style`/`class`/`role` are not
+# copy, and counting them would fail the gate on ordinary markup. Add a channel
+# here only if a reader can READ it, and add its test alongside.
+_VISIBLE_ATTRS = re.compile(
+    r"""\b(?:alt|title|aria-label)\s*=\s*(?:"([^"]*)"|'([^']*)')""", re.I
+)
+
+# Stylesheet and script bodies survive tag-stripping (the tags go, the text
+# between them stays) and would be counted as prose. No reader reads them. The
+# shipped template has no <style> block -- the only `<style` in the file is
+# inside the engineering notes at the top, which `strip_comments` removes -- so
+# this guards a future edit rather than a present one.
+_INERT_ELEMENTS = re.compile(r"<(style|script)\b[^>]*>.*?</\1\s*>", re.I | re.S)
+
 
 def _visible_prose(text: str) -> str:
-    """The words a reader actually sees: comments gone, tags gone, space collapsed."""
-    return " ".join(_TAGS.sub(" ", strip_comments(text)).split())
+    """The words a reader actually sees: text nodes PLUS readable attributes.
+
+    Entity-encoded copy counts as its raw characters, which over-counts rather
+    than under-counts, so an attempt to smuggle copy past the cap as `&#72;&#105;`
+    trips it harder. The failure direction is the safe one.
+    """
+    body = _INERT_ELEMENTS.sub(" ", strip_comments(text))
+    readable = [double or single for double, single in _VISIBLE_ATTRS.findall(body)]
+    return " ".join((_TAGS.sub(" ", body) + " " + " ".join(readable)).split())
 
 
 def _prose_split(text: str) -> tuple[str, str]:
