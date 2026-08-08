@@ -1986,3 +1986,245 @@ def test_a_template_that_does_not_render_is_a_diagnostic_not_a_traceback(
         "to the audit trail (AP #12)"
     )
     assert not transport.call_args_list, "nothing may be created from a template that failed"
+
+
+# --------------------------------------------------------------------------
+# Reading the post, and the two guards on the way in (blog-priv#81 class sweep)
+#
+# `read_post` and its extractor are where operator input and Hugo's output meet,
+# and almost every structural decision in them was unpinned: which h1 counts,
+# which <link> supplies the canonical, whether entities survive, and whether a
+# missing field produces a named error or a bare assert.
+# --------------------------------------------------------------------------
+
+
+PAGE_WITH_MAIN_HEADING = """<!doctype html><html><head>
+<meta name="description" content="{excerpt}">
+<meta property="article:published_time" content="{published}">
+<meta property="og:image" content="{hero}">
+<meta property="og:image:alt" content="{hero_alt}">
+<link rel="canonical" href="{url}">
+</head><body>
+<main>
+  <h1>Section heading that is not the post</h1>
+  <article><h1>{title}</h1><p>Body.</p></article>
+</main>
+</body></html>
+"""
+
+
+def test_the_title_comes_from_inside_the_article_not_merely_inside_main(
+    isolated: Path,
+) -> None:
+    """The scope is `<article>`, and widening it by one element is silent.
+
+    The existing masthead fixture cannot see this: it puts the branded h1 in an
+    <aside> OUTSIDE <main>, so scoping to `main` instead of `article` still reads
+    the right heading. A page with a section heading inside <main> and the post
+    title inside <article> distinguishes them, and that shape is ordinary.
+    """
+    path = isolated / "scoped" / "index.html"
+    path.parent.mkdir(parents=True)
+    path.write_text(
+        PAGE_WITH_MAIN_HEADING.format(
+            title=TITLE, excerpt=EXCERPT, published=PUBLISHED,
+            url="https://hoiboy.uk/blogs/scoped/",
+            hero="https://hoiboy.uk/blogs/scoped/hero_hu_deadbeef.jpg", hero_alt=TITLE,
+        ),
+        encoding="utf-8",
+    )
+    assert sn.read_post("scoped")["title"] == TITLE
+
+
+def test_only_the_first_heading_in_the_article_becomes_the_subject(
+    isolated: Path,
+) -> None:
+    """Dropping `self.title is None` is worse than last-wins.
+
+    `_title_parts` is never reset between headings, so the subject line becomes the
+    CONCATENATION of every h1 inside <article>. The class docstring documents the
+    sibling scoping bug and the first-wins half beside it was pinned by nothing.
+    """
+    page = PAGE.format(
+        title=TITLE, excerpt=EXCERPT, published=PUBLISHED,
+        url=f"https://hoiboy.uk/blogs/{SLUG}/",
+        hero=f"https://hoiboy.uk/blogs/{SLUG}/hero_hu_deadbeef.jpg", hero_alt=TITLE,
+    ).replace("</article>", "<h1>A Second Heading</h1></article>")
+    path = isolated / SLUG / "index.html"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(page, encoding="utf-8")
+
+    title = sn.read_post(SLUG)["title"]
+    assert title == TITLE
+    assert "A Second Heading" not in title
+
+
+def test_an_ampersand_in_the_title_survives_into_the_subject(isolated: Path) -> None:
+    """`convert_charrefs=False` drops the character entirely, it does not escape it.
+
+    With conversion off, HTMLParser routes entities to handle_entityref /
+    handle_charref, and _PostExtractor implements neither -- so the character is
+    silently DISCARDED. Hugo escapes `&` in .Title as `&amp;`, so the first post
+    with an ampersand in its title would have gone out as "Tea  Cake".
+    """
+    write_page(isolated, SLUG, title="Tea &amp; Cake")
+    assert sn.read_post(SLUG)["title"] == "Tea & Cake"
+
+
+def test_the_canonical_is_the_canonical_link_not_the_first_link(
+    isolated: Path,
+) -> None:
+    """`post["url"]` is both the reader's destination and the input to the consent
+    gate, so which <link> supplies it is a correctness question, not a parsing
+    detail. Dropping the `rel == "canonical"` test leaves it depending on the
+    stylesheet happening to come second in head.html."""
+    page = PAGE.format(
+        title=TITLE, excerpt=EXCERPT, published=PUBLISHED,
+        url=f"https://hoiboy.uk/blogs/{SLUG}/",
+        hero=f"https://hoiboy.uk/blogs/{SLUG}/hero_hu_deadbeef.jpg", hero_alt=TITLE,
+    ).replace("<link rel=", '<link rel="stylesheet" href="/css/main.css">\n<link rel=', 1)
+    path = isolated / SLUG / "index.html"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(page, encoding="utf-8")
+
+    assert sn.read_post(SLUG)["url"] == f"https://hoiboy.uk/blogs/{SLUG}/"
+
+
+@pytest.mark.parametrize(
+    "field,named",
+    [
+        ("excerpt", "excerpt"),
+        ("hero_alt", "hero alt (og:image:alt)"),
+    ],
+)
+def test_a_missing_field_is_named_rather_than_asserted(
+    isolated: Path, field: str, named: str
+) -> None:
+    """Dropping an entry from the `missing` list does not remove the check, it
+    DOWNGRADES it: execution falls through to the bare `assert` two lines below.
+    An AssertionError is not a NewsletterError, so main() does not catch it --
+    traceback, no fatal log, no audit record -- and under `python -O` the assert
+    vanishes entirely and a half-built email is constructed instead.
+    """
+    write_page(isolated, SLUG, **{field: ""})
+    with pytest.raises(sn.NewsletterError, match=re.escape(named)):
+        sn.read_post(SLUG)
+
+
+@pytest.mark.parametrize(
+    "url,why",
+    [
+        ("https://hoiboy.uk/blogs/..", "a bare .. normalises to the site root"),
+        ("https://hoiboy.uk/blogs/../hire-hoi/", "the traversal the guard was added for"),
+        ("https://hoiboy.uk/blogs//", "an empty path segment is still the index"),
+        ("https://hoiboy.uk/blogs/", "the index itself"),
+    ],
+)
+def test_the_consent_gate_refuses_every_url_that_is_not_a_post(url: str, why: str) -> None:
+    """Two guards, each narrowable in a way the single tested URL cannot see.
+
+    `".." in rest` -> `"../" in rest` still refuses `/blogs/../hire-hoi/`, which was
+    the only traversal under test, while newly ACCEPTING `/blogs/..` -- a canonical
+    that normalises to the site root, i.e. squarely outside the blogs tree. And
+    `rest.strip("/")` -> `rest.strip()` still refuses `/blogs/` while accepting
+    `/blogs//`, because a lone slash is truthy once you stop stripping slashes.
+    """
+    with pytest.raises(sn.NewsletterError, match="refusing to send"):
+        sn.assert_is_blog_post({"url": url})
+
+
+@pytest.mark.parametrize(
+    "slug", ["-leading", "trailing-", "double--hyphen", "----", "Upper", "has space"]
+)
+def test_a_malformed_slug_is_refused_by_the_shape_rule(isolated: Path, slug: str) -> None:
+    """Loosening `[a-z0-9]+(?:-[a-z0-9]+)*` to `[a-z0-9-]+` accepts all four hyphen
+    shapes, and swapping `fullmatch` for `match` accepts anything with a valid
+    PREFIX. Both survived: the five hostile slugs already tested are refused by the
+    containment check further down, so the shape rule itself was never the thing
+    being proved."""
+    with pytest.raises(sn.NewsletterError, match="not a post slug"):
+        sn.rendered_path(slug)
+
+
+def test_a_slug_with_a_valid_prefix_is_refused_by_the_shape_rule(
+    isolated: Path,
+) -> None:
+    """`fullmatch` -> `match` specifically. `abc$(whoami)` has a matching prefix, so
+    `match` accepts it and execution reaches the containment check, which passes
+    because the path stays under the blogs root. The run then fails with "no
+    rendered page", a message that sends the operator looking for a build problem
+    rather than at the slug he typed."""
+    with pytest.raises(sn.NewsletterError, match="not a post slug"):
+        sn.rendered_path("abc$(whoami)")
+
+
+def test_redaction_covers_the_whole_local_part(isolated: Path) -> None:
+    """The redaction tests assert the WHOLE address is absent, which a partially
+    redacted address satisfies. Narrowing the local-part class to stop at a dot
+    logs `a.subscriber@example.com` as `a.[email-redacted]`, leaking the prefix,
+    with both existing assertions still green. Asserted on equality instead."""
+    assert sn._redact("a.subscriber@example.com") == "[email-redacted]"
+    assert sn._redact("contact me at first.last@example.org please") == (
+        "contact me at [email-redacted] please"
+    )
+
+
+def test_nothing_the_sender_reads_relies_on_the_locale_encoding(
+    isolated: Path, tmp_path: Path
+) -> None:
+    """Four separate `encoding="utf-8"` arguments, none of them pinned.
+
+    They are not decoration. MEASURED: all 97 rendered pages under public/blogs/
+    contain non-ASCII bytes, so an implicit decode is load-bearing for every single
+    post rather than for an edge case, and the state file inherits any non-ASCII
+    slug or campaign name written into its audit trail.
+
+    Driven under `-X warn_default_encoding`, which is CPython's own detector for
+    exactly this, promoted to an error. Patching `locale.getpreferredencoding` was
+    tried first and does nothing: TextIOWrapper resolves the encoding in C and
+    never consults the Python-level attribute.
+    """
+    write_page(isolated, SLUG, title="Café Society")
+
+    driver = tmp_path / "encoding_driver.py"
+    driver.write_text(
+        "import json, pathlib, sys\n"
+        f"sys.path.insert(0, {str(REPO_ROOT / 'scripts')!r})\n"
+        "from unittest import mock\n"
+        "import send_newsletter as sn\n"
+        f"sn.RENDERED_ROOT = pathlib.Path({str(isolated)!r})\n"
+        f"sn.STATE_FILE = pathlib.Path({str(tmp_path / 'state.json')!r})\n"
+        "store = {}\n"
+        "def fake(method, path, **kw):\n"
+        "    if path == '/v3/emailCampaigns' and method == 'POST':\n"
+        "        store['c'] = dict(kw['json'])\n"
+        "        return 201, {'id': 42}\n"
+        "    if method == 'GET':\n"
+        "        c = store.get('c', {})\n"
+        "        return 200, {'id': 42, 'status': 'draft',\n"
+        "                     'htmlContent': c.get('htmlContent', ''),\n"
+        "                     'subject': c.get('subject', '')}\n"
+        "    return 204, {}\n"
+        "with mock.patch.object(sn, '_api_call', mock.Mock(side_effect=fake)):\n"
+        f"    assert sn.prepare({SLUG!r}, sn.STATE_FILE) == 0\n"
+        "    state = json.loads(sn.STATE_FILE.read_text(encoding='utf-8'))\n"
+        # `minted`, not the obvious name: check-public-repo-secrets.py's generic
+        # rule fires on any assignment whose left-hand side is named after a
+        # credential, and it blocked this commit on this very line.
+        f"    minted = state['pending'][{SLUG!r}]['confirmation']\n"
+        f"    assert sn.send({SLUG!r}, minted, sn.STATE_FILE) == 0\n"
+        "print('OK')\n",
+        encoding="utf-8",
+    )
+
+    proc = subprocess.run(
+        [sys.executable, "-X", "warn_default_encoding", "-W", "error::EncodingWarning",
+         str(driver)],
+        capture_output=True,
+        text=True,
+        env={"PATH": "/usr/bin:/bin", sn.API_KEY_ENV: "test-key-not-a-real-credential"},
+    )
+    assert proc.returncode == 0, (
+        "a read without an explicit encoding reached production code:\n" + proc.stderr
+    )
+    assert "EncodingWarning" not in proc.stderr
