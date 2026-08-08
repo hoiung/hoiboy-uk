@@ -216,7 +216,7 @@ def test_missing_content_column_is_caught(clean):
     pane is built around; without it the email renders full-bleed in Outlook.
     """
     problems = gate.failures(clean.replace("max-width:600px", "max-width:100%"))
-    assert any("600px content column" in p for p in problems), problems
+    assert any("content column" in p for p in problems), problems
 
 
 def test_missing_accent_is_caught(clean):
@@ -226,7 +226,213 @@ def test_missing_accent_is_caught(clean):
 
 def test_missing_presentation_table_is_caught(clean):
     problems = gate.failures(clean.replace('role="presentation"', 'role="none"'))
-    assert any("table-based" in p for p in problems), problems
+    assert any("role=" in p for p in problems), problems
+
+
+# --------------------------------------------------------------------------
+# The gate was reading its own documentation (blog-priv#81 class sweep)
+#
+# The template opens with ~50 lines of engineering notes that necessarily QUOTE
+# the literals these rules search for. Measured on the shipped file:
+# `role="presentation"` appears 5 times in the raw text and 4 in the markup;
+# `#c0533a` 10 times and 9. So every whole-file substring rule was satisfied by
+# the prose before a single real element was read, and the sweep proved the
+# consequence: all four tables could become role="none" and all nine accent
+# colours could go black, with this gate green.
+#
+# The rules now read the markup body. These tests mutate the MARKUP ONLY and
+# leave the comments intact, which is the shape the old gate could not see.
+# --------------------------------------------------------------------------
+
+
+def markup_only(text: str, old: str, new: str) -> str:
+    """Rewrite `old` everywhere EXCEPT inside html comments.
+
+    A plain `.replace` hits the engineering notes too, which is precisely what
+    made the old rules look tested: the fixture destroyed the evidence and the
+    prose at the same time, so the gate turned red for the wrong reason.
+    """
+    parts = re.split(r"(<!--.*?-->)", text, flags=re.S)
+    return "".join(
+        part if part.startswith("<!--") else part.replace(old, new)
+        for part in parts
+    )
+
+
+def test_the_fixture_really_does_leave_the_comments_alone(clean):
+    """Guard the guard: if markup_only stopped working, every test below would
+    pass for the wrong reason."""
+    mutated = markup_only(clean, 'role="presentation"', 'role="none"')
+    assert mutated != clean
+    assert '<!-- iamhoi -->' in mutated
+    assert mutated.count('role="presentation"') == 1, (
+        "exactly the one occurrence inside the explanatory comment must survive"
+    )
+
+
+def test_a_single_table_losing_its_role_is_caught(clean):
+    """The old rule was `'role="presentation"' not in text`, a whole-file
+    membership test over four tables plus one comment, so it passed while any one
+    of them still carried it. The outer table is the one that matters most: without
+    it a screen reader announces the entire email as a data table."""
+    # Searched in the MARKUP, not in `clean`. The comment at email.html:6 explains
+    # the technique by quoting `<table role="presentation">`, so a regex over the
+    # raw file finds the prose first and the "mutation" edits the documentation --
+    # which is the same confusion between the file and the email that this whole
+    # section exists to fix, reproduced one level up in the test.
+    outer = re.search(r'<table[^>]*role="presentation"[^>]*>', gate.strip_comments(clean))
+    assert outer is not None, "no real table carries the role in the shipped markup"
+    broken = clean.replace(outer.group(0), outer.group(0).replace(' role="presentation"', ""), 1)
+    assert broken != clean
+
+    problems = gate.failures(broken)
+    assert any("of 4 <table> elements" in p for p in problems), problems
+
+
+def test_the_accent_going_black_in_the_markup_is_caught(clean):
+    """Nine real accent occurrences (the border, the button, six link colours) could
+    all go black, because one mention of the hex in a prose comment satisfied the
+    rule. The rule's own message says the accent "must be a literal hex, not a
+    token" -- it could not tell a literal hex in a sentence from one in a style."""
+    problems = gate.failures(markup_only(clean, "#c0533a", "#000000"))
+    assert any("terracotta" in p for p in problems), problems
+
+
+def test_the_content_column_losing_its_width_is_caught(clean):
+    """`max-width:600px` occurs TWICE: on the content column and on the hero <img>.
+
+    So a membership test over the markup was answered by the image while the column
+    itself went full-bleed -- the same vacuity as reading the comments, one level
+    in. The existing sibling test replaces every occurrence at once and cannot see
+    it. Matched on a <table> carrying the width instead.
+    """
+    broken = clean.replace(
+        'align="center" style="max-width:600px;width:100%;',
+        'align="center" style="max-width:100%;width:100%;',
+        1,
+    )
+    assert broken != clean
+    assert "max-width:600px" in broken, (
+        "the hero image still carries it, which is exactly why the old rule passed"
+    )
+    problems = gate.failures(broken)
+    assert any("content column" in p for p in problems), problems
+
+
+def test_a_go_template_action_hidden_in_a_comment_is_caught(clean):
+    """This rule is the one place that MUST read the comments.
+
+    Hugo parses every file under layouts/ as a Go template, html comments included,
+    so a double-curly tag written into a comment fails the whole site build. The
+    existing test puts the tag in the markup, where any comment-blind version of
+    the rule still catches it, so the rule's entire stated rationale was untested.
+    """
+    broken = clean.replace(
+        "<!-- iamhoi -->",
+        "<!-- iamhoi. Brevo writes it as {" + "{contact.FIRSTNAME}" + "} -->",
+        1,
+    )
+    assert broken != clean
+    problems = gate.failures(broken)
+    assert any("Go-template action" in p for p in problems), problems
+
+
+def test_a_call_to_action_that_is_not_the_accent_colour_is_caught(clean):
+    """The button is the one element where losing the accent is most visible, and
+    the whole-file colour rule could never have seen it on its own."""
+    cell = re.search(r'<td[^>]*bgcolor="#c0533a"', clean)
+    assert cell is not None, "the CTA button cell is not in the shipped template"
+    broken = clean.replace(cell.group(0), cell.group(0).replace("#c0533a", "#333333"), 1)
+
+    problems = gate.failures(broken)
+    assert any("call-to-action button is" in p for p in problems), problems
+
+
+@pytest.mark.parametrize("threshold_probe", [1, 2])
+def test_the_font_declaration_floor_is_a_real_floor(clean, threshold_probe):
+    """Round 4 closed this rule only at ZERO.
+
+    Its test strips EVERY declaration and asserts the count is 0, so it pins "at
+    least one" and says nothing about the threshold: `< 3` could be lowered to
+    `< 1` or `< 2` with the suite green. Reduced to a real count here instead, so
+    the boundary itself is exercised.
+    """
+    stripped = gate._FONT_DECL.sub("color:#111", clean, count=len(gate._FONT_DECL.findall(clean)) - threshold_probe)
+    assert len(gate._FONT_DECL.findall(stripped)) == threshold_probe
+    problems = gate.failures(stripped)
+    assert any(f"only {threshold_probe} font-family" in p for p in problems), problems
+
+
+def test_a_generic_family_that_is_not_at_the_end_is_caught(clean):
+    """The `$` anchor IS the rule. The message promises the declarations "end in a
+    generic family"; unanchored, a generic appearing anywhere in the stack
+    satisfies it, so `font-family:sans-serif,Arial` would pass a check that claims
+    to have verified a fallback."""
+    decl = gate._FONT_DECL.findall(clean)[0]
+    broken = clean.replace(decl, "font-family:serif,'Some Face',Arial", 1)
+    problems = gate.failures(broken)
+    assert any("generic family" in p for p in problems), problems
+
+
+@pytest.mark.parametrize("css", ["display:grid;", "display: flex;", "display:  grid;"])
+def test_the_other_unsupported_layouts_are_caught(clean, css):
+    """Two untested halves of one rule. `grid` was exercised by nothing, and the
+    `\\s*` whitespace tolerance by nothing either -- every test injected the
+    no-space `display:flex;`, while `display: flex` with a space is how CSS is
+    ordinarily written and what every formatter emits."""
+    problems = gate.failures(clean.replace("padding:24px 12px;", css, 1))
+    assert any("flex/grid" in p for p in problems), problems
+
+
+def test_a_compliant_template_exits_zero_through_the_real_entry_point(tmp_path):
+    """main()'s SUCCESS path was driven by nothing.
+
+    Both entry-point tests exercise failures and assert `rc != 0`, so `return 0`
+    could become `return 1` and the gate would reject a perfectly valid template
+    while printing "OK". That blocks every commit touching the template, which is
+    loud -- but it is loud in a way that teaches the next person to bypass the hook.
+    """
+    skel = tmp_path / "scripts"
+    skel.mkdir()
+    for name in ("check_newsletter_template.py", "gate_coverage.py", "newsletter_render.py"):
+        (skel / name).write_text((SCRIPTS / name).read_text(encoding="utf-8"), encoding="utf-8")
+    template = tmp_path / "layouts" / "_partials" / "newsletter" / "email.html"
+    template.parent.mkdir(parents=True)
+    template.write_text(REAL_TEMPLATE.read_text(encoding="utf-8"), encoding="utf-8")
+
+    proc = subprocess.run(
+        [sys.executable, str(skel / "check_newsletter_template.py")],
+        capture_output=True, text=True,
+    )
+    assert proc.returncode == 0, f"the shipped template must pass: {proc.stderr}"
+    assert "OK:" in proc.stdout
+
+
+def test_a_template_that_cannot_be_decoded_is_a_coverage_failure(tmp_path):
+    """An unreadable surface is the vacuity problem wearing a different coat.
+
+    Invalid UTF-8 in the template used to kill this gate with a raw
+    UnicodeDecodeError traceback. gate_coverage ships require_readable for exactly
+    that, and its docstring states the rule this gate was breaking: a gate cannot
+    assert an absence in a surface it failed to parse.
+    """
+    skel = tmp_path / "scripts"
+    skel.mkdir()
+    for name in ("check_newsletter_template.py", "gate_coverage.py", "newsletter_render.py"):
+        (skel / name).write_text((SCRIPTS / name).read_text(encoding="utf-8"), encoding="utf-8")
+    template = tmp_path / "layouts" / "_partials" / "newsletter" / "email.html"
+    template.parent.mkdir(parents=True)
+    template.write_bytes(b'\xff\xfe<table role="presentation">\x80\x81')
+
+    proc = subprocess.run(
+        [sys.executable, str(skel / "check_newsletter_template.py")],
+        capture_output=True, text=True,
+    )
+    assert proc.returncode != 0
+    assert "cannot read" in proc.stderr, proc.stderr
+    assert "Traceback" not in proc.stderr, (
+        "a coverage failure must be a diagnostic, not a stack trace:\n" + proc.stderr
+    )
 
 
 def test_gate_floors_when_the_template_is_absent(tmp_path):
@@ -237,7 +443,9 @@ def test_gate_floors_when_the_template_is_absent(tmp_path):
     """
     skel = tmp_path / "scripts"
     skel.mkdir()
-    for name in ("check_newsletter_template.py", "gate_coverage.py"):
+    # newsletter_render is copied too: the gate imports strip_comments from it,
+    # so a skeleton without it fails on the import rather than on the contract.
+    for name in ("check_newsletter_template.py", "gate_coverage.py", "newsletter_render.py"):
         (skel / name).write_text((SCRIPTS / name).read_text(encoding="utf-8"), encoding="utf-8")
 
     proc = subprocess.run(
@@ -270,7 +478,9 @@ def test_a_violating_template_exits_non_zero_through_the_real_entry_point(clean,
     """
     skel = tmp_path / "scripts"
     skel.mkdir()
-    for name in ("check_newsletter_template.py", "gate_coverage.py"):
+    # newsletter_render is copied too: the gate imports strip_comments from it,
+    # so a skeleton without it fails on the import rather than on the contract.
+    for name in ("check_newsletter_template.py", "gate_coverage.py", "newsletter_render.py"):
         (skel / name).write_text((SCRIPTS / name).read_text(encoding="utf-8"), encoding="utf-8")
 
     template = tmp_path / "layouts" / "_partials" / "newsletter" / "email.html"
