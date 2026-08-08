@@ -15,10 +15,12 @@ format is wrong.
 from __future__ import annotations
 
 import importlib.util
+import io
 import json
 import re
 import subprocess
 import sys
+import urllib.error
 from pathlib import Path
 from unittest import mock
 
@@ -157,6 +159,48 @@ def prepare_then_confirmation(rendered: Path, transport: mock.Mock, slug: str = 
         assert sn.prepare(slug, sn.STATE_FILE) == 0
     state = json.loads(sn.STATE_FILE.read_text(encoding="utf-8"))
     return state["pending"][slug]["confirmation"]
+
+
+def endpoint_of(method: str, path: str, created_id: int = 42) -> str:
+    """Name the Brevo endpoint a (method, path) pair addresses.
+
+    Written as a helper rather than inline `.endswith` checks because `.endswith`
+    is what let the sendNow VERB and the campaign id in its PATH go unpinned: a
+    suffix match is satisfied by `DELETE /v3/emailCampaigns/sendNow` just as
+    happily as by the real call.
+    """
+    if path == "/v3/emailCampaigns" and method == "POST":
+        return "create"
+    if path == f"/v3/emailCampaigns/{created_id}/sendTest" and method == "POST":
+        return "send_test"
+    if path == f"/v3/emailCampaigns/{created_id}/sendNow" and method == "POST":
+        return "send_now"
+    if path == f"/v3/emailCampaigns/{created_id}" and method == "GET":
+        return "campaign_get"
+    return f"UNEXPECTED {method} {path}"
+
+
+def transport_answering(
+    overrides: dict[str, tuple[int, dict]], created_id: int = 42
+) -> mock.Mock:
+    """ok_transport with one endpoint's answer replaced.
+
+    Exists so each `_expect` ok-tuple can be driven with a status just OUTSIDE it.
+    Every one of the five was unpinned: the suite proved `_expect` was wired (a 402
+    exits non-zero) but never that any particular tuple held its contents, so
+    widening `(204,)` to `(204, 400)` on the send made a REFUSED send print
+    "Campaign 42 sent to list 4.", record the slug as sent and then refuse every
+    retry forever.
+    """
+    base = ok_transport(created_id)
+
+    def _call(method: str, path: str, **kw: object) -> tuple[int, dict]:
+        name = endpoint_of(method, path, created_id)
+        if name in overrides:
+            return overrides[name]
+        return base.side_effect(method, path, **kw)  # type: ignore[misc]
+
+    return mock.Mock(side_effect=_call)
 
 
 # --------------------------------------------------------------------------
@@ -1369,3 +1413,312 @@ def test_the_confirmation_gate_rejects_the_adversarial_token_band(
         with pytest.raises(sn.NewsletterError):
             sn.send(SLUG, bad, sn.STATE_FILE)
     assert not any(c.args[1].endswith("/sendNow") for c in transport.call_args_list)
+
+
+# --------------------------------------------------------------------------
+# The transport itself, and the five _expect ok-tuples (blog-priv#81 class sweep)
+#
+# WHY THIS SECTION EXISTS. Every test above this line mocks `_api_call`, which is
+# the right seam for asserting what would be SENT -- and it means the function that
+# actually talks to Brevo was executed by nothing. Measured by mutation: replacing
+# the entire body of `_api_call` with `raise AssertionError` left the suite green.
+# So the URL, the auth header, the timeout, the content negotiation and every branch
+# of the error handling were unpinned, including `return exc.code, body` -> `return
+# 200, body`, which turns every 401, 402 and 400 into a success.
+#
+# The five `_expect` ok-tuples were unpinned for a related reason: `test_402_exits_
+# nonzero` proves `_expect` is WIRED, but nothing pinned any tuple's CONTENTS.
+# --------------------------------------------------------------------------
+
+
+class _FakeResponse:
+    """The half of http.client.HTTPResponse that _api_call actually uses."""
+
+    def __init__(self, status: int, payload: bytes) -> None:
+        self.status = status
+        self._payload = payload
+
+    def read(self) -> bytes:
+        return self._payload
+
+    def __enter__(self) -> _FakeResponse:
+        return self
+
+    def __exit__(self, *exc: object) -> bool:
+        return False
+
+
+def _urlopen_returning(status: int, payload: bytes) -> tuple[mock.Mock, list]:
+    calls: list = []
+
+    def _open(request: object, **kw: object) -> _FakeResponse:
+        calls.append((request, kw))
+        return _FakeResponse(status, payload)
+
+    return mock.Mock(side_effect=_open), calls
+
+
+def test_the_request_reaches_brevo_at_the_documented_url_with_the_key(
+    isolated: Path,
+) -> None:
+    """The whole wire format, asserted once, because nothing else executes it.
+
+    Each of these was an independent survivor: the host could be repointed at
+    api.sendinblue.com, the api-key header could be blanked, the timeout could be
+    dropped (leaving a hand-run send able to hang forever with no output), and the
+    content-type could go missing.
+    """
+    opener, calls = _urlopen_returning(201, b'{"id": 42}')
+    with mock.patch("urllib.request.urlopen", opener):
+        status, body = sn._api_call(
+            "POST", "/v3/emailCampaigns", json={"name": "x"}, brevo_key="a-test-key"
+        )
+
+    assert (status, body) == (201, {"id": 42})
+    request, kwargs = calls[0]
+    assert request.full_url == "https://api.brevo.com/v3/emailCampaigns", (
+        "the base URL is the host the campaign API key is transmitted to"
+    )
+    assert request.get_method() == "POST"
+    assert request.get_header("Api-key") == "a-test-key"
+    assert request.get_header("Accept") == "application/json"
+    assert request.get_header("Content-type") == "application/json"
+    assert request.data == b'{"name": "x"}'
+    assert kwargs == {"timeout": 30}, (
+        "a send with no timeout blocks on the default socket timeout, and an operator "
+        "staring at a hung --send cannot tell whether subscribers were reached"
+    )
+
+
+def test_a_get_carries_no_body_and_no_content_type(isolated: Path) -> None:
+    """`json=None` is not a style choice: it decides what goes on the wire.
+
+    Defaulting the parameter to `{}` instead makes `json is not None` true, so the
+    two GETs -- the campaign read-back and the pre-send re-read, i.e. both halves of
+    "what ships is what was approved" -- would carry a `b"{}"` body and a JSON
+    content-type they should not have.
+    """
+    opener, calls = _urlopen_returning(200, b'{"id": 42, "status": "draft"}')
+    with mock.patch("urllib.request.urlopen", opener):
+        sn._api_call("GET", "/v3/emailCampaigns/42", brevo_key="k")
+
+    request, _ = calls[0]
+    assert request.data is None
+    assert request.get_header("Content-type") is None
+
+
+def test_a_204_with_an_empty_body_is_not_a_decode_error(isolated: Path) -> None:
+    """The two most important successes -- sendTest and sendNow -- are empty 204s.
+
+    `or "{}"` and the `raw.strip()` ternary are a matched pair guarding exactly this,
+    and both were unpinned. Dropping either raises ValueError on the happy path of
+    the send itself, immediately AFTER `_log("send_now_start")` has fired: the worst
+    possible place to lose the return value.
+    """
+    opener, _ = _urlopen_returning(204, b"")
+    with mock.patch("urllib.request.urlopen", opener):
+        assert sn._api_call("POST", "/v3/emailCampaigns/42/sendNow", brevo_key="k") == (
+            204,
+            {},
+        )
+
+
+def _http_error(code: int, payload: bytes) -> urllib.error.HTTPError:
+    return urllib.error.HTTPError(
+        url="https://api.brevo.com/x", code=code, msg="err",
+        hdrs=None, fp=io.BytesIO(payload),  # type: ignore[arg-type]
+    )
+
+
+def test_a_provider_error_keeps_its_own_status(isolated: Path) -> None:
+    """`return exc.code, body` -> `return 200, body` survived, and it is the worst
+    single-line mutation in the file: pinned at 200, EVERY 4xx and 5xx becomes a
+    success. A 401 bad key, a 402 out of credits and a 400 rejected payload would
+    all sail through `_expect` and be recorded as sent.
+
+    This also pins that HTTPError is caught HERE rather than by the URLError handler
+    below it. HTTPError subclasses URLError, so narrowing the first `except` does not
+    make the error escape -- it silently reroutes it into "network failure", which
+    reads like a connectivity problem and loses the provider's actual status.
+    """
+    with mock.patch("urllib.request.urlopen", mock.Mock(
+        side_effect=_http_error(402, b'{"code": "not_enough_credits"}')
+    )):
+        status, body = sn._api_call("POST", "/v3/emailCampaigns", json={}, brevo_key="k")
+
+    assert status == 402, "the provider's status is the whole diagnostic"
+    assert body == {"code": "not_enough_credits"}
+
+
+def test_a_provider_error_body_that_is_not_json_is_kept_as_text(isolated: Path) -> None:
+    """A gateway returning an HTML error page is routine, and losing it loses the
+    only thing that says what went wrong. Narrowing `except ValueError` to TypeError
+    made that page raise out of `_api_call` instead."""
+    with mock.patch("urllib.request.urlopen", mock.Mock(
+        side_effect=_http_error(502, b"<html><body>Bad Gateway</body></html>")
+    )):
+        status, body = sn._api_call("GET", "/v3/emailCampaigns/42", brevo_key="k")
+
+    assert status == 502
+    assert "Bad Gateway" in body["raw"]
+
+
+def test_a_provider_error_body_that_is_not_utf8_still_produces_a_diagnostic(
+    isolated: Path,
+) -> None:
+    """`errors="replace"` is there so that FORMATTING a diagnostic can never itself
+    throw. Removed, a non-UTF-8 error body raises UnicodeDecodeError from inside the
+    exception handler, replacing the provider's message with a decode traceback."""
+    with mock.patch("urllib.request.urlopen", mock.Mock(
+        side_effect=_http_error(500, b"\xff\xfe not utf-8 \x80")
+    )):
+        status, body = sn._api_call("GET", "/v3/emailCampaigns/42", brevo_key="k")
+
+    assert status == 500
+    assert "not utf-8" in body["raw"]
+
+
+def test_an_empty_provider_error_body_does_not_itself_raise(isolated: Path) -> None:
+    """4xx with an empty body is what proxies and gateways return."""
+    with mock.patch("urllib.request.urlopen", mock.Mock(side_effect=_http_error(400, b""))):
+        assert sn._api_call("POST", "/v3/emailCampaigns", json={}, brevo_key="k") == (400, {})
+
+
+def test_a_network_failure_becomes_a_named_newsletter_error(isolated: Path) -> None:
+    """DNS failure, refused connection or a TLS error. Left uncaught it escapes
+    main()'s `except NewsletterError` as a raw URLError: traceback, and no
+    `_log("fatal")` record of the attempt."""
+    with mock.patch("urllib.request.urlopen", mock.Mock(
+        side_effect=urllib.error.URLError("nodename nor servname provided")
+    )):
+        with pytest.raises(sn.NewsletterError, match="network failure calling POST /v3/x"):
+            sn._api_call("POST", "/v3/x", json={}, brevo_key="k")
+
+
+# ---- the five _expect ok-tuples, each driven one status outside its set ----
+
+
+def test_a_create_that_did_not_create_is_refused(isolated: Path) -> None:
+    """201 means created; 200 does not. Admitting 200 lets a non-creating response
+    through the status gate, and the `isinstance(campaign_id, int)` check one line
+    later only catches it when the body ALSO lacks an id."""
+    write_page(isolated, SLUG)
+    transport = transport_answering({"create": (200, {"id": 42})})
+    with mock.patch.object(sn, "_api_call", transport):
+        with pytest.raises(sn.NewsletterError, match="campaign create failed with HTTP 200"):
+            sn.prepare(SLUG, sn.STATE_FILE)
+
+    assert not any(
+        endpoint_of(*c.args[:2]) == "send_test" for c in transport.call_args_list
+    ), "nothing may be sent off the back of a campaign that was never created"
+
+
+def test_a_review_copy_the_provider_refused_is_not_reported_as_delivered(
+    isolated: Path,
+) -> None:
+    """The review copy IS the operator gate.
+
+    If sendTest is refused but the status is accepted, --prepare still reads the
+    campaign back, still mints the confirmation token, still writes the pending
+    state and still prints "A review copy has been sent to the review address. Read
+    it." The operator then confirms a copy he never received, which walks straight
+    around the one instruction the two-invocation design depends on.
+    """
+    write_page(isolated, SLUG)
+    transport = transport_answering({"send_test": (400, {"message": "rejected"})})
+    with mock.patch.object(sn, "_api_call", transport):
+        with pytest.raises(sn.NewsletterError, match="send test failed with HTTP 400"):
+            sn.prepare(SLUG, sn.STATE_FILE)
+
+    pending = (
+        json.loads(sn.STATE_FILE.read_text(encoding="utf-8"))["pending"]
+        if sn.STATE_FILE.is_file()
+        else {}
+    )
+    assert SLUG not in pending, (
+        "no confirmation token may exist for a review copy that never landed"
+    )
+
+
+def test_a_read_back_that_404s_is_refused_rather_than_fingerprinted(
+    isolated: Path,
+) -> None:
+    """On a 404 the body carries no htmlContent and no subject, so the fingerprint
+    becomes the digest of two empty strings and is stored as "what the operator
+    reviewed". The send-side comparison would then be measuring against nothing."""
+    write_page(isolated, SLUG)
+    transport = transport_answering({"campaign_get": (404, {"message": "not found"})})
+    with mock.patch.object(sn, "_api_call", transport):
+        with pytest.raises(
+            sn.NewsletterError, match="campaign read-back failed with HTTP 404"
+        ):
+            sn.prepare(SLUG, sn.STATE_FILE)
+
+
+def test_a_pre_send_re_read_that_404s_is_refused(isolated: Path) -> None:
+    """The re-read is the guard added after a dashboard edit slipped past the post
+    fingerprint. A 404 admitted here happens to fail closed today, but only by
+    accident of the `status != "draft"` check below it raising on None."""
+    confirmation = prepare_then_confirmation(isolated, ok_transport())
+    transport = transport_answering({"campaign_get": (404, {"message": "gone"})})
+    with mock.patch.object(sn, "_api_call", transport):
+        with pytest.raises(
+            sn.NewsletterError, match="campaign re-read failed with HTTP 404"
+        ):
+            sn.send(SLUG, confirmation, sn.STATE_FILE)
+
+    assert not any(
+        endpoint_of(*c.args[:2]) == "send_now" for c in transport.call_args_list
+    )
+
+
+def test_a_refused_send_is_never_recorded_as_sent(isolated: Path) -> None:
+    """The single highest-blast-radius survivor in the sweep.
+
+    Widening the sendNow ok-tuple from `(204,)` to `(204, 400)` was MEASURED end to
+    end: the identical rejected send printed "Campaign 42 sent to list 4.", returned
+    0, wrote `state["sent"]` and deleted `state["pending"]`. So the operator is told
+    the newsletter went out when nothing did, AND the double-send guard then refuses
+    every retry forever -- the post can never be sent at all without hand-editing the
+    state file.
+
+    Asserted on all four observable consequences, not just the exception, because it
+    is the state write that makes this unrecoverable rather than merely wrong.
+    """
+    confirmation = prepare_then_confirmation(isolated, ok_transport())
+    transport = transport_answering({"send_now": (400, {"message": "rejected"})})
+    with mock.patch.object(sn, "_api_call", transport):
+        with pytest.raises(sn.NewsletterError, match="send now failed with HTTP 400"):
+            sn.send(SLUG, confirmation, sn.STATE_FILE)
+
+    state = json.loads(sn.STATE_FILE.read_text(encoding="utf-8"))
+    assert SLUG not in state["sent"], "a refused send must not be recorded as sent"
+    assert SLUG in state["pending"], "the retry must still be possible"
+    assert sn.counters().get("api_error") == 1, (
+        "_expect's structured log line is the only record that the provider refused; "
+        "deleting it leaves the failure invisible to the audit trail (AP #12)"
+    )
+
+
+def test_every_call_the_two_commands_make_is_the_endpoint_it_claims(
+    isolated: Path,
+) -> None:
+    """Method AND path, in order, compared by equality rather than by suffix.
+
+    Every existing assertion about sendNow used `.endswith("/sendNow")`, which is
+    satisfied by `DELETE /v3/emailCampaigns/sendNow` -- wrong verb, campaign id gone.
+    sendNow is the one call that reaches real subscribers and the module treats it as
+    irreversible, so its address is worth pinning exactly.
+    """
+    prepare_transport = ok_transport()
+    confirmation = prepare_then_confirmation(isolated, prepare_transport)
+    assert [
+        endpoint_of(*c.args[:2]) for c in prepare_transport.call_args_list
+    ] == ["create", "send_test", "campaign_get"]
+
+    send_transport = ok_transport()
+    with mock.patch.object(sn, "_api_call", send_transport):
+        assert sn.send(SLUG, confirmation, sn.STATE_FILE) == 0
+    assert [
+        endpoint_of(*c.args[:2]) for c in send_transport.call_args_list
+    ] == ["campaign_get", "send_now"]
