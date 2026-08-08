@@ -221,17 +221,18 @@ hoiboy-uk/
 │                            #   package.json. Both lists are gated by test_gate_wiring.py,
 │                            #   so a test file nobody lists fails the build rather than
 │                            #   silently never running.
-├── scripts/                 # 26 gate/validator scripts (frontmatter, config-traceability,
+├── scripts/                 # 27 gate/validator scripts (frontmatter, config-traceability,
 │                            #   voice: iamhoi/tells/wordcount, EXIF, secret-scan, internal-links,
 │                            #   mirror-drift, lychee-expiry, social-cards, 404, pre-publish,
 │                            #   subscribe-form placement, noindex sitemap/feed exclusion,
-│                            #   newsletter-template contract, blogs-IA pre-push runner)
+│                            #   newsletter-template contract, feed-marker/XML-validity,
+│                            #   blogs-IA pre-push runner)
 │                            #   + repo-authored tests + 8 helper modules (voice_rules,
 │                            #   sst3_*, redirects/readnext parsers, import_aam_sql,
 │                            #   newsletter_render: shared by the preview and the sender)
 │                            #   + strip-exif/cloudflare-build (manual fixers). The 26 counts
 │                            #   gates only: helpers, tests and manual fixers are all excluded.
-│                            #   Derivation: 25 files matching check*/validate*/run-*/pre-publish
+│                            #   Derivation: 26 files matching check*/validate*/run-*/pre-publish
 │                            #   PLUS test_404.py (a CLI gate despite the test_ prefix).
 │                            #   Re-derive with:
 │                            #     ls scripts/{check*.py,check*.sh,validate*.py,run-*.sh,pre-publish*.sh} | wc -l

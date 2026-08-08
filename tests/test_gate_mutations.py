@@ -148,6 +148,48 @@ MUTATIONS = [
         "scripts/test_check_newsletter_template.py",
         id="template-contract-violation-exits-clean",
     ),
+    # The feed gate, registered here for the reason it was extracted out of
+    # tests/test_feed_markers.py in the first place. While the checks lived inside
+    # that test file, `assert not offenders` could be rewritten to `assert not
+    # offenders or True` and NOTHING in the repo noticed: a file cannot guard its
+    # own assertions, and this file is the mechanism that covers that -- but only
+    # for logic living outside the test. The class sweep found four such
+    # self-neutering edits in that one file. Each mutation below is a real
+    # survivor from it.
+    pytest.param(
+        "scripts/check_feed_markers.py",
+        "    comments = {f.name: t.count(ESCAPED_COMMENT) for f, t in texts.items()\n"
+        "                if ESCAPED_COMMENT in t}",
+        "    comments = {}",
+        "tests/test_feed_markers.py",
+        id="feed-comment-leak-check-reports-nothing",
+    ),
+    pytest.param(
+        "scripts/check_feed_markers.py",
+        'ESCAPED_COMMENT = html.escape("<!--")',
+        'ESCAPED_COMMENT = "&lt;!--zz-never-matches"',
+        "tests/test_feed_markers.py",
+        id="feed-comment-needle-cannot-match-anything",
+    ),
+    pytest.param(
+        "scripts/check_feed_markers.py",
+        "MIN_FEEDS = 6",
+        "MIN_FEEDS = 0",
+        "tests/test_feed_markers.py",
+        id="feed-vacuity-floor-accepts-an-unbuilt-tree",
+    ),
+    # `pass` rather than a narrowed `except`, deliberately. Naming an exception the
+    # parser never raises makes the gate CRASH on a malformed feed, which the test
+    # catches for the wrong reason: a crash is loud, and the failure this registry
+    # exists to detect is a check that quietly stops checking. This makes the parse
+    # a no-op instead, which is silent.
+    pytest.param(
+        "scripts/check_feed_markers.py",
+        "            ET.fromstring(texts[feed])",
+        "            pass",
+        "tests/test_feed_markers.py",
+        id="malformed-feed-xml-is-not-detected",
+    ),
     # The two-segment prefixes were an unconditional allow-list for the whole life
     # of the validator, so the 15 root-relative /hire-hoi/, /legal/, /community/,
     # /tags/ and /series/ links in the repo were resolved by no tier at all. This
