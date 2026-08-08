@@ -248,6 +248,58 @@ def test_invisible_attribute_text_cannot_answer_the_guarded_prose_floor(clean):
     )
 
 
+def test_entity_padding_cannot_answer_the_guarded_prose_floor(clean):
+    """The same padding attack as `data-*`, in a different substance.
+
+    An undecoded entity is measured as its SOURCE characters, so `&nbsp;` scored
+    6 apiece against a floor meant to count copy. Measured before entities were
+    decoded: 80 non-breaking spaces (480 characters that render as whitespace)
+    replacing the footer's real copy put guarded prose at 642 against a floor of
+    300, gate green.
+
+    Found by sweeping the class rather than waiting for it to be reported --
+    five instances of "this rule is answered by the wrong substance" had already
+    been fixed one at a time, which is how a class gets serialised across
+    restarts instead of closed.
+    """
+    pairs = list(gate._MARKER_PAIR.finditer(clean))
+    assert len(pairs) == 2
+    footer = pairs[1]
+    padding = "&nbsp;" * 80
+    assert len(padding) > gate.MIN_GUARDED_PROSE, "the padding must out-bulk the floor"
+
+    attacked = (
+        clean[: footer.start()]
+        + gate.MARKER_OPEN
+        + f"<p>{padding}</p>"
+        + gate.MARKER_CLOSE
+        + clean[footer.end() :]
+    )
+    assert attacked != clean
+    problems = gate.failures(attacked)
+    assert any("enclose only" in p for p in problems), (
+        f"whitespace entities must not satisfy the prose floor: {problems}"
+    )
+
+
+def test_entity_encoded_copy_is_measured_as_the_words_it_renders_as(clean):
+    """Decoding cuts both ways, and the other way matters too.
+
+    Copy written as numeric references must be measured as the copy it renders
+    as -- not as inflated source text, and not missed. This is the readable
+    half of the same decode.
+    """
+    copy = "This is plainly readable copy and it is far longer than the cap allows."
+    encoded = "".join(f"&#{ord(c)};" for c in copy)
+    assert copy not in encoded, "the fixture must actually be encoded"
+    assert gate._visible_prose(f"<p>{encoded}</p>") == copy
+
+    attacked = clean.rstrip() + f"\n<p>{encoded}</p>\n"
+    assert attacked != clean
+    problems = gate.failures(attacked)
+    assert any("OUTSIDE the iamhoi markers" in p for p in problems), problems
+
+
 def test_stylesheet_text_is_not_counted_as_copy(clean):
     """The inverse error: a rule that over-counts fails on ordinary edits.
 

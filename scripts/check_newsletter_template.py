@@ -26,6 +26,7 @@ fires, which is a real answer rather than a usage error wearing a compliant code
 
 from __future__ import annotations
 
+import html
 import re
 import sys
 from pathlib import Path
@@ -51,8 +52,10 @@ MARKER_CLOSE = "<!-- iamhoiend -->"
 # characters of <table> markup and no copy at all cleared it. Counting raw characters
 # measured the markup and called it protection.
 #
-# The floors: the shipped template carries 483 characters of guarded prose and leaves
-# 16 unguarded ("hoiboy.uk &nbsp;", the header wordmark and a spacer entity).
+# The floors: the shipped template carries 496 characters of guarded prose and leaves
+# 9 unguarded -- "hoiboy.uk", the header wordmark. (The spacer `&nbsp;` beside it used
+# to bring that to 16; entities are decoded now, so it collapses to whitespace and
+# scores nothing, which is the point of decoding them.)
 MIN_GUARDED_PROSE = 300
 MAX_UNGUARDED_PROSE = 40
 
@@ -117,13 +120,21 @@ _INERT_ELEMENTS = re.compile(r"<(style|script)\b[^>]*>.*?</\1\s*>", re.I | re.S)
 def _visible_prose(text: str) -> str:
     """The words a reader actually sees: text nodes PLUS readable attributes.
 
-    Entity-encoded copy counts as its raw characters, which over-counts rather
-    than under-counts, so an attempt to smuggle copy past the cap as `&#72;&#105;`
-    trips it harder. The failure direction is the safe one.
+    ENTITIES ARE DECODED, and that is a rule not a nicety. Left encoded, an
+    entity is measured as its source characters, so `&nbsp;` scores 6 against a
+    floor that is supposed to count copy. Measured before this line existed: 80
+    non-breaking spaces -- 480 characters that render as whitespace -- put
+    guarded prose at 642 against a floor of 300 and the gate stayed green, the
+    same padding attack as the `data-*` one, in a different substance.
+
+    Decoding fixes both directions at once. `&nbsp;` becomes \\xa0, which
+    `str.split()` treats as whitespace and drops, so padding scores nothing; and
+    copy written as `&#72;&#105;` decodes to the words it renders as, so it is
+    measured as the copy it is rather than as inflated source text.
     """
     body = _INERT_ELEMENTS.sub(" ", strip_comments(text))
     readable = [double or single for double, single in _VISIBLE_ATTRS.findall(body)]
-    return " ".join((_TAGS.sub(" ", body) + " " + " ".join(readable)).split())
+    return " ".join(html.unescape(_TAGS.sub(" ", body) + " " + " ".join(readable)).split())
 
 
 def _prose_split(text: str) -> tuple[str, str]:
