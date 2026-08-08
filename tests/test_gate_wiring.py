@@ -981,6 +981,79 @@ def test_deleting_a_pre_commit_hook_is_caught_by_the_wiring_guard():
         "the fixture did not actually remove the hook, so this proves nothing"
     )
 
+    # POINT THE MODULE AT THE NEUTERED CONFIG AND REQUIRE THE GUARD TO GO RED.
+    #
+    # Without this the test asserts only that its own FIXTURE works, which is
+    # exactly the trap the header of this file documents and exactly what the
+    # first version of this test did: it claimed to prove the guard measures
+    # wiring, and it would have stayed green with the guard's assertions
+    # neutered. Ralph round 7 tier 3 caught it, one round after the guard it is
+    # supposed to be protecting was itself added to close the same class.
+    #
+    # The three sibling mutation tests in this file (the CI pytest guard, and
+    # both npm-test guards) all repoint their module constant this way. This one
+    # did not, and it was the only one that did not.
+    import sys as _sys
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as tmp:
+        neutered = Path(tmp) / ".pre-commit-config.yaml"
+        neutered.write_text(mutated, encoding="utf-8")
+        module = _sys.modules[__name__]
+        original = module.PRE_COMMIT
+        module.PRE_COMMIT = neutered
+        try:
+            with pytest.raises(AssertionError):
+                test_a_pre_commit_gate_is_wired_to_the_path_it_claims(
+                    "check-newsletter-template",
+                    "layouts/_partials/newsletter/email.html",
+                )
+            with pytest.raises(AssertionError):
+                test_the_ac_proof_for_the_template_hook_reads_the_wiring_not_a_comment()
+        finally:
+            module.PRE_COMMIT = original
+
+
+def test_a_hook_whose_regex_selects_nothing_is_caught_by_the_wiring_guard():
+    """The REACH half, which deleting the hook cannot exercise.
+
+    The sibling above removes the hook entirely, so the guard's presence assertion
+    fires first and the regex assertion is never the one under test. Measured:
+    neutering `assert re.search(pattern, must_match)` survived that sibling. This
+    fixture keeps the hook and breaks only its `files:` pattern, which is the more
+    realistic regression anyway -- a hook present in the config, visible in review,
+    selecting nothing.
+    """
+    import sys as _sys
+    import tempfile
+
+    real = PRE_COMMIT.read_text(encoding="utf-8")
+    mutated = real.replace(
+        r"files: ^(layouts/_partials/newsletter/email\.html|scripts/check_newsletter_template\.py)$",
+        r"files: ^scripts/check_newsletter_template\.py$",
+        1,
+    )
+    assert mutated != real, "the files: pattern shape was not found to mutate"
+    hooks = _hooks(mutated)
+    assert "check-newsletter-template" in hooks, (
+        "the fixture must KEEP the hook, or this repeats the sibling's coverage"
+    )
+
+    with tempfile.TemporaryDirectory() as tmp:
+        neutered = Path(tmp) / ".pre-commit-config.yaml"
+        neutered.write_text(mutated, encoding="utf-8")
+        module = _sys.modules[__name__]
+        original = module.PRE_COMMIT
+        module.PRE_COMMIT = neutered
+        try:
+            with pytest.raises(AssertionError):
+                test_a_pre_commit_gate_is_wired_to_the_path_it_claims(
+                    "check-newsletter-template",
+                    "layouts/_partials/newsletter/email.html",
+                )
+        finally:
+            module.PRE_COMMIT = original
+
 
 def test_the_ac_proof_for_the_template_hook_reads_the_wiring_not_a_comment():
     """The recorded AC evidence was a grep for a literal that lives in a comment.
@@ -1000,6 +1073,14 @@ def test_the_ac_proof_for_the_template_hook_reads_the_wiring_not_a_comment():
         "why it is spelled out separately is stale: re-check the AC proof"
     )
     hooks = _hooks(text)
+    # Presence asserted before the lookup, so an absent hook fails with a sentence
+    # rather than a bare KeyError. Not cosmetic: the mutation test above drives
+    # this function under `pytest.raises(AssertionError)`, and a KeyError is not an
+    # AssertionError, so without this the proof-of-non-vacuity would itself error
+    # out instead of demonstrating the guard fires.
+    assert "check-newsletter-template" in hooks, (
+        "the hook is gone, so there is no wiring left for this proof to read"
+    )
     assert re.search(
         hooks["check-newsletter-template"]["files"],
         "layouts/_partials/newsletter/email.html",

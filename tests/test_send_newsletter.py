@@ -2429,6 +2429,76 @@ def test_the_approval_digest_cannot_be_walked_around_by_moving_a_character() -> 
     assert len(sn.content_fingerprint("body", "subject")) == 64, "sha256 hex is 64 chars"
 
 
+def test_a_pending_entry_from_an_older_revision_is_refused_by_name(
+    isolated: Path, capsys: pytest.CaptureFixture
+) -> None:
+    """STATE_VERSION guards the FILE; nothing guarded the pending ENTRY's shape.
+
+    `campaign_fingerprint` became required when the gate started verifying the
+    campaign as well as the post, and STATE_VERSION stayed at 1. So a state file
+    written before that change passes the version check ("Refusing to guess"),
+    and `send()` then died on `entry["campaign_fingerprint"]` with a bare KeyError
+    -- not a NewsletterError, so main() did not catch it: traceback, and
+    `_log("fatal")` never ran, leaving NO audit line for a refused send.
+
+    The same principle was defended three ways one level up (the version check,
+    the setdefault backfill, and a test for each) and zero ways at the level that
+    actually changed. Every existing test builds its pending entry by running
+    prepare() at HEAD, so no test could reach the old shape. Ralph round 7 tier 3.
+    """
+    write_page(isolated, SLUG)
+    body = sn.build_html(sn.read_post(SLUG), sn.TEMPLATE.read_text(encoding="utf-8"))
+    sn.STATE_FILE.write_text(
+        json.dumps({
+            "version": sn.STATE_VERSION,
+            "pending": {SLUG: {
+                "campaign_id": 99,
+                "confirmation": "a-token",
+                # The post fingerprint MATCHES, so execution reaches the missing
+                # key rather than being turned back by the post-changed guard. A
+                # fixture with a dummy digest here proves nothing: the wrong guard
+                # answers and the test passes for the wrong reason.
+                "fingerprint": sn.content_fingerprint(body, sn.read_post(SLUG)["title"]),
+                "prepared_at": "2026-08-01T00:00:00+00:00",
+            }},
+            "sent": {},
+            "audit": [],
+        }),
+        encoding="utf-8",
+    )
+
+    transport = ok_transport()
+    with mock.patch.object(sn, "_api_call", transport):
+        assert sn.main(["--slug", SLUG, "--send", "--confirm", "a-token"]) == 1
+
+    err = capsys.readouterr().err
+    assert "missing campaign_fingerprint" in err, "the message must name the missing key"
+    assert "Nothing was sent" in err
+    assert sn.counters().get("fatal") == 1, "a refused send must leave an audit line"
+    assert not transport.call_args_list, "it must refuse before touching the API at all"
+
+
+def test_the_send_path_names_a_missing_template_rather_than_crashing(
+    isolated: Path, capsys: pytest.CaptureFixture
+) -> None:
+    """prepare() guarded this and send() did not.
+
+    A missing or unreadable template on the send path raised FileNotFoundError
+    straight past main()'s handler: traceback, no fatal audit line. Both paths now
+    share one reader so they cannot drift apart again. Ralph round 7 tier 3.
+    """
+    confirmation = prepare_then_confirmation(isolated, ok_transport())
+
+    transport = ok_transport()
+    with mock.patch.object(sn, "TEMPLATE", isolated / "no-such-template.html"):
+        with mock.patch.object(sn, "_api_call", transport):
+            assert sn.main(["--slug", SLUG, "--send", "--confirm", confirmation]) == 1
+
+    assert "template missing" in capsys.readouterr().err
+    assert sn.counters().get("fatal") == 1
+    assert not any(endpoint_of(*c.args[:2]) == "send_now" for c in transport.call_args_list)
+
+
 def test_the_cli_contract_is_exactly_one_mode_and_always_a_slug() -> None:
     """The two-invocation design IS the safety model, and the argparse constraints
     enforcing it were pinned by nothing.

@@ -60,6 +60,37 @@ def test_unbalanced_markers_are_caught(clean):
     assert any("unbalanced" in p for p in problems), problems
 
 
+def test_markers_that_enclose_nothing_are_caught(clean):
+    """Present and balanced was the whole rule, and it protected nothing.
+
+    Collapsing each pair to `<!-- iamhoi --><!-- iamhoiend -->` and leaving the copy
+    below it keeps opens/closes at 2/2 and every other rule green, while taking the
+    guarded region from 4404 characters to 0. The voice guard is marker-driven and
+    default-SKIP, so it then scans nothing and reports OK -- which is verbatim the
+    outcome this gate's own error message says the marker rule exists to prevent.
+
+    The gate was checking that the markers EXIST, not that they DO anything. Ralph
+    round 7 tier 3 found it one round after the surrounding rules were hardened.
+    """
+    collapsed = re.sub(
+        re.escape(gate.MARKER_OPEN) + r"(.*?)" + re.escape(gate.MARKER_CLOSE),
+        lambda m: f"{gate.MARKER_OPEN}{gate.MARKER_CLOSE}\n{m.group(1)}",
+        clean,
+        flags=re.S,
+    )
+    assert collapsed != clean
+    assert collapsed.count(gate.MARKER_OPEN) == clean.count(gate.MARKER_OPEN), (
+        "the fixture must keep the markers balanced, or this passes via the "
+        "unbalanced rule and proves nothing about enclosure"
+    )
+    assert "We do not send anything about" in collapsed, (
+        "the copy must still be present, just outside the guarded region"
+    )
+
+    problems = gate.failures(collapsed)
+    assert any("enclose only 0 characters" in p for p in problems), problems
+
+
 def test_go_template_action_is_caught(clean):
     """A raw Brevo merge tag here fails the site build, not just the email."""
     broken = clean.replace("%%FIRSTNAME%%", "{" + "{contact.FIRSTNAME}" + "}")

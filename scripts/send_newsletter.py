@@ -702,6 +702,61 @@ def content_fingerprint(body_html: str, subject: str) -> str:
     return digest.hexdigest()
 
 
+# Every key `send()` reads out of a pending entry. Checked as a set rather than
+# relied on at the point of use, because the failure at the point of use is a bare
+# KeyError, which is not a NewsletterError and so escapes main()'s handler: the
+# operator gets a traceback and `_log("fatal")` never runs, leaving NO audit line
+# for a refused send.
+PENDING_KEYS = ("campaign_id", "confirmation", "fingerprint", "campaign_fingerprint")
+
+
+def _require_pending_shape(entry: dict[str, Any], slug: str) -> None:
+    """Refuse a pending entry written by an older revision of this script.
+
+    STATE_VERSION guards the FILE, and it has been 1 since the sender was written.
+    But the pending-ENTRY schema changed after that: `campaign_fingerprint` became
+    required when the gate started verifying the campaign as well as the post. The
+    version check compares only the top level, so a state file from before that
+    change is accepted as valid and then dies mid-send on a missing key.
+
+    The principle is defended three ways one level up (the version check, the
+    `setdefault` backfill, and a test for each) and was defended zero ways at the
+    level that actually changed. Found by Ralph round 7 tier 3.
+
+    Deliberately NOT fixed by bumping STATE_VERSION: that would reject every
+    existing state file, including a CURRENT-shape pending campaign the operator
+    has already reviewed and is waiting to send, and there is one of those live
+    right now. Validating the entry refuses only what is genuinely unusable.
+    """
+    missing = [key for key in PENDING_KEYS if key not in entry]
+    if missing:
+        raise NewsletterError(
+            f"the prepared entry for {slug} is missing {', '.join(missing)}. It was "
+            f"written by an older revision of this script, before the gate verified "
+            f"the campaign as well as the post, so it cannot be confirmed against "
+            f"what is now in Brevo. Nothing was sent. Run --prepare again and "
+            f"confirm the new review copy."
+        )
+
+
+def _read_template() -> str:
+    """The template, or a diagnostic naming it.
+
+    `prepare()` guarded this and `send()` did not, so a missing or unreadable
+    template on the send path raised FileNotFoundError straight past main()'s
+    handler: traceback, and no fatal audit line for the refused send. Shared so the
+    two paths cannot drift apart again.
+    """
+    if not TEMPLATE.is_file():
+        raise NewsletterError(f"template missing at {_display(TEMPLATE)}")
+    try:
+        return TEMPLATE.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise NewsletterError(
+            f"template at {_display(TEMPLATE)} could not be read: {exc}"
+        ) from exc
+
+
 def prepare(slug: str, state_path: Path | None = None) -> int:
     state_path = _state_path(state_path)
     state = load_state(state_path)
@@ -714,10 +769,7 @@ def prepare(slug: str, state_path: Path | None = None) -> int:
 
     post = read_post(slug)
     assert_is_blog_post(post)
-    if not TEMPLATE.is_file():
-        raise NewsletterError(f"template missing at {_display(TEMPLATE)}")
-
-    body_html = build_html(post, TEMPLATE.read_text(encoding="utf-8"))
+    body_html = build_html(post, _read_template())
     payload = campaign_payload(post, slug, body_html)
     key = brevo_key_from_env()
 
@@ -789,6 +841,8 @@ def send(slug: str, confirm: str, state_path: Path | None = None) -> int:
             f"copy, then come back with the token it prints."
         )
 
+    _require_pending_shape(entry, slug)
+
     # compare_digest rather than ==, so a wrong token cannot be narrowed down by
     # timing. Cheap, and the alternative is a guessable approval gate.
     #
@@ -823,7 +877,7 @@ def send(slug: str, confirm: str, state_path: Path | None = None) -> int:
 
     post = read_post(slug)
     assert_is_blog_post(post)
-    body_html = build_html(post, TEMPLATE.read_text(encoding="utf-8"))
+    body_html = build_html(post, _read_template())
     if content_fingerprint(body_html, post["title"]) != entry["fingerprint"]:
         raise NewsletterError(
             f"{slug} has changed since the review copy was sent. What would go out is "

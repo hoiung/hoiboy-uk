@@ -40,6 +40,12 @@ TEMPLATE = REPO_ROOT / "layouts" / "_partials" / "newsletter" / "email.html"
 MARKER_OPEN = "<!-- iamhoi -->"
 MARKER_CLOSE = "<!-- iamhoiend -->"
 
+# The shipped template guards 4404 characters across its two marker regions. The
+# floor is set well below that so ordinary copy edits do not trip it, while still
+# catching the collapse-to-empty case that leaves the guard scanning nothing. A
+# bare "greater than zero" would accept a single stray character just as happily.
+MIN_GUARDED_CHARS = 500
+
 # Matches how blog-priv#81 AC 1.3 extracts declarations. The character class stops
 # at a double quote as well as a semicolon, which is why the template quotes face
 # names with single quotes: a double-quoted name truncates the match before it
@@ -91,6 +97,29 @@ def failures(text: str) -> list[str]:
         )
     elif opens != closes:
         out.append(f"unbalanced markers: {opens} {MARKER_OPEN} vs {closes} {MARKER_CLOSE}")
+    else:
+        # PRESENT AND BALANCED IS NOT ENOUGH: a pair must ENCLOSE something.
+        #
+        # Counting was the whole rule, so two markers sitting adjacent passed while
+        # protecting zero characters. Measured on the shipped template: collapsing
+        # both pairs to `<!-- iamhoi --><!-- iamhoiend -->` and leaving the copy
+        # below them keeps opens/closes at 2/2, keeps every other rule green, and
+        # takes the guarded region from 4404 characters to 0. The voice guard then
+        # scans nothing and reports OK, which is verbatim the outcome the message
+        # above says this rule exists to prevent. Found by Ralph round 7 tier 3.
+        guarded = sum(
+            len(m.group(1).strip())
+            for m in re.finditer(
+                re.escape(MARKER_OPEN) + r"(.*?)" + re.escape(MARKER_CLOSE), text, re.S
+            )
+        )
+        if guarded < MIN_GUARDED_CHARS:
+            out.append(
+                f"the iamhoi markers enclose only {guarded} characters (expected at "
+                f"least {MIN_GUARDED_CHARS}). Balanced markers that wrap nothing leave "
+                f"the campaign copy outside the voice guard's scope while every count "
+                f"in this gate still passes."
+            )
 
     if _GO_TEMPLATE_ACTION.search(text):
         out.append(
