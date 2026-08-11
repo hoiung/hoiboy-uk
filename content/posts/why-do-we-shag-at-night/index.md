@@ -65,6 +65,14 @@ So the easy explanation, "oh Hoi is just a morning person", does not work on me.
 
 Although I think the ADHD explains something else here, and it might be the actual root of this whole post. I guess with the ADHD I have always struggled with the norm. Which is probably why I question it constantly. What is the norm?! And why is it the norm? Sex at night is just one more thing on that list.
 
+## The first time I danced in the daytime
+
+I did not want to turn this into a dance post. But it fits, so here it is.
+
+Brazilian Zouk marathons. The whole appeal for me is the flexibility, you dance at the hours that suit you instead of the hours a timetable hands you. That is where I first danced right through the daytime instead of the night time, by choice, and I loved it. Mentally, emotionally, physically, I was awake for all of it, and the dances themselves did not tire me at all.
+
+And then there is dancing until 6am or 9am in the morning, which I have done plenty of. By the end I am completely shattered. Despite being a night owl!
+
 ## The one real downside
 
 Dog breath.
