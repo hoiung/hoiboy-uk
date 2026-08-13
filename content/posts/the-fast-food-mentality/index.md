@@ -90,6 +90,8 @@ Back when I was learning and doing Amazon FBA products, there were a lot of guru
 
 That got me thinking. Wow. This whole business concept, the marketing, the selling, it's just a big sham.
 
+And this is why I've become so skeptical with a lot of marketing ploys and clickbaits. Once you learn these things, you can't unlearn it. lol
+
 The platforms allow it because it's their traffic. And the way it works right now, the burden lands on us. Something goes wrong, off you go and sue somebody, after the damage is already done. That's a cure, not prevention.
 
 I get it. People post things, it isn't advice, take it or leave it. And accountability and responsibility online is a genuinely messy problem.
