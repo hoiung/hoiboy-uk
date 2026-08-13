@@ -122,6 +122,6 @@ Am I sure that's the cause? No. Honestly, no. I can see the effects everywhere I
 
 I'm quite the country boy. Where I grew up felt like a small town. Which makes me wonder. Is the fast food mentality a big city thing? Or is it just human nature?
 
-Learning is a lifetime of chasing truth and knowledge, and I'm nowhere near done.
+Learning is a lifetime of chasing truth and knowledge, and I'm nowhere near done. Still a student. Always will be.
 
 <!-- iamhoiend -->
