@@ -78,6 +78,8 @@ That's the lot that drives me nuts.
 
 And look, I'm not having a go at anyone who bites. When people are desperate they do stupid things. I've done it myself, so I'm not sitting up here judging anybody.
 
+## Clickbait and marketing ploys
+
 What I don't understand is why there are no rules around any of it.
 
 I know about age. What children can be shown, what material can be put in front of them, all of that is heavily regulated, and rightly so. That is not the bit I'm talking about.
