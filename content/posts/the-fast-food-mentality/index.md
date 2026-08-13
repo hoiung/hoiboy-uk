@@ -118,7 +118,7 @@ Impatient.
 
 That's what I call the fast food mentality, and I think it's the thing sitting underneath all of it. Not the phone. Not the generation.
 
-Am I sure that's the cause? No. Honestly, no. I can see the effects everywhere I look, in the schools, on the street, and in three communities I've spent years inside. But I'm struggling to piece any of it together. It all just seems like noise to me, with no real correlation between any of it. If you've got a better answer than mine I'd genuinely like to hear it.
+Am I sure that's the cause? No. Honestly, no. I can see the effects everywhere I look, in the schools, on the street, in three communities I've spent years inside, and all over social media. That includes LinkedIn. It's like mass hypnosis or something. Or brainwashing. But I'm struggling to piece any of it together. It all just seems like noise to me, with no real correlation between any of it. If you've got a better answer than mine I'd genuinely like to hear it.
 
 I'm quite the country boy. Where I grew up felt like a small town. Which makes me wonder. Is the fast food mentality a big city thing? Or is it just human nature?
 
