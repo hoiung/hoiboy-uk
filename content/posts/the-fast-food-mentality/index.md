@@ -100,6 +100,8 @@ The platforms allow it because it's their traffic. And the way it works right no
 
 And it isn't just the little guys doing it. Big companies make the same claims about how effective their products or services are. Insurance, finance, big pharma, and plenty of others selling physical products, sportswear, equipment, diet, whatever it happens to be. They know a lawsuit takes a long time, and by the time anyone can hold them accountable they have already generated enough profit to cover it.
 
+And these are the ones with substantial researches and data behind them. Even that can be manipulated to paint a more positive picture, or a more negative one, depending what their goal is.
+
 That's why you see them get fined. The risk reward always favours fuck it, let's just do it, make the money, and if we get caught with our pants down then it's just a slap on the wrist.
 
 I get it. People post things, it isn't advice, take it or leave it. And accountability and responsibility online is a genuinely messy problem.
