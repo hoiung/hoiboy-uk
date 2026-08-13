@@ -13,6 +13,12 @@ Modes (selected via --mode):
       (default ON for blog mode) files in content/posts/ dated <
       HOIBOY_CUTOFF_DATE are skipped (legacy voice-sacred corpus).
 
+The mode picks WHICH lines are scanned. HOW STRICTLY they are judged is scoped
+separately by path: the commercial-copy rules (effort signalling, zero-to-one
+form, the Canonical clarifier) run in cv mode AND on any SERVICE_PAGE_PREFIXES
+path in either mode, so the pages that sell are never judged by the leniency
+written for personal blog posts (dotfiles#563).
+
 Rules: imported from voice_rules.py (single source of truth).
 Human-readable companion: dotfiles/voice/base/VOICE_PROFILE.md Section 8 / 19.
 
@@ -68,6 +74,7 @@ from voice_rules import (
     MARKER_SKIP_OPEN_HTML,
     MOTTO_PATTERN,
     motto_is_correct,
+    EFFORT_SIGNALLING_PATTERN,
     ZERO_TO_ONE_PATTERN,
     zero_to_one_is_correct,
     CANONICAL_UBUNTU_PATTERN,
@@ -184,6 +191,13 @@ DEFAULT_PATHS_BLOG: tuple[str, ...] = (
     "content/_index.md",
     "content/about.md",
     "docs/research",
+    # The service pages are the STRICTEST surface in blog mode (see
+    # SERVICE_PAGE_PREFIXES below), so leaving them out of the default set meant
+    # a bare `--mode blog` run reported OK on a dirty selling page - the exact
+    # surface dotfiles#563 exists to police. Entries that do not exist in a given
+    # consumer are skipped by the is_dir/exists test at the call site, so this is
+    # inert in the repos that have no such tree.
+    "content/hire-hoi",
 )
 
 
@@ -220,6 +234,22 @@ EXEMPT_PATHS_BLOG: tuple[str, ...] = (
     "docs/research/11_VOICE_PROFILE.md",
     "docs/research/12_AI_WRITING_TELLS.md",
     "docs/research/13_VOICE_GUARD_PLAN.md",
+)
+
+# Service pages — commercial copy, scanned STRICTLY whatever the mode (dotfiles#563).
+#
+# The commercial copy rules (effort signalling, zero-to-one form, the Canonical
+# clarifier) used to be gated on `--mode cv` alone. A Hugo blog repo runs the
+# guard as `--mode blog` across its whole content tree, so the pages that SELL
+# inherited the leniency written for personal blog posts — backwards, since the
+# leniency exists precisely because a blog post is personal experience. The
+# banned "12 to 15 hours a day every day" reached a live service page that way.
+#
+# Path-scoped rather than mode-scoped: one repo serves both registers, so the
+# mode flag cannot tell them apart. Kept to the paths the operator named — a
+# prefix that matches nothing in a given consumer simply never fires there.
+SERVICE_PAGE_PREFIXES: tuple[str, ...] = (
+    "content/hire-hoi/",
 )
 
 
@@ -391,7 +421,7 @@ def extract_voice_regions(text: str) -> list[tuple[int, str]]:
 # ---------------------------------------------------------------------------
 def _check_lines(
     numbered_lines: list[tuple[int, str]], file: str,
-    cv_copy_rules: bool = False,
+    commercial_copy_rules: bool = False,
 ) -> list[Finding]:
     findings: list[Finding] = []
     for ln, line in numbered_lines:
@@ -428,9 +458,18 @@ def _check_lines(
                     f'"{m.group(0)}" -> must be *This is the Way* '
                     f'(exact case, italic): {line.strip()[:80]}'
                 ))
-        # CV-mode-only copy rules (operator 2026-07-13). Off in blog mode
-        # (casual voice + voice-sacred posts use these bare forms freely).
-        if cv_copy_rules:
+        # Commercial-copy rules (operator 2026-07-13; re-scoped dotfiles#563).
+        # ON for CV mode and for the service pages that sell; OFF for blog
+        # posts, whose casual voice uses these bare forms freely.
+        if commercial_copy_rules:
+            # (0) no effort signalling — outcomes only. Every match is a
+            # violation; there is no correct rendering to fall back to.
+            for m in EFFORT_SIGNALLING_PATTERN.finditer(line):
+                findings.append(Finding(
+                    file, ln, "EFFORT_SIGNALLING",
+                    f'"{m.group(0)}" -> selling copy states outcomes, not hours: '
+                    f'{line.strip()[:80]}'
+                ))
             # (1) the "zero to one" concept must be written EXACTLY as
             # `zero to one (0-to-1)`. Flag every bare form.
             for m in ZERO_TO_ONE_PATTERN.finditer(line):
@@ -653,6 +692,19 @@ def is_whitelisted(file_path: Path, repo_root: Path, whitelist: tuple[str, ...])
     return rel in whitelist
 
 
+def is_service_page(file_path: Path, repo_root: Path) -> bool:
+    """True for a commercial service page (SERVICE_PAGE_PREFIXES, dotfiles#563).
+
+    A file outside repo_root cannot match a repo-relative prefix, so it is
+    simply not a service page — same convention as is_exempt().
+    """
+    try:
+        rel = str(file_path.relative_to(repo_root))
+    except ValueError:
+        return False
+    return rel.startswith(SERVICE_PAGE_PREFIXES)
+
+
 def scan_file(file_path: Path, repo_root: Path, mode: str) -> list[Finding]:
     """
     Mode-aware decision matrix (default = SKIP):
@@ -671,7 +723,14 @@ def scan_file(file_path: Path, repo_root: Path, mode: str) -> list[Finding]:
       iamhoi markers present    -> scan tagged regions only
       whole-file-scan whitelist -> scan whole file (back-compat, empty for now)
       otherwise                 -> SKIP
+
+    WHICH lines get scanned is the matrix above and is unchanged by mode-vs-path.
+    HOW STRICTLY they are judged is separate: the commercial-copy rules are ON in
+    CV mode and on any SERVICE_PAGE_PREFIXES path, so a service page inside a
+    blog-mode repo is judged as the selling copy it is (dotfiles#563).
     """
+    commercial = (mode == "cv") or is_service_page(file_path, repo_root)
+
     if mode == "cv":
         exempt = EXEMPT_PATHS_CV
         whitelist = WHOLE_FILE_SCAN_GLOBS_CV
@@ -695,7 +754,7 @@ def scan_file(file_path: Path, repo_root: Path, mode: str) -> list[Finding]:
         if is_whitelisted(file_path, repo_root, whitelist):
             is_cv = file_path.name.startswith("CV_AI_TRANSFORMATION")
             numbered = list(enumerate(text.split("\n"), 1))
-            findings = _check_lines(numbered, file_str, cv_copy_rules=True)
+            findings = _check_lines(numbered, file_str, commercial_copy_rules=commercial)
             findings.extend(_check_bold_bullets(text, file_str, is_cv))
             return findings
         try:
@@ -703,7 +762,7 @@ def scan_file(file_path: Path, repo_root: Path, mode: str) -> list[Finding]:
         except ValueError as e:
             return [Finding(file_str, 0, "MARKER_ERROR", str(e))]
         if regions:
-            return _check_lines(regions, file_str, cv_copy_rules=True)
+            return _check_lines(regions, file_str, commercial_copy_rules=commercial)
         return []
 
     # blog mode: region-first, then legacy whitelist (currently empty).
@@ -712,11 +771,11 @@ def scan_file(file_path: Path, repo_root: Path, mode: str) -> list[Finding]:
     except ValueError as e:
         return [Finding(file_str, 0, "MARKER_ERROR", str(e))]
     if regions:
-        return _check_lines(regions, file_str)
+        return _check_lines(regions, file_str, commercial_copy_rules=commercial)
     if is_whitelisted(file_path, repo_root, whitelist):
         is_cv = "CV_AI_TRANSFORMATION" in file_str
         numbered = list(enumerate(text.split("\n"), 1))
-        findings = _check_lines(numbered, file_str)
+        findings = _check_lines(numbered, file_str, commercial_copy_rules=commercial)
         findings.extend(_check_bold_bullets(text, file_str, is_cv))
         return findings
     return []
@@ -733,6 +792,14 @@ TYPE_LABELS = {
     "UNICODE_ARROW": "Unicode Arrows (use plain text)",
     "BOLD_BULLET": "Bold-First Bullet Pattern",
     "NEGATION_FRAME": "Negation Framing (\"It's not X, it's Y\")",
+    "EFFORT_SIGNALLING": "Effort Signalling (hours/day, FTE — outcomes only in selling copy)",
+    # The three commercial-copy rules below predate this table and were never
+    # added to it, so they printed as raw keys in the report the operator reads
+    # to decide what to fix. Added with EFFORT_SIGNALLING rather than left as
+    # the odd ones out (#563).
+    "MOTTO_FORMAT": "Motto Format (must be the exact italic *This is the Way*)",
+    "ZERO_TO_ONE_FORMAT": "Zero-to-One Format (must be the exact \"zero to one (0-to-1)\")",
+    "CANONICAL_UBUNTU": "Canonical Clarifier (must read \"Canonical (Ubuntu Linux)\")",
     "STAT_STACK": "Numeric Density / Stat-Stacking (numbers-as-hype, not evidence)",
     "RULE_OF_THREE": "Rule-of-Three Abstract-Noun Triple (AI scaffold)",
     "RHYTHM_UNIFORM": "Rhythm Uniformity (smooth AI sentence band)",

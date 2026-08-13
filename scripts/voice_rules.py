@@ -288,10 +288,12 @@ def motto_is_correct(open_marker: str, phrase: str, close_marker: str) -> bool:
 # phrase. The operator repeatedly had it stripped/collapsed by agents and was
 # emphatic ("I will not accept any other way of writing it", "everywhere").
 #
-# SCOPE: this is a CV-MODE-ONLY check (the voice-doc consumer's recruiter-facing docs). The
-# blog casual voice (hoiboy-uk + the private blog-staging consumer) legitimately uses the bare forms and
-# has voice-sacred legacy posts, so check-ai-writing-tells.py runs this ONLY in
-# --mode cv (never blog). See scan_file / _check_lines(check_zero_to_one=...).
+# SCOPE: this is a COMMERCIAL-COPY check (dotfiles#563) — it runs in CV mode, and
+# on the service-page paths listed in check-ai-writing-tells.py
+# SERVICE_PAGE_PREFIXES whatever the mode. The blog casual voice (hoiboy-uk +
+# the private blog-staging consumer) legitimately uses the bare forms and has
+# voice-sacred legacy posts, so a blog post is never scanned for it.
+# See scan_file / _check_lines(commercial_copy_rules=...).
 #
 # The pattern lists the canonical form FIRST so leftmost-first alternation
 # consumes the whole `zero to one (0-to-1)` as ONE match (never double-flagging
@@ -328,21 +330,148 @@ def zero_to_one_is_correct(matched_text: str) -> bool:
 # canonical source / canonical form) is used heavily across the harness docs and
 # must NEVER be flagged — so no re.IGNORECASE here.
 #
-# SCOPE: CV-MODE only (the voice-doc consumer's recruiter/client copy), same gate as the
-# zero-to-one rule. Not run in blog mode.
+# SCOPE: COMMERCIAL-COPY, the same gate as the zero-to-one rule — CV mode plus
+# the service-page paths (dotfiles#563). Not run on blog posts.
 #
 # The pattern greedily grabs the " (Ubuntu[ Linux])" suffix when present, so a
 # fully-clarified occurrence matches "Canonical (Ubuntu Linux)" (is_correct True)
 # while "Canonical (Ubuntu)" and bare "Canonical" match shorter and fail.
+# Capture the employer name plus ANY parenthetical that immediately follows it,
+# not just the two renderings the rule used to allow - otherwise a clarifier that
+# does its job in different words ("Canonical (the company behind Ubuntu)") is
+# read as a BARE mention and flagged, which is a false positive on copy that is
+# already correct. Operator-directed 2026-08-07 (dotfiles#563 Stage 5):
+# "as long as within the bracket it says Ubuntu".
 CANONICAL_UBUNTU_PATTERN: re.Pattern[str] = re.compile(
-    r"Canonical(?: \(Ubuntu(?: Linux)?\))?"
+    r"Canonical(?:\s*\([^)]*\))?"
 )
 
 
 def canonical_ubuntu_is_correct(matched_text: str) -> bool:
-    """True iff a CANONICAL_UBUNTU_PATTERN match is the ONE required form
-    'Canonical (Ubuntu Linux)'. Bare 'Canonical' AND 'Canonical (Ubuntu)' fail."""
-    return matched_text == "Canonical (Ubuntu Linux)"
+    """True iff the employer mention carries a parenthetical naming Ubuntu.
+
+    The WHY is reader recognition, not a fixed string: many readers know Ubuntu
+    and not the company name, and "Ubuntu" is itself an ATS keyword. Any bracket
+    that lands that word does the job, so "Canonical (Ubuntu Linux)",
+    "Canonical (Ubuntu)" and "Canonical (the company behind Ubuntu)" all pass.
+    A bare "Canonical" with no bracket, or a bracket that never says Ubuntu,
+    still fails. Case-sensitivity is handled by the pattern: only the
+    capitalised proper noun is matched, so the lowercase adjective "canonical"
+    used throughout the harness docs is never touched.
+    """
+    body = matched_text.partition("(")[2]
+    return "Ubuntu" in body
+
+# ---------------------------------------------------------------------------
+# Effort signalling — hours-per-day / FTE (operator-directed; dotfiles#563)
+# ---------------------------------------------------------------------------
+# Selling copy states OUTCOMES, never how many hours they cost to produce. The
+# rule was written down long before it was implemented ("No effort signalling.
+# NEVER write '12-15 hrs/day' or '2-2.5 yrs FTE' ... Outcomes only." — the
+# operator's MASTER_PROFILE), so the guard had no pattern for it and the banned
+# form shipped live on a client-facing service page. Found by grep, not by the
+# gate — which is why it is a pattern here now rather than prose in a skill.
+#
+# Unlike the motto / zero-to-one / Canonical rules there is NO correct rendering
+# to fall back to, so there is no *_is_correct() companion: every match is a
+# violation. Move the figure into private factual context, or cut it.
+#
+# SCOPE: COMMERCIAL-COPY, the same gate as the two rules above — CV mode plus
+# the service-page paths. Blog posts are DELIBERATELY exempt: they are personal
+# experience, where "12 to 15 hours a day, every day" is the lived story rather
+# than a sales claim, and the corpus uses it freely (operator, 2026-08-05: "in
+# blogs is fine, but not when selling service pages").
+#
+# The hours figure MUST bind directly to a per-day unit. Service pages are dense
+# with legitimate day-priced language — "£1,500 per day", "£1,500/extra day",
+# "8 hours of my time", "£1,500 / 10 hours", "2.5 hours per harness per month" —
+# and a looser "number near day" rule would flag the price list instead of the
+# effort claim. Requiring an hours token IMMEDIATELY before the day unit is what
+# separates "how hard I worked" from "what it costs".
+#
+# The number is matched in BOTH digit and spelled form: the operator writes it
+# both ways ("12-15 hrs/day", "about six hours a day"), so a digits-only rule
+# would read as complete while silently passing half of his vocabulary.
+#
+# DELIBERATELY NOT COVERED - the compact adjectival form "N-hour day(s)"
+# ("12-15 hour days", "fifteen-hour days"). Do not add it back without asking.
+# It is genuinely ambiguous: the same surface form carries a grind claim AND a
+# day-rate contract defining its own billing unit ("billed days are 7.5-hour
+# days"), and no lexical rule separates the two - a plural-only variant was
+# tried and still flagged the pricing register. Operator decision (2026-08-07),
+# choosing the miss over the nag on his own commercial pages. The consequence is
+# accepted and known: "Nine months of 12-15 hour days" pasted onto a service
+# page passes silently.
+_EFFORT_DIGIT = r"\d[\d.,]*\+?"
+_EFFORT_WORD = (
+    r"(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|"
+    r"thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)"
+)
+_EFFORT_NUM = rf"(?:{_EFFORT_DIGIT}|{_EFFORT_WORD})"
+# "12", "12-15", "12 to 15", "twelve-to-fifteen", "Twelve to fifteen"
+_EFFORT_DASH = "\u2013\u2014-"
+_EFFORT_RANGE = (
+    rf"{_EFFORT_NUM}"
+    rf"(?:(?:\s*[{_EFFORT_DASH}]\s*|\s+to\s+|-to-|\s+and\s+){_EFFORT_NUM})?"
+)
+# Availability is not effort. "the harness runs 24 hours a day" is a claim about
+# the PRODUCT being always-on, which is exactly what a service page is for, and
+# the operator sells an always-on harness. Excused by operator decision
+# (2026-08-07) under the same miss-over-nag preference as the withdrawn compact
+# form. Only a bare 24 is excused - "12 to 24 hours a day" still flags, because
+# the leftmost match starts at the 12. The excusal does NOT read the subject, so
+# a first-person claim at this magnitude is excused too; see the accepted-gap
+# note on EFFORT_SIGNALLING_PATTERN below for why that is deliberate.
+_EFFORT_ALWAYS_ON = r"(?!(?:24|twenty[-\s]*four)\s*(?:hours?|hrs?|h)\b)"
+# A match may not START mid-token, or the engine simply re-matches on the tail
+# of an excused number: blocking "twenty-four" at the "twenty" still left
+# "four hours a day" matching one character later.
+#
+# The tail guard is tied to the "four" it exists to block. A blanket
+# `(?<!twenty[-\s])` was tried first and was too broad in the other direction -
+# it suppressed EVERY spelled number one separator after "twenty", so a real
+# claim ("twenty six hours a day") stopped flagging entirely. Python lookbehind
+# is fixed-width, so the separator run is enumerated at one and two characters:
+# that covers "twenty-four", "twenty four", and the double-space typo. Three or
+# more separators between the two words is not prose and is not covered.
+_EFFORT_START = (
+    r"(?<![\w-])"
+    r"(?!(?<=twenty[-\s])four\b)"
+    r"(?!(?<=twenty[-\s]{2})four\b)"
+)
+# "hours a day", "hrs/day", "h per day", "hours daily".
+_EFFORT_DAY_UNIT = r"\s*(?:hours?|hrs?|h)\b\s*(?:(?:/\s*|per\s+|an?\s+)day|daily)\b"
+#
+# THE 24 MAGNITUDE IS THE ONLY AMBIGUOUS ONE, AND IT IS EXCUSED. Every other
+# magnitude - 1 to 23, ranges, spelled forms - means the same thing whoever the
+# subject is, so the rule decides them without knowing the subject. 24 does not:
+# it is simultaneously the natural always-on number ("the harness runs 24 hours
+# a day") and a plausible hyperbolic effort claim ("I work 24 hours a day"). The
+# two are separated only by the SUBJECT of the sentence, which a regex cannot
+# read.
+#
+# A first-person discriminator was built and measured against a 56-line
+# adversarial corpus, and it was DOMINATED: it added 4 false positives - it
+# stitched "I worked at a bank whose systems run 24 hours a day" into a hit -
+# while still missing 5 of 8 first-person forms ("I clock", "I grind", "I am
+# up", "I've been putting in", "I log"). Widening the verb set cannot close that
+# without widening the stitching too; both errors come from the same missing
+# subject. The blanket excusal is the only shape with ZERO false positives on
+# the operator's own copy.
+#
+# ACCEPTED CONSEQUENCE, operator decision 2026-08-07 under the miss-over-nag
+# preference already applied to the withdrawn compact form: a first-person
+# 24-hour claim on a service page passes silently. Pinned by
+# test_first_person_24_hour_claims_are_the_accepted_gap. Do not "fix" it with a
+# verb list - that path was measured and is worse.
+EFFORT_SIGNALLING_PATTERN: re.Pattern[str] = re.compile(
+    # Explicit day unit: "12 to 15 hours a day", "12-15 hrs/day",
+    # "10 hours per day", "16h/day", "14+ hours daily"
+    rf"{_EFFORT_START}{_EFFORT_ALWAYS_ON}{_EFFORT_RANGE}{_EFFORT_DAY_UNIT}"
+    # "2-2.5 yrs FTE" - the acronym alone is the effort claim.
+    r"|\bFTEs?\b",
+    re.IGNORECASE,
+)
 
 # Bold-first bullet thresholds. CV documents legitimately use bold-first
 # bullets in Core Competencies sections; non-CV docs should not.
@@ -482,6 +611,13 @@ __all__ = [
     "BANNED_WORDS_PATTERN", "BANNED_PHRASES_PATTERN",
     "BOLD_BULLET_PATTERN", "NEGATION_PATTERN", "FRONTMATTER_DATE_PATTERN",
     "MOTTO_CANONICAL", "MOTTO_PATTERN", "motto_is_correct",
+    # Commercial-copy rules — CV mode + service-page paths (see
+    # check-ai-writing-tells.py SERVICE_PAGE_PREFIXES). The first two were
+    # omitted when they landed; listed here so __all__ describes the real
+    # public surface rather than a stale subset of it.
+    "ZERO_TO_ONE_CANONICAL", "ZERO_TO_ONE_PATTERN", "zero_to_one_is_correct",
+    "CANONICAL_UBUNTU_PATTERN", "canonical_ubuntu_is_correct",
+    "EFFORT_SIGNALLING_PATTERN",
     "BOLD_BULLET_THRESHOLD_CV", "BOLD_BULLET_THRESHOLD_DEFAULT",
     # Structural AI-tell detectors (dotfiles#517 Phase E)
     "HTML_TAG_PATTERN", "URL_PATTERN", "MD_LINK_TARGET_PATTERN", "LIST_LINE_PATTERN",
