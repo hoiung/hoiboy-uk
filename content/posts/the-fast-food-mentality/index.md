@@ -124,4 +124,8 @@ I'm quite the country boy. Where I grew up felt like a small town. Which makes m
 
 Learning is a lifetime of chasing truth and knowledge, and I'm nowhere near done. Still a student. Always will be.
 
+The good news? Patience is still available. Nobody has regulated it, nobody can sell it to you in ten days, and it works exactly as well as it always did.
+
+Back to basics. Lay the foundation. Let it set.
+
 <!-- iamhoiend -->
