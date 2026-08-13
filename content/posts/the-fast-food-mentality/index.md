@@ -96,6 +96,10 @@ And this is why I've become so skeptical with a lot of marketing ploys and click
 
 The platforms allow it because it's their traffic. And the way it works right now, the burden lands on us. Something goes wrong, off you go and sue somebody, after the damage is already done. That's a cure, not prevention.
 
+And it isn't just the little guys doing it. Big companies make the same claims about how effective their products or services are. Insurance, finance, big pharma, and plenty of others selling physical products, sportswear, equipment, diet, whatever it happens to be. They know a lawsuit takes a long time, and by the time anyone can hold them accountable they have already generated enough profit to cover it.
+
+That's why you see them get fined. The risk reward always favours fuck it, let's just do it, make the money, and if we get caught with our pants down then it's just a slap on the wrist.
+
 I get it. People post things, it isn't advice, take it or leave it. And accountability and responsibility online is a genuinely messy problem.
 
 But man, I hate that people can get away with it this easily, knowing full well nobody is ever going to hold them accountable for any of it.
