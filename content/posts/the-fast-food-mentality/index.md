@@ -24,6 +24,8 @@ And the researchers who found it said, in plain English, that they don't know wh
 
 Which is exactly where I am. I can see the effects everywhere. I don't know the cause.
 
+So that's what this is. I'm curious, and I want to get at the truth of it. The easy answer (it's the phones, it's the kids) clearly isn't it, and I'd rather keep asking than settle for something that convenient.
+
 ## What I see in the schools
 
 Behaviour in classrooms got worse after the pandemic and it stayed worse. Suspensions up, attendance down.
@@ -118,6 +120,8 @@ That's what I call the fast food mentality, and I think it's the thing sitting u
 
 Am I sure that's the cause? No. Honestly, no. I can see the effects everywhere I look, in the schools, on the street, and in three communities I've spent years inside. But I'm struggling to piece any of it together. It all just seems like noise to me, with no real correlation between any of it. If you've got a better answer than mine I'd genuinely like to hear it.
 
-I'm quite the country boy in that respect. Learning is a lifetime of chasing truth and knowledge, and I'm nowhere near done.
+I'm quite the country boy. Where I grew up felt like a small town. Which makes me wonder. Is the fast food mentality a big city thing? Or is it just human nature?
+
+Learning is a lifetime of chasing truth and knowledge, and I'm nowhere near done.
 
 <!-- iamhoiend -->
