@@ -90,6 +90,8 @@ Back when I was learning and doing Amazon FBA products, there were a lot of guru
 
 That got me thinking. Wow. This whole business concept, the marketing, the selling, it's just a big sham.
 
+We can't paint everyone with the same colour though. I'm talking about the ones using these tactics and ploys, and they are obvious, because their "research" and their "expert" have no backing to it. That's easily checked with a simple search online. Even easier now, get an AI to do a quick fact check.
+
 And this is why I've become so skeptical with a lot of marketing ploys and clickbaits. Once you learn these things, you can't unlearn it. lol
 
 The platforms allow it because it's their traffic. And the way it works right now, the burden lands on us. Something goes wrong, off you go and sue somebody, after the damage is already done. That's a cure, not prevention.
