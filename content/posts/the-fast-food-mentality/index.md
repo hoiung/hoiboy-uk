@@ -86,6 +86,10 @@ I'm talking about the fact that there is nothing out there to stop a charlatan s
 
 To me that is false advertising, plain and simple, and it should sit under the same law as everything else does. Put a claim like that on a product and you would be in trouble. Put it on a video and it's absolutely fine.
 
+Back when I was learning and doing Amazon FBA products, there were a lot of gurus teaching the marketing side of it. They actually advised using words like researchers confirmed it, experts discovered it, it was tested and the results were positive. And they said it out loud. Buyers don't check. They will believe you if you just make up that an expert or a researcher did the work, as long as nobody gets hurt.
+
+That got me thinking. Wow. This whole business concept, the marketing, the selling, it's just a big sham.
+
 The platforms allow it because it's their traffic. And the way it works right now, the burden lands on us. Something goes wrong, off you go and sue somebody, after the damage is already done. That's a cure, not prevention.
 
 I get it. People post things, it isn't advice, take it or leave it. And accountability and responsibility online is a genuinely messy problem.
