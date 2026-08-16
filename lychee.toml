@@ -154,23 +154,6 @@ exclude = [
   # Re-probed 2026-08-02, still 403 anonymously. Expected to be renewed, not
   # deleted. added: 2026-08-02; expires: 2026-10-31 (90 days)
   "^https?://dash\\.cloudflare\\.com(/.*)?$",
-  # Cal.com booking pages (cal.eu is the EU-region host, cal.com the parent
-  # service) intermittently return 403 Forbidden to lychee's user-agent
-  # (anti-bot), so the booking URL https://cal.eu/hoiboyuk/discovery
-  # (docs/cal-eu-setup.md) flakes CI non-deterministically and cascade-skips
-  # Deploy. Known-good anti-bot domain, same class as linkedin/cloudflare
-  # above -- NOT a broken link.
-  # consulting-ops#2 AC 0.4 interaction (intentional): this also suppresses
-  # the SECONDARY lychee liveness check in pre-publish.sh:167
-  # consulting_link_check for cal.* URLs in rendered public/hire-hoi/ai-consultancy HTML.
-  # That secondary check is anti-bot-403-unreliable for cal.* by nature
-  # (same flake this entry fixes), so it was never a dependable guarantee.
-  # The BINDING guard against a stale cal.com/OPERATOR_TODO URL is the
-  # URL-agnostic literal string check (pre-publish.sh:89 consulting_yaml_check
-  # + the independent .pre-commit-config.yaml OPERATOR_TODO hook) — neither
-  # uses lychee or this allowlist, so the primary defence is unaffected.
-  # added: 2026-05-18; expires: 2026-08-16 (90 days)
-  "^https?://(www\\.)?cal\\.(eu|com)(/.*)?$",
   # Academic publishers and Medium return 403 Forbidden to lychee's user-agent
   # (anti-bot), same class as linkedin/substack above. These are the three
   # citations surfaced when docs/research stopped being excluded from the link
