@@ -396,7 +396,7 @@ The description must answer "why should I read this?" not "what is this about?" 
 - [Story spine for tech blogs: Anvil](https://www.useanvil.com/blog/engineering/writing-technical-blog-posts-with-the-story-spine/)
 - [How to write a great tech blog post: freeCodeCamp](https://www.freecodecamp.org/news/how-to-write-a-great-technical-blog-post-414c414b67f6/)
 - [10 Tips for Developer Blogs: MoldStud](https://moldstud.com/articles/p-10-tips-for-writing-an-engaging-developer-blog-to-showcase-your-work)
-- [Optimal blog length 2025: Automateed](https://www.automateed.com/how-long-should-blog-posts-be-in-2025)
+- Optimal blog length 2025: Automateed, `https://www.automateed.com/how-long-should-blog-posts-be-in-2025` (DEAD. 410 Gone, verified 2026-08-16 from a residential IP as well as from CI. The domain root still returns 200 and the Wayback Machine holds no snapshot, so the article was withdrawn rather than the site going down. This is real link rot, NOT the anti-bot or origin-IP false-positive class the `lychee.toml` allowlist exists for, so it is recorded unlinked instead of allowlisted. Kept rather than deleted because it is the provenance for the Optimal Length table at the top of this file, which drives the `scripts/check_wordcount.py` hard stop.)
 - [Screenshots in technical docs: Archbee](https://www.archbee.com/blog/screenshots-in-technical-documentation)
 - [500 Indie Hackers posts analysis: scottPlusPlus](https://medium.com/@scottplusplus/how-to-go-viral-on-indiehackers-a-study-of-500-posts-c467e567f1ed)
 - [Details/summary lightboxes: Dan Q](https://danq.me/2025/08/15/details-summary-lightboxes-in-pure-html-css/)
