@@ -7,6 +7,8 @@ breadcrumbParent: "/community/agit-featured"
 hideDate: true
 ---
 
+<!-- iamhoi-exempt -->
+
 Hi I'm Stephen. 👋 I'm a software nerd in London. By day I work in financial markets, doing lots of fun mathy and formal methods things at the frontiers of electronic markets.
 
 **Superpowers:** formal methods, compilers, functional programming.
