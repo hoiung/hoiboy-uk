@@ -59,6 +59,12 @@ GRAD   = ("#b5dae7", "#f9ebdf")   # panel gradient: powder-blue (top) -> cream (
 # --- share-card geometry ---
 CW, CH   = 1200, 630
 PHOTO_W  = 748       # left photo panel width
+# Vertical anchor when the submitted portrait is cropped to the landscape panel.
+# A submission is a head-and-shoulders portrait, so the face sits well above the
+# frame's middle: a centred crop (the SVG's own xMidYMid) takes the top of the
+# head off. Biased toward the top, and more so than the hero's, because the panel
+# discards far more of a portrait's height than the 4:5 hero does.
+CARD_CENTERING = (0.5, 0.08)
 PAD      = 48        # right-panel inner inset (equal left/right margins)
 EB_FS    = 18        # eyebrow size CEILING (justified across the panel via letter-spacing)
 EB_LINES = 2         # a deep trail wraps rather than shrinking to an illegible size
@@ -339,7 +345,8 @@ def build_share_card(photo, name, role, out_png, eyebrow, number=None):
             y += 8
 
     logo_uri = _im_datauri(_circle_logo(logo_px))
-    photo_uri = _im_datauri(photo, "JPEG")
+    photo_uri = _im_datauri(
+        ImageOps.fit(photo, (PHOTO_W, CH), Image.LANCZOS, centering=CARD_CENTERING), "JPEG")
     svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{CW}" height="{CH}" viewBox="0 0 {CW} {CH}">
   <defs>
     <clipPath id="ph"><rect width="{PHOTO_W}" height="{CH}"/></clipPath>
