@@ -230,18 +230,4 @@ exclude = [
   # holds. Expected to be renewed, not deleted.
   # added: 2026-08-02; expires: 2026-10-31 (90 days)
   "^/[^/]",
-  # freecodecamp.org (a cited source in 14_BLOG_CRAFT.md since 2026-04-10,
-  # commit 0f1e518) started returning HTTP 525 on 2026-08-08, breaking CI on
-  # main and cascade-skipping Deploy with no repo change to that file.
-  # NOT the same class as the anti-bot (403) or origin-IP (415) entries above:
-  # 525 is Cloudflare-to-origin SSL handshake failure, i.e. THEIR site is down,
-  # and it reproduces from a local machine under a browser UA as well as from
-  # the CI runner. Verified 2026-08-08: the domain ROOT and /news/ both 525 too,
-  # so this is a site-wide outage, not a broken or moved article.
-  # DELIBERATELY SHORT WINDOW (14 days, not the usual 90): a TLS outage should
-  # resolve in hours, so this must not sit here for a quarter hiding a link that
-  # may by then be genuinely dead. Re-probe the URL and DELETE this entry once
-  # freecodecamp.org serves 200 again; only renew if it is still down.
-  # added: 2026-08-08; expires: 2026-08-22 (14 days)
-  "^https?://(www\\.)?freecodecamp\\.org(/.*)?$",
 ]
