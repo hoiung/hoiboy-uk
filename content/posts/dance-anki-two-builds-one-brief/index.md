@@ -87,9 +87,9 @@ I had remembered it as 20 minutes. The transcript says 18 minutes 33 seconds, so
 
 Three minutes later, at 20:43:52, my first real class video had finished uploading and I was tagging moves in it. It ran for 7 minutes 17 seconds of actual use before I asked for a single change. Inside the 30-minute budget with about 11 minutes to spare.
 
-And that was the whole brief, not a skeleton. Tagging, cross-video search, click a result and it plays that clip only and stops dead on the out-point, the jump strip, and the full Anki review mode on an SM-2 scheduler.
+And that was the whole brief, not a skeleton. Tagging, cross-video search, click a result and it plays that clip only and stops dead on the out-point, the jump strip, and the full Anki review mode.
 
-{{< zoom-image src="shots/hoi/sibling-strip.webp" alt="The dance-anki clip view. A paused class video sits above a row of buttons labelled Bart Simpson, Gucci, Steve Martin, Cabbage Patch and Power, each with a timestamp, under the caption other moves in the same video, click one to jump straight to it." title="Open one clip and every other move in that video becomes a jump button." >}}
+{{< zoom-image src="shots/hoi/sibling-strip.webp" alt="Badged HOI, SST3-AI-Harness. The dance-anki clip view. A paused class video sits above a row of buttons labelled Bart Simpson, Gucci, Steve Martin, Cabbage Patch and Power, each with a timestamp, under the caption other moves in the same video, click one to jump straight to it." title="Open one clip and every other move in that video becomes a jump button." >}}
 
 ## Matt's brief, and why it went differently
 
@@ -105,7 +105,7 @@ They are not the same shape at all.
 
 Matt picked his stack in the first eight words. Python, a venv, simple HTML. I did the opposite and asked out loud: typescript? rust? go? python? react? I did not know, so I made it go and find out. It probed the box, found no Go and no FastAPI installed, and came back with standard library only. Which killed the whole install and build step, in a pub, on pub wifi.
 
-He also wanted the video **automatically segmented** into named moves, a far more ambitious ask than mine. I specified manual tagging, because I knew I would be sat there scrubbing through it myself.
+He also wanted the video **automatically segmented** into named moves, a far more ambitious ask than mine. I specified manual tagging, because I knew I would be scrubbing through it myself.
 
 And then the two endings. Mine finishes with a deadline and an instruction on how to split the work up in parallel. His finishes with *"Help me to flesh out how the system will work"* and *"Does this make sense?"*
 
@@ -123,9 +123,9 @@ This was not a controlled experiment. Two blokes, two pints, two laptops, no sto
 
 And a fair chunk of that hour was just us talking. There were stretches where Matt's Claude Code had finished and was sat there waiting on his next prompt, and he had not clocked it because we were mid-conversation with a pint in hand. Dead time that needed his attention and did not get it. None of that is about the tooling.
 
-The harness cost me time here too. Two research agents went out at the brief, and the one researching the stack stalled and returned absolutely nothing, which did not surface until about 10 minutes in. The build carried on in parallel, so it cost a wasted dispatch rather than 10 minutes of wall clock. But an unharnessed run would never have made that dispatch at all.
+The harness cost me time here too. Two research agents went out at the brief, and the one researching the stack stalled and returned absolutely nothing, which did not surface until about 10 minutes in. The build carried on in parallel, so it cost a wasted dispatch rather than wall clock. But an unharnessed run would never have made that dispatch at all.
 
-What my [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) actually bought me is that I did not have to type the standards out. The workflow, the quality bar, commit per file, prove it before you claim it. Already sat there in the repo, so it just applied. A real advantage, and a much more modest one than "faster".
+What my [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness) actually bought me is that I did not have to type the standards out. The workflow, the quality bar, commit per file. Already sat there in the repo, so it just applied. A real advantage, and a much more modest one than "faster".
 
 ## The tweaks, and this is where Matt got competitive
 
@@ -133,25 +133,25 @@ First tweak was tagging friction. Marking IN then OUT for every move meant two c
 
 Then Matt's version showed me slow motion. His had 0.25x and 0.5x from the start, mine had nothing at all, so I nicked it. Fair is fair. It is sticky too, so a move you keep failing can sit at quarter speed and follow you into review without resetting every card.
 
-Then I wanted the other end, because a 40-minute class recording is mostly not the bit you want. 1.5x, 3x and 6x for scanning. Browsers mute audio above roughly 4x, so 6x is a visual skim.
-
-Meanwhile Matt carried on doing UI improvements way, way past the one hour we agreed. Hahaha. He got competitive. I love it.
+Then I wanted the other end, because a 40-minute class recording is mostly not the bit you want. 1.5x, 3x and 6x for scanning. Browsers mute audio above roughly 4x, so 6x is a visual skim only.
 
 ## Two apps, side by side
 
 <!-- shots/matt/ gallery: Move Studio tagger + library grid -->
 
-{{< zoom-image src="shots/matt/tagger.webp" alt="Matt's Move Studio tagging screen, subtitled choreo to Anki. A video plays centre with a timeline strip below it showing a highlighted tagged region. A panel on the right holds IN and OUT fields, a move name box, a notes box, and a saved move called running man at 5 to 7 seconds with loop and delete buttons." title="Move Studio. Timeline strip, frame-by-frame nudge, crop tool, loop on every tag." >}}
+{{< zoom-image src="shots/matt/tagger.webp" alt="Badged MATT, No Harness. Matt's Move Studio tagging screen, subtitled choreo to Anki. A video plays centre with a timeline strip below it showing a highlighted tagged region. A panel on the right holds IN and OUT fields, a move name box, a notes box, and a saved move called running man at 5 to 7 seconds with loop and delete buttons." title="Move Studio. Timeline strip, frame-by-frame nudge, crop tool, loop on every tag." >}}
 
 His is called **Move Studio**, and I will say it out loud, it looks better than mine. A proper timeline strip under the video with the tagged region drawn onto it, frame-by-frame nudge on the comma and full stop keys, a crop tool, a loop button on every tag. Mine has none of that.
+
+Mind you, that is after over-over-time. He carried on way, way past the hour we agreed, and cheekily prompted Claude Code to improve the UI because it was like barebone! Hahaha. He got competitive. I love it.
 
 <!-- shots/hoi/ gallery: dance-anki moves list + recall card + recognise card + tagger -->
 
 But look at his library, then look at mine, because this is the bit that made me sit up.
 
-{{< zoom-image src="shots/matt/library.webp" alt="Matt's Move Studio library showing all tagged moves as six video cards in a row: running man, running man again, sdfs, jump thing, kriss kross and cabbage patch. The first two are the same move from two different class videos, listed as two separate cards." title="Matt's library. Running man twice, because he filmed it twice." >}}
+{{< zoom-image src="shots/matt/library.webp" alt="Badged MATT, No Harness. Matt's Move Studio library showing all tagged moves as six video cards in a row: running man, running man again, sdfs, jump thing, kriss kross and cabbage patch. The first two are the same move from two different class videos, listed as two separate cards." title="Matt's library. Running man twice, because he filmed it twice." >}}
 
-{{< zoom-image src="shots/hoi/moves-list.webp" alt="The dance-anki moves list. Each move is one collapsed row: Bart Simpson one clip, Cabbage Patch two clips across two videos, Gucci one clip, Power two clips across two videos. Cabbage Patch is expanded to show both takes underneath it." title="Mine collapses. Cabbage Patch is one row whether it is two takes or ten." >}}
+{{< zoom-image src="shots/hoi/moves-list.webp" alt="Badged HOI, SST3-AI-Harness. The dance-anki moves list. Each move is one collapsed row: Bart Simpson one clip, Cabbage Patch two clips across two videos, Gucci one clip, Power two clips across two videos. Cabbage Patch is expanded to show both takes underneath it." title="Mine collapses. Cabbage Patch is one row whether it is two takes or ten." >}}
 
 His library has "running man" in it **twice**. Two cards, because he tagged it in two different videos. Mine has one row that says "Cabbage Patch, 2 clips across 2 videos", and it will still be one row when there are ten.
 
@@ -167,11 +167,11 @@ So here, one move gives you two cards.
 
 `recall` shows you the **name**. Nothing else. Mine literally says "PERFORM THIS MOVE FROM MEMORY", then underneath, "Dance it first, actually move. Then reveal the clip and compare." So you do it, then the clip plays, and you grade how your body did rather than how your memory did.
 
-{{< zoom-image src="shots/hoi/recall-card.webp" alt="A dance-anki review card labelled name to move. It reads perform this move from memory, then the move name Steve Martin in large letters, then dance it first, actually move, then reveal the clip and compare. Speed buttons run from quarter speed to six times, above a show answer button and the Again, Hard, Good and Easy grading buttons." title="The recall card. Name on the front, and you are meant to actually dance it before you look." >}}
+{{< zoom-image src="shots/hoi/recall-card.webp" alt="Badged HOI, SST3-AI-Harness. A dance-anki review card labelled name to move. It reads perform this move from memory, then the move name Steve Martin in large letters, then dance it first, actually move, then reveal the clip and compare. Speed buttons run from quarter speed to six times, above a show answer button and the Again, Hard, Good and Easy grading buttons." title="The recall card. Name on the front, and you are meant to actually dance it before you look." >}}
 
 `recognise` flips it. "WHAT MOVE IS THIS?" over an **unlabelled clip**, and you have to name it. That is the "what on earth is that thing the teacher just did" card, and it is the one Matt and I both needed.
 
-{{< zoom-image src="shots/hoi/recognise-card.webp" alt="A dance-anki review card labelled clip to name. It asks what move is this, above a silent clip of a hip hop class in a mirrored studio with the teacher mid-move and students following behind. No move name is shown until you press show answer." title="The recognise card. Same move, question flipped." >}}
+{{< zoom-image src="shots/hoi/recognise-card.webp" alt="Badged HOI, SST3-AI-Harness. A dance-anki review card labelled clip to name. It asks what move is this, above a silent clip of a hip hop class in a mirrored studio with the teacher mid-move and students following behind. No move name is shown until you press show answer." title="The recognise card. Same move, question flipped." >}}
 
 And here is where the card-per-move decision pays off, which came out of my 21:00:56 prompt asking for randomisation rather than any grand plan.
 
