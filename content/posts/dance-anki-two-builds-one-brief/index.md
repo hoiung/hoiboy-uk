@@ -11,7 +11,7 @@ draft: false
 
 Matt can't make our Asians & Gingers in Tech gathering that is coming up on Friday 4th September. But he still wanted to meet up and do some Claude Code sessions together, so we did a 1:1 earlier this week instead. The Barrowboy & Banker by London Bridge, couple of pints, no agenda.
 
-We are both into dancing. We met at a Not Just Hip Hop course, and then it turned out Matt works in tech. By complete coincidence. I run a community literally called [Asians & Gingers in Tech](/community/asians-gingers-in-tech/) and the universe handed me another one in a dance class.
+We are both into dancing. We met at a Not Just Hip Hop course, and then it turned out Matt works in tech. By complete coincidence. I run a community literally called [Asians & Gingers in Tech](/community/asians-gingers-in-tech/).
 
 First pint in, Matt starts telling me about Anki cards.
 
