@@ -1,10 +1,10 @@
 ---
 title: Privacy Notice
 date: 2026-05-09
-lastmod: 2026-08-03
+lastmod: 2026-09-05
 description: Privacy Notice for HOIBOY AI LTD covering site personal data and consultancy engagements (including meeting recordings and AI-transcription).
 hideDate: true
-version: 1.4.0
+version: 1.5.0
 ---
 
 <!-- iamhoi-exempt -->
@@ -83,6 +83,16 @@ The site footer carries a subscribe form. If you tick the consent box and submit
 - **Article 17 erasure**: you are one addressable contact record in Brevo, so erasure is a single deletion of that record and everything stored against it. Brevo is the only third party holding your subscription data, so that deletion is also the Article 19 notification. There is no one else for us to tell.
 - **Article 21 objection to direct marketing**: you can object at any time, and there is no balancing test for us to apply. Because this list runs on consent, an Article 21 objection and an Article 7(3) withdrawal arrive at the same place, and the same one-click unsubscribe satisfies both.
 - **Article 20 portability**: the data is your name and your email address. Ask at `hello@hoiboy.uk` and we send you both in a structured, machine-readable file within one calendar month, through the same channel as any other subject-access request.
+
+### Partnership brochure
+
+The ICT consultancy page publishes the CRE and ICT services brochure I produce with my consultancy partner, Jolyn Pek. It contains her photograph, her professional credentials, the languages she works in, and her location.
+
+- **Purpose**: to show prospective clients the combined corporate real estate and ICT service we offer, and who they would be working with.
+- **Lawful basis**: consent (UK GDPR Article 6(1)(a)), and explicit consent (Article 9(2)(a)) for her photograph, which is an image of an identifiable person. She agreed to publication before the file was committed. She can withdraw at any time by emailing `hello@hoiboy.uk` or by telling me directly.
+- **How it is processed**: the brochure is a PDF committed to this site's public **GitHub** repository, which is where the site is stored and built from, and served from **Cloudflare Pages**. Because the repository is public, the file also becomes part of that repository's permanent history.
+- **Retention**: the brochure stays published until she or I take it down. Withdrawal removes it from the live site immediately. Removing it from the public repository's git history is a separate, deliberate operation, and copies already taken by third-party forks, clones and caches are outside our control.
+- **Withdrawal**: email `hello@hoiboy.uk`. Withdrawing is as easy as agreeing was, which is what Article 7(3) requires.
 
 ## 5. Your data-subject rights
 
