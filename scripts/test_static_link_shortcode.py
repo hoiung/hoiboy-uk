@@ -158,11 +158,20 @@ def build_site(
     # The whole layout: render the page body and nothing else. disableKinds
     # keeps hugo from warning about taxonomy templates this site has no use for.
     (site / "layouts" / "index.html").write_text("{{ .Content }}", encoding="utf-8")
-    # These two config blocks mirror config/_default/hugo.toml (unsafe at :127,
-    # keepQuotes at :117) and are load-bearing, not boilerplate. A fixture that
-    # claims to prove what Hugo does in production has to be configured like
-    # production, and this one was not. Measured on the real site, the rendered
-    # anchor differs on BOTH axes:
+    # These config blocks mirror config/_default/hugo.toml (keepQuotes at :117,
+    # unsafe at :127). A fixture that claims to prove what Hugo does in
+    # production has to be configured like production, and this one was not.
+    #
+    # Precisely which part is load-bearing, because Ralph round 5 Tier 3 caught
+    # this comment overclaiming: `keepQuotes` IS (drop it and the minifier
+    # unquotes every attribute), and `--minify` below IS. `unsafe = true` is NOT
+    # -- measured, the suite stays at 9 passed without it, because Hugo
+    # substitutes shortcode output after goldmark has run, so the anchor never
+    # takes the raw-HTML path. It is kept to mirror production rather than to
+    # make anything pass, and this note records that it currently reddens
+    # nothing so a future reader does not mistake it for a guard.
+    #
+    # Measured on the real site, the rendered anchor differs on both live axes:
     #   no --minify                  -> href="...Jolyn-Hoi_CRE&#43;ICT_..."
     #   --minify, keepQuotes unset   -> <a href=/ok.pdf target=_blank rel=noopener>
     #   --minify + keepQuotes = true -> href="...Jolyn-Hoi_CRE+ICT_..." (what ships)
@@ -327,9 +336,15 @@ def test_withdrawal_path_removes_link_and_file_together(tmp_path: Path) -> None:
         "withdrawn anything."
     )
 
+    # The REAL brochure call with the file absent, not a `/gone.pdf` stand-in.
+    # Ralph round 5 Tier 3 pointed out that the stand-in made this step a
+    # duplicate of the `target-file-does-not-exist` GUARD_CASES row, while the
+    # docstring above described it as the withdrawal path for this brochure.
+    # Using the published call is what makes step 3 about the thing the privacy
+    # notice actually promises.
     code_file_only, log_file_only, _ = build_site(
         tmp_path / "fileonly",
-        '{{< static-link path="/gone.pdf" label="View the brochure" >}}',
+        PUBLISHED_CALL,
         None,
     )
     assert code_file_only != 0, (
