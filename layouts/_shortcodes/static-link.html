@@ -1,0 +1,21 @@
+{{- /*
+  A link to a file under static/ that opens in a new tab, and fails the build
+  when the file is not there (render-link.html gives target="_blank" to http*
+  links only; validate_internal_links.py parses markdown links only). Same
+  fileExists/errorf shape as versioned-script.html. Arguments: path (root-
+  relative, must start with /) and label. Asserted by
+  scripts/test_static_link_shortcode.py.
+*/ -}}
+{{- $path := .Get "path" -}}
+{{- $label := .Get "label" -}}
+{{- if or (not $path) (not (hasPrefix $path "/")) -}}
+  {{- errorf "static-link: needs a root-relative path starting with /, got %q (called from %s)" $path .Page.Path -}}
+{{- end -}}
+{{- if not $label -}}
+  {{- errorf "static-link: needs a label (called from %s)" .Page.Path -}}
+{{- end -}}
+{{- $file := printf "static%s" $path -}}
+{{- if not (fileExists $file) -}}
+  {{- errorf "static-link: no file at %s (called from %s)" $file .Page.Path -}}
+{{- end -}}
+<a href="{{ $path }}" target="_blank" rel="noopener">{{ $label }}</a>
