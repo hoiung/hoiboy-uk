@@ -436,12 +436,22 @@ MUTATIONS = [
     # building the PUBLISHED state and proving the anchor and the file are really
     # there, so "the link is gone" cannot pass on a site that never had a link.
     # Detach the anchor from its path argument and the published state silently
-    # stops pointing at the brochure: that is what this row makes impossible.
+    # stops pointing at the brochure.
+    #
+    # The target is a pytest NODE ID, not the file. Ralph round 5 Tier 3 found
+    # that naming the file here would NOT pin the positive control at all: this
+    # harness asserts only that the named target goes red, so with the two
+    # positive-control asserts deleted the row still passed, because the
+    # happy-path test reddens the same FILE under this same mutant. A row that
+    # cannot tell which test caught the defect does not protect the test it was
+    # written for -- and an unprotected positive control is precisely the rot
+    # this Issue's history is made of. Scoping to the node id makes the row fail
+    # if and only if the withdrawal test itself notices.
     pytest.param(
         "layouts/_shortcodes/static-link.html",
         '<a href="{{ $path }}" target="_blank" rel="noopener">{{ $label }}</a>',
         '<a href="#" target="_blank" rel="noopener">{{ $label }}</a>',
-        "scripts/test_static_link_shortcode.py",
+        "scripts/test_static_link_shortcode.py::test_withdrawal_path_removes_link_and_file_together",
         id="static-link-anchor-href-detached-from-its-path-argument",
     ),
 ]
