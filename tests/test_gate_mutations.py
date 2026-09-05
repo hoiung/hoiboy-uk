@@ -413,6 +413,19 @@ MUTATIONS = [
         "scripts/test_static_link_shortcode.py",
         id="static-link-file-check-drops-the-static-prefix",
     ),
+    # This one pins the COUPLING check rather than a guard: a fourth guard added
+    # to the template with no row in GUARD_CASES must turn the suite red, which
+    # is what stops the enumerator quietly falling behind the thing it enumerates.
+    # Written in the no-trim-dash spelling on purpose. Ralph round 2 Tier 3 found
+    # the old `^\s*\{\{- errorf ` pattern blind to exactly this, so the guard was
+    # live in the template and invisible to the count that claimed to cover it.
+    pytest.param(
+        "layouts/_shortcodes/static-link.html",
+        '{{- $file := printf "static%s" $path -}}',
+        '{{- if not (hasSuffix $path ".pdf") -}}\n  {{ errorf "static-link: only pdfs (called from %s)" .Page.Path }}\n{{- end -}}\n{{- $file := printf "static%s" $path -}}',
+        "scripts/test_static_link_shortcode.py",
+        id="static-link-fourth-guard-added-with-no-row-in-the-guard-table",
+    ),
 ]
 
 

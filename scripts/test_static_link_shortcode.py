@@ -48,9 +48,21 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SHORTCODE = REPO_ROOT / "layouts" / "_shortcodes" / "static-link.html"
 
-# Anchored on the call site: `{{- errorf ` at the start of a line, optionally
-# indented. The doc comment mentions errorf in prose, and prose is not a guard.
-ERRORF_CALL_SITE = re.compile(r"^\s*\{\{- errorf ", re.MULTILINE)
+# The doc comment mentions errorf in prose, and prose is not a guard, so the
+# comment block is stripped before anything is counted. What remains is matched
+# on the call site itself rather than on its position in the line.
+#
+# This was `^\s*\{\{- errorf ` -- line-start, trim-dash mandatory -- until Ralph
+# round 2 Tier 3, which pointed out that the coupling check below was written in
+# the very idiom this file exists to stop: it asserted a TEXTUAL SHAPE and called
+# it a count of guards. Two legal Hugo spellings slipped past it, both proven
+# against a real build: `{{ errorf` without the trim dash, and an errorf sitting
+# inline on the same line as its `if`. A fourth guard written either way was live
+# in the template and invisible here, so the docstring's promise below was false.
+# Measured after the change: 3 on the real template (the prose mention still does
+# not count), 4 on all three added-guard spellings.
+GO_COMMENT = re.compile(r"\{\{-?\s*/\*.*?\*/\s*-?\}\}", re.DOTALL)
+ERRORF_CALL_SITE = re.compile(r"\{\{-?\s*errorf\b")
 
 # One row per way a caller can be wrong. `guard` names which of the template's
 # errorf branches must fire, and `fragment` is matched against Hugo's log, so a
@@ -219,7 +231,7 @@ def test_guard_table_covers_every_errorf_branch() -> None:
     silently fall behind the template it is meant to cover.
     """
     src = SHORTCODE.read_text(encoding="utf-8")
-    errorf_guards = ERRORF_CALL_SITE.findall(src)
+    errorf_guards = ERRORF_CALL_SITE.findall(GO_COMMENT.sub("", src))
     exercised = {case.values[2] for case in GUARD_CASES}
     assert exercised == COVERED_GUARDS, (
         f"GUARD_CASES exercises {sorted(exercised)} but COVERED_GUARDS names "
