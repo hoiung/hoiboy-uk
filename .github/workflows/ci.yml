@@ -242,6 +242,15 @@ jobs:
       - name: CTA button cascade + contrast unit tests
         run: python3 -m pytest scripts/test_cta_button.py scripts/test_check_cta_rendered.py -q
 
+      # Its own step rather than an argument appended to the CTA line above:
+      # tests/test_gate_wiring.py only checks that a test file is named after a
+      # pytest token, so appending would satisfy the wiring gate while filing a
+      # shortcode test under a CTA label. The shortcode is the only build-time
+      # guard on the brochure's path (validate_internal_links.py strips
+      # shortcode calls before scanning), so its contract gets its own name.
+      - name: static-link shortcode contract (new tab + build-time file check)
+        run: python3 -m pytest scripts/test_static_link_shortcode.py -q
+
       # The AGIT story counter says "keep writing" in red and "long enough" in
       # green, so those colours carry meaning and have to be legible on both
       # themes. No single hex can be: AA needs relative luminance <= 0.173550 on
