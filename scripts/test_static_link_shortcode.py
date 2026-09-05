@@ -158,10 +158,28 @@ def build_site(
     # The whole layout: render the page body and nothing else. disableKinds
     # keeps hugo from warning about taxonomy templates this site has no use for.
     (site / "layouts" / "index.html").write_text("{{ .Content }}", encoding="utf-8")
+    # These two config blocks mirror config/_default/hugo.toml (unsafe at :127,
+    # keepQuotes at :117) and are load-bearing, not boilerplate. A fixture that
+    # claims to prove what Hugo does in production has to be configured like
+    # production, and this one was not. Measured on the real site, the rendered
+    # anchor differs on BOTH axes:
+    #   no --minify                  -> href="...Jolyn-Hoi_CRE&#43;ICT_..."
+    #   --minify, keepQuotes unset   -> <a href=/ok.pdf target=_blank rel=noopener>
+    #   --minify + keepQuotes = true -> href="...Jolyn-Hoi_CRE+ICT_..." (what ships)
+    # Go's html/template escapes `+` in an href to `&#43;`; the minifier is what
+    # normalises it back. `+` is the one character the operator pinned in this
+    # filename, so the fixture was diverging from production on exactly the
+    # character that matters. The happy-path case never caught it because
+    # `/ok.pdf` contains nothing the modes disagree about; Ralph round 5 Tier 2's
+    # positive control did.
     (site / "hugo.toml").write_text(
         'baseURL = "https://example.test/"\n'
         'title = "static-link contract"\n'
-        'disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]\n',
+        'disableKinds = ["taxonomy", "term", "RSS", "sitemap", "404"]\n'
+        "[markup.goldmark.renderer]\n"
+        "  unsafe = true\n"
+        "[minify.tdewolff.html]\n"
+        "  keepQuotes = true\n",
         encoding="utf-8",
     )
     (site / "content" / "_index.md").write_text(
@@ -173,8 +191,15 @@ def build_site(
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(b"%PDF-1.4 stub for the contract test\n")
 
+    # `--minify` mirrors the real build command (`hugo --gc --minify -e
+    # production`, .github/workflows/ci.yml) and is load-bearing for any
+    # assertion on rendered HTML. Go's html/template escapes `+` in an href to
+    # the entity `&#43;`, and the minifier is what normalises it back to a
+    # literal `+`. Measured both ways on the real site: minified ->
+    # `Jolyn-Hoi_CRE+ICT_...`, unminified -> `Jolyn-Hoi_CRE&#43;ICT_...`. Without
+    # this flag the fixture asserted against a form Cloudflare never serves.
     proc = subprocess.run(
-        [hugo_binary(), "-s", str(site), "-d", str(site / "public")],
+        [hugo_binary(), "--minify", "-s", str(site), "-d", str(site / "public")],
         capture_output=True,
         text=True,
         timeout=180,
@@ -223,6 +248,12 @@ def test_guard_rejects_bad_input(
     )
 
 
+# The real published path, so the two withdrawal tests below exercise the actual
+# URL the privacy notice is talking about rather than a stand-in.
+BROCHURE = "hire-hoi/ict-consultancy/Jolyn-Hoi_CRE+ICT_brochure_v1.0.pdf"
+PUBLISHED_CALL = f'{{{{< static-link path="/{BROCHURE}" label="View the brochure" >}}}}'
+
+
 def test_withdrawal_path_removes_link_and_file_together(tmp_path: Path) -> None:
     """The privacy notice's withdrawal outcome must be one the build can deliver.
 
@@ -237,25 +268,63 @@ def test_withdrawal_path_removes_link_and_file_together(tmp_path: Path) -> None:
     withdrawal, performed exactly as written, would have left her data live.
 
     Prose was rewritten twice and broke twice because nothing bound it to the
-    machinery. This test is that binding. It asserts both halves of the coupling
-    the wording now depends on:
+    machinery. This test is that binding:
 
-      1. link removed AND file removed  -> the site builds, so the stated
-         outcome is reachable;
-      2. file removed while the link remains -> the build FAILS, which is why
-         the wording says "together" rather than naming the file alone.
+      1. a POSITIVE CONTROL builds the published state and proves the anchor and
+         the file are really there, so step 2 cannot pass for the wrong reason;
+      2. link removed AND file removed -> the site builds AND neither the anchor
+         nor the file survives, which is the outcome the sentence promises;
+      3. file removed while the link remains -> the build FAILS on the
+         missing-file guard, which is why the wording says "together" rather
+         than naming the file alone.
 
-    If a future edit reintroduces a file-only withdrawal instruction, case 2 is
-    the evidence that it cannot work.
+    Step 1 exists because of Ralph round 5 Tier 2. Until then step 2 built a page
+    containing no shortcode call at all and asserted only `exit == 0`, which is
+    true of any page whatsoever -- it passed with `static-link.html` deleted
+    outright. The docstring claimed it "asserts both halves of the coupling" and
+    it asserted neither. That is the same vacuity class this whole file exists to
+    kill, reappearing inside the fix for it.
+
+    The coupling the build enforces is ONE-DIRECTIONAL. That blindness is
+    disclosed, deliberately, by the test immediately below this one.
     """
+    published = build_site(tmp_path / "published", PUBLISHED_CALL, BROCHURE)
+    code_pub, log_pub, html_pub = published
+    served_pub = tmp_path / "published" / "site" / "public" / BROCHURE
+    assert code_pub == 0, (
+        f"the published state must build, or nothing below means anything. "
+        f"hugo exit {code_pub}:\n{log_pub}"
+    )
+    assert f'href="/{BROCHURE}"' in html_pub, (
+        "POSITIVE CONTROL: the published state must actually emit the brochure "
+        "anchor. If it does not, the 'link is gone' assertion below passes on a "
+        f"site that never had a link. Rendered:\n{html_pub}"
+    )
+    assert served_pub.is_file(), (
+        "POSITIVE CONTROL: the published state must actually serve the file at "
+        "its own URL. If it does not, the 'file is gone' assertion below passes "
+        "on a site that never served it."
+    )
+
     both_removed = build_site(
         tmp_path / "both", "The brochure is no longer published here.", None
     )
-    code_both, log_both, _ = both_removed
+    code_both, log_both, html_both = both_removed
+    served_both = tmp_path / "both" / "site" / "public" / BROCHURE
     assert code_both == 0, (
         "removing the link and the file together must leave a buildable site, "
         "because that is the withdrawal outcome the privacy notice promises "
         f"a data subject. hugo exit {code_both}:\n{log_both}"
+    )
+    assert BROCHURE not in html_both, (
+        "after withdrawal the rendered page must not still link the brochure. "
+        f"Rendered:\n{html_both}"
+    )
+    assert not served_both.exists(), (
+        "after withdrawal the brochure must not still be published at its own "
+        "URL. This is the half of 'together' that concerns the data subject: a "
+        "page that stops linking the file while the file stays served has not "
+        "withdrawn anything."
     )
 
     code_file_only, log_file_only, _ = build_site(
@@ -271,6 +340,52 @@ def test_withdrawal_path_removes_link_and_file_together(tmp_path: Path) -> None:
     assert "static-link: no file at" in log_file_only, (
         "the file-only removal must fail on the missing-file guard specifically, "
         f"not incidentally. hugo said:\n{log_file_only}"
+    )
+
+
+def test_withdrawal_coupling_is_one_directional_by_construction(tmp_path: Path) -> None:
+    """The build enforces "together" in ONE direction. This asserts the blindness.
+
+    Found by Ralph round 5 Tier 2 and recorded here rather than in prose, per
+    `SST3/standards/stage-4/mutation-verification.md` sweep quality gate 5: a
+    gate blind BY CONSTRUCTION asserts its blindness, not its safety, with a test
+    that FAILS if a future change makes it sensitive -- so the disclosure cannot
+    quietly go stale.
+
+    The asymmetry: `fileExists` fires at BUILD time on a call that names a
+    missing file, so file-gone-while-link-remains fails loudly (proven by the
+    test above). Nothing looks the other way. Hugo copies `static/` verbatim
+    whether or not any page references it, so link-gone-while-file-remains
+    builds clean and the brochure is STILL published at its own URL, reachable
+    by anyone who kept it.
+
+    That state is not hypothetical: this Issue's own documented Rollback
+    deliberately produces it, reverting the page commit for diagnosis while the
+    PDF stays in place. It is why the privacy notice's Retention bullet is worded
+    as a commitment about what taking it down does, and not as a claim that the
+    build prevents a half-completed take-down. It cannot.
+
+    If someone later adds an orphan-asset guard, this test fails -- and that is
+    the correct moment to revisit both the Rollback procedure and the notice's
+    wording, together.
+    """
+    code, log, html = build_site(
+        tmp_path, "The brochure is no longer published here.", BROCHURE
+    )
+    served = tmp_path / "site" / "public" / BROCHURE
+    assert code == 0, (
+        "dropping only the link must still build today. If this now fails, an "
+        f"orphan-asset guard has landed. hugo exit {code}:\n{log}"
+    )
+    assert BROCHURE not in html, (
+        f"the page must no longer link the brochure in this scenario:\n{html}"
+    )
+    assert served.is_file(), (
+        "DISCLOSED BLINDNESS: an unreferenced brochure is still copied to the "
+        "published output and still served at its own URL. No build-time guard "
+        "catches this direction. If this assertion ever fails, the build has "
+        "become sensitive to orphaned assets and the Retention wording plus the "
+        "Issue's Rollback procedure both need revisiting."
     )
 
 
