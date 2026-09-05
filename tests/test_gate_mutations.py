@@ -426,6 +426,24 @@ MUTATIONS = [
         "scripts/test_static_link_shortcode.py",
         id="static-link-fourth-guard-added-with-no-row-in-the-guard-table",
     ),
+    # hoiboy-uk#59, Ralph round 5 Tier 2, and it pins a POSITIVE CONTROL rather
+    # than a guard. test_withdrawal_path_removes_link_and_file_together binds the
+    # privacy notice's promise to a data subject that taking the brochure down
+    # "removes both the link and the file together". Its first half used to build
+    # a page with NO shortcode call at all and assert only `exit == 0` -- true of
+    # any page whatsoever, and it passed with static-link.html deleted outright,
+    # while the docstring claimed it asserted the coupling. It now opens by
+    # building the PUBLISHED state and proving the anchor and the file are really
+    # there, so "the link is gone" cannot pass on a site that never had a link.
+    # Detach the anchor from its path argument and the published state silently
+    # stops pointing at the brochure: that is what this row makes impossible.
+    pytest.param(
+        "layouts/_shortcodes/static-link.html",
+        '<a href="{{ $path }}" target="_blank" rel="noopener">{{ $label }}</a>',
+        '<a href="#" target="_blank" rel="noopener">{{ $label }}</a>',
+        "scripts/test_static_link_shortcode.py",
+        id="static-link-anchor-href-detached-from-its-path-argument",
+    ),
 ]
 
 
