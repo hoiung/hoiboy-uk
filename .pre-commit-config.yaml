@@ -9,6 +9,11 @@ repos:
     hooks:
       - id: check-added-large-files
         args: [--maxkb=1024]
+        # The Jolyn & Hoi brochure is a signed-off 2-page A3 PDF at 1144 KB (the
+        # hook ceils bytes/1024). Its bytes are pinned by sha256 in hoiboy-uk#59
+        # and must not be shrunk, so this one path is carved out; every other
+        # new file keeps the 1024 KB ceiling.
+        exclude: ^static/hire-hoi/ict-consultancy/Jolyn-Hoi_CRE\+ICT_brochure_v1\.0\.pdf$
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: check-yaml
