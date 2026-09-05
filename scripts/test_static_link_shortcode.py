@@ -223,6 +223,57 @@ def test_guard_rejects_bad_input(
     )
 
 
+def test_withdrawal_path_removes_link_and_file_together(tmp_path: Path) -> None:
+    """The privacy notice's withdrawal outcome must be one the build can deliver.
+
+    `content/legal/privacy/index.md` tells a named third party that taking the
+    brochure down "removes both the link and the file together". That sentence is
+    a promise to a data subject about her own withdrawal right, and it is the
+    THIRD wording of this bullet: the first invented a timescale the deploy path
+    could not keep, and the second ("I remove the file and the site republishes
+    without it") described an operation that DEFEATS ITSELF -- removing only the
+    file trips the fileExists guard, reddens CI, and `deploy.yml` then never fires
+    the Cloudflare hook, so the old deployment keeps serving the brochure. The
+    withdrawal, performed exactly as written, would have left her data live.
+
+    Prose was rewritten twice and broke twice because nothing bound it to the
+    machinery. This test is that binding. It asserts both halves of the coupling
+    the wording now depends on:
+
+      1. link removed AND file removed  -> the site builds, so the stated
+         outcome is reachable;
+      2. file removed while the link remains -> the build FAILS, which is why
+         the wording says "together" rather than naming the file alone.
+
+    If a future edit reintroduces a file-only withdrawal instruction, case 2 is
+    the evidence that it cannot work.
+    """
+    both_removed = build_site(
+        tmp_path / "both", "The brochure is no longer published here.", None
+    )
+    code_both, log_both, _ = both_removed
+    assert code_both == 0, (
+        "removing the link and the file together must leave a buildable site, "
+        "because that is the withdrawal outcome the privacy notice promises "
+        f"a data subject. hugo exit {code_both}:\n{log_both}"
+    )
+
+    code_file_only, log_file_only, _ = build_site(
+        tmp_path / "fileonly",
+        '{{< static-link path="/gone.pdf" label="View the brochure" >}}',
+        None,
+    )
+    assert code_file_only != 0, (
+        "removing the file while leaving the link must FAIL the build. If this "
+        "ever passes, the fileExists guard is gone and a withdrawal that deletes "
+        "only the file would ship a dead link instead of failing loudly."
+    )
+    assert "static-link: no file at" in log_file_only, (
+        "the file-only removal must fail on the missing-file guard specifically, "
+        f"not incidentally. hugo said:\n{log_file_only}"
+    )
+
+
 def test_guard_table_covers_every_errorf_branch() -> None:
     """GUARD_CASES must exercise every errorf branch the template carries.
 
