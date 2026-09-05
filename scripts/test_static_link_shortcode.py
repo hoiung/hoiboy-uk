@@ -72,6 +72,19 @@ GUARD_CASES = [
         id="path-argument-missing",
     ),
     pytest.param(
+        # An absolute URL is not "missing a /" -- it CONTAINS one -- so a guard
+        # widened to admit `http` alongside `/` still rejects every other case
+        # in this table and survives without this row. Ralph round 2 Tier 2
+        # built exactly that mutant and it passed all six tests. The guard's
+        # contract is root-relative, and http links belong to markdown plus
+        # render-link.html, so this pins the boundary rather than the symptom.
+        '{{< static-link path="https://example.com/x.pdf" label="Link" >}}',
+        None,
+        "root-relative",
+        "static-link: needs a root-relative path",
+        id="path-is-an-absolute-url",
+    ),
+    pytest.param(
         '{{< static-link path="/ok.pdf" >}}',
         "ok.pdf",
         "label",

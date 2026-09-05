@@ -391,6 +391,18 @@ MUTATIONS = [
         "scripts/test_static_link_shortcode.py",
         id="static-link-missing-file-guard-inverted-ships-a-dead-link",
     ),
+    # Same class again, and the subtlest member: the guard is neither inverted
+    # nor deleted, just taught to accept one more vocabulary. An absolute URL
+    # CONTAINS a "/", so widening the prefix set survives every case that only
+    # feeds relative or missing paths. Found by Ralph round 2 Tier 2 attacking
+    # the round-1 fix, which is the tier's job.
+    pytest.param(
+        "layouts/_shortcodes/static-link.html",
+        '{{- if or (not $path) (not (hasPrefix $path "/")) -}}',
+        '{{- if or (not $path) (not (or (hasPrefix $path "/") (hasPrefix $path "http"))) -}}',
+        "scripts/test_static_link_shortcode.py",
+        id="static-link-root-relative-guard-widened-to-admit-absolute-urls",
+    ),
     # Same class, different mechanism: the guard's polarity is intact but it is
     # asked about the wrong file, so it passes on a path the browser never
     # requests. `$file := printf` survives, so the old substring check did too.
