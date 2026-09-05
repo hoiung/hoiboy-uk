@@ -361,6 +361,46 @@ MUTATIONS = [
         "scripts/test_check_public_repo_secrets.py",
         id="secrets-extensionless-config-file-never-opened",
     ),
+    # hoiboy-uk#59, Ralph round 1 Tier 2. The four below are one CLASS, not four
+    # incidents: a static-link guard changed so that it still contains every
+    # token the test looked for, while doing the opposite of what it says.
+    # The first version of scripts/test_static_link_shortcode.py asserted that
+    # `fileExists`, `hasPrefix $path "/"` and three `errorf` call sites were
+    # PRESENT in the template. Dropping a `not` keeps all of that text and
+    # inverts the guard, so all three polarity mutants passed every assertion.
+    # That test now builds a throwaway Hugo site per guard and asserts which
+    # build fails and with whose message, which is what these rows pin.
+    pytest.param(
+        "layouts/_shortcodes/static-link.html",
+        '{{- if or (not $path) (not (hasPrefix $path "/")) -}}',
+        '{{- if or (not $path) (hasPrefix $path "/") -}}',
+        "scripts/test_static_link_shortcode.py",
+        id="static-link-root-relative-guard-inverted-accepts-relative-paths",
+    ),
+    pytest.param(
+        "layouts/_shortcodes/static-link.html",
+        "{{- if not $label -}}",
+        "{{- if $label -}}",
+        "scripts/test_static_link_shortcode.py",
+        id="static-link-label-guard-inverted-ships-an-invisible-link",
+    ),
+    pytest.param(
+        "layouts/_shortcodes/static-link.html",
+        "{{- if not (fileExists $file) -}}",
+        "{{- if (fileExists $file) -}}",
+        "scripts/test_static_link_shortcode.py",
+        id="static-link-missing-file-guard-inverted-ships-a-dead-link",
+    ),
+    # Same class, different mechanism: the guard's polarity is intact but it is
+    # asked about the wrong file, so it passes on a path the browser never
+    # requests. `$file := printf` survives, so the old substring check did too.
+    pytest.param(
+        "layouts/_shortcodes/static-link.html",
+        '{{- $file := printf "static%s" $path -}}',
+        '{{- $file := printf "%s" $path -}}',
+        "scripts/test_static_link_shortcode.py",
+        id="static-link-file-check-drops-the-static-prefix",
+    ),
 ]
 
 
