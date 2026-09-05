@@ -17,6 +17,10 @@ I have sat in the design team with the client or their representative, architect
 
 For data centres and IT labs, I would work with the data centre and the client's technical team to understand their requirements, then design the equipment rack, the network and switch architecture, the cabling and communication layouts, and the Bill of Materials (BoM). I would handle quotations and negotiations, availability, procurement and PO process, logistic management and timing, and the contractors for the build, implementation management, then run the site and build audits, quality control and checks, and the documentation for handover.
 
-More details coming soon.
+## The Jolyn & Hoi brochure
+
+Quick note on the link below: it opens in a new tab. If you would rather grab your own copy to keep, just right-click the link and choose Save link as.
+
+{{< static-link path="/hire-hoi/ict-consultancy/Jolyn-Hoi_CRE+ICT_brochure_v1.0.pdf" label="View the brochure (PDF, 1.2 MB)" >}}
 
 <!-- iamhoiend -->
