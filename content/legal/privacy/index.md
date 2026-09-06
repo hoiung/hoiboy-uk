@@ -32,7 +32,7 @@ This notice covers two scopes:
 - Contact-form / email enquiries: when you email `hello@hoiboy.uk`, your email address and message content are processed for the purpose of responding to your enquiry.
 - Community submission form: if you submit the "Get featured" form on the Asians & Gingers in Tech community page, we process the details and optional photo you send, on the basis of your explicit consent (see section 4).
 - Newsletter subscription: if you subscribe using the form in the site footer, we process your name and email address so we can email you new posts, on the basis of your consent (see section 4).
-- Partnership brochure: the ICT consultancy page publishes our CRE and ICT services brochure, which includes my consultancy partner Jolyn Pek's photograph, professional credentials, languages, location, and her client projects with the savings figures she delivered. The page itself also names her, describes her role, and says where she is based. Both are published on the basis of her consent (see section 4).
+- Partnership brochure: the ICT consultancy page publishes our CRE and ICT services brochure, which includes my consultancy partner Jolyn Pek's photograph, professional credentials, the languages and Chinese dialects she speaks, location, and her client projects with the savings figures she delivered. The page itself also names her, describes her role, and says where she is based. Both are published on the basis of her consent (see section 4).
 
 ### Consultancy engagement data (engaged clients only)
 
@@ -86,10 +86,10 @@ The site footer carries a subscribe form. If you tick the consent box and submit
 
 ### Partnership brochure
 
-The ICT consultancy page publishes the CRE and ICT services brochure I produce with my consultancy partner, Jolyn Pek. It contains her photograph, her professional credentials, the languages she works in, her location, and her client projects with the savings figures she delivered. The page itself also names her, describes her role, and says where she is based.
+The ICT consultancy page publishes the CRE and ICT services brochure I produce with my consultancy partner, Jolyn Pek. It contains her photograph, her professional credentials, the languages and Chinese dialects she speaks, her location, and her client projects with the savings figures she delivered. The page itself also names her, describes her role, and says where she is based.
 
 - **Purpose**: to show prospective clients the combined corporate real estate and ICT service we offer, and who they would be working with.
-- **Lawful basis**: consent (UK GDPR Article 6(1)(a)), and explicit consent (Article 9(2)(a)) for her photograph, which is an image of an identifiable person. She agreed to publication before the file was committed. She can withdraw at any time by emailing `hello@hoiboy.uk` or by telling me directly.
+- **Lawful basis**: consent (UK GDPR Article 6(1)(a)), and explicit consent (Article 9(2)(a)) for her photograph and for the list of Chinese dialects she speaks, which taken together can reveal ethnic origin. She agreed to publication before the file was committed. She can withdraw at any time by emailing `hello@hoiboy.uk` or by telling me directly.
 - **How it is processed**: the brochure is a PDF committed to this site's public **GitHub** repository, which is where the site is stored and built from, and served from **Cloudflare Pages**. Because the repository is public, the file also becomes part of that repository's permanent history.
 - **Retention**: the brochure and the mention of her on the page stay published until she or I take them down, which removes the link, the file and the page's description of her together. The public repository's git history keeps them unless we also run a history purge, and copies already taken by third-party forks, clones and caches are outside our control.
 - **Withdrawal**: email `hello@hoiboy.uk`, or tell me directly. Withdrawing is as easy as agreeing was, which is what Article 7(3) requires.
