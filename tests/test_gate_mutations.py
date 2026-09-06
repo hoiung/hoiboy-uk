@@ -475,7 +475,7 @@ MUTATIONS = [
     # text it had when the gap was found.
     pytest.param(
         "content/legal/privacy/index.md",
-        "languages, location, and her client projects with the savings figures she delivered. The page itself also names her, describes her role, and says where she is based. Both are published on the basis of her consent",
+        "the languages and Chinese dialects she speaks, location, and her client projects with the savings figures she delivered. The page itself also names her, describes her role, and says where she is based. Both are published on the basis of her consent",
         "languages and location, published on the basis of her consent",
         "tests/test_partner_disclosure_surfaces.py::test_every_passage_naming_her_discloses_the_page_as_a_publisher",
         id="partner-disclosure-section-2-summary-narrowed-back-to-the-brochure",
@@ -516,7 +516,7 @@ MUTATIONS = [
     # fixed where, when and how; the rework fixed which surfaces; this is what.
     pytest.param(
         "content/legal/privacy/index.md",
-        "the languages she works in, her location, and her client projects with the savings figures she delivered.",
+        "the languages and Chinese dialects she speaks, her location, and her client projects with the savings figures she delivered.",
         "the languages she works in, and her location.",
         "tests/test_partner_disclosure_surfaces.py::test_every_passage_naming_her_lists_the_client_figures_category",
         id="partner-disclosure-inventory-drops-the-client-figures-category",
@@ -530,6 +530,53 @@ MUTATIONS = [
         "## Cross-references\n\nJolyn Pek.",
         "tests/test_partner_disclosure_surfaces.py::test_every_shipped_surface_naming_the_partner_is_declared",
         id="partner-disclosure-undeclared-new-surface-names-the-partner",
+    ),
+    # Stage 5. Four rewrites MEASURED SURVIVING the gate above, each keeping every
+    # token the old assertion looked for while saying something else. The pattern
+    # across all four is the same: the Stage 4 fixes bound a check to one more
+    # thing than before, and stopped one binding short.
+    #
+    # The verb was bound to its SUBJECT and not its OBJECT, so the page could be
+    # said to name the SERVICE and the notice still passed while disclosing only
+    # the brochure as naming her.
+    pytest.param(
+        "content/legal/privacy/index.md",
+        "The page itself also names her, describes her role, and says where she is based.",
+        "The page itself also names our combined CRE and ICT service and describes what we sell.",
+        "tests/test_partner_disclosure_surfaces.py::test_every_passage_naming_her_discloses_the_page_as_a_publisher",
+        id="partner-disclosure-verb-not-bound-to-the-data-subject",
+    ),
+    # The `brochure` exclusion was case-sensitive, so capitalising one letter
+    # walked straight past the discriminator the whole test rests on.
+    pytest.param(
+        "content/legal/privacy/index.md",
+        "her location, and her client projects with the savings figures she delivered. The page itself also names her, describes her role, and says where she is based.",
+        "her location, and her client projects with the savings figures she delivered. The ICT consultancy page publishes the CRE and ICT services Brochure, which names my consultancy partner, Jolyn Pek.",
+        "tests/test_partner_disclosure_surfaces.py::test_every_passage_naming_her_discloses_the_page_as_a_publisher",
+        id="partner-disclosure-capitalised-brochure-escapes-the-lookahead",
+    ),
+    # The Retention check asserted a PHRASE was present, never that a removal verb
+    # governed it, so the bullet could promise the literal opposite and pass. The
+    # sibling row above ("narrowed-behind-both-surface-nouns") is the same shape
+    # one level up, which is why both stay.
+    pytest.param(
+        "content/legal/privacy/index.md",
+        "which removes the link, the file and the page's description of her together.",
+        "which removes the link and the file together. The mention of her on the page is not affected and stays live.",
+        "tests/test_partner_disclosure_surfaces.py::test_the_retention_promise_reaches_every_declared_surface",
+        id="partner-disclosure-retention-phrase-present-but-not-removed",
+    ),
+    # The client-figures check was line-scoped and attached to nobody, so dropping
+    # the consented category and re-adding the bare tokens elsewhere passed. The
+    # existing "inventory-drops-the-client-figures-category" row only DELETES;
+    # this one deletes and then puts the tokens back unowned, which is the shape
+    # that actually survived.
+    pytest.param(
+        "content/legal/privacy/index.md",
+        "her location, and her client projects with the savings figures she delivered.",
+        "her location. Prospective client projects with savings figures are discussed separately.",
+        "tests/test_partner_disclosure_surfaces.py::test_every_passage_naming_her_lists_the_client_figures_category",
+        id="partner-disclosure-client-figures-tokens-present-but-unattributed",
     ),
 ]
 
@@ -561,6 +608,60 @@ def _cold_bytecode_env() -> dict:
     return env
 
 
+# VCS internals, dependencies and caches. Excluded from the snapshot below
+# because no gate reads them.
+#
+# `public/` is deliberately NOT in this list. It is the largest thing in the tree
+# and excluding it looks like the obvious optimisation, but four rows in
+# `scripts/test_pre_publish_rendered_path.py` carry
+# `@pytest.mark.skipif(not PUBLIC.is_dir())`, so a snapshot without a built tree
+# SKIPS them, and a skipped test cannot catch a mutation. The
+# `frontmatter-url-override-silently-ignored` row reported VACUOUS GATE against a
+# guard that is not vacuous, purely because its four catching tests never ran.
+# That is the "a self-check must not read as a catch" rule arriving from the
+# other direction: here the harness would have cried wolf.
+#
+# Cost measured on this machine: 0.13s, because the filesystem is
+# copy-on-write. On a filesystem without reflinks this is a few seconds once per
+# session, which is the correct trade against a row that silently proves nothing.
+# When `public/` does not exist at all (a clean CI checkout that has not built
+# yet) the copy is a no-op and those rows skip exactly as they do today.
+_SNAPSHOT_IGNORE = shutil.ignore_patterns(
+    ".git", ".claude", ".venv", "node_modules", "__pycache__",
+    "legacy", ".pytest_cache", ".ruff_cache", "resources",
+)
+
+_SNAPSHOT: Path | None = None
+
+
+def _snapshot_root() -> Path:
+    """An isolated copy of the worktree. Mutations are applied HERE, never to ROOT.
+
+    Until hoiboy-uk#59 Stage 5 this harness wrote each mutant into the real
+    shipped file and restored it in a `finally`. That is concurrency-unsafe by
+    construction, and not theoretically: during the Stage 5 audit two independent
+    reviewers observed the worktree carrying a live mutant of
+    `layouts/_shortcodes/static-link.html` (the `printf "static%s"` guard reverted)
+    while they were reading it. A crash between the write and the restore, or a
+    concurrent `git commit`, ships a broken guard in the only build-time
+    protection on the brochure path.
+
+    The Stage 4 remedy for that was a prose warning in a scope file, which is not
+    a fix: it asks every future reader to remember. Copying the tree once per
+    session costs about a tenth of a second (measured: 953 tracked files, 0.08s)
+    and removes the hazard structurally, so the warning is no longer load-bearing.
+
+    The copy is made lazily so collection stays cheap for a run that selects no
+    mutation rows.
+    """
+    global _SNAPSHOT
+    if _SNAPSHOT is None or not _SNAPSHOT.is_dir():
+        dest = Path(tempfile.mkdtemp(prefix="gate-mutations-")) / "tree"
+        shutil.copytree(ROOT, dest, ignore=_SNAPSHOT_IGNORE, symlinks=True)
+        _SNAPSHOT = dest
+    return _SNAPSHOT
+
+
 @pytest.mark.parametrize("source,now,reverted,test_file", MUTATIONS)
 def test_reverting_a_guard_turns_its_own_test_red(source, now, reverted, test_file):
     """The defect goes back in; the test that exists for it must notice.
@@ -569,7 +670,13 @@ def test_reverting_a_guard_turns_its_own_test_red(source, now, reverted, test_fi
     anything, and would report the codebase as safe while the thing it names is
     broken. That is the single shape this whole workstream kept producing.
     """
-    src = ROOT / source
+    root = _snapshot_root()
+    src = root / source
+    assert src.is_file(), (
+        f"SNAPSHOT INCOMPLETE, not a defect detected: {source} is missing from the "
+        "isolated copy, so this row would prove nothing. Check _SNAPSHOT_IGNORE "
+        "has not started excluding a directory a gate lives in."
+    )
     original = src.read_text(encoding="utf-8")
     assert now in original, (
         f"STALE ANCHOR: {source} no longer contains the guard this mutation "
@@ -587,9 +694,9 @@ def test_reverting_a_guard_turns_its_own_test_red(source, now, reverted, test_fi
     # is real rather than theoretical -- a test renamed during the hoiboy-uk#59
     # rework re-validation left exactly this stale target behind.
     collected = subprocess.run(
-        [sys.executable, "-m", "pytest", str(ROOT / test_file), "--collect-only", "-q",
+        [sys.executable, "-m", "pytest", str(root / test_file), "--collect-only", "-q",
          "-p", "no:cacheprovider"],
-        capture_output=True, text=True, cwd=ROOT,
+        capture_output=True, text=True, cwd=root,
     )
     assert collected.returncode == 0, (
         f"STALE TARGET, not a defect detected: `{test_file}` collects nothing, so "
@@ -604,8 +711,8 @@ def test_reverting_a_guard_turns_its_own_test_red(source, now, reverted, test_fi
     try:
         src.write_text(original.replace(now, reverted, 1), encoding="utf-8")
         result = subprocess.run(
-            [sys.executable, "-m", "pytest", str(ROOT / test_file), "-q", "-p", "no:cacheprovider"],
-            capture_output=True, text=True, cwd=ROOT, env=_cold_bytecode_env(),
+            [sys.executable, "-m", "pytest", str(root / test_file), "-q", "-p", "no:cacheprovider"],
+            capture_output=True, text=True, cwd=root, env=_cold_bytecode_env(),
         )
     finally:
         shutil.copy(backup, src)
@@ -638,11 +745,18 @@ _TREE_SNAPSHOT = {
 
 
 def test_the_tree_is_left_exactly_as_it_was_found():
-    """Every mutation restores its file; prove no edit leaked out of a failure.
+    """Prove no mutation reached the real tree.
 
-    The mutations above write to real repo files. If one aborted between the
-    write and the restore, the working tree would carry a reverted guard and
-    every later assertion in this session would be measured against it.
+    Since hoiboy-uk#59 Stage 5 the mutations write into `_snapshot_root()`, an
+    isolated copy, so this can no longer fail through the route it was written
+    for. It is kept, and kept meaningful, because it now guards a DIFFERENT and
+    easier mistake: a future row, or a future edit to the runner, that resolves a
+    path against `ROOT` instead of the snapshot. That single-character slip
+    reintroduces the whole hazard silently, and this is the assertion that would
+    notice.
+
+    It is deliberately not weakened to "the snapshot was restored". The claim
+    worth making is about the shipped tree.
     """
     missing = [p for p in _GUARDED_FILES if p not in _TREE_SNAPSHOT]
     assert not missing, (
