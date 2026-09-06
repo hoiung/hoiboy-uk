@@ -36,6 +36,7 @@ Run:  python3 -m pytest tests/test_gate_mutations.py -q
 """
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import sys
@@ -493,6 +494,24 @@ MUTATIONS = [
         "tests/test_partner_disclosure_surfaces.py::test_the_retention_promise_reaches_every_declared_surface",
         id="partner-disclosure-retention-narrowed-back-to-link-and-file",
     ),
+    # These two pin the DISCRIMINATORS rather than the passages, and both were
+    # found by Ralph Tier 3 SURVIVING the first version of the gate. Each is a
+    # rewrite that keeps every token the gate looked for while saying the
+    # opposite thing, which is the vacuity class this whole Issue is made of.
+    pytest.param(
+        "content/legal/privacy/index.md",
+        "and her location. The page itself also names her, describes her role, and says where she is based.",
+        "and her location, and the brochure names her throughout.",
+        "tests/test_partner_disclosure_surfaces.py::test_every_passage_naming_her_discloses_the_page_as_a_publisher",
+        id="partner-disclosure-verb-attributed-to-the-brochure-not-the-page",
+    ),
+    pytest.param(
+        "content/legal/privacy/index.md",
+        "- **Retention**: the brochure and the mention of her on the page stay published until she or I take them down, which removes the link, the file and the page's description of her together.",
+        "- **Retention**: the brochure stays published until she or I take it down, which removes both the link and the file together. Nothing else on the page is affected.",
+        "tests/test_partner_disclosure_surfaces.py::test_the_retention_promise_reaches_every_declared_surface",
+        id="partner-disclosure-retention-narrowed-behind-both-surface-nouns",
+    ),
     # The enumerator itself: a new content surface starts naming her and nobody
     # declares it. This is the row that makes the gate a CLASS fix rather than a
     # sixth instance fix.
@@ -504,6 +523,33 @@ MUTATIONS = [
         id="partner-disclosure-undeclared-new-surface-names-the-partner",
     ),
 ]
+
+
+def _cold_bytecode_env() -> dict:
+    """Environment that guarantees the subprocess cannot import stale bytecode.
+
+    Python validates a cached `.pyc` against the source's (mtime, size). A
+    mutation that is the SAME LENGTH as what it replaces leaves the size
+    unchanged, and a rewrite inside the filesystem's mtime granularity can leave
+    that unchanged too, so the subprocess silently imports the ORIGINAL code and
+    the mutant appears to survive.
+
+    That is not hypothetical. `feed-vacuity-floor-accepts-an-unbuilt-tree` mutates
+    `MIN_FEEDS = 6` to `MIN_FEEDS = 0`, both 13 bytes. Run alone the row passed;
+    run inside the full suite, after an earlier row had warmed
+    `scripts/__pycache__`, it reported `15 passed` from the target and failed with
+    "VACUOUS GATE" against a guard that is not vacuous at all.
+
+    Redirecting the cache to a fresh directory per invocation means every
+    subprocess starts cold, so no earlier row can poison a later one, and the
+    harness stops writing `__pycache__` into the repo as a side effect. This
+    fails in the SAFE direction either way (a stale import makes a row cry
+    vacuous, never green), but a gate harness that cries wolf gets ignored, and
+    on this repo it would redden CI on main and hold the deploy hook shut.
+    """
+    env = dict(os.environ)
+    env["PYTHONPYCACHEPREFIX"] = tempfile.mkdtemp(prefix="mutation-pycache-")
+    return env
 
 
 @pytest.mark.parametrize("source,now,reverted,test_file", MUTATIONS)
@@ -550,7 +596,7 @@ def test_reverting_a_guard_turns_its_own_test_red(source, now, reverted, test_fi
         src.write_text(original.replace(now, reverted, 1), encoding="utf-8")
         result = subprocess.run(
             [sys.executable, "-m", "pytest", str(ROOT / test_file), "-q", "-p", "no:cacheprovider"],
-            capture_output=True, text=True, cwd=ROOT,
+            capture_output=True, text=True, cwd=ROOT, env=_cold_bytecode_env(),
         )
     finally:
         shutil.copy(backup, src)
