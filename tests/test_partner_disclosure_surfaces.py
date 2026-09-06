@@ -54,6 +54,31 @@ DECLARED_SURFACES = {
 # narrows the promise back to the brochure alone drops one of these and fails.
 SURFACE_NOUNS = ("brochure", "page")
 
+# Verbs that count as the notice disclosing the PAGE as a publisher of her
+# details in its own right, rather than merely as the thing that carries the
+# brochure. The distinction is the whole finding: "the ICT consultancy page
+# PUBLISHES our brochure" says nothing about the page naming her, and it is what
+# both passages said before the fix. `publishes` is deliberately NOT in this set.
+DISCLOSURE_VERBS = ("names", "describes", "identifies")
+
+# KNOWN BLINDNESS, disclosed rather than papered over (mutation-verification.md
+# sweep quality gate 2: a sweep enumerates what its generator CANNOT produce
+# beside what it does).
+#
+# The enumerator below matches the literal token in PARTNER. A surface that
+# identifies her WITHOUT naming her -- by role and location, which is exactly the
+# descriptive shape the ICT page already uses -- passes clean. The rework
+# re-validation proved this on a scratch clone: a paraphrase appended to a copy
+# of a legal page left all three tests green.
+#
+# It is recorded, not fixed, for a reason worth keeping: the fix is a
+# similarity/NLP judgement about whether prose identifies a person, and a gate
+# that guesses at that would fail on unrelated copy and get disabled. The
+# population it does cover is checked exactly, and the residual is one
+# occurred-count of zero: no such surface exists in the shipped tree today
+# (verified by a repo-wide sweep at the rework re-validation). If one ever lands,
+# it lands as a DECLARED surface here or it is caught by review, not by this file.
+
 
 def _subsection(name: str) -> str:
     """Return the body of one `### ` subsection of the notice."""
@@ -97,38 +122,54 @@ def test_every_shipped_surface_naming_the_partner_is_declared() -> None:
     )
 
 
-def test_the_notice_discloses_every_surface_it_publishes_her_on() -> None:
-    """The opening paragraph must name the page, not only the brochure.
+def test_every_passage_naming_her_discloses_the_page_as_a_publisher() -> None:
+    """EVERY passage in the notice that names her, not one hardcoded subsection.
 
-    Ralph round 5 Tier 3's finding in one assertion: the subsection said "It
-    contains her photograph, her professional credentials, the languages she
-    works in, and her location", where "It" is the brochure, while the page
-    itself independently named her, described her role and gave her location.
+    This test was scoped to the `### Partnership brochure` subsection until the
+    rework re-validation, and that scoping is exactly how it missed the defect it
+    was written to prevent. The subsection at section 4 was widened; the SUMMARY
+    bullet at section 2, which makes the same claim in the passage a reader hits
+    first, was left saying the brochure "includes my consultancy partner Jolyn
+    Pek's photograph, professional credentials, languages and location" and
+    nothing about the page's own mention of her. One document, two statements of
+    the same fact, one of them fixed. A `_subsection()` regex could not see the
+    other one BY CONSTRUCTION.
+
+    So the gate now enumerates instead of pointing: every line in the notice that
+    names her has to disclose the page as a publisher of her details in its own
+    right, and a new passage about her anywhere in the notice is covered the day
+    it lands.
+
+    The discriminator is a disclosure VERB applied to the page, not the token
+    "page". Both pre-fix passages contained "page" already, for an unrelated
+    reason ("the ICT consultancy page publishes ... brochure"), and an earlier
+    draft of this gate asserted the bare token and was proven vacuous by mutation
+    against the very text it existed to reject.
     """
-    body = _subsection("Partnership brochure")
-    opening = body.strip().split("\n\n", 1)[0]
-    assert "brochure" in opening, (
-        "PREMISE BROKEN: the opening paragraph no longer mentions the brochure, "
-        f"so this gate is reading the wrong text.\n{opening}"
+    lines = NOTICE.read_text(encoding="utf-8").splitlines()
+    passages = [(n, line) for n, line in enumerate(lines, 1) if PARTNER in line]
+    assert len(passages) >= 2, (
+        "PREMISE BROKEN, not a defect detected: the notice names the partner in "
+        f"fewer than two passages ({[n for n, _ in passages]}). This gate exists "
+        "because the same fact is stated in a section-2 summary AND a section-4 "
+        "subsection; if that is no longer true, the gate is measuring the wrong "
+        "document and must be rewritten rather than trusted."
     )
 
-    # Require ONE SENTENCE that ties the page to HER, not the bare token "page".
-    # The first draft of this gate asserted `"page" in opening` and a mutation
-    # proved it vacuous in the way this whole Issue keeps rediscovering: the
-    # pre-fix opening already read "The ICT consultancy PAGE publishes the ...
-    # brochure", so the token was present for an unrelated reason and the gate
-    # passed on the exact text it existed to reject. Sentence-scoping is what
-    # makes it fail: pre-fix, "page" and "her" never co-occur in one sentence
-    # (the page sentence says "my consultancy partner, Jolyn Pek"; the "her"
-    # sentence begins "It contains", where "It" is the brochure).
-    page_and_her = re.search(r"[^.]*\bpage\b[^.]*\bher\b[^.]*\.", opening)
-    assert page_and_her, (
-        "the notice's Partnership brochure subsection discloses the brochure but "
-        "not the page's own mention of her. The ICT consultancy page names her, "
-        "describes her role and says where she is based, independently of the "
-        "PDF. A notice that describes one of two publication surfaces "
-        "under-reports what was published about a named third party.\n"
-        f"opening paragraph was:\n{opening}"
+    verbs = "|".join(DISCLOSURE_VERBS)
+    undisclosed = [
+        n for n, line in passages
+        if not re.search(rf"\bpage\b[^.]*\b(?:{verbs})\b", line)
+    ]
+    assert not undisclosed, (
+        f"line(s) {undisclosed} of the privacy notice name the partner but "
+        "describe only the brochure as publishing her details. The ICT "
+        "consultancy page names her, describes her role and says where she is "
+        "based, independently of the PDF, so a passage that accounts for one of "
+        "two publication surfaces under-reports what is published about a named "
+        "third party. Every passage naming her has to say the page does it too, "
+        f"using one of {DISCLOSURE_VERBS}.\n"
+        + "\n".join(f"  :{n} {line[:160]}" for n, line in passages)
     )
 
 
