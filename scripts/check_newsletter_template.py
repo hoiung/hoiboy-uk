@@ -294,7 +294,7 @@ def failures(text: str) -> list[str]:
             "the footer no longer promises that this list is used ONLY for new posts. "
             "That sentence is a commitment made to every subscriber and is not "
             "editorial: widening it to admit services or product mail needs fresh "
-            "consent, per content/legal/privacy/index.md:77"
+            "consent, per content/legal/privacy/index.md, the newsletter Purpose bullet"
         )
     for admission in ("We may also send", "our latest offers", "news about our services"):
         if admission in body:

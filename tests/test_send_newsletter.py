@@ -347,7 +347,7 @@ def test_a_services_page_is_refused_naming_the_privacy_promise(isolated: Path) -
     }
     with pytest.raises(sn.NewsletterError) as exc:
         sn.assert_is_blog_post(services)
-    assert "privacy/index.md:77" in str(exc.value)
+    assert "the newsletter Purpose bullet" in str(exc.value)
 
 
 def test_a_category_landing_is_refused_by_the_metadata_guard_not_the_url_guard(
@@ -394,7 +394,7 @@ def test_a_canonical_that_escapes_the_blogs_tree_is_refused() -> None:
     """`.../blogs/../hire-hoi/` starts with the prefix and points somewhere else.
 
     A bare `startswith` accepted it. That target is the services tree, which
-    `content/legal/privacy/index.md:77` puts off limits without fresh consent, so a
+    `content/legal/privacy/index.md, the newsletter Purpose bullet` puts off limits without fresh consent, so a
     prefix check reaching the right verdict only by luck was not good enough.
     """
     with pytest.raises(sn.NewsletterError, match="traverses out of"):
@@ -1416,7 +1416,7 @@ def test_prepare_actually_CALLS_the_consent_gate(isolated: Path) -> None:
     write_page(isolated, SLUG, url="https://hoiboy.uk/hire-hoi/ai-consultancy/")
     transport = mock.Mock(side_effect=AssertionError("must not reach the API"))
     with mock.patch.object(sn, "_api_call", transport):
-        with pytest.raises(sn.NewsletterError, match="privacy/index.md:77"):
+        with pytest.raises(sn.NewsletterError, match="the newsletter Purpose bullet"):
             sn.prepare(SLUG, sn.STATE_FILE)
     transport.assert_not_called()
 
@@ -1441,7 +1441,7 @@ def test_send_actually_CALLS_the_consent_gate(isolated: Path) -> None:
 
     transport = ok_transport()
     with mock.patch.object(sn, "_api_call", transport):
-        with pytest.raises(sn.NewsletterError, match="privacy/index.md:77"):
+        with pytest.raises(sn.NewsletterError, match="the newsletter Purpose bullet"):
             sn.send(SLUG, confirmation, sn.STATE_FILE)
     assert not any(
         c.args[1].endswith("/sendNow") for c in transport.call_args_list
@@ -2596,3 +2596,49 @@ def test_the_cli_contract_is_exactly_one_mode_and_always_a_slug() -> None:
         with pytest.raises(SystemExit) as exc:
             sn.main(argv)
         assert exc.value.code == 2, f"{argv} should be an argparse usage error"
+
+
+# ---------------------------------------------------------------------------
+# Citation freshness (hoiboy-uk#59 Stage 5)
+# ---------------------------------------------------------------------------
+#
+# The sender's refusal message cites the privacy notice as its authority, so a
+# subscriber who is told "the notice restricts this" can go and read the promise
+# being enforced. That citation used to be a LINE NUMBER, and #59 inserted a
+# bullet above it: the file shifted by one, `:77` became a blank line, and ten
+# sites across scripts, tests and docs went on citing it. Four of those sites were
+# assertions, so the suite actively certified the stale pointer as correct.
+#
+# The citations are now anchored to bullet NAMES, which do not move when a line is
+# inserted. This test is what keeps that true: rename or delete either bullet in
+# the notice and the sender's message becomes a dead reference, here rather than
+# in front of a subscriber.
+NOTICE_PATH = REPO_ROOT / "content" / "legal" / "privacy" / "index.md"
+
+CITED_BULLETS = (
+    ("the newsletter Purpose bullet", "- **Purpose**: to email you new posts"),
+    ("the newsletter How to withdraw bullet", "- **How to withdraw**: every email we send"),
+)
+
+
+@pytest.mark.parametrize("citation,bullet", CITED_BULLETS)
+def test_every_privacy_notice_citation_still_resolves(citation, bullet):
+    """The bullet each citation names has to exist in the notice."""
+    notice = NOTICE_PATH.read_text(encoding="utf-8")
+    assert bullet in notice, (
+        f"the newsletter code cites {citation!r} as the promise it enforces, but "
+        f"no bullet starting {bullet!r} exists in "
+        f"{NOTICE_PATH.relative_to(REPO_ROOT)}. Either the bullet was renamed and "
+        f"the citations need updating with it, or the promise was removed and the "
+        f"code is enforcing something the notice no longer says."
+    )
+
+    sources = [
+        REPO_ROOT / "scripts" / "send_newsletter.py",
+        REPO_ROOT / "scripts" / "check_newsletter_template.py",
+    ]
+    cited_somewhere = any(citation in p.read_text(encoding="utf-8") for p in sources)
+    assert cited_somewhere, (
+        f"no shipped source cites {citation!r} any more, so this row is pinning a "
+        f"citation nobody makes. Drop the row, or restore the citation."
+    )

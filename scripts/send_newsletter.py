@@ -20,7 +20,7 @@ script the operator runs by hand is the only executor compatible with the gate.
 
 WHY THE CAMPAIGN ENDPOINT AND NOT TRANSACTIONAL (D-9). Only the campaign endpoint
 carries list semantics and the unsubscribe machinery that
-`content/legal/privacy/index.md:81` promises subscribers. The transactional send has
+`content/legal/privacy/index.md, the newsletter How to withdraw bullet` promises subscribers. The transactional send has
 no list, no unsubscribe footer and no unsubscribe page, so using it would breach a
 published commitment.
 
@@ -445,7 +445,7 @@ def read_post(slug: str) -> dict[str, str]:
 def assert_is_blog_post(post: dict[str, str]) -> None:
     """Refuse anything that is not a blog post (AC 2.7).
 
-    This is not a style rule. `content/legal/privacy/index.md:77` tells subscribers
+    This is not a style rule. `content/legal/privacy/index.md, the newsletter Purpose bullet` tells subscribers
     that this list is used for new posts from hoiboy.uk and that a services email
     needs fresh consent. That is a published promise, so a services or consultancy
     page reaching this list would breach it. The check is on the page's own canonical
@@ -468,7 +468,7 @@ def assert_is_blog_post(post: dict[str, str]) -> None:
     if not url.startswith(CANONICAL_PREFIX):
         raise NewsletterError(
             f"refusing to send: canonical URL {url!r} is not a blog post under "
-            f"{CANONICAL_PREFIX}. content/legal/privacy/index.md:77 restricts this "
+            f"{CANONICAL_PREFIX}. content/legal/privacy/index.md, the newsletter Purpose bullet restricts this "
             f"list to new posts from hoiboy.uk and requires fresh consent before any "
             f"services or consultancy email. Sending this would breach that promise."
         )

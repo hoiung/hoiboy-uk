@@ -600,7 +600,7 @@ to, for as long as that email exists in someone's mailbox. "Superseded" describe
 draft. It does not describe the mail.
 
 On a real send this is not tidiness, it is a compliance breach:
-`content/legal/privacy/index.md:81` promises subscribers an unsubscribe link, and UK
+`content/legal/privacy/index.md, the newsletter How to withdraw bullet` promises subscribers an unsubscribe link, and UK
 PECR requires the mechanism to keep working. Deleting a sent campaign silently revokes
 it for every recipient at once, with nothing turning red.
 

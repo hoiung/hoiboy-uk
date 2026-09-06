@@ -423,7 +423,7 @@ def test_inverting_the_consent_promise_is_caught(clean):
     This is the operator's requirement in his own words: "you're making it sound like
     I will spam them with HOIBOY AI LTD services. it needs to be more about blog
     posts." The list was collected on a posts-only promise, so widening it is a
-    consent question, not an editorial one (content/legal/privacy/index.md:77).
+    consent question, not an editorial one (content/legal/privacy/index.md, the newsletter Purpose bullet).
 
     Both directions are checked, because deleting the promise and contradicting it
     are different edits with the same effect on the reader.
