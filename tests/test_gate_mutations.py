@@ -466,12 +466,25 @@ MUTATIONS = [
     # subject a second time in the page's own prose. The sentence was BACKED and
     # its SCOPE was wrong, which is the question the escalation's sweep never
     # asked.
+    # TWO rows, one per passage, because the notice states this fact TWICE and
+    # the rework re-validation found the section-2 summary still carrying the
+    # pre-fix narrowing after section 4 had been widened. One document, two
+    # statements, one of them fixed, and the gate was scoped to the subsection so
+    # it could not see the other. Each row reverts its own passage to the exact
+    # text it had when the gap was found.
     pytest.param(
         "content/legal/privacy/index.md",
-        " The page itself also names her, describes her role, and says where she is based.",
-        "",
-        "tests/test_partner_disclosure_surfaces.py::test_the_notice_discloses_every_surface_it_publishes_her_on",
-        id="partner-disclosure-opening-narrowed-back-to-the-brochure-alone",
+        "languages and location. The page itself also names her, describes her role, and says where she is based. Both are published on the basis of her consent",
+        "languages and location, published on the basis of her consent",
+        "tests/test_partner_disclosure_surfaces.py::test_every_passage_naming_her_discloses_the_page_as_a_publisher",
+        id="partner-disclosure-section-2-summary-narrowed-back-to-the-brochure",
+    ),
+    pytest.param(
+        "content/legal/privacy/index.md",
+        "and her location. The page itself also names her, describes her role, and says where she is based.",
+        "and her location.",
+        "tests/test_partner_disclosure_surfaces.py::test_every_passage_naming_her_discloses_the_page_as_a_publisher",
+        id="partner-disclosure-section-4-opening-narrowed-back-to-the-brochure",
     ),
     pytest.param(
         "content/legal/privacy/index.md",
@@ -508,6 +521,27 @@ def test_reverting_a_guard_turns_its_own_test_red(source, now, reverted, test_fi
         f"reverts. The code was rewritten and this entry was not updated. Failing "
         f"loud rather than skipping, because a silently skipped mutation reports "
         f"as coverage that does not exist.\n\nExpected to find:\n{now}"
+    )
+
+    # STALE TARGET guard. `test_file` may be a pytest NODE ID, and pytest exits
+    # 4 on a node id that matches nothing ("no tests ran"). Since the assertion
+    # below is `returncode != 0`, a renamed or deleted test would make this row
+    # PASS while proving nothing at all: the mutation would be scored as caught
+    # by a test that never ran. That is the "a self-check must not read as a
+    # catch" rule (mutation-verification.md sweep quality gate 6), and the hazard
+    # is real rather than theoretical -- a test renamed during the hoiboy-uk#59
+    # rework re-validation left exactly this stale target behind.
+    collected = subprocess.run(
+        [sys.executable, "-m", "pytest", str(ROOT / test_file), "--collect-only", "-q",
+         "-p", "no:cacheprovider"],
+        capture_output=True, text=True, cwd=ROOT,
+    )
+    assert collected.returncode == 0, (
+        f"STALE TARGET, not a defect detected: `{test_file}` collects nothing, so "
+        "this row cannot prove the mutation is caught. A node id that matches no "
+        "test makes pytest exit non-zero for the WRONG reason, which would score "
+        "as a catch. Update the row to the test's current name.\n"
+        f"{collected.stdout[-500:]}"
     )
 
     backup = Path(tempfile.mkdtemp()) / "backup"
