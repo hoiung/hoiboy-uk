@@ -251,6 +251,16 @@ jobs:
       - name: static-link shortcode contract (new tab + build-time file check)
         run: python3 -m pytest scripts/test_static_link_shortcode.py -q
 
+      # The privacy notice names a third party on a consent basis, so it owes her
+      # an accurate account of WHERE she is published. This enumerates the
+      # surfaces that name her and requires the notice to cover each. It exists
+      # because hoiboy-uk#59 shipped a notice that disclosed the brochure and was
+      # blind to the page's own prose naming her, so a takedown performed exactly
+      # as promised would have left her name, role and location live. Source-only
+      # (it reads content/), so it runs before the build.
+      - name: Partner disclosure surfaces (the notice covers every page naming her)
+        run: python3 -m pytest tests/test_partner_disclosure_surfaces.py -q
+
       # The AGIT story counter says "keep writing" in red and "long enough" in
       # green, so those colours carry meaning and have to be legible on both
       # themes. No single hex can be: AA needs relative luminance <= 0.173550 on
