@@ -180,6 +180,46 @@ def test_every_passage_naming_her_discloses_the_page_as_a_publisher() -> None:
     )
 
 
+def test_every_passage_naming_her_lists_the_client_figures_category() -> None:
+    """The inventory must list what the brochure publishes, not a subset of it.
+
+    Ralph Tier 3's finding, and the eighth instance of this Issue's one class.
+    Rounds 3 to 5 fixed WHERE her data is published, WHEN it comes down and HOW.
+    The rework fixed which SURFACES. Nobody checked WHAT: both passages listed
+    "photograph, professional credentials, languages and location" while the
+    brochure also publishes, under SELECTED PROJECTS, her client engagements with
+    the savings figures she delivered (measured with `pdftotext -layout`: USD 4M,
+    USD 1.2M, USD 7.4M).
+
+    That category was identified at CONSENT time and then dropped from the
+    notice, which is what makes it a defect rather than a judgement call. The
+    repo says so twice: consent commit `20aa19e` ("the brochure carries a third
+    party's portrait, credentials AND HER CLIENTS' FIGURES") and AC 0.1, the
+    consent gate itself ("her portrait, credentials, languages, location AND HER
+    CLIENTS' SAVINGS FIGURES"). Five categories consented, four disclosed.
+
+    The gate is deliberately about the CATEGORY, not the numbers: the notice
+    should not restate USD figures, it should say the brochure carries them.
+    """
+    lines = NOTICE.read_text(encoding="utf-8").splitlines()
+    passages = [(n, line) for n, line in enumerate(lines, 1) if PARTNER in line]
+    assert passages, "PREMISE BROKEN, not a defect detected: no passage names her."
+
+    missing = [
+        n for n, line in passages
+        if not re.search(r"\bclient\b[^.]*\b(?:projects?|figures?|savings)\b", line)
+    ]
+    assert not missing, (
+        f"line(s) {missing} inventory what is published about her but omit her "
+        "client projects and the savings figures the brochure prints for them. "
+        "The consent record enumerated that category (commit 20aa19e and AC 0.1) "
+        "and the brochure publishes it under SELECTED PROJECTS, so a notice that "
+        "lists four of the five consented categories under-reports what was "
+        "published. Say the category; do not restate the figures.\n"
+        + "\n".join(f"  :{n} {line[:160]}" for n, line in passages)
+    )
+
+
 def test_the_retention_promise_reaches_every_declared_surface() -> None:
     """Withdrawal has to remove everything the opening paragraph declares.
 

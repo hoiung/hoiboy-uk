@@ -475,15 +475,15 @@ MUTATIONS = [
     # text it had when the gap was found.
     pytest.param(
         "content/legal/privacy/index.md",
-        "languages and location. The page itself also names her, describes her role, and says where she is based. Both are published on the basis of her consent",
+        "languages, location, and her client projects with the savings figures she delivered. The page itself also names her, describes her role, and says where she is based. Both are published on the basis of her consent",
         "languages and location, published on the basis of her consent",
         "tests/test_partner_disclosure_surfaces.py::test_every_passage_naming_her_discloses_the_page_as_a_publisher",
         id="partner-disclosure-section-2-summary-narrowed-back-to-the-brochure",
     ),
     pytest.param(
         "content/legal/privacy/index.md",
-        "and her location. The page itself also names her, describes her role, and says where she is based.",
-        "and her location.",
+        "her location, and her client projects with the savings figures she delivered. The page itself also names her, describes her role, and says where she is based.",
+        "her location, and her client projects with the savings figures she delivered.",
         "tests/test_partner_disclosure_surfaces.py::test_every_passage_naming_her_discloses_the_page_as_a_publisher",
         id="partner-disclosure-section-4-opening-narrowed-back-to-the-brochure",
     ),
@@ -500,8 +500,8 @@ MUTATIONS = [
     # opposite thing, which is the vacuity class this whole Issue is made of.
     pytest.param(
         "content/legal/privacy/index.md",
-        "and her location. The page itself also names her, describes her role, and says where she is based.",
-        "and her location, and the brochure names her throughout.",
+        "her location, and her client projects with the savings figures she delivered. The page itself also names her, describes her role, and says where she is based.",
+        "her location, and her client projects, and the brochure names her throughout.",
         "tests/test_partner_disclosure_surfaces.py::test_every_passage_naming_her_discloses_the_page_as_a_publisher",
         id="partner-disclosure-verb-attributed-to-the-brochure-not-the-page",
     ),
@@ -511,6 +511,15 @@ MUTATIONS = [
         "- **Retention**: the brochure stays published until she or I take it down, which removes both the link and the file together. Nothing else on the page is affected.",
         "tests/test_partner_disclosure_surfaces.py::test_the_retention_promise_reaches_every_declared_surface",
         id="partner-disclosure-retention-narrowed-behind-both-surface-nouns",
+    ),
+    # The eighth instance: the inventory drops a CONSENTED category. Rounds 3-5
+    # fixed where, when and how; the rework fixed which surfaces; this is what.
+    pytest.param(
+        "content/legal/privacy/index.md",
+        "the languages she works in, her location, and her client projects with the savings figures she delivered.",
+        "the languages she works in, and her location.",
+        "tests/test_partner_disclosure_surfaces.py::test_every_passage_naming_her_lists_the_client_figures_category",
+        id="partner-disclosure-inventory-drops-the-client-figures-category",
     ),
     # The enumerator itself: a new content surface starts naming her and nobody
     # declares it. This is the row that makes the gate a CLASS fix rather than a
