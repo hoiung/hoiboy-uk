@@ -61,8 +61,20 @@ SHORTCODE = REPO_ROOT / "layouts" / "_shortcodes" / "static-link.html"
 # in the template and invisible here, so the docstring's promise below was false.
 # Measured after the change: 3 on the real template (the prose mention still does
 # not count), 4 on all three added-guard spellings.
+# Stage 5 found the THIRD instance of the same shape the paragraph above says it
+# had already fixed twice. `errorf` is not the only spelling that fails a Hugo
+# build: `erroridf` does too (it is `errorf` with a suppressible ID), and it was
+# not counted. Measured on the pinned Hugo 0.160.0: a fourth guard written with
+# `erroridf` exits 1, so it is a real guard, while the count stayed at 3 and the
+# coupling assertion below passed. That made the docstring's promise -- "add a
+# fourth guard and this fails until GUARD_CASES gains a row" -- false again.
+#
+# The rule the pattern now encodes is the one that was meant all along: count the
+# build-FAILING error functions, not one spelling of one of them. `warnf` and
+# `warnidf` are deliberately absent because they do not fail a build, so they are
+# not guards and a row for them would assert nothing.
 GO_COMMENT = re.compile(r"\{\{-?\s*/\*.*?\*/\s*-?\}\}", re.DOTALL)
-ERRORF_CALL_SITE = re.compile(r"\{\{-?\s*errorf\b")
+ERRORF_CALL_SITE = re.compile(r"\{\{-?\s*(?:errorf|erroridf)\b")
 
 # One row per way a caller can be wrong. `guard` names which of the template's
 # errorf branches must fire, and `fragment` is matched against Hugo's log, so a
