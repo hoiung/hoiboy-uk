@@ -454,6 +454,42 @@ MUTATIONS = [
         "scripts/test_static_link_shortcode.py::test_withdrawal_path_removes_link_and_file_together",
         id="static-link-anchor-href-detached-from-its-path-argument",
     ),
+    # hoiboy-uk#59, Ralph round 5 Tier 3, the finding that terminally stopped the
+    # loop. These three pin the PARTNER-DISCLOSURE gates, and the defect each
+    # re-injects is the exact PRE-FIX text, so the rows fail if the notice ever
+    # narrows back to what it said when the gap was found. All three are scoped
+    # to a pytest NODE ID rather than the file, for the reason recorded on the
+    # row above: a file-scoped row is satisfied by any sibling test.
+    #
+    # The class: the privacy notice promised a takedown that "removes both the
+    # link and the file together" while the SAME Issue published the data
+    # subject a second time in the page's own prose. The sentence was BACKED and
+    # its SCOPE was wrong, which is the question the escalation's sweep never
+    # asked.
+    pytest.param(
+        "content/legal/privacy/index.md",
+        " The page itself also names her, describes her role, and says where she is based.",
+        "",
+        "tests/test_partner_disclosure_surfaces.py::test_the_notice_discloses_every_surface_it_publishes_her_on",
+        id="partner-disclosure-opening-narrowed-back-to-the-brochure-alone",
+    ),
+    pytest.param(
+        "content/legal/privacy/index.md",
+        "- **Retention**: the brochure and the mention of her on the page stay published until she or I take them down, which removes the link, the file and the page's description of her together. The public repository's git history keeps them unless",
+        "- **Retention**: the brochure stays published until she or I take it down, which removes both the link and the file together. The public repository's git history keeps the file unless",
+        "tests/test_partner_disclosure_surfaces.py::test_the_retention_promise_reaches_every_declared_surface",
+        id="partner-disclosure-retention-narrowed-back-to-link-and-file",
+    ),
+    # The enumerator itself: a new content surface starts naming her and nobody
+    # declares it. This is the row that makes the gate a CLASS fix rather than a
+    # sixth instance fix.
+    pytest.param(
+        "content/legal/sub-processors/index.md",
+        "## Cross-references",
+        "## Cross-references\n\nJolyn Pek.",
+        "tests/test_partner_disclosure_surfaces.py::test_every_shipped_surface_naming_the_partner_is_declared",
+        id="partner-disclosure-undeclared-new-surface-names-the-partner",
+    ),
 ]
 
 
