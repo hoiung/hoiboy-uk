@@ -9,7 +9,7 @@ description: "ICT design and consultancy: over ten years designing and building 
 
 I have over ten years as an ICT designer and consultant, designing and implementing data centres, labs, offices, shopping malls, hotels, and many other kinds of commercial intelligent buildings and construction projects.
 
-This is one of my specialisms, alongside project management (PMI PMP certified, 2023), procurement and negotiation, and logistics planning to keep projects on deadline or cut the delays down. I offer it here with Jolyn Pek, a corporate real estate consultant and client representative based in Singapore, working across APAC. She covers the property and programme side, I cover the technology side, and you get one point of contact instead of two.
+This is one of my specialisms, alongside project management (PMI PMP certified, 2023), procurement and negotiation, and logistics planning to keep projects on deadline or cut the delays down. I offer it here with Jolyn Pek, a corporate real estate consultant and client representative based in Singapore, working across APAC. She covers the property and programme side, I cover the technology side, and the two are integrated and delivered together as one piece of work, not two that get stitched together later.
 
 Every commercial building is an intelligent building now, so the property decision and the technology decision are tied together. The real estate side sets the programme and the capital budget. The ICT side sets the distribution design and how much network capacity the building actually has. Wifi, AV, VoIP, security, BMS and IoT have all converged onto IP, so costing the technology in early means fewer surprises later.
 
