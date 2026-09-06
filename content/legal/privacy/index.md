@@ -32,7 +32,7 @@ This notice covers two scopes:
 - Contact-form / email enquiries: when you email `hello@hoiboy.uk`, your email address and message content are processed for the purpose of responding to your enquiry.
 - Community submission form: if you submit the "Get featured" form on the Asians & Gingers in Tech community page, we process the details and optional photo you send, on the basis of your explicit consent (see section 4).
 - Newsletter subscription: if you subscribe using the form in the site footer, we process your name and email address so we can email you new posts, on the basis of your consent (see section 4).
-- Partnership brochure: the ICT consultancy page publishes our CRE and ICT services brochure, which includes my consultancy partner Jolyn Pek's photograph, professional credentials, languages and location, published on the basis of her consent (see section 4).
+- Partnership brochure: the ICT consultancy page publishes our CRE and ICT services brochure, which includes my consultancy partner Jolyn Pek's photograph, professional credentials, languages and location. The page itself also names her, describes her role, and says where she is based. Both are published on the basis of her consent (see section 4).
 
 ### Consultancy engagement data (engaged clients only)
 
