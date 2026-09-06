@@ -156,10 +156,17 @@ def test_every_passage_naming_her_discloses_the_page_as_a_publisher() -> None:
         "document and must be rewritten rather than trusted."
     )
 
+    # The verb must be attributed to the PAGE, with no "brochure" intervening.
+    # `\bpage\b[^.]*\b(verb)\b` was not enough and the rework re-validation broke
+    # it: "the ICT consultancy page publishes our ... brochure, WHICH NAMES my
+    # consultancy partner Jolyn Pek" matches that pattern while saying only that
+    # the BROCHURE names her, which is the exact claim this gate exists to reject.
+    # Excluding "brochure" between the page token and the verb is what binds the
+    # verb to its subject.
     verbs = "|".join(DISCLOSURE_VERBS)
     undisclosed = [
         n for n, line in passages
-        if not re.search(rf"\bpage\b[^.]*\b(?:{verbs})\b", line)
+        if not re.search(rf"\bpage\b(?:(?!brochure)[^.])*\b(?:{verbs})\b", line)
     ]
     assert not undisclosed, (
         f"line(s) {undisclosed} of the privacy notice name the partner but "
@@ -190,10 +197,26 @@ def test_the_retention_promise_reaches_every_declared_surface() -> None:
     )
     retention = match.group(1)
     missing = [noun for noun in SURFACE_NOUNS if noun not in retention]
-    assert not missing, (
-        f"the Retention promise does not reach {missing}. It promises a takedown "
-        "of a strict subset of what the subsection says is published about her, "
-        "so a withdrawal performed exactly as written would leave the rest live. "
-        "That is the defect Ralph round 5 Tier 3 stopped this Issue on.\n"
+
+    # Token presence is necessary and NOT sufficient, and this test learned that
+    # the hard way. The rework re-validation reverted this bullet to the exact
+    # pre-fix promise and appended "Nothing else on the page is affected." -- the
+    # literal opposite of the required disclosure -- and the bare-token check
+    # passed it, because both nouns were present. That is the same vacuity class
+    # the sibling test above records as "proven vacuous by mutation", left live
+    # here in the same commit that fixed it there.
+    #
+    # So the bullet must also ATTRIBUTE removable content to the page: a
+    # possessive or locative phrase tying what comes down to the page itself,
+    # rather than the noun appearing anywhere in any role.
+    page_content = re.search(r"page's\s+(?:description|mention)|mention of her on the page", retention)
+
+    assert not missing and page_content, (
+        f"the Retention promise does not reach {missing or 'the page as a surface'}. "
+        "It promises a takedown of a strict subset of what the subsection says is "
+        "published about her, so a withdrawal performed exactly as written would "
+        "leave the rest live. That is the defect Ralph round 5 Tier 3 stopped this "
+        "Issue on. Naming the page is not enough: the bullet has to say what comes "
+        "down WITH the file, in a phrase that attributes content to the page.\n"
         f"Retention bullet was:\n{retention.strip()}"
     )
