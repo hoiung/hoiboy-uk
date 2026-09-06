@@ -86,8 +86,36 @@ ALL_SUPPRESSED = [
     "private/tools/meet-recorder/index.html",
     "community/asians-gingers-in-tech/thanks/index.html",
     "newsletter/index.html",
+    "hire-hoi/ai-consultancy/portfolio/cu-architects/index.html",
+    "hire-hoi/ict-consultancy/index.html",
+    "hire-hoi/permanent-roles/index.html",
     "404.html",
 ]
+
+# Every suppression class the gate declares, read from the gate itself rather than
+# retyped. #61 added three and this list, the parametrize below and the gate's own
+# comment were three separate hand-maintained copies of one number; two of them
+# fell behind in the same commit. Deriving removes the copies instead of
+# re-synchronising them.
+SUPPRESSION_CLASSES = tuple(gate.SUPPRESSED_PREFIXES + gate.SUPPRESSED_EXACT)
+
+
+def test_the_fixture_covers_every_declared_suppression_class():
+    """ALL_SUPPRESSED must hold a page for each class, or a floor test is vacuous.
+
+    Without this, adding a class to the gate leaves the synthetic tree short of a
+    page for it, `test_synthetic_good_tree_passes` goes red for a reason unrelated
+    to the defect under test, and the per-class floor for the NEW class is never
+    actually exercised by anything.
+    """
+    uncovered = [
+        cls for cls in SUPPRESSION_CLASSES
+        if not any(rel == cls or rel.startswith(cls) for rel in ALL_SUPPRESSED)
+    ]
+    assert not uncovered, (
+        f"gate declares suppression class(es) {uncovered} with no representative "
+        f"page in ALL_SUPPRESSED; add one per class"
+    )
 
 
 def _run(built: Path, monkeypatch) -> int:
@@ -132,13 +160,16 @@ def test_a_class_with_no_pages_is_named(tmp_path, monkeypatch, capsys):
     assert "STALE" in err
 
 
-@pytest.mark.parametrize("missing", sorted(
-    {"legal/", "private/", "community/asians-gingers-in-tech/", "newsletter/", "404.html"}))
+@pytest.mark.parametrize("missing", sorted(SUPPRESSION_CLASSES))
 def test_every_suppression_class_has_its_own_floor(tmp_path, monkeypatch, capsys, missing):
     """Not just the newsletter one: each class must be independently exercised.
 
     Parametrised deliberately. A floor that happens to cover the class under
     discussion, and no other, is the aggregate bug wearing a different shape.
+
+    Parametrised from the GATE's own tuples, not a retyped literal: a hardcoded
+    list silently stops covering the class you just added, which is the same
+    never-exercised failure this whole test file exists to catch, one level up.
     """
     kept = [p for p in ALL_SUPPRESSED if not (p == missing or p.startswith(missing))]
     # Park the form's link outside the class under test, or the target page alone

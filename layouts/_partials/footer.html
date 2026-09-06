@@ -1,17 +1,31 @@
-{{- /* .Section alone cannot express three of these six classes: the 404 page and
-       the home page both report .Section "" and home must SHOW the form, and all
-       four community pages report .Section "community" while only the AGIT subtree
-       is suppressed. The RelPermalink prefix also absorbs the url-override on
-       agit-thanks, which lives at content/community/agit-thanks/ but serves under
+{{- /* Eight suppressed classes, and .Section alone cannot express five of them.
+       The 404 page and the home page both report .Section "" and home must SHOW
+       the form. All four community pages report .Section "community" while only
+       the AGIT subtree is suppressed. And every page under /hire-hoi/ reports the
+       same .Section, including /hire-hoi/ itself, which must keep the form: the
+       operator named three trees, not the section. Those five need .Kind or a
+       RelPermalink prefix; only legal, private and newsletter are whole sections.
+
+       The RelPermalink prefix also absorbs the url-override on agit-thanks, which
+       lives at content/community/agit-thanks/ but serves under
        /community/asians-gingers-in-tech/.
 
        "newsletter" is the form's OWN two confirmation pages plus their auto-section
        list (#56 Phase 3). Offering the subscribe form to someone who has just been
        told they are subscribed is the one placement that reads as broken, and the
-       pages did not exist when this predicate was first written in Phase 2. */ -}}
+       pages did not exist when this predicate was first written in Phase 2.
+
+       The three /hire-hoi/ trees are #61. Each is a page whose own call to action
+       is the reason it exists, so a second, unrelated one competes with it. The
+       prefix form is deliberate: it carries to every subpage, which is what was
+       asked for, and it leaves /hire-hoi/ untouched because that path is not a
+       prefix of any of the three. */ -}}
 {{- $hide := or (eq .Section "legal") (eq .Section "private") (eq .Section "newsletter")
                 (eq .Kind "404")
-                (strings.HasPrefix .RelPermalink "/community/asians-gingers-in-tech/") -}}
+                (strings.HasPrefix .RelPermalink "/community/asians-gingers-in-tech/")
+                (strings.HasPrefix .RelPermalink "/hire-hoi/ai-consultancy/")
+                (strings.HasPrefix .RelPermalink "/hire-hoi/ict-consultancy/")
+                (strings.HasPrefix .RelPermalink "/hire-hoi/permanent-roles/") -}}
 {{- if not $hide -}}
   {{- partial "subscribe-form.html" . -}}
 {{- end -}}

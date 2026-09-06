@@ -8,7 +8,7 @@ source-level greps cannot prove placement. Only a rendered tree can.
 
 Four assertions, the first three in increasing strength:
 
-1. SUPPRESSED: the marker is absent from every page in the five suppressed classes.
+1. SUPPRESSED: the marker is absent from every page in the eight suppressed classes.
 2. PRESENT: the marker is present on a named sample that deliberately includes the
    two pages a ``.Section``-only predicate gets wrong. ``/community/`` and
    ``/community/agit-featured/`` both report ``.Section == "community"``, the same
@@ -55,10 +55,11 @@ MARKER = "subscribe-form"
 # alias stub or a standalone bundle asset, not a page with a footer to guard.
 BASEOF_MARKER = "<footer"
 
-# The five suppressed classes, as BUILT paths. Five, not six: the AGIT signup and
-# thanks pages are two PAGES of one class (the prefix below covers both), and
-# counting them separately is what made this comment disagree with the docstring
-# above and with the tuples below (#56 Stage 5).
+# The eight suppressed classes, as BUILT paths: one per entry in the two tuples
+# below, which is where the count is re-derived from rather than incremented. A
+# class is not a page. The AGIT signup and thanks pages are two PAGES of one class
+# (the prefix covers both), and counting them separately is what made this comment
+# disagree with the docstring above and with the tuples below (#56 Stage 5).
 #   /legal/*   operator instruction
 #   /private/* the per-path CSP at static/_headers:10 is narrower than the root
 #              policy and would break the Turnstile widget, so the form is removed
@@ -68,11 +69,19 @@ BASEOF_MARKER = "<footer"
 #   /newsletter/* the form's own confirmation pages: offering the form to someone
 #              just told they are subscribed is the one placement that reads as
 #              broken. Added in Phase 3, when those pages first existed.
+#   the three /hire-hoi/ trees below: each page's own call to action is the reason
+#              the page exists, so a second unrelated one competes with it (#61).
+#              Three prefixes and not one "hire-hoi/", because /hire-hoi/ itself
+#              KEEPS the form: the operator named three trees, not the section.
+#              PRESENT_PATHS asserts that, so the distinction cannot quietly rot.
 SUPPRESSED_PREFIXES = (
     "legal/",
     "private/",
     "community/asians-gingers-in-tech/",
     "newsletter/",
+    "hire-hoi/ai-consultancy/",
+    "hire-hoi/ict-consultancy/",
+    "hire-hoi/permanent-roles/",
 )
 SUPPRESSED_EXACT = ("404.html",)
 
@@ -83,7 +92,12 @@ PRESENT_PATHS = (
     "community/agit-featured/index.html",      # .Section "community", must SHOW
     "blogs/tech-ai/index.html",                # a /blogs/<category>/ section landing
     "skills/index.html",                       # top-level section named in scope
-    "hire-hoi/ai-consultancy/index.html",
+    "hire-hoi/index.html",                     # the hub: KEEPS the form while all
+                                               # three trees under it are suppressed
+                                               # (#61). Every /hire-hoi/ page reports
+                                               # the same .Section, so this entry is
+                                               # what proves the prefixes did not
+                                               # swallow the section wholesale.
     "series/bakeoff/index.html",               # a taxonomy term page
 )
 
