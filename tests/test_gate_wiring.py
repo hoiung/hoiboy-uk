@@ -179,9 +179,16 @@ def _strip_comment(line: str) -> str:
 
     Whole-comment lines were already handled by a `startswith("#")` test, which
     is not the same thing: a comment can follow real code on the same line, and
-    that is where ci.yml discusses its own steps. `ci.yml:257` is why this is
-    quote-aware rather than a plain `split("#")` -- it runs `grep -v '^#'`, and
-    cutting at that `#` would silently truncate a real command.
+    that is where ci.yml discusses its own steps. The step that reads
+    `.hugo-warning-allowlist` is why this is quote-aware rather than a plain
+    `split("#")` -- it runs `grep -v '^#'`, and cutting at that `#` would
+    silently truncate a real command.
+
+    Named, not numbered. This cited `ci.yml:257` until hoiboy-uk#59 Stage 5,
+    which measured the step at :368 and found the anchor had been stale since
+    before #59 even started (:349 at the base commit). A line number in a comment
+    is a pointer nothing checks; the step's own name survives every insertion
+    above it.
     """
     quote: str | None = None
     for i, ch in enumerate(line):
@@ -414,7 +421,7 @@ def test_pytest_covered_credits_only_real_pytest_arguments():
     assert _pytest_covered(multi) == {"scripts/test_a.py", "scripts/test_b.py"}
 
     # A quoted '#' is not a comment; cutting there would truncate a real command
-    # (ci.yml:257 runs `grep -v '^#'`).
+    # (ci.yml's .hugo-warning-allowlist reader runs `grep -v '^#'`).
     quoted = "        run: grep -v '^#' f && python3 -m pytest scripts/test_a.py -q"
     assert _pytest_covered(quoted) == {"scripts/test_a.py"}
 
