@@ -21,7 +21,7 @@ For data centres and IT labs, I would work with the data centre and the client's
 
 I negotiate the commercial terms behind the design too: colocation, connectivity and hardware contracts, rate benchmarking and renewals.
 
-Between us we cover the whole run: strategy and feasibility, design management and ICT design, procurement and commercial, delivery and programme control, then handover and operations.
+Between us we cover the whole run: feasibility, costing and option comparisons, design management and ICT design, procurement and commercial, delivery and programme control, then handover and operations.
 
 Behind that: eight years of infrastructure architecture and data centre delivery at a global software company, Copper and Fibre Optic Structured Cabling with Connectix, and a BSc (Hons) in Computer Science and Network Communications from Kingston University.
 
