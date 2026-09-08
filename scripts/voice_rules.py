@@ -131,6 +131,16 @@ KEEP_LIST: tuple[str, ...] = (
     "results-driven",
     "detail-oriented",
     "proven track record",
+    # 2026-09-08 — operator: "ecosystem should not be a banned word, I use it.
+    # please whitelist". Same meta-rule "if I type it, I use it". He wrote it
+    # himself into his LinkedIn About ("a new localised business model and
+    # community growth ecosystem") and confirmed it on being asked. Moved OUT of
+    # BANNED_WORDS, where it had sat as a corporate-sense AI tell.
+    # NOTE the corpus reports (voice/base/02_word_choices.md L480, L570, L793)
+    # still record that he did NOT use it in the 2014-2023 corpus. Both are true:
+    # the corpus is a historical finding, the KEEP_LIST is current vocabulary.
+    # Do not "resolve" the two by reverting this.
+    "ecosystem", "ecosystems",
 )
 
 # ---------------------------------------------------------------------------
@@ -158,7 +168,6 @@ BANNED_WORDS: tuple[str, ...] = (
     "beacon",
     "testament",
     "holistic", "holistically",
-    "ecosystem",
     "unpack", "unpacking",
     "utilize", "utilizing", "utilized", "utilise", "utilising", "utilised",
     "commendable",
