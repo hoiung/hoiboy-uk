@@ -47,7 +47,7 @@ Training and guiding people is not new to me, and it did not start with AI. In m
 
 <!-- iamhoi -->
 
-Over ten years of my career has been ICT design and consultancy: data centres, labs, offices, hotels, shopping malls and other commercial intelligent buildings. For most of the last decade I was managing the work rather than doing the heavy lift. By 2022 my role at Canonical (Ubuntu Linux) was formally written as 10% Data Centre Manager, 40% IT Procurement Manager and 50% Infrastructure Architect, and I ran the estate on my own for about three years.
+Over ten years of my career has been ICT design and consultancy: data centres, labs, offices, hotels, shopping malls and other commercial intelligent buildings. For most of the last decade I was managing the work rather than doing the heavy lifting. By 2022 my role at Canonical (Ubuntu Linux) was formally written as 10% Data Centre Manager, 40% IT Procurement Manager and 50% Infrastructure Architect, and I ran the estate on my own for about three years.
 
 I cover the run from feasibility onwards. The strategy is client's upper management's call; I confirm whether it is feasible and cost it out. A lot of it is option comparisons, and that is actually the larger piece of work: cost models across the design options so client's have sufficient information, facts and figures to help make decisive calls quickly. Then design management and ICT design, procurement and commercial, delivery and programme control, then handover and operations.
 
