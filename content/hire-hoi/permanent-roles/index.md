@@ -11,10 +11,11 @@ build:
 
 I am open to the right permanent role, on the right terms. I am picky about where I put my energy, and I would rather find the right team than the nearest job. I work best on full autonomy, handed a real problem and given room to run. I am at my worst where everything has to be defined before I can move.
 
-There are two kinds of permanent role I am looking for:
+There are three kinds of permanent role I am looking for:
 
 1. **[Building, as an AI Product Engineer](#role-interest-1-building-as-an-ai-product-engineer)**
 2. **[AI enablement and training](#role-interest-2-ai-enablement-and-training)**
+3. **[ICT Designer and Consultant](#role-interest-3-ict-designer-and-consultant)**
 
 <!-- iamhoiend -->
 
@@ -39,6 +40,22 @@ What I want is to actually architect and build, with the room to run at it. It d
 The other role I want is helping people actually use AI. Most teams buy the tools and then copy and paste back and forth into a chat window, and stop there. I have spent a year working out what makes it stick: a real process around it, not a novelty. I built my own harness for it, and I run different workflows depending on what I am working on. Closing the gap between "we bought Claude" and "our people use it every day" is the work I have been doing, for myself and now for clients, and teaching people so they own it after I leave is the part I like most.
 
 Training and guiding people is not new to me, and it did not start with AI. In my ICT and infrastructure architecture career, most of it at Canonical (Ubuntu Linux), I sat with every kind of stakeholder and engineer, from the CFO down, guiding and training them and translating the technical into something they could actually use. I did the same as Programme Director of the dance school and the largest Brazilian Zouk community online that I built, where I designed the programme around how people actually retain and improve, and trained and led the people in it. It comes down to the same combination every time: coaching, mentorship and technical training.
+
+<!-- iamhoiend -->
+
+## Role interest 3: ICT Designer and Consultant
+
+<!-- iamhoi -->
+
+Over ten years of my career has been ICT design and consultancy: data centres, labs, offices, hotels, shopping malls and other commercial intelligent buildings. For most of the last decade I was managing the work rather than doing the heavy lift. By 2022 my role at Canonical (Ubuntu Linux) was formally written as 10% Data Centre Manager, 40% IT Procurement Manager and 50% Infrastructure Architect, and I ran the estate on my own for about three years.
+
+I cover the run from feasibility onwards. The strategy is client's upper management's call; I confirm whether it is feasible and cost it out. A lot of it is option comparisons, and that is actually the larger piece of work: cost models across the design options so client's have sufficient information, facts, and numbers to help make decisive calls quickly. Then design management and ICT design, procurement and commercial, delivery and programme control, then handover and operations.
+
+I sit in the design team with the client or their representative, architects, project managers, interior designers, AV, and electrical and mechanical engineers, as the translator of the IT technical requirements through the construction design stages (RIBA). Every commercial building is an intelligent building now: wifi, AV, VoIP, security, BMS and IoT have all converged onto IP, so costing the technology in early means fewer surprises later.
+
+Strategic contingency planning is the part I am best at: spotting which phase, stage, or item is most at risk of becoming a blocker before it does. Not theory that doesn't work in real life, or unnecessary paperwork and admin. Getting the work done, where it matters most.
+
+The AI does not get left behind in this one either. I am a power user of AI Claude Code and I build my own workflow with it, so the reporting, cost modelling and documentation around a programme get done faster. The tool is not the job. The delivery is.
 
 <!-- iamhoiend -->
 
