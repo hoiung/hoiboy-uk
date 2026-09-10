@@ -264,7 +264,7 @@ def test_an_explicit_path_list_does_not_trip_the_walk_floor(tmp_path):
         "/community/agit-featured/1-hoi-aka-hoiboy-ai-product-engineer/",
         "/hire-hoi/permanent-roles/",
         "/hire-hoi/ai-consultancy/portfolio/singerandsteel/",
-        "/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV.pdf",  # a file under static/
+        "/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV_AI_20260910.pdf",  # a file under static/
         "/hire-hoi/index.xml",  # the per-section RSS feed
         "/tags/ai/",
         "/tags/auto_pb/",  # Hugo keeps the underscore; folding it to - would 404
