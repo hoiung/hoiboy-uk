@@ -117,3 +117,7 @@
 /tags/community-building/* /tags/community/ 301
 /tags/llms /tags/llm/ 301
 /tags/llms/* /tags/llm/ 301
+
+# The single permanent-roles CV was split by lane 2026-09-10 (AI vs ICT/data centre).
+# Any circulated link to the old dateless file lands on the AI CV.
+/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV.pdf /hire-hoi/permanent-roles/Senh_Hoi_Ung_CV_AI_20260910.pdf 301

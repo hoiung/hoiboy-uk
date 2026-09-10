@@ -69,4 +69,7 @@ One thing that is not on my CV. Last year I was diagnosed with ADHD, which final
 
 ## My CV
 
-[Download my CV as a PDF](/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV.pdf) for the full detail: what I have built and shipped, my experience, and my skills.
+Download my CV as a PDF for the full detail: what I have built and shipped, my experience, and my skills. There are two, one for each side of the work:
+
+- [AI and product engineering](/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV_AI_20260910.pdf), for role interests 1 and 2.
+- [ICT and data centre management](/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV_ICT_Data_Centre_Management_20260909.pdf), for role interest 3.
