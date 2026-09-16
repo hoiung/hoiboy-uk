@@ -9,7 +9,7 @@ build:
 
 {{< brand-intro >}}
 
-I am open to the right permanent role, on the right terms. I am selective about the teams I join, and what I am selective about is culture and work ethic. I would rather find the right team than the nearest job. I work best on full autonomy, handed a real problem and given room to run. I am at my worst where everything has to be defined before I can move.
+I am open to the right permanent role, on the right terms. I am selective about the teams I join, and what matters to me is culture and work ethic. I would rather find the right team than the nearest job. I work best on full autonomy, handed a real problem and given room to run. I am at my worst where everything has to be defined before I can move.
 
 There are three kinds of permanent role I am looking for:
 
