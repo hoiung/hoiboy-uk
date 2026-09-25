@@ -5,7 +5,7 @@ draft: false
 slug: understand-the-problem-before-you-try-to-fix-it
 categories: [life, entrepreneurship, tech-ai, dance, trading]
 tags: [problem-solving, root-cause, symptoms, clickbait, planning]
-description: "What we want isn't what we need. Clickbait sells the quick fix before anyone understands the problem. Work backwards from the symptoms to find the root cause."
+description: "What we want isn't always what we need. Clickbait sells the quick fix before anyone understands the problem. Work backwards from the symptoms to find the root cause."
 ---
 
 <!-- iamhoi -->
