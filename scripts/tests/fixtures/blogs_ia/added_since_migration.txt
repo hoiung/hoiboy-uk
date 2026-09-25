@@ -40,3 +40,4 @@
 /blogs/bachata-vs-brazilian-zouk-community/
 /blogs/why-do-we-shag-at-night/
 /blogs/dance-anki-two-builds-one-brief/
+/blogs/understand-the-problem-before-you-try-to-fix-it/
