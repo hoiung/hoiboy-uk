@@ -66,6 +66,10 @@ It's similar to how some people get it wrong. They try to build a solution, and 
 
 That really isn't the way.
 
+I see products and services more as tools. Sometimes the simpler tools are the better ones, depending on the root problem you're trying to solve, and sometimes it's a combination of tools. With some complex products or services, you may only end up using a handful of their features.
+
+The tool or service itself isn't necessarily the solution, but a means to help solve the root problem. Only by understanding the problem can you then use tools to help solve it, and learn how to use those tools in the most effective manner.
+
 I find the best value comes from working out what the problems are, then planning how to solve them, and then executing the solution. Then you have the solution that fits the problem it's solving.
 
 Simple.
