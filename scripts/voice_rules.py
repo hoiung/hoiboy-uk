@@ -157,6 +157,12 @@ KEEP_LIST: tuple[str, ...] = (
     # resonate* — operator confirmed natural vocabulary 2026-06-20 ("resonate is a
     # word I use, it should be whitelisted"). Same meta-rule "if I type it, I use it".
     "resonate", "resonates", "resonating",
+    # cutting-edge — operator confirmed natural vocabulary 2026-09-30, verbatim:
+    # "nothing with cutting-edge. I use that word when it suits." Same meta-rule
+    # "if I type it, I use it" as the 2026-04-22 batch. It was on BANNED_WORDS as a
+    # recruiter cliche, which is a STYLE objection, not a truth one, and style is his
+    # call. robust / leveraged / results-driven were already whitelisted in April and he
+    # reconfirmed them the same day ("I use those words alot").
     # 2026-06-20 bulk sweep — operator scanned the full BANNED_WORDS list and flagged
     # these as natural vocabulary ("I use ... lol"). Same meta-rule "if I type it, I use it".
     "iterate", "iterating", "iterated",
@@ -195,7 +201,6 @@ BANNED_WORDS: tuple[str, ...] = (
     "delve", "delving", "delved",
     "spearhead", "spearheading", "spearheaded",
     "seamless", "seamlessly",
-    "cutting-edge",
     "innovative",
     "impactful",
     "facilitate", "facilitating", "facilitated",
