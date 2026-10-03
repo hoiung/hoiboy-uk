@@ -10,8 +10,9 @@ Modes (selected via --mode):
       region scan, otherwise SKIP. No frontmatter date filter.
   blog: scan iamhoi regions first, then PUBLIC_FACING_GLOBS_BLOG legacy
       whitelist (currently empty), otherwise SKIP. With --check-only-new
-      (default ON for blog mode) files in content/posts/ dated <
-      HOIBOY_CUTOFF_DATE are skipped (legacy voice-sacred corpus).
+      (default ON for blog mode) COMMITTED files in content/posts/ dated <
+      HOIBOY_CUTOFF_DATE are skipped (legacy voice-sacred corpus); a file
+      new to git is scanned whatever its date (voice_rules.cutoff_exempt).
 
 The mode picks WHICH lines are scanned. HOW STRICTLY they are judged is scoped
 separately by path: the commercial-copy rules (effort signalling, zero-to-one
@@ -62,6 +63,7 @@ from voice_rules import (
     Finding,
     FRONTMATTER_DATE_PATTERN,
     HOIBOY_CUTOFF_DATE,
+    cutoff_exempt,
     MARKER_CLOSE_HASH,
     MARKER_CLOSE_HTML,
     MARKER_EXEMPT_HASH,
@@ -847,7 +849,8 @@ def main() -> int:
     parser.add_argument(
         "--check-only-new", dest="check_only_new",
         action="store_true", default=None,
-        help="(blog mode) Skip posts dated < HOIBOY_CUTOFF_DATE. Default ON in blog mode.",
+        help="(blog mode) Skip committed posts dated < HOIBOY_CUTOFF_DATE (a post new to git "
+             "is scanned whatever its date). Default ON in blog mode.",
     )
     parser.add_argument(
         "--no-check-only-new", dest="check_only_new", action="store_false",
@@ -961,7 +964,7 @@ def main() -> int:
                 except ValueError as e:
                     print(f"[ERROR] {e}", file=sys.stderr)
                     return 1
-                if d is not None and d < HOIBOY_CUTOFF_DATE:
+                if cutoff_exempt(f, d):
                     continue
             kept.append(f)
         files_to_scan = kept
@@ -971,7 +974,7 @@ def main() -> int:
         # out as legacy. Named as such, with the count, so it cannot be misread
         # as the collection having failed.
         print(
-            f"[OK] {collected} file(s) collected, all dated before the "
+            f"[OK] {collected} file(s) collected, all committed and dated before the "
             f"{HOIBOY_CUTOFF_DATE} cutoff; nothing in scope to scan."
         )
         return 0

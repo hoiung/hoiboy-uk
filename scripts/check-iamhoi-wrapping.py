@@ -8,7 +8,8 @@ can write a full Hoi-voice post and the voice guard silently skips it
 (default = SKIP for unmarked content).
 
 Decision matrix (default = PASS):
-  --check-only-new and date < HOIBOY_CUTOFF_DATE  -> PASS (legacy corpus)
+  --check-only-new, date < HOIBOY_CUTOFF_DATE and
+    already committed (voice_rules.cutoff_exempt) -> PASS (legacy corpus)
   first non-blank line is `<!-- iamhoi-exempt -->` -> PASS (whole-file bypass)
   a standalone line is exactly `<!-- iamhoi -->`    -> PASS (wrapped; a mere
                                                       mention of the token in
@@ -46,7 +47,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from voice_rules import HOIBOY_CUTOFF_DATE
+from voice_rules import HOIBOY_CUTOFF_DATE, cutoff_exempt
 
 # Pre-compiled patterns (compile once, reuse per file)
 _FIRST_PERSON_RE = re.compile(r"\b(I|I'm|I've|Hoi)\b")
@@ -227,10 +228,8 @@ def check_file(
     except (OSError, UnicodeDecodeError) as exc:
         return False, f"READ_ERROR {path}: {exc}"
 
-    if check_only_new:
-        post_date = parse_post_date(text)
-        if post_date is not None and post_date < HOIBOY_CUTOFF_DATE:
-            return True, ""
+    if check_only_new and cutoff_exempt(path, parse_post_date(text)):
+        return True, ""
 
     body = strip_frontmatter(text)
     offset = text[: len(text) - len(body)].count("\n")  # body line -> file line
@@ -341,7 +340,8 @@ def main() -> int:
         dest="check_only_new",
         action="store_true",
         default=True,
-        help="Skip posts dated < HOIBOY_CUTOFF_DATE (default ON).",
+        help="Skip committed posts dated < HOIBOY_CUTOFF_DATE; a post new to git is "
+             "checked whatever its date (default ON).",
     )
     parser.add_argument(
         "--no-check-only-new",

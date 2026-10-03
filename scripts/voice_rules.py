@@ -24,14 +24,55 @@ Issue: hoiung/dotfiles#404
 
 from dataclasses import dataclass
 from datetime import date
+from functools import lru_cache
+import os
+from pathlib import Path
 import re
+import subprocess
 
 # ---------------------------------------------------------------------------
 # Cutoff date — hoiboy-uk legacy/new boundary
 # ---------------------------------------------------------------------------
-# Posts dated < this date are voice-sacred legacy and exempt from scanning.
+# COMMITTED posts dated < this date are voice-sacred legacy and exempt from
+# scanning (cutoff_exempt below); a file new to git is scanned whatever its date.
 # Posts dated >= this date are eligible (default still SKIP unless tagged).
 HOIBOY_CUTOFF_DATE: date = date(2026, 4, 7)
+
+
+def _git(cwd: Path, *args: str) -> "subprocess.CompletedProcess[bytes] | None":
+    try:
+        return subprocess.run(["git", "-C", str(cwd), *args], capture_output=True, timeout=30)  # sst3-sec: justified: git argv list from this module's callers, no shell
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+@lru_cache(maxsize=None)
+def _added_against_head(toplevel: str) -> "frozenset[str] | None":
+    """Absolute paths the index ADDS against HEAD (a rename is R, not A); None if unknown."""
+    r = _git(Path(toplevel), "diff", "--cached", "--name-only", "--diff-filter=A", "-M", "-z", "HEAD")
+    if r is None or r.returncode != 0:
+        return None
+    return frozenset(os.path.join(toplevel, os.fsdecode(b)) for b in r.stdout.split(b"\0") if b)
+
+
+def is_new_to_git(path: "str | Path") -> bool:
+    """True when git has no committed history for `path`: untracked, or staged as
+    added. When git cannot answer (no git, not a repo, no HEAD yet) it is new."""
+    p = Path(path).resolve()
+    top = _git(p.parent, "rev-parse", "--show-toplevel")
+    tracked = _git(p.parent, "ls-files", "--error-unmatch", "--", f":(literal){p.name}")
+    if top is None or top.returncode != 0 or tracked is None or tracked.returncode != 0:
+        return True
+    added = _added_against_head(os.fsdecode(top.stdout.strip()))
+    return added is None or str(p) in added
+
+
+def cutoff_exempt(path: "str | Path", post_date: "date | None") -> bool:
+    """True when `path` is legacy prose the cutoff exempts: dated before the cutoff
+    AND already committed. A NEW file dated before the cutoff used to skip every
+    voice check, so backdating a new post's `date:` bypassed the scanners
+    (#577 escalation, class C5); only committed files keep the exemption."""
+    return post_date is not None and post_date < HOIBOY_CUTOFF_DATE and not is_new_to_git(path)
 
 # ---------------------------------------------------------------------------
 # Markers (greenfield convention; HTML-comment form invisible in render)
@@ -610,7 +651,7 @@ class Finding:
 
 
 __all__ = [
-    "HOIBOY_CUTOFF_DATE",
+    "HOIBOY_CUTOFF_DATE", "cutoff_exempt", "is_new_to_git",
     "MARKER_OPEN_HTML", "MARKER_CLOSE_HTML", "MARKER_EXEMPT_HTML",
     "MARKER_SKIP_OPEN_HTML", "MARKER_SKIP_CLOSE_HTML",
     "MARKER_OPEN_HASH", "MARKER_CLOSE_HASH", "MARKER_EXEMPT_HASH",

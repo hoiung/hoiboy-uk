@@ -2,10 +2,11 @@
 """
 Word-count ceiling guard for hoiboy.uk new posts.
 
-Blocks commit / fails CI if a new post (date >= HOIBOY_CUTOFF_DATE) exceeds
-WORDCOUNT_CEILING words after markup stripping. Legacy posts
-(date < HOIBOY_CUTOFF_DATE) are silently skipped (voice-sacred corpus,
-e.g. woodsmoke-bushcraft-course at 11,858 words).
+Blocks commit / fails CI if a new post (date >= HOIBOY_CUTOFF_DATE, or any
+post new to git) exceeds WORDCOUNT_CEILING words after markup stripping.
+Committed legacy posts (date < HOIBOY_CUTOFF_DATE) are silently skipped
+(voice-sacred corpus, e.g. woodsmoke-bushcraft-course at 11,858 words); a
+post new to git is checked whatever its date (voice_rules.cutoff_exempt).
 
 Ceiling set from 14_BLOG_CRAFT.md line 17 rule: drafts >3000 words must be
 split or cut back. Negative example on file: sst3-ai-harness-reshapeable-knife
@@ -34,7 +35,7 @@ from pathlib import Path
 
 import yaml
 
-from voice_rules import HOIBOY_CUTOFF_DATE
+from voice_rules import HOIBOY_CUTOFF_DATE, cutoff_exempt
 
 WORDCOUNT_CEILING: int = 3000
 
@@ -157,7 +158,7 @@ def check_file(path: Path) -> int:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
-    if post_date < HOIBOY_CUTOFF_DATE:
+    if cutoff_exempt(path, post_date):
         return 0
 
     if path.parent.name in GRANDFATHERED_SLUGS:
