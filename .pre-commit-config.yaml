@@ -8,16 +8,20 @@ repos:
     rev: v5.0.0
     hooks:
       - id: check-added-large-files
-        args: [--maxkb=1024]
+        args: [--maxkb=1024, "--"]
         # The Jolyn & Hoi brochure is a signed-off 2-page A3 PDF at 1144 KB (the
         # hook ceils bytes/1024). Its bytes are pinned by sha256 in hoiboy-uk#59
         # and must not be shrunk, so this one path is carved out; every other
         # new file keeps the 1024 KB ceiling.
         exclude: ^static/hire-hoi/ict-consultancy/Jolyn-Hoi_CRE\+ICT_brochure_v1\.0\.pdf$
       - id: check-case-conflict
+        args: ["--"]
       - id: check-merge-conflict
+        args: ["--"]
       - id: check-yaml
+        args: ["--"]
       - id: check-toml
+        args: ["--"]
       # A BOM must never enter a tracked file. Two gates were hardened to
       # TOLERATE one after it silently dropped the first block of
       # static/_headers (costing the 404 its noindex with every gate green) and
@@ -27,16 +31,19 @@ repos:
       # Making the input impossible is the fix that does not depend on guessing
       # what the consumer does (blog-priv#64, Ralph rounds 6 and 7).
       - id: fix-byte-order-marker
+        args: ["--"]
       - id: end-of-file-fixer
+        args: ["--"]
       - id: mixed-line-ending
-        args: [--fix=lf]
+        args: [--fix=lf, "--"]
       - id: trailing-whitespace
+        args: ["--"]
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.41.0
     hooks:
       - id: markdownlint
-        args: [--fix, --config, .markdownlint.json]
+        args: [--fix, --config, .markdownlint.json, "--"]
         files: ^(content|docs)/.*\.md$
 
   - repo: local
