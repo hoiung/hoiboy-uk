@@ -9,7 +9,7 @@ build:
 
 {{< brand-intro >}}
 
-I am open to the right permanent role, on the right terms. I work best on full autonomy, handed a real problem and given room to run. I am at my worst where everything has to be defined before I can move.
+I am open to the right permanent role, on the right terms. I work best on full autonomy, handed a real problem and given room to run.
 
 There are three kinds of permanent role I am looking for:
 
