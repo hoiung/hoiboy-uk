@@ -36,6 +36,15 @@ def _run(path: Path) -> tuple[int, str, str]:
     return proc.returncode, proc.stdout, proc.stderr
 
 
+def _commit(repo: Path, path: Path) -> None:
+    """Commit `path` in a throwaway repo at `repo`, so git has history for it."""
+    git = ["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@example.invalid",
+           "-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null"]
+    subprocess.run(git[:3] + ["init", "-q"], check=True)
+    subprocess.run(git + ["add", path.name], check=True)
+    subprocess.run(git + ["commit", "-q", "-m", "legacy post"], check=True)
+
+
 def _write(path: Path, frontmatter: str, body_words: int) -> None:
     body = " ".join(["lorem"] * body_words) if body_words else ""
     path.write_text(f"---\n{frontmatter}\n---\n\n{body}\n", encoding="utf-8")
@@ -119,11 +128,22 @@ class TestCheckFile:
         assert rc == 0
 
     def test_legacy_date_silently_skipped(self, tmp_path):
+        # The cutoff exempts only COMMITTED legacy posts (voice_rules.cutoff_exempt,
+        # dotfiles#577 class C5), so the post must be in git history first.
         p = tmp_path / "a.md"
         _write(p, "title: t\ndate: 2024-01-01", 11000)
+        _commit(tmp_path, p)
         rc, _, err = _run(p)
         assert rc == 0
         assert err == ""
+
+    def test_new_post_with_legacy_date_is_checked(self, tmp_path):
+        # Backdating a NEW post's date must not bypass the ceiling (dotfiles#577 C5).
+        p = tmp_path / "a.md"
+        _write(p, "title: t\ndate: 2024-01-01", 11000)
+        rc, _, err = _run(p)
+        assert rc == 1
+        assert "exceeds word-count ceiling" in err
 
     def test_iso_timestamp_does_not_crash(self, tmp_path):
         p = tmp_path / "a.md"
