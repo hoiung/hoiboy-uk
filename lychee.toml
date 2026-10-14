@@ -110,13 +110,19 @@ exclude = [
   # Meetup, Facebook and Instagram return 403/999 (anti-bot) to lychee's
   # user-agent, same class as linkedin above. Community join links on
   # /community/asians-gingers-in-tech/ (#43). Verified reachable in-browser
-  # (200/308) 2026-07-10. added: 2026-07-10; expires: 2026-10-08 (90 days)
+  # (200/308) 2026-07-10. added: 2026-07-10; renewed 2026-10-14: re-probed from a
+  # residential IP with lychee's user-agent, meetup 308 and facebook/instagram 200,
+  # but meetup's own assets answer lychee 403, the same anti-bot class; CI runs from
+  # GitHub runner IPs, which a local probe cannot reproduce. Renewed, not deleted,
+  # same shape as linkedin above. expires: 2027-01-12 (90 days)
   "^https?://(www\\.)?meetup\\.com(/.*)?$",
   "^https?://(www\\.)?facebook\\.com(/.*)?$",
   "^https?://(www\\.)?instagram\\.com(/.*)?$",
   # TikTok and X (Twitter) return 403/anti-bot to lychee's user-agent, same
   # class as the community links above. /community/asians-gingers-in-tech/ (#43).
-  # added: 2026-07-11; expires: 2026-10-09 (90 days)
+  # added: 2026-07-11; renewed 2026-10-14: re-probed from a residential IP, tiktok
+  # and x 200 to lychee's user-agent; the block is on GitHub runner IPs, which a
+  # local probe cannot reproduce. Renewed, not deleted. expires: 2027-01-12 (90 days)
   "^https?://(www\\.)?tiktok\\.com(/.*)?$",
   "^https?://(www\\.)?x\\.com(/.*)?$",
   "^https?://(www\\.)?twitter\\.com(/.*)?$",
