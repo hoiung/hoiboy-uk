@@ -98,14 +98,16 @@ exclude = [
   # No value in self-checking; Hugo build + URL contract assertion already
   # validate the live site shape. Re-confirmed 2026-07-20 (blog-priv#55 Stage 5):
   # the deploy race is structural, not a transient, so the exclusion still holds.
-  # added: 2026-04-08; expires: 2026-10-18 (90 days)
+  # added: 2026-04-08; expires: 2027-01-12 (90 days)
+  # Re-confirmed 2026-10-14: still structural (the deploy race), renewed.
   "^https?://(www\\.)?hoiboy\\.uk(/.*)?$",
   # LinkedIn returns HTTP 999 (anti-bot rate-limit) to lychee's user-agent,
   # which is not a real HTTP status. Sidebar profile link cannot be liveness-
   # checked from CI without a logged-in cookie. STRUCTURAL, not a transient outage:
   # re-probed 2026-08-02 and LinkedIn still answers 999 to an anonymous request.
   # This entry is expected to be renewed, not deleted, until lychee can present a
-  # cookie. added: 2026-08-02; expires: 2026-10-31 (90 days)
+  # cookie. added: 2026-08-02; expires: 2027-01-12 (90 days)
+  # Re-probed 2026-10-14: lychee still gets 999 from LinkedIn. Renewed.
   "^https?://(www\\.)?linkedin\\.com(/.*)?$",
   # Meetup, Facebook and Instagram return 403/999 (anti-bot) to lychee's
   # user-agent, same class as linkedin above. Community join links on
@@ -129,101 +131,19 @@ exclude = [
   # Substack publication pages (asiansgingersintech.substack.com) return 403
   # Forbidden to lychee's user-agent (anti-bot), same class as the community
   # links above. /community/asians-gingers-in-tech/. Verified reachable
-  # in-browser (200) 2026-07-18. added: 2026-07-18; expires: 2026-10-16 (90 days)
+  # in-browser (200) 2026-07-18. added: 2026-07-18; expires: 2027-01-12 (90 days)
+  # 2026-10-14: 200 from a local IP, but 403 to lychee from a GitHub runner, re-tested from a GitHub runner 2026-10-14 (draft PR #64, closed unmerged). Renewed.
   "^https?://([a-z0-9-]+\\.)?substack\\.com(/.*)?$",
-  # Bluesky (bsky.app) times out from GitHub Actions runner IPs. It is the one
-  # social domain in the AGIT follow list on /community/asians-gingers-in-tech/
-  # that was never allowlisted alongside the facebook/instagram/x/tiktok/
-  # substack entries above, so it went unnoticed until the voice-guard fix
-  # let lychee run again and it failed CI on main, cascade-skipping Deploy.
-  # Not a transient: lychee retries timeouts (max_retries defaults to 3,
-  # measured 2026-08-01), so this was four attempts at the configured 20s.
-  # Returns 200 in 0.6s from a local IP, verified 2026-08-01. NOT a broken link.
-  # added: 2026-08-01; expires: 2026-10-30 (90 days)
-  "^https?://(www\\.)?bsky\\.app(/.*)?$",
-  # webaim.org is unreachable, not slow. Cited once as an accessibility
-  # reference at docs/research/14_BLOG_CRAFT.md:413 (a research note, not
-  # reader-facing content). Failed CI on main twice at 05e656f, both times as
-  # the ONLY failure with "Errors 0" and a bare [TIMEOUT], cascade-skipping
-  # Deploy. Not a lychee artefact and not a runner-IP artefact: three
-  # consecutive local curls returned HTTP 000 after the full 20s timeout,
-  # measured 2026-08-02, so it is failing from a residential IP too. Added to
-  # unblock a merge whose own CI was green; it is NOT a defect of blog-priv#66,
-  # which never touched that file. Recheck at expiry: if webaim is back, delete
-  # this entry rather than renewing it.
-  # added: 2026-08-02; expires: 2026-10-31 (90 days)
-  "^https?://(www\\.)?webaim\\.org(/.*)?$",
-  # Cloudflare dashboard URLs require authentication; anonymous lychee
-  # requests get 403. Referenced in cloudflare-api-token-setup.md runbook
-  # as documented destinations for operator UI actions (token creation,
-  # dashboard navigation). STRUCTURAL: the 403 is the auth wall, not an outage.
-  # Re-probed 2026-08-02, still 403 anonymously. Expected to be renewed, not
-  # deleted. added: 2026-08-02; expires: 2026-10-31 (90 days)
-  "^https?://dash\\.cloudflare\\.com(/.*)?$",
   # Academic publishers and Medium return 403 Forbidden to lychee's user-agent
   # (anti-bot), same class as linkedin/substack above. These are the three
   # citations surfaced when docs/research stopped being excluded from the link
   # check; each was verified reachable in-browser 2026-07-21, so they are
   # anti-bot false positives, NOT broken links. Cited in 14_BLOG_CRAFT.md.
-  # added: 2026-07-21; expires: 2026-10-19 (90 days)
+  # added: 2026-07-21; expires: 2027-01-12 (90 days)
+  # 2026-10-14: dl.acm.org and tandfonline still 403 to lychee locally; medium 200 locally but 403 from a GitHub runner, re-tested from a GitHub runner 2026-10-14 (draft PR #64, closed unmerged). Renewed.
   "^https?://dl\\.acm\\.org(/.*)?$",
   "^https?://(www\\.)?tandfonline\\.com(/.*)?$",
   "^https?://(www\\.)?medium\\.com(/.*)?$",
-  # noahkagan.com (a cited source in 14_BLOG_CRAFT.md) consistently times out
-  # from GitHub runners (rate-limited/throttled anti-bot), yet returns HTTP 200
-  # in <1s from a browser -- verified 2026-07-22. Same from-CI false-positive
-  # class as the medium/acm/tandfonline entries above; it flaked CI 3x in one
-  # session and cascade-skips Deploy. NOT a broken link.
-  # added: 2026-07-22; expires: 2026-10-20 (90 days)
-  "^https?://(www\\.)?noahkagan\\.com(/.*)?$",
-  # css-tricks.com and ryanholiday.net began returning 415 Unsupported Media Type
-  # to requests from GitHub Actions runner IPs on 2026-07-25, breaking CI on main
-  # (3 consecutive red runs, Deploy cascade-skipped) with no repo change: the links
-  # have sat in docs/research/14_BLOG_CRAFT.md since 2026-04-12 and passed every
-  # run until 13:55 UTC that day. Unlike the anti-bot entries above this is ORIGIN-IP
-  # blocking, not user-agent blocking -- verified 2026-07-25: all three return 200
-  # locally under a browser UA AND under lychee's own UA, so spoofing the agent
-  # would not help. NOT broken links. Re-test from CI before renewing.
-  # added: 2026-07-25; expires: 2026-10-23 (90 days)
-  "^https?://(www\\.)?css-tricks\\.com(/.*)?$",
-  "^https?://(www\\.)?ryanholiday\\.net(/.*)?$",
-  # nngroup.com (Nielsen Norman Group) returns 403 Forbidden to GitHub Actions
-  # runner IPs. Same ORIGIN-IP blocking class as css-tricks/ryanholiday directly
-  # above, same file: two citations in docs/research/14_BLOG_CRAFT.md, at :213
-  # and :416, that have sat there unchanged since 2026-04-12. Verified 2026-07-26:
-  # both return 200 from a local IP, and the merge that surfaced this touched
-  # neither the file nor any link, so nothing in the repo changed. It failed CI on
-  # main and cascade-skipped Deploy. NOT broken links. Re-test from CI before renewing.
-  # added: 2026-07-26; expires: 2026-10-24 (90 days)
-  "^https?://(www\\.)?nngroup\\.com(/.*)?$",
-  # backlinko.com, seangoedecke.com and gohugo.io all fail from GitHub Actions
-  # runner IPs: backlinko with "Connection failed", the other two with timeouts.
-  # Same ORIGIN-IP blocking class as css-tricks/ryanholiday/nngroup directly
-  # above, and the same untouched-since-April citations: backlinko at
-  # docs/research/14_BLOG_CRAFT.md:206-207, seangoedecke at :395, gohugo at
-  # docs/research/16_AI_BOT_AND_SEO_POLICY.md:209. Nothing in the repo changed.
-  # Not transients: lychee retries timeouts (max_retries defaults to 3, measured
-  # 2026-08-01), so each timing-out URL had four attempts at the configured 20s
-  # and failed all four. All three return 200 in under a second from a local IP,
-  # verified 2026-08-01. They failed CI on main and cascade-skipped Deploy.
-  # NOT broken links. Re-test from CI before renewing.
-  # added: 2026-08-01; expires: 2026-10-30 (90 days)
-  "^https?://(www\\.)?backlinko\\.com(/.*)?$",
-  "^https?://(www\\.)?seangoedecke\\.com(/.*)?$",
-  "^https?://(www\\.)?gohugo\\.io(/.*)?$",
-  # axios.com, openai.com and lokiwine.co.uk return 403 Forbidden to lychee's
-  # user-agent, same anti-bot class as medium/dl.acm.org above. Surfaced by #55
-  # AC 0.1, the FIRST run of the rendered-link gate over the post corpus, which
-  # had been voided by the `public/blogs` exclude_path entry since blog-priv#62,
-  # so these had never been checked by any tier. Each returns a real response
-  # body under a browser user-agent (axios 4544 B, openai 9971 B, lokiwine
-  # 1041 B, measured 2026-08-02), so the resource exists behind an anti-bot wall
-  # and these are NOT broken links. Cited in content/posts/
-  # every-sme-needs-their-own-harness, prompts-agents-harnesses-whats-next and
-  # for-the-love-of-wine. added: 2026-08-02; expires: 2026-10-31 (90 days)
-  "^https?://(www\\.)?axios\\.com(/.*)?$",
-  "^https?://(www\\.)?openai\\.com(/.*)?$",
-  "^https?://(www\\.)?lokiwine\\.co\\.uk(/.*)?$",
   # Root-relative paths (href="/js/...", href="/legal/...", href="/private/...")
   # are Hugo internal paths that get rewritten at render time. Lychee scans
   # raw markdown and has no Hugo context, so it cannot resolve them without
@@ -234,6 +154,7 @@ exclude = [
   # STRUCTURAL: this is a config decision about what lychee can resolve, not a
   # site that might come back. Reviewed 2026-08-02 and the reasoning above still
   # holds. Expected to be renewed, not deleted.
-  # added: 2026-08-02; expires: 2026-10-31 (90 days)
+  # added: 2026-08-02; expires: 2027-01-12 (90 days)
+  # Reviewed 2026-10-14: the reasoning above still holds (config decision). Renewed.
   "^/[^/]",
 ]
