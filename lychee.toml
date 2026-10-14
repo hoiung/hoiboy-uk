@@ -130,7 +130,6 @@ exclude = [
   # Forbidden to lychee's user-agent (anti-bot), same class as the community
   # links above. /community/asians-gingers-in-tech/. Verified reachable
   # in-browser (200) 2026-07-18. added: 2026-07-18; expires: 2026-10-16 (90 days)
-  "^https?://([a-z0-9-]+\\.)?substack\\.com(/.*)?$",
   # Bluesky (bsky.app) times out from GitHub Actions runner IPs. It is the one
   # social domain in the AGIT follow list on /community/asians-gingers-in-tech/
   # that was never allowlisted alongside the facebook/instagram/x/tiktok/
@@ -140,7 +139,6 @@ exclude = [
   # measured 2026-08-01), so this was four attempts at the configured 20s.
   # Returns 200 in 0.6s from a local IP, verified 2026-08-01. NOT a broken link.
   # added: 2026-08-01; expires: 2026-10-30 (90 days)
-  "^https?://(www\\.)?bsky\\.app(/.*)?$",
   # webaim.org is unreachable, not slow. Cited once as an accessibility
   # reference at docs/research/14_BLOG_CRAFT.md:413 (a research note, not
   # reader-facing content). Failed CI on main twice at 05e656f, both times as
@@ -152,7 +150,6 @@ exclude = [
   # which never touched that file. Recheck at expiry: if webaim is back, delete
   # this entry rather than renewing it.
   # added: 2026-08-02; expires: 2026-10-31 (90 days)
-  "^https?://(www\\.)?webaim\\.org(/.*)?$",
   # Cloudflare dashboard URLs require authentication; anonymous lychee
   # requests get 403. Referenced in cloudflare-api-token-setup.md runbook
   # as documented destinations for operator UI actions (token creation,
@@ -168,14 +165,12 @@ exclude = [
   # added: 2026-07-21; expires: 2026-10-19 (90 days)
   "^https?://dl\\.acm\\.org(/.*)?$",
   "^https?://(www\\.)?tandfonline\\.com(/.*)?$",
-  "^https?://(www\\.)?medium\\.com(/.*)?$",
   # noahkagan.com (a cited source in 14_BLOG_CRAFT.md) consistently times out
   # from GitHub runners (rate-limited/throttled anti-bot), yet returns HTTP 200
   # in <1s from a browser -- verified 2026-07-22. Same from-CI false-positive
   # class as the medium/acm/tandfonline entries above; it flaked CI 3x in one
   # session and cascade-skips Deploy. NOT a broken link.
   # added: 2026-07-22; expires: 2026-10-20 (90 days)
-  "^https?://(www\\.)?noahkagan\\.com(/.*)?$",
   # css-tricks.com and ryanholiday.net began returning 415 Unsupported Media Type
   # to requests from GitHub Actions runner IPs on 2026-07-25, breaking CI on main
   # (3 consecutive red runs, Deploy cascade-skipped) with no repo change: the links
@@ -185,8 +180,6 @@ exclude = [
   # locally under a browser UA AND under lychee's own UA, so spoofing the agent
   # would not help. NOT broken links. Re-test from CI before renewing.
   # added: 2026-07-25; expires: 2026-10-23 (90 days)
-  "^https?://(www\\.)?css-tricks\\.com(/.*)?$",
-  "^https?://(www\\.)?ryanholiday\\.net(/.*)?$",
   # nngroup.com (Nielsen Norman Group) returns 403 Forbidden to GitHub Actions
   # runner IPs. Same ORIGIN-IP blocking class as css-tricks/ryanholiday directly
   # above, same file: two citations in docs/research/14_BLOG_CRAFT.md, at :213
@@ -195,7 +188,6 @@ exclude = [
   # neither the file nor any link, so nothing in the repo changed. It failed CI on
   # main and cascade-skipped Deploy. NOT broken links. Re-test from CI before renewing.
   # added: 2026-07-26; expires: 2026-10-24 (90 days)
-  "^https?://(www\\.)?nngroup\\.com(/.*)?$",
   # backlinko.com, seangoedecke.com and gohugo.io all fail from GitHub Actions
   # runner IPs: backlinko with "Connection failed", the other two with timeouts.
   # Same ORIGIN-IP blocking class as css-tricks/ryanholiday/nngroup directly
@@ -208,9 +200,6 @@ exclude = [
   # verified 2026-08-01. They failed CI on main and cascade-skipped Deploy.
   # NOT broken links. Re-test from CI before renewing.
   # added: 2026-08-01; expires: 2026-10-30 (90 days)
-  "^https?://(www\\.)?backlinko\\.com(/.*)?$",
-  "^https?://(www\\.)?seangoedecke\\.com(/.*)?$",
-  "^https?://(www\\.)?gohugo\\.io(/.*)?$",
   # axios.com, openai.com and lokiwine.co.uk return 403 Forbidden to lychee's
   # user-agent, same anti-bot class as medium/dl.acm.org above. Surfaced by #55
   # AC 0.1, the FIRST run of the rendered-link gate over the post corpus, which
