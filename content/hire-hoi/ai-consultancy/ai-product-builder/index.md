@@ -28,7 +28,7 @@ I build in a short sequence of phases. Each phase closes before the next opens, 
 
 ## Who this is for
 
-Founders and owner-operators with an idea they want built and tested, without committing to a permanent hire just to find out if it works. It does not have to be a team; I can be solo, working directly with the interested stakeholders. I have shipped several real production systems this way over the last year. If you would rather have the capability in-house long term, a permanent role or the training service fits better, and the discovery call is where we work out which one is right.
+Founders and owner-operators with an idea they want built and tested, without committing to a permanent hire just to find out if it works. It does not have to be a team; I can be solo, working directly with the interested stakeholders. I have shipped several real production systems this way over the last year. If you would rather have the capability in-house long term, the training service fits better, and the discovery call is where we work out which one is right.
 
 {{< consulting-cta type="calcom" offer="ai_product_builder" label="Book a 20-min discovery call" >}}
 

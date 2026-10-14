@@ -1,6 +1,6 @@
 ---
 title: "Hire Hoi"
-description: "Three ways to work with Hoi: AI consultancy for owner-operator teams, ICT consultancy, and permanent AI Product Engineer roles. Pick the track that fits."
+description: "Three ways to work with Hoi: AI consultancy for owner-operator teams, ICT consultancy, and a permanent sales role with a data centre provider, a reseller or a hardware vendor. Pick the track that fits."
 ---
 
 Three tracks. Pick the one that fits, or use the menu.
@@ -19,6 +19,6 @@ Over ten years designing and building data centres, labs, offices, and commercia
 
 ## Permanent Roles
 
-Open to the right permanent role, on the right terms. The details, plus a CV to view or download.
+Changing career into sales, for data centres, resellers or hardware vendors. The details, plus a CV to view or download.
 
 [See Permanent Roles](/hire-hoi/permanent-roles/)

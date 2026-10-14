@@ -1,61 +1,41 @@
 ---
 title: "Permanent Roles"
-description: "The permanent roles Hoi is open to, and why he is suited to them: a high-level overview, with a CV to download."
+description: "Hoi is changing career into sales, for a data centre provider, a reseller or a hardware vendor. Why his years on the buying side suit it, with his CV to download."
 build:
   list: never
 ---
 
 <!-- iamhoi -->
 
-{{< brand-intro >}}
+I am changing career into sales: twenty years in IT and infrastructure, eight of them at Canonical (Ubuntu Linux), where a large part of my job was buying data centre space, hardware and SaaS, and now I want to be on the other side of the table. The reason is simple: to keep expanding my knowledge and experience while building on top of what I already have. To keep growing.
 
-I am open to the right permanent role, on the right terms. I work best on full autonomy, handed a real problem and given room to run.
-
-There are three kinds of permanent role I am looking for:
-
-1. **[Building, as an AI Product Engineer](#role-interest-1-building-as-an-ai-product-engineer)**
-2. **[AI enablement and training](#role-interest-2-ai-enablement-and-training)**
-3. **[ICT Designer and Consultant](#role-interest-3-ict-designer-and-consultant)**
+I want to focus on sales for data centre providers, resellers or hardware vendors, businesses I have knowledge of and want to expand on. I am looking for a role that can be my stepping stone: an opportunity to demonstrate the value I can add.
 
 <!-- iamhoiend -->
 
-## Role interest 1: Building, as an AI Product Engineer
+## What I bring from the buying side
 
 <!-- iamhoi -->
 
-I am a founder at heart with an engineer's mind, most drawn to very hands-on, founding-startup work: scoping the product, building it, and owning it end to end. With agentic coding I move fast, a prototype or MVP in days rather than weeks, then iterate from there. Shipping fast does not mean AI slop. A demo, prototype or MVP still has to work, and it has to be quality controlled. AI makes it easy to generate something that looks finished; what I care about is whether it holds up underneath: the logic, the workflow, the wiring, the design intent. That is what my own custom harness is for: a specialised framework I built and use for this.
+I think my experience on the purchasing side, and experience with hardware and data centre designs and contract negotiation, will add value and insight to help win opportunities.
 
-As an entrepreneur, I know the importance of testing the water, which is what MVPs and working prototypes are for: getting something in front of real users and seeing how it goes. Either stop the ones there is no real want or market for, or refine and scale the ones users actually want. Perfection is not the goal.
+At Canonical (Ubuntu Linux), I worked with all three kinds of business: colocation providers like Global Switch, Digital Realty and Interxion; resellers like CAE, Softcat and CDW; and hardware vendors like HPE, Dell, Supermicro, Lenovo, NVIDIA and Cisco.
 
-A prototype is also a way to drive and guide a conversation. Sometimes I know going in that it is not the answer, but it is still a good starting point when a stakeholder or client is not sure what they want. Having something they can hold and play with (not hold and break!) makes a big difference: people can also learn what they want by learning what they don't want. So the first thing I get clear on is the purpose, and the angle we are building for.
-
-What I want is to actually architect and build, with the room to run at it. It does not have to be a team; I can be solo, working directly with the interested stakeholders. I have shipped several real production systems this way over the last year, and the CV below has the detail.
+On our new London colocation site, the provider's sales rep and I worked closely together to identify the best approach to get the deal through, one which would become a win/win for both businesses: committing to power in stages as the site grew, rather than taking the full capacity from day one. Even though I was on the buyer side, I knew the stakeholders' thinking. The deal saved up to $269,263 a year against our existing London site's prices.
 
 <!-- iamhoiend -->
 
-## Role interest 2: AI enablement and training
+## The selling I have already done
 
 <!-- iamhoi -->
 
-The other role I want is helping people actually use AI. Most teams buy the tools and then copy and paste back and forth into a chat window, and stop there. I have spent a year working out what makes it stick: a real process around it, not a novelty. I built my own harness for it, and I run different workflows depending on what I am working on. Closing the gap between "we bought Claude" and "our people use it every day" is the work I have been doing, for myself and now for clients, and teaching people so they own it after I leave is the part I like most.
+I am not new to selling. A big part of my job was identifying, reaching out to, managing and coordinating internal stakeholders, and in effect selling my design proposals, with their costs and options, to the stakeholders who signed them off. I work very autonomously, and the project ideas from C-level stakeholders were usually very ambiguous, so I am used to working with ambiguity and delivering under deadline pressure.
 
-Training and guiding people is not new to me, and it did not start with AI. In my ICT and infrastructure architecture career, most of it at Canonical (Ubuntu Linux), I sat with every kind of stakeholder and engineer, from the CFO down, guiding and training them and translating the technical into something they could actually use. I did the same as Programme Director of the dance school and the largest Brazilian Zouk community online that I built, where I designed the programme around how people actually retain and improve, and trained and led the people in it. It comes down to the same combination every time: coaching, mentorship and technical training.
+Of my own businesses, the longest was my international dance school: over seven years of my life, running a team of fifteen, and I did 100% of the selling. I set up the community network and the funnels, gave talks in person and built rapport with the pool of potential clients, with clients travelling from as far as Australia and Hawaii just to attend our programmes. Before that, I brought in all of the new business at my design and print company.
 
-<!-- iamhoiend -->
+What I have not done is sell inside a structured sales organisation, and that is the part I want to learn: new sales approaches and sales structures. I don't mind learning from scratch, and I see myself learning and adapting very quickly, because I already have a good framework for how businesses work.
 
-## Role interest 3: ICT Designer and Consultant
-
-<!-- iamhoi -->
-
-Over ten years of my career has been ICT design and consultancy: data centres, labs, offices, hotels, shopping malls and other commercial intelligent buildings. For most of the last decade I was managing the work rather than doing the heavy lifting. By 2022 my role at Canonical (Ubuntu Linux) was formally written as 10% Data Centre Manager, 40% IT Procurement Manager and 50% Infrastructure Architect, and I ran the estate on my own for about three years.
-
-I cover the run from feasibility onwards. The strategy is client's upper management's call; I confirm whether it is feasible and cost it out. A lot of it is option comparisons, and that is actually the larger piece of work: cost models across the design options so client's have sufficient information, facts and figures to help make decisive calls quickly. Then design management and ICT design, procurement and commercial, delivery and programme control, then handover and operations.
-
-I sit in the design team with the client or their representative, architects, project managers, interior designers, AV, and electrical and mechanical engineers, as the translator of the IT technical requirements through the construction design stages (RIBA). Every commercial building is an intelligent building now: wifi, AV, VoIP, security, BMS and IoT have all converged onto IP, so costing the technology in early means fewer surprises later.
-
-Strategic contingency planning is the part I am best at: spotting which phase, stage, or item is most at risk of becoming a blocker before it does. Not theory that doesn't work in real life, or unnecessary paperwork and admin. Getting the work done, where it matters most.
-
-The AI does not get left behind in this one either. I am a power user of AI Claude Code and I build my own workflow with it, so the reporting, cost modelling and documentation around a programme get done faster. The tool is not the job. The delivery is.
+I am also a power user of AI Claude Code and I build my own workflow with it for any job or task. It is flexible enough to embed into any role, and it makes my work faster and more efficient. The tool is not the job. The delivery is.
 
 <!-- iamhoiend -->
 
@@ -63,13 +43,10 @@ The AI does not get left behind in this one either. I am a power user of AI Clau
 
 <!-- iamhoi -->
 
-One thing that is not on my CV. Last year I was diagnosed with ADHD, which finally explained why mainstream education never worked for me. It is also why I have spent two decades quietly obsessing over how people actually learn: memory retention, bite-size sessions, how psychology, memory, biomechanics and emotion all work together. When I train someone, that is what I am drawing on underneath. It is personal, and it is the thing I have spent my life getting good at.
+One thing that is not on my CV. In 2024 I was diagnosed with ADHD, which finally explained why mainstream education never worked for me. It is also why I have spent two decades quietly obsessing over how people actually learn: memory retention, bite-size sessions, how psychology, memory, biomechanics and emotion all work together. When I train someone, that is what I am drawing on underneath. It is personal, and it is the thing I have spent my life getting good at.
 
 <!-- iamhoiend -->
 
 ## My CV
 
-Download my CV as a PDF for the full detail: what I have built and shipped, my experience, and my skills. There are two, one for each side of the work:
-
-- [AI and product engineering](/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV_AI_20260910.pdf), for role interests 1 and 2.
-- [ICT and data centre management](/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV_ICT_Data_Centre_Management_20260909.pdf), for role interest 3.
+Download my [sales CV as a PDF](/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV_Sales_20261014.pdf) for the full detail: what I bought, what I sold, my experience and my skills.

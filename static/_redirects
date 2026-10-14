@@ -118,6 +118,9 @@
 /tags/llms /tags/llm/ 301
 /tags/llms/* /tags/llm/ 301
 
-# The single permanent-roles CV was split by lane 2026-09-10 (AI vs ICT/data centre).
-# Any circulated link to the old dateless file lands on the AI CV.
-/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV.pdf /hire-hoi/permanent-roles/Senh_Hoi_Ung_CV_AI_20260910.pdf 301
+# The single permanent-roles CV was split by lane 2026-09-10 (AI vs ICT/data centre), and both lane CVs
+# were replaced by the sales CV 2026-10-14, when the page moved to sales. Any circulated link to a
+# retired CV lands on the page, which names and links the current one.
+/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV.pdf /hire-hoi/permanent-roles/ 301
+/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV_AI_20260910.pdf /hire-hoi/permanent-roles/ 301
+/hire-hoi/permanent-roles/Senh_Hoi_Ung_CV_ICT_Data_Centre_Management_20260909.pdf /hire-hoi/permanent-roles/ 301
