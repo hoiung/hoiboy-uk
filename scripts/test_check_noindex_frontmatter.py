@@ -82,11 +82,13 @@ def _tree(root: Path, urls: list[str], sitemap: list[str] | None = None,
     return root
 
 
-# The four non-exempt rules in the real static/_headers, and one ordinary page so
-# the sitemap is never empty (the gate rejects an empty one outright).
+# Pages under every non-exempt rule in the real static/_headers, and one ordinary
+# page so the sitemap is never empty (the gate rejects an empty one outright).
 _COVERED = [
     "/private/tools/meet-recorder/",
     "/community/asians-gingers-in-tech/thanks/",
+    "/community/asians-gingers-in-tech/joined/check-inbox/",
+    "/community/asians-gingers-in-tech/joined/confirmed/",
     "/newsletter/",
     "/newsletter/check-inbox/",
     "/newsletter/confirmed/",
