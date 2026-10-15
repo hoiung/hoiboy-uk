@@ -31,8 +31,8 @@ This notice covers two scopes:
 - Visitor analytics: aggregated, anonymised page-view counts via privacy-preserving analytics. No individual tracking, no cookies beyond strictly-necessary, no advertising trackers.
 - Contact-form / email enquiries: when you email `hello@hoiboy.uk`, your email address and message content are processed for the purpose of responding to your enquiry.
 - Community submission form: if you submit the "Get featured" form on the Asians & Gingers in Tech community page, we process the details and optional photo you send, on the basis of your explicit consent (see section 4).
-- Newsletter subscription: if you subscribe using the form in the site footer, or the optional newsletter box on the AGIT Signup page, we process your name and email address so we can email you new posts, on the basis of your consent (see section 4).
-- AGIT membership: if you sign up on the Asians & Gingers in Tech (AGIT) Signup page, we process your name and email address for your membership and one welcome email with the WhatsApp invite, on the basis of your explicit consent (see section 4).
+- Newsletter subscription: if you subscribe using the form in the site footer, or the optional newsletter box on the AGIT Events Signup page, we process your name and email address so we can email you new posts, on the basis of your consent (see section 4).
+- AGIT membership: if you sign up on the Asians & Gingers in Tech (AGIT) Events Signup page, we process your name and email address for your membership and one welcome email with the WhatsApp invite, on the basis of your explicit consent (see section 4).
 - Partnership brochure: the ICT consultancy page publishes our CRE and ICT services brochure, which includes my consultancy partner Jolyn Pek's photograph, professional credentials, the languages and Chinese dialects she speaks, location, and her client projects with the savings figures she delivered. The page itself also names her, describes her role, and says where she is based. Both are published on the basis of her consent (see section 4).
 
 ### Consultancy engagement data (engaged clients only)
@@ -74,10 +74,10 @@ The Asians & Gingers in Tech community page has a "Get featured" form. If you ch
 
 ### Newsletter subscription
 
-The site footer carries a subscribe form, and the AGIT Signup page carries the same consent box as an option. If you tick the consent box and submit either form, we collect your name and your email address for the newsletter, and nothing else.
+The site footer carries a subscribe form, and the AGIT Events Signup page carries the same consent box as an option. If you tick the consent box and submit either form, we collect your name and your email address for the newsletter, and nothing else.
 
 - **Purpose**: to email you new posts from hoiboy.uk. That is the entire scope of what you are consenting to. We do not use this list to send you anything about our services, our consultancy or our products. If we ever want to, we have to ask you again.
-- **Lawful basis**: consent (UK GDPR Article 6(1)(a)), with the electronic-mail marketing rules in **PECR** Regulation 22 applying on top. The consent box is unticked by default and it is separate from any other permission, so nothing else on this site is withheld if you leave it alone. On the footer form, ticking it is what subscribing means, so that form does not submit without it, and the server refuses a footer submission that arrives without it. On the AGIT Signup page it is optional: leave it unticked and you join AGIT without the newsletter. Subscription is double opt-in: you are not on the list until you click the confirmation link we email you, so a mistyped or borrowed address never joins.
+- **Lawful basis**: consent (UK GDPR Article 6(1)(a)), with the electronic-mail marketing rules in **PECR** Regulation 22 applying on top. The consent box is unticked by default and it is separate from any other permission, so nothing else on this site is withheld if you leave it alone. On the footer form, ticking it is what subscribing means, so that form does not submit without it, and the server refuses a footer submission that arrives without it. On the AGIT Events Signup page it is optional: leave it unticked and you join AGIT without the newsletter. Subscription is double opt-in: you are not on the list until you click the confirmation link we email you, so a mistyped or borrowed address never joins.
 - **How it is processed**: the form posts to a Cloudflare Pages Function on this site, which passes your name and email to **Brevo**, our email provider, and asks Brevo to send you the confirmation email. Spam protection uses Cloudflare Turnstile, which processes your IP address. We store two things as the record of your consent: the time you submitted the form, and the version string of the exact consent wording you agreed to (currently `2026-08-03`). Brevo separately records the time you confirmed. We keep the wording version so that if the label is ever reworded we can still show which words you actually agreed to. We do not store your IP address as part of the consent record.
 - **Retention**: we keep your name, email and consent record for as long as you stay subscribed. When you unsubscribe we remove you from the list and keep only the evidence that you withdrew, so we can show we acted on it.
 - **How to withdraw**: every newsletter email carries an unsubscribe link, and one click is enough. You can also email `hello@hoiboy.uk`. Withdrawing is as easy as subscribing was, which is what Article 7(3) requires.
@@ -87,7 +87,7 @@ The site footer carries a subscribe form, and the AGIT Signup page carries the s
 
 ### AGIT membership
 
-The AGIT Signup page is how you join Asians & Gingers in Tech. Signing up and joining our WhatsApp group are required to attend AGIT events.
+The AGIT Events Signup page is how you join Asians & Gingers in Tech. Signing up and joining our WhatsApp group are required to attend AGIT events.
 
 - **What we collect**: your name and email address, and the record of your signup: when you submitted the form, which version of the membership wording you agreed to, and when we sent (or tried to send) your welcome email. Brevo records when you confirmed your email. Spam protection uses Cloudflare Turnstile, which processes your IP address.
 - **Purpose**: your membership, and one welcome email with the invite to our WhatsApp community groups. The membership list is not used for marketing; the newsletter is a separate, optional box.
