@@ -720,6 +720,10 @@ click log records the destination, so Brevo's click tracking does see the invite
 
 Attribute write and clear: a `PUT` of `AGIT_WELCOME_SENT` reads back at once and again
 2 s later. A `PUT` of `""` removes the attribute (the next GET no longer lists it).
+The webhook's exact marker body, `AGIT_WELCOME_SENT` plus `AGIT_LEFT: ""`, returns 204
+on a contact that never had `AGIT_LEFT` (a first-time member: the marker is set) and on
+one that has it (a member re-joining: `AGIT_LEFT` is gone on the next GET). Measured
+2026-10-15 on a throwaway contact on no list, deleted afterwards (404).
 Removing a contact from the AGIT list and adding it back by API fires `listAddition`
 (one more alert).
 
