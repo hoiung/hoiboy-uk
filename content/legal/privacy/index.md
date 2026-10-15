@@ -89,13 +89,13 @@ The site footer carries a subscribe form, and the AGIT Signup page carries the s
 
 The AGIT Signup page is how you join Asians & Gingers in Tech. Signing up and joining our WhatsApp group are required to attend AGIT events.
 
-- **What we collect**: your name and email address, and the record of your signup: when you submitted the form, which version of the membership wording you agreed to, and when we sent your welcome email. Brevo records when you confirmed your email. Spam protection uses Cloudflare Turnstile, which processes your IP address.
+- **What we collect**: your name and email address, and the record of your signup: when you submitted the form, which version of the membership wording you agreed to, and when we sent (or tried to send) your welcome email. Brevo records when you confirmed your email. Spam protection uses Cloudflare Turnstile, which processes your IP address.
 - **Purpose**: your membership, and one welcome email with the invite to our WhatsApp community groups. The membership list is not used for marketing; the newsletter is a separate, optional box.
 - **Lawful basis**: explicit consent, given by ticking the membership box, as for the "Get featured" form above. You withdraw it by leaving (below).
 - **How it is processed**: the form posts to a Cloudflare Pages Function on this site, which passes your name and email to **Brevo**. Brevo holds the AGIT members list and sends the confirmation and welcome emails.
 - **WhatsApp**: WhatsApp is run by Meta under its own terms. You join with your own WhatsApp account, and we pass nothing to WhatsApp. Other members of a WhatsApp group can see your phone number.
 - **Photos and videos at events**: attendees may take photos and videos and share them. AGIT's own channels may post them, never in adverts, and a social platform we post to receives them under its own terms. If you'd rather not be in photos, tell us at the event. Email `hello@hoiboy.uk` to have a photo or video of you taken down from AGIT's channels and we do it within one month. Copies attendees took themselves are outside our control.
-- **Retention and leaving**: we keep your details while you are a member. To leave, reply to the welcome email or email `hello@hoiboy.uk`. Within one month we remove you from the AGIT list and the WhatsApp groups, delete your details, and keep only your email address and the date you left, as the note that you left. The unsubscribe link Brevo adds to AGIT emails only stops those emails; it does not end your membership.
+- **Retention and leaving**: we keep your details while you are a member. To leave, reply to the welcome email or email `hello@hoiboy.uk`. Within one month we remove you from the AGIT list and the WhatsApp groups, delete your details, and keep only your email address and the date you left, as the note that you left. Clicking the unsubscribe link Brevo adds to AGIT emails does not end your membership.
 - **Your rights**: Articles 15 to 21 apply to this data as to the rest of this notice (section 5). Email `hello@hoiboy.uk`.
 
 ### Partnership brochure
