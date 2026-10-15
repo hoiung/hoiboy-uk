@@ -1,10 +1,10 @@
 ---
 title: Privacy Notice
 date: 2026-05-09
-lastmod: 2026-09-06
+lastmod: 2026-10-15
 description: Privacy Notice for HOIBOY AI LTD covering site personal data and consultancy engagements (including meeting recordings and AI-transcription).
 hideDate: true
-version: 1.6.0
+version: 1.7.0
 ---
 
 <!-- iamhoi-exempt -->
@@ -31,7 +31,8 @@ This notice covers two scopes:
 - Visitor analytics: aggregated, anonymised page-view counts via privacy-preserving analytics. No individual tracking, no cookies beyond strictly-necessary, no advertising trackers.
 - Contact-form / email enquiries: when you email `hello@hoiboy.uk`, your email address and message content are processed for the purpose of responding to your enquiry.
 - Community submission form: if you submit the "Get featured" form on the Asians & Gingers in Tech community page, we process the details and optional photo you send, on the basis of your explicit consent (see section 4).
-- Newsletter subscription: if you subscribe using the form in the site footer, we process your name and email address so we can email you new posts, on the basis of your consent (see section 4).
+- Newsletter subscription: if you subscribe using the form in the site footer, or the optional newsletter box on the AGIT Signup page, we process your name and email address so we can email you new posts, on the basis of your consent (see section 4).
+- AGIT membership: if you sign up on the Asians & Gingers in Tech (AGIT) Signup page, we process your name and email address for your membership and one welcome email with the WhatsApp invite, on the basis of your explicit consent (see section 4).
 - Partnership brochure: the ICT consultancy page publishes our CRE and ICT services brochure, which includes my consultancy partner Jolyn Pek's photograph, professional credentials, the languages and Chinese dialects she speaks, location, and her client projects with the savings figures she delivered. The page itself also names her, describes her role, and says where she is based. Both are published on the basis of her consent (see section 4).
 
 ### Consultancy engagement data (engaged clients only)
@@ -73,16 +74,29 @@ The Asians & Gingers in Tech community page has a "Get featured" form. If you ch
 
 ### Newsletter subscription
 
-The site footer carries a subscribe form. If you tick the consent box and submit it, we collect your name and your email address, and nothing else.
+The site footer carries a subscribe form, and the AGIT Signup page carries the same consent box as an option. If you tick the consent box and submit either form, we collect your name and your email address for the newsletter, and nothing else.
 
 - **Purpose**: to email you new posts from hoiboy.uk. That is the entire scope of what you are consenting to. We do not use this list to send you anything about our services, our consultancy or our products. If we ever want to, we have to ask you again.
-- **Lawful basis**: consent (UK GDPR Article 6(1)(a)), with the electronic-mail marketing rules in **PECR** Regulation 22 applying on top. The consent box is unticked by default and it is separate from any other permission, so nothing else on this site is withheld if you leave it alone. Ticking it is what subscribing means, so the form does not submit without it, and the server refuses a submission that arrives without it. Subscription is double opt-in: you are not on the list until you click the confirmation link we email you, so a mistyped or borrowed address never joins.
+- **Lawful basis**: consent (UK GDPR Article 6(1)(a)), with the electronic-mail marketing rules in **PECR** Regulation 22 applying on top. The consent box is unticked by default and it is separate from any other permission, so nothing else on this site is withheld if you leave it alone. On the footer form, ticking it is what subscribing means, so that form does not submit without it, and the server refuses a footer submission that arrives without it. On the AGIT Signup page it is optional: leave it unticked and you join AGIT without the newsletter. Subscription is double opt-in: you are not on the list until you click the confirmation link we email you, so a mistyped or borrowed address never joins.
 - **How it is processed**: the form posts to a Cloudflare Pages Function on this site, which passes your name and email to **Brevo**, our email provider, and asks Brevo to send you the confirmation email. Spam protection uses Cloudflare Turnstile, which processes your IP address. We store two things as the record of your consent: the time you submitted the form, and the version string of the exact consent wording you agreed to (currently `2026-08-03`). Brevo separately records the time you confirmed. We keep the wording version so that if the label is ever reworded we can still show which words you actually agreed to. We do not store your IP address as part of the consent record.
 - **Retention**: we keep your name, email and consent record for as long as you stay subscribed. When you unsubscribe we remove you from the list and keep only the evidence that you withdrew, so we can show we acted on it.
-- **How to withdraw**: every email we send carries an unsubscribe link, and one click is enough. You can also email `hello@hoiboy.uk`. Withdrawing is as easy as subscribing was, which is what Article 7(3) requires.
-- **Article 17 erasure**: you are one addressable contact record in Brevo, so erasure is a single deletion of that record and everything stored against it. Brevo is the only third party holding your subscription data, so that deletion is also the Article 19 notification. There is no one else for us to tell.
+- **How to withdraw**: every newsletter email carries an unsubscribe link, and one click is enough. You can also email `hello@hoiboy.uk`. Withdrawing is as easy as subscribing was, which is what Article 7(3) requires.
+- **Article 17 erasure**: you are one addressable contact record in Brevo, so erasure is a single deletion of that record and everything stored against it. Brevo is the only third party holding your newsletter subscription data, so that deletion is also the Article 19 notification. There is no one else for us to tell.
 - **Article 21 objection to direct marketing**: you can object at any time, and there is no balancing test for us to apply. Because this list runs on consent, an Article 21 objection and an Article 7(3) withdrawal arrive at the same place, and the same one-click unsubscribe satisfies both.
 - **Article 20 portability**: the data is your name and your email address. Ask at `hello@hoiboy.uk` and we send you both in a structured, machine-readable file within one calendar month, through the same channel as any other subject-access request.
+
+### AGIT membership
+
+The AGIT Signup page is how you join Asians & Gingers in Tech. Signing up and joining our WhatsApp group are required to attend AGIT events.
+
+- **What we collect**: your name and email address, and the record of your signup: when you submitted the form, which version of the membership wording you agreed to, and when we sent your welcome email. Brevo records when you confirmed your email. Spam protection uses Cloudflare Turnstile, which processes your IP address.
+- **Purpose**: your membership, and one welcome email with the invite to our WhatsApp community groups. The membership list is not used for marketing; the newsletter is a separate, optional box.
+- **Lawful basis**: explicit consent, given by ticking the membership box, as for the "Get featured" form above. You withdraw it by leaving (below).
+- **How it is processed**: the form posts to a Cloudflare Pages Function on this site, which passes your name and email to **Brevo**. Brevo holds the AGIT members list and sends the confirmation and welcome emails.
+- **WhatsApp**: WhatsApp is run by Meta under its own terms. You join with your own WhatsApp account, and we pass nothing to WhatsApp. Other members of a WhatsApp group can see your phone number.
+- **Photos and videos at events**: attendees may take photos and videos and share them. AGIT's own channels may post them, never in adverts, and a social platform we post to receives them under its own terms. If you'd rather not be in photos, tell us at the event. Email `hello@hoiboy.uk` to have a photo or video of you taken down from AGIT's channels and we do it within one month. Copies attendees took themselves are outside our control.
+- **Retention and leaving**: we keep your details while you are a member. To leave, reply to the welcome email or email `hello@hoiboy.uk`. Within one month we remove you from the AGIT list and the WhatsApp groups, delete your details, and keep only your email address and the date you left, as the note that you left. The unsubscribe link Brevo adds to AGIT emails only stops those emails; it does not end your membership.
+- **Your rights**: Articles 15 to 21 apply to this data as to the rest of this notice (section 5). Email `hello@hoiboy.uk`.
 
 ### Partnership brochure
 
