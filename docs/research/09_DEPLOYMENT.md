@@ -86,6 +86,10 @@ The community "Get featured" form (issue #43 Phase 2) posts to a Cloudflare Page
 | `BREVO_API_KEY` | Secret (encrypted) | Settings > Variables and Secrets > Production | Brevo marketing-lane key for the newsletter double opt-in call (issue #56) |
 | `BREVO_LIST_ID` | Plaintext variable | Settings > Variables and Secrets > Production | Numeric id of the `hoiboy.uk newsletter` list. NOT a secret, and deliberately NOT a `params.toml` key: a Pages Function cannot read Hugo config |
 | `BREVO_DOI_TEMPLATE_ID` | Plaintext variable | Settings > Variables and Secrets > Production | Numeric id of the double opt-in email template. Same rule as the list id |
+| `AGIT_LIST_ID` | Plaintext variable | Settings > Variables and Secrets > Production | Numeric id of the `AGIT members` list (issue #65). Must differ from `BREVO_LIST_ID`; read by `subscribe.js` and `brevo-webhook.js` |
+| `AGIT_DOI_TEMPLATE_ID` | Plaintext variable | Settings > Variables and Secrets > Production | Numeric id of the AGIT confirmation (double opt-in) template. Must differ from `BREVO_DOI_TEMPLATE_ID`; read by `subscribe.js` |
+| `AGIT_WELCOME_TEMPLATE_ID` | Plaintext variable | Settings > Variables and Secrets > Production | Numeric id of the AGIT welcome template; read by `brevo-webhook.js` |
+| `AGIT_WHATSAPP_INVITE_URL` | Secret (encrypted) | Settings > Variables and Secrets > Production | The AGIT WhatsApp community invite link, sent only inside the welcome email. Never committed; a change takes effect on the next deployment (see `docs/brevo-api-setup.md` "Invite-link reset") |
 
 `functions/api/subscribe.js` checks all three by name before doing anything else and returns a loud 500 naming the missing ones, so a half-provisioned deploy fails on the first request instead of after a reader has filled the form. Verified against the real Workers runtime: with two of the three absent it returns 500 and logs `{"event":"config-missing","missing":["BREVO_LIST_ID","BREVO_DOI_TEMPLATE_ID"]}`.
 
