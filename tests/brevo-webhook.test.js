@@ -409,6 +409,14 @@ test('string list ids are matched as numbers', async () => {
   assert.deepEqual(sequence(h.calls), [
     'GET contacts/member%40example.com', 'PUT contacts/member%40example.com', 'POST welcome', 'POST alert',
   ]);
+
+  // The alert's newsletter compare too: an existing member's newsletter signup with
+  // string ids is still a newsletter alert, not a list addition.
+  const contact = MEMBER({ listIds: ['43', '4'] });
+  contact.attributes.AGIT_WELCOME_SENT = '2026-10-15T01:00:00.000Z';
+  const h2 = harness({ fetchImpl: fakeBrevo({ contact }).impl });
+  await h2.run(post({ body: agitDelivery(['43', '4']) }), AGIT_ENV);
+  assert.equal(lastAlert(h2.calls).subject, 'New newsletter subscriber: member@example.com');
 });
 
 test('a throwing contact read still sends the alert with FAILED', async () => {
