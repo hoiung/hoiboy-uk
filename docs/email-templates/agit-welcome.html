@@ -5,9 +5,9 @@
      sends it by templateId once a member confirms, with ONE param: the
      WhatsApp invite link, read from the AGIT_WHATSAPP_INVITE_URL Pages secret.
      The link is never written into this file, the template stored at Brevo,
-     a contact attribute or a log line; it only exists in the secret and in
-     the delivered email. No visitor-supplied value is interpolated, so there
-     is nothing to escape.
+     a contact attribute or a log line. It lives in the secret; Brevo's send
+     log and click tracking see it, as they see every email. No
+     visitor-supplied value is interpolated, so there is nothing to escape.
 
      Uploaded with every html comment removed (scripts/newsletter_render.py
      strip_comments), as agit-confirm.html is. Layout follows
