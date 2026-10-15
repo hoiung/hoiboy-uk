@@ -45,7 +45,7 @@ JS_TEST = REPO / "tests" / "contribute.test.js"
 
 def test_form_hidden_version_is_accepted_by_the_endpoint():
     """The version the form renders must be one the endpoint accepts."""
-    rendered = hidden_input_version(FORM)
+    rendered = hidden_input_version(FORM, "consent_version")
     accepted = _versions_from(ENDPOINT)
     assert rendered in accepted, (
         f"the form posts consent_version={rendered!r} but contribute.js accepts "

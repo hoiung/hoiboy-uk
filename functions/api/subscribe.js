@@ -1,14 +1,20 @@
-// Newsletter double opt-in subscribe handler (issue #56 Phase 3).
+// Double opt-in signup handler: the blog newsletter (issue #56 Phase 3) and the AGIT
+// membership signup (issue #65).
 //
 // Cloudflare Pages Function, route: POST /api/subscribe
 //   0. Fail loud if any required binding is absent (three Brevo, plus Turnstile).
 //   1. Reject an oversized body up front (content-length ceiling) before parsing.
+//   1b. Which signup this is: the form's `audience` field, a closed list (absent =
+//       newsletter, the footer form; `agit` = the AGIT join page). An AGIT signup
+//       also needs AGIT_LIST_ID + AGIT_DOI_TEMPLATE_ID, checked here, so a missing
+//       AGIT binding fails only AGIT signups and the newsletter keeps working.
 //   2. Honeypot drop (silent redirect, no side effects).
 //   3. Mandatory Turnstile server-side siteverify (403 on failure).
 //   4. Validate the two fields. An over-length email is REJECTED, never truncated.
-//   5. Consent presence + known-version allowlist, fail loud on absent/unknown.
-//   6. Brevo double-opt-in call (this is the only write).
-//   7. 303 redirect to the "check your inbox" page.
+//   5. Consent presence + known-version allowlist, fail loud on absent/unknown. On
+//      the AGIT form the membership box is required and the newsletter box optional.
+//   6. Brevo double-opt-in call (the write).
+//   7. 303 redirect to the audience's "check your inbox" page.
 //
 // Ordering rationale: the worse failure here is losing a subscriber, not missing a
 // notification. So nothing is written until Turnstile and consent both pass, and the
@@ -33,6 +39,23 @@
 // lie. CONFIRMED_PATH is where Brevo sends them AFTER the click.
 const CHECK_INBOX_PATH = "/newsletter/check-inbox/";
 const CONFIRMED_PATH = "/newsletter/confirmed/";
+
+// The same two pages for an AGIT membership signup.
+const AGIT_CHECK_INBOX_PATH = "/community/asians-gingers-in-tech/joined/check-inbox/";
+const AGIT_CONFIRMED_PATH = "/community/asians-gingers-in-tech/joined/confirmed/";
+
+// Which signup a submission is for, from the form's `audience` field. A closed list:
+// an unknown value is rejected, never mapped to a default, so a tampered form cannot
+// land someone on a list they did not choose. The footer form posts no audience at
+// all, which means `newsletter`.
+const SIGNUP_AUDIENCES = ["newsletter", "agit"];
+
+// Membership-label versions the AGIT join page may post (its hidden
+// member_consent_version). Same rule as KNOWN_CONSENT_VERSIONS: unknown or absent is
+// rejected, newest first, older entries kept for cached pages. MUST match the join
+// page and the mirror in tests/subscribe.test.js.
+// Gate: tests/test_agit_signup_consent_version.py
+const KNOWN_AGIT_CONSENT_VERSIONS = ["2026-10-15"];
 
 const BREVO_DOI_ENDPOINT = "https://api.brevo.com/v3/contacts/doubleOptinConfirmation";
 
@@ -506,11 +529,39 @@ export async function onRequestPost(context) {
     return textResponse(400, "Could not read the form.");
   }
 
+  // 1b. Which signup this is. Absent = the footer newsletter form.
+  const audience = form.get("audience") === null ? "newsletter" : clean(form.get("audience"), 32);
+  if (!SIGNUP_AUDIENCES.includes(audience)) {
+    log("validation-reject", { reason: "unknown audience" });
+    return textResponse(400, "This form is out of date. Please reload the page and try again.");
+  }
+  const isAgit = audience === "agit";
+  const checkInboxPath = isAgit ? AGIT_CHECK_INBOX_PATH : CHECK_INBOX_PATH;
+
+  // The AGIT bindings, checked only for an AGIT signup so a missing one cannot take
+  // the newsletter down. Each must be a positive id AND differ from its newsletter
+  // twin: an AGIT_LIST_ID of 4 would put every member on the newsletter without
+  // their consent, which is worse than failing.
+  if (isAgit) {
+    const missingAgit = [];
+    if (!isPositiveId(env.AGIT_LIST_ID) || Number(env.AGIT_LIST_ID) === Number(env.BREVO_LIST_ID)) {
+      missingAgit.push("AGIT_LIST_ID");
+    }
+    if (!isPositiveId(env.AGIT_DOI_TEMPLATE_ID)
+        || Number(env.AGIT_DOI_TEMPLATE_ID) === Number(env.BREVO_DOI_TEMPLATE_ID)) {
+      missingAgit.push("AGIT_DOI_TEMPLATE_ID");
+    }
+    if (missingAgit.length > 0) {
+      log("config-missing", { missing: missingAgit, audience });
+      return textResponse(500, "The signup form is not fully configured yet. Please try again later.");
+    }
+  }
+
   // 2. Honeypot: a real person never fills the hidden "website" field.
   if (form.get("website")) {
-    log("honeypot-drop", {});
+    log("honeypot-drop", { audience });
     // Look successful to the bot; do NOT write anything.
-    return Response.redirect(new URL(CHECK_INBOX_PATH, request.url), 303);
+    return Response.redirect(new URL(checkInboxPath, request.url), 303);
   }
 
   // 3. Turnstile siteverify (mandatory).
@@ -557,7 +608,11 @@ export async function onRequestPost(context) {
   }
 
   // 5. Consent must be explicitly ticked, and we must know WHICH label was ticked.
-  if (!form.get("consent")) {
+  //    The newsletter box is required on the footer form and optional on the AGIT
+  //    join page, so only its presence check is per audience. Both forms always post
+  //    the hidden consent_version, so the version check runs for both.
+  const wantsNewsletter = Boolean(form.get("consent"));
+  if (!isAgit && !form.get("consent")) {
     log("validation-reject", { reason: "consent not given" });
     return textResponse(400, "Please tick the box to confirm you want the emails.");
   }
@@ -565,6 +620,21 @@ export async function onRequestPost(context) {
   if (!KNOWN_CONSENT_VERSIONS.includes(consentVersion)) {
     log("validation-reject", { reason: "unknown consent version", consentVersion: consentVersion || null });
     return textResponse(400, "This form is out of date. Please reload the page and try again.");
+  }
+
+  // The AGIT membership box: required, and its label version must be known.
+  const memberConsentVersion = isAgit ? clean(form.get("member_consent_version"), 32) : null;
+  if (isAgit) {
+    if (!form.get("member_consent")) {
+      log("validation-reject", { reason: "membership consent not given", audience });
+      return textResponse(400, "Please tick the membership box to sign up.");
+    }
+    if (!KNOWN_AGIT_CONSENT_VERSIONS.includes(memberConsentVersion)) {
+      log("validation-reject", {
+        reason: "unknown membership consent version", memberConsentVersion: memberConsentVersion || null,
+      });
+      return textResponse(400, "This form is out of date. Please reload the page and try again.");
+    }
   }
 
   // 6. Brevo double opt-in. Brevo emails the confirmation link and only adds the
@@ -577,16 +647,30 @@ export async function onRequestPost(context) {
   //    the address was verified. The Privacy Notice (AC 1.2) states that this pair
   //    is stored, so these attributes are what make that claim true and what
   //    discharges the Article 7(1) burden of proving consent.
+  //
+  //    An AGIT signup uses the AGIT confirmation template, lands on the AGIT list,
+  //    and records the membership label version + submission time. The newsletter
+  //    list and its consent pair are added ONLY when the optional newsletter box was
+  //    ticked, so a member who left it unticked is never put on the newsletter.
+  const submittedAt = new Date().toISOString();
+  const newsletterConsent = wantsNewsletter
+    ? { CONSENT_VERSION: consentVersion, CONSENT_TIMESTAMP: submittedAt }
+    : {};
+  const agitConsent = isAgit
+    ? { AGIT_CONSENT_VERSION: memberConsentVersion, AGIT_CONSENT_TIMESTAMP: submittedAt }
+    : {};
+  let includeListIds = [Number(env.BREVO_LIST_ID)];
+  if (isAgit) {
+    includeListIds = wantsNewsletter
+      ? [Number(env.AGIT_LIST_ID), Number(env.BREVO_LIST_ID)]
+      : [Number(env.AGIT_LIST_ID)];
+  }
   const doiPayload = {
     email,
-    attributes: {
-      FIRSTNAME: name,
-      CONSENT_VERSION: consentVersion,
-      CONSENT_TIMESTAMP: new Date().toISOString(),
-    },
-    includeListIds: [Number(env.BREVO_LIST_ID)],
-    templateId: Number(env.BREVO_DOI_TEMPLATE_ID),
-    redirectionUrl: new URL(CONFIRMED_PATH, request.url).toString(),
+    attributes: { FIRSTNAME: name, ...agitConsent, ...newsletterConsent },
+    includeListIds,
+    templateId: Number(isAgit ? env.AGIT_DOI_TEMPLATE_ID : env.BREVO_DOI_TEMPLATE_ID),
+    redirectionUrl: new URL(isAgit ? AGIT_CONFIRMED_PATH : CONFIRMED_PATH, request.url).toString(),
   };
 
   let resp;
@@ -642,8 +726,8 @@ export async function onRequestPost(context) {
     // tell the visitor to check an inbox no email is coming to.
     const isClientError = resp.status >= 400 && resp.status < 500 && resp.status !== 429;
     if (isClientError && isDuplicateCode(code)) {
-      log("brevo-doi", { ok: true, duplicate: true, status: resp.status, code });
-      return Response.redirect(new URL(CHECK_INBOX_PATH, request.url), 303);
+      log("brevo-doi", { ok: true, duplicate: true, status: resp.status, code, audience });
+      return Response.redirect(new URL(checkInboxPath, request.url), 303);
     }
 
     // Brevo's send cap is shared account-wide, so a retry storm is the worse
@@ -657,8 +741,8 @@ export async function onRequestPost(context) {
     return textResponse(502, "Something went wrong signing you up. Please try again.");
   }
 
-  log("brevo-doi", { ok: true, duplicate: false, status: resp.status, consentVersion });
+  log("brevo-doi", { ok: true, duplicate: false, status: resp.status, consentVersion, audience, wantsNewsletter });
 
   // 7. Success -> redirect (303 so the browser re-requests with GET).
-  return Response.redirect(new URL(CHECK_INBOX_PATH, request.url), 303);
+  return Response.redirect(new URL(checkInboxPath, request.url), 303);
 }

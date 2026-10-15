@@ -31,10 +31,13 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 
 # The hidden input a consent form renders. Order-sensitive by design: it matches
-# the shape both forms actually ship, and a rewrite that reorders the attributes
-# should fail loud here rather than silently stop finding the version.
-_HIDDEN_RE = re.compile(
-    r"""<input\s+type=["']hidden["']\s+name=["']consent_version["']\s+value=["']([^"']+)["']"""
+# the shape the forms actually ship, and a rewrite that reorders the attributes
+# should fail loud here rather than silently stop finding the version. The field
+# name is a parameter because the AGIT join page carries two version inputs:
+# `consent_version` for its optional newsletter box and `member_consent_version`
+# for its membership box (#65).
+_HIDDEN_TEMPLATE = (
+    r"""<input\s+type=["']hidden["']\s+name=["']{field}["']\s+value=["']([^"']+)["']"""
 )
 
 # A version string quoted to the reader in prose. Backticks are what makes this
@@ -60,10 +63,11 @@ def js_string_list(path: Path, symbol: str = "KNOWN_CONSENT_VERSIONS") -> list[s
     return re.findall(r"""["']([^"']+)["']""", match.group(1))
 
 
-def hidden_input_version(path: Path) -> str:
-    """The consent_version a form renders, from its hidden input."""
-    match = _HIDDEN_RE.search(path.read_text(encoding="utf-8"))
-    assert match, f"{path.name} has no hidden consent_version input"
+def hidden_input_version(path: Path, field: str) -> str:
+    """The version a form renders in its hidden ``field`` input."""
+    pattern = re.compile(_HIDDEN_TEMPLATE.format(field=re.escape(field)))
+    match = pattern.search(path.read_text(encoding="utf-8"))
+    assert match, f"{path.name} has no hidden {field} input"
     return match.group(1)
 
 

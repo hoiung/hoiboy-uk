@@ -64,7 +64,7 @@ JS_MIRROR_SYMBOL = "KNOWN_CONSENT_VERSIONS_MIRROR"
 
 def test_form_hidden_version_is_accepted_by_the_endpoint():
     """The version the form renders must be one the endpoint accepts."""
-    rendered = hidden_input_version(FORM)
+    rendered = hidden_input_version(FORM, "consent_version")
     accepted = js_string_list(ENDPOINT)
     assert rendered in accepted, (
         f"subscribe-form.html posts consent_version={rendered!r} but subscribe.js "
@@ -128,7 +128,11 @@ def test_the_accepted_version_reaches_the_stored_consent_record():
     # prefix of `KNOWN_CONSENT_VERSIONS`, so a bare find() matches the allowlist
     # constant (and its comment) hundreds of bytes earlier and the ordering
     # assertion below then compares the wrong two offsets.
-    attribute = source.find("CONSENT_VERSION:")
+    # And on a whole-identifier boundary: `AGIT_CONSENT_VERSION:` (#65) contains
+    # `CONSENT_VERSION:`, so a plain find() would anchor on the AGIT attribute
+    # whenever it is written earlier in the file, and check the wrong line.
+    found = re.search(r"(?<![A-Z_])CONSENT_VERSION:", source)
+    attribute = found.start() if found else -1
     assert attribute != -1, (
         "the accepted consent version is never written into the Brevo contact "
         "attributes, so no later export can tell which label the reader agreed to"
@@ -173,7 +177,7 @@ def test_the_privacy_notice_quotes_the_version_the_form_renders():
         "strength of that published claim."
     )
 
-    rendered = hidden_input_version(FORM)
+    rendered = hidden_input_version(FORM, "consent_version")
     assert set(quoted) == {rendered}, (
         f"{PRIVACY.relative_to(REPO)} tells readers their consent is recorded "
         f"against {sorted(set(quoted))!r}, but subscribe-form.html renders "

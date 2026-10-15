@@ -33,6 +33,10 @@ const ENDPOINT_PATH = path.join(__dirname, '..', 'functions', 'api', 'subscribe.
 // Asserted equal to the loaded value by the `mirror` test below.
 const KNOWN_CONSENT_VERSIONS_MIRROR = ['2026-08-03'];
 
+// The endpoint's AGIT membership-label versions, mirrored the same way for
+// tests/test_agit_signup_consent_version.py and asserted equal to the loaded value.
+const KNOWN_AGIT_CONSENT_VERSIONS_MIRROR = ['2026-10-15'];
+
 const VALID_EMAIL = 'reader@example.com';
 const BREVO_HOST = 'api.brevo.com';
 const SITEVERIFY_HOST = 'challenges.cloudflare.com';
@@ -82,7 +86,8 @@ function loadEndpoint() {
   const EXPOSE =
     '\n;({ onRequestPost, clean, EMAIL_RE, isDuplicateCode, KNOWN_CONSENT_VERSIONS,' +
     ' FIELD_CAPS, MAX_BODY_BYTES, CHECK_INBOX_PATH, CONFIRMED_PATH, BREVO_DOI_ENDPOINT,' +
-    ' redactPii, literalForms, MAX_ESCAPE_LEVELS })';
+    ' redactPii, literalForms, MAX_ESCAPE_LEVELS, SIGNUP_AUDIENCES, KNOWN_AGIT_CONSENT_VERSIONS,' +
+    ' AGIT_CHECK_INBOX_PATH, AGIT_CONFIRMED_PATH })';
 
   const mod = vm.runInContext(raw.replace(EXPORT_RE, '') + EXPOSE, context, {
     filename: ENDPOINT_PATH,
@@ -1334,4 +1339,156 @@ test('upstream: the cap stays far above what is ever logged', async () => {
     `window, so an address straddling it survives as an unmatchable fragment. ` +
     `Either restore the gap or reinstate a boundary trim WITH a test that fires.`
   );
+});
+
+// ----------------------------------------------------------------------
+// AGIT membership signup (#65): the same endpoint with audience=agit.
+// ----------------------------------------------------------------------
+
+const AGIT_ENV = { AGIT_LIST_ID: '43', AGIT_DOI_TEMPLATE_ID: '27' };
+// The join page's fields. `consent: null` deletes the newsletter box from the
+// base form: on this page it is optional and unticked by default, while its
+// hidden consent_version is still posted, as the page renders it.
+const AGIT_FIELDS = {
+  audience: 'agit',
+  consent: null,
+  member_consent: 'on',
+  member_consent_version: KNOWN_AGIT_CONSENT_VERSIONS_MIRROR[0],
+};
+const AGIT_CONFIRMED_URL = 'https://hoiboy.uk/community/asians-gingers-in-tech/joined/confirmed/';
+const AGIT_CHECK_INBOX_URL = 'https://hoiboy.uk/community/asians-gingers-in-tech/joined/check-inbox/';
+const ISO_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+
+function agitSubmit({ fields, env, turnstile, brevo } = {}) {
+  return submit({
+    fields: { ...AGIT_FIELDS, ...(fields || {}) },
+    env: { ...AGIT_ENV, ...(env || {}) },
+    turnstile,
+    brevo,
+  });
+}
+
+const doiBody = (calls, mod) => {
+  const doi = calls.filter((c) => c.url === mod.BREVO_DOI_ENDPOINT);
+  assert.equal(doi.length, 1, 'expected exactly one double opt-in call');
+  return JSON.parse(doi[0].init.body);
+};
+
+test('mirror: the AGIT consent-version list here equals the endpoint it is mirrored from', () => {
+  const { KNOWN_AGIT_CONSENT_VERSIONS } = loadEndpoint().mod;
+  assert.deepEqual([...KNOWN_AGIT_CONSENT_VERSIONS], KNOWN_AGIT_CONSENT_VERSIONS_MIRROR);
+});
+
+test('unknown audience is rejected', async () => {
+  for (const audience of ['vip', 'AGIT', '']) {
+    const { response, calls, logs } = await submit({ fields: { audience } });
+    assert.equal(response.status, 400, `audience=${JSON.stringify(audience)} was accepted`);
+    assert.equal(calls.length, 0, 'an unknown audience must not reach Turnstile or Brevo');
+    const entry = logs.map((l) => JSON.parse(l)).find((e) => e.event === 'validation-reject');
+    assert.equal(entry.reason, 'unknown audience');
+  }
+});
+
+test('agit audience fails loud on a missing AGIT binding', async () => {
+  for (const missing of ['AGIT_LIST_ID', 'AGIT_DOI_TEMPLATE_ID']) {
+    for (const value of ['', '   ', '0', 'abc']) {
+      const { response, calls, logs } = await agitSubmit({ env: { [missing]: value } });
+      assert.equal(response.status, 500, `${missing}=${JSON.stringify(value)} did not fail loud`);
+      assert.equal(calls.length, 0, 'a misconfigured AGIT signup must not reach Turnstile or Brevo');
+      const entry = logs.map((l) => JSON.parse(l)).find((e) => e.event === 'config-missing');
+      assert.deepEqual(entry.missing, [missing]);
+    }
+  }
+});
+
+test('agit list id equal to the newsletter list fails loud', async () => {
+  const cases = [
+    [{ AGIT_LIST_ID: DEFAULT_ENV.BREVO_LIST_ID }, 'AGIT_LIST_ID'],
+    [{ AGIT_DOI_TEMPLATE_ID: DEFAULT_ENV.BREVO_DOI_TEMPLATE_ID }, 'AGIT_DOI_TEMPLATE_ID'],
+  ];
+  for (const [env, name] of cases) {
+    const { response, calls, logs } = await agitSubmit({ env });
+    assert.equal(response.status, 500, `${name} equal to its newsletter twin was accepted`);
+    assert.equal(calls.length, 0);
+    const entry = logs.map((l) => JSON.parse(l)).find((e) => e.event === 'config-missing');
+    assert.deepEqual(entry.missing, [name]);
+  }
+});
+
+test('newsletter still works without AGIT bindings', async () => {
+  const { response, calls, mod } = await submit();
+  assert.equal(response.status, 303);
+  assert.equal(response.headers.get('location'), 'https://hoiboy.uk/newsletter/check-inbox/');
+  const body = doiBody(calls, mod);
+  assert.deepEqual(body.includeListIds, [42]);
+  assert.equal(body.templateId, 7);
+  assert.equal(body.redirectionUrl, 'https://hoiboy.uk/newsletter/confirmed/');
+  assert.deepEqual(Object.keys(body.attributes), ['FIRSTNAME', 'CONSENT_VERSION', 'CONSENT_TIMESTAMP']);
+});
+
+test('agit membership box is required', async () => {
+  const { response, calls, logs } = await agitSubmit({ fields: { member_consent: null } });
+  assert.equal(response.status, 400);
+  assertNoBrevoWrite(calls);
+  const entry = logs.map((l) => JSON.parse(l)).find((e) => e.event === 'validation-reject');
+  assert.equal(entry.reason, 'membership consent not given');
+});
+
+test('unknown AGIT consent version is rejected', async () => {
+  for (const version of ['2020-01-01', '', null]) {
+    const { response, calls } = await agitSubmit({ fields: { member_consent_version: version } });
+    assert.equal(response.status, 400, `member_consent_version=${JSON.stringify(version)} was accepted`);
+    assertNoBrevoWrite(calls);
+  }
+});
+
+test('agit without newsletter sends no newsletter consent attributes', async () => {
+  const { response, calls, mod } = await agitSubmit();
+  assert.equal(response.status, 303);
+  const body = doiBody(calls, mod);
+  assert.match(body.attributes.AGIT_CONSENT_TIMESTAMP, ISO_RE);
+  assert.deepEqual(body, {
+    email: VALID_EMAIL,
+    attributes: {
+      FIRSTNAME: 'A Reader',
+      AGIT_CONSENT_VERSION: KNOWN_AGIT_CONSENT_VERSIONS_MIRROR[0],
+      AGIT_CONSENT_TIMESTAMP: body.attributes.AGIT_CONSENT_TIMESTAMP,
+    },
+    includeListIds: [43],
+    templateId: 27,
+    redirectionUrl: AGIT_CONFIRMED_URL,
+  });
+});
+
+test('agit with newsletter adds both lists and newsletter consent', async () => {
+  const { response, calls, mod } = await agitSubmit({ fields: { consent: 'on' } });
+  assert.equal(response.status, 303);
+  const body = doiBody(calls, mod);
+  assert.deepEqual(body.includeListIds, [43, 42]);
+  assert.equal(body.templateId, 27);
+  assert.equal(body.attributes.CONSENT_VERSION, KNOWN_CONSENT_VERSIONS_MIRROR[0]);
+  assert.equal(body.attributes.AGIT_CONSENT_VERSION, KNOWN_AGIT_CONSENT_VERSIONS_MIRROR[0]);
+  assert.match(body.attributes.CONSENT_TIMESTAMP, ISO_RE);
+  assert.equal(body.attributes.CONSENT_TIMESTAMP, body.attributes.AGIT_CONSENT_TIMESTAMP);
+});
+
+test('agit 204 from Brevo redirects to the AGIT check-inbox page', async () => {
+  const { response } = await agitSubmit({ brevo: () => new Response(null, { status: 204 }) });
+  assert.equal(response.status, 303);
+  assert.equal(response.headers.get('location'), AGIT_CHECK_INBOX_URL);
+});
+
+test('agit honeypot redirects to the AGIT check-inbox page', async () => {
+  const { response, calls } = await agitSubmit({ fields: { website: 'https://spam.example' } });
+  assert.equal(response.status, 303);
+  assert.equal(response.headers.get('location'), AGIT_CHECK_INBOX_URL);
+  assert.equal(calls.length, 0, 'a honeypot hit must not reach Turnstile or Brevo');
+});
+
+test('agit duplicate redirects to the AGIT check-inbox page', async () => {
+  const { response } = await agitSubmit({
+    brevo: () => jsonResponse(400, { code: 'duplicate_parameter', message: 'already exists' }),
+  });
+  assert.equal(response.status, 303);
+  assert.equal(response.headers.get('location'), AGIT_CHECK_INBOX_URL);
 });
