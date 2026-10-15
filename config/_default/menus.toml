@@ -73,7 +73,7 @@
   weight = 10
 
 [[groups]]
-  name = "AGIT Signup"
+  name = "AGIT Events Signup"
   url = "/community/asians-gingers-in-tech/join/"
   weight = 15
 
