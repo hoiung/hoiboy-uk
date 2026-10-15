@@ -47,10 +47,12 @@
              record shows which wording was accepted. MUST stay in the
              KNOWN_CONSENT_VERSIONS list in functions/api/subscribe.js and in the
              mirror in tests/subscribe.test.js, AND match the version quoted in
-             prose at content/legal/privacy/index.md; bump all FOUR together
-             whenever the label text changes. The privacy-notice one is easy to
-             miss and the gate does check it.
-             Gate: tests/test_newsletter_consent_version.py */ -}}
+             prose at content/legal/privacy/index.md, AND the newsletter box on the
+             AGIT join page (content/community/agit-join/index.md); bump all FIVE
+             together whenever the label text changes. The privacy-notice one is
+             easy to miss and the gate does check it.
+             Gate: tests/test_newsletter_consent_version.py (the join page:
+             tests/test_agit_signup_consent_version.py) */ -}}
       <input type="hidden" name="consent_version" value="2026-08-03">
       <input type="checkbox" id="subscribe-consent" name="consent" required>
       {{- /* Explicit for/id pairing, not a wrapping label: the label contains an
