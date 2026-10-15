@@ -1,10 +1,10 @@
 ---
 title: Sub-processors
 date: 2026-05-09
-lastmod: 2026-08-03
+lastmod: 2026-10-15
 description: HOIBOY AI LTD sub-processor list - vendor names, services, data categories, locations, transfer mechanisms, DPA references.
 hideDate: true
-version: 1.4.0
+version: 1.5.0
 ---
 
 <!-- iamhoi-exempt -->
@@ -69,15 +69,15 @@ The operator's own workstation is in the **UK**, so the local copy described abo
 
 ## Newsletter subscription (public site feature)
 
-This section is **separate from the consultancy sub-processor list above**. The subscribe form in the site footer is a public site feature, not part of any client engagement, MSA, SOW, or the DPA Annex, so it carries its own disclosure and is not subject to the client change-notification mechanism above. It collects a name and an email address and nothing else, and it is double opt-in: nobody joins the list until they click the confirmation link sent to that address. Intake and spam protection use **Cloudflare**, already the site's infrastructure provider. List storage and email delivery use **Brevo**, which for this feature holds the subscriber list itself rather than relaying a single message.
+This section is **separate from the consultancy sub-processor list above**. The subscribe form in the site footer and the AGIT signup form (the Asians & Gingers in Tech Signup page) are public site features, not part of any client engagement, MSA, SOW, or the DPA Annex, so they carry their own disclosure and are not subject to the client change-notification mechanism above. Each collects a name and an email address (the AGIT signup form also records the signup: submission time, membership-wording version and when the welcome email was sent), and each is double opt-in: nobody joins the list until they click the confirmation link sent to that address. Intake and spam protection use **Cloudflare**, already the site's infrastructure provider. List storage and email delivery use **Brevo**, which for this feature holds the subscriber list itself rather than relaying a single message.
 
 <div class="sub-processor-table">
 
 | Service | Role for the form | Data processed | Retention |
 |---|---|---|---|
-| **Brevo** (Sendinblue SAS) | Holds the newsletter contact list, sends the double opt-in confirmation email, and sends the posts themselves | Subscriber name and email address, the consent record (submission time and consent-wording version), and Brevo's own double opt-in confirmation timestamp | Held while the subscriber stays subscribed. On unsubscribe the contact is removed and only the evidence of withdrawal is kept |
-| **Cloudflare Turnstile** | Bot / spam protection on the subscribe form | Visitor IP address + a challenge token (verified server-side) | Transient (verification only) |
-| **Cloudflare Pages Functions** | Runs the endpoint the form posts to, which validates the submission and calls Brevo | The submitted name, email and consent fields, in transit only | None; the request is not persisted |
+| **Brevo** (Sendinblue SAS) | Holds the newsletter contact list and the AGIT members list, sends the double opt-in confirmation emails, the posts themselves and the AGIT welcome email | Name and email address, the consent or signup record (submission time and wording version; for AGIT also the welcome-sent time), and Brevo's own double opt-in confirmation timestamp | Newsletter: held while subscribed; on unsubscribe the contact is removed and only the evidence of withdrawal is kept. AGIT: held while a member; on leaving, only the email address and the date they left are kept |
+| **Cloudflare Turnstile** | Bot / spam protection on the subscribe form and the AGIT signup form | Visitor IP address + a challenge token (verified server-side) | Transient (verification only) |
+| **Cloudflare Pages Functions** | Runs the endpoint the subscribe form and the AGIT signup form post to, which validates the submission and calls Brevo, and the webhook that sends the AGIT welcome email | The submitted name, email and consent fields, in transit only | None; the request is not persisted |
 
 </div>
 
