@@ -243,9 +243,18 @@ def test_join_page_missing_its_form_is_caught(tmp_path, monkeypatch, capsys):
 
 
 def test_the_exemption_is_exact_not_a_prefix(tmp_path, monkeypatch, capsys):
-    """A sibling of the join page carrying the form is still a leak."""
+    """A sibling of the join page carrying the form is still a leak.
+
+    The siblings carry a page's OWN form (OWN_FORM, no footer form): with the
+    footer form planted instead, an exemption that wrongly covered them would still
+    trip the footer check, and this test could not tell the two apart. One sibling
+    shares the string prefix (`join` / `joined`), one sits under the join page."""
     built = _tree(tmp_path, suppressed=ALL_SUPPRESSED)
-    _write(built, "community/asians-gingers-in-tech/joined/check-inbox/index.html", WITH_FORM)
+    siblings = ("community/asians-gingers-in-tech/joined/check-inbox/index.html",
+                "community/asians-gingers-in-tech/join/extra/index.html")
+    for rel in siblings:
+        _write(built, rel, OWN_FORM)
     assert _run(built, monkeypatch) == 1
-    assert "[suppressed-but-present] community/asians-gingers-in-tech/joined/check-inbox/" in (
-        capsys.readouterr().err)
+    err = capsys.readouterr().err
+    for rel in siblings:
+        assert f"[suppressed-but-present] {rel} carries 'subscribe-form'" in err, rel
