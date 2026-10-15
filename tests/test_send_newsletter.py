@@ -2617,7 +2617,7 @@ NOTICE_PATH = REPO_ROOT / "content" / "legal" / "privacy" / "index.md"
 
 CITED_BULLETS = (
     ("the newsletter Purpose bullet", "- **Purpose**: to email you new posts"),
-    ("the newsletter How to withdraw bullet", "- **How to withdraw**: every email we send"),
+    ("the newsletter How to withdraw bullet", "- **How to withdraw**: every newsletter email"),
 )
 
 
