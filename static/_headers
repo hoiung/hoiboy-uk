@@ -13,6 +13,12 @@
 /community/asians-gingers-in-tech/thanks/*
   X-Robots-Tag: noindex, nofollow
 
+# AGIT signup result pages (issue #65): check-your-inbox and you're-in. Under
+# /joined/, NOT /join/, because fnmatch lets `*` match empty, so a /join/* rule
+# would also noindex the signup page itself.
+/community/asians-gingers-in-tech/joined/*
+  X-Robots-Tag: noindex, nofollow
+
 # Newsletter double opt-in (issue #56): the whole section. Two thin confirmation
 # pages plus the section landing, none of which belongs in an index.
 # The glob covers /newsletter/ itself as well as its children, because fnmatch

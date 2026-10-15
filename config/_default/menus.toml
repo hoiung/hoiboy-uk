@@ -73,6 +73,11 @@
   weight = 10
 
 [[groups]]
+  name = "AGIT Signup"
+  url = "/community/asians-gingers-in-tech/join/"
+  weight = 15
+
+[[groups]]
   name = "AGIT Featured"
   url = "/community/agit-featured/"
   weight = 20

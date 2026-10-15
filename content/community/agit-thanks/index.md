@@ -34,6 +34,8 @@ I read every submission myself, so give me a little time. If it is a good fit fo
 
 Come be part of it. This is where everything happens between features.
 
+**Sign up first:** [AGIT Signup](/community/asians-gingers-in-tech/join/). To attend our events, you need to sign up and join our WhatsApp group, and signing up is how you get the WhatsApp invite.
+
 - **Real-life meetups (London):** [meetup.com/london-asians-gingers-in-tech](https://www.meetup.com/london-asians-gingers-in-tech)
 - **LinkedIn group:** [linkedin.com/groups/26310001](https://www.linkedin.com/groups/26310001/)
 - **Facebook page:** [facebook.com/asians.gingers.in.tech](https://www.facebook.com/asians.gingers.in.tech)

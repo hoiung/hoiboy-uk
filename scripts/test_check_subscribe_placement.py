@@ -51,6 +51,9 @@ def _with_form(href: str = "/legal/privacy/") -> str:
 
 
 WITH_FORM = _with_form()
+# A suppressed page carrying its own signup form (the AGIT join page, #65): the
+# .subscribe-form wrapper, but not the footer partial's heading.
+OWN_FORM = '<html><div class="subscribe-form"><form></form></div><footer></footer></html>'
 # Rendered through baseof, deliberately without the form: what a suppressed page
 # must look like.
 NO_FORM = "<html><footer>no form here</footer></html>"
@@ -77,6 +80,8 @@ def _tree(tmp_path: Path, *, suppressed: list[str],
     for rel in gate.PRESENT_PATHS:
         _write(root, rel, body)
     _write(root, "blogs/some-post/index.html", body)        # the sampled post
+    for rel in gate.OWN_FORM_PAGES:                         # pages with their own form
+        _write(root, rel, OWN_FORM)
     _write(root, link_href.strip("/") + "/index.html", NO_FORM)   # the link target
     return root
 
@@ -210,3 +215,37 @@ def test_a_dead_form_link_is_caught(tmp_path, monkeypatch, capsys):
     (built / "legal" / "privacy" / "index.html").unlink()
     assert _run(built, monkeypatch) == 1
     assert "[dead-form-link]" in capsys.readouterr().err
+
+
+# --------------------------------------------------------------------------
+# A suppressed page with its own form (#65): exempt, but never silently.
+# --------------------------------------------------------------------------
+
+def test_join_page_may_carry_its_own_form(tmp_path, monkeypatch, capsys):
+    """join page may carry the subscribe form, but not the footer one beside it."""
+    built = _tree(tmp_path, suppressed=ALL_SUPPRESSED)
+    assert _run(built, monkeypatch) == 0
+    _write(built, gate.OWN_FORM_PAGES[0],
+           OWN_FORM.replace("<footer>", '<footer><h2 class="subscribe-form-title"></h2>'))
+    assert _run(built, monkeypatch) == 1
+    assert "beside its own" in capsys.readouterr().err
+
+
+def test_join_page_missing_its_form_is_caught(tmp_path, monkeypatch, capsys):
+    """join page missing its form fails, and so does a missing join page."""
+    built = _tree(tmp_path, suppressed=ALL_SUPPRESSED)
+    _write(built, gate.OWN_FORM_PAGES[0], NO_FORM)
+    assert _run(built, monkeypatch) == 1
+    assert "[own-form-page-without-form]" in capsys.readouterr().err
+    (built / gate.OWN_FORM_PAGES[0]).unlink()
+    assert _run(built, monkeypatch) == 1
+    assert "[own-form-page-missing]" in capsys.readouterr().err
+
+
+def test_the_exemption_is_exact_not_a_prefix(tmp_path, monkeypatch, capsys):
+    """A sibling of the join page carrying the form is still a leak."""
+    built = _tree(tmp_path, suppressed=ALL_SUPPRESSED)
+    _write(built, "community/asians-gingers-in-tech/joined/check-inbox/index.html", WITH_FORM)
+    assert _run(built, monkeypatch) == 1
+    assert "[suppressed-but-present] community/asians-gingers-in-tech/joined/check-inbox/" in (
+        capsys.readouterr().err)

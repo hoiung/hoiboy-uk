@@ -85,6 +85,17 @@ SUPPRESSED_PREFIXES = (
 )
 SUPPRESSED_EXACT = ("404.html",)
 
+# Pages inside a suppressed class that carry a subscribe form of their OWN by
+# design, so the marker is expected there, not a leak. One today: the AGIT signup
+# page (#65), whose form posts audience=agit to the same endpoint and reuses the
+# .subscribe-form wrapper and static/js/subscribe-form.js, both of which carry the
+# marker. Exact paths, never a prefix, and each must be PRESENT and carry the
+# marker (asserted below) so an exemption cannot outlive its page or go silent.
+# The FOOTER form must still be absent there: FOOTER_FORM_MARKER is the footer
+# partial's own heading class, which the AGIT form does not render.
+OWN_FORM_PAGES = ("community/asians-gingers-in-tech/join/index.html",)
+FOOTER_FORM_MARKER = "subscribe-form-title"
+
 # Hugo emits the 404 at public/404.html, NOT public/404/index.html.
 PRESENT_PATHS = (
     "index.html",                              # home: .Section is "", same as 404
@@ -202,12 +213,29 @@ def main() -> int:
         rel = str(path.relative_to(built))
         if not is_suppressed(rel):
             continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        # An own-form page is checked for the footer form only, and does not count
+        # toward its class's floor: the floor needs a page that must carry no
+        # marker at all, or the class rule is never tested.
+        if rel in OWN_FORM_PAGES:
+            if FOOTER_FORM_MARKER in text:
+                failures.append(f"[suppressed-but-present] {rel} carries the footer form "
+                                f"('{FOOTER_FORM_MARKER}') beside its own and must not")
+            continue
         suppressed_seen += 1
         for cls in per_class:
             if rel == cls or rel.startswith(cls):
                 per_class[cls] += 1
-        if MARKER in path.read_text(encoding="utf-8", errors="replace"):
+        if MARKER in text:
             failures.append(f"[suppressed-but-present] {rel} carries '{MARKER}' and must not")
+    for rel in OWN_FORM_PAGES:
+        path = built / rel
+        if not path.is_file():
+            failures.append(f"[own-form-page-missing] {rel} is exempted as a page with its own "
+                            f"form but does not exist in {built}/")
+        elif MARKER not in path.read_text(encoding="utf-8", errors="replace"):
+            failures.append(f"[own-form-page-without-form] {rel} is exempted as a page with its "
+                            f"own form but carries no '{MARKER}'; drop the exemption or fix the page")
     for cls, seen in sorted(per_class.items()):
         if seen == 0:
             failures.append(
