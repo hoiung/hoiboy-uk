@@ -604,6 +604,12 @@ jobs:
       - name: AGIT signup consent-version + copy checks
         run: python3 -m pytest tests/test_agit_signup_consent_version.py -q
 
+      # The AGIT WhatsApp invite is a Pages secret, never a committed file (#65 AC
+      # 5.1). The shared secret scanner does not block an invite URL, so this
+      # repo-local guard does: any tracked file containing one fails the build.
+      - name: No WhatsApp invite link in the repo
+        run: python3 -m pytest tests/test_no_whatsapp_invite_links.py -q
+
       # The two Pages Functions are self-contained edge modules with no shared
       # import, so several helpers exist twice on purpose. This is what stops the
       # copies drifting. The #56 review found both files trusting a client-supplied
