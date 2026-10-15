@@ -1359,11 +1359,10 @@ const AGIT_CONFIRMED_URL = 'https://hoiboy.uk/community/asians-gingers-in-tech/j
 const AGIT_CHECK_INBOX_URL = 'https://hoiboy.uk/community/asians-gingers-in-tech/joined/check-inbox/';
 const ISO_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
-function agitSubmit({ fields, env, turnstile, brevo } = {}) {
+function agitSubmit({ fields, env, brevo } = {}) {
   return submit({
     fields: { ...AGIT_FIELDS, ...(fields || {}) },
     env: { ...AGIT_ENV, ...(env || {}) },
-    turnstile,
     brevo,
   });
 }
