@@ -370,11 +370,11 @@ operator owns rather than provider chrome that has to be tolerated.
 The list is named `hoiboy.uk newsletter`. `POST /v3/contacts/lists` requires both
 `name` and `folderId`, so the folder is created first.
 
-Alert automation, on one line because AC 0.3 greps for the pair together: trigger `Contact added to a list` scoped to that list, action `Notify by email` to `hoiboyuk@gmail.com`.
-
-Built in the dashboard; Brevo publishes no API for creating automations. Brevo also
-documents that this trigger does NOT fire when a contact is moved between lists, which
-is why AC 0.5 has to observe the alert arriving rather than assume it.
+The operator's new-subscriber email comes from the `listAddition` webhook
+(`functions/api/brevo-webhook.js`, see "The new-subscriber alert is a WEBHOOK" below),
+not from a dashboard automation. Measured 2026-10-15: six list additions on probe
+aliases each produced exactly one email to `hoiboyuk@gmail.com`, every one the
+webhook's alert, and no other email arrived.
 
 ### Runtime bindings (Cloudflare Pages, hoiboy-uk project)
 
@@ -514,9 +514,12 @@ diagnosable from the logs rather than from an absence of alerts.
 Brevo does not sign webhook calls. There is no HMAC header, so the URL itself is the
 credential and carries a token checked against `BREVO_WEBHOOK_TOKEN` in
 length-then-constant-time. Anyone who learns the URL can forge an alert, which is why
-the endpoint does exactly one thing: send a fixed-shape email to one hard-coded
-address. It never writes, never reads contacts, and never echoes attacker-supplied
-text anywhere but into that email, HTML-escaped.
+the endpoint does little: send a fixed-shape email to one hard-coded address, and,
+for an AGIT delivery (#65), read that contact, write `AGIT_WELCOME_SENT` and send the
+welcome email. A forged call can therefore at most alert the operator, or send the
+welcome to a contact that signed up for it and has not had it: the contact read, not
+the payload, decides who gets an invite (see "AGIT membership lane" below). It never
+echoes attacker-supplied text anywhere but into the alert, HTML-escaped.
 
 #### The unsubscribe footgun, and the self-heal
 
@@ -631,6 +634,117 @@ The draft, the review copy, the confirmation value and the content fingerprint a
 Trigger to revisit: Brevo documenting the semantics explicitly, or a throwaway list built for
 the purpose (its own contacts, none of them real) where the experiment can be run without
 anyone receiving anything they did not ask for.
+
+## AGIT membership lane
+
+The AGIT Signup page (`/community/asians-gingers-in-tech/join/`, issue #65) posts to
+the same `subscribe.js` with `audience=agit`. Brevo sends the AGIT confirmation email;
+on the confirm click it adds the contact to the AGIT list and fires the same
+`listAddition` webhook, and `brevo-webhook.js` sends the welcome email with the
+WhatsApp invite once. Same account, same 300/day allowance as the other lanes.
+
+### Recorded ids (AGIT)
+
+Like the newsletter table above, nothing here is read by code; the runtime has its own
+copies as Pages bindings.
+
+| Field | Value |
+|---|---|
+| AGIT members list id | `6` |
+| AGIT confirmation (DOI) template id | `27` |
+| AGIT welcome template id | `28` |
+
+The four contact attributes, created as `text` before the first signup (Brevo silently
+drops an attribute the account has never defined, see "The DOI call" above):
+`AGIT_CONSENT_VERSION`, `AGIT_CONSENT_TIMESTAMP` (written by the form),
+`AGIT_WELCOME_SENT` (written by the webhook just before the welcome send) and
+`AGIT_LEFT` (the date a member left; the note that they left).
+
+Both templates are built from committed sources, `docs/email-templates/agit-confirm.html`
+and `docs/email-templates/agit-welcome.html`, uploaded with every html comment removed
+by `scripts/newsletter_render.py` `strip_comments`. The read-back `htmlContent` equalled
+`strip_comments(<source>)` byte for byte for both at upload (2026-10-15), so Brevo does
+not normalise the HTML. Edit the source, re-upload it with `PUT /v3/smtp/templates/<id>`,
+and read it back. Brevo deletes a template only after `PUT isActive:false` (a DELETE on
+an active one answers 405 "Only inactive templates can be deleted").
+
+### Bindings (Cloudflare Pages, Production)
+
+| Variable | Kind | Read by | Value |
+|---|---|---|---|
+| `AGIT_LIST_ID` | plaintext | `subscribe.js`, `brevo-webhook.js` | AGIT members list id; must differ from `BREVO_LIST_ID` |
+| `AGIT_DOI_TEMPLATE_ID` | plaintext | `subscribe.js` | AGIT confirmation template id; must differ from `BREVO_DOI_TEMPLATE_ID` |
+| `AGIT_WELCOME_TEMPLATE_ID` | plaintext | `brevo-webhook.js` | AGIT welcome template id |
+| `AGIT_WHATSAPP_INVITE_URL` | secret | `brevo-webhook.js` | the WhatsApp community invite link |
+
+`subscribe.js` checks the first two only for an AGIT signup, so a missing one fails
+AGIT signups loudly and leaves the newsletter working. An `AGIT_LIST_ID` equal to the
+newsletter list is refused, because it would put every member on the newsletter
+without consent.
+
+### Why the invite link is a secret passed as a template param
+
+The public link is how the spam bots got in, so it lives in exactly one place: the
+`AGIT_WHATSAPP_INVITE_URL` Pages secret. The webhook passes it as the welcome
+template's one param, `params.INVITE_URL`. It is never in the repo
+(`tests/test_no_whatsapp_invite_links.py` fails the build on one), a Brevo template, a
+contact attribute, a log line or the operator alert. Brevo's own send logs see it, as
+they see every email body, and so does its click tracking when links are tracked (see
+the href result below).
+
+### What the probes measured
+
+Stage 1 (2026-10-14): a double opt-in for a contact ALREADY on the newsletter list
+answers 201 with `includeListIds [4]` and 204 with `[4, <new list>]`, and the
+confirmation email is delivered in both cases; a second `optin`-tagged template works
+when named by `templateId`, and template 7 keeps working beside it; an unconfirmed
+DOI address is not a contact (GET answers 404) until the click.
+
+Phase 0 (2026-10-15), with plus-aliases of the operator's inbox:
+
+existing-contact DOI attributes: applied on the confirm click, existing subscribers
+included. Aliases 1 and 2, already on list 4, got the AGIT DOI with `includeListIds`
+[AGIT] and [4, AGIT] plus the two AGIT attributes. Before the click both read back
+`listIds` [4] with no AGIT attributes; after it, [4, 6] with both. So the DOI payload
+alone carries the record and `subscribe.js` makes no extra call.
+
+deliveries per two-list confirm: one. Alias 3 (never a contact) confirmed a [4, AGIT]
+DOI and produced exactly one webhook alert, its `List:` line reading `4, 6`; aliases 1
+and 2 produced one each too. So the webhook has no settle step.
+
+Welcome button href: a Brevo click-tracking redirect (`*.r.bh.d.sendibt3.com`, a 302 to
+the real URL), not the direct link. Clicking it opened the stand-in page, and Brevo's
+click log records the destination, so Brevo's click tracking does see the invite link.
+
+Attribute write and clear: a `PUT` of `AGIT_WELCOME_SENT` reads back at once and again
+2 s later. A `PUT` of `""` removes the attribute (the next GET no longer lists it).
+Removing a contact from the AGIT list and adding it back by API fires `listAddition`
+(one more alert).
+
+### Resend a welcome
+
+When an alert says `AGIT welcome email: FAILED (...)`:
+
+1. Clear the member's `AGIT_WELCOME_SENT`: `PUT /v3/contacts/<email>` with
+   `{"attributes":{"AGIT_WELCOME_SENT":""}}` (an empty string removes it).
+2. Remove the contact from the AGIT list, then add it back (`POST
+   /v3/contacts/lists/<AGIT list id>/contacts/remove`, then `.../contacts/add`). The
+   re-add fires `listAddition`, and the webhook sends the welcome.
+3. Check the next alert says `AGIT welcome email: sent`.
+
+A member who clicked Brevo's unsubscribe link on an AGIT email is on the transactional
+blocklist and cannot be resent to. Ask them to email `hello@hoiboy.uk`; never unblock
+them from here (the webhook's self-heal unblocks only the operator's own alert address).
+
+Leaving AGIT is documented once, in `docs/runbooks/agit-erasure.md` "Member leaves AGIT".
+
+### Invite-link reset
+
+Every invite-link reset = reset the link in WhatsApp, update the
+`AGIT_WHATSAPP_INVITE_URL` secret in Cloudflare Pages, then redeploy, because a secret
+change only takes effect on the next deployment. Until the redeploy, new members get
+the old (dead) link. Send one test signup afterwards and check the button opens the
+community.
 
 ## Campaign lane (blog-priv#81)
 

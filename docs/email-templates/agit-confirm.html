@@ -1,0 +1,56 @@
+<!-- AGIT double opt-in confirmation email (hoiboy-uk#65 AC 0.3).
+
+     Uploaded to Brevo as a template tagged optin, subject
+     "Confirm your email to join Asians & Gingers in Tech", sender and replyTo
+     hello@hoiboy.uk. What is uploaded is this file with every html comment
+     removed by scripts/newsletter_render.py strip_comments, so these notes and
+     the iamhoi markers never reach an inbox. Brevo fills the confirm link at
+     send time; it must appear exactly once.
+
+     Layout and inline styles follow layouts/_partials/newsletter/email.html
+     (tables, fixed 600px column, literal hex, every domain mention an explicit
+     anchor so Gmail does not auto-link it). Copy: Stage-3-approved C4.
+-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#fafafa" style="background-color:#fafafa;margin:0;padding:0;width:100%;">
+  <tr>
+    <td align="center" style="padding:24px 12px;">
+
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" align="center" style="max-width:600px;width:100%;background-color:#ffffff;border:1px solid #e0e0e0;">
+
+        <tr>
+          <td style="padding:24px 28px 8px 28px;border-top:3px solid #c0533a;">
+            <a href="https://hoiboy.uk/" style="font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:20px;font-weight:700;color:#c0533a;text-decoration:none;">hoiboy.uk</a>
+          </td>
+        </tr>
+
+        <!-- iamhoi -->
+        <tr>
+          <td style="padding:16px 28px 0 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:16px;line-height:24px;color:#1a1a1a;">
+            Hi, thanks for signing up to Asians &amp; Gingers in Tech. Click below to confirm your email is correct, and then we send you the welcome email with your WhatsApp invite.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:24px 28px 4px 28px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td bgcolor="#c0533a" style="background-color:#c0533a;padding:12px 22px;">
+                  <a href="{{ doubleoptin }}" style="font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;display:inline-block;">Confirm my email</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:20px 28px 24px 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:13px;line-height:20px;color:#555555;">
+            If you didn't sign up, ignore this email and you won't be added.
+          </td>
+        </tr>
+        <!-- iamhoiend -->
+
+      </table>
+
+    </td>
+  </tr>
+</table>

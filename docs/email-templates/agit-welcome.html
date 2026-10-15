@@ -1,0 +1,86 @@
+<!-- AGIT welcome email (hoiboy-uk#65 AC 0.4).
+
+     A transactional Brevo template, subject "Welcome to Asians & Gingers in
+     Tech", sender and replyTo hello@hoiboy.uk. functions/api/brevo-webhook.js
+     sends it by templateId once a member confirms, with ONE param: the
+     WhatsApp invite link, read from the AGIT_WHATSAPP_INVITE_URL Pages secret.
+     The link is never written into this file, the template stored at Brevo,
+     a contact attribute or a log line; it only exists in the secret and in
+     the delivered email. No visitor-supplied value is interpolated, so there
+     is nothing to escape.
+
+     Uploaded with every html comment removed (scripts/newsletter_render.py
+     strip_comments), as agit-confirm.html is. Layout follows
+     layouts/_partials/newsletter/email.html. Copy: Stage-3-approved C5.
+-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#fafafa" style="background-color:#fafafa;margin:0;padding:0;width:100%;">
+  <tr>
+    <td align="center" style="padding:24px 12px;">
+
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" align="center" style="max-width:600px;width:100%;background-color:#ffffff;border:1px solid #e0e0e0;">
+
+        <tr>
+          <td style="padding:24px 28px 8px 28px;border-top:3px solid #c0533a;">
+            <a href="https://hoiboy.uk/" style="font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:20px;font-weight:700;color:#c0533a;text-decoration:none;">hoiboy.uk</a>
+          </td>
+        </tr>
+
+        <!-- iamhoi -->
+        <tr>
+          <td style="padding:16px 28px 0 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:16px;line-height:24px;color:#1a1a1a;">
+            Hi, welcome to Asians &amp; Gingers in Tech! Your email is confirmed and you're now a member.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:12px 28px 0 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:16px;line-height:24px;color:#1a1a1a;">
+            Here's your invite to our WhatsApp community groups:
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:20px 28px 4px 28px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td bgcolor="#c0533a" style="background-color:#c0533a;padding:12px 22px;">
+                  <a href="{{ params.INVITE_URL }}" style="font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;display:inline-block;">Join WhatsApp Asians &amp; Gingers Community Groups</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:20px 28px 0 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:16px;line-height:24px;color:#1a1a1a;">
+            Please keep this link to yourself. We stopped posting it publicly because bots kept spamming our groups, so if a friend wants to join, send them to our <a href="https://hoiboy.uk/community/asians-gingers-in-tech/join/" style="color:#c0533a;">AGIT Signup page</a>.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:12px 28px 24px 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:16px;line-height:24px;color:#1a1a1a;">
+            See you at the next event.<br><br>Hoi
+          </td>
+        </tr>
+        <!-- iamhoiend -->
+
+        <tr>
+          <td style="padding:0 28px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr><td height="1" bgcolor="#e0e0e0" style="background-color:#e0e0e0;line-height:1px;font-size:1px;">&nbsp;</td></tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- iamhoi -->
+        <tr>
+          <td style="padding:18px 28px 24px 28px;font-family:'Source Serif 4',Palatino,'Palatino Linotype','Book Antiqua',Charter,'Bitstream Charter','Iowan Old Style','Sitka Text','Noto Serif',Georgia,Cambria,'Times New Roman',Times,serif;font-size:12px;line-height:19px;color:#555555;">
+            You got this email because you signed up at <a href="https://hoiboy.uk/" style="color:#c0533a;">hoiboy.uk</a>. To leave AGIT, reply to this email.
+          </td>
+        </tr>
+        <!-- iamhoiend -->
+
+      </table>
+
+    </td>
+  </tr>
+</table>
