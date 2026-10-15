@@ -210,7 +210,10 @@ hoiboy-uk/
 │   └── {hire-hoi,legal,skills,private}/_index.md  # non-category sections (hire-hoi = AI/ICT consultancy + permanent roles; private = noindex)
 ├── functions/api/           # Cloudflare Pages Functions (server-side, NOT Hugo).
 │   ├── contribute.js        #   POST /api/contribute  - AGIT story submission
-│   └── subscribe.js         #   POST /api/subscribe   - newsletter double opt-in
+│   ├── subscribe.js         #   POST /api/subscribe   - double opt-in: newsletter (footer
+│   │                        #     form) or AGIT membership (audience=agit, the join page)
+│   └── brevo-webhook.js     #   POST /api/brevo-webhook - operator alert on each confirm
+│                            #     + the one AGIT welcome email (WhatsApp invite)
 │                            #   Secrets/ids arrive as Pages env bindings, never from
 │                            #   params.toml: a Function cannot read Hugo config.
 ├── static/                  # Copied verbatim to the site root. static/_headers carries
