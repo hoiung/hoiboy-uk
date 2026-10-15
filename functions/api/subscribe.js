@@ -74,8 +74,10 @@ const FIELD_CAPS = { name: 100, email: 254 };
 // would relabel a submission as consenting to wording it never saw. Newest first;
 // keep older entries so an in-flight submission from a cached page still validates.
 // MUST match the hidden input in layouts/_partials/subscribe-form.html, the mirror
-// in tests/subscribe.test.js, AND the version quoted in prose in
-// content/legal/privacy/index.md -- FOUR surfaces, all four gated.
+// in tests/subscribe.test.js, the version quoted in prose in
+// content/legal/privacy/index.md, AND the newsletter box on the AGIT join page
+// (content/community/agit-join/index.md) -- FIVE surfaces, all five gated (the join
+// page by tests/test_agit_signup_consent_version.py).
 // Gate: tests/test_newsletter_consent_version.py
 const KNOWN_CONSENT_VERSIONS = ["2026-08-03"];
 
