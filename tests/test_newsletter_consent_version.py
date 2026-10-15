@@ -5,9 +5,10 @@ surface in this repo. Recording THAT someone consented is not enough under
 Article 7(1); the record has to show WHICH wording they agreed to, or a later
 export cannot tell a pre-amendment subscriber from a post-amendment one.
 
-FOUR surfaces have to agree and nothing at runtime couples them. Bumping a
-version means editing all four; the first three are the machine-readable
-triple, the fourth is the prose claim made to the reader:
+FIVE surfaces have to agree and nothing at runtime couples them. Bumping a
+version means editing all five; the first three are the machine-readable
+triple, the fourth is the prose claim made to the reader, the fifth a copy of
+the footer box:
 
   1. the hidden input in layouts/_partials/subscribe-form.html
      (the version actually rendered to the reader),
@@ -25,6 +26,10 @@ triple, the fourth is the prose claim made to the reader:
      verbatim reddened the build on
      test_the_privacy_notice_quotes_the_version_the_form_renders. Enrolment
      was complete; only its documentation was wrong.
+  5. the newsletter box's hidden input on the AGIT join page,
+     content/community/agit-join/index.md (#65), gated by
+     tests/test_agit_signup_consent_version.py
+     test_join_page_newsletter_box_is_the_footer_box rather than here.
 
 A wording change that bumps one and not the others fails silently in the worst
 way: the form would post a version the endpoint rejects, and every submission
