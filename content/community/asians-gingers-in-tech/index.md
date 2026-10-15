@@ -21,7 +21,7 @@ Networking? Friendship? World domination? We'll see.
 Come join the weirdest niche community. 🧡🤝
 
 <!-- iamhoi -->
-**Sign up first:** [AGIT Signup](/community/asians-gingers-in-tech/join/). To attend our events, you need to sign up and join our WhatsApp group, and signing up is how you get the WhatsApp invite.
+**Sign up first:** [AGIT Events Signup](/community/asians-gingers-in-tech/join/). To attend our events, you need to sign up and join our WhatsApp group, and signing up is how you get the WhatsApp invite.
 <!-- iamhoiend -->
 
 ## Our community rules
@@ -38,7 +38,7 @@ Come join the weirdest niche community. 🧡🤝
 ## Join and follow us
 
 <!-- iamhoi -->
-**Sign up first:** [AGIT Signup](/community/asians-gingers-in-tech/join/). To attend our events, you need to sign up and join our WhatsApp group, and signing up is how you get the WhatsApp invite.
+**Sign up first:** [AGIT Events Signup](/community/asians-gingers-in-tech/join/). To attend our events, you need to sign up and join our WhatsApp group, and signing up is how you get the WhatsApp invite.
 <!-- iamhoiend -->
 
 - **Real-life meetups (London):** [meetup.com/london-asians-gingers-in-tech](https://www.meetup.com/london-asians-gingers-in-tech)
