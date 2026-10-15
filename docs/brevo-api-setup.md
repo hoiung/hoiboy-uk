@@ -546,9 +546,11 @@ what triggers it.
 
 ### The 300/day cap is shared, and this lane spends it two at a time
 
-The free tier's 300 outbound emails/day covers BOTH lanes. Each signup costs two
-sends: one double opt-in email, one operator alert. So the cap is exhausted at
-roughly **150 signups in a day**, and that is the point where the Cal.com
+The free tier's 300 outbound emails/day covers every lane. Each newsletter signup
+costs two sends: one double opt-in email, one operator alert. An AGIT signup costs
+three: the confirmation, the welcome and one alert (one webhook delivery per confirm,
+measured in "What the probes measured" below). So the cap is exhausted at roughly
+**150 newsletter signups, or 100 AGIT signups, in a day**, and that is the point where the Cal.com
 transactional path starts competing for the same allowance rather than the newsletter
 simply throttling itself.
 
@@ -723,14 +725,21 @@ Removing a contact from the AGIT list and adding it back by API fires `listAddit
 
 ### Resend a welcome
 
-When an alert says `AGIT welcome email: FAILED (...)`:
+When an alert says `AGIT welcome email: FAILED (...)` or `NOT sent (...)`:
 
-1. Clear the member's `AGIT_WELCOME_SENT`: `PUT /v3/contacts/<email>` with
+1. For `NOT sent (missing <name>)`, fix that binding and redeploy first (see "Bindings"
+   above). With `AGIT_LIST_ID` missing, every member confirmed meanwhile is on the AGIT
+   list without `AGIT_WELCOME_SENT`; resend to each.
+2. Check they did not get it already: `GET /v3/contacts/<email>`. If `AGIT_WELCOME_SENT`
+   is set, look for a delivered welcome (template id above) in
+   `GET /v3/smtp/statistics/events?email=<email>`. If one was delivered, stop: a FAILED
+   contact read on a later delivery says nothing about the first welcome.
+3. Clear the member's `AGIT_WELCOME_SENT`: `PUT /v3/contacts/<email>` with
    `{"attributes":{"AGIT_WELCOME_SENT":""}}` (an empty string removes it).
-2. Remove the contact from the AGIT list, then add it back (`POST
+4. Remove the contact from the AGIT list, then add it back (`POST
    /v3/contacts/lists/<AGIT list id>/contacts/remove`, then `.../contacts/add`). The
    re-add fires `listAddition`, and the webhook sends the welcome.
-3. Check the next alert says `AGIT welcome email: sent`.
+5. Check the next alert says `AGIT welcome email: sent`.
 
 A member who clicked Brevo's unsubscribe link on an AGIT email is on the transactional
 blocklist and cannot be resent to. Ask them to email `hello@hoiboy.uk`; never unblock
