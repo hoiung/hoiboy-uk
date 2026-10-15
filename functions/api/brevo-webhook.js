@@ -24,7 +24,8 @@
 // list_id lists EVERY list the contact is now on, so that marker is what stops a
 // member's later newsletter signup from sending a second invite. The invite link
 // comes from the AGIT_WHATSAPP_INVITE_URL secret as a template param; it is never
-// logged, never put in the alert, never stored at Brevo outside the sent email.
+// logged, never put in the alert, and never stored in a Brevo template or contact
+// attribute. Brevo's own send log and click tracking see it, as they see every email.
 //
 // AUTHENTICATION. Brevo does not sign its webhook calls: there is no HMAC header to
 // verify. The URL itself is therefore the credential, so it carries a secret token
@@ -37,6 +38,11 @@
 const BREVO_EMAIL_ENDPOINT = "https://api.brevo.com/v3/smtp/email";
 const BREVO_UNBLOCK_ENDPOINT = "https://api.brevo.com/v3/smtp/blockedContacts";
 const BREVO_CONTACTS_ENDPOINT = "https://api.brevo.com/v3/contacts";
+
+// Each AGIT call gives up after this long. Cloudflare cancels waitUntil work 30 s
+// after the response, so a stalled Brevo call would otherwise end the work silently:
+// no welcome and no alert. Three calls at 5 s leave the alert send its time.
+const BREVO_TIMEOUT_MS = 5000;
 
 // Where the alert goes. The operator named this address; it is not configurable by
 // the request, so a forged call cannot redirect the alert somewhere else.
@@ -54,8 +60,8 @@ const ALERT_TO = "hoiboyuk@gmail.com";
 // The camelCase form is kept in case Brevo ever aligns the two.
 const WATCHED_EVENTS = ["list_addition", "listAddition"];
 
-// What a FAILED welcome line tells the operator to do. The procedure lives in the
-// docs, so this names it rather than restating it.
+// What a FAILED or NOT sent welcome line tells the operator to do. The procedure
+// lives in the docs, so this names it rather than restating it.
 const RESEND_HINT = "To resend it, follow \"Resend a welcome\" in docs/brevo-api-setup.md.";
 
 function textResponse(status, message) {
@@ -119,14 +125,16 @@ async function sendAgitWelcome(email, invite, env, log) {
   const contactUrl = `${BREVO_CONTACTS_ENDPOINT}/${encodeURIComponent(email.toLowerCase())}`;
   const shape = emailShape(email);
 
-  const read = await fetch(contactUrl, { method: "GET", headers: brevoHeaders(env) });
+  const read = await fetch(contactUrl, {
+    method: "GET", headers: brevoHeaders(env), signal: AbortSignal.timeout(BREVO_TIMEOUT_MS),
+  });
   if (!read.ok) {
     log("agit-welcome", { ok: false, step: "contact-read", status: read.status, shape });
     return `FAILED (contact read ${read.status})`;
   }
   const contact = await read.json();
   const listIds = Array.isArray(contact.listIds) ? contact.listIds.map(Number) : [];
-  const attributes = (contact && contact.attributes) || {};
+  const attributes = contact.attributes || {};
   if (!listIds.includes(agitListId) || !attributes.AGIT_CONSENT_VERSION) {
     log("agit-welcome", { ok: true, outcome: "no-signup-record", shape });
     return "skipped: no AGIT signup record";
@@ -135,18 +143,14 @@ async function sendAgitWelcome(email, invite, env, log) {
     log("agit-welcome", { ok: true, outcome: "already-sent", shape });
     return "already sent (skipped)";
   }
-  const to = contact.email;
-  if (typeof to !== "string" || !to.includes("@")) {
-    log("agit-welcome", { ok: false, step: "contact-email", shape });
-    return "FAILED (contact read returned no email)";
-  }
-
   // The marker goes on BEFORE the send, so a second delivery for this confirm
-  // finds it and skips. Clearing AGIT_LEFT here is what lets a former member
-  // re-join and get a fresh invite.
+  // finds it and skips. AGIT_LEFT is cleared because a former member who re-joins
+  // is a member again (leaving cleared their AGIT_WELCOME_SENT, which is what lets
+  // them get a fresh invite).
   const mark = await fetch(contactUrl, {
     method: "PUT",
     headers: brevoHeaders(env),
+    signal: AbortSignal.timeout(BREVO_TIMEOUT_MS),
     body: JSON.stringify({ attributes: { AGIT_WELCOME_SENT: new Date().toISOString(), AGIT_LEFT: "" } }),
   });
   if (!mark.ok) {
@@ -157,9 +161,10 @@ async function sendAgitWelcome(email, invite, env, log) {
   const send = await fetch(BREVO_EMAIL_ENDPOINT, {
     method: "POST",
     headers: brevoHeaders(env),
+    signal: AbortSignal.timeout(BREVO_TIMEOUT_MS),
     body: JSON.stringify({
       templateId: Number(env.AGIT_WELCOME_TEMPLATE_ID),
-      to: [{ email: to }],
+      to: [{ email: contact.email }],
       params: { INVITE_URL: invite },
     }),
   });
@@ -194,7 +199,8 @@ async function agitPart(email, listIds, env, log) {
   try {
     return { delivery: true, line: await sendAgitWelcome(email, invite, env, log) };
   } catch (err) {
-    // A network error or a non-JSON body. The name only: String(err) can carry a URL.
+    // A network error, a timeout or a non-JSON body. The name only: String(err) can
+    // carry a URL.
     const reason = (err && err.name) || "error";
     log("agit-welcome", { ok: false, step: "exception", reason, shape: emailShape(email) });
     return { delivery: true, line: `FAILED (${reason})` };
@@ -214,20 +220,9 @@ function buildAlert(email, listIds, agit, env) {
   const agitLine = agit.line === null
     ? ""
     : `<p>AGIT welcome email: ${escapeHtml(agit.line)}</p>` +
-      (agit.line.startsWith("FAILED") ? `<p>${escapeHtml(RESEND_HINT)}</p>` : "");
+      (/^(FAILED|NOT sent)/.test(agit.line) ? `<p>${escapeHtml(RESEND_HINT)}</p>` : "");
 
-  if (!agit.delivery) {
-    return {
-      subject: `New newsletter subscriber: ${email}`,
-      htmlContent:
-        `<p>Someone confirmed their subscription to hoiboy.uk.</p>` +
-        `<p><strong>${safeEmail}</strong></p>` + listLine + newsletterParagraph + agitLine,
-    };
-  }
-
-  const joined = agit.line === "sent" || agit.line.startsWith("FAILED");
-  const onNewsletter = isPositiveId(env.BREVO_LIST_ID)
-    && listIds.map(Number).includes(Number(env.BREVO_LIST_ID));
+  const joined = agit.delivery && (agit.line === "sent" || agit.line.startsWith("FAILED"));
   if (joined) {
     return {
       subject: `New AGIT member: ${email}`,
@@ -238,12 +233,14 @@ function buildAlert(email, listIds, agit, env) {
         `in the AGIT signup email.</p>`,
     };
   }
-  if (onNewsletter) {
+  const onNewsletter = isPositiveId(env.BREVO_LIST_ID)
+    && listIds.map(Number).includes(Number(env.BREVO_LIST_ID));
+  if (!agit.delivery || onNewsletter) {
     return {
       subject: `New newsletter subscriber: ${email}`,
       htmlContent:
         `<p>Someone confirmed their subscription to hoiboy.uk.</p>` +
-        `<p><strong>${safeEmail}</strong></p>` + listLine + agitLine + newsletterParagraph,
+        `<p><strong>${safeEmail}</strong></p>` + listLine + newsletterParagraph + agitLine,
     };
   }
   return {

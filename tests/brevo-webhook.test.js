@@ -39,11 +39,13 @@ const AGIT_ENV = {
 const EMAIL_URL = 'https://api.brevo.com/v3/smtp/email';
 const CONTACTS_URL = 'https://api.brevo.com/v3/contacts';
 
-function harness({ fetchImpl } = {}) {
+// `abortSignal` stands in for the global AbortSignal, so a test can make every
+// per-call timeout fire at once instead of sleeping.
+function harness({ fetchImpl, abortSignal = AbortSignal } = {}) {
   const calls = [];
   const logs = [];
   const context = vm.createContext({
-    Response, Request, Headers, URL, Buffer,
+    Response, Request, Headers, URL, Buffer, AbortSignal: abortSignal,
     console: { log: (l) => logs.push(l), error: (l) => logs.push(l) },
     fetch: async (url, init) => {
       calls.push({ url: String(url), init });
@@ -52,9 +54,10 @@ function harness({ fetchImpl } = {}) {
     },
   });
   const EXPOSE = '\n;({ onRequestPost, tokensMatch, emailShape, escapeHtml, ALERT_TO, WATCHED_EVENTS,' +
-    ' inviteUrl, RESEND_HINT })';
+    ' inviteUrl, RESEND_HINT, BREVO_CONTACTS_ENDPOINT, BREVO_TIMEOUT_MS })';
   const mod = vm.runInContext(RAW.replace(EXPORT_RE, '') + EXPOSE, context, { filename: ENDPOINT_PATH });
   assert.equal(typeof mod.onRequestPost, 'function', 'onRequestPost did not load');
+  assert.equal(mod.BREVO_CONTACTS_ENDPOINT, CONTACTS_URL, 'the fake Brevo matches a different contacts URL');
 
   // Invoke the handler, then await every waitUntil promise it scheduled.
   async function run(request, env) {
@@ -115,25 +118,25 @@ function fakeBrevo({ contact = null, fail = {} } = {}) {
     const method = (init && init.method) || 'GET';
     if (u.startsWith(`${CONTACTS_URL}/`)) {
       if (method === 'GET') {
-        if (fail.read) return fail.read();
+        if (fail.read) return fail.read(u, init);
         return state.contact ? json(200, state.contact) : json(404, { code: 'document_not_found' });
       }
       if (method === 'PUT') {
-        if (fail.mark) return fail.mark();
+        if (fail.mark) return fail.mark(u, init);
         Object.assign(state.contact.attributes, JSON.parse(init.body).attributes);
         return new Response(null, { status: 204 });
       }
     }
     if (u === EMAIL_URL && method === 'POST') {
       const isWelcome = Boolean(JSON.parse(init.body).templateId);
-      if (isWelcome && fail.welcome) return fail.welcome();
+      if (isWelcome && fail.welcome) return fail.welcome(u, init);
       if (!isWelcome && fail.alert) return fail.alert();
       return json(201, { messageId: '<fixture@smtp>' });
     }
     if (method === 'DELETE') return new Response(null, { status: 204 });
     throw new Error(`unexpected ${method} ${u}`);
   }
-  return { impl, state };
+  return { impl };
 }
 
 const MEMBER = (overrides = {}) => ({
@@ -420,6 +423,39 @@ test('a throwing contact read still sends the alert with FAILED', async () => {
   }
 });
 
+test('a stalled Brevo call fails loud instead of hanging', { timeout: 5000 }, async () => {
+  // Cloudflare cancels waitUntil work 30 s after the response, so a call that never
+  // answers has to time out and become a FAILED line, never a silent end with no
+  // welcome and no alert. The timeout is stubbed to fire at once, so nothing sleeps.
+  const stall = (url, init) => new Promise((_, reject) => {
+    if (!init.signal) return; // no timeout on this call: it hangs, and the test times out
+    if (init.signal.aborted) reject(init.signal.reason);
+    else init.signal.addEventListener('abort', () => reject(init.signal.reason));
+  });
+  const expected = {
+    read: ['GET contacts/member%40example.com', 'POST alert'],
+    mark: ['GET contacts/member%40example.com', 'PUT contacts/member%40example.com', 'POST alert'],
+    welcome: ['GET contacts/member%40example.com', 'PUT contacts/member%40example.com', 'POST welcome', 'POST alert'],
+  };
+  for (const [step, seq] of Object.entries(expected)) {
+    const timeouts = [];
+    const abortSignal = {
+      timeout: (ms) => {
+        timeouts.push(ms);
+        return AbortSignal.abort(new DOMException('The operation timed out.', 'TimeoutError'));
+      },
+    };
+    const h = harness({ fetchImpl: fakeBrevo({ contact: MEMBER(), fail: { [step]: stall } }).impl, abortSignal });
+    await h.run(post({ body: agitDelivery() }), AGIT_ENV);
+    assert.deepEqual(sequence(h.calls), seq, step);
+    const alert = lastAlert(h.calls);
+    assert.match(alert.htmlContent, /AGIT welcome email: FAILED \(TimeoutError\)/, step);
+    assert.ok(alert.htmlContent.includes(h.mod.escapeHtml(h.mod.RESEND_HINT)), `${step}: no resend hint`);
+    assert.equal(timeouts.length, seq.length - 1, `${step}: every AGIT call carries a timeout`);
+    assert.ok(timeouts.every((ms) => ms === h.mod.BREVO_TIMEOUT_MS), step);
+  }
+});
+
 // ----------------------------------------------------------------------
 // #65 AC 2.3: the send, and where the invite link may never appear.
 // ----------------------------------------------------------------------
@@ -494,7 +530,9 @@ test('missing AGIT bindings never block the newsletter alert', async () => {
     const h = harness({ fetchImpl: fakeBrevo({ contact: MEMBER() }).impl });
     await h.run(post({ body: agitDelivery([43, 4]) }), env);
     assert.deepEqual(sequence(h.calls), ['POST alert']);
-    assert.match(lastAlert(h.calls).htmlContent, new RegExp(`AGIT welcome email: NOT sent \\(missing ${name}\\)`));
+    const alert = lastAlert(h.calls);
+    assert.match(alert.htmlContent, new RegExp(`AGIT welcome email: NOT sent \\(missing ${name}\\)`));
+    assert.ok(alert.htmlContent.includes(h.mod.escapeHtml(h.mod.RESEND_HINT)), `${name}: no resend hint`);
     assert.ok(h.logs.some((l) => l.includes('config-missing') && l.includes(name)));
   }
 });
