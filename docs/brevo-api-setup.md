@@ -664,9 +664,11 @@ drops an attribute the account has never defined, see "The DOI call" above):
 
 Both templates are built from committed sources, `docs/email-templates/agit-confirm.html`
 and `docs/email-templates/agit-welcome.html`, uploaded with every html comment removed
-by `scripts/newsletter_render.py` `strip_comments`. The read-back `htmlContent` equalled
-`strip_comments(<source>)` byte for byte for both at upload (2026-10-15), so Brevo does
-not normalise the HTML. Edit the source, re-upload it with `PUT /v3/smtp/templates/<id>`,
+by `scripts/newsletter_render.py` `strip_comments`. Brevo trims leading and trailing
+whitespace and otherwise stores the HTML as sent: on the 2026-10-15 re-upload the read-back
+`htmlContent` equalled `strip_comments(<source>).strip()` for both, and was two bytes
+shorter than the untrimmed source (one newline at each end). Compare with `.strip()`
+on both sides. Edit the source, re-upload it with `PUT /v3/smtp/templates/<id>`,
 and read it back. Brevo deletes a template only after `PUT isActive:false` (a DELETE on
 an active one answers 405 "Only inactive templates can be deleted").
 
