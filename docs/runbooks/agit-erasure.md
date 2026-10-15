@@ -97,3 +97,30 @@ guidelines page states the same limit, so the two must not disagree.
 Keep the request and what was done in the member's record under `~/.agit-records/<slug>/`.
 The Article 17(3)(e) legal-evidence basis in the Privacy Notice covers retaining the
 erasure correspondence itself; it does not cover retaining the published feature.
+
+## Member leaves AGIT
+
+A member who leaves the AGIT membership (the signup on the AGIT Signup page, #65), as
+opposed to a featured member asking for their story to come down.
+
+1. The request arrives as a reply to the welcome email or at `hello@hoiboy.uk`. Act on it
+   when it comes from the member's own address; otherwise ask them to write from it.
+   Do it within one month.
+2. In Brevo, remove the contact from the `AGIT members` list.
+3. Clear `AGIT_CONSENT_VERSION`, `AGIT_CONSENT_TIMESTAMP` and `AGIT_WELCOME_SENT`, and
+   `FIRSTNAME` too unless they stay on the newsletter.
+4. Set `AGIT_LEFT` to the date. That date plus the email address is the note that they left.
+5. Remove them from the AGIT WhatsApp groups.
+6. The newsletter subscription stays only if they still want it; ask if it is unclear.
+
+An Article 17 erasure request (rather than leaving) deletes the Brevo contact outright,
+as the newsletter section of the Privacy Notice already describes.
+
+## Photo takedown
+
+When someone asks for a photo or video of them to come down from AGIT's channels, remove
+it from every AGIT channel it was posted to within one month of the request, and reply to
+say it is done. Copies attendees took themselves are outside our control; say so if asked.
+
+At events: when someone says they'd rather not be in photos, the organiser tells whoever is
+taking AGIT's photos, and that person is kept out of AGIT's posts.
