@@ -100,7 +100,7 @@ erasure correspondence itself; it does not cover retaining the published feature
 
 ## Member leaves AGIT
 
-A member who leaves the AGIT membership (the signup on the AGIT Signup page, #65), as
+A member who leaves the AGIT membership (the signup on the AGIT Events Signup page, #65), as
 opposed to a featured member asking for their story to come down.
 
 1. The request arrives as a reply to the welcome email or at `hello@hoiboy.uk`. Act on it
