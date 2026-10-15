@@ -639,7 +639,7 @@ anyone receiving anything they did not ask for.
 
 ## AGIT membership lane
 
-The AGIT Signup page (`/community/asians-gingers-in-tech/join/`, issue #65) posts to
+The AGIT Events Signup page (`/community/asians-gingers-in-tech/join/`, issue #65) posts to
 the same `subscribe.js` with `audience=agit`. Brevo sends the AGIT confirmation email;
 on the confirm click it adds the contact to the AGIT list and fires the same
 `listAddition` webhook, and `brevo-webhook.js` sends the welcome email with the
