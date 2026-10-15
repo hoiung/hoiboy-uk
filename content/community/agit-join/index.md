@@ -1,5 +1,5 @@
 ---
-title: "AGIT Signup"
+title: "AGIT Events Signup"
 description: "Sign up once to attend AGIT events and get the invite to our WhatsApp community groups. Free."
 hideDate: true
 # The AGIT page is a leaf bundle and cannot hold a child page, so this sibling
