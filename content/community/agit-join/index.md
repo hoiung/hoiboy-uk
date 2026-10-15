@@ -11,7 +11,7 @@ breadcrumbParent: "/community/asians-gingers-in-tech"
 <!-- iamhoi -->
 You need to sign up to attend our events. You only need to sign up once and become a member of our AGIT community and join our WhatsApp group. This is mandatory.
 
-The membership is free because we're a self-contributing community where members give to build what we have. It's not the usual networking event where you're trying to find a job or sell.
+The membership is free because we're a self-contributing community where members give to build what we have. It's not the usual networking event where you're trying to find a job or sell or find investors.
 <!-- iamhoi-skip -->
 <!-- The sentence below is Hoi's own wording, kept as he wrote it: "facilitating" is his word (#65 R10). -->
 Networking is about giving and adding value within our community, and it's free to join and help make it better because this is your community that we're facilitating.
