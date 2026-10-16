@@ -729,7 +729,7 @@ one that has it (a member re-joining: `AGIT_LEFT` is gone on the next GET). Meas
 Removing a contact from the AGIT list and adding it back by API fires `listAddition`
 (one more alert). That event carries `email` as an array of address strings, not the
 string a confirm click sends (Brevo's sample shows a string): measured 2026-10-16, when
-the re-add made the webhook fail with `FAILED (TypeError)` until bd97a68 took the
+the re-add made the webhook fail with `FAILED (TypeError)` until 5f6065f took the
 addresses one by one. After the fix the same re-add reads "already sent (skipped)" and
 sends no second welcome.
 
