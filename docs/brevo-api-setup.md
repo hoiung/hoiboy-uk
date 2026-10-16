@@ -748,7 +748,10 @@ When an alert says `AGIT welcome email: FAILED (...)` or `NOT sent (...)`:
    `{"attributes":{"AGIT_WELCOME_SENT":""}}` (an empty string removes it).
 4. Remove the contact from the AGIT list, then add it back (`POST
    /v3/contacts/lists/<AGIT list id>/contacts/remove`, then `.../contacts/add`). The
-   re-add fires `listAddition`, and the webhook sends the welcome.
+   re-add fires `listAddition`, and the webhook sends the welcome. Add one contact per
+   call, even when resending to several: the webhook does all of one event's work inside
+   Cloudflare's 30 s `waitUntil` limit, and each address can take up to three 5 s Brevo
+   calls, so a many-address add in one call can be cut off before every welcome is sent.
 5. Check the next alert says `AGIT welcome email: sent`.
 
 A member who clicked Brevo's unsubscribe link on an AGIT email is on the transactional
