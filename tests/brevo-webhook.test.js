@@ -419,6 +419,44 @@ test('string list ids are matched as numbers', async () => {
   assert.equal(lastAlert(h2.calls).subject, 'New newsletter subscriber: member@example.com');
 });
 
+// Measured live 2026-10-16: re-adding a welcomed member to the AGIT list by API
+// delivered a non-string email, and the welcome step threw TypeError instead of
+// reading "already sent (skipped)". An array is taken address by address.
+test('an API list add with the email as an array is checked like a confirm', async () => {
+  const contact = MEMBER();
+  contact.attributes.AGIT_WELCOME_SENT = '2026-10-15T01:00:00.000Z';
+  const h = harness({ fetchImpl: fakeBrevo({ contact }).impl });
+  await h.run(post({ body: agitDelivery([43], ['member@example.com']) }), AGIT_ENV);
+  assert.deepEqual(sequence(h.calls), ['GET contacts/member%40example.com', 'POST alert']);
+  assert.equal(lastAlert(h.calls).subject, 'List addition: member@example.com');
+  assert.match(lastAlert(h.calls).htmlContent, /AGIT welcome email: already sent \(skipped\)/);
+
+  const fresh = harness({ fetchImpl: fakeBrevo({ contact: MEMBER() }).impl });
+  await fresh.run(post({ body: agitDelivery([43], ['member@example.com']) }), AGIT_ENV);
+  assert.equal(welcomeCalls(fresh.calls).length, 1);
+  assert.equal(lastAlert(fresh.calls).subject, 'New AGIT member: member@example.com');
+});
+
+test('a bulk add sends one alert per address', async () => {
+  const h = harness({ fetchImpl: fakeBrevo().impl });
+  await h.run(post({ body: { ...LIST_ADDITION, email: ['a@example.com', 'b@example.com'] } }), AGIT_ENV);
+  assert.deepEqual(
+    alertCalls(h.calls).map((c) => JSON.parse(c.init.body).subject),
+    ['New newsletter subscriber: a@example.com', 'New newsletter subscriber: b@example.com'],
+  );
+});
+
+test('a listAddition with no usable email is ignored and logged with its type', async () => {
+  for (const [email, type] of [[[], 'array'], [42, 'number'], [[7], 'array']]) {
+    const h = harness({ fetchImpl: fakeBrevo().impl });
+    const res = await h.run(post({ body: { ...LIST_ADDITION, email } }), AGIT_ENV);
+    assert.equal(res.status, 200);
+    assert.equal(h.calls.length, 0, `no Brevo call for email ${JSON.stringify(email)}`);
+    const line = h.logs.find((l) => l.includes('bad-payload'));
+    assert.ok(line && line.includes(`"type":"${type}"`), `bad-payload log for ${JSON.stringify(email)}: ${line}`);
+  }
+});
+
 test('a throwing contact read still sends the alert with FAILED', async () => {
   for (const read of [() => { throw new TypeError('network down'); }, () => new Response('not json', { status: 200 })]) {
     const h = harness({ fetchImpl: fakeBrevo({ contact: MEMBER(), fail: { read } }).impl });
