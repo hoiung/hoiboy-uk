@@ -373,9 +373,16 @@ export async function onRequestPost(context) {
     return textResponse(200, "Ignored.");
   }
 
-  const email = payload.email || payload["email_address"] || "";
-  if (!email) {
-    log("bad-payload", { reason: "no email on listAddition" });
+  // A confirm click delivers `email` as a string. An API list add delivered something
+  // else (2026-10-16: re-adding one member by API threw on `email.toLowerCase()`),
+  // and Brevo says one event can cover a bulk add of several contacts. So an array is
+  // taken address by address: each gets its own AGIT check and its own alert.
+  const raw = payload.email || payload["email_address"] || "";
+  const emails = (Array.isArray(raw) ? raw : [raw]).filter((e) => typeof e === "string" && e !== "");
+  if (emails.length === 0) {
+    log("bad-payload", {
+      reason: "no email on listAddition", type: Array.isArray(raw) ? "array" : typeof raw,
+    });
     return textResponse(200, "Ignored.");
   }
 
@@ -385,8 +392,10 @@ export async function onRequestPost(context) {
   //    less likely. The outcome of the work is in the logs, not in this response.
   const listIds = Array.isArray(payload.list_id) ? payload.list_id : [];
   context.waitUntil((async () => {
-    const agit = await agitPart(email, listIds, env, log);
-    await sendAlert(buildAlert(email, listIds, agit, env), email, listIds, env, log);
+    for (const email of emails) {
+      const agit = await agitPart(email, listIds, env, log);
+      await sendAlert(buildAlert(email, listIds, agit, env), email, listIds, env, log);
+    }
   })());
   return textResponse(200, "Accepted.");
 }
