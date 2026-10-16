@@ -52,7 +52,7 @@ BRIEF_SENTENCES = (
     "You need to sign up to attend our events.",
     "You only need to sign up once and become a member of our AGIT community and join our WhatsApp group.",
     "This is mandatory.",
-    "The membership is free because we're a self-contributing community where members give to build what we have.",
+    "The membership is FREE because we're a self-contributing community where members give to build what we have.",
     "Our WhatsApp link used to be public on Meetup, and we have been bombarded by crypto and stock bots "
     "spamming our groups constantly.",
     "Attendees to our events may take photos and videos and share them.",
