@@ -373,10 +373,12 @@ export async function onRequestPost(context) {
     return textResponse(200, "Ignored.");
   }
 
-  // A confirm click delivers `email` as a string. An API list add delivered something
-  // else (2026-10-16: re-adding one member by API threw on `email.toLowerCase()`),
-  // and Brevo says one event can cover a bulk add of several contacts. So an array is
-  // taken address by address: each gets its own AGIT check and its own alert.
+  // A confirm click delivers `email` as a string. An API list add delivered an array of
+  // address strings (2026-10-16: re-adding one member by API threw on
+  // `email.toLowerCase()`, and that alert's subject printed the bare address). Brevo
+  // documents that this event also fires for a multi-contact API add, without saying
+  // whether that is one event or one per contact, so an array is taken address by
+  // address: each gets its own AGIT check and its own alert.
   const raw = payload.email || payload["email_address"] || "";
   const emails = (Array.isArray(raw) ? raw : [raw]).filter((e) => typeof e === "string" && e !== "");
   if (emails.length === 0) {
