@@ -13,8 +13,8 @@ You need to sign up to attend our events. You only need to sign up once and beco
 
 The membership is **FREE** because we're a self-contributing community where members give to build what we have. It's not the usual networking event where you're trying to find a job or sell or find investors.
 <!-- iamhoi-skip -->
-<!-- The sentence below is Hoi's own wording, kept as he wrote it: "facilitating" is his word (#65 R10). -->
-Networking is about giving and adding value within our community, and it's free to join and help make it better because this is your community that we're facilitating.
+<!-- The two sentences below are Hoi's own wording, kept as he wrote them: "facilitating" is his word (#65 R10). -->
+Networking is about giving and adding value within our community, and it's free to join and help make it better because this is your community that we're facilitating. People notice what you give, not what you take.
 <!-- iamhoi-skipend -->
 
 **Why the WhatsApp invite comes by email.** Our WhatsApp link used to be public on Meetup, and we have been bombarded by crypto and stock bots spamming our groups constantly. So to protect our group, the invite link is sent once you sign up to our form and confirm your email is correct, and then we send you the welcome email.
