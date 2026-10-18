@@ -53,6 +53,8 @@ A rule is a keyword plus a link or contact detail (a phone number, a contact car
 
 And there are no second chances. If they post spamming shit, they are deleted, blocked and removed from the group. Full stop. If they were truly human, or had their account hijacked, that's their problem. They need to reach out to us and fix their account before we even unblock them.
 
+The only exception is admins. The bot checks with WhatsApp who the admins and owners are, and it never removes them, even if their message matches a rule. It just flags it in Telegram instead. So we can't accidentally lock ourselves out.
+
 When a new kind of spam turns up, I paste it into Claude Code, and a skill tests every rule against all our saved spam and suggests the smallest rule change. I built the whole thing with Claude Code, using my [SST3-AI-Harness](https://github.com/hoiung/sst3-ai-harness).
 
 ## Yes, we're kind of breaking WhatsApp's rules
